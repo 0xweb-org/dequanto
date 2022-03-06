@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./",
+        "paths": {
+            "@dequanto/*": [ "src/*" ],
+            "@dequanto-contracts/*": [ "contracts/*" ]
+        },
+        "outDir": "dist",
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "experimentalDecorators": true,
+        "target": "es2020",
+        "lib": ["dom", "es2018"],
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true
+    },
+    "transformers": {
+        "before": ["ts-nameof"]
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "db",
+        "test"
+    ]
+}

@@ -1,0 +1,49 @@
+{
+  "name": "dequanto",
+  "scripts": {
+    "hardhat": "hardhat node",
+    "build": "tsc -p tsconfig-src.json"
+  },
+  "devDependencies": {
+    "hardhat": "^2.6.7",
+    "shellbee": "^0.5.16"
+  },
+  "dependencies": {
+    "@ethereumjs/common": "^2.5.0",
+    "@ethereumjs/tx": "^3.3.2",
+    "a-di": "^1.0.25",
+    "alot": "^0.2.96",
+    "atma-io": "^1.2.51",
+    "atma-loader-ts": "^1.1.17",
+    "atma-utils": "^0.2.51",
+    "axios": "^0.21.1",
+    "bcrypt": "^5.0.1",
+    "ethers": "^5.5.1",
+    "everlog": "^1.0.8",
+    "memd": "^0.3.10",
+    "papaparse": "^5.3.1",
+    "web3": "^1.6.0",
+    "web3-core": "^1.6.0",
+    "web3-core-subscriptions": "^1.6.0"
+  },
+  "atma": {
+    "configs": "./configs/**.yml",
+    "plugins": [
+      "atma-loader-ts"
+    ],
+    "settings": {
+      "include": {
+        "amd": true,
+        "extentionDefault": {
+          "js": "ts"
+        },
+        "routes": "#import ./tsconfig-build.json compilerOptions.paths",
+        "map": {}
+      },
+      "atma-loader-ts": {
+        "sourceMap": true,
+        "typescript": "#import ./tsconfig-build.json"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+    "git.ignoreLimitWarning": true,
+    "typescript.tsdk": "node_modules\\typescript\\lib",
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/dist": true,
+        "**/.DS_Store": true
+    }
+}

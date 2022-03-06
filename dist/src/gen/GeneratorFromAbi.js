@@ -1,0 +1,326 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GeneratorFromAbi = void 0;
+const atma_io_1 = require("atma-io");
+const atma_utils_1 = require("atma-utils");
+const alot_1 = __importDefault(require("alot"));
+const _abiType_1 = require("@dequanto/utils/$abiType");
+const _date_1 = require("@dequanto/utils/$date");
+const _path_1 = require("@dequanto/utils/$path");
+const _abiUtils_1 = require("@dequanto/utils/$abiUtils");
+class GeneratorFromAbi {
+    async generate(abiJson, opts) {
+        let methodsArr = abiJson
+            .map(item => {
+            if (item.type === 'function') {
+                return Gen.serializeMethodTs(item);
+            }
+            return null;
+        })
+            .filter(Boolean)
+            .map(Str.formatMethod);
+        ;
+        let eventsArr = abiJson
+            .filter(x => x.type === 'event')
+            .map(x => Gen.serializeEvent(x))
+            .filter(Boolean)
+            .map(Str.formatMethod);
+        ;
+        let eventsExtractorsArr = abiJson
+            .filter(x => x.type === 'event')
+            .map(x => Gen.serializeEventExtractor(x))
+            .filter(Boolean)
+            .map(Str.formatMethod);
+        let eventInterfaces = abiJson
+            .filter(x => x.type === 'event')
+            .map(x => Gen.serializeEventInterface(x))
+            .filter(Boolean)
+            .map(Str.formatMethod);
+        ;
+        let methods = methodsArr.join('\n\n');
+        let events = eventsArr.join('\n\n');
+        let eventsExtractors = eventsExtractorsArr.join('\n\n');
+        let name = opts.name;
+        let templatePath = _path_1.$path.resolve(`/src/gen/ContractTemplate.ts`);
+        let template = await atma_io_1.File.readAsync(templatePath, { skipHooks: true });
+        let EtherscanStr;
+        let EthWeb3ClientStr;
+        let imports = [];
+        let explorerUrl;
+        switch (opts.network) {
+            case 'bsc':
+                EtherscanStr = 'Bscscan';
+                EthWeb3ClientStr = 'BscWeb3Client';
+                imports = [
+                    `import { Bscscan } from '@dequanto/BlockchainExplorer/Bscscan'`,
+                    `import { BscWeb3Client } from '@dequanto/clients/BscWeb3Client'`,
+                ];
+                explorerUrl = `https://bscscan.com/address/${opts.implementation}#code`;
+                break;
+            case 'polygon':
+                EtherscanStr = 'Polyscan';
+                EthWeb3ClientStr = 'PolyWeb3Client';
+                imports = [
+                    `import { Polyscan } from '@dequanto/BlockchainExplorer/Polyscan'`,
+                    `import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client'`,
+                ];
+                explorerUrl = `https://polygonscan.com/address/${opts.implementation}#code`;
+                break;
+            case 'xdai':
+                EtherscanStr = 'XDaiscan';
+                EthWeb3ClientStr = 'XDaiWeb3Client';
+                imports = [
+                    `import { XDaiscan } from '@dequanto/chains/xdai/XDaiscan'`,
+                    `import { XDaiWeb3Client } from '@dequanto/chains/xdai/XDaiWeb3Client'`,
+                ];
+                explorerUrl = `https://blockscout.com/xdai/mainnet/address/${opts.implementation}/contracts`;
+                break;
+            case 'eth':
+                EtherscanStr = 'Etherscan';
+                EthWeb3ClientStr = 'EthWeb3Client';
+                imports = [
+                    `import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'`,
+                    `import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'`,
+                ];
+                explorerUrl = `https://etherscan.io/address/${opts.implementation}#code`;
+                break;
+            default:
+                throw new Error(`Unknown network ${opts.network}`);
+        }
+        let code = template
+            .replace(/\$Etherscan\$/g, EtherscanStr)
+            .replace(/\$EthWeb3Client\$/g, EthWeb3ClientStr)
+            .replace(`/* IMPORTS */`, imports.join('\n'))
+            .replace(`$NAME$`, name)
+            .replace(`$ADDRESS$`, opts.address ?? '')
+            .replace(`/* METHODS */`, methods)
+            .replace(`/* EVENTS */`, events)
+            .replace(`/* EVENTS_EXTRACTORS */`, eventsExtractors)
+            .replace(`$ABI$`, JSON.stringify(abiJson))
+            .replace(`$DATE$`, _date_1.$date.format(new Date(), 'yyyy-MM-dd HH:mm'))
+            .replace(`$EXPLORER_URL$`, explorerUrl)
+            .replace(`/* $EVENT_INTERFACES$ */`, eventInterfaces.join('\n'));
+        let path = atma_utils_1.class_Uri.combine(opts.output, `${name}.ts`);
+        await atma_io_1.File.writeAsync(path, code, { skipHooks: true });
+        let sources = opts.sources;
+        if (sources) {
+            await alot_1.default.fromObject(sources).forEachAsync(async (entry) => {
+                let filename = /\/?([^/]+$)/.exec(entry.key)[1];
+                let path = atma_utils_1.class_Uri.combine(opts.output, name, filename);
+                await atma_io_1.File.writeAsync(path, entry.value.content, { skipHooks: true });
+            }).toArrayAsync();
+        }
+        return code;
+    }
+}
+exports.GeneratorFromAbi = GeneratorFromAbi;
+var Gen;
+(function (Gen) {
+    function serializeMethodTs(abi) {
+        let isRead = ['view', 'pure', null].includes(abi.stateMutability);
+        if (isRead) {
+            return serializeReadMethodTs(abi);
+        }
+        return serializeWriteMethodTs(abi);
+    }
+    Gen.serializeMethodTs = serializeMethodTs;
+    function serializeEvent(abi) {
+        let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
+        return `
+            on${abi.name} (fn: (event: EventData, ${fnInputArguments}) => void): ClientEventsStream<any> {
+                return this.$on('${abi.name}', fn);
+            }
+        `;
+    }
+    Gen.serializeEvent = serializeEvent;
+    function serializeEventExtractor(abi) {
+        return `
+            extractLogs${abi.name} (tx: TransactionReceipt): TLog${abi.name}[] {
+                let abi = this.$getAbiItem('event', '${abi.name}');
+                return this.$extractLogs(tx, abi) as any as TLog${abi.name}[];
+            }
+        `;
+    }
+    Gen.serializeEventExtractor = serializeEventExtractor;
+    function serializeEventInterface(abi) {
+        let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
+        return `
+            type TLog${abi.name} = {
+                contract: TAddress,
+                ${fnInputArguments}
+            }
+        `;
+    }
+    Gen.serializeEventInterface = serializeEventInterface;
+    function serializeMethodAbi(abi) {
+        let params = abi.inputs?.map(x => x.type).join(', ') ?? '';
+        let returns = serializeMethodAbiReturns(abi.outputs);
+        if (returns && abi.outputs.length > 1) {
+            returns = `(${returns})`;
+        }
+        let returnsStr = returns ? `returns ${returns}` : '';
+        return `function ${abi.name}(${params}) ${returnsStr}`.trim();
+    }
+    function serializeReadMethodTs(abi) {
+        let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
+        if (callInputArguments) {
+            callInputArguments = `, ${callInputArguments}`;
+        }
+        return `
+            // ${_abiUtils_1.$abiUtils.getMethodSignature(abi)}
+            async ${abi.name} (${fnInputArguments}): ${fnResult} {
+                return this.$read('${serializeMethodAbi(abi)}'${callInputArguments});
+            }
+        `;
+    }
+    function serializeWriteMethodTs(abi) {
+        let { fnInputArguments, callInputArguments } = serializeArgumentsTs(abi);
+        if (callInputArguments) {
+            callInputArguments = `, ${callInputArguments}`;
+        }
+        return `
+            // ${_abiUtils_1.$abiUtils.getMethodSignature(abi)}
+            async ${abi.name} (eoa: {address: TAddress, key: string, value?: string | number | bigint }, ${fnInputArguments}): Promise<TxWriter> {
+                return this.$write(this.$getAbiItem('function', '${abi.name}'), eoa${callInputArguments});
+            }
+        `;
+    }
+    function serializeArgumentsTs(abi) {
+        let inputs = abi.inputs.map((input, i) => {
+            let result = { ...input };
+            if (result.name == null || result.name === '') {
+                result.name = 'input' + i;
+            }
+            return result;
+        });
+        let fnInputArguments = inputs
+            ?.map((input) => {
+            let tsType = _abiType_1.$abiType.getTsType(input.type, input);
+            if (tsType == null) {
+                throw new Error(`Unknown abi type in arguments: ${input.type}`);
+            }
+            return `${input.name}: ${tsType}`;
+        })
+            ?.join(', ') ?? '';
+        let callInputArguments = inputs
+            ?.map(input => {
+            return `${input.name}`;
+        })
+            ?.join(', ') ?? '';
+        let fnResult = serializeMethodTsReturns(abi.outputs);
+        return { fnInputArguments, callInputArguments, fnResult };
+    }
+    function isObjectParams(params) {
+        return params?.every(x => Boolean(x.name));
+    }
+    function serializeMethodAbiReturns(params) {
+        if (params == null) {
+            return '';
+        }
+        // if (isObjectParams(params)) {
+        //     return params.map(x => serializeMethodAbiReturnsSingle(x)).join(',');
+        // }
+        return params?.map(x => serializeMethodAbiReturnsSingle(x)).join(',');
+    }
+    function serializeMethodAbiReturnsSingle(param) {
+        if (param == null) {
+            return null;
+        }
+        if (param.components) {
+            // tuple, tuple[]
+            let fields = serializeMethodAbiReturns(param.components);
+            return `[${fields}]${param.type === 'tuple[]' ? '[]' : ''}`;
+        }
+        // if (param.name && param.type) {
+        //     return `${param.type} ${param.name}`;
+        // }
+        return param.type;
+    }
+    function serializeMethodTsReturns(params) {
+        if (params == null || params.length === 0) {
+            params = [{ name: '', type: 'uint256' }];
+        }
+        let tsTypes = params.map(param => {
+            let tsType = _abiType_1.$abiType.getTsType(param.type, param);
+            if (tsType == null) {
+                throw new Error(`(gen) Unknown abi type in return: ${param.type}`);
+            }
+            return {
+                name: param.name,
+                type: tsType
+            };
+        });
+        if (params.length > 1 && isObjectParams(params)) {
+            let paramsStr = tsTypes.map(x => `${x.name}: ${x.type}`).join(', ');
+            return `Promise<{ ${paramsStr} }>`;
+        }
+        let fnResult = tsTypes?.map(x => x.type).join(', ');
+        if (tsTypes.length > 1) {
+            fnResult = `[ ${fnResult} ]`;
+        }
+        return `Promise<${fnResult}>`;
+    }
+    // const AbiTsTypes = {
+    //     'uint8': 'number',
+    //     'uint4': 'number',
+    //     'uint': 'number',
+    //     'bool': 'boolean',
+    //     'bytes': 'Buffer',
+    //     'bytes4': 'Buffer',
+    //     'bytes32': 'Buffer',
+    //     'bytes64': 'Buffer',
+    //     'bytes128': 'Buffer',
+    //     'bytes256': 'Buffer',
+    //     'address': 'TAddress',
+    //     'string': 'string',
+    // };
+    // const AbiTsTypesRgx = [
+    //     {
+    //         rgx: /uint\d+/,
+    //         type: 'bigint',
+    //     }
+    // ];
+})(Gen || (Gen = {}));
+var Str;
+(function (Str) {
+    function formatMethod(str) {
+        str = trim(str);
+        str = indent(str, '    ');
+        return str;
+    }
+    Str.formatMethod = formatMethod;
+    function trim(str) {
+        let lines = str.split('\n');
+        let min = (0, alot_1.default)(lines).min(x => {
+            if (x.trim() === '') {
+                return Number.MAX_SAFE_INTEGER;
+            }
+            let match = /^\s+/.exec(x);
+            if (match == null) {
+                return Number.MAX_SAFE_INTEGER;
+            }
+            return match[0].length;
+        });
+        lines = lines.map((line, i) => {
+            let x = line.substring(min);
+            if ((i === 0) || (lines.length === i + 1)) {
+                if (x === '') {
+                    return null;
+                }
+            }
+            return x;
+        }).filter(Boolean);
+        return lines.join('\n');
+    }
+    Str.trim = trim;
+    function indent(str, indent) {
+        return str
+            .split('\n')
+            .map(x => `${indent}${x}`)
+            .join('\n');
+    }
+    Str.indent = indent;
+})(Str || (Str = {}));
