@@ -7,14 +7,18 @@ exports.TPUniswap = void 0;
 const axios_1 = __importDefault(require("axios"));
 const JsonArrayStore_1 = require("@dequanto/json/JsonArrayStore");
 const ATokenProvider_1 = require("./ATokenProvider");
+const _path_1 = require("@dequanto/utils/$path");
 const TheGraphUrl = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2';
-const tokensStore = new JsonArrayStore_1.JsonArrayStore({
-    path: '/data/tokens/uni.json',
-    key: (x) => x.symbol
-});
 class TPUniswap extends ATokenProvider_1.ATokenProvider {
+    constructor() {
+        super(...arguments);
+        this.store = new JsonArrayStore_1.JsonArrayStore({
+            path: _path_1.$path.resolve('/data/tokens/uni.json'),
+            key: x => x.symbol
+        });
+    }
     getTokens() {
-        return tokensStore.getAll();
+        return this.store.getAll();
     }
     /** Finds remote  */
     async find(address) {
@@ -73,7 +77,7 @@ class TPUniswap extends ATokenProvider_1.ATokenProvider {
             }
             skip += take;
         }
-        await tokensStore.saveAll(out);
+        await this.store.saveAll(out);
         return out;
     }
 }

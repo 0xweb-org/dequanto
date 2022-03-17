@@ -161,8 +161,8 @@ export class HopBridge implements IBridge {
 
             let gasPrice = await chainFrom.client.getGasPrice();
             let gasLimit = 300_000n;
-            amountWei -= gasPrice * gasLimit;
-            console.log(`Estimated GAS Price: ${ $bigint.toGweiFromWei(gasPrice) }GWEI; Total: ${ $bigint.toGweiFromWei(gasPrice * gasLimit) }GWEI`);
+            amountWei -= gasPrice.price * gasLimit;
+            console.log(`Estimated GAS Price: ${ $bigint.toGweiFromWei(gasPrice.price) }GWEI; Total: ${ $bigint.toGweiFromWei(gasPrice.price * gasLimit) }GWEI`);
             if (amountWei < 0) {
                 throw new Error(`Not enough amount to be left on chain. Balance ${balance}`);
             }

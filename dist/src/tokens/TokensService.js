@@ -36,7 +36,6 @@ class TokensService {
             new ArbTokenProvider_1.ArbTokenProvider(),
             new TPChain_1.TPChain(this.platform, this.explorer),
         ];
-        _require_1.$require.notNull(platform, 'Tokens service platform');
     }
     async getTokenOrDefault(address, chainLookup = true) {
         return await this.getToken(address, chainLookup) ?? this.default(address);

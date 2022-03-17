@@ -9,7 +9,6 @@ const alot_1 = __importDefault(require("alot"));
 const BlockChainExplorerProvider_1 = require("@dequanto/BlockchainExplorer/BlockChainExplorerProvider");
 const Web3ClientFactory_1 = require("@dequanto/clients/Web3ClientFactory");
 const _bigint_1 = require("@dequanto/utils/$bigint");
-const _is_1 = require("@dequanto/utils/$is");
 const PancakeswapExchange_1 = require("./TokenExchanges/PancakeswapExchange");
 //import { UniswapExchange } from './TokenExchanges/UniswapExchange';
 const TokensService_1 = require("./TokensService");
@@ -17,6 +16,7 @@ const TokenUtils_1 = require("./utils/TokenUtils");
 const UniswapExchange_1 = require("./TokenExchanges/UniswapExchange");
 const SushiswapPolygonExchange_1 = require("./TokenExchanges/SushiswapPolygonExchange");
 const _logger_1 = require("@dequanto/utils/$logger");
+const _require_1 = require("@dequanto/utils/$require");
 class TokenExchangeService {
     constructor(platform) {
         this.platform = platform;
@@ -47,7 +47,7 @@ class TokenExchangeService {
         let $fromAmount = typeof fromAmount === 'bigint'
             ? fromAmount
             : _bigint_1.$bigint.toWei(fromAmount, fromToken.decimals ?? 18);
-        _is_1.$is.Address(fromToken?.address, `Token 404 ${from}`);
+        _require_1.$require.Address(fromToken?.address, `Token 404 ${from}`);
         let converted = TokenUtils_1.TokenUtils.isStable(fromToken.symbol) ? {
             to: {
                 ...fromToken,

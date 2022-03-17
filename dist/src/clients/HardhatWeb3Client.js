@@ -4,19 +4,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HardhatWeb3Client = void 0;
-const _config_1 = require("@dequanto/utils/$config");
-const tx_1 = require("@ethereumjs/tx");
 const common_1 = __importDefault(require("@ethereumjs/common"));
+const _config_1 = require("@dequanto/utils/$config");
 const Web3Client_1 = require("./Web3Client");
 const ClientEndpoints_1 = require("./utils/ClientEndpoints");
-let web3Config = _config_1.$config.get('web3.hardhat');
-let endpoints = web3Config?.endpoints ?? [{ url: web3Config?.url, safe: true }];
+const TxFactory_1 = require("./utils/TxFactory");
 // https://hardhat.org/hardhat-network/reference/
 class HardhatWeb3Client extends Web3Client_1.Web3Client {
     constructor(opts) {
-        super(ClientEndpoints_1.ClientEndpoints.filterEndpoints(endpoints, opts));
+        super(ClientEndpoints_1.ClientEndpoints.filterEndpoints(_config_1.$config.get('web3.hardhat.endpoints'), opts));
         this.platform = 'hardhat';
         this.chainId = 31337;
+        this.chainToken = 'ETH';
+        this.TIMEOUT = 5 * 60 * 1000;
+        this.defaultGasLimit = 2000000;
     }
     sign(txData, privateKey) {
         const key = Buffer.from(privateKey, 'hex');
@@ -26,15 +27,10 @@ class HardhatWeb3Client extends Web3Client_1.Web3Client {
             customChains: [
                 {
                     chainId: 31337,
-                    //networkId: 31337,
                     url: 'http://127.0.0.1:8545/',
                     name: 'ETH',
                     comment: '',
                     hardforks: [
-                        // {
-                        //     name: "spuriousDragon",
-                        //     block: 0
-                        // },
                         {
                             name: 'london',
                             block: 0
@@ -51,16 +47,8 @@ class HardhatWeb3Client extends Web3Client_1.Web3Client {
                     }
                 }
             ]
-            // customChains: [{
-            //     chainId: 31337,
-            //     networkId: 31337,
-            //     url: 'http://127.0.0.1:8545/',
-            //     name: 'eth',
-            //     comment: '',
-            //     hardforks: [{ name: 'berlin' }]
-            // } as any]
         });
-        const tx = tx_1.Transaction.fromTxData(txData, { common });
+        const tx = TxFactory_1.TxFactory.fromTxData(txData, { common });
         const signedTx = tx.sign(key);
         return signedTx.serialize();
     }

@@ -3,17 +3,19 @@ import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
 import { ITokenProvider } from './ITokenProvider';
 import { ATokenProvider } from './ATokenProvider';
 import { ITokenGlob } from '@dequanto/models/ITokenGlob';
+import { $path } from '@dequanto/utils/$path';
 
 
 const TheGraphUrl = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2';
 
-const tokensStore = new JsonArrayStore<ITokenGlob> ({
-    path: '/data/tokens/uni.json',
-    key: (x) => x.symbol
-});
 export class TPUniswap extends ATokenProvider implements ITokenProvider {
+    store = new JsonArrayStore<ITokenGlob> ({
+        path: $path.resolve('/data/tokens/uni.json'),
+        key: x => x.symbol
+    });
+
     getTokens(): Promise<ITokenGlob[]> {
-        return tokensStore.getAll();
+        return this.store.getAll();
     }
 
     /** Finds remote  */
@@ -77,7 +79,7 @@ export class TPUniswap extends ATokenProvider implements ITokenProvider {
             skip += take;
         }
 
-        await tokensStore.saveAll(out);
+        await this.store.saveAll(out);
         return out;
     }
 }

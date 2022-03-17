@@ -35,6 +35,7 @@ class ContractBase {
             data: buffer,
             value: value,
         });
+        console.log("decodedInput", decodedInput);
         return {
             name: decodedInput.name,
             args: _contract_1.$contract.normalizeArgs(Array.from(decodedInput.args))

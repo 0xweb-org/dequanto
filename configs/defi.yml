@@ -1,0 +1,24 @@
+pancackeswap:
+  # e.g. to get userInfo
+  masterChef:  '0x73feaa1eE314F8c655E354234017bE2193C9E24E'
+  # e.g. to get pairInfo
+  factory: '0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73'
+  # CakeVault
+  vault: '0xa80240Eb5d7E05d3F250cF000eEc0891d00b51CC'
+
+uniswapV3:
+  # e.g. to get userInfo
+  masterChef:  ''
+  # e.g. to get pairInfo
+  factory: ''
+  # LPVault
+  vault: ''
+
+
+uniswapV2:
+  # e.g. to get userInfo
+  masterChef:  ''
+  # e.g. to get pairInfo
+  factory: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f'
+  # LPVault
+  vault: '0x7a250d5630b4cf539739df2c5dacb4c659f2488d'

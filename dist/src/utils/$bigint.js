@@ -74,9 +74,19 @@ var $bigint;
         if (val < Number.MAX_SAFE_INTEGER) {
             return Number(val) / Number(round);
         }
-        throw new Error(`Ether overflow: ${val}`);
+        throw new Error(`Ether overflow: ${val}. Decimals: ${decimals}`);
     }
     $bigint_1.toEther = toEther;
+    function toEtherSafe(amount, decimals = $bigint_1.ETHER_DECIMALS, round = 100000n) {
+        let $decimals = BigInt(decimals);
+        let $amount = BigInt(amount);
+        let val = $amount * round / 10n ** $decimals;
+        if (val < Number.MAX_SAFE_INTEGER) {
+            return Number(val) / Number(round);
+        }
+        return val / round;
+    }
+    $bigint_1.toEtherSafe = toEtherSafe;
     function toHex(num) {
         return `0x${num.toString(16)}`;
     }

@@ -12,6 +12,8 @@ import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder'
 import { TxWriter } from '@dequanto/txs/TxWriter'
 import { Web3Client } from '@dequanto/clients/Web3Client'
 import { $contract } from '@dequanto/utils/$contract'
+import { ChainAccount } from '@dequanto/ChainAccounts'
+import { $is } from '@dequanto/utils/$is'
 
 export interface IContractInit {
     Ctor?:  new (...args) => any
@@ -48,7 +50,7 @@ export abstract class Contract {
         return this.runner.readAsync(this.address, methodAbi, ...params);
     }
 
-    async writeAsyncWithAccount<T = any>(account: { address?: string, key: string }, interfaceAbi: string, ...params): Promise<TxWriter> {
+    async writeAsyncWithAccount<T = any>(account: ChainAccount, interfaceAbi: string, ...params): Promise<TxWriter> {
 
         let txBuilder = new TxDataBuilder(this.client, account, {
             to: this.address
@@ -110,7 +112,7 @@ export abstract class Contract {
 
         let info = await provider.getInfo(mix)
         if (info == null) {
-            let byName = mix.startsWith('0x') === false;
+            let byName = $is.Address(mix) === false;
             if (byName) {
                 throw new Error(`Contract by name not found ${mix}`);
             }

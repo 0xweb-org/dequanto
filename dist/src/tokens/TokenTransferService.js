@@ -82,7 +82,7 @@ class TokenTransferService {
         let buildTxRetries = 1;
         const buildTx = async () => {
             let GAS = 21000;
-            let GAS_RATIO = 1.1;
+            let GAS_RATIO = 1.05;
             let [balance, gasPrice] = await Promise.all([
                 this.client.getBalance(from.address),
                 this.client.getGasPrice()
@@ -91,8 +91,9 @@ class TokenTransferService {
                 let remainder = this.getAmount(opts.remainder, 18);
                 balance -= remainder;
             }
-            gasPrice = _bigint_1.$bigint.multWithFloat(gasPrice, GAS_RATIO);
-            let gasConsumed = BigInt(GAS) * gasPrice;
+            let $gasPrice = _bigint_1.$bigint.multWithFloat(gasPrice.price, GAS_RATIO);
+            console.log('$gasPrice', _bigint_1.$bigint.toGweiFromWei($gasPrice));
+            let gasConsumed = BigInt(GAS) * $gasPrice;
             let transferValue = balance - gasConsumed;
             if (transferValue <= 0) {
                 if (--buildTxRetries > -1) {
@@ -108,11 +109,14 @@ class TokenTransferService {
                 to: to,
                 value: _bigint_1.$bigint.toHex(transferValue)
             });
-            txBuilder.data.gasPrice = _bigint_1.$bigint.toHex(gasPrice);
+            txBuilder.data.gasPrice = _bigint_1.$bigint.toHex($gasPrice);
+            // txBuilder.data.maxFeePerGas = $bigint.toHex($gasPrice - 20n**9n);
+            // txBuilder.data.maxPriorityFeePerGas = $bigint.toHex(20n**9n);
             txBuilder.data.gasLimit = GAS;
+            txBuilder.data.type = 1;
             txBuilder.setConfig(this.txConfig);
             await Promise.all([
-                txBuilder.setNonce(),
+                txBuilder.setNonce({ overriding: true }),
             ]);
             _logger_1.$logger.log(`TransferNative ALL. Balance ${balance}; GasConsumed ${gasConsumed}; TransferValue ${transferValue}; Nonce: ${txBuilder.data.nonce}`);
             return txBuilder;

@@ -8,13 +8,18 @@ const axios_1 = __importDefault(require("axios"));
 const JsonArrayStore_1 = require("@dequanto/json/JsonArrayStore");
 const TokenUtils_1 = require("../utils/TokenUtils");
 const ATokenProvider_1 = require("./ATokenProvider");
-let tokensStore = new JsonArrayStore_1.JsonArrayStore({
-    path: '/data/tokens/1inch.json',
-    key: x => x.symbol
-});
+const _path_1 = require("@dequanto/utils/$path");
 class TPOneInch extends ATokenProvider_1.ATokenProvider {
+    constructor() {
+        super(...arguments);
+        this.store = new JsonArrayStore_1.JsonArrayStore({
+            path: _path_1.$path.resolve('/data/tokens/1inch.json'),
+            key: x => x.symbol,
+            format: true,
+        });
+    }
     getTokens() {
-        return tokensStore.getAll();
+        return this.store.getAll();
     }
     async redownloadTokens() {
         let tokensByPlatform = await Promise.all([
@@ -23,7 +28,7 @@ class TPOneInch extends ATokenProvider_1.ATokenProvider {
             this.downloadForPlatform('polygon'),
         ]);
         let globals = TokenUtils_1.TokenUtils.merge(...tokensByPlatform);
-        await tokensStore.saveAll(globals);
+        await this.store.saveAll(globals);
         return globals;
     }
     async downloadForPlatform(platform) {

@@ -16,6 +16,7 @@ class BlocksTxIndexer {
             name: `${opts?.name ?? 'indexer'}_${this.platform}`,
             client: this.client,
             loadTransactions: opts?.loadTransactions ?? true,
+            persistance: opts?.persistance ?? true,
             visitor: async (block, txs) => {
                 return this.indexTransactions(block, txs);
             }

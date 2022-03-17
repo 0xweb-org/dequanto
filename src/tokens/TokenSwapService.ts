@@ -10,7 +10,10 @@ import { Paraswap } from './defi/paraswap/Paraswap';
 
 export class TokenSwapService {
 
-    constructor(public client: Web3Client, public provider: ISwapService = di.resolve(Paraswap, client.platform, client)) {
+    constructor(
+        public client: Web3Client,
+        public provider: ISwapService = di.resolve(Paraswap, client.platform, client)
+    ) {
 
     }
 

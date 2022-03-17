@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.$require = void 0;
+const _is_1 = require("./$is");
 var $require;
 (function ($require) {
     function Number(val, message = '', opts) {
@@ -93,15 +94,25 @@ var $require;
     }
     $require.oneOf = oneOf;
     function Address(val, message = '') {
-        if (val == null) {
-            throw new Error(`Value is undefined. ${message}`);
-        }
-        if (/^0x[\w]{10,}$/.test(val) === false) {
+        if (_is_1.$is.Address(val) === false) {
             throw new Error(`Value ${val} is not a valid address. ${message}`);
         }
         return val;
     }
     $require.Address = Address;
+    function Token(token, message = '') {
+        if (token == null) {
+            throw new Error(`Token is undefined. ${message}`);
+        }
+        if (token.address == null) {
+            throw new Error(`Token address property is undefined. ${message}`);
+        }
+        if (token.decimals == null) {
+            throw new Error(`Token decimals property is undefined. ${message}`);
+        }
+        return token;
+    }
+    $require.Token = Token;
     /**
      * throws when a <= b
      */

@@ -115,8 +115,8 @@ class HopBridge {
             amountWei = balance + amountWei;
             let gasPrice = await chainFrom.client.getGasPrice();
             let gasLimit = 300000n;
-            amountWei -= gasPrice * gasLimit;
-            console.log(`Estimated GAS Price: ${_bigint_1.$bigint.toGweiFromWei(gasPrice)}GWEI; Total: ${_bigint_1.$bigint.toGweiFromWei(gasPrice * gasLimit)}GWEI`);
+            amountWei -= gasPrice.price * gasLimit;
+            console.log(`Estimated GAS Price: ${_bigint_1.$bigint.toGweiFromWei(gasPrice.price)}GWEI; Total: ${_bigint_1.$bigint.toGweiFromWei(gasPrice.price * gasLimit)}GWEI`);
             if (amountWei < 0) {
                 throw new Error(`Not enough amount to be left on chain. Balance ${balance}`);
             }

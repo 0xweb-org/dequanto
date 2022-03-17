@@ -2,17 +2,19 @@ import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
 import { ITokenGlob } from '@dequanto/models/ITokenGlob';
 import { ATokenProvider } from '@dequanto/tokens/TokenProviders/ATokenProvider';
 import { ITokenProvider } from '@dequanto/tokens/TokenProviders/ITokenProvider';
+import { $path } from '@dequanto/utils/$path';
 import axios from 'axios';
 
-let tokensStore = new JsonArrayStore<ITokenGlob> ({
-    path: '/data/tokens/arbitrum.json',
-    key: x => x.symbol
-});
 
 
 export class ArbTokenProvider  extends ATokenProvider  implements ITokenProvider {
+    store = new JsonArrayStore<ITokenGlob> ({
+        path: $path.resolve('/data/tokens/arbitrum.json'),
+        key: x => x.symbol
+    });
+
     getTokens(): Promise<ITokenGlob[]> {
-        return tokensStore.getAll();
+        return this.store.getAll();
     }
 
     async redownloadTokens(): Promise<any> {
@@ -31,7 +33,7 @@ export class ArbTokenProvider  extends ATokenProvider  implements ITokenProvider
                 }]
             };
         });
-        await tokensStore.saveAll(tokens);
+        await this.store.saveAll(tokens);
         return tokens;
     }
 }

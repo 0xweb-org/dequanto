@@ -31,6 +31,9 @@ export interface IGenerateOptions {
      * c) Method function to read the implementation address from
      */
     implementation?: string
+
+    /** ABI will be save alongside with TS classes */
+    saveAbi?: boolean
 }
 const KEYS = {
     'platform': 1,
@@ -136,6 +139,7 @@ export class Generator {
             output: output,
             implementation: implementation,
             sources: sources,
+            saveAbi: this.options.saveAbi
         });
     }
 

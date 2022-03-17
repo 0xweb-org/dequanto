@@ -10,10 +10,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BlockChainExplorerFactory = void 0;
+const alot_1 = __importDefault(require("alot"));
 const memd_1 = __importDefault(require("memd"));
 const axios_1 = __importDefault(require("axios"));
 const _logger_1 = require("@dequanto/utils/$logger");
-const _contract_1 = require("@dequanto/utils/$contract");
 const _promise_1 = require("@dequanto/utils/$promise");
 var BlockChainExplorerFactory;
 (function (BlockChainExplorerFactory) {
@@ -22,6 +22,7 @@ var BlockChainExplorerFactory;
         return class {
             constructor() {
                 this.localDb = opts.CONTRACTS;
+                this.config = opts.getConfig();
                 this.getContractAbi = memd_1.default.fn.memoize(this.getContractAbi, {
                     trackRef: true,
                     persistance: new memd_1.default.FsTransport({
@@ -45,21 +46,15 @@ var BlockChainExplorerFactory;
                 if (info?.proxy) {
                     address = info.proxy;
                 }
-                let url = `${opts.HOST}/api?module=contract&action=getabi&address=${address}&apikey=${opts.KEY}`;
+                let url = `${this.config.host}/api?module=contract&action=getabi&address=${address}&apikey=${this.config.key}`;
                 let abi = await client.get(url);
                 let abiJson = JSON.parse(abi);
                 if (params?.implementation) {
                     if (/0x.{64}/.test(params.implementation)) {
                         let web3 = opts.getWeb3();
                         let stat = await web3.getNodeInfos();
-                        console.log(stat, 'STATUSES');
-                        let x = (BigInt(_contract_1.$contract.keccak256("eip1967.proxy.implementation")) - 1n).toString(16);
-                        console.log(x, 'x');
-                        // let res = await ContractReader.read(web3, '0x5a58505a96d1dbf8df91cb21b54419fc36e93fde', '_implementation():address');
-                        // console.log(res, 'RES')
-                        console.log('WEB3', web3.config, 'address', address, params.implementation);
+                        //-let x = (BigInt($contract.keccak256("eip1967.proxy.implementation")) - 1n).toString(16);
                         let uin256Hex = await web3.getStorageAt('0x5a58505a96d1dbf8df91cb21b54419fc36e93fde', `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`);
-                        console.log('RESULT', uin256Hex);
                         let hex = uin256Hex.replace(/0x0+/, '0x');
                         return this.getContractAbi(hex);
                     }
@@ -96,12 +91,44 @@ var BlockChainExplorerFactory;
                 return { abi, implementation: address };
             }
             async getContractSource(address) {
-                let url = `${opts.HOST}/api?module=contract&action=getsourcecode&address=${address}&apikey=${opts.KEY}`;
+                let url = `${this.config.host}/api?module=contract&action=getsourcecode&address=${address}&apikey=${this.config.key}`;
                 let result = await client.get(url);
                 return Array.isArray(result) ? result[0] : result;
             }
             async getTransactions(addr, params) {
-                let url = `${opts.HOST}/api?module=account&action=txlist&address=${addr}&sort=${params.sort ?? 'desc'}&apikey=${opts.KEY}`;
+                return this.loadTxs('txlist', addr, params);
+            }
+            async getTransactionsAll(addr) {
+                return this.loadTxsAll('txlist', addr);
+            }
+            async getInternalTransactions(addr, params) {
+                return this.loadTxs('txlistinternal', addr, params);
+            }
+            async getInternalTransactionsAll(addr) {
+                return this.loadTxsAll('txlistinternal', addr);
+            }
+            async getErc20Transfers(addr, fromBlockNumber) {
+                let events = await this.loadTxs('tokentx', addr, { fromBlockNumber });
+                events.forEach(transfer => {
+                    transfer.timeStamp = new Date((Number(transfer.timeStamp) * 1000));
+                    transfer.value = BigInt(transfer.value);
+                    transfer.blockNumber = Number(transfer.blockNumber);
+                    transfer.tokenDecimal = Number(transfer.tokenDecimal);
+                });
+                return events;
+            }
+            async getErc20TransfersAll(addr, fromBlockNumber) {
+                let events = await this.loadTxsAll('tokentx', addr);
+                events.forEach(transfer => {
+                    transfer.timeStamp = new Date((Number(transfer.timeStamp) * 1000));
+                    transfer.value = BigInt(transfer.value);
+                    transfer.blockNumber = Number(transfer.blockNumber);
+                    transfer.tokenDecimal = Number(transfer.tokenDecimal);
+                });
+                return events;
+            }
+            async loadTxs(type, address, params) {
+                let url = `${this.config.host}/api?module=account&action=${type}&address=${address}&sort=${params.sort ?? 'desc'}&apikey=${this.config.key}`;
                 if (params.fromBlockNumber != null) {
                     url += `&startblock=${params.fromBlockNumber}`;
                 }
@@ -114,36 +141,22 @@ var BlockChainExplorerFactory;
                 let txs = await client.get(url);
                 return txs;
             }
-            async getTransactionsAll(addr) {
+            async loadTxsAll(type, address) {
                 let page = 1;
                 let size = 1000;
                 let out = [];
                 let fromBlockNumber = null;
                 while (true) {
-                    let arr = await this.getTransactions(addr, { fromBlockNumber, sort: 'asc' });
+                    let arr = await this.loadTxs(type, address, { fromBlockNumber, sort: 'asc' });
                     out.push(...arr);
-                    _logger_1.$logger.log(`Got transactions for ${addr}. Page: ${arr.length}; Received: ${out.length}. Latest Block: ${fromBlockNumber}`);
+                    _logger_1.$logger.log(`Got transactions(${type}) for ${address}. Page: ${arr.length}; Received: ${out.length}. Latest Block: ${fromBlockNumber}`);
                     if (arr.length < size) {
                         break;
                     }
                     page++;
-                    fromBlockNumber = Number(arr[arr.length - 1].blockNumber) + 1;
+                    fromBlockNumber = Number(arr[arr.length - 1].blockNumber);
                 }
-                return out;
-            }
-            async getTransferEvents(addr, fromBlockNumber) {
-                let url = `${opts.HOST}/api?module=account&action=tokentx&address=${addr}&sort=asc&apikey=${opts.KEY}`;
-                if (fromBlockNumber != null) {
-                    url += `&startblock=${fromBlockNumber ?? 0}`;
-                }
-                let events = await client.getPaged(url);
-                events.forEach(transfer => {
-                    transfer.timeStamp = new Date((Number(transfer.timeStamp) * 1000));
-                    transfer.value = BigInt(transfer.value);
-                    transfer.blockNumber = Number(transfer.blockNumber);
-                    transfer.tokenDecimal = Number(transfer.tokenDecimal);
-                });
-                return events;
+                return (0, alot_1.default)(out).distinctBy(x => x.hash).toArray();
             }
         };
     }

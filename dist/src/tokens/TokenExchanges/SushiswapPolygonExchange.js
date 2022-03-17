@@ -9,11 +9,11 @@ const Bscscan_1 = require("@dequanto/BlockchainExplorer/Bscscan");
 const BscWeb3Client_1 = require("@dequanto/clients/BscWeb3Client");
 const _config_1 = require("@dequanto/utils/$config");
 const AmmV2ExchangeBase_1 = require("./AmmV2ExchangeBase");
-const _is_1 = require("@dequanto/utils/$is");
+const _require_1 = require("@dequanto/utils/$require");
 const config = _config_1.$config.get('pancackeswap');
-const factory = _is_1.$is.Address(config.factory, 'Factory Address');
-const masterChef = _is_1.$is.Address(config.masterChef, 'MasterChef Address');
-const vault = _is_1.$is.Address(config.vault, 'Vault Address');
+const factory = _require_1.$require.Address(config.factory, 'Factory Address');
+const masterChef = _require_1.$require.Address(config.masterChef, 'MasterChef Address');
+const vault = _require_1.$require.Address(config.vault, 'Vault Address');
 class SushiswapPolygonExchange extends AmmV2ExchangeBase_1.AmmV2ExchangeBase {
     constructor(client = a_di_1.default.resolve(BscWeb3Client_1.BscWeb3Client), explorer = a_di_1.default.resolve(Bscscan_1.Bscscan)) {
         super(client, explorer);

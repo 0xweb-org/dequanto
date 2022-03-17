@@ -6,14 +6,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ArbTokenProvider = void 0;
 const JsonArrayStore_1 = require("@dequanto/json/JsonArrayStore");
 const ATokenProvider_1 = require("@dequanto/tokens/TokenProviders/ATokenProvider");
+const _path_1 = require("@dequanto/utils/$path");
 const axios_1 = __importDefault(require("axios"));
-let tokensStore = new JsonArrayStore_1.JsonArrayStore({
-    path: '/data/tokens/arbitrum.json',
-    key: x => x.symbol
-});
 class ArbTokenProvider extends ATokenProvider_1.ATokenProvider {
+    constructor() {
+        super(...arguments);
+        this.store = new JsonArrayStore_1.JsonArrayStore({
+            path: _path_1.$path.resolve('/data/tokens/arbitrum.json'),
+            key: x => x.symbol
+        });
+    }
     getTokens() {
-        return tokensStore.getAll();
+        return this.store.getAll();
     }
     async redownloadTokens() {
         let { data: json } = await axios_1.default.get(`https://bridge.arbitrum.io/token-list-42161.json`);
@@ -29,7 +33,7 @@ class ArbTokenProvider extends ATokenProvider_1.ATokenProvider {
                     }]
             };
         });
-        await tokensStore.saveAll(tokens);
+        await this.store.saveAll(tokens);
         return tokens;
     }
 }

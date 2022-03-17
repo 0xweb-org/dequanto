@@ -19,11 +19,18 @@ class TokenPriceService {
         this.oracle = a_di_1.default.resolve(AmmPriceV2Oracle_1.AmmPriceV2Oracle, this.client, this.explorer);
     }
     async getPrice(mix, opts) {
-        let token = typeof mix === 'string'
-            ? await this.tokens.getKnownToken(mix)
-            : mix;
+        let token;
+        try {
+            token = typeof mix === 'string'
+                ? await this.tokens.getKnownToken(mix)
+                : mix;
+        }
+        catch (error) { }
         if (token == null) {
             return { error: new Error(`Token ${mix} not found`) };
+        }
+        if (token.decimals == null) {
+            return { error: new Error(`Token has no decimals ${token.symbol}`) };
         }
         let { error, result } = await this.oracle.getPrice(token, opts);
         if (error != null) {
@@ -44,8 +51,8 @@ class TokenPriceService {
                     total: sorted ? route.pool.reserve1 : route.pool.reserve0,
                 };
                 function getTotalToken(t) {
-                    let amount = _bigint_1.$bigint.divToFloat(t.total, (10n ** BigInt(t.decimals)));
-                    return amount * t.price;
+                    let amount = t.total / 10n ** BigInt(t.decimals);
+                    return _bigint_1.$bigint.multWithFloat(amount, t.price);
                 }
                 return getTotalToken(t1) + getTotalToken(t2);
             })

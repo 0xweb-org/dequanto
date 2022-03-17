@@ -1,10 +1,16 @@
 {
     "compilerOptions": {
-        "baseUrl": "./src",
+        "baseUrl": "./",
         "paths": {
             "@dequanto/*": [ "src/*" ],
             "@dequanto-contracts/*": [ "contracts/*" ]
         },
+        "typeRoots": [
+            "node_modules/@types",
+            "typings/globals"
+        ],
+        "types": ["node", "assertion", "atma-utest"],
+
         "outDir": "dist",
         "module": "CommonJS",
         "moduleResolution": "node",
@@ -23,6 +29,8 @@
     "exclude": [
         "node_modules",
         "db",
-        "test"
+        "test",
+        "**/*.spec.ts",
+        "src/gen/ContractTemplate.ts"
     ]
 }

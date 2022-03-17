@@ -32,7 +32,7 @@ class ChainAccountsService {
     }
     async generateMany(names, platform) {
         let newAccounts = [];
-        let accounts = (0, alot_1.default)(names).mapAsync(async (name) => {
+        let accounts = await (0, alot_1.default)(names).mapAsync(async (name) => {
             let current = await this.get(name, platform);
             if (current) {
                 return current;
@@ -52,7 +52,8 @@ class Store {
     constructor() {
         this.fs = new JsonArrayStore_1.JsonArrayStore({
             path: './db/accounts/accounts.json',
-            key: x => (x.key ?? x.address)
+            key: x => (x.key ?? x.address),
+            format: true,
         });
     }
     async get(mix) {

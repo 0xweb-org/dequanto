@@ -17,7 +17,12 @@ var $path;
                 throw new Error(`Root path not resolved: ${__dirname}`);
             }
             if (dir === 'lib' || dir === 'src') {
-                return uri.cdUp().toString();
+                uri = uri.cdUp();
+                let path = uri.toString();
+                if (/dequanto/.test(path) === false) {
+                    path = uri.combine('dequanto').toString();
+                }
+                return path;
             }
             uri = uri.cdUp();
         }

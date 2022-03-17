@@ -82,7 +82,8 @@ class TxLoggerService {
             ]);
             return;
         }
-        let gasPrice = BigInt(tx.builder.data.gasPrice);
+        let txData = tx.builder.data;
+        let gasPrice = 0n; //BigInt((txData.gasPrice) as string);
         _logger_1.$logger.log(`TxLogger - Tx for action: ${action}; GasPrice: ${gasPrice}`);
         tx.on('log', message => {
             _logger_1.$logger.log(`Tx ${tx.client.platform}:`, message);

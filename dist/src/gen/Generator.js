@@ -92,13 +92,14 @@ class Generator {
         let sources = await this.getSources(implementation, name);
         let generator = a_di_1.default.resolve(GeneratorFromAbi_1.GeneratorFromAbi);
         let address = this.options.defaultAddress;
-        await generator.generate(abiJson, {
+        return await generator.generate(abiJson, {
             network: network,
             name: name,
             address: address,
             output: output,
             implementation: implementation,
             sources: sources,
+            saveAbi: this.options.saveAbi
         });
     }
     async getAbi(opts) {
@@ -130,11 +131,14 @@ class Generator {
         if (_address_1.$address.isValid(implementation) === false) {
             return null;
         }
+        console.log('Loading contract source code.');
         let meta = await this.explorer.getContractSource(implementation);
         if (meta?.SourceCode == null) {
+            console.log('No contract source found.');
             return null;
         }
         if (/^\s*\{/.test(meta.SourceCode) === false) {
+            console.log('Source contract as single file fetched.');
             return {
                 [`${name}.sol`]: {
                     content: meta.SourceCode
@@ -148,6 +152,7 @@ class Generator {
         try {
             let sources = JSON.parse(code);
             let files = sources.sources;
+            console.log(`Source code (${Object.keys(files).join(', ')}) fetched.`);
             return files;
         }
         catch (error) {
@@ -159,13 +164,16 @@ class Generator {
         let address = _address_1.$address.expectValid(this.options.source?.abi, 'contract address is not valid');
         let explorer = _require_1.$require.notNull(this.explorer, `Explorer not resolved for network: ${this.options.platform}`);
         try {
+            console.log(`Loading contracts ABI for ${address}. `);
             let { abi, implementation } = await explorer.getContractAbi(address, opts);
+            let hasProxy = _address_1.$address.eq(address, implementation) === false;
+            console.log(`Proxy detected: ${hasProxy ? 'YES' : 'NO'}`, hasProxy ? implementation : '');
             let abiJson = JSON.parse(abi);
             return { abi: abiJson, implementation };
         }
         catch (error) {
             console.error(error);
-            throw new Error(`Abi is resolved from ${this.options.platform}/${address}: ${error.message ?? error}`);
+            throw new Error(`ABI is not resolved from ${this.options.platform}/${address}: ${error.message ?? error}`);
         }
     }
 }

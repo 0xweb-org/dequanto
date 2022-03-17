@@ -17,7 +17,7 @@ export class TokensServiceXDai extends TokensService {
         return TokensService.erc20(mix, 'xdai');
     }
 
-    protected async getTokenBySymbol (symbol: string, chainLookup: boolean = true): Promise<[IToken, ITokenProvider]> {
+    public async getTokenBySymbol (symbol: string, chainLookup: boolean = true): Promise<[IToken, ITokenProvider]> {
         if (symbol === 'DAI') {
             symbol = 'wxDAI';
         }

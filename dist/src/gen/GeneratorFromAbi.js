@@ -12,6 +12,9 @@ const _date_1 = require("@dequanto/utils/$date");
 const _path_1 = require("@dequanto/utils/$path");
 const _abiUtils_1 = require("@dequanto/utils/$abiUtils");
 class GeneratorFromAbi {
+    static get Gen() {
+        return Gen;
+    }
     async generate(abiJson, opts) {
         let methodsArr = abiJson
             .map(item => {
@@ -94,7 +97,7 @@ class GeneratorFromAbi {
             .replace(/\$Etherscan\$/g, EtherscanStr)
             .replace(/\$EthWeb3Client\$/g, EthWeb3ClientStr)
             .replace(`/* IMPORTS */`, imports.join('\n'))
-            .replace(`$NAME$`, name)
+            .replace(`$NAME$`, Gen.toClassName(name))
             .replace(`$ADDRESS$`, opts.address ?? '')
             .replace(`/* METHODS */`, methods)
             .replace(`/* EVENTS */`, events)
@@ -103,24 +106,45 @@ class GeneratorFromAbi {
             .replace(`$DATE$`, _date_1.$date.format(new Date(), 'yyyy-MM-dd HH:mm'))
             .replace(`$EXPLORER_URL$`, explorerUrl)
             .replace(`/* $EVENT_INTERFACES$ */`, eventInterfaces.join('\n'));
-        let path = atma_utils_1.class_Uri.combine(opts.output, `${name}.ts`);
+        let directory = name;
+        let filename = /[^\\/]+$/.exec(name)[0];
+        let path = atma_utils_1.class_Uri.combine(opts.output, directory, `${filename}.ts`);
         await atma_io_1.File.writeAsync(path, code, { skipHooks: true });
+        if (opts.saveAbi) {
+            let path = atma_utils_1.class_Uri.combine(opts.output, directory, `${filename}.json`);
+            await atma_io_1.File.writeAsync(path, abiJson);
+        }
+        console.log(`ABI wrapper class created: ${path}`);
         let sources = opts.sources;
+        let sourceFiles = [];
         if (sources) {
-            await alot_1.default.fromObject(sources).forEachAsync(async (entry) => {
-                let filename = /\/?([^/]+$)/.exec(entry.key)[1];
-                let path = atma_utils_1.class_Uri.combine(opts.output, name, filename);
+            sourceFiles = await alot_1.default.fromObject(sources).mapAsync(async (entry) => {
+                let sourceFilename = /\/?([^/]+$)/.exec(entry.key)[1];
+                let path = atma_utils_1.class_Uri.combine(opts.output, directory, filename, sourceFilename);
                 await atma_io_1.File.writeAsync(path, entry.value.content, { skipHooks: true });
+                console.log(`Source code saved: ${path}`);
+                return path;
             }).toArrayAsync();
         }
-        return code;
+        return {
+            main: path,
+            sources: sourceFiles,
+        };
     }
 }
 exports.GeneratorFromAbi = GeneratorFromAbi;
 var Gen;
 (function (Gen) {
+    function toClassName(name) {
+        let str = name.replace(/[^\w_\-\\/]/g, '');
+        str = str.replace(/[\-\\/](\w)/g, (full, letter) => {
+            return letter.toUpperCase();
+        });
+        return str[0].toUpperCase() + str.substring(1);
+    }
+    Gen.toClassName = toClassName;
     function serializeMethodTs(abi) {
-        let isRead = ['view', 'pure', null].includes(abi.stateMutability);
+        let isRead = isReader(abi);
         if (isRead) {
             return serializeReadMethodTs(abi);
         }
@@ -155,8 +179,18 @@ var Gen;
         `;
     }
     Gen.serializeEventInterface = serializeEventInterface;
-    function serializeMethodAbi(abi) {
-        let params = abi.inputs?.map(x => x.type).join(', ') ?? '';
+    function isReader(abi) {
+        return ['view', 'pure', null].includes(abi.stateMutability);
+    }
+    Gen.isReader = isReader;
+    function serializeMethodAbi(abi, includeNames) {
+        let params = abi.inputs?.map(x => {
+            let param = x.type;
+            if (includeNames && x.name) {
+                param += ' ' + x.name;
+            }
+            return param;
+        }).join(', ') ?? '';
         let returns = serializeMethodAbiReturns(abi.outputs);
         if (returns && abi.outputs.length > 1) {
             returns = `(${returns})`;
@@ -164,6 +198,7 @@ var Gen;
         let returnsStr = returns ? `returns ${returns}` : '';
         return `function ${abi.name}(${params}) ${returnsStr}`.trim();
     }
+    Gen.serializeMethodAbi = serializeMethodAbi;
     function serializeReadMethodTs(abi) {
         let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
         if (callInputArguments) {

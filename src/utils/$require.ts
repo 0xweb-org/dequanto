@@ -1,5 +1,6 @@
 import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';
+import { $is } from './$is';
 
 export namespace $require {
     export function Number <T> (val: T, message: string = '', opts?: { min?: T, max?: T}): T {
@@ -85,10 +86,7 @@ export namespace $require {
     }
 
     export function Address (val: TAddress, message: string = ''): TAddress {
-        if (val == null) {
-            throw new Error(`Value is undefined. ${message}`);
-        }
-        if (/^0x[\w]{10,}$/.test(val) === false) {
+        if ($is.Address(val) === false) {
             throw new Error(`Value ${val} is not a valid address. ${message}`);
         }
         return val;

@@ -76,9 +76,11 @@ class TxDataBuilder {
         //let nonce = count;
         this.data.nonce = nonce;
     }
-    async setGas({ price, priceRatio, gasLimitRatio, gasLimit, gasEstimation, from } = {}) {
+    async setGas({ price, priceRatio, gasLimitRatio, gasLimit, gasEstimation, from, type, } = {}) {
         let [gasPrice, gasUsage] = await Promise.all([
-            price ?? this.client.getGasPrice(),
+            price != null ?
+                { price, base: price, priority: 10n ** 9n }
+                : this.client.getGasPrice(),
             gasEstimation
                 ? this.client.getGasEstimation(from, this.data)
                 : (gasLimit ?? this.client.defaultGasLimit ?? 2000000)
@@ -92,7 +94,17 @@ class TxDataBuilder {
         else if (hasPriceFixed === false) {
             $priceRatio = 1.4;
         }
-        this.data.gasPrice = _bigint_1.$bigint.toHex(_bigint_1.$bigint.multWithFloat(gasPrice, $priceRatio));
+        if (type === 1) {
+            let $baseFee = _bigint_1.$bigint.multWithFloat(gasPrice.price, $priceRatio);
+            this.data.gasPrice = _bigint_1.$bigint.toHex($baseFee);
+        }
+        else {
+            let $baseFee = _bigint_1.$bigint.multWithFloat(gasPrice.base ?? gasPrice.price, $priceRatio);
+            let $priorityFee = gasPrice.priority ?? 10n ** 9n;
+            this.data.maxFeePerGas = _bigint_1.$bigint.toHex($baseFee + $priorityFee);
+            this.data.maxPriorityFeePerGas = _bigint_1.$bigint.toHex($priorityFee);
+            this.data.type = '0x02';
+        }
         let hasLimitRatio = gasLimitRatio != null;
         let hasLimitFixed = gasLimit != null;
         let $gasLimitRatio = 1;

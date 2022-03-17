@@ -44,12 +44,14 @@ class ContractWriter {
                 gasLimitRatio: builderConfig.gasLimitRatio,
                 gasEstimation: builderConfig.gasEstimation,
                 from: builderConfig.from ?? eoa.address,
+                type: builderConfig.type ?? null,
             }),
             txBuilder.setNonce({
                 nonce: builderConfig.nonce,
                 noncePending: builderConfig.noncePending,
             }),
         ]);
+        console.log(txBuilder.data, eoa, this.address);
         let writer = TxWriter_1.TxWriter.write(this.client, txBuilder, eoa, configs?.writerConfig ?? this.writerConfig);
         writer.on('log', message => {
             _logger_1.$logger.log(`TxContract ${abi.name}; ${message}`);

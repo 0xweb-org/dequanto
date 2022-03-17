@@ -9,12 +9,14 @@ const tx_1 = require("@ethereumjs/tx");
 const common_1 = __importDefault(require("@ethereumjs/common"));
 const Web3Client_1 = require("@dequanto/clients/Web3Client");
 const ClientEndpoints_1 = require("@dequanto/clients/utils/ClientEndpoints");
-const web3Config = _config_1.$config.get('web3.arbitrum');
 class ArbWeb3Client extends Web3Client_1.Web3Client {
     constructor(opts) {
-        super(ClientEndpoints_1.ClientEndpoints.filterEndpoints(web3Config.endpoints, opts));
+        super(ClientEndpoints_1.ClientEndpoints.filterEndpoints(_config_1.$config.get('web3.arbitrum.endpoints'), opts));
         this.platform = 'arbitrum';
         this.chainId = 42161;
+        this.chainToken = 'ETH';
+        this.TIMEOUT = 15 * 60 * 1000;
+        this.defaultGasLimit = 2000000;
     }
     sign(txData, privateKey) {
         const key = Buffer.from(privateKey, 'hex');

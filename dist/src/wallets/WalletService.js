@@ -14,7 +14,7 @@ class WalletService {
     async getTokens(fromBlock) {
         let wallet = this.wallet;
         let account = wallet.account;
-        let events = await wallet.explorer.getTransferEvents(account.address, fromBlock);
+        let events = await wallet.explorer.getErc20Transfers(account.address, fromBlock);
         let service = a_di_1.default.resolve(TokensService_1.TokensService, account.platform, wallet.explorer);
         let tokens = await (0, alot_1.default)(events)
             .map(x => x.contractAddress)

@@ -24,13 +24,14 @@ class TxContract {
         return decodedInput;
     }
     async parseTrasactions(arr) {
-        return await (0, alot_1.default)(arr).mapAsync(async (tx) => {
+        let mapped = await (0, alot_1.default)(arr).mapAsync(async (tx) => {
             let details = await this.parseTrasaction(tx);
             return {
                 ...tx,
                 details: details
             };
         }).toArrayAsync();
+        return mapped;
     }
 }
 exports.TxContract = TxContract;

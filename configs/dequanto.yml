@@ -1,7 +1,4 @@
 accounts:
-  eth:
-    - address: ''
-      key: ''
 
 # a*****87@protonmail.com
 
@@ -41,3 +38,14 @@ web3:
   xdai:
     endpoints:
       - url: 'https://rpc.gnosischain.com/'
+
+
+ns:
+  ens:
+    registry: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
+  ud:
+    # https://docs.unstoppabledomains.com/send-and-receive-crypto-payments/direct-blockchain-calls/resolve-unstoppable-domain-names
+    eth:
+      registry: '0xfee4d4f0adff8d84c12170306507554bc7045878'
+    polygon:
+      registry: '0xa3f32c8cd786dc089bd1fc175f2707223aee5d00'

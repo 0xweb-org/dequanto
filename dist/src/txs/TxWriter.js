@@ -157,8 +157,10 @@ class TxWriter extends atma_utils_1.class_EventEmitter {
                 if (options.retries == null) {
                     options.retries = 1;
                 }
-                this.logger.log(`Nonce ${Number(this.builder.data.nonce)} too low. Resetting`);
+                let nonce = this.builder.data.nonce;
+                // reset nonce
                 await this.builder.setNonce();
+                this.logger.log(`Nonce was ${Number(nonce)} too low. Reetries left: ${options.retries}. New nonce: ${Number(this.builder.data.nonce)}`);
             }
             let submitsCount = this.txs.length;
             let submitsMax = (options.retries ?? 0) + 1;

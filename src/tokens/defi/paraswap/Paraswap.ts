@@ -14,6 +14,7 @@ import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client';
 import { TokensServicePolygon } from '@dequanto/tokens/TokensServicePolygon';
 import { TokensService } from '@dequanto/tokens/TokensService';
 import { ISwapService } from '../ISwapService';
+import { Web3Client } from '@dequanto/clients/Web3Client';
 
 
 interface TransactionParams {
@@ -31,7 +32,7 @@ export class Paraswap implements ISwapService {
 
     private tokensProvider = TokensServiceFactory.get(this.platform);
 
-    constructor(public platform: TPlatform, public client = di.resolve(PolyWeb3Client)) {
+    constructor(public platform: TPlatform, public client: Web3Client = di.resolve(PolyWeb3Client)) {
 
     }
 

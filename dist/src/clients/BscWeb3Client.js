@@ -9,10 +9,9 @@ const tx_1 = require("@ethereumjs/tx");
 const common_1 = __importDefault(require("@ethereumjs/common"));
 const Web3Client_1 = require("./Web3Client");
 const ClientEndpoints_1 = require("./utils/ClientEndpoints");
-const web3Config = _config_1.$config.get('web3.bsc');
 class BscWeb3Client extends Web3Client_1.Web3Client {
     constructor(opts) {
-        super(ClientEndpoints_1.ClientEndpoints.filterEndpoints(web3Config.endpoints, opts));
+        super(ClientEndpoints_1.ClientEndpoints.filterEndpoints(_config_1.$config.get('web3.bsc.endpoints'), opts));
         this.platform = 'bsc';
         this.chainId = 56;
         this.chainToken = 'BNB';

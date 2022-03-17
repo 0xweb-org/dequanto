@@ -15,6 +15,7 @@ import { ERC20 } from '@dequanto/contracts/common/ERC20';
 import { UniswapExchange } from './TokenExchanges/UniswapExchange';
 import { SushiswapPolygonExchange } from './TokenExchanges/SushiswapPolygonExchange';
 import { $logger } from '@dequanto/utils/$logger';
+import { $require } from '@dequanto/utils/$require';
 
 export class TokenExchangeService {
 
@@ -56,7 +57,7 @@ export class TokenExchangeService {
             ? fromAmount
             : $bigint.toWei(fromAmount, fromToken.decimals ?? 18);
 
-        $is.Address(fromToken?.address, `Token 404 ${from}`);
+        $require.Address(fromToken?.address, `Token 404 ${from}`);
 
         let converted = TokenUtils.isStable(fromToken.symbol) ? {
             to: {

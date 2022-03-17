@@ -30,12 +30,14 @@ export class TxContract {
     }
 
     async parseTrasactions (arr: Transaction[]): Promise<ITransactionDetails[]> {
-        return await alot(arr).mapAsync(async tx => {
+        let mapped = await alot(arr).mapAsync(async tx => {
             let details = await this.parseTrasaction(tx);
             return {
                 ...tx,
-                details: details
-            }
+                details: details as any
+            };
         }).toArrayAsync();
+
+        return mapped;
     }
 }

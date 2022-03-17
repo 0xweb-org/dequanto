@@ -10,6 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BlocksWalker = void 0;
+const a_di_1 = __importDefault(require("a-di"));
 const alot_1 = __importDefault(require("alot"));
 const memd_1 = __importDefault(require("memd"));
 const _array_1 = require("@dequanto/utils/$array");
@@ -17,7 +18,6 @@ const atma_io_1 = require("atma-io");
 const PackedRanges_1 = require("../../structs/PackedRanges");
 const everlog_1 = require("everlog");
 const BlockDateResolver_1 = require("@dequanto/blocks/BlockDateResolver");
-const a_di_1 = __importDefault(require("a-di"));
 const _date_1 = require("@dequanto/utils/$date");
 const atma_utils_1 = require("atma-utils");
 const _is_1 = require("@dequanto/utils/$is");
@@ -77,16 +77,18 @@ class BlocksWalker {
     }
     stats() {
         return {
-            ...(this.walker.stats()),
+            ...(this.walker?.stats() ?? {}),
             ...(this.status),
         };
     }
     async restore() {
         try {
-            let json = await this.cachedState.readAsync();
-            let ranges = JSON.parse(json);
-            if (ranges != null) {
-                this.ranges.set(ranges);
+            if (this.params.persistance !== false) {
+                let json = await this.cachedState.readAsync();
+                let ranges = JSON.parse(json);
+                if (ranges != null) {
+                    this.ranges.set(ranges);
+                }
             }
         }
         catch (error) { }
@@ -152,8 +154,10 @@ class BlocksWalker {
         await this.visitor(block, txs);
     }
     async save() {
-        let json = this.ranges.serialize();
-        await this.cachedState?.writeAsync(json);
+        if (this.params.persistance !== false) {
+            let json = this.ranges.serialize();
+            await this.cachedState?.writeAsync(json);
+        }
     }
     async log() {
         let error = this.walker.pluckLastErrorMessage();

@@ -6,18 +6,22 @@ import alot from 'alot';
 import { $abiType } from '@dequanto/utils/$abiType';
 import { $date } from '@dequanto/utils/$date';
 import { $path } from '@dequanto/utils/$path';
-import { $contract } from '@dequanto/utils/$contract';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { TPlatform } from '@dequanto/models/TPlatform';
 
 export class GeneratorFromAbi {
 
+    static get Gen () {
+        return Gen;
+    }
+
     async generate (abiJson: AbiItem[], opts: {
         network: TPlatform
         name: string
-        address: TAddress,
-        output: string,
-        implementation: TAddress,
+        address: TAddress
+        output: string
+        implementation: TAddress
+        saveAbi?: boolean
         sources?: {
             [file: string]: { content: string }
         }
@@ -110,7 +114,7 @@ export class GeneratorFromAbi {
             .replace(/\$Etherscan\$/g, EtherscanStr)
             .replace(/\$EthWeb3Client\$/g, EthWeb3ClientStr)
             .replace(`/* IMPORTS */`, imports.join('\n'))
-            .replace(`$NAME$`, name)
+            .replace(`$NAME$`, Gen.toClassName(name))
             .replace(`$ADDRESS$`, opts.address ?? '')
             .replace(`/* METHODS */`, methods)
             .replace(`/* EVENTS */`, events)
@@ -119,11 +123,19 @@ export class GeneratorFromAbi {
             .replace(`$DATE$`, $date.format(new Date(), 'yyyy-MM-dd HH:mm'))
             .replace(`$EXPLORER_URL$`, explorerUrl)
             .replace(`/* $EVENT_INTERFACES$ */`, eventInterfaces.join('\n'))
-
             ;
 
-        let path = class_Uri.combine(opts.output, `${name}.ts`);
+
+        let directory = name;
+        let filename = /[^\\/]+$/.exec(name)[0];
+
+        let path = class_Uri.combine(opts.output, directory, `${filename}.ts`);
         await File.writeAsync(path, code, { skipHooks: true });
+
+        if (opts.saveAbi) {
+            let path = class_Uri.combine(opts.output, directory, `${filename}.json`);
+            await File.writeAsync(path, abiJson);
+        }
 
         console.log(`ABI wrapper class created: ${path}`);
 
@@ -131,8 +143,8 @@ export class GeneratorFromAbi {
         let sourceFiles = [];
         if (sources) {
             sourceFiles = await alot.fromObject(sources).mapAsync(async entry => {
-                let filename = /\/?([^/]+$)/.exec(entry.key)[1];
-                let path = class_Uri.combine(opts.output, name, filename);
+                let sourceFilename = /\/?([^/]+$)/.exec(entry.key)[1];
+                let path = class_Uri.combine(opts.output, directory, filename, sourceFilename);
                 await File.writeAsync(path, entry.value.content, { skipHooks: true });
 
                 console.log(`Source code saved: ${path}`);
@@ -149,9 +161,17 @@ export class GeneratorFromAbi {
 
 namespace Gen {
 
+    export function toClassName (name: string) {
+        let str = name.replace(/[^\w_\-\\/]/g, '');
+        str = str.replace(/[\-\\/](\w)/g, (full, letter) => {
+            return letter.toUpperCase();
+        });
+        return str[0].toUpperCase() + str.substring(1);
+    }
+
 
     export function serializeMethodTs (abi: AbiItem) {
-        let isRead = ['view', 'pure', null].includes(abi.stateMutability);
+        let isRead = isReader(abi);
         if (isRead) {
             return serializeReadMethodTs(abi);
         }
@@ -184,8 +204,18 @@ namespace Gen {
         `;
     }
 
-    function serializeMethodAbi(abi: AbiItem) {
-        let params = abi.inputs?.map(x => x.type).join(', ') ?? '';
+    export function isReader (abi: AbiItem) {
+        return ['view', 'pure', null].includes(abi.stateMutability);
+    }
+
+    export function serializeMethodAbi(abi: AbiItem, includeNames?: boolean) {
+        let params = abi.inputs?.map(x => {
+            let param = x.type;
+            if (includeNames && x.name) {
+                param += ' ' + x.name;
+            }
+            return param;
+        }).join(', ') ?? '';
         let returns = serializeMethodAbiReturns(abi.outputs);
         if (returns && abi.outputs.length > 1) {
             returns = `(${returns})`;

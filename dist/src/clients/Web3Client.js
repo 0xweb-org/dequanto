@@ -77,10 +77,10 @@ class Web3Client {
             return web3.eth.isSyncing();
         });
     }
-    getTransaction(txHash) {
+    getTransaction(txHash, opts) {
         return this.pool.call(web3 => {
             return web3.eth.getTransaction(txHash);
-        });
+        }, opts);
     }
     getTransactionReceipt(txHash) {
         return this.pool.call(web3 => {
@@ -131,7 +131,9 @@ class Web3Client {
     getGasPrice() {
         return this.pool.call(web3 => {
             return web3.eth.getGasPrice().then(x => {
-                return BigInt(x);
+                return {
+                    price: BigInt(x)
+                };
             });
         });
     }

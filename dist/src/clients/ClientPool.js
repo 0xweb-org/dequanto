@@ -249,14 +249,26 @@ class ClientPool {
             }
             return this.ws;
         }
+        let clients = this.clients;
         if (opts?.ws === false) {
-            return this.clients.find(x => x.config.url.startsWith('http'));
+            clients = this.clients.filter(x => x.config.url.startsWith('http'));
         }
         if (this.discoveredPartial === false) {
             await this.discoverLive().ready;
             this.discoveredPartial = true;
         }
-        let clients = this.clients.filter(x => x.status === 'ok');
+        // we check OK clients first
+        let okClients = clients.filter(x => x.status === 'ok');
+        if (okClients.length === 0) {
+            // then switch to at least not off
+            let notOffClients = clients.filter(x => x.status !== 'off');
+            if (notOffClients) {
+                clients = notOffClients;
+            }
+        }
+        else {
+            clients = okClients;
+        }
         let available = used == null
             ? clients
             : clients.filter(x => used.has(x) === false);

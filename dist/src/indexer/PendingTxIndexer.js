@@ -24,12 +24,14 @@ class PendingTxIndexer {
         this.client = Web3ClientFactory_1.Web3ClientFactory.get(platform, {
             ws: true
         });
-        this.loader = new TxQueueLoader_1.TxQueueLoader(this.client, tx => {
+        let pool = Web3ClientFactory_1.Web3ClientFactory.get(platform);
+        this.loader = new TxQueueLoader_1.TxQueueLoader(pool, tx => {
             this.onMempoolTxLoaded(tx);
         });
         this.blocks = new BlocksTxIndexer_1.BlocksTxIndexer(platform, {
             name: opts.name,
             loadTransactions: false,
+            persistance: false,
         });
         this.blocks.onBlock(async (client, block) => {
             this.onBlockLoaded(block);
@@ -64,7 +66,8 @@ class PendingTxIndexer {
             this.mempoolHash[hash] = 1;
             this.loader.push(hash);
         });
-        this.blocks.start();
+        let blockNumber = await this.client.getBlockNumber();
+        this.blocks.start(blockNumber);
     }
     onMempoolTxLoaded(tx) {
         if (tx == null) {

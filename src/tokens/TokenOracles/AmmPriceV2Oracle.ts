@@ -36,7 +36,7 @@ export class AmmPriceV2Oracle {
     exchange: AmmV2ExchangeBase
     tokensService = di.resolve(TokensService, this.client.platform, this.explorer)
     pairService = di.resolve(AmmPairV2Service, this.client, this.explorer)
-    logger = di.resolve(LoggerService, nameof(AmmPriceV2Oracle));
+    logger = di.resolve(LoggerService, 'AmmPriceV2Oracle');
 
     constructor(public client: Web3Client, public explorer: IBlockChainExplorer) {
         switch (client.platform) {

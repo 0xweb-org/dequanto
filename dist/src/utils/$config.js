@@ -6,7 +6,9 @@ const atma_utils_1 = require("atma-utils");
 var $config;
 (function ($config) {
     function get(path, $default) {
-        let value = app?.config.$get(path) ?? (0, atma_utils_1.obj_getProperty)(Config_1.config, path) ?? $default;
+        let value = (typeof global.app !== 'undefined' ? global.app.config?.$get?.(path) : null)
+            ?? (0, atma_utils_1.obj_getProperty)(Config_1.config, path)
+            ?? $default;
         if (value == null) {
             //-throw new Error(`Config data is undefined for ${path}`);
         }

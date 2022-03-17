@@ -31,13 +31,10 @@ var $is;
     }
     $is.BigInt = BigInt;
     function Address(val, message) {
-        if (val == null) {
-            throw new Error(`Value is undefined. ${message}`);
+        if (typeof val !== 'string') {
+            return false;
         }
-        if (/^0x[\w]{10,}$/.test(val) === false) {
-            throw new Error(`Value ${val} is not a valid address. ${message}`);
-        }
-        return val;
+        return /^0x[a-fA-F0-9]{40}$/g.test(val);
     }
     $is.Address = Address;
 })($is = exports.$is || (exports.$is = {}));

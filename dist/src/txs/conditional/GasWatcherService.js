@@ -27,10 +27,11 @@ class GasWatcherService {
     }
     async tick() {
         let start = Date.now();
-        let [block, price] = await Promise.all([
+        let [block, priceInfo] = await Promise.all([
             this.client.getBlockNumber(),
             this.client.getGasPrice()
         ]);
+        let price = priceInfo.price;
         this.logger.logPrice(price, block);
         await this.store.savePrice({ date: new Date(), price });
         await (0, alot_1.default)(this.pending)

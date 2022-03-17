@@ -141,19 +141,4 @@ var PairUtil;
         };
     }
     PairUtil.createPairInfo = createPairInfo;
-    // export function getTokenData(pair: ISwapPoolInfo, mix: string | TAddress) {
-    //     if (tokenEq(pair.token0Data, mix)) {
-    //         return pair.token0Data;
-    //     }
-    //     if (tokenEq(pair.token1Data, mix)) {
-    //         return pair.token1Data;
-    //     }
-    //     throw new Error(`Token not found ${mix} in pair ${pair.token0}:${pair.token1}`);
-    // }
-    function tokenEq(t, mix) {
-        if (t.symbol === mix || _address_1.$address.eq(t.address, mix)) {
-            return true;
-        }
-        return false;
-    }
 })(PairUtil || (PairUtil = {}));

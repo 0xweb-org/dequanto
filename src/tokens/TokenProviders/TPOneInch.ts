@@ -6,16 +6,20 @@ import { TPlatform } from '@dequanto/models/TPlatform';
 import { TokenUtils } from '../utils/TokenUtils';
 import { ITokenProvider } from './ITokenProvider';
 import { ATokenProvider } from './ATokenProvider';
+import { $path } from '@dequanto/utils/$path';
 
 
-let tokensStore = new JsonArrayStore<ITokenGlob> ({
-    path: '/data/tokens/1inch.json',
-    key: x => x.symbol
-});
 
 export class TPOneInch extends ATokenProvider implements ITokenProvider {
+
+    store = new JsonArrayStore<ITokenGlob> ({
+        path: $path.resolve('/data/tokens/1inch.json'),
+        key: x => x.symbol,
+        format: true,
+    });
+
     getTokens(): Promise<ITokenGlob[]> {
-        return tokensStore.getAll();
+        return this.store.getAll();
     }
 
     async redownloadTokens () {
@@ -27,7 +31,7 @@ export class TPOneInch extends ATokenProvider implements ITokenProvider {
         ]);
 
         let globals = TokenUtils.merge(...tokensByPlatform);
-        await tokensStore.saveAll(globals);
+        await this.store.saveAll(globals);
         return globals;
     }
 

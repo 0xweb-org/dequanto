@@ -7,7 +7,7 @@ class TxQueueLoader {
         this.client = client;
         this.cb = cb;
         this.opts = {
-            threads: 1,
+            threads: 4,
             timeout: 20000,
             // log every N ms
             logTimeWindow: 5000,
@@ -20,9 +20,16 @@ class TxQueueLoader {
         this.busy = [];
         this.errors = [];
         this.queue = [];
+        this.seen = [];
     }
     push(hash) {
-        this.queue.push(hash);
+        if (this.seen.includes(hash) === false) {
+            this.queue.push(hash);
+            this.seen.unshift(hash);
+            if (this.seen.length > 2000) {
+                this.seen = this.seen.slice(0, 1000);
+            }
+        }
         this.tick();
     }
     stats() {
@@ -34,11 +41,17 @@ class TxQueueLoader {
                 errors: this.status.errors,
             },
             errors: this.errors,
+            error: this.errors.length > 0
+                ? this.errors[this.errors.length - 1]?.error?.message
+                : null,
             avgLoadTime: this.status.avgLoadTime,
         };
     }
     tick() {
         if (this.busy.length >= this.opts.threads) {
+            return;
+        }
+        if (this.queue.length === 0) {
             return;
         }
         let hash = this.queue.shift();
@@ -91,7 +104,7 @@ class TxLoader {
     async load() {
         this.started = Date.now();
         try {
-            let tx = await this.client.getTransaction(this.hash);
+            let tx = await this.client.getTransaction(this.hash, { ws: false });
             return tx;
         }
         catch (error) {

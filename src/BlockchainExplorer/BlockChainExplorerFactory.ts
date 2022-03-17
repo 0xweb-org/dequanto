@@ -160,7 +160,7 @@ export namespace BlockChainExplorerFactory {
             }
 
 
-            private async loadTxs(type: 'tokentx' | 'txlistinternal' | 'txlist', address: TAddress, params?: {
+            async loadTxs(type: 'tokentx' | 'txlistinternal' | 'txlist', address: TAddress, params?: {
                 fromBlockNumber?: number,
                 page?: number,
                 size?: number,
@@ -180,7 +180,7 @@ export namespace BlockChainExplorerFactory {
                 return txs;
             }
 
-            private async loadTxsAll (type: 'tokentx' | 'txlistinternal' | 'txlist', address: TAddress): Promise<Transaction[]> {
+            async loadTxsAll (type: 'tokentx' | 'txlistinternal' | 'txlist', address: TAddress): Promise<Transaction[]> {
 
                 let page = 1;
                 let size = 1000;

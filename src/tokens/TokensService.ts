@@ -17,6 +17,7 @@ import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockCh
 import { $address } from '@dequanto/utils/$address';
 import { ArbTokenProvider } from '@dequanto/chains/arbitrum/ArbTokenProvider';
 import { $require } from '@dequanto/utils/$require';
+import { $is } from '@dequanto/utils/$is';
 
 
 export class TokensService {
@@ -33,7 +34,7 @@ export class TokensService {
 
 
     constructor(private platform: TPlatform, private explorer?: IBlockChainExplorer) {
-        $require.notNull(platform, 'Tokens service platform');
+
     }
 
     async getTokenOrDefault (address: TAddress, chainLookup: boolean = true): Promise<IToken> {
@@ -46,7 +47,7 @@ export class TokensService {
 
     @memd.deco.memoize({ perInstance: true })
     async getToken (mix: string, chainLookup: boolean = true): Promise<IToken> {
-        let [ token, provider ] = mix.startsWith('0x')
+        let [ token, provider ] = $is.Address(mix)
             ? await this.getTokenByAddress(mix, chainLookup)
             : await this.getTokenBySymbol(mix, chainLookup);
 
@@ -55,7 +56,7 @@ export class TokensService {
 
     @memd.deco.memoize({ perInstance: true })
     async getKnownToken (mix: string): Promise<IToken> {
-        let [ token, provider ] = mix.startsWith('0x')
+        let [ token, provider ] = $is.Address(mix)
             ? await this.getTokenByAddress(mix, false)
             : await this.getTokenBySymbol(mix, false);
 
@@ -74,7 +75,7 @@ export class TokensService {
         if (typeof mix === 'object') {
             return this.isNative(mix.symbol ?? mix.address);
         }
-        if (mix.startsWith('0x')) {
+        if ($is.Address(mix)) {
             return NativeTokens.isNativeByAddress(mix);
         }
         return NativeTokens.isNativeBySymbol(this.platform, mix);

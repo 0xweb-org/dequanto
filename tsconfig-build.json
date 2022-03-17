@@ -6,7 +6,7 @@
             "@dequanto-contracts/*": [ "contracts/*" ]
         },
         "outDir": "./dist",
-        "module": "CommonJS",
+        "module": "AMD",
         "moduleResolution": "node",
         "experimentalDecorators": true,
         "target": "es2020",
@@ -20,5 +20,5 @@
     "exclude": [
         "node_modules",
         "db"
-    ],
+    ]
 }

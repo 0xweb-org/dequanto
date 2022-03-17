@@ -8,15 +8,18 @@ import { TPlatform } from '@dequanto/models/TPlatform';
 import { TokenUtils } from '../utils/TokenUtils';
 import { ITokenProvider } from './ITokenProvider';
 import { ATokenProvider } from './ATokenProvider';
+import { $path } from '@dequanto/utils/$path';
 
 
-const tokensStore = new JsonArrayStore<ITokenGlob> ({
-    path: '/data/tokens/sushi.json',
-    key: (x) => x.symbol
-});
 export class TPSushiswap extends ATokenProvider implements ITokenProvider  {
+    store = new JsonArrayStore<ITokenGlob> ({
+        path: $path.resolve('/data/tokens/sushi.json'),
+        key: x => x.symbol,
+        format: true,
+    });
+
     getTokens(): Promise<ITokenGlob[]> {
-        return tokensStore.getAll();
+        return this.store.getAll();
     }
 
     /** Finds remote  */
@@ -32,7 +35,7 @@ export class TPSushiswap extends ATokenProvider implements ITokenProvider  {
         ]);
 
         let globals = TokenUtils.merge(...tokensByPlatform);
-        await tokensStore.saveAll(globals);
+        await this.store.saveAll(globals);
         return globals;
     }
 

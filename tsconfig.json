@@ -5,7 +5,14 @@
             "@dequanto/*": [ "src/*" ],
             "@dequanto-contracts/*": [ "contracts/*" ]
         },
-        "outDir": "dist",
+        "typeRoots": [
+            "node_modules/@types",
+            "typings",
+            "typings/globals"
+        ],
+        "types": ["node", "assertion", "atma-utest"],
+        "declaration": true,
+
         "module": "CommonJS",
         "moduleResolution": "node",
         "experimentalDecorators": true,
@@ -16,13 +23,5 @@
     },
     "transformers": {
         "before": ["ts-nameof"]
-    },
-    "include": [
-        "src/**/*"
-    ],
-    "exclude": [
-        "node_modules",
-        "db",
-        "test"
-    ]
+    }
 }

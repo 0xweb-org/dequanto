@@ -9,14 +9,13 @@ const tx_1 = require("@ethereumjs/tx");
 const common_1 = __importDefault(require("@ethereumjs/common"));
 const Web3Client_1 = require("./Web3Client");
 const ClientEndpoints_1 = require("./utils/ClientEndpoints");
-let web3Config = _config_1.$config.get('web3.eth');
 class EthWeb3Client extends Web3Client_1.Web3Client {
     constructor(opts) {
-        super(ClientEndpoints_1.ClientEndpoints.filterEndpoints(web3Config.endpoints, opts));
+        super(ClientEndpoints_1.ClientEndpoints.filterEndpoints(_config_1.$config.get('web3.eth.endpoints'), opts));
         this.platform = 'eth';
         this.chainId = 1;
         this.chainToken = 'ETH';
-        this.TIMEOUT = 5 * 60 * 1000;
+        this.TIMEOUT = 15 * 60 * 1000;
         this.defaultGasLimit = 2000000;
         //let host = `192.168.1.220`;
         // let host = `localhost`;

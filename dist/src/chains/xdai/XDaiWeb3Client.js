@@ -18,10 +18,9 @@ const ClientEndpoints_1 = require("@dequanto/clients/utils/ClientEndpoints");
 const memd_1 = __importDefault(require("memd"));
 const axios_1 = __importDefault(require("axios"));
 const _bigint_1 = require("@dequanto/utils/$bigint");
-const web3Config = _config_1.$config.get('web3.xdai');
 class XDaiWeb3Client extends Web3Client_1.Web3Client {
     constructor(opts) {
-        super(ClientEndpoints_1.ClientEndpoints.filterEndpoints(web3Config.endpoints, opts));
+        super(ClientEndpoints_1.ClientEndpoints.filterEndpoints(_config_1.$config.get('web3.xdai.endpoints'), opts));
         this.platform = 'xdai';
         this.chainId = 100;
         this.chainToken = 'XDAI';
@@ -59,16 +58,19 @@ class XDaiWeb3Client extends Web3Client_1.Web3Client {
             gasPrice = await this.loadGasPrice();
         }
         catch (err) {
-            gasPrice = await super.getGasPrice();
+            let { price } = await super.getGasPrice();
+            gasPrice = price;
         }
         // MIN 20gwei, max: 80gwei
         const MAX = _bigint_1.$bigint.toWeiFromGwei(80);
         const MIN = _bigint_1.$bigint.toWeiFromGwei(20);
         if (gasPrice < MIN)
-            return MIN;
+            gasPrice = MIN;
         if (gasPrice > MAX)
-            return MAX;
-        return gasPrice;
+            gasPrice = MAX;
+        return {
+            price: gasPrice
+        };
     }
     async loadGasPrice() {
         let resp = await axios_1.default.get(`https://blockscout.com/xdai/mainnet/api/v1/gas-price-oracle`);

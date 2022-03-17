@@ -2,6 +2,5 @@
 /// <reference path="globals/atma-utest/index.d.ts" />
 /// <reference path="globals/mask/index.d.ts" />
 /// <reference path="globals/axios/index.d.ts" />
-/// <reference path="globals/ruta/index.d.ts" />
-/// <reference path="globals/onesignal/index.d.ts" />
+
 
