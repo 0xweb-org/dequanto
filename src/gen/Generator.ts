@@ -163,7 +163,8 @@ export class Generator {
                     path = relPath;
                 }
             }
-            abiJson = await File.readAsync(path);
+            let json = await File.readAsync <any> (path);
+            abiJson = Array.isArray(json) ? json : json.abi;
         }
 
         $require.notNull(abiJson, `Abi not resolved from ${abi}`);
