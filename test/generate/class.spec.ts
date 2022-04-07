@@ -4,7 +4,7 @@ import { File } from 'atma-io';
 
 UTest({
     async 'generate test' () {
-        let genPath = `/test/tmp/polygon/DaiTokenContractBase.ts`
+        let genPath = `/test/tmp/polygon/DaiTokenContractBase/DaiTokenContractBase.ts`
 
         try {
             await File.removeAsync(genPath);
@@ -15,11 +15,11 @@ UTest({
 
         let templatePath = $path.resolve(`/src/gen/ContractTemplate.ts`);
         let exists = await File.exists(templatePath);
-        eq_(exists, true);
+        eq_(exists, true, `Path 404: ${templatePath}`);
         await Generator.generateForClass('/test/fixtures/DaiTokenContract.ts');
 
         existsBase = await File.exists(genPath);
-        eq_(existsBase, true);
+        eq_(existsBase, true, `Path 404: ${genPath}`);
 
         let source = await File.readAsync(genPath, { skipHooks: true });
         has_(source, 'onTransfer');

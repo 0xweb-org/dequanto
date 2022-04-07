@@ -18,7 +18,7 @@ UTest({
                 .toArray();
 
             let distinct = alot(values).distinct().toArray();
-            eq_(distinct.length, values.length, 'No repeated values');
+            eq_(distinct.length, values.length, 'Has repeated values.');
         },
         async 'float' () {
             let min = 0.01;
@@ -35,7 +35,7 @@ UTest({
                 .toArray();
 
             let distinct = alot(values).distinct().toArray();
-            eq_(distinct.length, values.length, 'No repeated values');
+            eq_(distinct.length, values.length, 'Has repeated values. Random?');
         }
     }
 })

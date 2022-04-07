@@ -1,6 +1,22 @@
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
-module.exports = {
-  solidity: "0.7.3",
+ module.exports = {
+  solidity: {
+      version: "0.8.2",
+      settings: {
+          optimizer: {
+              enabled: true,
+              runs: 200
+          }
+      }
+  },
+  networks: {
+      hardhat: {
+          chainId: 1337
+      },
+      localhost: {
+          chainId: 1337
+      }
+  }
 };

@@ -65,6 +65,7 @@ export class GeneratorFromAbi {
         let templatePath = $path.resolve(`/src/gen/ContractTemplate.ts`);
         let template = await File.readAsync<string>(templatePath, { skipHooks: true });
 
+
         let EtherscanStr;
         let EthWeb3ClientStr;
         let imports = [];

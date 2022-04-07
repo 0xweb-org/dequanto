@@ -19,8 +19,6 @@ UTest({
 
         let parser = new TxLogParser();
         let logs = await parser.parse(swapReceipt);
-        console.log(logs);
-
         let dai = logs.find(x => x.token.symbol === 'DAI');
         eq_(dai.amount, 30000000000000000000000n);
     }

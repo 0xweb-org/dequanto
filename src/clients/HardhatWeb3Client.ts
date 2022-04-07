@@ -13,24 +13,27 @@ import { TxFactory } from './utils/TxFactory';
 export class HardhatWeb3Client extends Web3Client {
 
     platform: TPlatform = 'hardhat'
-    chainId: number = 31337
+    chainId: number = this.options.chainId ?? 31337
     chainToken = 'ETH';
     TIMEOUT: number = 5 * 60 * 1000;
     defaultGasLimit = 2_000_000
 
     constructor (opts?: IWeb3EndpointOptions) {
-        super(ClientEndpoints.filterEndpoints($config.get('web3.hardhat.endpoints'), opts));
+        super({
+            ...(opts ?? {}),
+            endpoints: ClientEndpoints.filterEndpoints($config.get('web3.hardhat.endpoints'), opts)
+        });
     }
 
     sign(txData: TxData, privateKey: string): Buffer {
 
         const key = Buffer.from(privateKey, 'hex');
         const common = new Common({
-            chain: 31337,
+            chain: this.chainId,
             hardfork: 'london',
             customChains: [
                 <any> {
-                    chainId: 31337,
+                    chainId: this.chainId,
                     url: 'http://127.0.0.1:8545/',
                     name: 'ETH',
                     comment: '',

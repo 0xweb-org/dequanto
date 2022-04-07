@@ -12,7 +12,7 @@ export class TestNode {
 
     static async client () {
         await TestNode.start();
-        return HardhatWeb3Client.url(HOST);
+        return HardhatWeb3Client.url(HOST, { chainId: 1337 });
     }
 
     @memd.deco.memoize()

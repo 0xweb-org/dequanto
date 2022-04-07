@@ -251,6 +251,7 @@ export class HopBridge implements IBridge {
                 result.txTransferId.resolve(event.transferId as string);
 
             } catch (error) {
+                console.log(`HopBridge transfer ${error.message}`);
                 result.txTransferId.reject(error);
             }
 

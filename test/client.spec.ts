@@ -32,7 +32,7 @@ UTest({
         });
 
         await tx.setGas();
-        gte_(BigInt(tx.data.gasPrice as string), 10n ** 8n);
+        gte_(BigInt(tx.data.maxFeePerGas as string), 10n ** 8n);
 
         await tx.setNonce();
         gte_(Number(tx.data.nonce), 0);
@@ -54,6 +54,8 @@ UTest({
         eq_(before + amount, after);
 
         let txMined = await client.getTransaction(receipt.transactionHash);
-        eq_(txMined.gasPrice, tx.data.gasPrice);
+
+        gt_(Number(tx.data.maxFeePerGas), 1000_000_000)
+        lt_(Number(txMined.gasPrice), Number(tx.data.maxFeePerGas));
     }
 })

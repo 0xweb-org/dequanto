@@ -1,6 +1,6 @@
 import Common from '@ethereumjs/common'
 import { $config } from '@dequanto/utils/$config';
-import { FeeMarketEIP1559Transaction, Transaction,  TxData } from '@ethereumjs/tx'
+import { TxData } from '@ethereumjs/tx'
 import { Web3Client } from './Web3Client';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { ClientEndpoints } from './utils/ClientEndpoints';
@@ -10,15 +10,16 @@ import { TxFactory } from './utils/TxFactory';
 
 export class PolyWeb3Client extends Web3Client {
 
-
-
     platform: TPlatform = 'polygon';
-    chainId: number = 137;
+    chainId: number = this.options.chainId ?? 137;
     chainToken = 'MATIC';
     defaultGasLimit = 2_000_000;
 
     constructor (opts?: IWeb3EndpointOptions) {
-        super(ClientEndpoints.filterEndpoints($config.get('web3.polygon.endpoints'), opts));
+        super({
+            ...(opts ?? {}),
+            endpoints: ClientEndpoints.filterEndpoints($config.get('web3.polygon.endpoints'), opts)
+        });
     }
 
     async getGasPrice() {
@@ -48,12 +49,12 @@ export class PolyWeb3Client extends Web3Client {
         const key = Buffer.from(privateKey, 'hex');
 
         const common = new Common({
-            chain: 137,
+            chain: this.chainId,
             hardfork: 'london',
             customChains: [
                 <any> {
-                    chainId: 137,
-                    networkId: 137,
+                    chainId: this.chainId,
+                    networkId: this.chainId,
                     url: 'https://rpc-mainnet.maticvigil.com',
                     name: 'MATIC',
                     comment: '',

@@ -12,22 +12,26 @@ import { $bigint } from '@dequanto/utils/$bigint';
 export class XDaiWeb3Client extends Web3Client {
 
     platform: TPlatform = 'xdai'
-    chainId: number = 100
+    chainId: number = this.options.chainId ?? 100
     chainToken = 'XDAI';
     defaultGasLimit = 500_000
+    defaultTxType: 1 | 2 = 1;
 
 
     constructor (opts?: IWeb3EndpointOptions) {
-        super(ClientEndpoints.filterEndpoints($config.get('web3.xdai.endpoints'), opts));
+        super({
+            ...(opts ?? {}),
+            endpoints: ClientEndpoints.filterEndpoints($config.get('web3.xdai.endpoints'), opts)
+        });
     }
     sign(txData: TxData, privateKey: string): Buffer {
 
         const key = Buffer.from(privateKey, 'hex');
         const common = new Common({
-            chain: 100,
+            chain: this.chainId,
             customChains: [{
-                chainId: 100,
-                networkId: 100,
+                chainId: this.chainId,
+                networkId: this.chainId,
                 url: 'https://rpc.xdaichain.com/',
                 name: 'xdai',
                 comment: '',

@@ -9,23 +9,26 @@ import { ClientEndpoints } from '@dequanto/clients/utils/ClientEndpoints';
 export class ArbWeb3Client extends Web3Client {
 
     platform: TPlatform = 'arbitrum'
-    chainId: number = 42161
+    chainId: number = this.options.chainId ?? 42161
     chainToken = 'ETH'
     TIMEOUT: number = 15 * 60 * 1000;
     defaultGasLimit = 2_000_000
 
 
     constructor (opts?: IWeb3EndpointOptions) {
-        super(ClientEndpoints.filterEndpoints($config.get('web3.arbitrum.endpoints'), opts));
+        super({
+            ...(opts ?? {}),
+            endpoints: ClientEndpoints.filterEndpoints($config.get('web3.arbitrum.endpoints'), opts)
+        });
     }
     sign(txData: TxData, privateKey: string): Buffer {
 
         const key = Buffer.from(privateKey, 'hex');
         const common = new Common({
-            chain: 42161,
+            chain: this.chainId,
             customChains: [{
-                chainId: 42161,
-                networkId: 42161,
+                chainId: this.chainId,
+                networkId: this.chainId,
                 url: 'https://arb1.arbitrum.io/rpc',
                 name: 'aeth',
                 comment: '',

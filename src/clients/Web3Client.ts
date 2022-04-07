@@ -4,12 +4,11 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { TxData } from '@ethereumjs/tx';
 import { BlockHeader, BlockTransactionString, Syncing } from 'web3-eth';
-import { ClientPool, IPoolWeb3Request } from './ClientPool';
+import { ClientPool, IPoolClientConfig, IPoolWeb3Request } from './ClientPool';
 import { ClientPoolTrace } from './ClientPoolStats';
-import { IWeb3Client } from './interfaces/IWeb3Client';
+import { IWeb3Client, IWeb3ClientOptions } from './interfaces/IWeb3Client';
 import { Log, LogsOptions } from 'web3-core';
 import { Subscription } from 'web3-core-subscriptions';
-
 
 export abstract class Web3Client implements IWeb3Client {
 
@@ -20,13 +19,28 @@ export abstract class Web3Client implements IWeb3Client {
     abstract chainToken: string;
     abstract defaultGasLimit: number;
 
+    defaultTxType: 1 | 2 = 2;
+
     abstract sign(txData: TxData, privateKey: string): Buffer
 
 
-    private pool = new ClientPool(this.config);
+    protected options: IWeb3ClientOptions;
+    protected pool: ClientPool;
 
-    constructor (public config: { url: string }[] ) {
+    constructor (options: IWeb3ClientOptions)
+    constructor (endpoints: IPoolClientConfig[] )
+    constructor (mix: IWeb3ClientOptions | IPoolClientConfig[]) {
+        if (Array.isArray(mix)) {
+            this.options = { endpoints: mix }
+        } else if (mix != null) {
+            this.options = mix;
+        }
 
+        if (this.options.endpoints == null) {
+            throw new Error(`Undefined Web3Client endpoints`);
+        }
+
+        this.pool = new ClientPool(this.options.endpoints)
     }
 
     getEventStream (address: TAddress, abi: any, event: string) {
@@ -217,12 +231,23 @@ export abstract class Web3Client implements IWeb3Client {
         return this.pool.getNodeStats();
     }
 
-    static url<T extends Web3Client> (url: string): T {
+    static url<T extends Web3Client> (options: IWeb3ClientOptions)
+    static url<T extends Web3Client> (endpoints: IPoolClientConfig[], opts?: Partial<IWeb3ClientOptions>)
+    static url<T extends Web3Client> (url: string, opts?: Partial<IWeb3ClientOptions>): T
+    static url<T extends Web3Client> (mix: IWeb3ClientOptions | IPoolClientConfig[] | string, opts?: Partial<IWeb3ClientOptions>): T {
         const Ctor: any = this;
-        return new Ctor({
-            endpoints: [
-                { url }
-            ],
-        });
+        let options: IWeb3ClientOptions;
+        if (typeof mix === 'string') {
+            options = { endpoints: [ { url: mix }] }
+        } else if (Array.isArray(mix)) {
+            options = { endpoints: mix }
+        } else {
+            options = mix;
+        }
+        const param = {
+            ...options,
+            ...(opts ?? {})
+        };
+        return new Ctor(param);
     }
 }

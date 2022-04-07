@@ -9,22 +9,25 @@ import { ClientEndpoints } from './utils/ClientEndpoints';
 export class BscWeb3Client extends Web3Client {
 
     platform: TPlatform = 'bsc'
-    chainId: number = 56
+    chainId: number = this.options.chainId ?? 56
     chainToken = 'BNB';
     defaultGasLimit = 2_000_000
 
 
     constructor (opts?: IWeb3EndpointOptions) {
-        super(ClientEndpoints.filterEndpoints($config.get('web3.bsc.endpoints'), opts));
+        super({
+            ...(opts ?? {}),
+            endpoints: ClientEndpoints.filterEndpoints($config.get('web3.bsc.endpoints'), opts)
+        });
     }
     sign(txData: TxData, privateKey: string): Buffer {
 
         const key = Buffer.from(privateKey, 'hex');
         const common = new Common({
-            chain: 56,
+            chain: this.chainId,
             customChains: [{
-                chainId: 56,
-                networkId: 56,
+                chainId: this.chainId,
+                networkId: this.chainId,
                 url: 'https://bsc-dataseed.binance.org/',
                 name: 'bnb',
                 comment: '',

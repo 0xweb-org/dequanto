@@ -10,21 +10,24 @@ import { ClientEndpoints } from '@dequanto/clients/utils/ClientEndpoints';
 export class BobaWeb3Client extends Web3Client {
 
     platform: TPlatform = 'boba'
-    chainId: number = 288
+    chainId: number = this.options.chainId ?? 288
     chainToken = 'ETH';
     defaultGasLimit = 500_000
 
     constructor (opts?: IWeb3EndpointOptions) {
-        super(ClientEndpoints.filterEndpoints($config.get('web3.boba.endpoints'), opts));
+        super({
+            ...(opts ?? {}),
+            endpoints: ClientEndpoints.filterEndpoints($config.get('web3.boba.endpoints'), opts)
+        });
     }
     sign(txData: TxData, privateKey: string): Buffer {
 
         const key = Buffer.from(privateKey, 'hex');
         const common = new Common({
-            chain: 288,
+            chain: this.chainId,
             customChains: [{
-                chainId: 288,
-                networkId: 288,
+                chainId: this.chainId,
+                networkId: this.chainId,
                 url: 'https://mainnet.boba.network/',
                 name: 'boba',
                 comment: '',

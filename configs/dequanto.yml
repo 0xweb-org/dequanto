@@ -39,6 +39,10 @@ web3:
     endpoints:
       - url: 'https://rpc.gnosischain.com/'
 
+  hardhat:
+    endpoints:
+      - url: 'http://127.0.0.1:8545/'
+
 
 ns:
   ens:

@@ -129,6 +129,8 @@ export class TxDataBuilder {
             $priceRatio = 1.4;
         }
 
+        type ??= this.client.defaultTxType;
+
         if (type === 1) {
             let $baseFee = $bigint.multWithFloat(gasPrice.price, $priceRatio);
             this.data.gasPrice = $bigint.toHex($baseFee);

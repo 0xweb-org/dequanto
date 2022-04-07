@@ -14,7 +14,6 @@ UTest({
             eq_(val, 333n);
 
             val = $bigint.multWithFloat($bigint.toWei(10, 18), 0.025);
-            console.log(val, '<<<');
         }
     },
     'toWei': {

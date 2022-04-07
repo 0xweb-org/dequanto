@@ -4,6 +4,7 @@ import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 import { $date } from '@dequanto/utils/$date';
 import { $number } from '@dequanto/utils/$number';
+import { $fn } from '@dequanto/utils/$fn';
 import { PromiEvent } from 'web3-core';
 import { PromiEventWrap } from './model/PromiEventWrap';
 import { IWeb3ClientStatus } from './interfaces/IWeb3ClientStatus';
@@ -12,13 +13,10 @@ import { ClientPoolTrace, ClientPoolTraceError } from './ClientPoolStats';
 import { class_Dfr } from 'atma-utils';
 import { TAddress } from '@dequanto/models/TAddress';
 import { ClientEventsStream } from './ClientEventsStream';
-import { Subscription } from 'web3-core-subscriptions';
 import { ClientErrorUtil } from './utils/ClientErrorUtil';
-import { $fn } from '@dequanto/utils/$fn';
-import { $promise } from '@dequanto/utils/$promise';
 
 
-interface IPoolClientConfig {
+export interface IPoolClientConfig {
     url: string
     safe?: boolean
     distinct?: boolean
@@ -36,7 +34,7 @@ export class ClientPool {
     private clients = this.config.map(cfg => new WClient(cfg));
     private ws: WClient;
 
-    constructor (public config: { url: string }[] ) {
+    constructor (public config: IPoolClientConfig[] ) {
 
         if (this.clients.length < 2) {
             this.discoveredPartial = true;

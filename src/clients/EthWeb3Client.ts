@@ -9,14 +9,17 @@ import { ClientEndpoints } from './utils/ClientEndpoints';
 export class EthWeb3Client extends Web3Client {
 
     platform: TPlatform = 'eth'
-    chainId: number = 1;
+    chainId: number = this.options.chainId ?? 1;
     chainToken = 'ETH';
     TIMEOUT: number = 15 * 60 * 1000;
     defaultGasLimit = 2_000_000
 
 
     constructor (opts?: IWeb3EndpointOptions) {
-        super(ClientEndpoints.filterEndpoints($config.get('web3.eth.endpoints'), opts));
+        super({
+            ...(opts ?? {}),
+            endpoints: ClientEndpoints.filterEndpoints($config.get('web3.eth.endpoints'), opts)
+        });
 
         //let host = `192.168.1.220`;
         // let host = `localhost`;

@@ -3,7 +3,8 @@
   "version": "0.0.2",
   "scripts": {
     "hardhat": "hardhat node",
-    "build": "tsc -p tsconfig-src.json"
+    "build": "tsc -p tsconfig-src.json",
+    "test": "atma test"
   },
   "devDependencies": {
     "hardhat": "^2.6.7",

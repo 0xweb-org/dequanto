@@ -4,7 +4,7 @@ import { TokensServiceFactory } from '@dequanto/tokens/TokensServiceFactory';
 import { TransactionReceipt } from 'web3-core';
 import { TxWriter } from '../TxWriter';
 import { IKnownLogFormatter, ITxLogItem } from './ITxLogItem';
-import { TxLogParser } from './TxLogParser';
+// import { TxLogParser } from './TxLogParser';
 
 import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -39,12 +39,12 @@ export class TxLogsTransfer implements IKnownLogFormatter {
         }).toArrayAsync();
     }
 
-    async extractFromReceipt (receipt: TransactionReceipt, platform: TPlatform): Promise<ITxLogsTransferData[]> {
-        let parser = new TxLogParser();
-        let logs = await parser.parse(receipt);
-        logs = logs.filter(x => x != null);
-        return this.extractFromParsed(logs, platform);
-    }
+    // async extractFromReceipt (receipt: TransactionReceipt, platform: TPlatform): Promise<ITxLogsTransferData[]> {
+    //     let parser = new TxLogParser();
+    //     let logs = await parser.parse(receipt);
+    //     logs = logs.filter(x => x != null);
+    //     return this.extractFromParsed(logs, platform);
+    // }
 
     async extract (transfer: ITxLogItem, platform: TPlatform): Promise<ITxLogsTransferData> {
         let tokenService = TokensServiceFactory.get(platform);
