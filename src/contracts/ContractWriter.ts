@@ -80,7 +80,6 @@ export class ContractWriter implements IContractWriter {
             }),
         ]);
 
-        console.log(txBuilder.data, eoa, this.address);
         let writer = TxWriter.write(
             this.client,
             txBuilder,
