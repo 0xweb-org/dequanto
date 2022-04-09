@@ -171,6 +171,7 @@ namespace NativeTokens {
     };
     const PLATFORMS = {
         'eth': 'ETH',
+        'hardhat': 'ETH',
         'bsc': 'BNB',
         'polygon': 'MATIC',
         'xdai': 'xDAI',
