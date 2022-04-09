@@ -14,12 +14,14 @@ import { class_Dfr } from 'atma-utils';
 import { TAddress } from '@dequanto/models/TAddress';
 import { ClientEventsStream } from './ClientEventsStream';
 import { ClientErrorUtil } from './utils/ClientErrorUtil';
+import { IWeb3ClientOptions } from './interfaces/IWeb3Client';
 
 
 export interface IPoolClientConfig {
-    url: string
+    url?: string
     safe?: boolean
     distinct?: boolean
+    web3?: Web3
 }
 export interface IPoolWeb3Request {
     ws?: boolean
@@ -31,11 +33,19 @@ export class ClientPool {
 
     private discoveredPartial = false;
     private discoveredFull = false;
-    private clients = this.config.map(cfg => new WClient(cfg));
+    private clients: WClient[] ;
     private ws: WClient;
 
-    constructor (public config: IPoolClientConfig[] ) {
+    constructor (config: IWeb3ClientOptions) {
 
+        if (config.endpoints != null && config.endpoints.length > 0) {
+            this.clients = config.endpoints.map(cfg => new WClient(cfg))
+        } else if (config.web3) {
+            this.clients = [ new WClient({ web3: config.web3 }) ];
+        } else {
+            console.dir(config, { depth: null });
+            throw new Error(`Neither Node endpoints nor Web3 instance`)
+        }
         if (this.clients.length < 2) {
             this.discoveredPartial = true;
             this.discoveredFull = true;
@@ -503,6 +513,7 @@ class WClient {
 
     web3: Web3
     eth: Web3['eth']
+    config: IPoolClientConfig
 
     healthy () {
         if (this.getRequestCount() === 0) {
@@ -521,8 +532,15 @@ class WClient {
         return false;
     }
 
-    constructor (public config: IPoolClientConfig) {
-        this.web3 = new Web3(config.url);
+    constructor (mix: IPoolClientConfig) {
+        const hasUrl = 'url' in mix && typeof mix.url === 'string';
+        const hasWeb3 = 'web3' in mix && typeof mix.web3 != null;
+        if (hasUrl || hasWeb3) {
+            this.config = mix;
+            this.web3 = mix.web3 ?? new Web3(mix.url);
+        } else {
+            throw new Error(`Neither Node URL nor Web3 Instance in argument`);
+        }
         this.web3.eth.handleRevert = true;
         this.eth = this.web3.eth;
     }

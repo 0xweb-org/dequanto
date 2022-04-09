@@ -40,7 +40,7 @@ export abstract class Web3Client implements IWeb3Client {
             throw new Error(`Undefined Web3Client endpoints`);
         }
 
-        this.pool = new ClientPool(this.options.endpoints)
+        this.pool = new ClientPool(this.options)
     }
 
     getEventStream (address: TAddress, abi: any, event: string) {
