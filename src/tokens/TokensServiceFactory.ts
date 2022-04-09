@@ -12,6 +12,7 @@ export namespace TokensServiceFactory {
             case 'bsc':
                 return di.resolve(TokensServiceBsc);
             case 'eth':
+            case 'hardhat':
                 return di.resolve(TokensServiceEth);
             case 'polygon':
                 return di.resolve(TokensServicePolygon);
