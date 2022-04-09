@@ -58,6 +58,10 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         return promise as any;
     }
 
+    wait (): Promise<TransactionReceipt> {
+        return this.onCompleted as any as Promise<TransactionReceipt>;
+    }
+
     id = Math.round(Math.random() * 10**10) + '';
     tx: {
         timestamp: number
@@ -148,7 +152,11 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
                 this.logger.logReceipt(receipt, Date.now() - time);
                 this.onSent.resolve();
                 this.emit('receipt', receipt);
-                this.emit('log', `Tx receipt received for ${receipt.transactionHash}. Status: ${receipt.status}`);
+
+                let hash = tx.hash;
+                let status = receipt.status;
+                let gasFormatted = GasCalculator.formatUsed(this.builder, <any>receipt);
+                this.emit('log', `Tx receipt received for ${hash}. Status: ${status}. Gas used: ${gasFormatted}`);
             })
             // .on('confirmation', (confNumber, receipt) => {
             //     tx.hash = receipt.transactionHash ?? tx.hash;
@@ -368,3 +376,18 @@ export type TTxWriterJson = {
     txs: TxWriter['txs']
     builder: ReturnType<TxDataBuilder['toJSON']>
 };
+
+
+
+namespace GasCalculator {
+
+    export function formatUsed (builder: TxDataBuilder, receipt: TransactionReceipt & { effectiveGasPrice }) {
+        let usage = receipt.gasUsed;
+        let price = BigInt(receipt.effectiveGasPrice ?? builder.data.gasPrice ?? 1);
+
+        let priceGwei = $bigint.toGweiFromWei(price);
+        let totalEth = $bigint.toEther(BigInt(usage) * price);
+
+        return `${totalEth}ETH(${usage}gas × ${priceGwei}gwei)`;
+    }
+}
