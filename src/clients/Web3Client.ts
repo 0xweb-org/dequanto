@@ -36,8 +36,9 @@ export abstract class Web3Client implements IWeb3Client {
             this.options = mix;
         }
 
-        if (this.options.endpoints == null) {
-            throw new Error(`Undefined Web3Client endpoints`);
+        if (this.options.endpoints == null && this.options.web3 == null) {
+            console.dir(this.options, { depth: null });
+            throw new Error(`Neither Node endpoints nor web3 instance provided`);
         }
 
         this.pool = new ClientPool(this.options)
