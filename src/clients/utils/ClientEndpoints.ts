@@ -9,6 +9,9 @@ export namespace ClientEndpoints {
         if (opts == null) {
             return endpoints;
         }
+        if (endpoints == null) {
+            return null;
+        }
         return endpoints.filter(endpoint => {
             if (opts.type != null && endpoint.type !== opts.type) {
                 return false;
