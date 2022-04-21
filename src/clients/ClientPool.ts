@@ -22,11 +22,15 @@ export interface IPoolClientConfig {
     safe?: boolean
     distinct?: boolean
     web3?: Web3
+    name?: string
+    /** Will be used only if manually requested with .getWeb3, or .getNodeUrl */
+    manual?: boolean
 }
 export interface IPoolWeb3Request {
     ws?: boolean
     preferSafe?: boolean
     distinct?: boolean
+    name?: string
     trace?: ClientPoolTrace
 }
 export class ClientPool {
@@ -102,16 +106,19 @@ export class ClientPool {
         }
     }
     async getWeb3 (options?: IPoolWeb3Request) {
-        let wClient = await this.next(null, options);
+        let wClient = await this.next(null, options, { manual: true });
         if (wClient == null) {
             throw new Error(`Not client found in ${this.clients.length} Clients`);
         }
         return wClient?.web3;
     }
     async getNodeURL (options?: IPoolWeb3Request) {
-        let wClient = await this.next(null, options);
+        let wClient = await this.next(null, options, { manual: true });
         if (wClient == null) {
-            throw new Error(`Not client found in ${this.clients.length} Clients`);
+            let stats = await this.getNodeStats();
+            let info = stats.map(x => `    ${x.url}. ERR: ${x.fail}; OK: ${x.success}; Ping: ${x.ping}`).join('\n');
+            let requirements = JSON.stringify(options);
+            throw new Error(`No alive node for ${requirements} found. \n ${info}`);
         }
         return wClient?.config.url;
     }
@@ -308,18 +315,21 @@ export class ClientPool {
     //     return root as any as TResult;
     // }
 
-    private async next (used?: Map<WClient, number>, opts?: IPoolWeb3Request): Promise<WClient> {
+    private async next (used?: Map<WClient, number>, opts?: IPoolWeb3Request, params?: { manual?: boolean }): Promise<WClient> {
+        let clients = this.clients;
+        if (params?.manual !== true) {
+            clients = clients.filter(x => x.config.manual !== true);
+        }
+
         if (opts?.ws === true) {
             if (this.ws == null) {
-                this.ws = this.clients.find(x => x.config.url.startsWith('ws'));
+                this.ws = clients.find(x => x.config.url.startsWith('ws'));
             }
             return this.ws;
         }
 
-        let clients = this.clients;
-
         if (opts?.ws === false) {
-            clients = this.clients.filter(x => x.config.url.startsWith('http'));
+            clients = clients.filter(x => x.config.url.startsWith('http'));
         }
 
         if (this.discoveredPartial === false) {

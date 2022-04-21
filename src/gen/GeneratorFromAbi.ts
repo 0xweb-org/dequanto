@@ -246,7 +246,7 @@ namespace Gen {
 
         return `
             // ${$abiUtils.getMethodSignature(abi)}
-            async ${abi.name} (eoa: {address: TAddress, key: string, value?: string | number | bigint }, ${fnInputArguments}): Promise<TxWriter> {
+            async ${abi.name} (eoa: TAccount, ${fnInputArguments}): Promise<TxWriter> {
                 return this.$write(this.$getAbiItem('function', '${abi.name}'), eoa${callInputArguments});
             }
         `;

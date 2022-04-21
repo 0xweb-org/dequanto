@@ -82,29 +82,31 @@ export class TokensService {
             token = await service.getToken(token);
         }
         if (token == null) {
-            throw new Error(`Token not found: ${arguments[0]}`);
+            throw new Error(`Token not found ${arguments[0]} in ${platform}`);
         }
         return new ERC20(token.address, client, explorer);
     }
 
     @memd.deco.memoize()
     async erc20 (token: string | IToken): Promise<ERC20> {
-        let client = Web3ClientFactory.get(this.platform);
-        let explorer = BlockChainExplorerProvider.get(this.platform);
 
-        let t = typeof token === 'string'
-            ? await this.getToken(token)
-            : token;
-        if (t == null) {
-            if (typeof token === 'string' && $address.isValid(token)) {
-                t = {
-                    address: token,
-                    decimals: 18,
-                    platform: this.platform
-                };
-            }
-            throw new Error(`Token not found: ${arguments[0]}`);
-        }
-        return new ERC20(t.address, client, explorer);
+        return TokensService.erc20(token, this.platform);
+        // let client = Web3ClientFactory.get(this.platform);
+        // let explorer = BlockChainExplorerProvider.get(this.platform);
+
+        // let t = typeof token === 'string'
+        //     ? await this.getToken(token)
+        //     : token;
+        // if (t == null) {
+        //     if (typeof token === 'string' && $address.isValid(token)) {
+        //         t = {
+        //             address: token,
+        //             decimals: 18,
+        //             platform: this.platform
+        //         };
+        //     }
+        //     throw new Error(`Token not found: ${arguments[0]}`);
+        // }
+        // return new ERC20(t.address, client, explorer);
     }
 }

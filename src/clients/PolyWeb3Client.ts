@@ -1,6 +1,6 @@
 import Common from '@ethereumjs/common'
 import { $config } from '@dequanto/utils/$config';
-import { TxData } from '@ethereumjs/tx'
+import { FeeMarketEIP1559TxData, TxData } from '@ethereumjs/tx'
 import { Web3Client } from './Web3Client';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { ClientEndpoints } from './utils/ClientEndpoints';
@@ -44,7 +44,7 @@ export class PolyWeb3Client extends Web3Client {
 
     // https://raw.githubusercontent.com/maticnetwork/launch/master/mainnet-v1/sentry/sentry/bor/genesis.json
     // https://raw.githubusercontent.com/maticnetwork/launch/master/mainnet-v1/sentry/sentry/heimdall/config/genesis.json
-    sign(txData: TxData, privateKey: string): Buffer {
+    sign(txData: TxData | FeeMarketEIP1559TxData, privateKey: string): Buffer {
 
         const key = Buffer.from(privateKey, 'hex');
 

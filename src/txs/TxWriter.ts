@@ -132,6 +132,9 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
             .client
             .sendSignedTransaction(signedTxBuffer)
             .once('transactionHash', hash => {
+                if (tx.hash === hash) {
+                    return;
+                }
                 if (tx.hash && tx.timeout) {
                     // network has reaccepted the tx, restart previous timeout
                     this.clearTimer(tx);
@@ -143,21 +146,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
                 this.emit('transactionHash', hash);
                 this.emit('log', `Tx hash received: ${hash}`);
             })
-            .once('receipt', receipt => {
-                tx.receipt = receipt;
-                tx.hash = receipt.transactionHash ?? tx.hash;
 
-                this.receipt = receipt;
-                this.clearTimer(tx);
-                this.logger.logReceipt(receipt, Date.now() - time);
-                this.onSent.resolve();
-                this.emit('receipt', receipt);
-
-                let hash = tx.hash;
-                let status = receipt.status;
-                let gasFormatted = GasCalculator.formatUsed(this.builder, <any>receipt);
-                this.emit('log', `Tx receipt received for ${hash}. Status: ${status}. Gas used: ${gasFormatted}`);
-            })
             // .on('confirmation', (confNumber, receipt) => {
             //     tx.hash = receipt.transactionHash ?? tx.hash;
             //     this.onSent.resolve();
@@ -174,6 +163,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
             //     }
             // })
             .on('error', error => {
+                console.log('ERROR', error.message);
                 this.clearTimer(tx);
                 this.logger.logError(error);
                 this.emit('error', error);
@@ -184,10 +174,34 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
                 try {
                     await this.extractLogs(receipt, tx);
-                } catch (error) { }
-                this.onCompleted.resolve(receipt);
+                } catch (error) {
+                    console.log('Logs error', error);
+                }
+
+                try {
+                    console.log('RECEIPT', receipt.transactionHash);
+                    tx.receipt = receipt;
+                    tx.hash = receipt.transactionHash ?? tx.hash;
+
+                    this.receipt = receipt;
+                    this.logger.logReceipt(receipt, Date.now() - time);
+                    this.onSent.resolve();
+                    this.emit('receipt', receipt);
+
+                    let hash = tx.hash;
+                    let status = receipt.status;
+                    let gasFormatted = GasCalculator.formatUsed(this.builder, <any>receipt);
+                    this.emit('log', `Tx receipt received for ${hash}. Status: ${status}. Gas used: ${gasFormatted}`);
+
+                    this.onCompleted.resolve(receipt);
+                } catch (error) {
+                    console.log('FATAL ERROR', error);
+                    throw error;
+                }
 
             }, async (err: Error & { receipt?: TransactionReceipt }) => {
+                this.logger.log(`Tx errored ${err.message}`);
+
                 this.clearTimer(tx);
                 tx.error = err;
 
@@ -297,6 +311,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         }, ms);
     }
     private clearTimer (tx: TxWriter['tx']) {
+        console.log('clear timer', tx.hash);
         if (tx.timeout) {
             clearTimeout(tx.timeout);
             tx.timeout = null;

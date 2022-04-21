@@ -15,6 +15,8 @@ import { ITxConfig } from '@dequanto/txs/ITxConfig';
 import type { BufferLike } from 'ethereumjs-util';
 import { TxTopicInMemoryProvider } from '@dequanto/txs/receipt/TxTopicInMemoryProvider';
 import { $class } from '@dequanto/utils/$class';
+import { ChainAccount } from '@dequanto/ChainAccounts';
+import { ChainAccountsService } from '@dequanto/ChainAccountsService';
 
 
 export abstract class ContractBase {
@@ -93,10 +95,33 @@ export abstract class ContractBase {
     }
 
 
-    protected async $write (abi: string | AbiItem, eoa: { address: TAddress, key: string, value?: number | string | bigint } , ...params): Promise<TxWriter> {
+    protected async $write (abi: string | AbiItem, eoa: string | (Partial<ChainAccount> & {  value?: number | string | bigint }) , ...params): Promise<TxWriter> {
+
+        if (typeof eoa === 'string') {
+            eoa = { name: eoa };
+        }
+
+        if (typeof eoa.name === 'string' && eoa.key == null) {
+            let name = eoa.name;
+            let service = di.resolve(ChainAccountsService);
+
+            eoa = await service.get(name, this.client.platform);
+            if (eoa == null) {
+                throw new Error(`Account ${name} not found`);
+            }
+        }
+        if (eoa.key == null) {
+            throw new Error(`No KEY for ${eoa.name}:${eoa.address} found`);
+        }
+
+        let account = {
+            key: eoa.key,
+            address: eoa.address,
+            value: eoa.value,
+        };
 
         let writer = await this.getContractWriter();
-        return writer.writeAsync(eoa, abi, params, {
+        return writer.writeAsync(account, abi, params, {
             builderConfig: this.builderConfig,
             writerConfig: this.writerConfig,
         });

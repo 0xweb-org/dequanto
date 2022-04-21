@@ -4,6 +4,7 @@ import { ChainAccount, ChainAccountProvider } from './ChainAccounts';
 import { JsonArrayStore } from './json/JsonArrayStore';
 import { TAddress } from './models/TAddress';
 import { TPlatform } from './models/TPlatform';
+import { NameService } from './ns/NameService';
 import { $address } from './utils/$address';
 
 export class ChainAccountsService {
@@ -11,6 +12,16 @@ export class ChainAccountsService {
     private config = ChainAccountProvider;
 
     async get (mix: string | TAddress, platform?: TPlatform): Promise<ChainAccount> {
+        if ($address.isValid(mix) === false) {
+            // Check NS
+            let ns = di.resolve(NameService);
+            if (ns.supports(mix)) {
+                let address = await ns.getAddress(mix);
+                if (address) {
+                    mix = address;
+                }
+            }
+        }
         let acc = this.config.tryGet(mix, platform);
         return acc ?? this.store.get(mix);
     }

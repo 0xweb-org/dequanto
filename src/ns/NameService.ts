@@ -18,4 +18,7 @@ export class NameService {
         $require.notNull(provider, `NS Provider for ${domain} not found`);
         return provider.getAddress(domain);
     }
+    supports (mix: string) {
+        return this.providers.some(x => x.supports(mix));
+    }
 }

@@ -4,6 +4,7 @@ import { $config } from './utils/$config'
 import { Wallet } from 'ethers';
 import crypto from 'crypto';
 import { $address } from './utils/$address';
+import memd from 'memd';
 
 
 export class ChainAccount {
@@ -13,14 +14,10 @@ export class ChainAccount {
     platform?: TPlatform
 }
 
-const accounts: {
-    [platform: string]: {
-        [name: string]: ChainAccount
-    }
-} = $config.get('accounts');
 
 export namespace ChainAccountProvider {
     export function get (platform: TPlatform, name: string): ChainAccount {
+        let accounts = AccountsConfigProvider.get();
         let acc: ChainAccount = accounts?.[platform]?.[name];
         if (acc == null) {
             throw new Error(`Account not resolved by name: ${name} in ${platform}`);
@@ -43,16 +40,7 @@ export namespace ChainAccountProvider {
         };
     }
     export function getAll (): ChainAccount[] {
-        let out = [];
-        for (let platform in accounts) {
-            for (let name in accounts[platform]) {
-                let account = accounts[platform][name];
-                account.name = name;
-                account.platform = platform as TPlatform;
-                out.push(account);
-            }
-        }
-        return out;
+       return AccountsConfigProvider.get();
     }
     export function getAddressFromKey (key: string) {
         const bytes = Buffer.from(key, 'hex');
@@ -67,6 +55,36 @@ export namespace ChainAccountProvider {
             ...(opts ?? {}),
             address: wallet.address,
             key: bytes.toString('hex'),
+        }
+    }
+
+    class AccountsConfigProvider {
+        @memd.deco.memoize()
+        static get (): ChainAccount[] {
+
+            type TDictionary = {
+                [platform: string]: {
+                    [name: string]: ChainAccount
+                }
+            };
+
+            let accounts: TDictionary | ChainAccount[] = $config.get('accounts');
+            if (accounts == null) {
+                return [];
+            }
+            if (Array.isArray(accounts)) {
+                return accounts;
+            }
+            let out = [];
+            for (let platform in accounts) {
+                for (let name in accounts[platform]) {
+                    let account = accounts[platform][name];
+                    account.name = name;
+                    account.platform = platform as TPlatform;
+                    out.push(account);
+                }
+            }
+            return out;
         }
     }
 }

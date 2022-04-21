@@ -167,6 +167,7 @@ namespace NativeTokens {
             icon: null,
             platform: 'xdai',
             address: T1,
+            aliases: ['DAI']
         },
     };
     const PLATFORMS = {
@@ -176,13 +177,29 @@ namespace NativeTokens {
         'polygon': 'MATIC',
         'xdai': 'xDAI',
     };
+    const PLATFORM_ALIASES = {
+        ['xdai']: {
+            aliases: ['DAI']
+        }
+    } as {
+        [platform in TPlatform]: {
+            aliases: string[]
+        }
+    };
 
     export function isNativeBySymbol (platform: TPlatform, symbol: string) {
         if (symbol == null) {
             return false;
         }
         symbol = symbol.toUpperCase();
-        return symbol in tokens;
+        if (symbol in tokens) {
+            return true;
+        }
+        let byPlatform = PLATFORM_ALIASES[platform];
+        if (byPlatform?.aliases?.includes(symbol)) {
+            return true;
+        }
+        return false;
     }
 
     export function isNativeByAddress (address: TAddress) {

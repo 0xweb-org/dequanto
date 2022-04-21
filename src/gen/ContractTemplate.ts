@@ -33,4 +33,11 @@ export class $NAME$ extends ContractBase {
     abi = $ABI$
 }
 
+type TAccount = string | {
+    address?: TAddress,
+    key?: string,
+    name?: string,
+    value?: string | number | bigint
+}
+
 /* $EVENT_INTERFACES$ */

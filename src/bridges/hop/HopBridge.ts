@@ -214,6 +214,11 @@ export class HopBridge implements IBridge {
             amountOut: BigInt(sendData.amountOut.toString())
         };
 
+        // decrease awaitence
+        params.amountOut = $bigint.multWithFloat(params.amountOut, .98);
+
+
+
         let txWriter = await depositContract
             .$config({
                 gasLimit: 300_000,
