@@ -54,8 +54,11 @@ export class TxDataBuilder {
     }
 
     async setNonce(opts?: {
+        // sets the nonce of the first tx in pending state
         overriding?: boolean
+        // set the nonce of the N-th tx in pending state
         noncePending?: number
+        // custom nonce value
         nonce?: number
     }) {
         let nonce: number;
@@ -79,13 +82,6 @@ export class TxDataBuilder {
         } else {
             nonce = await this.client.getTransactionCount(this.account.address, 'pending');
         }
-        // let count = opts?.nonce ?? (
-        //     opts?.overriding === true
-        //     ? await this.client.getTransactionCount(this.account.address)
-        //     : await this.client.getTransactionCount(this.account.address, 'pending')
-        // );
-        //let nonce = count;
-
         this.data.nonce = nonce;
     }
 
@@ -101,8 +97,6 @@ export class TxDataBuilder {
         price?: bigint
         priceRatio?: number
 
-        pricePriority?: bigint
-
         gasLimitRatio?: number
         gasLimit?: string | number
         gasEstimation?: boolean
@@ -116,7 +110,7 @@ export class TxDataBuilder {
                 { price, base: price, priority: 10n**9n }
                 : this.client.getGasPrice(),
             gasEstimation
-                ? this.client.getGasEstimation(from, this.data)
+                ? this.client.getGasEstimation(from ?? this.account.address, this.data)
                 : (gasLimit ?? this.client.defaultGasLimit ?? 2_000_000)
         ]);
 
@@ -166,10 +160,12 @@ export class TxDataBuilder {
         this.data.gasPrice = $bigint.toHex(priceNew);
     }
 
+    /** Returns Buffer of the Tx Data */
     signToBuffer(privateKey: string) {
         return this.client.sign(this.data, privateKey);
     }
 
+    /** Returns base64 string of the Tx Data */
     signToString(privateKey: string) {
         if (privateKey.startsWith('0x')) {
             privateKey = privateKey.substring(2);
