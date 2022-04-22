@@ -14,4 +14,8 @@ export namespace $config {
         }
         return value;
     }
+
+    export function set <T = any> (path: string, value: T) {
+        global.app.config?.$set?.(path, value);
+    }
 }

@@ -1,7 +1,10 @@
 import memd from 'memd';
+import hre from "hardhat";
+
 import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client';
 import { Socket } from 'net';
 import { Shell } from 'shellbee'
+import { $config } from '@dequanto/utils/$config';
 
 const PORT = `8545`;
 const HOST = `http://127.0.0.1:${PORT}/`
@@ -10,20 +13,34 @@ export class TestNode {
     static PORT = PORT
     static HOST = HOST
 
+    @memd.deco.memoize()
     static async client () {
-        await TestNode.start();
-        return HardhatWeb3Client.url(HOST, { chainId: 1337 });
+        //> in-memory
+        const web3 = (hre as any).web3;
+
+        global.check = web3;
+
+        // clean default configuration
+        $config.set('web3.hardhat.endpoints', []);
+
+        const client = new HardhatWeb3Client({ web3, chainId: 1337 });
+        return client;
+
+        //> localhost
+        // await TestNode.start();
+        // return HardhatWeb3Client.url(HOST, { chainId: 1337 });
     }
 
     @memd.deco.memoize()
     static async start () {
         if (await isPortBusy(PORT) === false) {
-
+            console.log('START');
             let shell = await Shell.run({
                 command: 'npx hardhat node',
                 matchReady: /Started HTTP/i
             });
             await shell.onReadyAsync();
+            console.log('SHEL', shell.stdout, shell.stderr);
         }
     }
 }
@@ -48,7 +65,8 @@ async function isPortBusy(port) {
         });
 
         socket.on("error", function (exception: any) {
-            if (exception.code !== "ECONNREFUSED") {
+
+            if (exception.code === "ECONNREFUSED") {
                 resolve(false);
             } else {
                 socket.destroy();

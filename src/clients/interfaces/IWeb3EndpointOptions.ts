@@ -8,4 +8,5 @@ export interface IWeb3EndpointOptions {
 
     endpoints?: Config['web3']['eth']['endpoints']
     web3?: Web3
+    chainId?: number
 }

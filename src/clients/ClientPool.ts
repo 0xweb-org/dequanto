@@ -161,7 +161,6 @@ export class ClientPool {
             root.bind(promiEvent);
 
             promiEvent.on('error', async error => {
-                console.log('!!client ERROR', error);
                 error.message += ` (RPC: ${wClient.config.url})`;
                 if (ClientErrorUtil.isConnectionFailed(error)) {
                     this.callPromiEvent(

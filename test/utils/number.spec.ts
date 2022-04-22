@@ -25,7 +25,7 @@ UTest({
             let max = 0.020001;
 
             let values = alot
-                .fromRange(0, 50)
+                .fromRange(0, 20)
                 .map(() => {
                     let r = $number.randomFloat(min, max);
                     gte_(r, min);

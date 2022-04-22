@@ -1,3 +1,4 @@
+require("@nomiclabs/hardhat-web3");
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
