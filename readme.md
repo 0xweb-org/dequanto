@@ -1,5 +1,8 @@
 # dequanto
 
+[![Documentation Link](https://img.shields.io/badge/%E2%9D%93-documentation-green.svg)](https://docs.0xweb.org/dequanto)
+[![CircleCI](https://circleci.com/gh/0xweb-org/dequanto.svg?style=svg)](https://circleci.com/gh/0xweb-org/dequanto)
+
 
 Here we share our library to work with Ethereum Virtual Machine RPC Nodes: Ethereum, Polygon, BSC, Arbitrum, etc. We use web3 and ethers to provide new Features and to simplify the API.
 

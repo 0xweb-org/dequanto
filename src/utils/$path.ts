@@ -18,7 +18,7 @@ export namespace $path {
             if (dir === 'lib' || dir === 'src') {
                 uri = uri.cdUp();
                 let path = uri.toString();
-                if (/dequanto/.test(path) === false) {
+                if (/dequanto/.test(path) === false && (/project/.test(path) === false) /* circleci*/) {
                     path = uri.combine('dequanto').toString();
                 }
                 return path;
