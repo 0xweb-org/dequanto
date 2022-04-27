@@ -7,7 +7,7 @@ import { BlockHeader, BlockTransactionString, Syncing } from 'web3-eth';
 import { ClientPool, IPoolClientConfig, IPoolWeb3Request } from './ClientPool';
 import { ClientPoolTrace } from './ClientPoolStats';
 import { IWeb3Client, IWeb3ClientOptions } from './interfaces/IWeb3Client';
-import { Log, LogsOptions } from 'web3-core';
+import { Log, LogsOptions, type TransactionConfig } from 'web3-core';
 import { Subscription } from 'web3-core-subscriptions';
 
 export abstract class Web3Client implements IWeb3Client {
@@ -209,6 +209,11 @@ export abstract class Web3Client implements IWeb3Client {
     sendSignedTransaction(signedTxBuffer: string) {
         return this.pool.callPromiEvent(web3 => {
             return web3.eth.sendSignedTransaction(signedTxBuffer);
+        }, { preferSafe: true, distinct: true });
+    }
+    sendTransaction(data: TransactionConfig) {
+        return this.pool.callPromiEvent(web3 => {
+            return web3.eth.sendTransaction(data);
         }, { preferSafe: true, distinct: true });
     }
 

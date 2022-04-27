@@ -6,6 +6,10 @@ UTest({
 
 
     'ens': {
+        async 'tld' () {
+            let hash = $ns.namehash('eth');
+            eq_(hash, '0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae');
+        },
         async 'namehash' () {
             let hash = $ns.namehash('alice.eth');
             eq_(hash, `0x787192fc5378cc32aa956ddfdedbf26b24e8d78e40109add0eea2c1a012c3dec`);

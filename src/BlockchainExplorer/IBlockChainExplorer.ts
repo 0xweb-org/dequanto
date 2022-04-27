@@ -1,7 +1,8 @@
 import { TAddress } from '@dequanto/models/TAddress';
 import { IContractDetails } from '@dequanto/models/IContractDetails';
-import { Transaction } from 'web3-core';
 import { IAbiProvider } from './IAbiProvider';
+import { type Transaction } from 'web3-core';
+
 
 export interface IBlockChainExplorer extends IAbiProvider {
     localDb: IContractDetails[]

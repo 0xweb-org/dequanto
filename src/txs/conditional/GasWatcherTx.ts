@@ -1,6 +1,5 @@
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $logger } from '@dequanto/utils/$logger';
-import { id } from 'ethers/lib/utils';
 import { TTxWriterJson, TxWriter } from '../TxWriter';
 import { GasWatcherLogger } from './GasWatcherLogger';
 

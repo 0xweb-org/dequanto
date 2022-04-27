@@ -10,7 +10,17 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { $logger } from '@dequanto/utils/$logger';
 import { $promise } from '@dequanto/utils/$promise';
 
+
+
 export namespace BlockChainExplorerFactory {
+
+
+    type TxFilter = {
+        fromBlockNumber?: number,
+        page?: number,
+        size?: number,
+        sort?: 'asc' | 'desc'
+    }
 
     export function create (opts: {
         ABI_CACHE: string
@@ -122,15 +132,15 @@ export namespace BlockChainExplorerFactory {
                 return Array.isArray(result) ? result[0] : result;
             }
 
-            async getTransactions (addr: TAddress, params?: { fromBlockNumber?: number, page?: number, size?: number, sort?: 'asc' | 'desc' }): Promise<Transaction[]> {
+            async getTransactions (addr: TAddress, params?: TxFilter): Promise<Transaction[]> {
                 return this.loadTxs('txlist', addr, params);
             }
-            async getTransactionsAll (addr: TAddress): Promise<Transaction[]> {
-                return this.loadTxsAll('txlist', addr);
+            async getTransactionsAll (addr: TAddress, params?: TxFilter): Promise<Transaction[]> {
+                return this.loadTxsAll('txlist', addr, params);
             }
 
 
-            async getInternalTransactions (addr: TAddress, params?: { fromBlockNumber?: number, page?: number, size?: number, sort?: 'asc' | 'desc' }): Promise<Transaction[]> {
+            async getInternalTransactions (addr: TAddress, params?: TxFilter): Promise<Transaction[]> {
                 return this.loadTxs('txlistinternal', addr, params);
             }
             async getInternalTransactionsAll (addr: TAddress): Promise<Transaction[]> {
@@ -180,12 +190,12 @@ export namespace BlockChainExplorerFactory {
                 return txs;
             }
 
-            async loadTxsAll (type: 'tokentx' | 'txlistinternal' | 'txlist', address: TAddress): Promise<Transaction[]> {
+            async loadTxsAll (type: 'tokentx' | 'txlistinternal' | 'txlist', address: TAddress, params?: TxFilter): Promise<Transaction[]> {
 
                 let page = 1;
                 let size = 1000;
                 let out = [] as Transaction[];
-                let fromBlockNumber = null as number;
+                let fromBlockNumber = params?.fromBlockNumber;
                 while(true) {
                     let arr = await this.loadTxs(type, address, { fromBlockNumber, sort: 'asc' });
                     out.push(...arr);

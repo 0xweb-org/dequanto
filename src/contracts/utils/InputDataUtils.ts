@@ -1,6 +1,5 @@
-import { IWeb3Client } from '@dequanto/clients/interfaces/IWeb3Client';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { ethers, utils } from 'ethers';
+import { utils } from 'ethers';
 import { AbiItem } from 'web3-utils';
 import { $abiParser } from '../../utils/$abiParser';
 
@@ -43,7 +42,7 @@ export namespace InputDataUtils {
         return normalizeArgs(arr);
     }
     export function decodeWithABI (IFunctionABI: string | AbiItem, ...params): string {
-        let iface = new ethers.utils.Interface([ IFunctionABI as any ]);
+        let iface = new utils.Interface([ IFunctionABI as any ]);
         let methodName: string;
 
         if (typeof IFunctionABI === 'string') {
@@ -63,7 +62,7 @@ export namespace InputDataUtils {
      * function work(uint256 id, address worker, uint256 principalAmount, uint256 loan, uint256 maxReturn, bytes calldata data)
      */
     export function encodeWithABI (IFunctionABI: string | AbiItem, ...params): string {
-        let iface = new ethers.utils.Interface([ IFunctionABI as any ]);
+        let iface = new utils.Interface([ IFunctionABI as any ]);
         let methodName: string;
 
         if (typeof IFunctionABI === 'string') {

@@ -1,5 +1,5 @@
 import { AbiItem } from 'web3-utils';
-import { AbiCoder }  from '@ethersproject/abi';
+import { utils }  from 'ethers';
 import { $contract } from './$contract';
 import Web3 from 'web3';
 
@@ -10,7 +10,7 @@ export namespace $abiUtils {
     }
 
     export function encode (types: any[], values: any[]) {
-        let coder = new AbiCoder();
+        let coder = new utils.AbiCoder();
         return coder.encode(types, values)
     }
 

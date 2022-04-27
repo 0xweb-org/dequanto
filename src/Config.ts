@@ -70,7 +70,8 @@ export class Config {
             {
                 path: '%APPDATA%/.dequanto/config.yml',
                 writable: true,
-                optional: true
+                optional: true,
+                extendArrays: false,
             },
             unlockedAccounts ? {
                 name: 'accounts',

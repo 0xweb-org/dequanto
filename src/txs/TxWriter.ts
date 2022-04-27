@@ -16,6 +16,7 @@ import { ClientErrorUtil } from '@dequanto/clients/utils/ClientErrorUtil';
 import { $logger } from '@dequanto/utils/$logger';
 import { ITxLogItem } from './receipt/ITxLogItem';
 import { TxLogParser } from './receipt/TxLogParser';
+import { type PromiEvent } from 'web3-core';
 
 interface ITxWriterEvents {
     transactionHash (hash: string)
@@ -115,7 +116,10 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
     private sendTxInner () {
         let time = Date.now();
-        let signedTxBuffer = this.builder.signToString(this.account.key);
+        let key = this.account?.key;
+        let signedTxBuffer = key == null
+            ? null
+            : this.builder.signToString(this.account.key);
 
         let tx = <TxWriter['tx']> {
             timestamp: Date.now(),
@@ -128,9 +132,18 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         this.tx = tx;
         this.txs.push(tx);
 
-        let promiEvent = this
-            .client
-            .sendSignedTransaction(signedTxBuffer)
+        let promiEvent: PromiEvent<TransactionReceipt>;
+        if (signedTxBuffer != null) {
+            promiEvent =  this
+                .client
+                .sendSignedTransaction(signedTxBuffer);
+        } else {
+            promiEvent = this
+                .client
+                .sendTransaction(this.builder.getTxData(this.client));
+        }
+
+        promiEvent
             .once('transactionHash', hash => {
                 if (tx.hash === hash) {
                     return;
@@ -146,7 +159,6 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
                 this.emit('transactionHash', hash);
                 this.emit('log', `Tx hash received: ${hash}`);
             })
-
             // .on('confirmation', (confNumber, receipt) => {
             //     tx.hash = receipt.transactionHash ?? tx.hash;
             //     this.onSent.resolve();

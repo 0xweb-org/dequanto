@@ -4,6 +4,7 @@ import { InputDataUtils } from '@dequanto/contracts/utils/InputDataUtils';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { FeeMarketEIP1559TxData, TxData } from '@ethereumjs/tx'
+import { type TransactionConfig } from 'web3-core';
 import { AbiItem } from 'web3-utils';
 import { ITxConfig } from './ITxConfig';
 
@@ -158,6 +159,15 @@ export class TxDataBuilder {
         let price = BigInt(this.data.gasPrice as string);
         let priceNew = $bigint.multWithFloat(price, ratio);
         this.data.gasPrice = $bigint.toHex(priceNew);
+    }
+
+    getTxData (client: Web3Client) {
+        return <any> {
+            ...this.data,
+
+            from: this.account?.address ?? void 0,
+            chainId: client.chainId,
+        };
     }
 
     /** Returns Buffer of the Tx Data */
