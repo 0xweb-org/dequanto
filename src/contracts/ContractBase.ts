@@ -48,7 +48,6 @@ export abstract class ContractBase {
             data: buffer as string,
             value: value,
         });
-        console.log("decodedInput", decodedInput);
         return {
             name: decodedInput.name,
             args: $contract.normalizeArgs(Array.from(decodedInput.args))
