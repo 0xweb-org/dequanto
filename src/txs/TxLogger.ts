@@ -1,6 +1,6 @@
 import { TAddress } from '@dequanto/models/TAddress';
 import { $logger } from '@dequanto/utils/$logger';
-import { Monit } from'everlog';
+import { Everlog } from'everlog';
 import { TransactionReceipt } from 'web3-core';
 import { TxDataBuilder } from './TxDataBuilder';
 
@@ -50,7 +50,7 @@ export class TxLogger {
 }
 
 const channels = {
-    start: Monit.createChannel('tx-starts', {
+    start: Everlog.createChannel('tx-starts', {
         columns: [
             {
                 type: 'date',
@@ -74,7 +74,7 @@ const channels = {
             }
         ]
     }),
-    log: Monit.createChannel('tx-logs', {
+    log: Everlog.createChannel('tx-logs', {
         columns: [
             {
                 type: 'date',
@@ -94,7 +94,7 @@ const channels = {
             }
         ]
     }),
-    receipt: Monit.createChannel('tx-receipts', {
+    receipt: Everlog.createChannel('tx-receipts', {
         columns: [
             {
                 type: 'date',
