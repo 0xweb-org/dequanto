@@ -290,9 +290,13 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
             gasEstimation: true,
             from: this.account.address
         });
-        let { gasPrice, gasLimit } = this.builder.data;
+
+        let { gasLimit } = this.builder.data;
+        let gasPrice = TxDataBuilder.getGasPrice(this.builder);
+
+
         let LITTLE_BIT_MORE = 1.3;
-        let wei = $bigint.multWithFloat(BigInt(gasPrice as any) * BigInt(gasLimit as any), LITTLE_BIT_MORE);
+        let wei = $bigint.multWithFloat(gasPrice * BigInt(gasLimit as any), LITTLE_BIT_MORE);
 
         let fundTx = await this.transferNative(account, this.account.address, wei);
         await fundTx.onCompleted;

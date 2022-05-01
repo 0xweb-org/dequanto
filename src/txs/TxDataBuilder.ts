@@ -152,13 +152,22 @@ export class TxDataBuilder {
     }
 
     increaseGas (ratio: number) {
-        let gasPrice = this.data.gasPrice as string;
-        if (gasPrice == null) {
-            throw new Error(`Not possible to increase the gas price, the price not set yet`);
+        let { gasPrice, maxFeePerGas } = this.data;
+        if (gasPrice != null) {
+            let price = BigInt(gasPrice as any);
+            let priceNew = $bigint.multWithFloat(price, ratio);
+            this.data.gasPrice = $bigint.toHex(priceNew);
+            return;
         }
-        let price = BigInt(this.data.gasPrice as string);
-        let priceNew = $bigint.multWithFloat(price, ratio);
-        this.data.gasPrice = $bigint.toHex(priceNew);
+
+        if (maxFeePerGas != null) {
+            let price = BigInt(maxFeePerGas as any);
+            let priceNew = $bigint.multWithFloat(price, ratio);
+            this.data.maxFeePerGas = $bigint.toHex(priceNew);
+            return;
+        }
+
+        throw new Error(`Not possible to increase the gas price, the price not set yet`);
     }
 
     getTxData (client: Web3Client) {
@@ -211,5 +220,16 @@ export class TxDataBuilder {
             }
         }
         return data;
+    }
+
+    static getGasPrice (builder: TxDataBuilder): bigint {
+        let { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = builder.data;
+        if (gasPrice != null) {
+            return BigInt(gasPrice as any);
+        }
+        if (maxFeePerGas != null) {
+            return BigInt(maxFeePerGas as any) + BigInt(<any> maxPriorityFeePerGas ?? 0);
+        }
+        return null;
     }
 }

@@ -1,3 +1,4 @@
+import { $date } from '@dequanto/utils/$date';
 import { Everlog } from 'everlog';
 import { ILogger } from './ILogger';
 
@@ -18,22 +19,25 @@ export class LoggerService implements ILogger {
     }
 
     warn (message: string) {
-        this.write([ new Date(), 'Warn', message ]);
+        this.write([ 'Warn', message ]);
     }
     error (message: string) {
-        this.write([ new Date(), 'Error', message ]);
+        this.write([ 'Error', message ]);
     }
     info (message: string) {
-        this.write([ new Date(), 'Info', message ]);
+        this.write([ 'Info', message ]);
     }
 
     write (row: string)
     write (row: any[])
     write (row: any[] | string) {
         let arr = typeof row === 'string' ? [ row ] : row;
-        arr.unshift(new Date());
+        let date = new Date();
+        arr.unshift(date);
         this.channel.writeRow(arr);
-        console.log(Array.isArray(row) ? row.join(' ') : row);
+
+        arr[0] = $date.format(date, 'HH:mm:ss');
+        console.log(arr.join(' '));
         return this;
     }
 }

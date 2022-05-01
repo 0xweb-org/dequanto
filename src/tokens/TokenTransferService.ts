@@ -193,7 +193,9 @@ export class TokenTransferService {
                     retryCount: 0
                 });
             }
-            return null;
+            if (this.txConfig.gasFunding == null) {
+                return null;
+            }
         }
         return erc20
             .$config(this.txConfig)
