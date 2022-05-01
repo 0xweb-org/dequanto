@@ -5,7 +5,7 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { FeeMarketEIP1559TxData, TxData } from '@ethereumjs/tx'
 import { type TransactionConfig } from 'web3-core';
-import { AbiItem } from 'web3-utils';
+import { type AbiItem } from 'web3-utils';
 import { ITxConfig } from './ITxConfig';
 
 export class TxDataBuilder {

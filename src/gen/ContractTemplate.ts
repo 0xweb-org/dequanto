@@ -7,7 +7,7 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
-import { AbiItem } from 'web3-utils';
+import { type AbiItem } from 'web3-utils';
 import { TransactionReceipt } from 'web3-core';
 import { EventData } from 'web3-eth-contract';
 import { TxWriter } from '@dequanto/txs/TxWriter';

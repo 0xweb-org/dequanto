@@ -1,5 +1,5 @@
 import Web3 from 'web3';
-import { AbiItem } from 'web3-utils';
+import { type AbiItem } from 'web3-utils';
 import { Log, TransactionReceipt } from 'web3-core';
 import { $abiUtils } from './$abiUtils';
 import { InputDataUtils } from '@dequanto/contracts/utils/InputDataUtils';

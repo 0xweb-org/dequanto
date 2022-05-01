@@ -1,4 +1,4 @@
-import { AbiItem } from 'web3-utils';
+import { type AbiItem } from 'web3-utils';
 import { utils }  from 'ethers';
 import { $contract } from './$contract';
 import Web3 from 'web3';

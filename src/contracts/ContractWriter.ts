@@ -1,6 +1,6 @@
 import di from 'a-di';
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
-import { AbiItem } from 'web3-utils';
+import { type AbiItem } from 'web3-utils';
 import { ITxWriterOptions, TxWriter } from '@dequanto/txs/TxWriter';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';

@@ -5,7 +5,7 @@ import type { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
 import { ContractReader } from './ContractReader';
 import { ContractWriter } from './ContractWriter';
-import { AbiItem } from 'web3-utils';
+import { type AbiItem } from 'web3-utils';
 import type { ITxWriterOptions, TxWriter } from '@dequanto/txs/TxWriter';
 import { $contract } from '@dequanto/utils/$contract';
 import { utils } from 'ethers'

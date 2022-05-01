@@ -1,6 +1,6 @@
 import { $abiParser } from '@dequanto/utils/$abiParser';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { AbiItem } from 'web3-utils';
+import { type AbiItem } from 'web3-utils';
 import { IAbiItemFormattable, IKnownLogFormatter, ITxLogItemDescriptor } from './ITxLogItem';
 
 

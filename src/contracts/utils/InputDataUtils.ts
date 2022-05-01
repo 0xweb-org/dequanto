@@ -1,6 +1,6 @@
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { utils } from 'ethers';
-import { AbiItem } from 'web3-utils';
+import { type AbiItem } from 'web3-utils';
 import { $abiParser } from '../../utils/$abiParser';
 
 export namespace InputDataUtils {

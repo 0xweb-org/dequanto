@@ -1,6 +1,6 @@
 import di from 'a-di';
 import alot from 'alot';
-import { AbiItem } from 'web3-utils';
+import { type AbiItem } from 'web3-utils';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { $address } from '@dequanto/utils/$address';
 import { $require } from '@dequanto/utils/$require';

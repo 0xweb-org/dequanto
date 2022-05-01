@@ -1,6 +1,6 @@
 import { TAddress } from '@dequanto/models/TAddress';
 import { TPlatform } from '@dequanto/models/TPlatform';
-import { AbiItem } from 'web3-utils';
+import { type AbiItem } from 'web3-utils';
 
 export interface ITxLogItem {
     contract: TAddress

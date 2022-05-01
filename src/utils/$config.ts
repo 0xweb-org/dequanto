@@ -1,11 +1,12 @@
 import { config } from '@dequanto/Config';
 import { obj_getProperty } from 'atma-utils';
 
-declare let global;
-
+const $global = typeof global === 'undefined'
+    ? window
+    : global;
 export namespace $config {
     export function get <T = any> (path: string, $default?: T): T {
-        let value = (typeof global.app !== 'undefined' ? global.app.config?.$get?.(path) : null)
+        let value = (typeof $global.app !== 'undefined' ? $global.app.config?.$get?.(path) : null)
             ?? obj_getProperty(config, path)
             ?? $default;
 
@@ -16,6 +17,6 @@ export namespace $config {
     }
 
     export function set <T = any> (path: string, value: T) {
-        global.app.config?.$set?.(path, value);
+        $global.app.config?.$set?.(path, value);
     }
 }

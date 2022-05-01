@@ -1,6 +1,6 @@
 import di from 'a-di';
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
-import { AbiItem } from 'web3-utils';
+import { type AbiItem } from 'web3-utils';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { $abiParser } from '../utils/$abiParser';
 import { AbiDeserializer } from './utils/AbiDeserializer';

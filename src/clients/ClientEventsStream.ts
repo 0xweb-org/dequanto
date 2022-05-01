@@ -1,4 +1,4 @@
-import { AbiItem } from 'web3-utils';
+import { type AbiItem } from 'web3-utils';
 import { Contract, EventData } from 'web3-eth-contract';
 import { Subscription } from 'web3-core-subscriptions';
 

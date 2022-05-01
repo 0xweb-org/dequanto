@@ -1,7 +1,7 @@
 import alot from 'alot';
 import memd from 'memd';
 import Web3 from 'web3';
-import { AbiItem } from 'web3-utils';
+import { type AbiItem } from 'web3-utils';
 import { $date } from '@dequanto/utils/$date';
 import { $number } from '@dequanto/utils/$number';
 import { $fn } from '@dequanto/utils/$fn';

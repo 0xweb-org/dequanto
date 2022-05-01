@@ -1,4 +1,4 @@
-import { AbiItem, AbiOutput } from 'web3-utils';
+import { type AbiItem, AbiOutput } from 'web3-utils';
 
 interface IParameter {
     name?: string

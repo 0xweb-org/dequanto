@@ -3,7 +3,7 @@ import memd from 'memd';
 import axios from 'axios'
 import { IBlockChainExplorer, IBlockChainTransferEvent } from './IBlockChainExplorer';
 import { Transaction } from 'web3-core';
-import { AbiItem } from 'web3-utils';
+import { type AbiItem } from 'web3-utils';
 import { IContractDetails } from '@dequanto/models/IContractDetails';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';

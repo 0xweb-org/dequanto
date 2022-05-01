@@ -1,5 +1,5 @@
 import di from 'a-di';
-import { AbiItem } from 'web3-utils';
+import { type AbiItem } from 'web3-utils';
 import { IAbiItemFormattable, ITxLogItemDescriptor } from './ITxLogItem';
 import { TxLogsTransfer } from './TxLogsTransfer';
 import { TxTopicInMemoryProvider } from './TxTopicInMemoryProvider';

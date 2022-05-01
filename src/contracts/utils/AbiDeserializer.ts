@@ -1,5 +1,5 @@
 import { $abiType } from '@dequanto/utils/$abiType';
-import { AbiItem, AbiOutput } from 'web3-utils';
+import { type AbiItem, AbiOutput } from 'web3-utils';
 import { $abiParser } from '../../utils/$abiParser';
 
 export namespace AbiDeserializer {

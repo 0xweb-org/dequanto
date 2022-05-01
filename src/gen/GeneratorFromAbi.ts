@@ -1,5 +1,5 @@
 import { TAddress } from '@dequanto/models/TAddress';
-import { AbiItem } from 'web3-utils';
+import { type AbiItem } from 'web3-utils';
 import { File } from 'atma-io';
 import { class_Uri } from 'atma-utils';
 import alot from 'alot';
