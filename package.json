@@ -4,16 +4,15 @@
   "scripts": {
     "hardhat": "hardhat node",
     "build": "tsc -p tsconfig-src.json",
-    "test": "atma test"
+    "test": "atma --openssl-legacy-provider test"
   },
   "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.5",
     "@nomiclabs/hardhat-web3": "^2.0.0",
     "hardhat": "^2.6.7",
     "shellbee": "^0.5.16"
   },
   "dependencies": {
-    "@ethereumjs/common": "^2.5.0",
-    "@ethereumjs/tx": "^3.3.2",
     "a-di": "^1.0.25",
     "alot": "^0.2.96",
     "appcfg": "^0.4.63",

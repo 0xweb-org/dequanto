@@ -1,6 +1,4 @@
 import { $config } from '@dequanto/utils/$config';
-import { Transaction, TxData } from '@ethereumjs/tx'
-import Common from '@ethereumjs/common'
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IWeb3EndpointOptions } from '@dequanto/clients/interfaces/IWeb3EndpointOptions';
@@ -20,23 +18,5 @@ export class ArbWeb3Client extends Web3Client {
             ...(opts ?? {}),
             endpoints: ClientEndpoints.filterEndpoints($config.get('web3.arbitrum.endpoints'), opts)
         });
-    }
-    sign(txData: TxData, privateKey: string): Buffer {
-
-        const key = Buffer.from(privateKey, 'hex');
-        const common = new Common({
-            chain: this.chainId,
-            customChains: [{
-                chainId: this.chainId,
-                networkId: this.chainId,
-                url: 'https://arb1.arbitrum.io/rpc',
-                name: 'aeth',
-                comment: '',
-                hardforks: [{ name: 'mainnet' }]
-            } as any]
-        })
-        const tx = Transaction.fromTxData(txData, { common });
-        const signedTx = tx.sign(key);
-        return signedTx.serialize();
     }
 }

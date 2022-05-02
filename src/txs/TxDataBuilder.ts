@@ -2,9 +2,9 @@ import { ChainAccount } from '@dequanto/ChainAccounts';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { InputDataUtils } from '@dequanto/contracts/utils/InputDataUtils';
 import { TAddress } from '@dequanto/models/TAddress';
+import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { $bigint } from '@dequanto/utils/$bigint';
-import { FeeMarketEIP1559TxData, TxData } from '@ethereumjs/tx'
-import { type TransactionConfig } from 'web3-core';
+import { type TransactionRequest } from '@ethersproject/abstract-provider';
 import { type AbiItem } from 'web3-utils';
 import { ITxConfig } from './ITxConfig';
 
@@ -14,7 +14,7 @@ export class TxDataBuilder {
     constructor(
         public client: Web3Client,
         public account: { address?: TAddress, key: string },
-        public data: Partial<Omit<FeeMarketEIP1559TxData, 'gasPrice'> & TxData>,
+        public data: Partial<TransactionRequest>,
         public config: ITxConfig = null,
     ) {
         this.data.value = this.data.value ?? 0;
@@ -135,7 +135,7 @@ export class TxDataBuilder {
 
             this.data.maxFeePerGas = $bigint.toHex($baseFee + $priorityFee);
             this.data.maxPriorityFeePerGas = $bigint.toHex($priorityFee);
-            this.data.type = '0x02';
+            this.data.type = 2;
         }
 
         let hasLimitRatio = gasLimitRatio != null;
@@ -179,18 +179,13 @@ export class TxDataBuilder {
         };
     }
 
-    /** Returns Buffer of the Tx Data */
-    signToBuffer(privateKey: string) {
-        return this.client.sign(this.data, privateKey);
-    }
 
     /** Returns base64 string of the Tx Data */
-    signToString(privateKey: string) {
+    async signToString(privateKey: string): Promise<string> {
         if (privateKey.startsWith('0x')) {
             privateKey = privateKey.substring(2);
         }
-        let buffer = this.signToBuffer(privateKey);
-        return '0x' + buffer.toString('hex');
+        return this.client.sign(this.data, privateKey);
     }
 
     toJSON () {
@@ -202,7 +197,7 @@ export class TxDataBuilder {
 
     static fromJSON (client: Web3Client, account: ChainAccount, json: {
         config: ITxConfig,
-        data: TxData,
+        data: TransactionRequest,
     }) {
         return new TxDataBuilder(
             client,
@@ -212,7 +207,7 @@ export class TxDataBuilder {
         );
     }
 
-    static normalize(data: Partial<TxData>) {
+    static normalize(data: Partial<TransactionRequest>) {
         for (let key in data) {
             let v = data[key];
             if (typeof v === 'string' && /^\d+$/.test(v)) {

@@ -1,4 +1,6 @@
-import { TxData } from '@ethereumjs/tx';
+import { TBufferLike } from '@dequanto/models/TBufferLike';
+import { TransactionRequest } from '@ethersproject/abstract-provider';
+
 import type Web3 from 'web3';
 import { IPoolClientConfig } from '../ClientPool';
 
@@ -7,7 +9,7 @@ export interface IWeb3Client {
     chainId: number
     defaultGasLimit: number
 
-    sign (txData: TxData, privateKey: string): Buffer
+    sign (txData: TransactionRequest, privateKey: string): Promise<TBufferLike>
 }
 
 

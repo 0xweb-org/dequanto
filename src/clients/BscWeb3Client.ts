@@ -1,6 +1,4 @@
 import { $config } from '@dequanto/utils/$config';
-import { Transaction, TxData } from '@ethereumjs/tx'
-import Common from '@ethereumjs/common'
 import { Web3Client } from './Web3Client';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { IWeb3EndpointOptions } from './interfaces/IWeb3EndpointOptions';
@@ -19,23 +17,5 @@ export class BscWeb3Client extends Web3Client {
             ...(opts ?? {}),
             endpoints: ClientEndpoints.filterEndpoints($config.get('web3.bsc.endpoints'), opts)
         });
-    }
-    sign(txData: TxData, privateKey: string): Buffer {
-
-        const key = Buffer.from(privateKey, 'hex');
-        const common = new Common({
-            chain: this.chainId,
-            customChains: [{
-                chainId: this.chainId,
-                networkId: this.chainId,
-                url: 'https://bsc-dataseed.binance.org/',
-                name: 'bnb',
-                comment: '',
-                hardforks: [{ name: 'mainnet' }]
-            } as any]
-        })
-        const tx = Transaction.fromTxData(txData, { common });
-        const signedTx = tx.sign(key);
-        return signedTx.serialize();
     }
 }

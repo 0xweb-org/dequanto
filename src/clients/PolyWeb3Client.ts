@@ -1,12 +1,9 @@
-import Common from '@ethereumjs/common'
 import { $config } from '@dequanto/utils/$config';
-import { FeeMarketEIP1559TxData, TxData } from '@ethereumjs/tx'
 import { Web3Client } from './Web3Client';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { ClientEndpoints } from './utils/ClientEndpoints';
 import { IWeb3EndpointOptions } from './interfaces/IWeb3EndpointOptions';
 import { $bigint } from '@dequanto/utils/$bigint';
-import { TxFactory } from './utils/TxFactory';
 
 export class PolyWeb3Client extends Web3Client {
 
@@ -42,51 +39,4 @@ export class PolyWeb3Client extends Web3Client {
         };
     }
 
-    // https://raw.githubusercontent.com/maticnetwork/launch/master/mainnet-v1/sentry/sentry/bor/genesis.json
-    // https://raw.githubusercontent.com/maticnetwork/launch/master/mainnet-v1/sentry/sentry/heimdall/config/genesis.json
-    sign(txData: TxData | FeeMarketEIP1559TxData, privateKey: string): Buffer {
-
-        const key = Buffer.from(privateKey, 'hex');
-
-        const common = new Common({
-            chain: this.chainId,
-            hardfork: 'london',
-            customChains: [
-                <any> {
-                    chainId: this.chainId,
-                    networkId: this.chainId,
-                    url: 'https://rpc-mainnet.maticvigil.com',
-                    name: 'MATIC',
-                    comment: '',
-                    hardforks: [
-                        {
-                            name: "spuriousDragon",
-                            block: 0
-                        },
-                        {
-                            name: 'berlin',
-                            block: 14750000
-                        },
-                        {
-                            name: 'london',
-                            block: 23850000
-                        }
-                    ],
-                    genesis: {
-                        hash: '0x0000000000000000000000000000000000000000000000000000000000000000',
-                        timestamp: '0x5ED20F84',
-                        difficulty: 0x1,
-                        gasLimit: 0x989680,
-                        nonce: '0x0',
-                        stateRoot: '',
-                        extraData: '',
-                    }
-                }
-            ]
-        });
-
-        const tx = TxFactory.fromTxData(txData as any, { common });
-        const signedTx = tx.sign(key);
-        return signedTx.serialize();
-    }
 }

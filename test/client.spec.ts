@@ -40,13 +40,10 @@ UTest({
         let amount = 10n * 10n ** 18n;
         tx.setValue(amount);
 
-        let message = tx.signToString(from.key);
+        let message = await tx.signToString(from.key);
+        console.log('msg', message);
         let promi = client.sendSignedTransaction(message)
 
-        // promi.on('transactionHash', assert.await());
-        // promi.on('error', error => console.log('error', error));
-        // promi.on('confirmation', confirmation => console.log('confirmation', confirmation));
-        // promi.on('receipt', receipt => console.log('receipt', receipt));
 
         let receipt = await promi;
 

@@ -2,13 +2,15 @@ import memd from 'memd';
 import Web3 from 'web3';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TPlatform } from '@dequanto/models/TPlatform';
-import { TxData } from '@ethereumjs/tx';
+import { TransactionRequest } from '@ethersproject/abstract-provider';
 import { BlockHeader, BlockTransactionString, Syncing } from 'web3-eth';
 import { ClientPool, IPoolClientConfig, IPoolWeb3Request } from './ClientPool';
 import { ClientPoolTrace } from './ClientPoolStats';
 import { IWeb3Client, IWeb3ClientOptions } from './interfaces/IWeb3Client';
 import { Log, LogsOptions, type TransactionConfig } from 'web3-core';
 import { Subscription } from 'web3-core-subscriptions';
+import { TBufferLike } from '@dequanto/models/TBufferLike';
+import { Wallet } from 'ethers';
 
 export abstract class Web3Client implements IWeb3Client {
 
@@ -21,7 +23,16 @@ export abstract class Web3Client implements IWeb3Client {
 
     defaultTxType: 1 | 2 = 2;
 
-    abstract sign(txData: TxData, privateKey: string): Buffer
+    async sign(txData: TransactionRequest, privateKey: string): Promise<string> {
+
+        let wallet = new Wallet(privateKey);
+        let tx = await wallet.signTransaction({
+            ...txData,
+            type: 2,
+            chainId: this.chainId
+        });
+        return tx;
+    }
 
 
     protected options: IWeb3ClientOptions;
@@ -192,7 +203,7 @@ export abstract class Web3Client implements IWeb3Client {
             });
         });
     }
-    getGasEstimation (from: TAddress, tx: TxData) {
+    getGasEstimation (from: TAddress, tx: TransactionRequest) {
         return this.pool.call(async web3 => {
             let txData = {
                 from: from,
@@ -207,6 +218,7 @@ export abstract class Web3Client implements IWeb3Client {
     }
 
     sendSignedTransaction(signedTxBuffer: string) {
+        console.log('sending', signedTxBuffer);
         return this.pool.callPromiEvent(web3 => {
             return web3.eth.sendSignedTransaction(signedTxBuffer);
         }, { preferSafe: true, distinct: true });

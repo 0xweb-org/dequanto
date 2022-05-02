@@ -114,12 +114,15 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         }
     }
 
-    private sendTxInner () {
+    private async sendTxInner () {
+        console.log('sendTxInner')
         let time = Date.now();
         let key = this.account?.key;
         let signedTxBuffer = key == null
             ? null
-            : this.builder.signToString(this.account.key);
+            : await this.builder.signToString(this.account.key);
+
+        console.log('send', signedTxBuffer);
 
         let tx = <TxWriter['tx']> {
             timestamp: Date.now(),
