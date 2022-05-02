@@ -1,2 +1,2 @@
-export declare type TBufferLike = Buffer | Uint8Array | number[] | number | TPrefixedHexString;
-export declare type TPrefixedHexString = string;
+export declare type TBufferLike = Buffer | Uint8Array | number[] | number | THexBuffer;
+export declare type THexBuffer = string;

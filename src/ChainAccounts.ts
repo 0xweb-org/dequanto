@@ -1,10 +1,10 @@
+import memd from 'memd';
 import { TAddress } from './models/TAddress'
 import { TPlatform } from './models/TPlatform'
 import { $config } from './utils/$config'
 import { Wallet } from 'ethers';
-import crypto from 'crypto';
 import { $address } from './utils/$address';
-import memd from 'memd';
+import { $crypto } from './utils/$crypto';
 
 
 export class ChainAccount {
@@ -49,12 +49,12 @@ export namespace ChainAccountProvider {
     }
 
     export function generate (opts?: { name?: string, platform?: TPlatform }): ChainAccount {
-        const bytes = crypto.randomBytes(32);
+        const bytes = $crypto.randomBytes(32);
         const wallet = new Wallet(bytes);
         return {
             ...(opts ?? {}),
             address: wallet.address,
-            key: bytes.toString('hex'),
+            key: wallet.privateKey,
         }
     }
 

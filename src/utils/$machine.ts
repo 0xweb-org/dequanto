@@ -1,18 +1,6 @@
 
 
 
-
-function hash(guid: string): string {
-    const { createHash } = require('crypto');
-    return createHash('sha256').update(guid).digest('hex');
-}
-
-// export function machineIdSync(original: boolean): string {
-//     let id: string = expose(execSync(guid[platform]).toString());
-//     return original ? id : hash(id);
-// }
-
-
 export namespace $machine {
 
     export function id(original: boolean = false): Promise<string> {
@@ -30,6 +18,11 @@ export namespace $machine {
                 return resolve(original ? id : hash(id));
             });
         });
+    }
+
+    function hash(guid: string): string {
+        const { createHash } = require('crypto');
+        return createHash('sha256').update(guid).digest('hex');
     }
 
     function getCommand() {
