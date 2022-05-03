@@ -5,7 +5,7 @@ import { type AbiItem } from 'web3-utils';
 import { $date } from '@dequanto/utils/$date';
 import { $number } from '@dequanto/utils/$number';
 import { $fn } from '@dequanto/utils/$fn';
-import { PromiEvent } from 'web3-core';
+import { PromiEvent, type provider } from 'web3-core';
 import { PromiEventWrap } from './model/PromiEventWrap';
 import { IWeb3ClientStatus } from './interfaces/IWeb3ClientStatus';
 import { ClientStatus } from './model/ClientStatus';
@@ -21,7 +21,7 @@ export interface IPoolClientConfig {
     url?: string
     safe?: boolean
     distinct?: boolean
-    web3?: Web3
+    web3?: Web3 | provider
     name?: string
     /** Will be used only if manually requested with .getWeb3, or .getNodeUrl */
     manual?: boolean
@@ -44,8 +44,8 @@ export class ClientPool {
 
         if (config.endpoints != null && config.endpoints.length > 0) {
             this.clients = config.endpoints.map(cfg => new WClient(cfg))
-        } else if (config.web3) {
-            this.clients = [ new WClient({ web3: config.web3 }) ];
+        } else if (config.web3 || config.provider) {
+            this.clients = [ new WClient({ web3: config.web3 ?? config.provider }) ];
         } else {
             console.dir(config, { depth: null });
             throw new Error(`Neither Node endpoints nor Web3 instance`)
@@ -212,7 +212,7 @@ export class ClientPool {
 
     getEventStream (address: TAddress, abi: any, event: string) {
         if (this.ws == null) {
-            this.ws = this.clients.find(x => x.config.url.startsWith('ws'));
+            this.ws = this.clients.find(x => x.config.url?.startsWith('ws'));
         }
         let stream = this.ws.getEventStream(address, abi, event);
         return stream;
@@ -322,13 +322,13 @@ export class ClientPool {
 
         if (opts?.ws === true) {
             if (this.ws == null) {
-                this.ws = clients.find(x => x.config.url.startsWith('ws'));
+                this.ws = clients.find(x => x.config.url?.startsWith('ws'));
             }
             return this.ws;
         }
 
         if (opts?.ws === false) {
-            clients = clients.filter(x => x.config.url.startsWith('http'));
+            clients = clients.filter(x => x.config.url?.startsWith('http'));
         }
 
         if (this.discoveredPartial === false) {
@@ -546,7 +546,15 @@ class WClient {
         const hasWeb3 = 'web3' in mix && typeof mix.web3 != null;
         if (hasUrl || hasWeb3) {
             this.config = mix;
-            this.web3 = mix.web3 ?? new Web3(mix.url);
+            if (mix.url) {
+                // web3 object
+                this.web3 = new Web3(mix.url);
+            } else if ((mix.web3 as any).eth != null) {
+                this.web3 = <Web3> mix.web3;
+            } else {
+                // provider
+                this.web3 = new Web3(<provider> mix.web3);
+            }
         } else {
             throw new Error(`Neither Node URL nor Web3 Instance in argument`);
         }

@@ -2,6 +2,7 @@ import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { TransactionRequest } from '@ethersproject/abstract-provider';
 
 import type Web3 from 'web3';
+import { provider } from 'web3-core';
 import { IPoolClientConfig } from '../ClientPool';
 
 export interface IWeb3Client {
@@ -16,5 +17,7 @@ export interface IWeb3Client {
 export interface IWeb3ClientOptions {
     endpoints: IPoolClientConfig[]
     chainId?: number
-    web3?: Web3
+    // alias to `provider`
+    web3?: Web3 | provider
+    provider?: Web3 | provider
 }

@@ -38,7 +38,7 @@ export class Config {
 
     @memd.deco.memoize()
     static async fetch () {
-        let unlockedAccounts = await $secret.get();
+        let unlockedAccountsKey = await $secret.getPin();
         let configPathAccounts = $cli.getParamValue('config-accounts') ?? '%APPDATA%/.dequanto/accounts.json';
 
         let dequantoConfigs = 'dequanto/configs/';
@@ -73,12 +73,12 @@ export class Config {
                 optional: true,
                 extendArrays: false,
             },
-            unlockedAccounts ? {
+            unlockedAccountsKey ? {
                 name: 'accounts',
                 path: configPathAccounts,
                 writable: true,
                 optional: true,
-                secret: unlockedAccounts
+                secret: unlockedAccountsKey
             } : null,
             {
                 path: 'package.json',

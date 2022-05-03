@@ -11,6 +11,7 @@ import { Log, LogsOptions, type TransactionConfig } from 'web3-core';
 import { Subscription } from 'web3-core-subscriptions';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { Wallet } from 'ethers';
+import { $number } from '@dequanto/utils/$number';
 
 export abstract class Web3Client implements IWeb3Client {
 
@@ -215,6 +216,25 @@ export abstract class Web3Client implements IWeb3Client {
             let gasAmount = await web3.eth.estimateGas(txData);
             return gasAmount;
         })
+    }
+    async getAccounts (options: IPoolWeb3Request): Promise<TAddress[]> {
+        let web3 = await this.getWeb3(options);
+        return web3.eth.getAccounts();
+    }
+    async getChainId (options: IPoolWeb3Request): Promise<number> {
+        let web3 = await this.getWeb3(options);
+        return web3.eth.getChainId()
+    }
+
+    async switchChain (params: { chainId: number | string }, options: IPoolWeb3Request): Promise<any> {
+        let web3 = await this.getWeb3(options);
+        if (typeof (web3.eth.currentProvider as any).request !== 'function') {
+            throw new Error(`Current provider doesn't have request method`);
+        }
+        return (web3.eth.currentProvider as any).request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: $number.toHex(params.chainId) }],
+        });
     }
 
     sendSignedTransaction(signedTxBuffer: string) {

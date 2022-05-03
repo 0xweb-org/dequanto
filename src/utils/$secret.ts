@@ -1,7 +1,7 @@
 import { $machine } from './$machine';
 
 export namespace $secret {
-    export async function get() {
+    export async function getPin() {
 
         let pin = getPinFromCli() ?? getPinFromEnv();
         if (pin == null || pin.length === 0) {
@@ -10,7 +10,6 @@ export namespace $secret {
         let id = await $machine.id();
         return `${id}:${pin}`;
     }
-
 
     function getPinFromCli () {
         let args = process.argv;

@@ -86,4 +86,7 @@ export namespace $number {
         throw new Error('Unsupported type to convert to number ' + typeof mix);
     }
 
+    export function toHex (num: string | number) {
+        return `0x` + Number(num).toString(16);
+    }
 }
