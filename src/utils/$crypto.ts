@@ -27,6 +27,6 @@ class WebCryptoPolyfill implements ICrypto {
 
 
 export const $crypto: ICrypto = typeof crypto === "undefined"
-    ? new WebCrypto()
-    : new WebCryptoPolyfill()
+    ? new WebCryptoPolyfill()
+    : new WebCrypto()
     ;
