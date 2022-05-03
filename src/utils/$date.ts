@@ -1,8 +1,5 @@
-import * as Formatter from 'atma-formatter';
-
-
 export class DateTool {
-    protected constructor (public date: Date = new Date()) {
+    protected constructor(public date: Date = new Date()) {
 
     }
     /**
@@ -11,7 +8,7 @@ export class DateTool {
      * - ISODate
      * - Ticks
      */
-    static with (mix: string | number | Date) {
+    static with(mix: string | number | Date) {
         let date: Date;
         if (typeof mix === 'string' || typeof mix === 'number') {
             date = $date.parse(mix);
@@ -20,62 +17,62 @@ export class DateTool {
         }
         return new DateTool(date);
     }
-    static withNow () {
+    static withNow() {
         return new DateTool();
     }
-    clone () {
+    clone() {
         this.date = new Date(this.date);
         return this;
     }
-    add (x: string | number) {
+    add(x: string | number) {
         this.date = $date.additive(this.date, x)
         return this;
     }
-    dayStart () {
+    dayStart() {
         this.date = $date.dayStart(this.date);
         return this;
     }
-    dayEnd () {
+    dayEnd() {
         this.date = $date.dayEnd(this.date);
         return this;
     }
-    weekStart () {
+    weekStart() {
         this.date = $date.weekStart(this.date);
         return this;
     }
-    weekEnd () {
+    weekEnd() {
         this.date = $date.weekEnd(this.date);
         return this;
     }
-    monthStart () {
+    monthStart() {
         this.date = $date.monthStart(this.date);
         return this;
     }
-    monthEnd () {
+    monthEnd() {
         this.date = $date.monthEnd(this.date);
         return this;
     }
 
-    daysBetween (b: Date) {
+    daysBetween(b: Date) {
         return $date.daysBetween(this.date, b);
     }
     /** e.g. yyyy-MM-dd HH:mm */
-    format (format: string) {
+    format(format: string) {
         return $date.format(this.date, format);
     }
-    setMilliseconds (v: number) {
+    setMilliseconds(v: number) {
         this.date.setMilliseconds(v);
         return this;
     }
-    setSeconds (v: number) {
+    setSeconds(v: number) {
         this.date.setSeconds(v);
         return this;
     }
-    setMinutes (v: number) {
+    setMinutes(v: number) {
         this.date.setMinutes(v);
         return this;
     }
-    setHours (h: number, min?: number, sec?: number, ms?: number) {
+    setHours(h: number, min?: number, sec?: number, ms?: number) {
         this.date.setHours(h);
         if (min != null) this.date.setMinutes(min);
         if (sec != null) this.date.setSeconds(sec);
@@ -83,20 +80,20 @@ export class DateTool {
         return this;
     }
     /** Sets the numeric day-of-the-month value of the Date object using local time. */
-    setDate (v: number) {
+    setDate(v: number) {
         this.date.setDate(v);
         return this;
     }
-    setMonth (v: number) {
+    setMonth(v: number) {
         this.date.setMonth(v);
         return this;
     }
-    setFullYear (v: number) {
+    setFullYear(v: number) {
         this.date.setFullYear(v);
         return this;
     }
 
-    nextDay (h?: number, min?: number, s?: number, ms?: number) {
+    nextDay(h?: number, min?: number, s?: number, ms?: number) {
         this.date = $date.additive(this.date, '1d');
         if (h != null) {
             this.date.setHours(h);
@@ -113,25 +110,25 @@ export class DateTool {
         return this;
     }
 
-    toUnixTimestamp (): number {
+    toUnixTimestamp(): number {
         return $date.toUnixTimestamp(this.date);
     }
 }
 export namespace $date {
 
-    export function tool (date: Date = new Date()) {
+    export function tool(date: Date = new Date()) {
         return DateTool.with(date);
     }
 
     /** e.g. yyyy-MM-dd HH:mm */
-    export function format (date: number | string | Date, format: string) {
+    export function format(date: number | string | Date, format: string) {
         if (typeof date === 'string' || typeof date === 'number') {
             date = parse(date);
         }
-        return Formatter.formatDate(date, format);
+        return Formatter.format(date, format);
     }
 
-    export function formatTimespan (ms: number) {
+    export function formatTimespan(ms: number) {
         let str = '';
         let SECOND = 1000;
         let MINUTE = 60 * SECOND;
@@ -179,7 +176,7 @@ export namespace $date {
         result.setHours(23, 59, 59, 999);
         return result;
     }
-    export function weekStart (date = new Date()) {
+    export function weekStart(date = new Date()) {
         let result = new Date(date);
         let day = result.getDay() - 1;
         if (day === -1) {
@@ -189,7 +186,7 @@ export namespace $date {
         result.setHours(0, 0, 0, 0);
         return result;
     }
-    export function weekEnd (date = new Date()) {
+    export function weekEnd(date = new Date()) {
         let result = new Date(date);
         let day = result.getDay() - 1;
         if (day === -1) {
@@ -199,13 +196,13 @@ export namespace $date {
         result.setHours(23, 59, 59, 999);
         return result;
     }
-    export function monthStart (date = new Date()) {
+    export function monthStart(date = new Date()) {
         let result = new Date(date);
         result.setDate(1);
         result.setHours(0, 0, 0, 0);
         return result;
     }
-    export function monthEnd (date = new Date()) {
+    export function monthEnd(date = new Date()) {
         let result = new Date(date);
         result.setMonth(result.getMonth() + 1);
         result.setDate(1);
@@ -215,7 +212,7 @@ export namespace $date {
 
 
     /** date1 + X === date2 */
-    export function daysBetween (a: Date, b: Date, abs: boolean = true) {
+    export function daysBetween(a: Date, b: Date, abs: boolean = true) {
         let aStart = dayStart(a);
         let bStart = dayStart(b);
         let diff = bStart.valueOf() - aStart.valueOf();
@@ -224,7 +221,7 @@ export namespace $date {
     }
 
     /** hour1 + X === hour2 */
-    export function hoursBetween (a: Date, b: Date, abs: boolean = true) {
+    export function hoursBetween(a: Date, b: Date, abs: boolean = true) {
         let aStart = hourStart(a);
         let bStart = hourStart(b);
         let diff = bStart.valueOf() - aStart.valueOf();
@@ -232,7 +229,7 @@ export namespace $date {
         return Math.floor(diff / (60 * 60 * 1000));
     }
 
-    export function minsBetween (a: Date | string, b: Date | string, abs: boolean = true) {
+    export function minsBetween(a: Date | string, b: Date | string, abs: boolean = true) {
         if (typeof a === 'string') {
             a = parse(a);
         }
@@ -305,7 +302,7 @@ export namespace $date {
      * @param str
      * @param opts Default: ms
      */
-    export function parseTimespan (str: string, opts?: { get?: 'ms' | 's', anchor?: Date }): number {
+    export function parseTimespan(str: string, opts?: { get?: 'ms' | 's', anchor?: Date }): number {
 
         let direction = str[0] === '-' ? -1 : +1;
         if (direction === -1) {
@@ -375,7 +372,7 @@ export namespace $date {
     }
 
 
-    export function additive (date: Date | number | string, x: string | number) {
+    export function additive(date: Date | number | string, x: string | number) {
         let d = parse(date);
         let timestamp = d.getTime();
         if (typeof x === 'number') {
@@ -394,7 +391,7 @@ export namespace $date {
         return target;
     }
 
-    export function equal (a: Date, b: Date, precision: 'year' | 'month' | 'date' | 'hour' | 'minute' | 'second' | 'ms' = 'ms') {
+    export function equal(a: Date, b: Date, precision: 'year' | 'month' | 'date' | 'hour' | 'minute' | 'second' | 'ms' = 'ms') {
         let aYear = a.getFullYear();
         let bYear = b.getFullYear();
         if (aYear !== bYear) {
@@ -466,8 +463,165 @@ export namespace $date {
         return true;
     }
 
-    export function toUnixTimestamp (date: Date): number {
+    export function toUnixTimestamp(date: Date): number {
         return Math.floor(date.getTime() / 1000);
+    }
+
+
+    namespace Formatter {
+        const _cultureInfo: { MONTH, MONTH_SHORT, DAY, DAY_SHORT } = {
+            MONTH: [
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December',
+            ],
+            MONTH_SHORT: [
+                'Jan',
+                'Feb',
+                'Mar',
+                'Apr',
+                'May',
+                'June',
+                'July',
+                'Aug',
+                'Sept',
+                'Oct',
+                'Nov',
+                'Dec',
+            ],
+            DAY: [
+                'Sunday',
+                'Monday',
+                'Tuesday',
+                'Wednesday',
+                'Thursday',
+                'Friday',
+                'Saturday',
+            ],
+            DAY_SHORT: [
+                'Mon',
+                'Tues',
+                'Weds',
+                'Thurs',
+                'Fri',
+                'Sat',
+                'Sun',
+            ],
+        };
+
+        let _date: Date;
+        export function format(date: Date, format: string) {
+
+            _date = date;
+            return format
+                .replace('Mm', Mm)
+                .replace('MMM', MMM)
+                .replace('MM', MM)
+                .replace('#M', $M)
+
+                .replace('yyyy', yyyy)
+                .replace('yy', yy)
+
+                .replace('dd', dd)
+                .replace('#d', $d)
+                .replace('Dd', Dd)
+                .replace('DDD', DDD)
+
+                .replace('HH', HH)
+                .replace('hh', hh)
+                .replace('#h', $h)
+
+                .replace('mm', mm)
+                .replace('#m', $m)
+
+                .replace('ss', ss)
+                .replace('#s', $s)
+                ;
+
+        };
+
+
+
+        const yyyy = function () {
+            return String(_date.getFullYear());
+        };
+
+        const yy = function () {
+            return String(_date.getFullYear() % 100);
+        };
+
+        const $M = function () {
+            return String(_date.getMonth() + 1);
+        };
+
+        const MM = function () {
+            return pad(_date.getMonth() + 1);
+        };
+
+        const Mm = function () {
+            return _cultureInfo.MONTH_SHORT[_date.getMonth()];
+        };
+
+        const MMM = function () {
+            return _cultureInfo.MONTH[_date.getMonth()];
+        };
+
+        const $d = function () {
+            return String(_date.getDate());
+        };
+
+        const dd = function () {
+            return pad(_date.getDate());
+        };
+
+        const Dd = function () {
+            return _cultureInfo.DAY_SHORT[_date.getMonth()];
+        };
+
+        const DDD = function () {
+            return _cultureInfo.DAY_SHORT[_date.getMonth()];
+        };
+
+        const $H = function () {
+            return String(_date.getHours());
+        };
+
+        const HH = function () {
+            return pad(_date.getHours());
+        };
+        const hh = HH;
+        const $h = $H;
+
+        const $m = function () {
+            return String(_date.getMinutes());
+        };
+
+        const mm = function () {
+            return pad(_date.getMinutes());
+        };
+
+        const $s = function () {
+            return String(_date.getSeconds());
+        };
+
+        const ss = function () {
+            return pad(_date.getSeconds());
+        };
+
+
+        function pad(value) {
+            return value > 9 ? value : '0' + value;
+        }
+
     }
 }
 
