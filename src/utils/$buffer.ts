@@ -98,7 +98,7 @@ namespace utils {
         if (hex.length % 2 !== 0) {
             throw new Error(`Not valid hex buffer. Char count not even: ${hex}`);
         }
-        if (/^[\dabcdef]$/i.test(hex) === false) {
+        if (/^[\da-f]+$/i.test(hex) === false) {
             throw new Error(`Not valid hex buffer. Invalid char in ${hex}`);
         }
         return hex;
