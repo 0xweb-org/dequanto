@@ -29,7 +29,7 @@ export class JsonObjectStore<T> {
     }
 
 
-    async get(opts?: { cloned?: boolean }): Promise<T> {
+    async get(opts?: { cloned?: boolean }): Promise<this['options']['default']> {
         if (this.fs.errored != null) {
             throw this.fs.errored;
         }
