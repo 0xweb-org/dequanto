@@ -1,5 +1,5 @@
 import di from 'a-di';
-import { ChainAccount } from '@dequanto/ChainAccounts';
+import { ChainAccount } from '@dequanto/ChainAccountProvider';
 import { WXDaiTokenContract } from '@dequanto/chains/xdai/tokens/WXDaiTokenContract';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IToken } from '@dequanto/models/IToken';

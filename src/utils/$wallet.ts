@@ -1,4 +1,4 @@
-import { ChainAccount } from '@dequanto/ChainAccounts';
+import { ChainAccount } from '@dequanto/ChainAccountProvider';
 import { Wallet, utils } from 'ethers';
 
 export namespace $wallet {

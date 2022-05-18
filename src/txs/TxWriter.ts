@@ -5,7 +5,7 @@ import { TransactionReceipt } from 'web3-core';
 import { TxDataBuilder } from './TxDataBuilder';
 import { TxLogger } from './TxLogger';
 import '../env/BigIntSerializer'
-import { ChainAccount } from '@dequanto/ChainAccounts';
+import { ChainAccount } from '@dequanto/ChainAccountProvider';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { TAddress } from '@dequanto/models/TAddress';
 import { ChainAccountsService } from '@dequanto/ChainAccountsService';

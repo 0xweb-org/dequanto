@@ -5,6 +5,7 @@ import { $config } from './utils/$config'
 import { Wallet } from 'ethers';
 import { $address } from './utils/$address';
 import { $crypto } from './utils/$crypto';
+import { $buffer } from './utils/$buffer';
 
 
 export class ChainAccount {
@@ -43,7 +44,7 @@ export namespace ChainAccountProvider {
        return AccountsConfigProvider.get();
     }
     export function getAddressFromKey (key: string) {
-        const bytes = Buffer.from(key, 'hex');
+        const bytes = $buffer.fromHex(key);
         const wallet = new Wallet(bytes);
         return wallet.address;
     }

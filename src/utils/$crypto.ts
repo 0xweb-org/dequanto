@@ -19,8 +19,9 @@ class WebCrypto implements ICrypto {
 
 class WebCryptoPolyfill implements ICrypto {
     crypto = require('crypto');
+
     randomBytes(size: number) {
-        const bytes = this.crypto.randomBytes(32);
+        const bytes = this.crypto.randomBytes(size);
         return bytes;
     }
 }

@@ -15,7 +15,7 @@ import { ITxConfig } from '@dequanto/txs/ITxConfig';
 import type { BufferLike } from 'ethereumjs-util';
 import { TxTopicInMemoryProvider } from '@dequanto/txs/receipt/TxTopicInMemoryProvider';
 import { $class } from '@dequanto/utils/$class';
-import { ChainAccount } from '@dequanto/ChainAccounts';
+import { ChainAccount } from '@dequanto/ChainAccountProvider';
 import { ChainAccountsService } from '@dequanto/ChainAccountsService';
 
 

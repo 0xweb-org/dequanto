@@ -1,10 +1,12 @@
+import { $buffer } from '@dequanto/utils/$buffer';
+
 (BigInt as any).prototype.toJSON = function () { return this.toString() };
 (BigInt as any).prototype.toBuffer = function () {
     let hex = (this as bigint).toString(16);
     if (hex.length % 2 !== 0) {
         hex = `0${hex}`;
     }
-    return Buffer.from(hex, 'hex');
+    return $buffer.fromHex(hex);
 };
 
 (BigInt as any).prototype.valueOf = function () {

@@ -1,4 +1,4 @@
-import { ChainAccountProvider } from '@dequanto/ChainAccounts';
+import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
 import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client';
 import { $sign } from '@dequanto/utils/$sign';
 

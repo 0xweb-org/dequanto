@@ -1,4 +1,4 @@
-import { ChainAccount } from '@dequanto/ChainAccounts';
+import { ChainAccount } from '@dequanto/ChainAccountProvider';
 import { ChainAccountsService } from '@dequanto/ChainAccountsService';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TxLoggerService } from '@dequanto/loggers/TxLoggerService';

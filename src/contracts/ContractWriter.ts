@@ -7,7 +7,7 @@ import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $abiType } from '@dequanto/utils/$abiType';
 import { $abiParser } from '../utils/$abiParser';
-import { ChainAccount } from '@dequanto/ChainAccounts';
+import { ChainAccount } from '@dequanto/ChainAccountProvider';
 import { ITxConfig } from '@dequanto/txs/ITxConfig';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $logger } from '@dequanto/utils/$logger';

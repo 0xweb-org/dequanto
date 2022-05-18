@@ -1,10 +1,11 @@
 import { hashPersonalMessage, ecsign } from 'ethereumjs-util';
+import { $buffer } from './$buffer';
 
 export namespace $sign {
     export function signEC (message: string | Buffer, privateKey: string | Buffer) {
         const sig = ecsign(
-            toBuffer(message),
-            toBuffer(privateKey, { encoding: 'hex' })
+            toBuffer(message) as Buffer,
+            toBuffer(privateKey, { encoding: 'hex' }) as Buffer
         );
 
         let r = sig.r.toString('hex').padStart(64, '0')
@@ -20,16 +21,22 @@ export namespace $sign {
         }
     }
     export function signEIPHashed (message: string | Buffer, privateKey: string) {
-        const hash = hashPersonalMessage(toBuffer(message, { encoding: 'utf8' }));
+        const buffer = toBuffer(message, { encoding: 'utf8' });
+        const hash = hashPersonalMessage(buffer as Buffer);
         return signEC(hash, privateKey);
     }
 
     function toBuffer (message: string | Buffer, opts?: { encoding?: 'utf8' | 'hex' }) {
         if (typeof message === 'string') {
-            if (/^0x[\da-f]+$/i.test(message)) {
-                return Buffer.from(message.substring(2), 'hex');
+            let encoding = opts?.encoding;
+            if (encoding == null && /^0x[\da-f]+$/i.test(message)) {
+                encoding = 'hex';
+                message = message.substring(2);
             }
-            return Buffer.from(message, opts?.encoding ?? 'utf8');
+            if (encoding === 'hex') {
+                return $buffer.fromHex(message);
+            }
+            return $buffer.fromString(message, opts?.encoding ?? 'utf8');
         }
         return message;
     }

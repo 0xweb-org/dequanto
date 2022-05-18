@@ -1,4 +1,4 @@
-import { ChainAccountProvider } from '@dequanto/ChainAccounts'
+import { ChainAccountProvider } from '@dequanto/ChainAccountProvider'
 
 
 UTest({

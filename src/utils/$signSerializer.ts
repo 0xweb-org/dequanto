@@ -1,5 +1,7 @@
 import * as ethUtil from 'ethereumjs-util';
 import * as ethAbi from 'ethereumjs-abi';
+import { $buffer } from './$buffer';
+import { type BytesLike } from 'ethers';
 
 export namespace $signSerializer {
 
@@ -116,7 +118,7 @@ export namespace $signSerializer {
                     if (type === 'string') {
                         // convert string to buffer - prevents ethUtil from interpreting strings like '0xabcd' as hex
                         if (typeof value === 'string') {
-                            value = Buffer.from(value, 'utf8');
+                            value = $buffer.fromString(value);
                         }
                         return ['bytes32', ethUtil_keccak(value)];
                     }
@@ -159,7 +161,7 @@ export namespace $signSerializer {
                             encodedTypes.push('bytes32');
                             // convert string to buffer - prevents ethUtil from interpreting strings like '0xabcd' as hex
                             if (typeof value === 'string') {
-                                value = Buffer.from(value, 'utf8');
+                                value = $buffer.fromString(value, 'utf8');
                             }
                             value = ethUtil_keccak(value);
                             encodedValues.push(value);
@@ -298,7 +300,7 @@ export namespace $signSerializer {
             useV4 = true
         ): Buffer {
             const sanitizedData = this.sanitizeData(typedData);
-            const parts = [Buffer.from('1901', 'hex')];
+            const parts = [$buffer.fromHex('1901')];
 
             parts.push(
                 this.hashStruct(
@@ -319,13 +321,13 @@ export namespace $signSerializer {
                 );
             }
 
-            return ethUtil_keccak(Buffer.concat(parts));
+            return ethUtil_keccak($buffer.concat(parts));
         }
     };
 
 
 
-    function ethUtil_keccak (value: string | Buffer) {
+    function ethUtil_keccak (value: BytesLike) {
         if (typeof value === 'string') {
             if (value.startsWith('0x')) {
                 value = Buffer.from(value.substring(2), 'hex');
@@ -333,7 +335,7 @@ export namespace $signSerializer {
                 value = Buffer.from(value);
             }
         }
-        return ethUtil.keccak(value);
+        return ethUtil.keccak(value as Buffer);
     }
 
 }

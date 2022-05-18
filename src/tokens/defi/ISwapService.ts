@@ -1,4 +1,4 @@
-import { ChainAccount } from '@dequanto/ChainAccounts';
+import { ChainAccount } from '@dequanto/ChainAccountProvider';
 import { IToken } from '@dequanto/models/IToken';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 
