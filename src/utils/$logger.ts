@@ -15,8 +15,8 @@ export namespace $logger {
     }
 
 
-    function colored (...args) {
-        for (let i = 0; i > args.length; i++) {
+    function colored (args: (string | any)[]) {
+        for (let i = 0; i < args.length; i++) {
             let x = args[i];
             if (typeof x !== 'string') {
                 continue;
