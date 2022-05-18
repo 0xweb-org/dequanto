@@ -1,4 +1,4 @@
-import { is_NODE } from 'atma-utils/is';
+import { is_NODE } from 'atma-utils';
 import { type Bytes } from 'ethers';
 
 interface IBufferUtils {
