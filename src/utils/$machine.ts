@@ -6,8 +6,7 @@ export namespace $machine {
     export function id(original: boolean = false): Promise<string> {
         return new Promise((resolve: Function, reject: Function): Object => {
 
-            const exec = require('child_process');
-
+            const { exec } = require('child_process');
             return exec(getCommand(), {}, (err: any, stdout: any, stderr: any) => {
                 if (err) {
                     return reject(
