@@ -13,6 +13,10 @@ export interface IProviderEndpoint {
     safe?: boolean
 }
 export class Config {
+    settings: {
+        /** Root path of the dequanto library */
+        base?: string
+    }
     accounts: {
         [platform in TPlatform]: {
             [name: string]: {

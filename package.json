@@ -4,7 +4,7 @@
   "scripts": {
     "hardhat": "hardhat node",
     "build": "tsc -p tsconfig-src.json",
-    "test": "atma --openssl-legacy-provider test"
+    "test": "atma --openssl-legacy-provider test --config 'settings.base=./'"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.5",

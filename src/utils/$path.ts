@@ -1,4 +1,5 @@
 import { class_Uri } from 'atma-utils';
+import { $config } from './$config';
 
 export namespace $path {
     let root: string = null;
@@ -9,6 +10,12 @@ export namespace $path {
     }
 
     function getRoot () {
+        let base = $config.get('settings.base');
+        if (base != null) {
+            let cwd = process.cwd();
+            return class_Uri.combine('file://' + cwd, base);
+        }
+
         let uri = new class_Uri('file://' + __dirname + '/');
         while (true) {
             let dir = getDirName(uri.path);
