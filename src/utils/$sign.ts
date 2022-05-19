@@ -1,5 +1,6 @@
 import { hashPersonalMessage, ecsign } from 'ethereumjs-util';
 import { $buffer } from './$buffer';
+import { $is } from './$is';
 
 export namespace $sign {
     export function signEC (message: string | Buffer, privateKey: string | Buffer) {
@@ -21,7 +22,7 @@ export namespace $sign {
         }
     }
     export function signEIPHashed (message: string | Buffer, privateKey: string) {
-        const buffer = toBuffer(message, { encoding: 'utf8' });
+        const buffer = toBuffer(message);
         const hash = hashPersonalMessage(buffer as Buffer);
         return signEC(hash, privateKey);
     }
@@ -29,7 +30,7 @@ export namespace $sign {
     function toBuffer (message: string | Buffer, opts?: { encoding?: 'utf8' | 'hex' }) {
         if (typeof message === 'string') {
             let encoding = opts?.encoding;
-            if (encoding == null && /^0x[\da-f]+$/i.test(message)) {
+            if (encoding == null && $is.hexString(message)) {
                 encoding = 'hex';
                 message = message.substring(2);
             }

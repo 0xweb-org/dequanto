@@ -1,10 +1,10 @@
 {
   "name": "dequanto",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "scripts": {
     "hardhat": "hardhat node",
     "build": "tsc -p tsconfig-src.json",
-    "test": "atma --openssl-legacy-provider test --config 'settings.base=./'"
+    "test": "atma --openssl-legacy-provider test --config='settings.base=./'"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.5",

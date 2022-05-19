@@ -36,9 +36,14 @@ export namespace $config {
         envOptions = {};
         if (argv != null) {
             for (let i = 0; i < argv.length; i++) {
-                if (argv[i] === '--config') {
-                    let value = argv[i + 1];
-                    value = trimQuites(value);
+                let key = argv[i];
+                let value = argv[i + 1];
+                if (key.startsWith('--config=')) {
+                    value = key.replace('--config=', '');
+                    key = '--config';
+                }
+                if (key === '--config') {
+                    value = trimQuotes(value);
                     if (value === '') {
                         continue;
                     }
@@ -61,7 +66,7 @@ export namespace $config {
         }
         return envOptions;
     }
-    function trimQuites(value: string): string {
+    function trimQuotes(value: string): string {
         value = value?.trim() ?? '';
         let q = /^['"]/.exec(value);
         if (q) {

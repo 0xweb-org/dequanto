@@ -238,7 +238,6 @@ export abstract class Web3Client implements IWeb3Client {
     }
 
     sendSignedTransaction(signedTxBuffer: string) {
-        console.log('sending', signedTxBuffer);
         return this.pool.callPromiEvent(web3 => {
             return web3.eth.sendSignedTransaction(signedTxBuffer);
         }, { preferSafe: true, distinct: true });

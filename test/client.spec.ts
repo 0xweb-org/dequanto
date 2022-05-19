@@ -41,7 +41,6 @@ UTest({
         tx.setValue(amount);
 
         let message = await tx.signToString(from.key);
-        console.log('msg', message);
         let promi = client.sendSignedTransaction(message)
 
 

@@ -34,4 +34,11 @@ export namespace $is {
         }
         return /^0x[a-fA-F0-9]{40}$/g.test(val);
     }
+
+    export function hexString(str: string | any) {
+        if (typeof str !== 'string') {
+            return false;
+        }
+        return /^0x[\da-f]+$/i.test(str);
+    }
 }
