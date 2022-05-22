@@ -10,13 +10,15 @@ import type { ITxWriterOptions, TxWriter } from '@dequanto/txs/TxWriter';
 import { $contract } from '@dequanto/utils/$contract';
 import { utils } from 'ethers'
 import { ContractStream } from './ContractStream';
-import { TransactionReceipt } from 'web3-core';
+import type { Log, PastLogsOptions, TransactionReceipt } from 'web3-core';
 import { ITxConfig } from '@dequanto/txs/ITxConfig';
 import type { BufferLike } from 'ethereumjs-util';
 import { TxTopicInMemoryProvider } from '@dequanto/txs/receipt/TxTopicInMemoryProvider';
 import { $class } from '@dequanto/utils/$class';
 import { ChainAccount } from '@dequanto/ChainAccountProvider';
 import { ChainAccountsService } from '@dequanto/ChainAccountsService';
+import { $block } from '@dequanto/utils/$block';
+import alot from 'alot';
 
 
 export abstract class ContractBase {
@@ -133,18 +135,46 @@ export abstract class ContractBase {
 
     protected $extractLogs (tx: TransactionReceipt, abiItem: AbiItem) {
         let logs = $contract.extractLogsForAbi(tx, abiItem);
-        return logs.map(log => {
+        return logs;
+    }
+    protected $extractLog (log: Log, abiItem: AbiItem) {
+        let parsed = $contract.parseLogWithAbi(log, abiItem);
+        return parsed;
+    }
+    protected async $getPastLogs(filters: PastLogsOptions) {
+        return this.client.getPastLogs(filters);
+    }
+    protected async $getPastLogsFilters(abi: AbiItem, options: {
+        topic: string
+        fromBlock?: number | Date
+        toBlock?: number | Date
+        params?: {
+            [key: string]: any
+        }
+    }): Promise<PastLogsOptions> {
+        let filters: PastLogsOptions = {};
 
-            let params = log.arguments.reduce((aggr, arg) => {
-                aggr[arg.name] = arg.value;
-                return aggr;
-            }, {});
-            return {
-                contract: log.contract,
-                arguments: log.arguments,
-                ...params
-            };
-        })
+        if (options.fromBlock) {
+            filters.fromBlock = await $block.ensureNumber(options.fromBlock, this.client);
+        }
+        if (options.toBlock) {
+            filters.toBlock = await $block.ensureNumber(options.toBlock, this.client);
+        }
+        let topics = [ options.topic ];
+        alot(abi.inputs)
+            .takeWhile(x => x.indexed)
+            .forEach(arg => {
+                let param = options.params?.[arg.name];
+                if (param == null) {
+                    topics.push(undefined);
+                    return;
+                }
+                topics.push(param);
+            })
+            .toArray();
+
+        filters.topics = topics;
+        return filters;
     }
 
     private async getContractReader () {

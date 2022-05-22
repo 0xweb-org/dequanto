@@ -80,6 +80,10 @@ export class ContractReader implements IContractReader {
         }
     }
 
+    async getLogs () {
+
+    }
+
     static async read (client: Web3Client, address: TAddress, methodAbi: string){
         let reader = new ContractReader(client);
         return reader.readAsync(address, methodAbi);

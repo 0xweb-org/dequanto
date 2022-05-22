@@ -2,13 +2,15 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { type AbiItem } from 'web3-utils';
 
-export interface ITxLogItem {
-    contract: TAddress
-    name: string
+export interface ITxLogItem<TParams = { [name: string]: any }> {
+    transactionHash: string
+    address: TAddress
+    event: string
     arguments: {
         name?: string
         value: any
-    }[],
+    }[]
+    params: TParams
 }
 
 export interface ITxLogItemDescriptor {

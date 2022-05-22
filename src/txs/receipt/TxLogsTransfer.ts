@@ -1,11 +1,7 @@
 import alot from 'alot';
 import { TPlatform } from '@dequanto/models/TPlatform';
-
-import { TransactionReceipt } from 'web3-core';
 import { TxWriter } from '../TxWriter';
 import { IKnownLogFormatter, ITxLogItem } from './ITxLogItem';
-// import { TxLogParser } from './TxLogParser';
-
 import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TokenDataProvider } from '@dequanto/tokens/TokenDataProvider';
@@ -25,10 +21,10 @@ export class TxLogsTransfer implements IKnownLogFormatter {
 
     async extractFromParsed(knownLogs: ITxLogItem[], platform: TPlatform): Promise<ITxLogsTransferData[]> {
 
-        let transfers = knownLogs.filter(x => x.name === 'Transfer');
+        let transfers = knownLogs.filter(x => x.event === 'Transfer');
         let tokenService = new TokenDataProvider(platform);
         return alot(transfers).mapAsync(async transfer => {
-            let erc20Address = transfer.contract;
+            let erc20Address = transfer.address;
             let token = await tokenService.getTokenOrDefault(erc20Address);
             let [ from, to, amount ] = transfer.arguments;
             return {
@@ -49,7 +45,7 @@ export class TxLogsTransfer implements IKnownLogFormatter {
 
     async extract (transfer: ITxLogItem, platform: TPlatform): Promise<ITxLogsTransferData> {
         let tokenService = new TokenDataProvider(platform);
-        let erc20Address = transfer.contract;
+        let erc20Address = transfer.address;
         let token = await tokenService.getTokenOrDefault(erc20Address);
         let [ from, to, amount ] = transfer.arguments;
         return {

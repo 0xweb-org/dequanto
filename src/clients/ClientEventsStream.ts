@@ -1,14 +1,15 @@
-import { type AbiItem } from 'web3-utils';
-import { Contract, EventData } from 'web3-eth-contract';
-import { Subscription } from 'web3-core-subscriptions';
+import type { AbiItem } from 'web3-utils';
+import type { Contract } from 'web3-eth-contract';
+import type { Subscription } from 'web3-core-subscriptions';
+import type { EventLog } from 'web3-core';
 
 export class ClientEventsStream<T = any> {
-    constructor(public contract: Contract, public eventAbi: AbiItem, public stream: Subscription<EventData> ) {
+    constructor(public contract: Contract, public eventAbi: AbiItem, public stream: Subscription<EventLog> ) {
 
     }
 
-    onData (cb: (event: EventData, ...args) => void): this {
-        this.stream.on('data', (event: EventData) => {
+    onData (cb: (event: EventLog, ...args) => void): this {
+        this.stream.on('data', (event: EventLog) => {
             let inputs = this.eventAbi.inputs.map(arg => {
                 let val = event.returnValues[arg.name];
                 return val;
@@ -19,7 +20,6 @@ export class ClientEventsStream<T = any> {
     }
     onConnected (cb): this {
         this.stream.on('connected', data => {
-            console.log('CONNECTED', data);
             cb(data);
         });
         return this;

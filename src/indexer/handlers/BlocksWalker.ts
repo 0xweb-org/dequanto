@@ -13,6 +13,7 @@ import { $date } from '@dequanto/utils/$date';
 import { class_Dfr } from 'atma-utils';
 import { $is } from '@dequanto/utils/$is';
 import { $logger } from '@dequanto/utils/$logger';
+import { $block } from '@dequanto/utils/$block';
 
 interface IBlockIndexer {
     name: string
@@ -162,14 +163,7 @@ export class BlocksWalker {
         if (mix == null) {
             return this.client.getBlockNumber();
         }
-        if (typeof mix === 'number') {
-            return mix;
-        }
-        if (mix instanceof Date) {
-            let dateResolver = di.resolve(BlockDateResolver, this.client)
-            return await dateResolver.getBlockNumberFor(mix);
-        }
-        throw new Error(`Invalid getBlockNumber param: ${mix}`);
+        return $block.ensureNumber(mix, this.client);
     }
 
     private async processBlock (nr: number) {

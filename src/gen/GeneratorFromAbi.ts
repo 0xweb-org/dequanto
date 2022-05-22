@@ -50,6 +50,12 @@ export class GeneratorFromAbi {
             .filter(Boolean)
             .map(Str.formatMethod);
 
+        let eventsFetchersArr = abiJson
+            .filter(x => x.type === 'event')
+            .map(x => Gen.serializeEventFetcher(x))
+            .filter(Boolean)
+            .map(Str.formatMethod);
+
         let eventInterfaces = abiJson
             .filter(x => x.type === 'event')
             .map(x => Gen.serializeEventInterface(x))
@@ -60,6 +66,7 @@ export class GeneratorFromAbi {
         let methods = methodsArr.join('\n\n');
         let events = eventsArr.join('\n\n');
         let eventsExtractors = eventsExtractorsArr.join('\n\n');
+        let eventsFetchers = eventsFetchersArr.join('\n\n');
 
         let name = opts.name;
         let templatePath = $path.resolve(`/src/gen/ContractTemplate.ts`);
@@ -120,6 +127,7 @@ export class GeneratorFromAbi {
             .replace(`/* METHODS */`, methods)
             .replace(`/* EVENTS */`, events)
             .replace(`/* EVENTS_EXTRACTORS */`, eventsExtractors)
+            .replace(`/* EVENTS_FETCHERS */`, eventsFetchers)
             .replace(`$ABI$`, JSON.stringify(abiJson))
             .replace(`$DATE$`, $date.format(new Date(), 'yyyy-MM-dd HH:mm'))
             .replace(`$EXPLORER_URL$`, explorerUrl)
@@ -182,16 +190,37 @@ namespace Gen {
     export function serializeEvent (abi: AbiItem) {
         let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
         return `
-            on${abi.name} (fn: (event: EventData, ${fnInputArguments}) => void): ClientEventsStream<any> {
+            on${abi.name} (fn: (event: EventLog, ${fnInputArguments}) => void): ClientEventsStream<any> {
                 return this.$on('${abi.name}', fn);
             }
         `;
     }
     export function serializeEventExtractor (abi: AbiItem) {
         return `
-            extractLogs${abi.name} (tx: TransactionReceipt): TLog${abi.name}[] {
+            extractLogs${abi.name} (tx: TransactionReceipt): ITxLogItem<TLog${abi.name}>[] {
                 let abi = this.$getAbiItem('event', '${abi.name}');
-                return this.$extractLogs(tx, abi) as any as TLog${abi.name}[];
+                return this.$extractLogs(tx, abi) as any as ITxLogItem<TLog${abi.name}>[];
+            }
+        `;
+    }
+    export function serializeEventFetcher (abi: AbiItem) {
+        let inputs = abi.inputs;
+        let indexed = alot(inputs).takeWhile(x => x.indexed).toArray();
+        let indexedParams = indexed.map(param => `${param.name}?: ${ $abiType.getTsType(param.type, param) }`)
+        return `
+            async getPastLogs${abi.name} (options: {
+                fromBlock?: number | Date
+                toBlock?: number | Date
+                params?: { ${indexedParams} }
+            }): Promise<ITxLogItem<TLog${abi.name}>[]> {
+                let topic = '${$abiUtils.getTopicSignature(abi)}';
+                let abi = this.$getAbiItem('event', '${abi.name}');
+                let filters = await this.$getPastLogsFilters(abi, {
+                    topic,
+                    ...options
+                });
+                let logs= await this.$getPastLogs(filters);
+                return logs.map(log => this.$extractLog(log, abi)) as any;
             }
         `;
     }
@@ -199,7 +228,6 @@ namespace Gen {
         let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
         return `
             type TLog${abi.name} = {
-                contract: TAddress,
                 ${fnInputArguments}
             }
         `;

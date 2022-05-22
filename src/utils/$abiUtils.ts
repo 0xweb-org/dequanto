@@ -28,6 +28,14 @@ export namespace $abiUtils {
         let hash = $contract.keccak256(signature);
         return hash.substring(0, 10);
     }
+
+    export function getTopicSignature (abi: AbiItem) {
+        let types = abi.inputs?.map(serializeMethodSignatureArgumentType) ?? [];
+        let signature = `${abi.name}(${types.join(',')})`;
+        let hash = $contract.keccak256(signature);
+        return hash;
+    }
+
     function serializeMethodSignatureArgumentType (input: AbiItem['inputs'][0]) {
         if (input.type === 'tuple') {
             let types = input.components.map(x => serializeMethodSignatureArgumentType(x));

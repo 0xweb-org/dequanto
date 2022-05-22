@@ -34,6 +34,17 @@ export namespace $contract {
             })
         return logs;
     }
+    // export function formatLogForAbi (log: ITxLogItem) {
+    //     let params = log.arguments.reduce((aggr, arg) => {
+    //         aggr[arg.name] = arg.value;
+    //         return aggr;
+    //     }, {});
+    //     return {
+    //         contract: log.contract,
+    //         arguments: log.arguments,
+    //         ...params
+    //     };
+    // }
 
     export function parseLogWithAbi(log: Log, abiItem: AbiItem): ITxLogItem {
         let inputs = abiItem.inputs.slice();
@@ -57,11 +68,17 @@ export namespace $contract {
                 };
             }));
         }
+        let params = args.reduce((aggr, arg) => {
+            aggr[arg.name] = arg.value;
+            return aggr;
+        }, {});
 
         return {
-            contract: log.address,
-            name: abiItem.name,
+            transactionHash: log.transactionHash,
+            address: log.address,
+            event: abiItem.name,
             arguments: args,
+            params: params,
         };
     }
 }

@@ -7,7 +7,7 @@ import { BlockHeader, BlockTransactionString, Syncing } from 'web3-eth';
 import { ClientPool, IPoolClientConfig, IPoolWeb3Request } from './ClientPool';
 import { ClientPoolTrace } from './ClientPoolStats';
 import { IWeb3Client, IWeb3ClientOptions } from './interfaces/IWeb3Client';
-import { Log, LogsOptions, type TransactionConfig } from 'web3-core';
+import { Log, LogsOptions, type PastLogsOptions, type TransactionConfig } from 'web3-core';
 import { Subscription } from 'web3-core-subscriptions';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { Wallet } from 'ethers';
@@ -258,6 +258,12 @@ export abstract class Web3Client implements IWeb3Client {
     getBlockNumberCached () {
         return this.pool.call(web3 => {
             return web3.eth.getBlockNumber();
+        });
+    }
+
+    getPastLogs (options: PastLogsOptions) {
+        return this.pool.call(web3 => {
+            return web3.eth.getPastLogs(options)
         });
     }
 
