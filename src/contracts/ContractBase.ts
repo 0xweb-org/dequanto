@@ -160,6 +160,7 @@ export abstract class ContractBase {
         if (options.toBlock) {
             filters.toBlock = await $block.ensureNumber(options.toBlock, this.client);
         }
+
         let topics = [ options.topic ];
         alot(abi.inputs)
             .takeWhile(x => x.indexed)

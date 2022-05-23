@@ -5,7 +5,7 @@ import type { ContractBase } from '@dequanto/contracts/ContractBase';
 import type { Constructor } from 'atma-utils/mixin';
 import type { ChainAccount } from '@dequanto/ChainAccountProvider';
 import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client';
-import { $config } from '@dequanto/utils/$config';
+
 
 export class HardhatProvider {
 
@@ -22,7 +22,6 @@ export class HardhatProvider {
 
     @memd.deco.memoize()
     static async resolve<T extends ContractBase>(Ctor: Constructor<T>, ...params): Promise<T> {
-
         const ethers = (hh as any).ethers;
         const Factory: Ethers.ContractFactory = await ethers.getContractFactory(Ctor.name);
         const contract = await Factory.deploy(...params);
@@ -35,7 +34,7 @@ export class HardhatProvider {
     }
 
     static client() {
-        $config.set('web3.hardhat.endpoints', []);
+        //$config.set('web3.hardhat.endpoints', []);
 
         const web3 = (hh as any).web3;
         const client = new HardhatWeb3Client({ web3, chainId: 1337 });

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2022-05-23 00:46
+ *  AUTO-Generated Class: 2022-05-23 14:34
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -49,7 +49,7 @@ export class Foo extends ContractBase {
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogUpdated>[];
     }
 
-    async getPastLogsUpdated (options: {
+    async getPastLogsUpdated (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }

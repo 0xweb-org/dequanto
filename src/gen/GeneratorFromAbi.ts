@@ -208,7 +208,7 @@ namespace Gen {
         let indexed = alot(inputs).takeWhile(x => x.indexed).toArray();
         let indexedParams = indexed.map(param => `${param.name}?: ${ $abiType.getTsType(param.type, param) }`)
         return `
-            async getPastLogs${abi.name} (options: {
+            async getPastLogs${abi.name} (options?: {
                 fromBlock?: number | Date
                 toBlock?: number | Date
                 params?: { ${indexedParams} }

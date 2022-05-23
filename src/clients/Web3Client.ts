@@ -52,8 +52,7 @@ export abstract class Web3Client implements IWeb3Client {
             console.dir(this.options, { depth: null });
             throw new Error(`Neither Node endpoints nor web3 instance provided`);
         }
-
-        this.pool = new ClientPool(this.options)
+        this.pool = new ClientPool(this.options);
     }
 
     getEventStream (address: TAddress, abi: any, event: string) {
@@ -261,7 +260,38 @@ export abstract class Web3Client implements IWeb3Client {
         });
     }
 
-    getPastLogs (options: PastLogsOptions) {
+    async getPastLogs (options: PastLogsOptions) {
+        let MAX = this.pool.getOptionForFetchableRange();
+        if (typeof options.fromBlock === 'number') {
+            let to = options.toBlock;
+            if (typeof to !== 'number') {
+                to = await this.getBlockNumber();
+            }
+            let range = to - options.fromBlock;
+            if (range > MAX) {
+                let logs = [];
+                let cursor = options.fromBlock;
+                let pages = Math.ceil(range / MAX);
+                let page = 0;
+                let complete = false;
+                while (complete === false) {
+                    ++page;
+                    console.log(`Get past logs paged: ${page}/${pages}. Loaded ${logs.length}`);
+                    let end = cursor + MAX;
+                    if (end > to) {
+                        end = options.toBlock as number;
+                        complete = true;
+                    }
+                    let paged = await this.pool.call(web3 => web3.eth.getPastLogs({
+                        ...options,
+                        fromBlock: cursor,
+                        toBlock: end ?? undefined,
+                    }));
+                    logs.push(...paged);
+                    cursor += MAX + 1;
+                }
+            }
+        }
         return this.pool.call(web3 => {
             return web3.eth.getPastLogs(options)
         });

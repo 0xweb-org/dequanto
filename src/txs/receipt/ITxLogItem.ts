@@ -3,6 +3,7 @@ import { TPlatform } from '@dequanto/models/TPlatform';
 import { type AbiItem } from 'web3-utils';
 
 export interface ITxLogItem<TParams = { [name: string]: any }> {
+    blockNumber: number
     transactionHash: string
     address: TAddress
     event: string

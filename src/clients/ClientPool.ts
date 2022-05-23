@@ -25,6 +25,9 @@ export interface IPoolClientConfig {
     name?: string
     /** Will be used only if manually requested with .getWeb3, or .getNodeUrl */
     manual?: boolean
+
+    /** max block range per request when getting for example the past logs*/
+    fetchableBlockRange?: number
 }
 export interface IPoolWeb3Request {
     ws?: boolean
@@ -124,6 +127,15 @@ export class ClientPool {
     }
     async releaseWeb3 () {
 
+    }
+
+    getOptionForFetchableRange (): number {
+        const DEFAULT = 1000;
+        let max = alot(this.clients).max(x => x.config?.fetchableBlockRange ?? 0);
+        if (max === 0) {
+            return DEFAULT;
+        }
+        return max;
     }
 
     callPromiEvent <TResult extends PromiEvent<any>> (

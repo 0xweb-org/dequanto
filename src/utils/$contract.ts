@@ -74,6 +74,7 @@ export namespace $contract {
         }, {});
 
         return {
+            blockNumber: log.blockNumber,
             transactionHash: log.transactionHash,
             address: log.address,
             event: abiItem.name,

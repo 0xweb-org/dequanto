@@ -3,6 +3,9 @@ import { IWeb3EndpointOptions } from '../interfaces/IWeb3EndpointOptions';
 export namespace ClientEndpoints {
 
     export function filterEndpoints (endpoints, opts: IWeb3EndpointOptions) {
+        if (opts?.web3) {
+            return [];
+        }
         if (opts?.endpoints) {
             endpoints = opts.endpoints
         }
