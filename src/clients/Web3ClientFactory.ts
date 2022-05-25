@@ -6,6 +6,7 @@ import { IWeb3EndpointOptions } from './interfaces/IWeb3EndpointOptions';
 import { PolyWeb3Client } from './PolyWeb3Client';
 import { ArbWeb3Client } from '@dequanto/chains/arbitrum/ArbWeb3Client';
 import { XDaiWeb3Client } from '@dequanto/chains/xdai/XDaiWeb3Client';
+import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 
 export namespace Web3ClientFactory {
 
@@ -21,6 +22,8 @@ export namespace Web3ClientFactory {
                 return di.resolve(ArbWeb3Client, opts);
             case 'xdai':
                 return di.resolve(XDaiWeb3Client, opts);
+            case 'hardhat':
+                return di.resolve(HardhatProvider).client();
             default:
                 throw new Error(`Unsupported platform ${platform} for web3 client`);
         }

@@ -10,7 +10,7 @@ import { ClientEndpoints } from './utils/ClientEndpoints';
 export class HardhatWeb3Client extends Web3Client {
 
     platform: TPlatform = 'hardhat'
-    chainId: number = this.options.chainId ?? 31337
+    chainId: number = this.options.chainId ?? 1337
     chainToken = 'ETH';
     TIMEOUT: number = 5 * 60 * 1000;
     defaultGasLimit = 2_000_000

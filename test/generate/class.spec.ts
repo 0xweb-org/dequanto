@@ -77,12 +77,13 @@ UTest({
         await File.copyTo('/test/tmp/eth/Foo/Foo.ts', '/test/fixtures/contracts/');
 
 
-        let foo = await HardhatProvider.resolve(Foo, 'hello');
+        let provider = new HardhatProvider();
+        let foo = await provider.resolve(Foo, 'hello');
         let name = await foo.name();
         eq_(name, 'hello');
 
 
-        let tx = await foo.setName(HardhatProvider.deployer(), 'bar');
+        let tx = await foo.setName(provider.deployer(), 'bar');
         await tx.wait();
 
         name = await foo.name();

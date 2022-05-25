@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2022-05-23 14:34
+ *  AUTO-Generated Class: 2022-05-25 02:00
  *  Implementation: https://polygonscan.com/address/0x7ceb23fd6bc0add59e62ac25578270cff1b9f619#code
  */
 import di from 'a-di';
