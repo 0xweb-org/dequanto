@@ -114,6 +114,15 @@ export class GeneratorFromAbi {
                 ];
                 explorerUrl = `https://etherscan.io/address/${opts.implementation}#code`;
                 break;
+            case 'hardhat':
+                EtherscanStr = 'Etherscan';
+                EthWeb3ClientStr = 'HardhatWeb3Client';
+                imports = [
+                    `import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'`,
+                    `import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client'`,
+                ];
+                explorerUrl = ``;
+                break;
             default:
                 throw new Error(`Unknown network ${opts.network}`);
         }
