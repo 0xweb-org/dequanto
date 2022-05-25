@@ -5,8 +5,17 @@ export namespace $path {
     let root: string = null;
 
     export function resolve (path: string) {
-
         return class_Uri.combine(root ?? (root = getRoot()), path)
+    }
+    export function isAbsolute(path: string) {
+        if (path[0] === '/') {
+            return true;
+        }
+        let hasProtocol = /^[\w]{2,5}:[\\\/]{2,}/.test(path);
+        if (hasProtocol) {
+            return true;
+        }
+        return false;
     }
 
     function getRoot () {

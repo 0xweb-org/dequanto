@@ -19,6 +19,8 @@ export namespace BlockChainExplorerProvider {
                 return di.resolve(Arbiscan);
             case 'xdai':
                 return di.resolve(XDaiscan);
+            case 'hardhat':
+                return null;
             default:
                 throw new Error(`Unsupported platform ${platform} for block chain explorer`);
         }

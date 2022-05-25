@@ -10,6 +10,7 @@ import { File, Directory } from 'atma-io';
 import { class_Uri, obj_setProperty } from 'atma-utils';
 import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
 import { TPlatform } from '@dequanto/models/TPlatform';
+import { $path } from '@dequanto/utils/$path';
 
 export interface IGenerateOptions {
     platform: TPlatform
@@ -156,7 +157,7 @@ export class Generator {
         } else {
             let path = abi;
             let location = this.options.location;
-            if (location && path[0] !== '/') {
+            if (location && $path.isAbsolute(path) === false) {
                 // if path not relative, check the file at ClassFile location
                 let relPath = class_Uri.combine(location, path);
                 if (await File.existsAsync(relPath)) {
