@@ -5,11 +5,9 @@ import { ITxWriterOptions, TxWriter } from '@dequanto/txs/TxWriter';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 import { TAddress } from '@dequanto/models/TAddress';
-import { $abiType } from '@dequanto/utils/$abiType';
 import { $abiParser } from '../utils/$abiParser';
 import { ChainAccount } from '@dequanto/ChainAccountProvider';
 import { ITxConfig } from '@dequanto/txs/ITxConfig';
-import { $bigint } from '@dequanto/utils/$bigint';
 import { $logger } from '@dequanto/utils/$logger';
 import { $class } from '@dequanto/utils/$class';
 
@@ -17,8 +15,9 @@ interface IChainAccountSender extends ChainAccount {
     value?: number | string | bigint
 }
 
+
 export interface IContractWriter {
-    writeAsync <T = any> (eoa: { address?: string, key: string }, methodAbi: string | AbiItem, ...params: any[]): Promise<TxWriter>
+    writeAsync<T = any>(eoa: { address?: string, key: string }, methodAbi: string | AbiItem, ...params: any[]): Promise<TxWriter>
 }
 
 export class ContractWriter implements IContractWriter {
@@ -31,13 +30,23 @@ export class ContractWriter implements IContractWriter {
 
     }
 
-    $config (builderConfig?: ITxConfig, writerConfig?: ITxWriterOptions): this {
+    $config(builderConfig?: ITxConfig, writerConfig?: ITxWriterOptions): this {
         return $class.curry(this, {
             builderConfig: builderConfig ?? this.builderConfig,
             writerConfig: writerConfig ?? this.writerConfig,
         });
     }
 
+    /**
+    * We split Tx sending in two awaitable steps
+    * 1. This method prepairs(gas, nonce, etc) - and sends the Tx
+    * 2. With returned writer you can subscribe to events and/or wait for Tx to be mined
+    * @param eoa
+    * @param interfaceAbi
+    * @param params
+    * @param configs
+    * @returns {TxWriter}
+     */
     async writeAsync<T = any>(
         eoa: IChainAccountSender,
         interfaceAbi: string | AbiItem,
@@ -88,7 +97,7 @@ export class ContractWriter implements IContractWriter {
         );
 
         writer.on('log', message => {
-            $logger.log(`TxContract ${ abi.name}; ${message}`);
+            $logger.log(`TxContract ${abi.name}; ${message}`);
         });
         return writer;
     }

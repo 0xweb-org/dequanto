@@ -216,7 +216,7 @@ export abstract class Web3Client implements IWeb3Client {
             return gasAmount;
         })
     }
-    async getAccounts (options: IPoolWeb3Request): Promise<TAddress[]> {
+    async getAccounts (options?: IPoolWeb3Request): Promise<TAddress[]> {
         let web3 = await this.getWeb3(options);
         return web3.eth.getAccounts();
     }
