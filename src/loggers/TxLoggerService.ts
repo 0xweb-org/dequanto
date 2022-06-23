@@ -1,4 +1,4 @@
-import { ChainAccount } from '@dequanto/ChainAccountProvider';
+import { ChainAccount } from "@dequanto/models/TAccount";
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { IToken } from '@dequanto/models/IToken';

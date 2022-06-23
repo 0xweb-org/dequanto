@@ -4,6 +4,7 @@
  */
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
+import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
@@ -35,10 +36,7 @@ export class $NAME$ extends ContractBase {
     abi = $ABI$
 }
 
-type TAccount = string | {
-    address?: TAddress,
-    key?: string,
-    name?: string,
+type TSender = TAccount & {
     value?: string | number | bigint
 }
 

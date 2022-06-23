@@ -1,6 +1,7 @@
 import di from 'a-di';
 import alot from 'alot';
-import { ChainAccount, ChainAccountProvider } from './ChainAccountProvider';
+import { ChainAccountProvider } from './ChainAccountProvider';
+import { ChainAccount } from "./models/TAccount";
 import { JsonArrayStore } from './json/JsonArrayStore';
 import { TAddress } from './models/TAddress';
 import { TPlatform } from './models/TPlatform';

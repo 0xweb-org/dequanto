@@ -2,7 +2,7 @@ import memd from 'memd';
 import type Ethers from 'ethers'
 import type { ContractBase } from '@dequanto/contracts/ContractBase';
 import type { Constructor } from 'atma-utils/mixin';
-import type { ChainAccount } from '@dequanto/ChainAccountProvider';
+import { ChainAccount } from "@dequanto/models/TAccount";
 import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client';
 
 

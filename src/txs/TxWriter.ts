@@ -1,11 +1,11 @@
+import '../env/BigIntSerializer'
 import di from 'a-di';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { class_Dfr, class_EventEmitter } from 'atma-utils';
 import { TransactionReceipt } from 'web3-core';
 import { TxDataBuilder } from './TxDataBuilder';
 import { TxLogger } from './TxLogger';
-import '../env/BigIntSerializer'
-import { ChainAccount } from '@dequanto/ChainAccountProvider';
+import { ChainAccount, SafeAccount, TAccount } from "@dequanto/models/TAccount";
 import { $bigint } from '@dequanto/utils/$bigint';
 import { TAddress } from '@dequanto/models/TAddress';
 import { ChainAccountsService } from '@dequanto/ChainAccountsService';
@@ -17,6 +17,8 @@ import { $logger } from '@dequanto/utils/$logger';
 import { ITxLogItem } from './receipt/ITxLogItem';
 import { TxLogParser } from './receipt/TxLogParser';
 import { type PromiEvent } from 'web3-core';
+import { GnosisSafe } from '@dequanto/safe/GnosisSafe';
+import { $account } from '@dequanto/utils/$account';
 
 interface ITxWriterEvents {
     transactionHash (hash: string)
@@ -41,6 +43,8 @@ export interface ITxWriterOptions {
 }
 
 export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
+
+    private isSafe = $account.isSafe(this.account);
 
     onSent = new class_Dfr<string>();
     onCompleted = new class_Dfr<TransactionReceipt>();
@@ -80,7 +84,8 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
     private logger = new TxLogger(
         this.id,
-        this.account.name ?? this.account.key,
+        this.getSenderName(),
+
         this.builder
     );
     private confirmationAwaiters = [] as { count: number, promise }[]
@@ -89,7 +94,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     protected constructor (
         public client: Web3Client,
         public builder: TxDataBuilder,
-        public account: { name?: string, key: string, address: string }
+        public account: TAccount
     ) {
         super();
     }
@@ -115,11 +120,25 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     }
 
     private async sendTxInner () {
+
+        if (this.isSafe) {
+            let safeAccount = this.account as SafeAccount;
+            let sender = await this.getSender();
+            let safe = new GnosisSafe(safeAccount.safeAddress, sender, this.client);
+            let innerWriter = await safe.execute(this);
+
+            this.pipeInnerWriter(innerWriter);
+            return;
+        }
+
         let time = Date.now();
-        let key = this.account?.key;
+        let sender: ChainAccount = await this.getSender()
+
+
+        let key = sender?.key;
         let signedTxBuffer = key == null
             ? null
-            : await this.builder.signToString(this.account.key);
+            : await this.builder.signToString(sender.key);
 
         let tx = <TxWriter['tx']> {
             timestamp: Date.now(),
@@ -134,7 +153,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
         let promiEvent: PromiEvent<TransactionReceipt>;
         if (signedTxBuffer != null) {
-            promiEvent =  this
+            promiEvent = this
                 .client
                 .sendSignedTransaction(signedTxBuffer);
         } else {
@@ -175,7 +194,6 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
             //     }
             // })
             .on('error', error => {
-                console.log('ERROR', error.message);
                 this.clearTimer(tx);
                 this.logger.logError(error);
                 this.emit('error', error);
@@ -277,6 +295,26 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
                 this.onCompleted.reject(err);
             });
     }
+
+    private async getSender (): Promise<ChainAccount> {
+        let account = this.account;
+
+        let sender = $account.getSender(account);
+        if (sender.key == null) {
+            let addressOrName = sender.address ?? sender.name;
+            let service = di.resolve(ChainAccountsService);
+            let fromStorage = await service.get(addressOrName, this.client.platform);
+            if (fromStorage) {
+                account = fromStorage;
+            }
+        }
+        return sender;
+    }
+    private getSenderName () {
+        let sender = $account.getSender(this.account);
+        return sender.name ?? sender.address;
+    }
+
     private async extractLogs(receipt: TransactionReceipt, tx: TxWriter['tx']) {
         let parser = di.resolve(TxLogParser);
         let logs = await parser.parse(receipt);
@@ -284,10 +322,11 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     }
 
     private async fundAccountAndResend () {
-        let account = this.builder.config.gasFunding;
+        let gasFunding = this.builder.config.gasFunding;
+        let sender = $account.getSender(this.account);
         await this.builder.setGas({
             gasEstimation: true,
-            from: this.account.address
+            from: sender.address
         });
 
         let { gasLimit } = this.builder.data;
@@ -297,7 +336,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         let LITTLE_BIT_MORE = 1.3;
         let wei = $bigint.multWithFloat(gasPrice * BigInt(gasLimit as any), LITTLE_BIT_MORE);
 
-        let fundTx = await this.transferNative(account, this.account.address, wei);
+        let fundTx = await this.transferNative(gasFunding, sender.address, wei);
         await fundTx.onCompleted;
         // account was funded resubmit the tx
         this.resubmit();
@@ -338,6 +377,18 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         }
         this.sendTxInner();
     }
+    private pipeInnerWriter (innerWriter: TxWriter) {
+        innerWriter.onCompleted.then(
+            (receipt) => this.onCompleted.resolve(receipt),
+            (error) => this.onCompleted.reject(error)
+        );
+        innerWriter.onSent.then(
+            (hash) => this.onSent.resolve(hash),
+            (error) => this.onSent.reject(error)
+        );
+        innerWriter.on('error', error => this.emit('error', error));
+        innerWriter.on('log', message => this.emit('log', message));
+    }
 
     /** Use this transfer in case of additional account funding */
     private async transferNative (from: ChainAccount, to: TAddress, amount: bigint): Promise<TxWriter> {
@@ -355,11 +406,21 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     }
 
     toJSON (): TTxWriterJson {
+        let account = this.account;
+        if (typeof account !== 'string') {
+            account = <ChainAccount | SafeAccount> JSON.parse(JSON.stringify(account));
+            // Clean any KEY to prevent leaking. When resubmitted if one is required should be taken from the storage
+            if ($account.isSafe(account)) {
+                delete account.operator?.key;
+            } else {
+                delete account.key;
+            }
+        }
         return {
             id: this.id,
             platform: this.client.platform,
             options: this.options,
-            account: this.account.address,
+            account: account,
             txs: this.txs,
             builder: this.builder.toJSON(),
         };
@@ -368,8 +429,8 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     static async fromJSON (json: TTxWriterJson, client?: Web3Client): Promise<TxWriter> {
         client = client ?? Web3ClientFactory.get(json.platform);
 
-        let service = di.resolve(ChainAccountsService);
-        let account = await service.get(json.account, json.platform);
+
+        let account = json.account;
 
         let builder = TxDataBuilder.fromJSON(client, account, {
             config: json.builder.config,
@@ -387,13 +448,18 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     }
 
 
-    static write (client: Web3Client, builder: TxDataBuilder, account: ChainAccount, options?: ITxWriterOptions): TxWriter {
+    static write (client: Web3Client, builder: TxDataBuilder, account: TAccount, options?: ITxWriterOptions): TxWriter {
         let writer = new TxWriter(client, builder, account);
         writer.write(options);
         return writer;
     }
 
-    static create (client: Web3Client, builder: TxDataBuilder, account: ChainAccount, options?: ITxWriterOptions): TxWriter {
+    static create (
+        client: Web3Client,
+        builder: TxDataBuilder,
+        account: TAccount,
+        options?: ITxWriterOptions
+    ): TxWriter {
         return new TxWriter(client, builder, account);
     }
 }
@@ -402,7 +468,7 @@ export type TTxWriterJson = {
     id: string
     platform: TPlatform
     options: ITxWriterOptions
-    account: TAddress
+    account: TAccount
     txs: TxWriter['txs']
     builder: ReturnType<TxDataBuilder['toJSON']>
 };

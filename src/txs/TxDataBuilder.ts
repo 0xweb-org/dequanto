@@ -1,10 +1,11 @@
-import { ChainAccount } from '@dequanto/ChainAccountProvider';
+import { TAccount } from "@dequanto/models/TAccount";
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { InputDataUtils } from '@dequanto/contracts/utils/InputDataUtils';
 import { TAddress } from '@dequanto/models/TAddress';
-import { TBufferLike } from '@dequanto/models/TBufferLike';
+import { $account } from '@dequanto/utils/$account';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { type TransactionRequest } from '@ethersproject/abstract-provider';
+import { type TransactionConfig } from 'web3-core';
 import { type AbiItem } from 'web3-utils';
 import { ITxConfig } from './ITxConfig';
 
@@ -13,7 +14,7 @@ export class TxDataBuilder {
 
     constructor(
         public client: Web3Client,
-        public account: { address?: TAddress, key: string },
+        public account: { address?: TAddress },
         public data: Partial<TransactionRequest>,
         public config: ITxConfig = null,
     ) {
@@ -171,7 +172,7 @@ export class TxDataBuilder {
     }
 
     getTxData (client: Web3Client) {
-        return <any> {
+        return <TransactionConfig> <any> {
             ...this.data,
 
             from: this.account?.address ?? void 0,
@@ -195,13 +196,15 @@ export class TxDataBuilder {
         }
     }
 
-    static fromJSON (client: Web3Client, account: ChainAccount, json: {
+    static fromJSON (client: Web3Client, account: TAccount, json: {
         config: ITxConfig,
         data: TransactionRequest,
     }) {
+
+        let sender = $account.getSender(account);
         return new TxDataBuilder(
             client,
-            account,
+            sender,
             json.data,
             json.config
         );
@@ -227,4 +230,7 @@ export class TxDataBuilder {
         }
         return null;
     }
+
+
+
 }

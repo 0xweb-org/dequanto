@@ -13,6 +13,10 @@
     "shellbee": "^0.5.16"
   },
   "dependencies": {
+    "@gnosis.pm/safe-core-sdk": "^2.1.0",
+    "@gnosis.pm/safe-ethers-lib": "^1.1.0",
+    "@gnosis.pm/safe-service-client": "^1.1.2",
+    "@gnosis.pm/safe-web3-lib": "^1.1.0",
     "a-di": "^1.0.25",
     "alot": "^0.3.0",
     "appcfg": "^0.4.64",

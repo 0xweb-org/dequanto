@@ -1,4 +1,5 @@
 import { TAddress } from '@dequanto/models/TAddress';
+import web3 from 'web3';
 
 export namespace $address {
     export function eq (a1: string, a2: string) {
@@ -31,6 +32,10 @@ export namespace $address {
 
     export function toBytes32 (address: TAddress) {
         return address.toLowerCase().substring(2).padStart(32, '0');
+    }
+
+    export function toChecksum (address: TAddress) {
+        return web3.utils.toChecksumAddress(address);
     }
 
     export const ZERO = '0x0000000000000000000000000000000000000000'

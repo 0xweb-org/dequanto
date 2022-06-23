@@ -283,8 +283,8 @@ namespace Gen {
 
         return `
             // ${$abiUtils.getMethodSignature(abi)}
-            async ${abi.name} (eoa: TAccount, ${fnInputArguments}): Promise<TxWriter> {
-                return this.$write(this.$getAbiItem('function', '${abi.name}'), eoa${callInputArguments});
+            async ${abi.name} (sender: TSender, ${fnInputArguments}): Promise<TxWriter> {
+                return this.$write(this.$getAbiItem('function', '${abi.name}'), sender${callInputArguments});
             }
         `;
     }

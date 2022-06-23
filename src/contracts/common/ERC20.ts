@@ -6,7 +6,7 @@
  * output: ./contracts/gen/base/
  */
 
-import { ERC20Base } from '@dequanto-contracts/gen/base/ERC20Base';
+import { ERC20Base } from '@dequanto-contracts/gen/base/ERC20Base/ERC20Base';
 
 export class ERC20 extends ERC20Base {
 

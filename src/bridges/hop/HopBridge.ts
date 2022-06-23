@@ -1,6 +1,6 @@
 import di from 'a-di';
 import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
-import { ChainAccount } from '@dequanto/ChainAccountProvider';
+import { ChainAccount } from "@dequanto/models/TAccount";
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { IToken } from '@dequanto/models/IToken';
 import { TPlatform } from '@dequanto/models/TPlatform';

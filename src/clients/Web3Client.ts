@@ -29,7 +29,7 @@ export abstract class Web3Client implements IWeb3Client {
         let wallet = new Wallet(privateKey);
         let tx = await wallet.signTransaction({
             ...txData,
-            type: 2,
+            type: txData.type ?? this.defaultTxType,
             chainId: this.chainId
         });
         return tx;

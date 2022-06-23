@@ -6,14 +6,7 @@ import { Wallet } from 'ethers';
 import { $address } from './utils/$address';
 import { $crypto } from './utils/$crypto';
 import { $buffer } from './utils/$buffer';
-
-
-export class ChainAccount {
-    name?: string
-    address: TAddress
-    key: string
-    platform?: TPlatform
-}
+import { ChainAccount } from './models/TAccount';
 
 
 export namespace ChainAccountProvider {

@@ -1,5 +1,6 @@
 import di from 'a-di';
-import { ChainAccount } from '@dequanto/ChainAccountProvider';
+
+import { ChainAccount, SafeAccount, TAccount } from "@dequanto/models/TAccount";
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -14,6 +15,7 @@ import { ITxConfig } from '@dequanto/txs/ITxConfig';
 import { $promise } from '@dequanto/utils/$promise';
 import { LoggerService } from '@dequanto/loggers/LoggerService';
 import { $logger } from '@dequanto/utils/$logger';
+import { $account } from '@dequanto/utils/$account';
 
 
 export class TokenTransferService {
@@ -48,8 +50,8 @@ export class TokenTransferService {
         let ANYTOKEN = 'USDC';
         let erc20 = await TokensService.erc20(ANYTOKEN, this.client.platform);
         let transfers = erc20.extractLogsTransfer(receipt)
-        let transfer = transfers.find(x => $address.eq(x.to, receiver));
-        return transfer?.value ?? 0n;
+        let transfer = transfers.find(x => $address.eq(x.params.to, receiver));
+        return transfer?.params.value ?? 0n;
     }
 
     /** Returns NULL for transaction, if no balance to transfer */
@@ -71,7 +73,7 @@ export class TokenTransferService {
         }
         return this.transferErc20All(from, to, token, { remainder });
     }
-    async transfer (from: ChainAccount, to: TAddress, token: string | IToken, amount: number | bigint) : Promise<TxWriter> {
+    async transfer (from: TAccount, to: TAddress, token: string | IToken, amount: number | bigint) : Promise<TxWriter> {
         token = await this.getToken(token);
         amount = this.getAmount(amount, token);
 
@@ -161,8 +163,8 @@ export class TokenTransferService {
             }
         });
     }
-    private async transferNative (from: ChainAccount, to: TAddress, amount: bigint): Promise<TxWriter> {
-        let txBuilder = new TxDataBuilder(this.client, from, {
+    private async transferNative (from: TAccount, to: TAddress, amount: bigint): Promise<TxWriter> {
+        let txBuilder = new TxDataBuilder(this.client, $account.getSender(from), {
             to: to,
             value: $bigint.toHex(amount)
         });
@@ -201,7 +203,7 @@ export class TokenTransferService {
             .$config(this.txConfig)
             .transfer(from, to, balance);
     }
-    private async transferErc20 (from: ChainAccount, to: TAddress, token: IToken, amount: bigint): Promise<TxWriter> {
+    private async transferErc20 (from: TAccount, to: TAddress, token: IToken, amount: bigint): Promise<TxWriter> {
         let erc20 = await TokensService.erc20(token, this.client.platform);
         return erc20
             .$config(this.txConfig)

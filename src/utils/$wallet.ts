@@ -1,4 +1,4 @@
-import { ChainAccount } from '@dequanto/ChainAccountProvider';
+import { ChainAccount } from "@dequanto/models/TAccount";
 import { Wallet, utils } from 'ethers';
 
 export namespace $wallet {

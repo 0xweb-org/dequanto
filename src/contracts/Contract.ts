@@ -12,7 +12,7 @@ import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder'
 import { TxWriter } from '@dequanto/txs/TxWriter'
 import { Web3Client } from '@dequanto/clients/Web3Client'
 import { $contract } from '@dequanto/utils/$contract'
-import { ChainAccount } from '@dequanto/ChainAccountProvider'
+import { ChainAccount } from "@dequanto/models/TAccount"
 import { $is } from '@dequanto/utils/$is'
 
 export interface IContractInit {

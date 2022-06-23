@@ -1,4 +1,4 @@
-import { ChainAccount } from '@dequanto/ChainAccountProvider';
+import { ChainAccount } from "@dequanto/models/TAccount";
 import { TAddress } from '@dequanto/models/TAddress';
 
 export interface ITxConfig {
