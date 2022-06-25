@@ -6,6 +6,7 @@ import { ChainAccount } from "@dequanto/models/TAccount";
 import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client';
 
 
+
 export class HardhatProvider {
 
     /* lazy load */
@@ -33,8 +34,23 @@ export class HardhatProvider {
 
     @memd.deco.memoize()
     async resolve<T extends ContractBase>(Ctor: Constructor<T>, ...params): Promise<T> {
-        const ethers = this.hh.ethers;
-        const Factory: Ethers.ContractFactory = await ethers.getContractFactory(Ctor.name);
+        return this.resolveForSigner(null, Ctor, ...params);
+    }
+
+    @memd.deco.memoize()
+    async resolveForSigner<T extends ContractBase>(signer: Ethers.Signer | ChainAccount, Ctor: Constructor<T>, ...params): Promise<T> {
+        let ethers: typeof Ethers = this.hh.ethers;
+        let Factory: Ethers.ContractFactory = await (ethers as any).getContractFactory(Ctor.name);
+        if (signer != null) {
+
+            let $signer = 'key' in signer
+                ? new ethers.Wallet(signer.key, Factory.signer.provider)
+                : signer as Ethers.Signer;
+
+            const provider = ethers.getDefaultProvider();
+            Factory = Factory.connect($signer);
+        }
+
         const contract = await Factory.deploy(...params);
         const receipt = await contract.deployed();
 
