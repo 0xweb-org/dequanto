@@ -14,7 +14,7 @@ import { type AbiItem } from 'web3-utils';
 
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { $address } from '@dequanto/utils/$address';
-import { $sign } from '@dequanto/utils/$sign';
+import { $signRaw } from '@dequanto/utils/$signRaw';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import { $fn } from '@dequanto/utils/$fn';
 
@@ -38,7 +38,7 @@ export class GnosisSafe {
     }
     async confirmTx(safeTxHash: string): Promise<SignatureResponse> {
         let service = await this.getService();
-        let signature = $sign.signEC(safeTxHash, this.owner.key);
+        let signature = $signRaw.signEC(safeTxHash, this.owner.key);
         let resp = await service.confirmTransaction(safeTxHash, signature.signature);
         return resp;
     }
@@ -138,7 +138,7 @@ export class GnosisSafe {
         let signatures = new Map();
         signatures.set(this.owner.address.toLowerCase(), {
             signer: $address.toChecksum(this.owner.address),
-            data: $sign.signEC(hash, this.owner.key).signature
+            data: $signRaw.signEC(hash, this.owner.key).signature
         });
 
         // https://docs.gnosis-safe.io/tutorials/tutorial_tx_service_initiate_sign

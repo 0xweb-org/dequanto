@@ -11,6 +11,7 @@ interface IBufferUtils {
     concat (buffers: Bytes[]): Bytes
 }
 
+export type TBytes = Bytes;
 
 
 
