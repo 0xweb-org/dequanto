@@ -176,6 +176,7 @@ namespace NativeTokens {
         'bsc': 'BNB',
         'polygon': 'MATIC',
         'xdai': 'xDAI',
+        'arbitrum': 'ETH',
     };
     const PLATFORM_ALIASES = {
         ['xdai']: {

@@ -27,11 +27,16 @@ export abstract class Web3Client implements IWeb3Client {
     async sign(txData: TransactionRequest, privateKey: string): Promise<string> {
 
         let wallet = new Wallet(privateKey);
-        let tx = await wallet.signTransaction({
+        let json = {
             ...txData,
             type: txData.type ?? this.defaultTxType,
             chainId: this.chainId
-        });
+        };
+        if (json.type === 1) {
+            // delete `type` field in case old tx type. Some old nodes may reject type field presence
+            delete json.type;
+        }
+        let tx = await wallet.signTransaction(json);
         return tx;
     }
 
