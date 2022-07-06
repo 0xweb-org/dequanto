@@ -6,11 +6,11 @@ import { Wallet } from 'ethers';
 import { $address } from './utils/$address';
 import { $crypto } from './utils/$crypto';
 import { $buffer } from './utils/$buffer';
-import { ChainAccount } from './models/TAccount';
+import { ChainAccount, IAccount, SafeAccount } from './models/TAccount';
 
 
 export namespace ChainAccountProvider {
-    export function get (platform: TPlatform, name: string): ChainAccount {
+    export function get (platform: TPlatform, name: string): IAccount {
         let accounts = AccountsConfigProvider.get();
         let acc: ChainAccount = accounts?.[platform]?.[name];
         if (acc == null) {
@@ -20,7 +20,7 @@ export namespace ChainAccountProvider {
         acc.platform = platform;
         return acc;
     }
-    export function tryGet (mix: string | TAddress, platform?): ChainAccount {
+    export function tryGet (mix: string | TAddress, platform?): IAccount {
         let all = this.getAll();
 
         let accounts = all.filter(x => ($address.eq(mix, x.address) || x.name == mix));
@@ -33,7 +33,7 @@ export namespace ChainAccountProvider {
             platform: platform ?? acc.platform
         };
     }
-    export function getAll (): ChainAccount[] {
+    export function getAll (): IAccount[] {
        return AccountsConfigProvider.get();
     }
     export function getAddressFromKey (key: string) {
@@ -54,15 +54,15 @@ export namespace ChainAccountProvider {
 
     class AccountsConfigProvider {
         @memd.deco.memoize()
-        static get (): ChainAccount[] {
+        static get (): IAccount[] {
 
             type TDictionary = {
                 [platform: string]: {
-                    [name: string]: ChainAccount
+                    [name: string]: ChainAccount | SafeAccount
                 }
             };
 
-            let accounts: TDictionary | ChainAccount[] = $config.get('accounts');
+            let accounts: TDictionary | (ChainAccount | SafeAccount)[] = $config.get('accounts');
             if (accounts == null) {
                 return [];
             }

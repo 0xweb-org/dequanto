@@ -6,7 +6,7 @@ import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
 import Web3Adapter from '@gnosis.pm/safe-web3-lib'
-import Safe from '@gnosis.pm/safe-core-sdk'
+import Safe, { SafeAccountConfig, SafeFactory } from '@gnosis.pm/safe-core-sdk'
 import { SafeTransaction, SafeTransactionData } from '@gnosis.pm/safe-core-sdk-types'
 import SafeServiceClient, { ProposeTransactionProps, SafeMultisigTransactionEstimate, SignatureResponse } from '@gnosis.pm/safe-service-client'
 
@@ -17,6 +17,8 @@ import { $address } from '@dequanto/utils/$address';
 import { $signRaw } from '@dequanto/utils/$signRaw';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import { $fn } from '@dequanto/utils/$fn';
+import { $buffer } from '@dequanto/utils/$buffer';
+import { $hex } from '@dequanto/utils/$hex';
 
 
 
@@ -24,6 +26,23 @@ import { $fn } from '@dequanto/utils/$fn';
 export class GnosisSafe {
     constructor(public safeAddress: TAddress, public owner: ChainAccount, public client: Web3Client = di.resolve(EthWeb3Client)) {
 
+    }
+
+    async create (config: {
+        owners: TAddress[],
+        threshold?: number
+    }) {
+        const ethAdapter = await this.getAdapter();
+        const safeFactory = await SafeFactory.create({ ethAdapter })
+        const safeAccountConfig: SafeAccountConfig = {
+          owners: config.owners,
+          threshold: config.threshold ?? config.owners.length,
+        };
+
+        const safeSdk: Safe = await safeFactory.deploySafe({ safeAccountConfig });
+
+        this.safeAddress = safeSdk.getAddress();
+        return safeSdk;
     }
 
     async getTx (safeTxHash: string) {
@@ -107,7 +126,7 @@ export class GnosisSafe {
 
         let service = await this.getService();
 
-        let safeTxEstimation: SafeMultisigTransactionEstimate = {
+        let safeTxEstimation: SafeMultisigTransactionEstimate & { data } = {
             to: $address.toChecksum(txData.to),
             value: Number(value) as any,
             data: txData.data as any,
@@ -184,7 +203,7 @@ export class GnosisSafe {
     private async getAdapter() {
         const web3 = await this.client.getWeb3();
 
-        web3.eth.accounts.wallet.add('0x' + this.owner.key);
+        web3.eth.accounts.wallet.add($hex.ensure(this.owner.key));
 
         const ethAdapter = new Web3Adapter({
             web3: <any>web3,

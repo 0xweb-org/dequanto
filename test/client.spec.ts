@@ -14,12 +14,12 @@ const Accounts = [
 
 UTest({
     async 'get block' () {
-        let client = await TestNode.client()
-        let block = await client.getBlockNumber()
+        let client = await TestNode.client();
+        let block = await client.getBlockNumber();
         gte_(block, 0);
     },
     async 'check balance' () {
-        let client = await TestNode.client()
+        let client = await TestNode.client();
         let balance = await client.getBalance('0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266');
         lte_(balance, 10000n * 10n ** 18n);
     },

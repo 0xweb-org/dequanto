@@ -130,7 +130,7 @@ export class ClientPool {
     }
 
     getOptionForFetchableRange (): number {
-        const DEFAULT = 1000;
+        const DEFAULT = 1_000;
         let max = alot(this.clients).max(x => x.config?.fetchableBlockRange ?? 0);
         if (max === 0) {
             return DEFAULT;

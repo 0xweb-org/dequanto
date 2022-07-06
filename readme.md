@@ -9,17 +9,18 @@ Here we share our library to work with Ethereum Virtual Machine RPC Nodes: Ether
 1. RPC Client Pool
 2. Transaction Builder
 3. Generated TypeScript classes for contracts
-4. Etherscan&Co clients
+4. Etherscan & Co clients
 5. Tokens provider - get token data by symbol, address, platform.
 6. Tokens service - transfer and swap
 7. Transaction **Indexers** - listens to blocks and parse new transactions to simplify further processing
 8. Native **`BigInt`** types and various utility methods
+9. OpenZeppelin contracts
 
 
-### Distribution `as-Source-Code`
+###  **`Source-Code`** Distribution
 
 Not as a library, but as the source code. Clone or fork it and use it as a **submodule**. Means:
-a) you can `import` any `class`, `namespace` and `utility` methods.
+a) you can `import` any `class`, `namespace` and `utility` method.
 b) you can easily extend and modify any `class`, `namespace` and `utility` method.
 c) you get the documentation direct from the code. _We don't have much time yet to document all the parts_
 
@@ -28,7 +29,8 @@ And path prefix (alias) to your `tsconfig.json`
 {
     "compilerOptions": {
         "paths": {
-            "@dequanto/*": [ "your-sub-module-folder/src/*" ]
+            "@dequanto/*": [ "your-sub-module-folder/src/*" ],
+            "@dequanto-contract/*": [ "your-sub-module-folder/contract/*" ]
         }
     }
 }
@@ -77,3 +79,15 @@ Start listening the blockchain with less code
 ## 8. Utils
 
 Lots of Utility methods. BigInt are the first-class citizens in the code.
+
+
+### 9. OpenZeppelin contracts
+
+We prebuild generic OpenZeppelin contracts
+
+```
+import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20
+
+let erc20 = new ERC20(`0x...`);
+let balance = await erc20.balanceOf('0x...');
+```

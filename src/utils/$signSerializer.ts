@@ -327,7 +327,7 @@ export namespace $signSerializer {
 
 
 
-    function ethUtil_keccak (value: BytesLike) {
+    function ethUtil_keccak(value: BytesLike) {
         if (typeof value === 'string') {
             if (value.startsWith('0x')) {
                 value = Buffer.from(value.substring(2), 'hex');

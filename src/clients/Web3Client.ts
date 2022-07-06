@@ -7,11 +7,13 @@ import { BlockHeader, BlockTransactionString, Syncing } from 'web3-eth';
 import { ClientPool, IPoolClientConfig, IPoolWeb3Request } from './ClientPool';
 import { ClientPoolTrace } from './ClientPoolStats';
 import { IWeb3Client, IWeb3ClientOptions } from './interfaces/IWeb3Client';
-import { Log, LogsOptions, type PastLogsOptions, type TransactionConfig } from 'web3-core';
+import { type BlockNumber, Log, LogsOptions, type PastLogsOptions, type TransactionConfig } from 'web3-core';
 import { Subscription } from 'web3-core-subscriptions';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { Wallet } from 'ethers';
 import { $number } from '@dequanto/utils/$number';
+import di from 'a-di';
+import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
 
 export abstract class Web3Client implements IWeb3Client {
 
@@ -266,6 +268,27 @@ export abstract class Web3Client implements IWeb3Client {
     }
 
     async getPastLogs (options: PastLogsOptions) {
+
+        const getBlock = async (block: BlockNumber | Date) => {
+            if (block == null) {
+                return 'latest';
+            }
+            if (block instanceof Date) {
+                let resolver = di.resolve(BlockDateResolver, this);
+                return resolver.getBlockNumberFor(block);
+            }
+            return block;
+        };
+
+        options.fromBlock = await getBlock(options.fromBlock);
+        options.toBlock = await getBlock(options.toBlock);
+        options.topics = options.topics?.map(topic => {
+            if (typeof topic === 'string' && topic.startsWith('0x')) {
+                return '0x' + topic.substring(2).padStart(64, '0');
+            }
+            return topic;
+        });
+
         let MAX = this.pool.getOptionForFetchableRange();
         if (typeof options.fromBlock === 'number') {
             let to = options.toBlock;

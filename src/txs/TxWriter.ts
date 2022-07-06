@@ -124,7 +124,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         if (this.isSafe) {
             let safeAccount = this.account as SafeAccount;
             let sender = await this.getSender();
-            let safe = new GnosisSafe(safeAccount.safeAddress, sender, this.client);
+            let safe = new GnosisSafe(safeAccount.address ?? safeAccount.safeAddress, sender, this.client);
             let innerWriter = await safe.execute(this);
 
             this.pipeInnerWriter(innerWriter);
@@ -301,6 +301,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
         let sender = $account.getSender(account);
         if (sender.key == null) {
+            /** check the encrypted storage. In case no key is found, assume the target node contains unlocked or locked account */
             let addressOrName = sender.address ?? sender.name;
             let service = di.resolve(ChainAccountsService);
             let fromStorage = await service.get(addressOrName, this.client.platform);

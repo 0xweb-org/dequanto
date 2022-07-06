@@ -36,6 +36,7 @@ task('compile', "Compiles the entire project, building all artifacts")
         if (compilationArgs.artifacts) {
             config.paths.artifacts = process.cwd() + compilationArgs.artifacts;
         }
+        console.log(config, config.paths);
         const compilationTasks = await run('compile:get-compilation-tasks');
         for (const compilationTask of compilationTasks) {
             await run(compilationTask, compilationArgs);

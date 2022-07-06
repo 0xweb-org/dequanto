@@ -147,7 +147,10 @@ export class GeneratorFromAbi {
         let directory = name;
         let filename = /[^\\/]+$/.exec(name)[0];
 
-        let path = class_Uri.combine(opts.output, directory, `${filename}.ts`);
+        let path = /\.ts$/.test(opts.output)
+            ? opts.output
+            : class_Uri.combine(opts.output, directory, `${filename}.ts`);
+
         await File.writeAsync(path, code, { skipHooks: true });
 
         if (opts.saveAbi) {

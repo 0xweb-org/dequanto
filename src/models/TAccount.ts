@@ -2,16 +2,28 @@ import { TAddress } from './TAddress';
 import { TPlatform } from './TPlatform';
 
 
-export class ChainAccount {
-    name?: string;
-    address?: TAddress;
-    key?: string;
-    platform?: TPlatform;
+export interface IAccount {
+    type?: 'eoa' | 'safe'
+    name?: string
+    address?: TAddress
+    platform?: TPlatform
 }
 
-export class SafeAccount {
-    type?: 'gnosis'
-    safeAddress: TAddress
+
+export interface ChainAccount extends IAccount {
+    type?: 'eoa'
+    key?: string;
+}
+
+export interface SafeAccount extends IAccount {
+    type: 'safe'
+    provider?: 'gnosis',
+
+    /**
+     * @deprecated backcomp. Use `address` prop
+     */
+    safeAddress?: TAddress
+
     operator: ChainAccount
 }
 

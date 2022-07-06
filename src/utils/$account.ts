@@ -11,7 +11,7 @@ export namespace $account {
             return { name: account };
         }
 
-        let acc = 'safeAddress' in account
+        let acc = isSafe(account)
             ? account.operator
             : account;
 
@@ -19,6 +19,9 @@ export namespace $account {
     }
 
     export function isSafe (account:TAccount): account is SafeAccount {
-        return typeof account !== 'string' && 'safeAddress' in account;
+        if (typeof account === 'string') {
+            return /^safe\//.test(account);
+        }
+        return 'operator' in account;
     }
 }
