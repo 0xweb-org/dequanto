@@ -5,8 +5,7 @@ import { ChainAccount } from "@dequanto/models/TAccount";
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
-import Web3Adapter from '@gnosis.pm/safe-web3-lib'
-import Safe, { SafeAccountConfig, SafeFactory } from '@gnosis.pm/safe-core-sdk'
+import Safe from '@gnosis.pm/safe-core-sdk'
 import { SafeTransaction, SafeTransactionData } from '@gnosis.pm/safe-core-sdk-types'
 import SafeServiceClient, { ProposeTransactionProps, SafeMultisigTransactionEstimate, SignatureResponse } from '@gnosis.pm/safe-service-client'
 
@@ -17,62 +16,68 @@ import { $address } from '@dequanto/utils/$address';
 import { $signRaw } from '@dequanto/utils/$signRaw';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import { $fn } from '@dequanto/utils/$fn';
-import { $buffer } from '@dequanto/utils/$buffer';
-import { $hex } from '@dequanto/utils/$hex';
+import { $gnosis } from './$gnosis';
+import { GnosisServiceTransport } from './transport/GnosisServiceTransport';
+import { ISafeServiceTransport } from './transport/ISafeServiceTransport';
+import alot from 'alot';
 
 
 
 
-export class GnosisSafe {
-    constructor(public safeAddress: TAddress, public owner: ChainAccount, public client: Web3Client = di.resolve(EthWeb3Client)) {
+export class GnosisSafeHandler {
 
-    }
+    public safeAddress: TAddress
+    public owner: ChainAccount
+    public client: Web3Client
+    public transport: ISafeServiceTransport
 
-    async create (config: {
-        owners: TAddress[],
-        threshold?: number
+    constructor(config: {
+        safeAddress: TAddress
+        owner: ChainAccount
+        client: Web3Client
+        transport?: ISafeServiceTransport
     }) {
-        const ethAdapter = await this.getAdapter();
-        const safeFactory = await SafeFactory.create({ ethAdapter })
-        const safeAccountConfig: SafeAccountConfig = {
-          owners: config.owners,
-          threshold: config.threshold ?? config.owners.length,
-        };
-
-        const safeSdk: Safe = await safeFactory.deploySafe({ safeAccountConfig });
-
-        this.safeAddress = safeSdk.getAddress();
-        return safeSdk;
+        this.safeAddress = config.safeAddress;
+        this.owner = config.owner;
+        this.client = config.client ?? di.resolve(EthWeb3Client);
+        this.transport = config.transport ?? new GnosisServiceTransport(this.client, this.owner)
     }
 
     async getTx (safeTxHash: string) {
-        let service = await this.getService();
-        let resp = await service.getTransaction(safeTxHash);
-        return resp;
+        return this.transport.getTx(safeTxHash);
     }
     async getTxConfirmations (safeTxHash: string) {
-        let service = await this.getService();
-        let resp = await service.getTransactionConfirmations(safeTxHash);
-        return resp;
+        return this.transport.getTxConfirmations(safeTxHash);
     }
-    async confirmTx(safeTxHash: string): Promise<SignatureResponse> {
-        let service = await this.getService();
-        let signature = $signRaw.signEC(safeTxHash, this.owner.key);
-        let resp = await service.confirmTransaction(safeTxHash, signature.signature);
-        return resp;
+    async confirmTx(safeTxHash: string, owner?: ChainAccount): Promise<SignatureResponse> {
+
+        let acc = owner ?? this.owner;
+        let signature = $signRaw.signEC(safeTxHash, acc.key);
+
+        return this.transport.confirmTx(safeTxHash, {
+            owner: acc.address,
+            signature: signature.signature
+        });
     }
 
     async submitTransaction(safeTxHash: string) {
-        let service = await this.getService();
-        let tx = await service.getTransaction(safeTxHash);
+        let tx = await this.transport.getTx(safeTxHash);
 
         let writer = di.resolve(ContractWriter, this.safeAddress, this.client);
         let confirmations = tx.confirmations;
-        let myConfirmation = confirmations.find(x => $address.eq(x.owner, this.owner.address));
-        let myConfirmationIdx = confirmations.indexOf(myConfirmation);
-        confirmations.splice(myConfirmationIdx, 1);
 
-        let signaturesArr = [myConfirmation, ...confirmations].map(x => x.signature);
+        // let myConfirmation = confirmations.find(x => $address.eq(x.owner, this.owner.address));
+        // let myConfirmationIdx = confirmations.indexOf(myConfirmation);
+        // confirmations.splice(myConfirmationIdx, 1);
+
+        // let signaturesArr = [myConfirmation, ...confirmations].map(x => x.signature);
+
+        let signaturesArr = alot(confirmations)
+            .sortBy(x => x.owner)
+            .map(x => x.signature)
+            .toArray();
+
+
         let signatures = '0x' + signaturesArr.map(x => x.substring(2)).join('')
 
         let args = [
@@ -87,6 +92,7 @@ export class GnosisSafe {
             tx.refundReceiver,
             signatures,
         ];
+
 
         let txWriter = await writer.writeAsync(
             this.owner,
@@ -124,7 +130,6 @@ export class GnosisSafe {
         let builder = writer.builder;
         let txData = builder.getTxData(this.client);
 
-        let service = await this.getService();
 
         let safeTxEstimation: SafeMultisigTransactionEstimate & { data } = {
             to: $address.toChecksum(txData.to),
@@ -133,15 +138,15 @@ export class GnosisSafe {
             operation: 0,
         }
 
-        let safeInfo = await service.getSafeInfo(this.safeAddress);
+        let safeInfo = await this.transport.getSafeInfo(this.safeAddress);
 
 
-        let estimated = await service.estimateSafeTransaction(this.safeAddress, safeTxEstimation);
+       // let estimated = await this.transport.estimateSafeTransaction(this.safeAddress, safeTxEstimation);
 
         let safeTxData: SafeTransactionData = {
             ...safeTxEstimation,
 
-            safeTxGas: Number(estimated.safeTxGas),
+            safeTxGas: 0, // Number(estimated.safeTxGas),
 
             baseGas: 0,
             gasToken: $address.ZERO,
@@ -171,23 +176,13 @@ export class GnosisSafe {
             safeTxHash: hash,
         };
 
-        await service.proposeTransaction(args);
+        await this.transport.proposeTransaction(args);
         return {
             threshold: safeInfo.threshold,
             hash
         };
     }
 
-    @memd.deco.memoize({ perInstance: true })
-    private async getService() {
-        let adapter = await this.getAdapter();
-        const safeService = new SafeServiceClient({
-
-            txServiceUrl: this.getServiceApiEndpoint(Number(this.client.chainId)),
-            ethAdapter: adapter
-        });
-        return safeService;
-    }
 
     @memd.deco.memoize({ perInstance: true })
     private async getSafeSdk() {
@@ -201,29 +196,7 @@ export class GnosisSafe {
 
     @memd.deco.memoize({ perInstance: true })
     private async getAdapter() {
-        const web3 = await this.client.getWeb3();
-
-        web3.eth.accounts.wallet.add($hex.ensure(this.owner.key));
-
-        const ethAdapter = new Web3Adapter({
-            web3: <any>web3,
-            signerAddress: this.owner.address,
-        });
-        return ethAdapter;
-    }
-
-
-    @memd.deco.memoize()
-    private getServiceApiEndpoint(chainId: number) {
-        let network = '';
-        if (chainId === 100) {
-            network = `xdai.`;
-        }
-        if (chainId === 137) {
-            network = `polygon.`;
-        }
-
-        return `https://safe-transaction.${network}gnosis.io/`;
+        return $gnosis.getAdapter(this.owner, this.client);
     }
 
 
@@ -263,8 +236,24 @@ export class GnosisSafe {
     }
 }
 
+// https://etherscan.io/address/0x34cfac646f301356faa8b21e94227e3583fe3f5f#code
 
 const SafeAbi = {
+    nonce: <AbiItem> {
+        "constant": true,
+        "inputs": [],
+        "name": "nonce",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
     execTransaction: <AbiItem> {
         "type": "function",
         "stateMutability": "payable",

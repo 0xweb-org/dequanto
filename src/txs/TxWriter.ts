@@ -17,7 +17,7 @@ import { $logger } from '@dequanto/utils/$logger';
 import { ITxLogItem } from './receipt/ITxLogItem';
 import { TxLogParser } from './receipt/TxLogParser';
 import { type PromiEvent } from 'web3-core';
-import { GnosisSafe } from '@dequanto/safe/GnosisSafe';
+import { GnosisSafeHandler } from '@dequanto/safe/GnosisSafeHandler';
 import { $account } from '@dequanto/utils/$account';
 
 interface ITxWriterEvents {
@@ -124,7 +124,11 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         if (this.isSafe) {
             let safeAccount = this.account as SafeAccount;
             let sender = await this.getSender();
-            let safe = new GnosisSafe(safeAccount.address ?? safeAccount.safeAddress, sender, this.client);
+            let safe = new GnosisSafeHandler({
+                safeAddress: safeAccount.address ?? safeAccount.safeAddress,
+                owner: sender,
+                client: this.client
+            });
             let innerWriter = await safe.execute(this);
 
             this.pipeInnerWriter(innerWriter);
@@ -366,7 +370,6 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         }, ms);
     }
     private clearTimer (tx: TxWriter['tx']) {
-        console.log('clear timer', tx.hash);
         if (tx.timeout) {
             clearTimeout(tx.timeout);
             tx.timeout = null;
