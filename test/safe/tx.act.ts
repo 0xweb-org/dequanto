@@ -31,9 +31,9 @@ UTest({
         let owner1 = provider.deployer();
         let owner2 = provider.deployer(1);
 
-        const { contract: proxyFactoryContract, abi: proxyFactoryAbi } = await provider.deploy('/test/fixtures/gnosis/proxies/GnosisSafeProxyFactory.sol');
-        const { contract: safeContract, abi: safeAbi } = await provider.deploy('/test/fixtures/gnosis/GnosisSafe.sol');
-        const { contract: multiSendContract, abi: multiSendAbi } = await provider.deploy('/test/fixtures/gnosis/libraries/MultiSend.sol');
+        const { contract: proxyFactoryContract, abi: proxyFactoryAbi } = await provider.deploySol('/test/fixtures/gnosis/proxies/GnosisSafeProxyFactory.sol');
+        const { contract: safeContract, abi: safeAbi } = await provider.deploySol('/test/fixtures/gnosis/GnosisSafe.sol');
+        const { contract: multiSendContract, abi: multiSendAbi } = await provider.deploySol('/test/fixtures/gnosis/libraries/MultiSend.sol');
 
         let safe = await GnosisSafeFactory.create(owner1, client, {
             owners: [
@@ -69,7 +69,7 @@ UTest({
         });
 
 
-        const { contract: freeTokenContract, abi: freeTokenAbi } = await provider.deploy('/test/fixtures/contracts/FreeToken.sol');
+        const { contract: freeTokenContract, abi: freeTokenAbi } = await provider.deploySol('/test/fixtures/contracts/FreeToken.sol', { client });
 
 
         let balanceBefore = await freeTokenContract.balanceOf(safe.safeAddress);

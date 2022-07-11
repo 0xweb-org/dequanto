@@ -1,9 +1,10 @@
 /**
- *  AUTO-Generated Class: 2022-05-25 02:00
+ *  AUTO-Generated Class: 2022-07-11 10:58
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
+import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
@@ -36,8 +37,8 @@ export class Foo extends ContractBase {
     }
 
     // 0xc47f0027
-    async setName (eoa: TAccount, _name: string): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'setName'), eoa, _name);
+    async setName (sender: TSender, _name: string): Promise<TxWriter> {
+        return this.$write(this.$getAbiItem('function', 'setName'), sender, _name);
     }
 
     onUpdated (fn: (event: EventLog, newName: string) => void): ClientEventsStream<any> {
@@ -67,10 +68,7 @@ export class Foo extends ContractBase {
     abi = [{"inputs":[{"internalType":"string","name":"_name","type":"string"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"string","name":"newName","type":"string"}],"name":"Updated","type":"event"},{"inputs":[],"name":"getName","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"_name","type":"string"}],"name":"setName","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 }
 
-type TAccount = string | {
-    address?: TAddress,
-    key?: string,
-    name?: string,
+type TSender = TAccount & {
     value?: string | number | bigint
 }
 

@@ -1,9 +1,10 @@
 /**
- *  AUTO-Generated Class: 2022-05-25 02:00
+ *  AUTO-Generated Class: 2022-07-11 10:58
  *  Implementation: https://polygonscan.com/address/0x7ceb23fd6bc0add59e62ac25578270cff1b9f619#code
  */
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
+import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
@@ -66,8 +67,8 @@ export class WETH extends ContractBase {
     }
 
     // 0x095ea7b3
-    async approve (eoa: TAccount, spender: TAddress, amount: bigint): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'approve'), eoa, spender, amount);
+    async approve (sender: TSender, spender: TAddress, amount: bigint): Promise<TxWriter> {
+        return this.$write(this.$getAbiItem('function', 'approve'), sender, spender, amount);
     }
 
     // 0x70a08231
@@ -81,18 +82,18 @@ export class WETH extends ContractBase {
     }
 
     // 0xa457c2d7
-    async decreaseAllowance (eoa: TAccount, spender: TAddress, subtractedValue: bigint): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'decreaseAllowance'), eoa, spender, subtractedValue);
+    async decreaseAllowance (sender: TSender, spender: TAddress, subtractedValue: bigint): Promise<TxWriter> {
+        return this.$write(this.$getAbiItem('function', 'decreaseAllowance'), sender, spender, subtractedValue);
     }
 
     // 0xcf2c52cb
-    async deposit (eoa: TAccount, user: TAddress, depositData: TBufferLike): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'deposit'), eoa, user, depositData);
+    async deposit (sender: TSender, user: TAddress, depositData: TBufferLike): Promise<TxWriter> {
+        return this.$write(this.$getAbiItem('function', 'deposit'), sender, user, depositData);
     }
 
     // 0x0c53c51c
-    async executeMetaTransaction (eoa: TAccount, userAddress: TAddress, functionSignature: TBufferLike, sigR: TBufferLike, sigS: TBufferLike, sigV: number): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'executeMetaTransaction'), eoa, userAddress, functionSignature, sigR, sigS, sigV);
+    async executeMetaTransaction (sender: TSender, userAddress: TAddress, functionSignature: TBufferLike, sigR: TBufferLike, sigS: TBufferLike, sigV: number): Promise<TxWriter> {
+        return this.$write(this.$getAbiItem('function', 'executeMetaTransaction'), sender, userAddress, functionSignature, sigR, sigS, sigV);
     }
 
     // 0x3408e470
@@ -126,8 +127,8 @@ export class WETH extends ContractBase {
     }
 
     // 0x2f2ff15d
-    async grantRole (eoa: TAccount, role: TBufferLike, account: TAddress): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'grantRole'), eoa, role, account);
+    async grantRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TxWriter> {
+        return this.$write(this.$getAbiItem('function', 'grantRole'), sender, role, account);
     }
 
     // 0x91d14854
@@ -136,8 +137,8 @@ export class WETH extends ContractBase {
     }
 
     // 0x39509351
-    async increaseAllowance (eoa: TAccount, spender: TAddress, addedValue: bigint): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'increaseAllowance'), eoa, spender, addedValue);
+    async increaseAllowance (sender: TSender, spender: TAddress, addedValue: bigint): Promise<TxWriter> {
+        return this.$write(this.$getAbiItem('function', 'increaseAllowance'), sender, spender, addedValue);
     }
 
     // 0x06fdde03
@@ -146,13 +147,13 @@ export class WETH extends ContractBase {
     }
 
     // 0x36568abe
-    async renounceRole (eoa: TAccount, role: TBufferLike, account: TAddress): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'renounceRole'), eoa, role, account);
+    async renounceRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TxWriter> {
+        return this.$write(this.$getAbiItem('function', 'renounceRole'), sender, role, account);
     }
 
     // 0xd547741f
-    async revokeRole (eoa: TAccount, role: TBufferLike, account: TAddress): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'revokeRole'), eoa, role, account);
+    async revokeRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TxWriter> {
+        return this.$write(this.$getAbiItem('function', 'revokeRole'), sender, role, account);
     }
 
     // 0x95d89b41
@@ -166,18 +167,18 @@ export class WETH extends ContractBase {
     }
 
     // 0xa9059cbb
-    async transfer (eoa: TAccount, recipient: TAddress, amount: bigint): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'transfer'), eoa, recipient, amount);
+    async transfer (sender: TSender, recipient: TAddress, amount: bigint): Promise<TxWriter> {
+        return this.$write(this.$getAbiItem('function', 'transfer'), sender, recipient, amount);
     }
 
     // 0x23b872dd
-    async transferFrom (eoa: TAccount, sender: TAddress, recipient: TAddress, amount: bigint): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'transferFrom'), eoa, sender, recipient, amount);
+    async transferFrom (sender: TSender, sender: TAddress, recipient: TAddress, amount: bigint): Promise<TxWriter> {
+        return this.$write(this.$getAbiItem('function', 'transferFrom'), sender, sender, recipient, amount);
     }
 
     // 0x2e1a7d4d
-    async withdraw (eoa: TAccount, amount: bigint): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'withdraw'), eoa, amount);
+    async withdraw (sender: TSender, amount: bigint): Promise<TxWriter> {
+        return this.$write(this.$getAbiItem('function', 'withdraw'), sender, amount);
     }
 
     onApproval (fn: (event: EventLog, owner: TAddress, spender: TAddress, value: bigint) => void): ClientEventsStream<any> {
@@ -327,10 +328,7 @@ export class WETH extends ContractBase {
     abi = [{"inputs":[{"internalType":"address","name":"childChainManager","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"userAddress","type":"address"},{"indexed":false,"internalType":"address payable","name":"relayerAddress","type":"address"},{"indexed":false,"internalType":"bytes","name":"functionSignature","type":"bytes"}],"name":"MetaTransactionExecuted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"previousAdminRole","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"newAdminRole","type":"bytes32"}],"name":"RoleAdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleGranted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleRevoked","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[],"name":"CHILD_CHAIN_ID","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"CHILD_CHAIN_ID_BYTES","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"DEFAULT_ADMIN_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"DEPOSITOR_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"ERC712_VERSION","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"ROOT_CHAIN_ID","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"ROOT_CHAIN_ID_BYTES","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"},{"internalType":"bytes","name":"depositData","type":"bytes"}],"name":"deposit","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"userAddress","type":"address"},{"internalType":"bytes","name":"functionSignature","type":"bytes"},{"internalType":"bytes32","name":"sigR","type":"bytes32"},{"internalType":"bytes32","name":"sigS","type":"bytes32"},{"internalType":"uint8","name":"sigV","type":"uint8"}],"name":"executeMetaTransaction","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"getChainId","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"getDomainSeperator","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getNonce","outputs":[{"internalType":"uint256","name":"nonce","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleAdmin","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getRoleMember","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleMemberCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"grantRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"hasRole","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"renounceRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"revokeRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 }
 
-type TAccount = string | {
-    address?: TAddress,
-    key?: string,
-    name?: string,
+type TSender = TAccount & {
     value?: string | number | bigint
 }
 

@@ -43,8 +43,8 @@ export abstract class Web3Client implements IWeb3Client {
     }
 
 
-    protected options: IWeb3ClientOptions;
-    protected pool: ClientPool;
+    public options: IWeb3ClientOptions;
+    public pool: ClientPool;
 
     constructor (options: IWeb3ClientOptions)
     constructor (endpoints: IPoolClientConfig[] )
@@ -195,7 +195,6 @@ export abstract class Web3Client implements IWeb3Client {
             }
         });
     }
-
     getStorageAt (address: TAddress, position: string | number | bigint, blockNumber?: number) {
         return this.pool.call(web3 => {
             return web3.eth.getStorageAt(address, <any> position, blockNumber);

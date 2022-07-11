@@ -78,7 +78,7 @@ UTest({
 
 
         let provider = new HardhatProvider();
-        let foo = await provider.resolve(Foo, 'hello');
+        let foo = await provider.deployClass(Foo, { arguments: [ 'hello' ] });
         let name = await foo.name();
         eq_(name, 'hello');
 
