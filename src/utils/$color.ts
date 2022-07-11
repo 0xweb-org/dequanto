@@ -1,11 +1,22 @@
 import { is_BROWSER } from './$const';
 
+
+let COLOR: typeof ColorData.ColorAscii;
+
 export function $color (str: string) {
-    const COLOR = is_BROWSER
-        ? ColorData.ColorNone
-        : ColorData.ColorAscii;
+    if (COLOR == null) {
+        COLOR = is_BROWSER
+            ? ColorData.ColorNone
+            : ColorData.ColorAscii;
+    }
     return painter.paint(str, COLOR);
-}
+};
+
+export function $color_options(opts: { type: 'none' | 'ascii' }) {
+    COLOR = opts.type === 'none'
+        ? ColorData.ColorNone
+        : ColorData.ColorAscii
+};
 
 namespace ColorData {
 
