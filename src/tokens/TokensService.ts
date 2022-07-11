@@ -44,6 +44,9 @@ export class TokensService {
     async getKnownToken (mix: string): Promise<IToken> {
         return this.provider.getKnownToken(mix);
     }
+    async addKnownToken (token: IToken): Promise<void> {
+        await this.provider.addKnownToken(token);
+    }
 
     isNative (token: IToken): boolean
     isNative (address: TAddress): boolean

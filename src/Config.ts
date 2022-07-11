@@ -47,6 +47,7 @@ export class Config {
     static async fetch () {
         let unlockedAccountsKey = await $secret.getPin();
         let configPathAccounts = $cli.getParamValue('config-accounts') ?? '%APPDATA%/.dequanto/accounts.json';
+        let configPathGlobal = $cli.getParamValue('config-global') ?? '%APPDATA%/.dequanto/config.yml';
 
         let dequantoConfigs = 'dequanto/configs/';
         let [
@@ -75,7 +76,7 @@ export class Config {
                 optional: true,
             },
             {
-                path: '%APPDATA%/.dequanto/config.yml',
+                path: configPathGlobal,
                 writable: true,
                 optional: true,
                 extendArrays: false,
