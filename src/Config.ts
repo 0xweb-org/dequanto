@@ -1,11 +1,12 @@
+import memd from 'memd';
+import AppConfig from 'appcfg'
 import { IContractDetails } from './models/IContractDetails';
 import { TPlatform } from './models/TPlatform';
-import AppConfig from 'appcfg'
 import { $secret } from './utils/$secret';
 import { $cli } from './utils/$cli';
-import memd from 'memd';
 import { obj_extend } from 'atma-utils';
-import { Directory, env } from 'atma-io';
+import { Directory } from 'atma-io';
+import { ITokenGlob } from './models/ITokenGlob';
 
 export interface IProviderEndpoint {
     url: string
@@ -25,6 +26,8 @@ export class Config {
             }
         }
     }
+    tokens: ITokenGlob[]
+
     blockchainExplorer: {
         [platform in TPlatform]: {
             key: string
@@ -97,6 +100,11 @@ export class Config {
 
         obj_extend(config, cfg.toJSON());
         return cfg;
+    }
+
+    static async extend (json) {
+        let current = await Config.fetch();
+        await current.$write(json)
     }
 }
 

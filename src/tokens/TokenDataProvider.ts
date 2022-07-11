@@ -13,10 +13,14 @@ import { TPChain } from './TokenProviders/TPChain';
 import { TPCoinmarketcap } from './TokenProviders/TPCoinmarketcap';
 import { TPOneInch } from './TokenProviders/TPOneInch';
 import { TPSushiswap } from './TokenProviders/TPSushiswap';
+import { TPConfig } from './TokenProviders/TPConfig';
 
 export class TokenDataProvider {
 
+    private config = new TPConfig();
+
     private providers = [
+        this.config,
         new TPOneInch(),
         new TPSushiswap(),
         // @TODO uniswap thegraph api doesn't work any more
@@ -58,6 +62,13 @@ export class TokenDataProvider {
             throw new Error(`Token ${mix} not found`);
         }
         return token
+    }
+
+    /**
+     *  Adds and saves the token to dequanto configuration.
+     */
+    async addKnownToken (token: IToken): Promise<any> {
+        await this.config.addToken(token);
     }
 
     isNative (token: IToken): boolean
