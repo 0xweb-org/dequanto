@@ -23,7 +23,7 @@ export namespace Web3ClientFactory {
             case 'xdai':
                 return di.resolve(XDaiWeb3Client, opts);
             case 'hardhat':
-                return di.resolve(HardhatProvider).client();
+                return di.resolve(HardhatProvider).client('localhost');
             default:
                 throw new Error(`Unsupported platform ${platform} for web3 client`);
         }
