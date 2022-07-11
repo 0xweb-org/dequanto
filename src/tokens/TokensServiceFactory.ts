@@ -5,6 +5,7 @@ import { TokensServiceEth } from './TokensServiceEth';
 import { TokensServicePolygon } from './TokensServicePolygon';
 import { TokensServiceXDai } from './TokensServiceXDai';
 import { TokensServiceArbitrum } from '@dequanto/chains/arbitrum/TokensServiceArbitrum';
+import { TokensService } from './TokensService';
 
 export namespace TokensServiceFactory {
 
@@ -13,7 +14,6 @@ export namespace TokensServiceFactory {
             case 'bsc':
                 return di.resolve(TokensServiceBsc);
             case 'eth':
-            case 'hardhat':
                 return di.resolve(TokensServiceEth);
             case 'polygon':
                 return di.resolve(TokensServicePolygon);
@@ -21,6 +21,8 @@ export namespace TokensServiceFactory {
                 return di.resolve(TokensServiceXDai);
             case 'arbitrum':
                 return di.resolve(TokensServiceArbitrum);
+            case 'hardhat':
+                return di.resolve(TokensService, 'hardhat');
             default:
                 throw new Error(`Unsupported platform ${platform} for TokensService`);
         }
