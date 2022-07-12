@@ -3,10 +3,9 @@ import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { Generator } from '@dequanto/gen/Generator';
 import { $path } from '@dequanto/utils/$path';
 import { File } from 'atma-io';
-import { Foo } from '../fixtures/contracts/Foo';
-import { WETH } from '../fixtures/contracts/WETH';
-import alot from 'alot';
 import { $date } from '@dequanto/utils/$date';
+
+declare let include;
 
 UTest({
     $config: {
@@ -24,20 +23,13 @@ UTest({
             output: './test/tmp/polygon/'
         });
         await gen.generate();
-        await File.copyTo('/test/tmp/polygon/WETH/WETH.ts', '/test/fixtures/contracts/');
 
-        let weth = new WETH();
+        let { WETH } = await include.js('/test/tmp/polygon/WETH/WETH.ts');
+
+
+        let weth = new WETH.WETH();
         let decimals = await weth.decimals();
         eq_(decimals, 18);
-        if (false) {
-            let current = await weth.client.getBlockNumber();
-            let logs = await weth.getPastLogsTransfer({
-                fromBlock: current - 200
-            });
-            let min = alot(logs).min(x => x.blockNumber);
-            let max = alot(logs).max(x => x.blockNumber);
-            console.log(`Count: ${logs.length}. Blocks: ${min}-${max}`)
-        }
     },
     async 'generate from class meta comments and check the sources' () {
         let genPath = `/test/tmp/polygon/DaiTokenContractBase/DaiTokenContractBase.ts`
@@ -74,11 +66,10 @@ UTest({
             output: './test/tmp/eth/'
         });
         await gen.generate();
-        await File.copyTo('/test/tmp/eth/Foo/Foo.ts', '/test/fixtures/contracts/');
-
-
+        let { Foo } = await include.js('/test/tmp/eth/Foo/Foo.ts');
         let provider = new HardhatProvider();
-        let foo = await provider.deployClass(Foo, { arguments: [ 'hello' ] });
+
+        let foo = await provider.deployClass(Foo.Foo, { arguments: [ 'hello' ] });
         let name = await foo.name();
         eq_(name, 'hello');
 

@@ -298,6 +298,9 @@ namespace Gen {
             if (result.name == null || result.name === '') {
                 result.name = 'input' + i;
             }
+            if (result.name === 'sender') {
+                result.name = '_sender';
+            }
             return result;
         });
 

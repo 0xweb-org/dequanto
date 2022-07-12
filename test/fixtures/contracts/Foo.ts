@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2022-07-11 10:58
+ *  AUTO-Generated Class: 2022-07-12 23:33
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
