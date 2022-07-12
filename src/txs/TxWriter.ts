@@ -131,7 +131,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
                 safeAddress: safeAccount.address ?? safeAccount.safeAddress,
                 owner: sender,
                 client: this.client,
-                transport: this.options.safeTransport
+                transport: this.options?.safeTransport
             });
             let innerWriter = await safe.execute(this);
 
@@ -140,8 +140,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         }
 
         let time = Date.now();
-        let sender: ChainAccount = await this.getSender()
-
+        let sender: ChainAccount = await this.getSender();
 
         let key = sender?.key;
         let signedTxBuffer = key == null
@@ -314,7 +313,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
             let service = di.resolve(ChainAccountsService);
             let fromStorage = await service.get(addressOrName, this.client.platform);
             if (fromStorage) {
-                account = fromStorage;
+                sender = fromStorage;
             }
         }
         return sender;

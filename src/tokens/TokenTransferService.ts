@@ -5,7 +5,7 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-import { TxWriter } from '@dequanto/txs/TxWriter';
+import { ITxWriterOptions, TxWriter } from '@dequanto/txs/TxWriter';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $is } from '@dequanto/utils/$is';
 import { TokensService } from './TokensService';
@@ -21,15 +21,21 @@ import { $account } from '@dequanto/utils/$account';
 export class TokenTransferService {
 
     private gasPriorityFee?: number
-    private txConfig: ITxConfig
+    private builderConfig: ITxConfig
+    private writerConfig: ITxWriterOptions
     private tokenService = di.resolve(TokensService, this.client.platform)
 
     constructor (public client: Web3Client, private logger = di.resolve(LoggerService)) {
 
     }
 
-    $config (txConfig: ITxConfig): this {
-        this.txConfig = txConfig;
+    $config (builderConfig: ITxConfig): this {
+        this.builderConfig = builderConfig;
+        return this;
+    }
+
+    $configWriter (writerConfig: ITxWriterOptions): this {
+        this.writerConfig = writerConfig;
         return this;
     }
 
@@ -138,7 +144,7 @@ export class TokenTransferService {
             txBuilder.data.gasLimit = GAS;
             txBuilder.data.type = 1;
 
-            txBuilder.setConfig(this.txConfig);
+            txBuilder.setConfig(this.builderConfig);
 
             await Promise.all([
                 txBuilder.setNonce({ overriding: true }),
@@ -149,6 +155,7 @@ export class TokenTransferService {
         }
         let txBuilder = await buildTx();
         return TxWriter.write(this.client, txBuilder, from, {
+            ...(this.writerConfig ?? {}),
             retries: 3,
             async onErrorRebuild (tx, error, errCount) {
                 // In case we got `balance` value, but that one was outdated, then all our calculations where wrong.
@@ -174,8 +181,8 @@ export class TokenTransferService {
             txBuilder.setGas({ priceRatio: this.gasPriorityFee, gasLimit: GAS }),
             txBuilder.setNonce(),
         ]);
-        txBuilder.setConfig(this.txConfig);
-        return TxWriter.write(this.client, txBuilder, from);
+        txBuilder.setConfig(this.builderConfig);
+        return TxWriter.write(this.client, txBuilder, from, this.writerConfig);
     }
 
     private async transferErc20All (from: ChainAccount, to: TAddress, token: IToken, opts?: { remainder?: number | bigint, retryCount?: number }): Promise<TxWriter> {
@@ -195,18 +202,18 @@ export class TokenTransferService {
                     retryCount: 0
                 });
             }
-            if (this.txConfig.gasFunding == null) {
+            if (this.builderConfig.gasFunding == null) {
                 return null;
             }
         }
         return erc20
-            .$config(this.txConfig)
+            .$config(this.builderConfig, this.writerConfig)
             .transfer(from, to, balance);
     }
     private async transferErc20 (from: TAccount, to: TAddress, token: IToken, amount: bigint): Promise<TxWriter> {
         let erc20 = await TokensService.erc20(token, this.client.platform);
         return erc20
-            .$config(this.txConfig)
+            .$config(this.builderConfig, this.writerConfig)
             .transfer(from, to, amount);
     }
     private getAmount (amount: number | bigint, token: IToken): bigint

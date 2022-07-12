@@ -60,10 +60,21 @@ export class GnosisSafeHandler {
         });
     }
 
-    async submitTransaction(safeTxHash: string) {
+    async submitTransaction(safeTxHash: string, options?: { threshold?: number }) {
         let tx = await this.transport.getTx(safeTxHash);
         let writer = di.resolve(ContractWriter, this.safeAddress, this.client);
         let confirmations = tx.confirmations;
+
+        if (options?.threshold != null) {
+            let needCount = options.threshold;
+            if (confirmations.length < needCount) {
+                throw new Error(`Require ${needCount} confirmations, but got ${confirmations.length} for the tx ${safeTxHash}`);
+            }
+            if (confirmations.length > needCount) {
+                // get confirmations count as required
+                confirmations = confirmations.slice(0, needCount);
+            }
+        }
 
         let signaturesArr = alot(confirmations)
             .sortBy(x => x.owner)
@@ -112,7 +123,7 @@ export class GnosisSafeHandler {
             intervalMs: 3000
         });
 
-        let tx = await this.submitTransaction(hash);
+        let tx = await this.submitTransaction(hash, { threshold });
         return tx;
     }
 
@@ -171,7 +182,7 @@ export class GnosisSafeHandler {
 
         writer.emit('safeTxProposed', args);
         return {
-            threshold: safeInfo.threshold,
+            threshold: Number(safeInfo.threshold),
             hash
         };
     }
