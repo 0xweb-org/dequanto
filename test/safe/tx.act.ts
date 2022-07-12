@@ -1,21 +1,24 @@
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-
-import { $signRaw } from '@dequanto/utils/$signRaw';
-import { class_Uri } from 'atma-utils';
-import hre from 'hardhat'
 import { File } from 'atma-io';
+import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { GnosisSafeFactory } from '@dequanto/safe/GnosisSafeFactory';
-import { $address } from '@dequanto/utils/$address';
 import { GnosisSafe } from '@dequanto-contracts/gnosis/GnosisSafe';
 import { GnosisSafeHandler } from '@dequanto/safe/GnosisSafeHandler';
 import { InMemoryServiceTransport } from '@dequanto/safe/transport/InMemoryServiceTransport';
-import { TokenTransferService } from '@dequanto/tokens/TokenTransferService';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import { SafeAccount } from '@dequanto/models/TAccount';
+import { FileServiceTransport } from '@dequanto/safe/transport/FileServiceTransport';
+import { $signRaw } from '@dequanto/utils/$signRaw';
 import { $bigint } from '@dequanto/utils/$bigint';
+import { $promise } from '@dequanto/utils/$promise';
+import { $address } from '@dequanto/utils/$address';
 
 
 UTest({
+    async $before () {
+        try {
+            await File.removeAsync('./test/tmp/safe-tx.json');
+        } catch (error) { }
+    },
     'should sign tx hash' () {
         const key = `0x66e91912f68828c17ad3fee506b7580c4cd19c7946d450b4b0823ac73badc878`;
         const address = `0x6a2EB7F6734F4B79104A38Ad19F1c4311e5214c8`
@@ -25,7 +28,130 @@ UTest({
         eq_(signature.signature, `0xc0df6a1b659d56d3d23f66cbd1c483467ea68a428fea7bbbe0a527d43d8681f616af33344035f36c08218718480374dada0fe6cdb266d0182a4225d0e9c227181b`);
     },
 
-    async '!create' () {
+    async 'create in-memory safe and manully receive tokens ' () {
+        let provider = new HardhatProvider();
+        let client = provider.client();
+        let owner1 = provider.deployer();
+        let owner2 = provider.deployer(1);
+
+        let { safe, freeTokenContract } = await SafeTestableFactory.prepair();
+
+        eq_($address.isValid(safe.safeAddress), true, `Invalid address ${safe.safeAddress}`);
+
+        let contract = new GnosisSafe(safe.safeAddress, client);
+        let nonce = await contract.nonce();
+        eq_(Number(nonce), 0);
+
+
+        let handler = new GnosisSafeHandler({
+            safeAddress: safe.safeAddress,
+            owner: owner1,
+            client: client,
+            transport: new InMemoryServiceTransport(client, owner1)
+        });
+
+
+        let balanceBefore = await freeTokenContract.balanceOf(safe.safeAddress);
+        eq_($bigint.toEther(balanceBefore, 18), 0);
+
+
+        '> airdrop some tokens to sender (safe)'
+
+        let writer = new ContractWriter(freeTokenContract.address, client);
+        let txWriter = await writer.writeAsync(<SafeAccount>{
+            address: safe.safeAddress,
+            operator: owner1,
+        }, 'airdrop()', [], {
+            builderConfig: {
+                send: 'manual'
+            }
+        });
+
+        let { hash, threshold } = await handler.createTransaction(txWriter, 0n);
+
+        await handler.confirmTx(hash, owner2);
+        await handler.confirmTx(hash, owner1);
+        let tx = await handler.submitTransaction(hash);
+
+        let receipt = await tx.wait();
+        eq_(receipt.status, true);
+
+        let balance = await freeTokenContract.balanceOf(safe.safeAddress);
+        let eth = $bigint.toEther(balance, 18);
+        eq_(eth, 10);
+
+
+        nonce = await contract.nonce();
+        eq_(Number(nonce), 1);
+    },
+
+    async 'create file safe and manully receive tokens ' () {
+        let provider = new HardhatProvider();
+        let client = provider.client();
+        let owner1 = provider.deployer();
+        let owner2 = provider.deployer(1);
+
+        let { safe, freeTokenContract } = await SafeTestableFactory.prepair();
+
+        eq_($address.isValid(safe.safeAddress), true, `Invalid address ${safe.safeAddress}`);
+
+        let contract = new GnosisSafe(safe.safeAddress, client);
+        let nonce = await contract.nonce();
+        eq_(Number(nonce), 0);
+
+
+        let balanceBefore = await freeTokenContract.balanceOf(safe.safeAddress);
+        eq_($bigint.toEther(balanceBefore, 18), 0);
+
+
+        '> airdrop some tokens to sender (safe)'
+
+        let writer = new ContractWriter(freeTokenContract.address, client);
+        let safeAccount = <SafeAccount>{
+            address: safe.safeAddress,
+            operator: owner1,
+        };
+
+        let confirmationsFile = './test/tmp/safe-tx.json';
+        let txWriter = await writer.writeAsync(safeAccount, 'airdrop()', [], {
+            writerConfig: {
+                safeTransport: new FileServiceTransport(client, owner1, confirmationsFile)
+            }
+        });
+
+        let safeTx = await $promise.fromEvent(txWriter, 'safeTxProposed');
+
+
+        let arr = await File.readAsync<any>(confirmationsFile);
+        let json = arr.find(x => x.safeTxHash === safeTx.safeTxHash);
+
+        eq_(json.safeTxHash, safeTx.safeTxHash);
+
+        let sig1 = $signRaw.signEC(safeTx.safeTxHash, owner1.key);
+        let sig2 = $signRaw.signEC(safeTx.safeTxHash, owner2.key);
+        json.confirmations = [
+            { owner: owner1.address, signature: sig1.signature },
+            { owner: owner2.address, signature: sig2.signature },
+        ];
+
+        await File.writeAsync(confirmationsFile, arr);
+
+
+        let receipt = await txWriter.wait();
+        eq_(receipt.status, true);
+
+        let balance = await freeTokenContract.balanceOf(safe.safeAddress);
+        let eth = $bigint.toEther(balance, 18);
+        eq_(eth, 10);
+
+        nonce = await contract.nonce();
+        eq_(Number(nonce), 1);
+    }
+})
+
+class SafeTestableFactory {
+
+    static async prepair () {
         let provider = new HardhatProvider();
         let client = provider.client();
         let owner1 = provider.deployer();
@@ -54,52 +180,12 @@ UTest({
             }
         });
 
-        eq_($address.isValid(safe.safeAddress), true, `Invalid address ${safe.safeAddress}`);
-
-        let contract = new GnosisSafe(safe.safeAddress, client);
-        let nonce = await contract.nonce();
-        eq_(Number(nonce), 0);
-
-
-        let handler = new GnosisSafeHandler({
-            safeAddress: safe.safeAddress,
-            owner: owner1,
-            client: client,
-            transport: new InMemoryServiceTransport(client, owner1)
+        const { contract: freeTokenContract, abi: freeTokenAbi } = await provider.deploySol('/test/fixtures/contracts/FreeToken.sol', {
+            client
         });
 
-
-        const { contract: freeTokenContract, abi: freeTokenAbi } = await provider.deploySol('/test/fixtures/contracts/FreeToken.sol', { client });
-
-
-        let balanceBefore = await freeTokenContract.balanceOf(safe.safeAddress);
-        eq_($bigint.toEther(balanceBefore, 18), 0);
-
-
-        '> airdrop some tokens to sender (safe)'
-
-        let writer = new ContractWriter(freeTokenContract.address, client);
-        let txWriter = await writer.writeAsync(<SafeAccount>{
-            address: safe.safeAddress,
-            operator: owner1,
-        }, 'airdrop()', [], {
-            builderConfig: {
-                send: 'manual'
-            }
-        });
-
-
-        let { hash, threshold } = await handler.createTransaction(txWriter, 0n);
-
-        await handler.confirmTx(hash, owner2);
-        await handler.confirmTx(hash, owner1);
-        let tx = await handler.submitTransaction(hash);
-
-        let receipt = await tx.wait();
-        eq_(receipt.status, true);
-
-        let balance = await freeTokenContract.balanceOf(safe.safeAddress);
-        let eth = $bigint.toEther(balance, 18);
-        eq_(eth, 10);
+        return {
+            safe, freeTokenContract
+        }
     }
-})
+}

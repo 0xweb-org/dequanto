@@ -62,21 +62,13 @@ export class GnosisSafeHandler {
 
     async submitTransaction(safeTxHash: string) {
         let tx = await this.transport.getTx(safeTxHash);
-
         let writer = di.resolve(ContractWriter, this.safeAddress, this.client);
         let confirmations = tx.confirmations;
-
-        // let myConfirmation = confirmations.find(x => $address.eq(x.owner, this.owner.address));
-        // let myConfirmationIdx = confirmations.indexOf(myConfirmation);
-        // confirmations.splice(myConfirmationIdx, 1);
-
-        // let signaturesArr = [myConfirmation, ...confirmations].map(x => x.signature);
 
         let signaturesArr = alot(confirmations)
             .sortBy(x => x.owner)
             .map(x => x.signature)
             .toArray();
-
 
         let signatures = '0x' + signaturesArr.map(x => x.substring(2)).join('')
 
@@ -92,7 +84,6 @@ export class GnosisSafeHandler {
             tx.refundReceiver,
             signatures,
         ];
-
 
         let txWriter = await writer.writeAsync(
             this.owner,
@@ -177,6 +168,8 @@ export class GnosisSafeHandler {
         };
 
         await this.transport.proposeTransaction(args);
+
+        writer.emit('safeTxProposed', args);
         return {
             threshold: safeInfo.threshold,
             hash

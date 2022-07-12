@@ -19,6 +19,8 @@ import { TxLogParser } from './receipt/TxLogParser';
 import { type PromiEvent } from 'web3-core';
 import { GnosisSafeHandler } from '@dequanto/safe/GnosisSafeHandler';
 import { $account } from '@dequanto/utils/$account';
+import { ISafeServiceTransport } from '@dequanto/safe/transport/ISafeServiceTransport';
+import type { ProposeTransactionProps } from '@gnosis.pm/safe-service-client';
 
 interface ITxWriterEvents {
     transactionHash (hash: string)
@@ -26,12 +28,14 @@ interface ITxWriterEvents {
     confirmation (confNumber: number, receipt: TransactionReceipt)
     error (error: Error)
     sent ()
-    log (message: string);
+    log (message: string)
+    safeTxProposed (safeTx: ProposeTransactionProps)
 }
 export interface ITxWriterOptions {
     timeout?: number | boolean
     retries?: number
     retryDelay?: number
+    safeTransport?: ISafeServiceTransport
 
     /**
      * The callback is executed on error, to give the opportunity to build a new Tx to resubmit the tx.
@@ -90,7 +94,6 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     );
     private confirmationAwaiters = [] as { count: number, promise }[]
 
-
     protected constructor (
         public client: Web3Client,
         public builder: TxDataBuilder,
@@ -127,7 +130,8 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
             let safe = new GnosisSafeHandler({
                 safeAddress: safeAccount.address ?? safeAccount.safeAddress,
                 owner: sender,
-                client: this.client
+                client: this.client,
+                transport: this.options.safeTransport
             });
             let innerWriter = await safe.execute(this);
 
