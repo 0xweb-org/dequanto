@@ -48,7 +48,7 @@ class TxLogger {
 }
 exports.TxLogger = TxLogger;
 const channels = {
-    start: everlog_1.Monit.createChannel('tx-starts', {
+    start: everlog_1.Everlog.createChannel('tx-starts', {
         columns: [
             {
                 type: 'date',
@@ -72,7 +72,7 @@ const channels = {
             }
         ]
     }),
-    log: everlog_1.Monit.createChannel('tx-logs', {
+    log: everlog_1.Everlog.createChannel('tx-logs', {
         columns: [
             {
                 type: 'date',
@@ -92,7 +92,7 @@ const channels = {
             }
         ]
     }),
-    receipt: everlog_1.Monit.createChannel('tx-receipts', {
+    receipt: everlog_1.Everlog.createChannel('tx-receipts', {
         columns: [
             {
                 type: 'date',

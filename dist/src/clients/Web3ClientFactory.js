@@ -10,6 +10,7 @@ const EthWeb3Client_1 = require("./EthWeb3Client");
 const PolyWeb3Client_1 = require("./PolyWeb3Client");
 const ArbWeb3Client_1 = require("@dequanto/chains/arbitrum/ArbWeb3Client");
 const XDaiWeb3Client_1 = require("@dequanto/chains/xdai/XDaiWeb3Client");
+const HardhatProvider_1 = require("@dequanto/hardhat/HardhatProvider");
 var Web3ClientFactory;
 (function (Web3ClientFactory) {
     function get(platform, opts) {
@@ -24,6 +25,8 @@ var Web3ClientFactory;
                 return a_di_1.default.resolve(ArbWeb3Client_1.ArbWeb3Client, opts);
             case 'xdai':
                 return a_di_1.default.resolve(XDaiWeb3Client_1.XDaiWeb3Client, opts);
+            case 'hardhat':
+                return a_di_1.default.resolve(HardhatProvider_1.HardhatProvider).client('localhost');
             default:
                 throw new Error(`Unsupported platform ${platform} for web3 client`);
         }

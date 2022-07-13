@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TxDataBuilder = void 0;
 const InputDataUtils_1 = require("@dequanto/contracts/utils/InputDataUtils");
+const _account_1 = require("@dequanto/utils/$account");
 const _bigint_1 = require("@dequanto/utils/$bigint");
 class TxDataBuilder {
     constructor(client, account, data, config = null) {
@@ -68,12 +69,6 @@ class TxDataBuilder {
         else {
             nonce = await this.client.getTransactionCount(this.account.address, 'pending');
         }
-        // let count = opts?.nonce ?? (
-        //     opts?.overriding === true
-        //     ? await this.client.getTransactionCount(this.account.address)
-        //     : await this.client.getTransactionCount(this.account.address, 'pending')
-        // );
-        //let nonce = count;
         this.data.nonce = nonce;
     }
     async setGas({ price, priceRatio, gasLimitRatio, gasLimit, gasEstimation, from, type, } = {}) {
@@ -82,7 +77,7 @@ class TxDataBuilder {
                 { price, base: price, priority: 10n ** 9n }
                 : this.client.getGasPrice(),
             gasEstimation
-                ? this.client.getGasEstimation(from, this.data)
+                ? this.client.getGasEstimation(from ?? this.account.address, this.data)
                 : (gasLimit ?? this.client.defaultGasLimit ?? 2000000)
         ]);
         let hasPriceRatio = priceRatio != null;
@@ -94,6 +89,7 @@ class TxDataBuilder {
         else if (hasPriceFixed === false) {
             $priceRatio = 1.4;
         }
+        type ?? (type = this.client.defaultTxType);
         if (type === 1) {
             let $baseFee = _bigint_1.$bigint.multWithFloat(gasPrice.price, $priceRatio);
             this.data.gasPrice = _bigint_1.$bigint.toHex($baseFee);
@@ -103,7 +99,7 @@ class TxDataBuilder {
             let $priorityFee = gasPrice.priority ?? 10n ** 9n;
             this.data.maxFeePerGas = _bigint_1.$bigint.toHex($baseFee + $priorityFee);
             this.data.maxPriorityFeePerGas = _bigint_1.$bigint.toHex($priorityFee);
-            this.data.type = '0x02';
+            this.data.type = 2;
         }
         let hasLimitRatio = gasLimitRatio != null;
         let hasLimitFixed = gasLimit != null;
@@ -118,23 +114,34 @@ class TxDataBuilder {
         return this;
     }
     increaseGas(ratio) {
-        let gasPrice = this.data.gasPrice;
-        if (gasPrice == null) {
-            throw new Error(`Not possible to increase the gas price, the price not set yet`);
+        let { gasPrice, maxFeePerGas } = this.data;
+        if (gasPrice != null) {
+            let price = BigInt(gasPrice);
+            let priceNew = _bigint_1.$bigint.multWithFloat(price, ratio);
+            this.data.gasPrice = _bigint_1.$bigint.toHex(priceNew);
+            return;
         }
-        let price = BigInt(this.data.gasPrice);
-        let priceNew = _bigint_1.$bigint.multWithFloat(price, ratio);
-        this.data.gasPrice = _bigint_1.$bigint.toHex(priceNew);
+        if (maxFeePerGas != null) {
+            let price = BigInt(maxFeePerGas);
+            let priceNew = _bigint_1.$bigint.multWithFloat(price, ratio);
+            this.data.maxFeePerGas = _bigint_1.$bigint.toHex(priceNew);
+            return;
+        }
+        throw new Error(`Not possible to increase the gas price, the price not set yet`);
     }
-    signToBuffer(privateKey) {
-        return this.client.sign(this.data, privateKey);
+    getTxData(client) {
+        return {
+            ...this.data,
+            from: this.account?.address ?? void 0,
+            chainId: client.chainId,
+        };
     }
-    signToString(privateKey) {
+    /** Returns base64 string of the Tx Data */
+    async signToString(privateKey) {
         if (privateKey.startsWith('0x')) {
             privateKey = privateKey.substring(2);
         }
-        let buffer = this.signToBuffer(privateKey);
-        return '0x' + buffer.toString('hex');
+        return this.client.sign(this.data, privateKey);
     }
     toJSON() {
         return {
@@ -143,7 +150,8 @@ class TxDataBuilder {
         };
     }
     static fromJSON(client, account, json) {
-        return new TxDataBuilder(client, account, json.data, json.config);
+        let sender = _account_1.$account.getSender(account);
+        return new TxDataBuilder(client, sender, json.data, json.config);
     }
     static normalize(data) {
         for (let key in data) {
@@ -153,6 +161,16 @@ class TxDataBuilder {
             }
         }
         return data;
+    }
+    static getGasPrice(builder) {
+        let { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = builder.data;
+        if (gasPrice != null) {
+            return BigInt(gasPrice);
+        }
+        if (maxFeePerGas != null) {
+            return BigInt(maxFeePerGas) + BigInt(maxPriorityFeePerGas ?? 0);
+        }
+        return null;
     }
 }
 exports.TxDataBuilder = TxDataBuilder;

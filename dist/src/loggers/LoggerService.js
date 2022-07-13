@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LoggerService = void 0;
+const _date_1 = require("@dequanto/utils/$date");
 const everlog_1 = require("everlog");
 class LoggerService {
     constructor(name = 'journal') {
@@ -15,19 +16,21 @@ class LoggerService {
         });
     }
     warn(message) {
-        this.write([new Date(), 'Warn', message]);
+        this.write(['Warn', message]);
     }
     error(message) {
-        this.write([new Date(), 'Error', message]);
+        this.write(['Error', message]);
     }
     info(message) {
-        this.write([new Date(), 'Info', message]);
+        this.write(['Info', message]);
     }
     write(row) {
         let arr = typeof row === 'string' ? [row] : row;
-        arr.unshift(new Date());
+        let date = new Date();
+        arr.unshift(date);
         this.channel.writeRow(arr);
-        console.log(Array.isArray(row) ? row.join(' ') : row);
+        arr[0] = _date_1.$date.format(date, 'HH:mm:ss');
+        console.log(arr.join(' '));
         return this;
     }
 }

@@ -10,18 +10,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BlocksWalker = void 0;
-const a_di_1 = __importDefault(require("a-di"));
 const alot_1 = __importDefault(require("alot"));
 const memd_1 = __importDefault(require("memd"));
 const _array_1 = require("@dequanto/utils/$array");
 const atma_io_1 = require("atma-io");
 const PackedRanges_1 = require("../../structs/PackedRanges");
 const everlog_1 = require("everlog");
-const BlockDateResolver_1 = require("@dequanto/blocks/BlockDateResolver");
 const _date_1 = require("@dequanto/utils/$date");
 const atma_utils_1 = require("atma-utils");
 const _is_1 = require("@dequanto/utils/$is");
 const _logger_1 = require("@dequanto/utils/$logger");
+const _block_1 = require("@dequanto/utils/$block");
 class BlocksWalker {
     constructor(params) {
         this.params = params;
@@ -130,14 +129,7 @@ class BlocksWalker {
         if (mix == null) {
             return this.client.getBlockNumber();
         }
-        if (typeof mix === 'number') {
-            return mix;
-        }
-        if (mix instanceof Date) {
-            let dateResolver = a_di_1.default.resolve(BlockDateResolver_1.BlockDateResolver, this.client);
-            return await dateResolver.getBlockNumberFor(mix);
-        }
-        throw new Error(`Invalid getBlockNumber param: ${mix}`);
+        return _block_1.$block.ensureNumber(mix, this.client);
     }
     async processBlock(nr) {
         // reading block and transactions

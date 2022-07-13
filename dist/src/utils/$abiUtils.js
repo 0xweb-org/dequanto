@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.$abiUtils = void 0;
-const abi_1 = require("@ethersproject/abi");
+const ethers_1 = require("ethers");
 const _contract_1 = require("./$contract");
 const web3_1 = __importDefault(require("web3"));
 var $abiUtils;
@@ -14,7 +14,7 @@ var $abiUtils;
     }
     $abiUtils.encodePacked = encodePacked;
     function encode(types, values) {
-        let coder = new abi_1.AbiCoder();
+        let coder = new ethers_1.utils.AbiCoder();
         return coder.encode(types, values);
     }
     $abiUtils.encode = encode;
@@ -33,6 +33,13 @@ var $abiUtils;
         return hash.substring(0, 10);
     }
     $abiUtils.getMethodSignature = getMethodSignature;
+    function getTopicSignature(abi) {
+        let types = abi.inputs?.map(serializeMethodSignatureArgumentType) ?? [];
+        let signature = `${abi.name}(${types.join(',')})`;
+        let hash = _contract_1.$contract.keccak256(signature);
+        return hash;
+    }
+    $abiUtils.getTopicSignature = getTopicSignature;
     function serializeMethodSignatureArgumentType(input) {
         if (input.type === 'tuple') {
             let types = input.components.map(x => serializeMethodSignatureArgumentType(x));

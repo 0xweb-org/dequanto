@@ -37,4 +37,11 @@ var $is;
         return /^0x[a-fA-F0-9]{40}$/g.test(val);
     }
     $is.Address = Address;
+    function hexString(str) {
+        if (typeof str !== 'string') {
+            return false;
+        }
+        return /^0x[\da-f]+$/i.test(str);
+    }
+    $is.hexString = hexString;
 })($is = exports.$is || (exports.$is = {}));

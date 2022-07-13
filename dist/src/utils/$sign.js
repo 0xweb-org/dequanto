@@ -1,14 +1,42 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.$sign = void 0;
-const ethereumjs_util_1 = require("ethereumjs-util");
+const _buffer_1 = require("./$buffer");
+const _is_1 = require("./$is");
 var $sign;
 (function ($sign) {
-    function signEC(message, privateKey) {
-        const sig = (0, ethereumjs_util_1.ecsign)(toBuffer(message), toBuffer(privateKey, { encoding: 'hex' }));
-        let r = sig.r.toString('hex').padStart(64, '0');
-        let s = sig.s.toString('hex').padStart(64, '0');
-        let v = sig.v.toString(16);
+    /** Adds  "Ethereum Signed Message" */
+    async function signEIPHashed(client, message, account, accountPss) {
+        const web3 = await client.getWeb3();
+        //const buffer = toBuffer(message);
+        //const hash = hashPersonalMessage(buffer as Buffer);
+        const str = message;
+        const key = account.key != null
+            ? account.key
+            : null;
+        if (key != null) {
+            let sig = web3.eth.accounts.sign(str, key);
+            let r = sig.r.substring(2);
+            let s = sig.s.substring(2);
+            let v = sig.v.substring(2);
+            return toSignature({ r, s, v });
+        }
+        else {
+            let signature = accountPss == null
+                ? await web3.eth.sign(message.toString(), account.address)
+                : await web3.eth.personal.sign(message.toString(), account.address, accountPss);
+            return toSignature(splitSignature(signature));
+        }
+    }
+    $sign.signEIPHashed = signEIPHashed;
+    function splitSignature(signature) {
+        let r = signature.substring(2, 2 + 64);
+        let s = signature.substring(2 + 64, 2 + 64 + 64);
+        let v = signature.substring(2 + 64 + 64);
+        return { r, s, v };
+    }
+    function toSignature(sign) {
+        let { r, s, v } = sign;
         return {
             v: `0x${v}`,
             r: `0x${r}`,
@@ -17,18 +45,17 @@ var $sign;
             signatureVRS: `0x${v}${r}${s}`
         };
     }
-    $sign.signEC = signEC;
-    function signEIPHashed(message, privateKey) {
-        const hash = (0, ethereumjs_util_1.hashPersonalMessage)(toBuffer(message, { encoding: 'utf8' }));
-        return signEC(hash, privateKey);
-    }
-    $sign.signEIPHashed = signEIPHashed;
     function toBuffer(message, opts) {
         if (typeof message === 'string') {
-            if (/^0x[\da-f]+$/i.test(message)) {
-                return Buffer.from(message.substring(2), 'hex');
+            let encoding = opts?.encoding;
+            if (encoding == null && _is_1.$is.hexString(message)) {
+                encoding = 'hex';
+                message = message.substring(2);
             }
-            return Buffer.from(message, opts?.encoding ?? 'utf8');
+            if (encoding === 'hex') {
+                return _buffer_1.$buffer.fromHex(message);
+            }
+            return _buffer_1.$buffer.fromString(message, opts?.encoding ?? 'utf8');
         }
         return message;
     }

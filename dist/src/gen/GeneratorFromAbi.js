@@ -37,6 +37,11 @@ class GeneratorFromAbi {
             .map(x => Gen.serializeEventExtractor(x))
             .filter(Boolean)
             .map(Str.formatMethod);
+        let eventsFetchersArr = abiJson
+            .filter(x => x.type === 'event')
+            .map(x => Gen.serializeEventFetcher(x))
+            .filter(Boolean)
+            .map(Str.formatMethod);
         let eventInterfaces = abiJson
             .filter(x => x.type === 'event')
             .map(x => Gen.serializeEventInterface(x))
@@ -46,6 +51,7 @@ class GeneratorFromAbi {
         let methods = methodsArr.join('\n\n');
         let events = eventsArr.join('\n\n');
         let eventsExtractors = eventsExtractorsArr.join('\n\n');
+        let eventsFetchers = eventsFetchersArr.join('\n\n');
         let name = opts.name;
         let templatePath = _path_1.$path.resolve(`/src/gen/ContractTemplate.ts`);
         let template = await atma_io_1.File.readAsync(templatePath, { skipHooks: true });
@@ -90,6 +96,15 @@ class GeneratorFromAbi {
                 ];
                 explorerUrl = `https://etherscan.io/address/${opts.implementation}#code`;
                 break;
+            case 'hardhat':
+                EtherscanStr = 'Etherscan';
+                EthWeb3ClientStr = 'HardhatWeb3Client';
+                imports = [
+                    `import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'`,
+                    `import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client'`,
+                ];
+                explorerUrl = ``;
+                break;
             default:
                 throw new Error(`Unknown network ${opts.network}`);
         }
@@ -102,13 +117,16 @@ class GeneratorFromAbi {
             .replace(`/* METHODS */`, methods)
             .replace(`/* EVENTS */`, events)
             .replace(`/* EVENTS_EXTRACTORS */`, eventsExtractors)
+            .replace(`/* EVENTS_FETCHERS */`, eventsFetchers)
             .replace(`$ABI$`, JSON.stringify(abiJson))
             .replace(`$DATE$`, _date_1.$date.format(new Date(), 'yyyy-MM-dd HH:mm'))
             .replace(`$EXPLORER_URL$`, explorerUrl)
             .replace(`/* $EVENT_INTERFACES$ */`, eventInterfaces.join('\n'));
         let directory = name;
         let filename = /[^\\/]+$/.exec(name)[0];
-        let path = atma_utils_1.class_Uri.combine(opts.output, directory, `${filename}.ts`);
+        let path = /\.ts$/.test(opts.output)
+            ? opts.output
+            : atma_utils_1.class_Uri.combine(opts.output, directory, `${filename}.ts`);
         await atma_io_1.File.writeAsync(path, code, { skipHooks: true });
         if (opts.saveAbi) {
             let path = atma_utils_1.class_Uri.combine(opts.output, directory, `${filename}.json`);
@@ -154,7 +172,7 @@ var Gen;
     function serializeEvent(abi) {
         let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
         return `
-            on${abi.name} (fn: (event: EventData, ${fnInputArguments}) => void): ClientEventsStream<any> {
+            on${abi.name} (fn: (event: EventLog, ${fnInputArguments}) => void): ClientEventsStream<any> {
                 return this.$on('${abi.name}', fn);
             }
         `;
@@ -162,18 +180,39 @@ var Gen;
     Gen.serializeEvent = serializeEvent;
     function serializeEventExtractor(abi) {
         return `
-            extractLogs${abi.name} (tx: TransactionReceipt): TLog${abi.name}[] {
+            extractLogs${abi.name} (tx: TransactionReceipt): ITxLogItem<TLog${abi.name}>[] {
                 let abi = this.$getAbiItem('event', '${abi.name}');
-                return this.$extractLogs(tx, abi) as any as TLog${abi.name}[];
+                return this.$extractLogs(tx, abi) as any as ITxLogItem<TLog${abi.name}>[];
             }
         `;
     }
     Gen.serializeEventExtractor = serializeEventExtractor;
+    function serializeEventFetcher(abi) {
+        let inputs = abi.inputs;
+        let indexed = (0, alot_1.default)(inputs).takeWhile(x => x.indexed).toArray();
+        let indexedParams = indexed.map(param => `${param.name}?: ${_abiType_1.$abiType.getTsType(param.type, param)}`);
+        return `
+            async getPastLogs${abi.name} (options?: {
+                fromBlock?: number | Date
+                toBlock?: number | Date
+                params?: { ${indexedParams} }
+            }): Promise<ITxLogItem<TLog${abi.name}>[]> {
+                let topic = '${_abiUtils_1.$abiUtils.getTopicSignature(abi)}';
+                let abi = this.$getAbiItem('event', '${abi.name}');
+                let filters = await this.$getPastLogsFilters(abi, {
+                    topic,
+                    ...options
+                });
+                let logs= await this.$getPastLogs(filters);
+                return logs.map(log => this.$extractLog(log, abi)) as any;
+            }
+        `;
+    }
+    Gen.serializeEventFetcher = serializeEventFetcher;
     function serializeEventInterface(abi) {
         let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
         return `
             type TLog${abi.name} = {
-                contract: TAddress,
                 ${fnInputArguments}
             }
         `;
@@ -218,8 +257,8 @@ var Gen;
         }
         return `
             // ${_abiUtils_1.$abiUtils.getMethodSignature(abi)}
-            async ${abi.name} (eoa: {address: TAddress, key: string, value?: string | number | bigint }, ${fnInputArguments}): Promise<TxWriter> {
-                return this.$write(this.$getAbiItem('function', '${abi.name}'), eoa${callInputArguments});
+            async ${abi.name} (sender: TSender, ${fnInputArguments}): Promise<TxWriter> {
+                return this.$write(this.$getAbiItem('function', '${abi.name}'), sender${callInputArguments});
             }
         `;
     }
@@ -228,6 +267,9 @@ var Gen;
             let result = { ...input };
             if (result.name == null || result.name === '') {
                 result.name = 'input' + i;
+            }
+            if (result.name === 'sender') {
+                result.name = '_sender';
             }
             return result;
         });

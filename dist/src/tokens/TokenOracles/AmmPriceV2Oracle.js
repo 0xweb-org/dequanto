@@ -23,7 +23,7 @@ class AmmPriceV2Oracle {
         this.explorer = explorer;
         this.tokensService = a_di_1.default.resolve(TokensService_1.TokensService, this.client.platform, this.explorer);
         this.pairService = a_di_1.default.resolve(AmmPairV2Service_1.AmmPairV2Service, this.client, this.explorer);
-        this.logger = a_di_1.default.resolve(LoggerService_1.LoggerService, nameof(AmmPriceV2Oracle));
+        this.logger = a_di_1.default.resolve(LoggerService_1.LoggerService, 'AmmPriceV2Oracle');
         switch (client.platform) {
             case 'bsc':
                 this.exchange = a_di_1.default.resolve(PancakeswapExchange_1.PancakeswapExchange, this.client, this.explorer);

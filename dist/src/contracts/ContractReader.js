@@ -68,6 +68,8 @@ class ContractReader {
             throw new Error(`Contract: ${address} ${methodAbi} with \n${args}\nfailed with ${error.message}`);
         }
     }
+    async getLogs() {
+    }
     static async read(client, address, methodAbi) {
         let reader = new ContractReader(client);
         return reader.readAsync(address, methodAbi);

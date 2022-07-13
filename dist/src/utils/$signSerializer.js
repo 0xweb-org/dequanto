@@ -26,6 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.$signSerializer = void 0;
 const ethUtil = __importStar(require("ethereumjs-util"));
 const ethAbi = __importStar(require("ethereumjs-abi"));
+const _buffer_1 = require("./$buffer");
 var $signSerializer;
 (function ($signSerializer) {
     const TYPED_MESSAGE_SCHEMA = {
@@ -96,7 +97,7 @@ var $signSerializer;
                     if (type === 'string') {
                         // convert string to buffer - prevents ethUtil from interpreting strings like '0xabcd' as hex
                         if (typeof value === 'string') {
-                            value = Buffer.from(value, 'utf8');
+                            value = _buffer_1.$buffer.fromString(value);
                         }
                         return ['bytes32', ethUtil_keccak(value)];
                     }
@@ -129,7 +130,7 @@ var $signSerializer;
                             encodedTypes.push('bytes32');
                             // convert string to buffer - prevents ethUtil from interpreting strings like '0xabcd' as hex
                             if (typeof value === 'string') {
-                                value = Buffer.from(value, 'utf8');
+                                value = _buffer_1.$buffer.fromString(value, 'utf8');
                             }
                             value = ethUtil_keccak(value);
                             encodedValues.push(value);
@@ -241,12 +242,12 @@ var $signSerializer;
          */
         serialize(typedData, useV4 = true) {
             const sanitizedData = this.sanitizeData(typedData);
-            const parts = [Buffer.from('1901', 'hex')];
+            const parts = [_buffer_1.$buffer.fromHex('1901')];
             parts.push(this.hashStruct('EIP712Domain', sanitizedData.domain, sanitizedData.types, useV4));
             if (sanitizedData.primaryType !== 'EIP712Domain') {
                 parts.push(this.hashStruct(sanitizedData.primaryType, sanitizedData.message, sanitizedData.types, useV4));
             }
-            return ethUtil_keccak(Buffer.concat(parts));
+            return ethUtil_keccak(_buffer_1.$buffer.concat(parts));
         }
     }
     ;

@@ -15,19 +15,27 @@ const memd_1 = __importDefault(require("memd"));
 const web3_1 = __importDefault(require("web3"));
 const _date_1 = require("@dequanto/utils/$date");
 const _number_1 = require("@dequanto/utils/$number");
+const _fn_1 = require("@dequanto/utils/$fn");
 const PromiEventWrap_1 = require("./model/PromiEventWrap");
 const ClientStatus_1 = require("./model/ClientStatus");
 const ClientPoolStats_1 = require("./ClientPoolStats");
 const atma_utils_1 = require("atma-utils");
 const ClientEventsStream_1 = require("./ClientEventsStream");
 const ClientErrorUtil_1 = require("./utils/ClientErrorUtil");
-const _fn_1 = require("@dequanto/utils/$fn");
 class ClientPool {
     constructor(config) {
-        this.config = config;
         this.discoveredPartial = false;
         this.discoveredFull = false;
-        this.clients = this.config.map(cfg => new WClient(cfg));
+        if (config.endpoints != null && config.endpoints.length > 0) {
+            this.clients = config.endpoints.map(cfg => new WClient(cfg));
+        }
+        else if (config.web3 || config.provider) {
+            this.clients = [new WClient({ web3: config.web3 ?? config.provider })];
+        }
+        else {
+            console.dir(config, { depth: null });
+            throw new Error(`Neither Node endpoints nor Web3 instance`);
+        }
         if (this.clients.length < 2) {
             this.discoveredPartial = true;
             this.discoveredFull = true;
@@ -76,20 +84,31 @@ class ClientPool {
         }
     }
     async getWeb3(options) {
-        let wClient = await this.next(null, options);
+        let wClient = await this.next(null, options, { manual: true });
         if (wClient == null) {
             throw new Error(`Not client found in ${this.clients.length} Clients`);
         }
         return wClient?.web3;
     }
     async getNodeURL(options) {
-        let wClient = await this.next(null, options);
+        let wClient = await this.next(null, options, { manual: true });
         if (wClient == null) {
-            throw new Error(`Not client found in ${this.clients.length} Clients`);
+            let stats = await this.getNodeStats();
+            let info = stats.map(x => `    ${x.url}. ERR: ${x.fail}; OK: ${x.success}; Ping: ${x.ping}`).join('\n');
+            let requirements = JSON.stringify(options);
+            throw new Error(`No alive node for ${requirements} found. \n ${info}`);
         }
         return wClient?.config.url;
     }
     async releaseWeb3() {
+    }
+    getOptionForFetchableRange() {
+        const DEFAULT = 1000;
+        let max = (0, alot_1.default)(this.clients).max(x => x.config?.fetchableBlockRange ?? 0);
+        if (max === 0) {
+            return DEFAULT;
+        }
+        return max;
     }
     callPromiEvent(fn, opts, used = new Map(), errors = [], root) {
         root = root ?? new PromiEventWrap_1.PromiEventWrap();
@@ -113,7 +132,6 @@ class ClientPool {
             let promiEvent = wClient.callPromiEvent(fn);
             root.bind(promiEvent);
             promiEvent.on('error', async (error) => {
-                console.log('!!client ERROR', error);
                 error.message += ` (RPC: ${wClient.config.url})`;
                 if (ClientErrorUtil_1.ClientErrorUtil.isConnectionFailed(error)) {
                     this.callPromiEvent(fn, opts, used, errors, root);
@@ -153,7 +171,7 @@ class ClientPool {
     }
     getEventStream(address, abi, event) {
         if (this.ws == null) {
-            this.ws = this.clients.find(x => x.config.url.startsWith('ws'));
+            this.ws = this.clients.find(x => x.config.url?.startsWith('ws'));
         }
         let stream = this.ws.getEventStream(address, abi, event);
         return stream;
@@ -242,16 +260,19 @@ class ClientPool {
     //     used.set(wClient, 1);
     //     return root as any as TResult;
     // }
-    async next(used, opts) {
+    async next(used, opts, params) {
+        let clients = this.clients;
+        if (params?.manual !== true) {
+            clients = clients.filter(x => x.config.manual !== true);
+        }
         if (opts?.ws === true) {
             if (this.ws == null) {
-                this.ws = this.clients.find(x => x.config.url.startsWith('ws'));
+                this.ws = clients.find(x => x.config.url?.startsWith('ws'));
             }
             return this.ws;
         }
-        let clients = this.clients;
         if (opts?.ws === false) {
-            clients = this.clients.filter(x => x.config.url.startsWith('http'));
+            clients = clients.filter(x => x.config.url?.startsWith('http'));
         }
         if (this.discoveredPartial === false) {
             await this.discoverLive().ready;
@@ -408,8 +429,7 @@ __decorate([
 ], ClientPool.prototype, "discoverLive", null);
 exports.ClientPool = ClientPool;
 class WClient {
-    constructor(config) {
-        this.config = config;
+    constructor(mix) {
         this.lastStatus = 0;
         this.lastDate = new Date(2000);
         this.status = 'ok';
@@ -418,7 +438,25 @@ class WClient {
             fail: 0,
             ping: 0
         };
-        this.web3 = new web3_1.default(config.url);
+        const hasUrl = 'url' in mix && typeof mix.url === 'string';
+        const hasWeb3 = 'web3' in mix && typeof mix.web3 != null;
+        if (hasUrl || hasWeb3) {
+            this.config = mix;
+            if (mix.url) {
+                // web3 object
+                this.web3 = new web3_1.default(mix.url);
+            }
+            else if (mix.web3.eth != null) {
+                this.web3 = mix.web3;
+            }
+            else {
+                // provider
+                this.web3 = new web3_1.default(mix.web3);
+            }
+        }
+        else {
+            throw new Error(`Neither Node URL nor Web3 Instance in argument`);
+        }
         this.web3.eth.handleRevert = true;
         this.eth = this.web3.eth;
     }

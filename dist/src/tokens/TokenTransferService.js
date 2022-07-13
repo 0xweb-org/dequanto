@@ -14,14 +14,19 @@ const _address_1 = require("@dequanto/utils/$address");
 const _promise_1 = require("@dequanto/utils/$promise");
 const LoggerService_1 = require("@dequanto/loggers/LoggerService");
 const _logger_1 = require("@dequanto/utils/$logger");
+const _account_1 = require("@dequanto/utils/$account");
 class TokenTransferService {
     constructor(client, logger = a_di_1.default.resolve(LoggerService_1.LoggerService)) {
         this.client = client;
         this.logger = logger;
         this.tokenService = a_di_1.default.resolve(TokensService_1.TokensService, this.client.platform);
     }
-    $config(txConfig) {
-        this.txConfig = txConfig;
+    $config(builderConfig) {
+        this.builderConfig = builderConfig;
+        return this;
+    }
+    $configWriter(writerConfig) {
+        this.writerConfig = writerConfig;
         return this;
     }
     async getBalance(address, token) {
@@ -39,8 +44,8 @@ class TokenTransferService {
         let ANYTOKEN = 'USDC';
         let erc20 = await TokensService_1.TokensService.erc20(ANYTOKEN, this.client.platform);
         let transfers = erc20.extractLogsTransfer(receipt);
-        let transfer = transfers.find(x => _address_1.$address.eq(x.to, receiver));
-        return transfer?.value ?? 0n;
+        let transfer = transfers.find(x => _address_1.$address.eq(x.params.to, receiver));
+        return transfer?.params.value ?? 0n;
     }
     /** Returns NULL for transaction, if no balance to transfer */
     async transferAll(from, to, token) {
@@ -114,7 +119,7 @@ class TokenTransferService {
             // txBuilder.data.maxPriorityFeePerGas = $bigint.toHex(20n**9n);
             txBuilder.data.gasLimit = GAS;
             txBuilder.data.type = 1;
-            txBuilder.setConfig(this.txConfig);
+            txBuilder.setConfig(this.builderConfig);
             await Promise.all([
                 txBuilder.setNonce({ overriding: true }),
             ]);
@@ -123,6 +128,7 @@ class TokenTransferService {
         };
         let txBuilder = await buildTx();
         return TxWriter_1.TxWriter.write(this.client, txBuilder, from, {
+            ...(this.writerConfig ?? {}),
             retries: 3,
             async onErrorRebuild(tx, error, errCount) {
                 // In case we got `balance` value, but that one was outdated, then all our calculations where wrong.
@@ -138,7 +144,7 @@ class TokenTransferService {
         });
     }
     async transferNative(from, to, amount) {
-        let txBuilder = new TxDataBuilder_1.TxDataBuilder(this.client, from, {
+        let txBuilder = new TxDataBuilder_1.TxDataBuilder(this.client, _account_1.$account.getSender(from), {
             to: to,
             value: _bigint_1.$bigint.toHex(amount)
         });
@@ -147,8 +153,8 @@ class TokenTransferService {
             txBuilder.setGas({ priceRatio: this.gasPriorityFee, gasLimit: GAS }),
             txBuilder.setNonce(),
         ]);
-        txBuilder.setConfig(this.txConfig);
-        return TxWriter_1.TxWriter.write(this.client, txBuilder, from);
+        txBuilder.setConfig(this.builderConfig);
+        return TxWriter_1.TxWriter.write(this.client, txBuilder, from, this.writerConfig);
     }
     async transferErc20All(from, to, token, opts) {
         let erc20 = await TokensService_1.TokensService.erc20(token, this.client.platform);
@@ -167,16 +173,18 @@ class TokenTransferService {
                     retryCount: 0
                 });
             }
-            return null;
+            if (this.builderConfig.gasFunding == null) {
+                return null;
+            }
         }
         return erc20
-            .$config(this.txConfig)
+            .$config(this.builderConfig, this.writerConfig)
             .transfer(from, to, balance);
     }
     async transferErc20(from, to, token, amount) {
         let erc20 = await TokensService_1.TokensService.erc20(token, this.client.platform);
         return erc20
-            .$config(this.txConfig)
+            .$config(this.builderConfig, this.writerConfig)
             .transfer(from, to, amount);
     }
     getAmount(amount, mix) {

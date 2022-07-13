@@ -92,4 +92,8 @@ var $number;
         throw new Error('Unsupported type to convert to number ' + typeof mix);
     }
     $number.parseOptional = parseOptional;
+    function toHex(num) {
+        return `0x` + Number(num).toString(16);
+    }
+    $number.toHex = toHex;
 })($number = exports.$number || (exports.$number = {}));

@@ -11,6 +11,7 @@ const ethers_1 = require("ethers");
 const TxDataBuilder_1 = require("@dequanto/txs/TxDataBuilder");
 const TxWriter_1 = require("@dequanto/txs/TxWriter");
 const _contract_1 = require("@dequanto/utils/$contract");
+const _is_1 = require("@dequanto/utils/$is");
 class Contract {
     constructor(data, opts) {
         this.name = null;
@@ -75,7 +76,7 @@ class Contract {
         let provider = a_di_1.default.resolve(ContractProvider_1.ContractProvider, opts.explorer);
         let info = await provider.getInfo(mix);
         if (info == null) {
-            let byName = mix.startsWith('0x') === false;
+            let byName = _is_1.$is.Address(mix) === false;
             if (byName) {
                 throw new Error(`Contract by name not found ${mix}`);
             }

@@ -1,30 +1,6 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.$date = exports.DateTool = void 0;
-const Formatter = __importStar(require("atma-formatter"));
 class DateTool {
     constructor(date = new Date()) {
         this.date = date;
@@ -154,7 +130,7 @@ var $date;
         if (typeof date === 'string' || typeof date === 'number') {
             date = parse(date);
         }
-        return Formatter.formatDate(date, format);
+        return Formatter.format(date, format);
     }
     $date.format = format;
     function formatTimespan(ms) {
@@ -493,4 +469,132 @@ var $date;
         return Math.floor(date.getTime() / 1000);
     }
     $date.toUnixTimestamp = toUnixTimestamp;
+    let Formatter;
+    (function (Formatter) {
+        const _cultureInfo = {
+            MONTH: [
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December',
+            ],
+            MONTH_SHORT: [
+                'Jan',
+                'Feb',
+                'Mar',
+                'Apr',
+                'May',
+                'June',
+                'July',
+                'Aug',
+                'Sept',
+                'Oct',
+                'Nov',
+                'Dec',
+            ],
+            DAY: [
+                'Sunday',
+                'Monday',
+                'Tuesday',
+                'Wednesday',
+                'Thursday',
+                'Friday',
+                'Saturday',
+            ],
+            DAY_SHORT: [
+                'Mon',
+                'Tues',
+                'Weds',
+                'Thurs',
+                'Fri',
+                'Sat',
+                'Sun',
+            ],
+        };
+        let _date;
+        function format(date, format) {
+            _date = date;
+            return format
+                .replace('Mm', Mm)
+                .replace('MMM', MMM)
+                .replace('MM', MM)
+                .replace('#M', $M)
+                .replace('yyyy', yyyy)
+                .replace('yy', yy)
+                .replace('dd', dd)
+                .replace('#d', $d)
+                .replace('Dd', Dd)
+                .replace('DDD', DDD)
+                .replace('HH', HH)
+                .replace('hh', hh)
+                .replace('#h', $h)
+                .replace('mm', mm)
+                .replace('#m', $m)
+                .replace('ss', ss)
+                .replace('#s', $s);
+        }
+        Formatter.format = format;
+        ;
+        const yyyy = function () {
+            return String(_date.getFullYear());
+        };
+        const yy = function () {
+            return String(_date.getFullYear() % 100);
+        };
+        const $M = function () {
+            return String(_date.getMonth() + 1);
+        };
+        const MM = function () {
+            return pad(_date.getMonth() + 1);
+        };
+        const Mm = function () {
+            return _cultureInfo.MONTH_SHORT[_date.getMonth()];
+        };
+        const MMM = function () {
+            return _cultureInfo.MONTH[_date.getMonth()];
+        };
+        const $d = function () {
+            return String(_date.getDate());
+        };
+        const dd = function () {
+            return pad(_date.getDate());
+        };
+        const Dd = function () {
+            return _cultureInfo.DAY_SHORT[_date.getMonth()];
+        };
+        const DDD = function () {
+            return _cultureInfo.DAY_SHORT[_date.getMonth()];
+        };
+        const $H = function () {
+            return String(_date.getHours());
+        };
+        const HH = function () {
+            return pad(_date.getHours());
+        };
+        const hh = HH;
+        const $h = $H;
+        const $m = function () {
+            return String(_date.getMinutes());
+        };
+        const mm = function () {
+            return pad(_date.getMinutes());
+        };
+        const $s = function () {
+            return String(_date.getSeconds());
+        };
+        const ss = function () {
+            return pad(_date.getSeconds());
+        };
+        function pad(value) {
+            return value > 9 ? value : '0' + value;
+        }
+    })(Formatter || (Formatter = {}));
 })($date = exports.$date || (exports.$date = {}));

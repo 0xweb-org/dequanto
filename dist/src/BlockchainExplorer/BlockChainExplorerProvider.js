@@ -24,6 +24,8 @@ var BlockChainExplorerProvider;
                 return a_di_1.default.resolve(Arbiscan_1.Arbiscan);
             case 'xdai':
                 return a_di_1.default.resolve(XDaiscan_1.XDaiscan);
+            case 'hardhat':
+                return null;
             default:
                 throw new Error(`Unsupported platform ${platform} for block chain explorer`);
         }

@@ -19,7 +19,6 @@ class ClientEventsStream {
     }
     onConnected(cb) {
         this.stream.on('connected', data => {
-            console.log('CONNECTED', data);
             cb(data);
         });
         return this;

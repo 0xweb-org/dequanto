@@ -148,6 +148,8 @@ class HopBridge {
             estimatedReceived: BigInt(sendData.estimatedReceived.toString()),
             amountOut: BigInt(sendData.amountOut.toString())
         };
+        // decrease awaitence
+        params.amountOut = _bigint_1.$bigint.multWithFloat(params.amountOut, .98);
         let txWriter = await depositContract
             .$config({
             gasLimit: 300000,
@@ -173,6 +175,7 @@ class HopBridge {
                 result.txTransferId.resolve(event.transferId);
             }
             catch (error) {
+                console.log(`HopBridge transfer ${error.message}`);
                 result.txTransferId.reject(error);
             }
         }());

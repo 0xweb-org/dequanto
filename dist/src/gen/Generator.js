@@ -12,6 +12,7 @@ const GeneratorFromAbi_1 = require("./GeneratorFromAbi");
 const atma_io_1 = require("atma-io");
 const atma_utils_1 = require("atma-utils");
 const BlockChainExplorerProvider_1 = require("@dequanto/BlockchainExplorer/BlockChainExplorerProvider");
+const _path_1 = require("@dequanto/utils/$path");
 const KEYS = {
     'platform': 1,
     'name': 1,
@@ -115,14 +116,15 @@ class Generator {
         else {
             let path = abi;
             let location = this.options.location;
-            if (location && path[0] !== '/') {
+            if (location && _path_1.$path.isAbsolute(path) === false) {
                 // if path not relative, check the file at ClassFile location
                 let relPath = atma_utils_1.class_Uri.combine(location, path);
                 if (await atma_io_1.File.existsAsync(relPath)) {
                     path = relPath;
                 }
             }
-            abiJson = await atma_io_1.File.readAsync(path);
+            let json = await atma_io_1.File.readAsync(path);
+            abiJson = Array.isArray(json) ? json : json.abi;
         }
         _require_1.$require.notNull(abiJson, `Abi not resolved from ${abi}`);
         return { abiJson, implementation };

@@ -13,11 +13,39 @@ exports.Web3Client = void 0;
 const memd_1 = __importDefault(require("memd"));
 const ClientPool_1 = require("./ClientPool");
 const ClientPoolStats_1 = require("./ClientPoolStats");
+const ethers_1 = require("ethers");
+const _number_1 = require("@dequanto/utils/$number");
+const a_di_1 = __importDefault(require("a-di"));
+const BlockDateResolver_1 = require("@dequanto/blocks/BlockDateResolver");
 class Web3Client {
-    constructor(config) {
-        this.config = config;
+    constructor(mix) {
         this.TIMEOUT = 3 * 60 * 1000;
-        this.pool = new ClientPool_1.ClientPool(this.config);
+        this.defaultTxType = 2;
+        if (Array.isArray(mix)) {
+            this.options = { endpoints: mix };
+        }
+        else if (mix != null) {
+            this.options = mix;
+        }
+        if (this.options.endpoints == null && this.options.web3 == null) {
+            console.dir(this.options, { depth: null });
+            throw new Error(`Neither Node endpoints nor web3 instance provided`);
+        }
+        this.pool = new ClientPool_1.ClientPool(this.options);
+    }
+    async sign(txData, privateKey) {
+        let wallet = new ethers_1.Wallet(privateKey);
+        let json = {
+            ...txData,
+            type: txData.type ?? this.defaultTxType,
+            chainId: this.chainId
+        };
+        if (json.type === 1) {
+            // delete `type` field in case old tx type. Some old nodes may reject type field presence
+            delete json.type;
+        }
+        let tx = await wallet.signTransaction(json);
+        return tx;
     }
     getEventStream(address, abi, event) {
         return this.pool.getEventStream(address, abi, event);
@@ -150,9 +178,32 @@ class Web3Client {
             return gasAmount;
         });
     }
+    async getAccounts(options) {
+        let web3 = await this.getWeb3(options);
+        return web3.eth.getAccounts();
+    }
+    async getChainId(options) {
+        let web3 = await this.getWeb3(options);
+        return web3.eth.getChainId();
+    }
+    async switchChain(params, options) {
+        let web3 = await this.getWeb3(options);
+        if (typeof web3.eth.currentProvider.request !== 'function') {
+            throw new Error(`Current provider doesn't have request method`);
+        }
+        return web3.eth.currentProvider.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: _number_1.$number.toHex(params.chainId) }],
+        });
+    }
     sendSignedTransaction(signedTxBuffer) {
         return this.pool.callPromiEvent(web3 => {
             return web3.eth.sendSignedTransaction(signedTxBuffer);
+        }, { preferSafe: true, distinct: true });
+    }
+    sendTransaction(data) {
+        return this.pool.callPromiEvent(web3 => {
+            return web3.eth.sendTransaction(data);
         }, { preferSafe: true, distinct: true });
     }
     getBlockNumber() {
@@ -165,19 +216,83 @@ class Web3Client {
             return web3.eth.getBlockNumber();
         });
     }
+    async getPastLogs(options) {
+        const getBlock = async (block) => {
+            if (block == null) {
+                return 'latest';
+            }
+            if (block instanceof Date) {
+                let resolver = a_di_1.default.resolve(BlockDateResolver_1.BlockDateResolver, this);
+                return resolver.getBlockNumberFor(block);
+            }
+            return block;
+        };
+        options.fromBlock = await getBlock(options.fromBlock);
+        options.toBlock = await getBlock(options.toBlock);
+        options.topics = options.topics?.map(topic => {
+            if (typeof topic === 'string' && topic.startsWith('0x')) {
+                return '0x' + topic.substring(2).padStart(64, '0');
+            }
+            return topic;
+        });
+        let MAX = this.pool.getOptionForFetchableRange();
+        if (typeof options.fromBlock === 'number') {
+            let to = options.toBlock;
+            if (typeof to !== 'number') {
+                to = await this.getBlockNumber();
+            }
+            let range = to - options.fromBlock;
+            if (range > MAX) {
+                let logs = [];
+                let cursor = options.fromBlock;
+                let pages = Math.ceil(range / MAX);
+                let page = 0;
+                let complete = false;
+                while (complete === false) {
+                    ++page;
+                    console.log(`Get past logs paged: ${page}/${pages}. Loaded ${logs.length}`);
+                    let end = cursor + MAX;
+                    if (end > to) {
+                        end = options.toBlock;
+                        complete = true;
+                    }
+                    let paged = await this.pool.call(web3 => web3.eth.getPastLogs({
+                        ...options,
+                        fromBlock: cursor,
+                        toBlock: end ?? undefined,
+                    }));
+                    logs.push(...paged);
+                    cursor += MAX + 1;
+                }
+            }
+        }
+        return this.pool.call(web3 => {
+            return web3.eth.getPastLogs(options);
+        });
+    }
     getNodeInfos() {
         return this.pool.getNodeInfos();
     }
     getNodeStats() {
         return this.pool.getNodeStats();
     }
-    static url(url) {
+    static url(mix, opts) {
         const Ctor = this;
-        return new Ctor({
-            endpoints: [
-                { url }
-            ],
-        });
+        let options;
+        if (typeof mix === 'string') {
+            options = { endpoints: [{ url: mix }] };
+        }
+        else if (Array.isArray(mix)) {
+            options = { endpoints: mix };
+        }
+        else {
+            options = mix;
+        }
+        const param = {
+            ...options,
+            ...(opts ?? {})
+        };
+        return new Ctor(param);
     }
 }
 __decorate([

@@ -6,15 +6,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChainAccountsService = void 0;
 const a_di_1 = __importDefault(require("a-di"));
 const alot_1 = __importDefault(require("alot"));
-const ChainAccounts_1 = require("./ChainAccounts");
+const ChainAccountProvider_1 = require("./ChainAccountProvider");
 const JsonArrayStore_1 = require("./json/JsonArrayStore");
+const NameService_1 = require("./ns/NameService");
 const _address_1 = require("./utils/$address");
 class ChainAccountsService {
     constructor() {
         this.store = a_di_1.default.resolve(Store);
-        this.config = ChainAccounts_1.ChainAccountProvider;
+        this.config = ChainAccountProvider_1.ChainAccountProvider;
     }
     async get(mix, platform) {
+        if (_address_1.$address.isValid(mix) === false) {
+            // Check NS
+            let ns = a_di_1.default.resolve(NameService_1.NameService);
+            if (ns.supports(mix)) {
+                let address = await ns.getAddress(mix);
+                if (address) {
+                    mix = address;
+                }
+            }
+        }
         let acc = this.config.tryGet(mix, platform);
         return acc ?? this.store.get(mix);
     }

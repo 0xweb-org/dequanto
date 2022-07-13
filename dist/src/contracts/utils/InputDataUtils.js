@@ -39,7 +39,7 @@ var InputDataUtils;
     }
     InputDataUtils.decodeParamsWithABI = decodeParamsWithABI;
     function decodeWithABI(IFunctionABI, ...params) {
-        let iface = new ethers_1.ethers.utils.Interface([IFunctionABI]);
+        let iface = new ethers_1.utils.Interface([IFunctionABI]);
         let methodName;
         if (typeof IFunctionABI === 'string') {
             methodName = /function \s*(?<methodName>[\w\d_]+)/.exec(IFunctionABI)?.groups?.methodName;
@@ -57,7 +57,7 @@ var InputDataUtils;
      * function work(uint256 id, address worker, uint256 principalAmount, uint256 loan, uint256 maxReturn, bytes calldata data)
      */
     function encodeWithABI(IFunctionABI, ...params) {
-        let iface = new ethers_1.ethers.utils.Interface([IFunctionABI]);
+        let iface = new ethers_1.utils.Interface([IFunctionABI]);
         let methodName;
         if (typeof IFunctionABI === 'string') {
             methodName = /function \s*(?<methodName>[\w\d_]+)/.exec(IFunctionABI)?.groups?.methodName;

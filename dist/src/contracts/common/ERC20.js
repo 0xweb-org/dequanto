@@ -8,7 +8,7 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ERC20 = void 0;
-const ERC20Base_1 = require("@dequanto-contracts/gen/base/ERC20Base");
+const ERC20Base_1 = require("@dequanto-contracts/gen/base/ERC20Base/ERC20Base");
 class ERC20 extends ERC20Base_1.ERC20Base {
 }
 exports.ERC20 = ERC20;

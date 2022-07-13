@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.$path = void 0;
 const atma_utils_1 = require("atma-utils");
+const _config_1 = require("./$config");
 var $path;
 (function ($path) {
     let root = null;
@@ -9,7 +10,23 @@ var $path;
         return atma_utils_1.class_Uri.combine(root ?? (root = getRoot()), path);
     }
     $path.resolve = resolve;
+    function isAbsolute(path) {
+        if (path[0] === '/') {
+            return true;
+        }
+        let hasProtocol = /^[\w]{2,5}:[\\\/]{2,}/.test(path);
+        if (hasProtocol) {
+            return true;
+        }
+        return false;
+    }
+    $path.isAbsolute = isAbsolute;
     function getRoot() {
+        let base = _config_1.$config.get('settings.base');
+        if (base != null) {
+            let cwd = process.cwd();
+            return atma_utils_1.class_Uri.combine('file://' + cwd, base);
+        }
         let uri = new atma_utils_1.class_Uri('file://' + __dirname + '/');
         while (true) {
             let dir = getDirName(uri.path);

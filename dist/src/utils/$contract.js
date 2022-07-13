@@ -38,6 +38,17 @@ var $contract;
         return logs;
     }
     $contract.extractLogsForAbi = extractLogsForAbi;
+    // export function formatLogForAbi (log: ITxLogItem) {
+    //     let params = log.arguments.reduce((aggr, arg) => {
+    //         aggr[arg.name] = arg.value;
+    //         return aggr;
+    //     }, {});
+    //     return {
+    //         contract: log.contract,
+    //         arguments: log.arguments,
+    //         ...params
+    //     };
+    // }
     function parseLogWithAbi(log, abiItem) {
         let inputs = abiItem.inputs.slice();
         let args = log.topics.slice(1).map((bytes, i) => {
@@ -57,10 +68,17 @@ var $contract;
                 };
             }));
         }
+        let params = args.reduce((aggr, arg) => {
+            aggr[arg.name] = arg.value;
+            return aggr;
+        }, {});
         return {
-            contract: log.address,
-            name: abiItem.name,
+            blockNumber: log.blockNumber,
+            transactionHash: log.transactionHash,
+            address: log.address,
+            event: abiItem.name,
             arguments: args,
+            params: params,
         };
     }
     $contract.parseLogWithAbi = parseLogWithAbi;

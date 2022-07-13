@@ -4,11 +4,17 @@ exports.ClientEndpoints = void 0;
 var ClientEndpoints;
 (function (ClientEndpoints) {
     function filterEndpoints(endpoints, opts) {
+        if (opts?.web3) {
+            return [];
+        }
         if (opts?.endpoints) {
             endpoints = opts.endpoints;
         }
         if (opts == null) {
             return endpoints;
+        }
+        if (endpoints == null) {
+            return null;
         }
         return endpoints.filter(endpoint => {
             if (opts.type != null && endpoint.type !== opts.type) {

@@ -4,11 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TxWriter = void 0;
+require("../env/BigIntSerializer");
 const a_di_1 = __importDefault(require("a-di"));
 const atma_utils_1 = require("atma-utils");
 const TxDataBuilder_1 = require("./TxDataBuilder");
 const TxLogger_1 = require("./TxLogger");
-require("../env/BigIntSerializer");
 const _bigint_1 = require("@dequanto/utils/$bigint");
 const ChainAccountsService_1 = require("@dequanto/ChainAccountsService");
 const Web3ClientFactory_1 = require("@dequanto/clients/Web3ClientFactory");
@@ -16,18 +16,21 @@ const _promise_1 = require("@dequanto/utils/$promise");
 const ClientErrorUtil_1 = require("@dequanto/clients/utils/ClientErrorUtil");
 const _logger_1 = require("@dequanto/utils/$logger");
 const TxLogParser_1 = require("./receipt/TxLogParser");
+const GnosisSafeHandler_1 = require("@dequanto/safe/GnosisSafeHandler");
+const _account_1 = require("@dequanto/utils/$account");
 class TxWriter extends atma_utils_1.class_EventEmitter {
     constructor(client, builder, account) {
         super();
         this.client = client;
         this.builder = builder;
         this.account = account;
+        this.isSafe = _account_1.$account.isSafe(this.account);
         this.onSent = new atma_utils_1.class_Dfr();
         this.onCompleted = new atma_utils_1.class_Dfr();
         this.id = Math.round(Math.random() * 10 ** 10) + '';
         this.tx = null;
         this.txs = [];
-        this.logger = new TxLogger_1.TxLogger(this.id, this.account.name ?? this.account.key, this.builder);
+        this.logger = new TxLogger_1.TxLogger(this.id, this.getSenderName(), this.builder);
         this.confirmationAwaiters = [];
     }
     onConfirmed(waitForCount) {
@@ -42,6 +45,9 @@ class TxWriter extends atma_utils_1.class_EventEmitter {
             });
         }
         return promise;
+    }
+    wait() {
+        return this.onCompleted;
     }
     send(options) {
         if (this.tx == null) {
@@ -59,9 +65,26 @@ class TxWriter extends atma_utils_1.class_EventEmitter {
             this.send(options);
         }
     }
-    sendTxInner() {
+    async sendTxInner() {
+        if (this.isSafe) {
+            let safeAccount = this.account;
+            let sender = await this.getSender();
+            let safe = new GnosisSafeHandler_1.GnosisSafeHandler({
+                safeAddress: safeAccount.address ?? safeAccount.safeAddress,
+                owner: sender,
+                client: this.client,
+                transport: this.options?.safeTransport
+            });
+            let innerWriter = await safe.execute(this);
+            this.pipeInnerWriter(innerWriter);
+            return;
+        }
         let time = Date.now();
-        let signedTxBuffer = this.builder.signToString(this.account.key);
+        let sender = await this.getSender();
+        let key = sender?.key;
+        let signedTxBuffer = key == null
+            ? null
+            : await this.builder.signToString(sender.key);
         let tx = {
             timestamp: Date.now(),
             confirmations: 0,
@@ -72,10 +95,22 @@ class TxWriter extends atma_utils_1.class_EventEmitter {
         tx.timeout = this.startTimer(tx);
         this.tx = tx;
         this.txs.push(tx);
-        let promiEvent = this
-            .client
-            .sendSignedTransaction(signedTxBuffer)
+        let promiEvent;
+        if (signedTxBuffer != null) {
+            promiEvent = this
+                .client
+                .sendSignedTransaction(signedTxBuffer);
+        }
+        else {
+            promiEvent = this
+                .client
+                .sendTransaction(this.builder.getTxData(this.client));
+        }
+        promiEvent
             .once('transactionHash', hash => {
+            if (tx.hash === hash) {
+                return;
+            }
             if (tx.hash && tx.timeout) {
                 // network has reaccepted the tx, restart previous timeout
                 this.clearTimer(tx);
@@ -85,16 +120,6 @@ class TxWriter extends atma_utils_1.class_EventEmitter {
             this.onSent.resolve(hash);
             this.emit('transactionHash', hash);
             this.emit('log', `Tx hash received: ${hash}`);
-        })
-            .once('receipt', receipt => {
-            tx.receipt = receipt;
-            tx.hash = receipt.transactionHash ?? tx.hash;
-            this.receipt = receipt;
-            this.clearTimer(tx);
-            this.logger.logReceipt(receipt, Date.now() - time);
-            this.onSent.resolve();
-            this.emit('receipt', receipt);
-            this.emit('log', `Tx receipt received for ${receipt.transactionHash}. Status: ${receipt.status}`);
         })
             // .on('confirmation', (confNumber, receipt) => {
             //     tx.hash = receipt.transactionHash ?? tx.hash;
@@ -121,9 +146,28 @@ class TxWriter extends atma_utils_1.class_EventEmitter {
             try {
                 await this.extractLogs(receipt, tx);
             }
-            catch (error) { }
-            this.onCompleted.resolve(receipt);
+            catch (error) {
+                console.log('Logs error', error);
+            }
+            try {
+                tx.receipt = receipt;
+                tx.hash = receipt.transactionHash ?? tx.hash;
+                this.receipt = receipt;
+                this.logger.logReceipt(receipt, Date.now() - time);
+                this.onSent.resolve();
+                this.emit('receipt', receipt);
+                let hash = tx.hash;
+                let status = receipt.status;
+                let gasFormatted = GasCalculator.formatUsed(this.builder, receipt);
+                this.emit('log', `Tx receipt received for ${hash}. Status: ${status}. Gas used: ${gasFormatted}`);
+                this.onCompleted.resolve(receipt);
+            }
+            catch (error) {
+                console.log('FATAL ERROR', error);
+                throw error;
+            }
         }, async (err) => {
+            this.logger.log(`Tx errored ${err.message}`);
             this.clearTimer(tx);
             tx.error = err;
             const options = this.options ?? {};
@@ -182,21 +226,41 @@ class TxWriter extends atma_utils_1.class_EventEmitter {
             this.onCompleted.reject(err);
         });
     }
+    async getSender() {
+        let account = this.account;
+        let sender = _account_1.$account.getSender(account);
+        if (sender.key == null) {
+            /** check the encrypted storage. In case no key is found, assume the target node contains unlocked or locked account */
+            let addressOrName = sender.address ?? sender.name;
+            let service = a_di_1.default.resolve(ChainAccountsService_1.ChainAccountsService);
+            let fromStorage = await service.get(addressOrName, this.client.platform);
+            if (fromStorage) {
+                sender = fromStorage;
+            }
+        }
+        return sender;
+    }
+    getSenderName() {
+        let sender = _account_1.$account.getSender(this.account);
+        return sender.name ?? sender.address;
+    }
     async extractLogs(receipt, tx) {
         let parser = a_di_1.default.resolve(TxLogParser_1.TxLogParser);
         let logs = await parser.parse(receipt);
         tx.knownLogs = logs.filter(x => x != null);
     }
     async fundAccountAndResend() {
-        let account = this.builder.config.gasFunding;
+        let gasFunding = this.builder.config.gasFunding;
+        let sender = _account_1.$account.getSender(this.account);
         await this.builder.setGas({
             gasEstimation: true,
-            from: this.account.address
+            from: sender.address
         });
-        let { gasPrice, gasLimit } = this.builder.data;
+        let { gasLimit } = this.builder.data;
+        let gasPrice = TxDataBuilder_1.TxDataBuilder.getGasPrice(this.builder);
         let LITTLE_BIT_MORE = 1.3;
-        let wei = _bigint_1.$bigint.multWithFloat(BigInt(gasPrice) * BigInt(gasLimit), LITTLE_BIT_MORE);
-        let fundTx = await this.transferNative(account, this.account.address, wei);
+        let wei = _bigint_1.$bigint.multWithFloat(gasPrice * BigInt(gasLimit), LITTLE_BIT_MORE);
+        let fundTx = await this.transferNative(gasFunding, sender.address, wei);
         await fundTx.onCompleted;
         // account was funded resubmit the tx
         this.resubmit();
@@ -236,6 +300,12 @@ class TxWriter extends atma_utils_1.class_EventEmitter {
         }
         this.sendTxInner();
     }
+    pipeInnerWriter(innerWriter) {
+        innerWriter.onCompleted.then((receipt) => this.onCompleted.resolve(receipt), (error) => this.onCompleted.reject(error));
+        innerWriter.onSent.then((hash) => this.onSent.resolve(hash), (error) => this.onSent.reject(error));
+        innerWriter.on('error', error => this.emit('error', error));
+        innerWriter.on('log', message => this.emit('log', message));
+    }
     /** Use this transfer in case of additional account funding */
     async transferNative(from, to, amount) {
         let txBuilder = new TxDataBuilder_1.TxDataBuilder(this.client, from, {
@@ -250,19 +320,29 @@ class TxWriter extends atma_utils_1.class_EventEmitter {
         return TxWriter.write(this.client, txBuilder, from);
     }
     toJSON() {
+        let account = this.account;
+        if (typeof account !== 'string') {
+            account = JSON.parse(JSON.stringify(account));
+            // Clean any KEY to prevent leaking. When resubmitted if one is required should be taken from the storage
+            if (_account_1.$account.isSafe(account)) {
+                delete account.operator?.key;
+            }
+            else {
+                delete account.key;
+            }
+        }
         return {
             id: this.id,
             platform: this.client.platform,
             options: this.options,
-            account: this.account.address,
+            account: account,
             txs: this.txs,
             builder: this.builder.toJSON(),
         };
     }
     static async fromJSON(json, client) {
         client = client ?? Web3ClientFactory_1.Web3ClientFactory.get(json.platform);
-        let service = a_di_1.default.resolve(ChainAccountsService_1.ChainAccountsService);
-        let account = await service.get(json.account, json.platform);
+        let account = json.account;
         let builder = TxDataBuilder_1.TxDataBuilder.fromJSON(client, account, {
             config: json.builder.config,
             data: json.builder.data,
@@ -285,3 +365,14 @@ class TxWriter extends atma_utils_1.class_EventEmitter {
     }
 }
 exports.TxWriter = TxWriter;
+var GasCalculator;
+(function (GasCalculator) {
+    function formatUsed(builder, receipt) {
+        let usage = receipt.gasUsed;
+        let price = BigInt(receipt.effectiveGasPrice ?? builder.data.gasPrice ?? 1);
+        let priceGwei = _bigint_1.$bigint.toGweiFromWei(price);
+        let totalEth = _bigint_1.$bigint.toEther(BigInt(usage) * price);
+        return `${totalEth}ETH(${usage}gas × ${priceGwei}gwei)`;
+    }
+    GasCalculator.formatUsed = formatUsed;
+})(GasCalculator || (GasCalculator = {}));

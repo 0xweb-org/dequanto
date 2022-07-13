@@ -1,6 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.$address = void 0;
+const web3_1 = __importDefault(require("web3"));
 var $address;
 (function ($address) {
     function eq(a1, a2) {
@@ -37,5 +41,9 @@ var $address;
         return address.toLowerCase().substring(2).padStart(32, '0');
     }
     $address.toBytes32 = toBytes32;
+    function toChecksum(address) {
+        return web3_1.default.utils.toChecksumAddress(address);
+    }
+    $address.toChecksum = toChecksum;
     $address.ZERO = '0x0000000000000000000000000000000000000000';
 })($address = exports.$address || (exports.$address = {}));

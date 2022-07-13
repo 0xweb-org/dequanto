@@ -19,6 +19,8 @@ const ethers_1 = require("ethers");
 const ContractStream_1 = require("./ContractStream");
 const TxTopicInMemoryProvider_1 = require("@dequanto/txs/receipt/TxTopicInMemoryProvider");
 const _class_1 = require("@dequanto/utils/$class");
+const _block_1 = require("@dequanto/utils/$block");
+const alot_1 = __importDefault(require("alot"));
 class ContractBase {
     constructor(address, client, explorer) {
         this.address = address;
@@ -35,7 +37,6 @@ class ContractBase {
             data: buffer,
             value: value,
         });
-        console.log("decodedInput", decodedInput);
         return {
             name: decodedInput.name,
             args: _contract_1.$contract.normalizeArgs(Array.from(decodedInput.args))
@@ -76,9 +77,9 @@ class ContractBase {
         let stream = this.getContractStream();
         return stream.on(event, cb);
     }
-    async $write(abi, eoa, ...params) {
+    async $write(abi, account, ...params) {
         let writer = await this.getContractWriter();
-        return writer.writeAsync(eoa, abi, params, {
+        return writer.writeAsync(account, abi, params, {
             builderConfig: this.builderConfig,
             writerConfig: this.writerConfig,
         });
@@ -88,17 +89,37 @@ class ContractBase {
     }
     $extractLogs(tx, abiItem) {
         let logs = _contract_1.$contract.extractLogsForAbi(tx, abiItem);
-        return logs.map(log => {
-            let params = log.arguments.reduce((aggr, arg) => {
-                aggr[arg.name] = arg.value;
-                return aggr;
-            }, {});
-            return {
-                contract: log.contract,
-                arguments: log.arguments,
-                ...params
-            };
-        });
+        return logs;
+    }
+    $extractLog(log, abiItem) {
+        let parsed = _contract_1.$contract.parseLogWithAbi(log, abiItem);
+        return parsed;
+    }
+    async $getPastLogs(filters) {
+        return this.client.getPastLogs(filters);
+    }
+    async $getPastLogsFilters(abi, options) {
+        let filters = {};
+        if (options.fromBlock) {
+            filters.fromBlock = await _block_1.$block.ensureNumber(options.fromBlock, this.client);
+        }
+        if (options.toBlock) {
+            filters.toBlock = await _block_1.$block.ensureNumber(options.toBlock, this.client);
+        }
+        let topics = [options.topic];
+        (0, alot_1.default)(abi.inputs)
+            .takeWhile(x => x.indexed)
+            .forEach(arg => {
+            let param = options.params?.[arg.name];
+            if (param == null) {
+                topics.push(undefined);
+                return;
+            }
+            topics.push(param);
+        })
+            .toArray();
+        filters.topics = topics;
+        return filters;
     }
     async getContractReader() {
         let reader = await this.getContractReaderInner();

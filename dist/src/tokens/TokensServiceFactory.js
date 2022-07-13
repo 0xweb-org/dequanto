@@ -9,6 +9,8 @@ const TokensServiceBsc_1 = require("./TokensServiceBsc");
 const TokensServiceEth_1 = require("./TokensServiceEth");
 const TokensServicePolygon_1 = require("./TokensServicePolygon");
 const TokensServiceXDai_1 = require("./TokensServiceXDai");
+const TokensServiceArbitrum_1 = require("@dequanto/chains/arbitrum/TokensServiceArbitrum");
+const TokensService_1 = require("./TokensService");
 var TokensServiceFactory;
 (function (TokensServiceFactory) {
     function get(platform) {
@@ -21,6 +23,10 @@ var TokensServiceFactory;
                 return a_di_1.default.resolve(TokensServicePolygon_1.TokensServicePolygon);
             case 'xdai':
                 return a_di_1.default.resolve(TokensServiceXDai_1.TokensServiceXDai);
+            case 'arbitrum':
+                return a_di_1.default.resolve(TokensServiceArbitrum_1.TokensServiceArbitrum);
+            case 'hardhat':
+                return a_di_1.default.resolve(TokensService_1.TokensService, 'hardhat');
             default:
                 throw new Error(`Unsupported platform ${platform} for TokensService`);
         }

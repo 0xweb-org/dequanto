@@ -98,8 +98,8 @@ var BlockChainExplorerFactory;
             async getTransactions(addr, params) {
                 return this.loadTxs('txlist', addr, params);
             }
-            async getTransactionsAll(addr) {
-                return this.loadTxsAll('txlist', addr);
+            async getTransactionsAll(addr, params) {
+                return this.loadTxsAll('txlist', addr, params);
             }
             async getInternalTransactions(addr, params) {
                 return this.loadTxs('txlistinternal', addr, params);
@@ -141,11 +141,11 @@ var BlockChainExplorerFactory;
                 let txs = await client.get(url);
                 return txs;
             }
-            async loadTxsAll(type, address) {
+            async loadTxsAll(type, address, params) {
                 let page = 1;
                 let size = 1000;
                 let out = [];
-                let fromBlockNumber = null;
+                let fromBlockNumber = params?.fromBlockNumber;
                 while (true) {
                     let arr = await this.loadTxs(type, address, { fromBlockNumber, sort: 'asc' });
                     out.push(...arr);
