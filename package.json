@@ -11,7 +11,8 @@
     "@nomiclabs/hardhat-web3": "^2.0.0",
     "@openzeppelin/contracts": "^4.7.0",
     "hardhat": "^2.6.7",
-    "shellbee": "^0.5.16"
+    "shellbee": "^0.5.16",
+    "ts-nameof": "^5.0.0"
   },
   "dependencies": {
     "@gnosis.pm/safe-core-sdk": "^2.1.0",
@@ -29,11 +30,9 @@
     "bcrypt": "^5.0.1",
     "ethers": "^5.5.1",
     "everlog": "^1.0.10",
-    "include": "^1.1.0",
     "includejs": "^0.16.5",
     "memd": "^0.3.11",
     "papaparse": "^5.3.1",
-    "ts-nameof": "^5.0.0",
     "web3": "^1.6.0",
     "web3-core": "^1.6.0",
     "web3-core-subscriptions": "^1.6.0"

@@ -69,7 +69,7 @@ UTest({
         let { Foo } = await include.js('/test/tmp/eth/Foo/Foo.ts');
         let provider = new HardhatProvider();
 
-        let foo = await provider.deployClass(Foo.Foo, { arguments: [ 'hello' ] });
+        let foo:any = await provider.deployClass(Foo.Foo, { arguments: [ 'hello' ] });
         let name = await foo.name();
         eq_(name, 'hello');
 
