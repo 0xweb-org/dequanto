@@ -117,13 +117,13 @@ export class TokenTransferService {
             }
 
             let $gasPrice = $bigint.multWithFloat(gasPrice.price, GAS_RATIO);
-            console.log('$gasPrice', $bigint.toGweiFromWei($gasPrice));
+            $logger.log(`GasPrice ${ $bigint.toGweiFromWei($gasPrice) }gwei`);
 
             let gasConsumed = BigInt(GAS) * $gasPrice;
             let transferValue = balance - gasConsumed;
             if (transferValue <= 0) {
                 if (--buildTxRetries > -1) {
-                    $logger.log(`No balance to transfer retry in 5s`);
+                    $logger.log(`No balance to transfer. Retry in 5s`);
                     await $promise.wait(5000);
                     return buildTx();
                 }
@@ -171,16 +171,21 @@ export class TokenTransferService {
         });
     }
     private async transferNative (from: TAccount, to: TAddress, amount: bigint): Promise<TxWriter> {
-        let txBuilder = new TxDataBuilder(this.client, $account.getSender(from), {
+        let sender = $account.getSender(from);
+
+        let txBuilder = new TxDataBuilder(this.client, sender, {
             to: to,
             value: $bigint.toHex(amount)
         });
 
-        let GAS = 21000;
-        await Promise.all([
-            txBuilder.setGas({ priceRatio: this.gasPriorityFee, gasLimit: GAS }),
-            txBuilder.setNonce(),
-        ]);
+        if (sender.address) {
+            await Promise.all([
+                txBuilder.setGas({ priceRatio: this.gasPriorityFee, gasEstimation: true, gasLimitRatio: 1, }),
+                txBuilder.setNonce(),
+            ]);
+        }
+
+
         txBuilder.setConfig(this.builderConfig);
         return TxWriter.write(this.client, txBuilder, from, this.writerConfig);
     }

@@ -1,5 +1,6 @@
 import di from 'a-di';
 import memd from 'memd';
+import alot from 'alot';
 
 import { ChainAccount } from "@dequanto/models/TAccount";
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
@@ -7,9 +8,7 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
 import Safe from '@gnosis.pm/safe-core-sdk'
 import { SafeTransaction, SafeTransactionData } from '@gnosis.pm/safe-core-sdk-types'
-import SafeServiceClient, { ProposeTransactionProps, SafeMultisigTransactionEstimate, SignatureResponse } from '@gnosis.pm/safe-service-client'
-
-import { type AbiItem } from 'web3-utils';
+import { ProposeTransactionProps, SafeMultisigTransactionEstimate, SignatureResponse } from '@gnosis.pm/safe-service-client'
 
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { $address } from '@dequanto/utils/$address';
@@ -19,9 +18,13 @@ import { $fn } from '@dequanto/utils/$fn';
 import { $gnosis } from './$gnosis';
 import { GnosisServiceTransport } from './transport/GnosisServiceTransport';
 import { ISafeServiceTransport } from './transport/ISafeServiceTransport';
-import alot from 'alot';
+import { $logger } from '@dequanto/utils/$logger';
+import { $bigint } from '@dequanto/utils/$bigint';
+import { utils } from 'ethers'
 
-
+import { type AbiItem } from 'web3-utils';
+import { $contract } from '@dequanto/utils/$contract';
+import { $buffer } from '@dequanto/utils/$buffer';
 
 
 export class GnosisSafeHandler {
@@ -86,7 +89,7 @@ export class GnosisSafeHandler {
         let args = [
             tx.to,
             tx.value,
-            tx.data,
+            tx.data ?? '0x',
             tx.operation,
             tx.safeTxGas,
             tx.baseGas,
@@ -117,7 +120,7 @@ export class GnosisSafeHandler {
                 return [ null, {} ];
             }
             const addr = confirmations.results?.map(x => x.owner)?.join(', ');
-            console.log(`Require ${threshold} confirmations. Got ${confirmations.count} (${addr}). Waiting`);
+            $logger.log(`Require ${threshold} confirmations. Got ${confirmations.count} (${addr}). Waiting`);
             return [ null, null ];
         }, {
             intervalMs: 3000
@@ -132,11 +135,10 @@ export class GnosisSafeHandler {
         let builder = writer.builder;
         let txData = builder.getTxData(this.client);
 
-
         let safeTxEstimation: SafeMultisigTransactionEstimate & { data } = {
             to: $address.toChecksum(txData.to),
             value: Number(value) as any,
-            data: txData.data as any,
+            data: txData.data ?? null,
             operation: 0,
         }
 
@@ -218,8 +220,8 @@ export class GnosisSafeHandler {
     }) {
         let args = [
             params.to,
-            params.value,
-            params.data,
+            params.value ? $bigint.toHex(params.value) : 0,
+            params.data ?? '0x',
             params.operation,
             params.safeTxGas,
             params.baseGas ?? 0,
@@ -228,7 +230,7 @@ export class GnosisSafeHandler {
             params.refundReceiver ?? $address.ZERO,
             params.nonce,
         ];
-
+        console.log(`args`, args, '\n');
        return this.client.readContract({
             address: this.safeAddress,
             method: 'getTransactionHash',
@@ -237,6 +239,18 @@ export class GnosisSafeHandler {
                SafeAbi.getTransactionHash
             ]
         })
+    }
+
+    static parseSafeTx (buffer: string, value?) {
+        const inter = new utils.Interface([ SafeAbi.execTransaction ]);
+        const decodedInput = inter.parseTransaction({
+            data: buffer as string,
+            value: value,
+        });
+        return {
+            name: decodedInput.name,
+            args: $contract.normalizeArgs(Array.from(decodedInput.args))
+        };
     }
 }
 

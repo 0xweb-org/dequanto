@@ -1,9 +1,9 @@
 import { $machine } from './$machine';
 
 export namespace $secret {
-    export async function getPin() {
+    export async function getPin(parameters?: { pin?: string }) {
 
-        let pin = getPinFromCli() ?? getPinFromEnv();
+        let pin = parameters?.pin ?? getPinFromCli() ?? getPinFromEnv();
         if (pin == null || pin.length === 0) {
             return null;
         }

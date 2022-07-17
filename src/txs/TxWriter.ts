@@ -142,6 +142,10 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         let time = Date.now();
         let sender: ChainAccount = await this.getSender();
 
+        if (this.builder.data.nonce == null) {
+            await this.builder.setNonce();
+        }
+
         let key = sender?.key;
         let signedTxBuffer = key == null
             ? null
@@ -212,7 +216,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
                 try {
                     await this.extractLogs(receipt, tx);
                 } catch (error) {
-                    console.log('Logs error', error);
+                    console.error('Logs error', error);
                 }
 
                 try {
@@ -231,7 +235,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
                     this.onCompleted.resolve(receipt);
                 } catch (error) {
-                    console.log('FATAL ERROR', error);
+                    console.error('FATAL ERROR', error);
                     throw error;
                 }
 

@@ -15,6 +15,7 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { ClientEventsStream } from './ClientEventsStream';
 import { ClientErrorUtil } from './utils/ClientErrorUtil';
 import { IWeb3ClientOptions } from './interfaces/IWeb3Client';
+import { $logger } from '@dequanto/utils/$logger';
 
 
 export interface IPoolClientConfig {
@@ -181,23 +182,16 @@ export class ClientPool {
                     return;
                 }
                 if (ClientErrorUtil.isAlreadyKnown(error)) {
-                    console.log(`TxWriter ERROR ${error.message}. Check pending...`);
+                    $logger.log(`TxWriter ERROR ${error.message}. Check pending...`);
                     let web3 = await this.getWeb3();
                     let txs = await web3.eth.getPendingTransactions();
-                    console.log('PENDING ', txs?.map(x => x.hash));
-                    // throw anyways
-                    // this.callPromiEvent(
-                    //     fn, opts, used, errors, root
-                    // );
-                    // return;
+                    $logger.log('PENDING ', txs?.map(x => x.hash));
+                    // throw anyway
                 }
                 root.emit('error', error);
                 root.reject(error);
             });
-            promiEvent.catch(error => {
-                console.log('!!client CATCH', error);
-                //root.reject(error);
-            });
+
 
             used.set(wClient, 1);
 

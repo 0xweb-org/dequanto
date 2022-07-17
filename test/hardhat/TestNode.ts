@@ -34,13 +34,12 @@ export class TestNode {
     @memd.deco.memoize()
     static async start () {
         if (await isPortBusy(PORT) === false) {
-            console.log('START');
-            let shell = await Shell.run({
+            let shell = new Shell({
                 command: 'npx hardhat node',
                 matchReady: /Started HTTP/i
             });
+            shell.run();
             await shell.onReadyAsync();
-            console.log('SHEL', shell.stdout, shell.stderr);
         }
     }
 }

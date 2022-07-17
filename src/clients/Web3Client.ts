@@ -219,6 +219,7 @@ export abstract class Web3Client implements IWeb3Client {
                 nonce: tx.nonce as any,
             };
             let gasAmount = await web3.eth.estimateGas(txData);
+            console.log('getGasEstimation', txData, gasAmount);
             return gasAmount;
         })
     }

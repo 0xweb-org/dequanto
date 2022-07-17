@@ -44,10 +44,10 @@ export class Config {
     }
 
     @memd.deco.memoize()
-    static async fetch () {
-        let unlockedAccountsKey = await $secret.getPin();
-        let configPathAccounts = $cli.getParamValue('config-accounts') ?? '%APPDATA%/.dequanto/accounts.json';
-        let configPathGlobal = $cli.getParamValue('config-global') ?? '%APPDATA%/.dequanto/config.yml';
+    static async fetch (parameters?: { pin?, 'config-accounts'?, 'config-global'? } ) {
+        let unlockedAccountsKey = await $secret.getPin(parameters);
+        let configPathAccounts = $cli.getParamValue('config-accounts', parameters) ?? '%APPDATA%/.dequanto/accounts.json';
+        let configPathGlobal = $cli.getParamValue('config-global', parameters) ?? '%APPDATA%/.dequanto/config.yml';
 
         let dequantoConfigs = 'dequanto/configs/';
         let [
