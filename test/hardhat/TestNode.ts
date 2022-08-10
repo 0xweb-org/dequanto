@@ -36,7 +36,8 @@ export class TestNode {
         if (await isPortBusy(PORT) === false) {
             let shell = new Shell({
                 command: 'npx hardhat node',
-                matchReady: /Started HTTP/i
+                matchReady: /Started HTTP/i,
+                silent: true
             });
             shell.run();
             await shell.onReadyAsync();
@@ -65,7 +66,7 @@ async function isPortBusy(port) {
 
         socket.on("error", function (exception: any) {
 
-            if (exception.code === "ECONNREFUSED") {
+            if (exception.code === "ECONNREFUSED" || exception.code === "ECONNRESET") {
                 resolve(false);
             } else {
                 socket.destroy();

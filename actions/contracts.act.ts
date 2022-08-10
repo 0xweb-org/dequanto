@@ -1,6 +1,6 @@
 import { UAction } from 'atma-utest';
 import { Generator } from '@dequanto/gen/Generator';
-import { Directory } from 'atma-io';
+import { Directory, File } from 'atma-io';
 import alot from 'alot';
 
 UAction.create({
@@ -41,6 +41,9 @@ UAction.create({
                 });
 
                 await generator.generate();
+
+                let content = await file.readAsync<{abi}>();
+                await File.writeAsync(`./contracts/openzeppelin/${name}.json`, content.abi);
             })
             .toArrayAsync();
     }

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2022-07-06 13:14
+ *  AUTO-Generated Class: 2022-08-11 00:10
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -91,11 +91,11 @@ export class IAMB extends ContractBase {
         return this.$read('function transactionHash() returns bytes32');
     }
 
-    onAffirmationCompleted (fn: (event: EventLog, sender: TAddress, executor: TAddress, messageId: TBufferLike, status: boolean) => void): ClientEventsStream<any> {
+    onAffirmationCompleted (fn: (event: EventLog, _sender: TAddress, executor: TAddress, messageId: TBufferLike, status: boolean) => void): ClientEventsStream<any> {
         return this.$on('AffirmationCompleted', fn);
     }
 
-    onRelayedMessage (fn: (event: EventLog, sender: TAddress, executor: TAddress, messageId: TBufferLike, status: boolean) => void): ClientEventsStream<any> {
+    onRelayedMessage (fn: (event: EventLog, _sender: TAddress, executor: TAddress, messageId: TBufferLike, status: boolean) => void): ClientEventsStream<any> {
         return this.$on('RelayedMessage', fn);
     }
 
@@ -195,10 +195,10 @@ type TSender = TAccount & {
 }
 
     type TLogAffirmationCompleted = {
-        sender: TAddress, executor: TAddress, messageId: TBufferLike, status: boolean
+        _sender: TAddress, executor: TAddress, messageId: TBufferLike, status: boolean
     }
     type TLogRelayedMessage = {
-        sender: TAddress, executor: TAddress, messageId: TBufferLike, status: boolean
+        _sender: TAddress, executor: TAddress, messageId: TBufferLike, status: boolean
     }
     type TLogUserRequestForAffirmation = {
         messageId: TBufferLike, encodedData: TBufferLike

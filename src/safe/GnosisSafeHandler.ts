@@ -46,10 +46,10 @@ export class GnosisSafeHandler {
         this.transport = config.transport ?? new GnosisServiceTransport(this.client, this.owner)
     }
 
-    async getTx (safeTxHash: string) {
+    async getTx(safeTxHash: string) {
         return this.transport.getTx(safeTxHash);
     }
-    async getTxConfirmations (safeTxHash: string) {
+    async getTxConfirmations(safeTxHash: string) {
         return this.transport.getTxConfirmations(safeTxHash);
     }
     async confirmTx(safeTxHash: string, owner?: ChainAccount): Promise<SignatureResponse> {
@@ -117,11 +117,11 @@ export class GnosisSafeHandler {
         await $fn.waitForObject(async () => {
             let confirmations = await this.getTxConfirmations(hash);
             if (confirmations.count >= threshold) {
-                return [ null, {} ];
+                return [null, {}];
             }
             const addr = confirmations.results?.map(x => x.owner)?.join(', ');
             $logger.log(`Require ${threshold} confirmations. Got ${confirmations.count} (${addr}). Waiting`);
-            return [ null, null ];
+            return [null, null];
         }, {
             intervalMs: 3000
         });
@@ -145,7 +145,7 @@ export class GnosisSafeHandler {
         let safeInfo = await this.transport.getSafeInfo(this.safeAddress);
 
 
-       // let estimated = await this.transport.estimateSafeTransaction(this.safeAddress, safeTxEstimation);
+        // let estimated = await this.transport.estimateSafeTransaction(this.safeAddress, safeTxEstimation);
 
         let safeTxData: SafeTransactionData = {
             ...safeTxEstimation,
@@ -154,7 +154,7 @@ export class GnosisSafeHandler {
 
             baseGas: 0,
             gasToken: $address.ZERO,
-            refundReceiver:  $address.ZERO,
+            refundReceiver: $address.ZERO,
             nonce: safeInfo.nonce,
             gasPrice: 0,
         };
@@ -173,7 +173,7 @@ export class GnosisSafeHandler {
         let args: ProposeTransactionProps = {
             safeAddress: $address.toChecksum(this.safeAddress),
             senderAddress: $address.toChecksum(this.owner.address),
-            safeTransaction: <SafeTransaction> {
+            safeTransaction: <SafeTransaction>{
                 data: safeTxData,
                 signatures: signatures
             },
@@ -206,7 +206,7 @@ export class GnosisSafeHandler {
     }
 
 
-    private getTransactionHash (params: {
+    private getTransactionHash(params: {
         to,
         value,
         data,
@@ -230,19 +230,19 @@ export class GnosisSafeHandler {
             params.refundReceiver ?? $address.ZERO,
             params.nonce,
         ];
-        console.log(`args`, args, '\n');
-       return this.client.readContract({
+
+        return this.client.readContract({
             address: this.safeAddress,
             method: 'getTransactionHash',
             arguments: args,
             abi: [
-               SafeAbi.getTransactionHash
+                SafeAbi.getTransactionHash
             ]
         })
     }
 
-    static parseSafeTx (buffer: string, value?) {
-        const inter = new utils.Interface([ SafeAbi.execTransaction ]);
+    static parseSafeTx(buffer: string, value?) {
+        const inter = new utils.Interface([ <any> SafeAbi.execTransaction ]);
         const decodedInput = inter.parseTransaction({
             data: buffer as string,
             value: value,
@@ -257,7 +257,7 @@ export class GnosisSafeHandler {
 // https://etherscan.io/address/0x34cfac646f301356faa8b21e94227e3583fe3f5f#code
 
 const SafeAbi = {
-    nonce: <AbiItem> {
+    nonce: <AbiItem>{
         "constant": true,
         "inputs": [],
         "name": "nonce",
@@ -272,7 +272,7 @@ const SafeAbi = {
         "stateMutability": "view",
         "type": "function"
     },
-    execTransaction: <AbiItem> {
+    execTransaction: <AbiItem>{
         "type": "function",
         "stateMutability": "payable",
         "outputs": [
@@ -336,7 +336,7 @@ const SafeAbi = {
             }
         ]
     },
-    getTransactionHash:  {
+    getTransactionHash: {
         "type": "function",
         "stateMutability": "view",
         "outputs": [

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2022-07-06 13:14
+ *  AUTO-Generated Class: 2022-08-11 00:10
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -42,8 +42,8 @@ export class IBridge extends ContractBase {
     }
 
     // 0x02bbfad1
-    async deliverMessageToInbox (sender: TSender, kind: number, sender: TAddress, messageDataHash: TBufferLike): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'deliverMessageToInbox'), sender, kind, sender, messageDataHash);
+    async deliverMessageToInbox (sender: TSender, kind: number, _sender: TAddress, messageDataHash: TBufferLike): Promise<TxWriter> {
+        return this.$write(this.$getAbiItem('function', 'deliverMessageToInbox'), sender, kind, _sender, messageDataHash);
     }
 
     // 0x9e5d4c49
@@ -79,7 +79,7 @@ export class IBridge extends ContractBase {
         return this.$on('InboxToggle', fn);
     }
 
-    onMessageDelivered (fn: (event: EventLog, messageIndex: bigint, beforeInboxAcc: TBufferLike, inbox: TAddress, kind: number, sender: TAddress, messageDataHash: TBufferLike) => void): ClientEventsStream<any> {
+    onMessageDelivered (fn: (event: EventLog, messageIndex: bigint, beforeInboxAcc: TBufferLike, inbox: TAddress, kind: number, _sender: TAddress, messageDataHash: TBufferLike) => void): ClientEventsStream<any> {
         return this.$on('MessageDelivered', fn);
     }
 
@@ -181,7 +181,7 @@ type TSender = TAccount & {
         inbox: TAddress, enabled: boolean
     }
     type TLogMessageDelivered = {
-        messageIndex: bigint, beforeInboxAcc: TBufferLike, inbox: TAddress, kind: number, sender: TAddress, messageDataHash: TBufferLike
+        messageIndex: bigint, beforeInboxAcc: TBufferLike, inbox: TAddress, kind: number, _sender: TAddress, messageDataHash: TBufferLike
     }
     type TLogOutboxToggle = {
         outbox: TAddress, enabled: boolean

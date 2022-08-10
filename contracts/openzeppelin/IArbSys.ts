@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2022-07-06 13:14
+ *  AUTO-Generated Class: 2022-08-11 00:10
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -62,8 +62,8 @@ export class IArbSys extends ContractBase {
     }
 
     // 0x4dbbd506
-    async mapL1SenderContractAddressToL2Alias (sender: TAddress, dest: TAddress): Promise<TAddress> {
-        return this.$read('function mapL1SenderContractAddressToL2Alias(address, address) returns address', sender, dest);
+    async mapL1SenderContractAddressToL2Alias (_sender: TAddress, dest: TAddress): Promise<TAddress> {
+        return this.$read('function mapL1SenderContractAddressToL2Alias(address, address) returns address', _sender, dest);
     }
 
     // 0xd74523b3

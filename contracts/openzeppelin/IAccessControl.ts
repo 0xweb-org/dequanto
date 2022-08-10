@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2022-07-06 13:14
+ *  AUTO-Generated Class: 2022-08-11 00:10
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -55,11 +55,11 @@ export class IAccessControl extends ContractBase {
         return this.$on('RoleAdminChanged', fn);
     }
 
-    onRoleGranted (fn: (event: EventLog, role: TBufferLike, account: TAddress, sender: TAddress) => void): ClientEventsStream<any> {
+    onRoleGranted (fn: (event: EventLog, role: TBufferLike, account: TAddress, _sender: TAddress) => void): ClientEventsStream<any> {
         return this.$on('RoleGranted', fn);
     }
 
-    onRoleRevoked (fn: (event: EventLog, role: TBufferLike, account: TAddress, sender: TAddress) => void): ClientEventsStream<any> {
+    onRoleRevoked (fn: (event: EventLog, role: TBufferLike, account: TAddress, _sender: TAddress) => void): ClientEventsStream<any> {
         return this.$on('RoleRevoked', fn);
     }
 
@@ -134,9 +134,9 @@ type TSender = TAccount & {
         role: TBufferLike, previousAdminRole: TBufferLike, newAdminRole: TBufferLike
     }
     type TLogRoleGranted = {
-        role: TBufferLike, account: TAddress, sender: TAddress
+        role: TBufferLike, account: TAddress, _sender: TAddress
     }
     type TLogRoleRevoked = {
-        role: TBufferLike, account: TAddress, sender: TAddress
+        role: TBufferLike, account: TAddress, _sender: TAddress
     }
 

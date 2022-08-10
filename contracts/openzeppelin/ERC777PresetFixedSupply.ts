@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2022-07-06 13:14
+ *  AUTO-Generated Class: 2022-08-11 00:10
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -82,8 +82,8 @@ export class ERC777PresetFixedSupply extends ContractBase {
     }
 
     // 0x62ad1b83
-    async operatorSend (sender: TSender, sender: TAddress, recipient: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'operatorSend'), sender, sender, recipient, amount, data, operatorData);
+    async operatorSend (sender: TSender, _sender: TAddress, recipient: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike): Promise<TxWriter> {
+        return this.$write(this.$getAbiItem('function', 'operatorSend'), sender, _sender, recipient, amount, data, operatorData);
     }
 
     // 0xfad8b32a

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2022-07-06 13:14
+ *  AUTO-Generated Class: 2022-08-11 00:10
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -44,7 +44,7 @@ export class ICrossDomainMessenger extends ContractBase {
         return this.$on('RelayedMessage', fn);
     }
 
-    onSentMessage (fn: (event: EventLog, target: TAddress, sender: TAddress, message: TBufferLike, messageNonce: bigint, gasLimit: bigint) => void): ClientEventsStream<any> {
+    onSentMessage (fn: (event: EventLog, target: TAddress, _sender: TAddress, message: TBufferLike, messageNonce: bigint, gasLimit: bigint) => void): ClientEventsStream<any> {
         return this.$on('SentMessage', fn);
     }
 
@@ -122,6 +122,6 @@ type TSender = TAccount & {
         msgHash: TBufferLike
     }
     type TLogSentMessage = {
-        target: TAddress, sender: TAddress, message: TBufferLike, messageNonce: bigint, gasLimit: bigint
+        target: TAddress, _sender: TAddress, message: TBufferLike, messageNonce: bigint, gasLimit: bigint
     }
 

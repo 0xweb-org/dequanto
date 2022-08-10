@@ -1,3 +1,4 @@
+import di from 'a-di';
 import memd from 'memd';
 import Web3 from 'web3';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -9,11 +10,10 @@ import { ClientPoolTrace } from './ClientPoolStats';
 import { IWeb3Client, IWeb3ClientOptions } from './interfaces/IWeb3Client';
 import { type BlockNumber, Log, LogsOptions, type PastLogsOptions, type TransactionConfig } from 'web3-core';
 import { Subscription } from 'web3-core-subscriptions';
-import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { Wallet } from 'ethers';
 import { $number } from '@dequanto/utils/$number';
-import di from 'a-di';
 import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
+import { $txData } from '@dequanto/utils/$txData';
 
 export abstract class Web3Client implements IWeb3Client {
 
@@ -29,15 +29,7 @@ export abstract class Web3Client implements IWeb3Client {
     async sign(txData: TransactionRequest, privateKey: string): Promise<string> {
 
         let wallet = new Wallet(privateKey);
-        let json = {
-            ...txData,
-            type: txData.type ?? this.defaultTxType,
-            chainId: this.chainId
-        };
-        if (json.type === 1) {
-            // delete `type` field in case old tx type. Some old nodes may reject type field presence
-            delete json.type;
-        }
+        let json = $txData.getJson(txData, this);
         let tx = await wallet.signTransaction(json);
         return tx;
     }
@@ -219,7 +211,6 @@ export abstract class Web3Client implements IWeb3Client {
                 nonce: tx.nonce as any,
             };
             let gasAmount = await web3.eth.estimateGas(txData);
-            console.log('getGasEstimation', txData, gasAmount);
             return gasAmount;
         })
     }
