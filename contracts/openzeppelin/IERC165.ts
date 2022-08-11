@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2022-08-11 00:10
+ *  AUTO-Generated Class: 2022-08-11 11:20
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -37,7 +37,7 @@ export class IERC165 extends ContractBase {
 
 
 
-    abi = [{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"}]
+    abi: AbiItem[] = [{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"}]
 }
 
 type TSender = TAccount & {

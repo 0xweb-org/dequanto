@@ -27,16 +27,23 @@ export class GeneratorFromAbi {
         }
     }) {
 
-        let methodsArr = abiJson
-            .map(item => {
-                if (item.type === 'function') {
+        let methodsArr = alot(abiJson)
+            .filter(x => x.type === 'function')
+            .groupBy(x => x.name)
+            .map(group => {
+                if (group.values.length === 1) {
+                    let item = group.values[0];
                     return Gen.serializeMethodTs(item);
+                }
+                if (group.values.length > 1) {
+                    let items = group.values;
+                    return Gen.serializeMethodTsOverloads(items);
                 }
                 return null;
             })
             .filter(Boolean)
-            .map(Str.formatMethod);
-            ;
+            .map(Str.formatMethod)
+            .toArray();
 
         let eventsArr = abiJson
             .filter(x => x.type === 'event')
@@ -198,6 +205,13 @@ namespace Gen {
         }
         return serializeWriteMethodTs(abi);
     }
+    export function serializeMethodTsOverloads (abis: AbiItem[]) {
+        let isRead = abis.every(abi => isReader(abi));
+        if (isRead) {
+            return serializeReadMethodTsOverloads(abis);
+        }
+        return serializeWriteMethodTsOverloads(abis);
+    }
 
     export function serializeEvent (abi: AbiItem) {
         let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
@@ -277,6 +291,26 @@ namespace Gen {
             }
         `;
     }
+    function serializeReadMethodTsOverloads (abis: AbiItem[]) {
+        let overrides = abis.map(abi => {
+            let { fnInputArguments, fnResult } = serializeArgumentsTs(abi);
+            return `
+            // ${$abiUtils.getMethodSignature(abi)}
+            async ${abi.name} (${fnInputArguments}): ${fnResult}
+            `;
+        }).join('\n');
+
+        let abi = abis[0];
+        let { fnResult } = serializeArgumentsTs(abi);
+        let sigs = abis.map(abi => serializeMethodAbi(abi)).map(x => `'${x}'`).join(', ');
+        return `
+            ${ overrides }
+            async ${abi.name} (...args): ${fnResult} {
+                let abi = this.$getAbiItemOverload([ ${sigs} ], args);
+                return this.$read(abi, ...args);
+            }
+        `;
+    }
 
     function serializeWriteMethodTs (abi: AbiItem) {
         let { fnInputArguments, callInputArguments } = serializeArgumentsTs(abi);
@@ -288,6 +322,25 @@ namespace Gen {
             // ${$abiUtils.getMethodSignature(abi)}
             async ${abi.name} (sender: TSender, ${fnInputArguments}): Promise<TxWriter> {
                 return this.$write(this.$getAbiItem('function', '${abi.name}'), sender${callInputArguments});
+            }
+        `;
+    }
+    function serializeWriteMethodTsOverloads (abis: AbiItem[]) {
+        let overrides = abis.map(abi => {
+            let { fnInputArguments, fnResult } = serializeArgumentsTs(abi);
+            return `
+            // ${$abiUtils.getMethodSignature(abi)}
+            async ${abi.name} (sender: TSender, ${fnInputArguments}): Promise<TxWriter>
+            `;
+        }).join('\n');
+
+        let abi = abis[0];
+        let sigs = abis.map(abi => serializeMethodAbi(abi)).map(x => `'${x}'`).join(', ');
+        return `
+            ${ overrides }
+            async ${abi.name} (sender: TSender, ...args): Promise<TxWriter> {
+                let abi = this.$getAbiItemOverload([ ${sigs} ], args);
+                return this.$write(abi, sender, ...args);
             }
         `;
     }

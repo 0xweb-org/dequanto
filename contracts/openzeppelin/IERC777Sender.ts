@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2022-08-11 00:10
+ *  AUTO-Generated Class: 2022-08-11 11:20
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -37,7 +37,7 @@ export class IERC777Sender extends ContractBase {
 
 
 
-    abi = [{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bytes","name":"userData","type":"bytes"},{"internalType":"bytes","name":"operatorData","type":"bytes"}],"name":"tokensToSend","outputs":[],"stateMutability":"nonpayable","type":"function"}]
+    abi: AbiItem[] = [{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bytes","name":"userData","type":"bytes"},{"internalType":"bytes","name":"operatorData","type":"bytes"}],"name":"tokensToSend","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 }
 
 type TSender = TAccount & {

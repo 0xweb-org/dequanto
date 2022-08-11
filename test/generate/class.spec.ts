@@ -4,6 +4,7 @@ import { Generator } from '@dequanto/gen/Generator';
 import { $path } from '@dequanto/utils/$path';
 import { File } from 'atma-io';
 import { $date } from '@dequanto/utils/$date';
+import { l } from '@dequanto/utils/$logger';
 
 declare let include;
 
@@ -52,7 +53,7 @@ UTest({
         let source = await File.readAsync(genPath, { skipHooks: true });
         has_(source, 'onTransfer');
     },
-    async 'generate and check with deployed contract' () {
+    async '!generate and check with deployed contract' () {
         await hh.run('compile', {
             sources: '/test/fixtures/contracts'
         });
@@ -73,13 +74,14 @@ UTest({
         let name = await foo.name();
         eq_(name, 'hello');
 
-
         let tx = await foo.setName(provider.deployer(), 'bar');
         await tx.wait();
 
+        l`Check name was set`
         name = await foo.name();
         eq_(name, 'bar');
 
+        l`Check logs`
         let logs = await foo.getPastLogsUpdated({});
         eq_(logs.length, 1);
 
@@ -87,5 +89,12 @@ UTest({
         eq_(log.transactionHash, tx.tx.hash);
         eq_(log.event, 'Updated');
         eq_(log.params.newName, 'bar');
+
+        l`Check overloads`
+        let zero = await foo.someEcho();
+        eq_(zero, 0);
+
+        let echoed = await foo.someEcho(2);
+        eq_(echoed, 2);
     },
 })

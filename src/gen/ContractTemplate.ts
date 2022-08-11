@@ -33,7 +33,7 @@ export class $NAME$ extends ContractBase {
 
 /* EVENTS_FETCHERS */
 
-    abi = $ABI$
+    abi: AbiItem[] = $ABI$
 }
 
 type TSender = TAccount & {

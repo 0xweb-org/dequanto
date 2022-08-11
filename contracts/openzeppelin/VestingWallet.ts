@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2022-08-11 00:10
+ *  AUTO-Generated Class: 2022-08-11 11:20
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -37,23 +37,21 @@ export class VestingWallet extends ContractBase {
     }
 
     // 0x19165587
-    async release (sender: TSender, token: TAddress): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'release'), sender, token);
-    }
-
+    async release (sender: TSender, token: TAddress): Promise<TxWriter>
     // 0x86d1a69f
-    async release (sender: TSender, ): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'release'), sender);
+    async release (sender: TSender, ): Promise<TxWriter>
+    async release (sender: TSender, ...args): Promise<TxWriter> {
+        let abi = this.$getAbiItemOverload([ 'function release(address)', 'function release()' ], args);
+        return this.$write(abi, sender, ...args);
     }
 
     // 0x96132521
-    async released (): Promise<bigint> {
-        return this.$read('function released() returns uint256');
-    }
-
+    async released (): Promise<bigint>
     // 0x9852595c
-    async released (token: TAddress): Promise<bigint> {
-        return this.$read('function released(address) returns uint256', token);
+    async released (token: TAddress): Promise<bigint>
+    async released (...args): Promise<bigint> {
+        let abi = this.$getAbiItemOverload([ 'function released() returns uint256', 'function released(address) returns uint256' ], args);
+        return this.$read(abi, ...args);
     }
 
     // 0xbe9a6555
@@ -62,13 +60,12 @@ export class VestingWallet extends ContractBase {
     }
 
     // 0x0a17b06b
-    async vestedAmount (timestamp: number): Promise<bigint> {
-        return this.$read('function vestedAmount(uint64) returns uint256', timestamp);
-    }
-
+    async vestedAmount (timestamp: number): Promise<bigint>
     // 0x810ec23b
-    async vestedAmount (token: TAddress, timestamp: number): Promise<bigint> {
-        return this.$read('function vestedAmount(address, uint64) returns uint256', token, timestamp);
+    async vestedAmount (token: TAddress, timestamp: number): Promise<bigint>
+    async vestedAmount (...args): Promise<bigint> {
+        let abi = this.$getAbiItemOverload([ 'function vestedAmount(uint64) returns uint256', 'function vestedAmount(address, uint64) returns uint256' ], args);
+        return this.$read(abi, ...args);
     }
 
     onERC20Released (fn: (event: EventLog, token: TAddress, amount: bigint) => void): ClientEventsStream<any> {
@@ -119,7 +116,7 @@ export class VestingWallet extends ContractBase {
         return logs.map(log => this.$extractLog(log, abi)) as any;
     }
 
-    abi = [{"inputs":[{"internalType":"address","name":"beneficiaryAddress","type":"address"},{"internalType":"uint64","name":"startTimestamp","type":"uint64"},{"internalType":"uint64","name":"durationSeconds","type":"uint64"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"token","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"ERC20Released","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"EtherReleased","type":"event"},{"inputs":[],"name":"beneficiary","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"duration","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"}],"name":"release","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"release","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"released","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"}],"name":"released","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"start","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint64","name":"timestamp","type":"uint64"}],"name":"vestedAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint64","name":"timestamp","type":"uint64"}],"name":"vestedAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"stateMutability":"payable","type":"receive"}]
+    abi: AbiItem[] = [{"inputs":[{"internalType":"address","name":"beneficiaryAddress","type":"address"},{"internalType":"uint64","name":"startTimestamp","type":"uint64"},{"internalType":"uint64","name":"durationSeconds","type":"uint64"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"token","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"ERC20Released","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"EtherReleased","type":"event"},{"inputs":[],"name":"beneficiary","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"duration","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"}],"name":"release","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"release","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"released","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"}],"name":"released","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"start","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint64","name":"timestamp","type":"uint64"}],"name":"vestedAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint64","name":"timestamp","type":"uint64"}],"name":"vestedAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"stateMutability":"payable","type":"receive"}]
 }
 
 type TSender = TAccount & {

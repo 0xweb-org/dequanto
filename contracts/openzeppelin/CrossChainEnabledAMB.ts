@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2022-08-11 00:10
+ *  AUTO-Generated Class: 2022-08-11 11:20
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -34,7 +34,7 @@ export class CrossChainEnabledAMB extends ContractBase {
 
 
 
-    abi = [{"inputs":[{"internalType":"address","name":"bridge","type":"address"}],"stateMutability":"nonpayable","type":"constructor"}]
+    abi: AbiItem[] = [{"inputs":[{"internalType":"address","name":"bridge","type":"address"}],"stateMutability":"nonpayable","type":"constructor"}]
 }
 
 type TSender = TAccount & {

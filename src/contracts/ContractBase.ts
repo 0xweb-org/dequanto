@@ -19,6 +19,7 @@ import { ChainAccount, SafeAccount, TAccount } from "@dequanto/models/TAccount";
 import { ChainAccountsService } from '@dequanto/ChainAccountsService';
 import { $block } from '@dequanto/utils/$block';
 import alot from 'alot';
+import { $abiParser } from '@dequanto/utils/$abiParser';
 
 
 export abstract class ContractBase {
@@ -30,7 +31,7 @@ export abstract class ContractBase {
     private builderConfig?: ITxConfig;
     private writerConfig?: ITxWriterOptions;
 
-    abstract abi?: any
+    abstract abi?: AbiItem[]
 
     constructor (
         public address: TAddress,
@@ -45,7 +46,7 @@ export abstract class ContractBase {
         return reader.getStorageAt(this.address, position);
     }
     public parseInputData (buffer: string | BufferLike, value?: string) {
-        const inter = new utils.Interface(this.abi);
+        const inter = new utils.Interface(this.abi as any);
         const decodedInput = inter.parseTransaction({
             data: buffer as string,
             value: value,
@@ -106,8 +107,32 @@ export abstract class ContractBase {
     }
 
 
-    protected $getAbiItem (type: 'event' | 'function' | 'string', name: string) {
-        return this.abi.find(x => x.type === type && x.name === name);
+    protected $getAbiItem (type: 'event' | 'function' | 'string', name: string, argsCount?: number) {
+        let arr = this.abi.filter(x => x.type === type && x.name === name);
+        if (arr.length === 0) {
+            throw new Error(`AbiItem ${name} not found`);
+        }
+        if (arr.length === 1) {
+            return arr[0];
+        }
+        if (argsCount == null) {
+            throw new Error(`Found multiple AbiItems for ${name}. Args Count not specified to pick one`);
+        }
+        return arr.find(x => (x.inputs?.length ?? 0) === argsCount)
+    }
+
+    protected $getAbiItemOverload (abis: string[], args: any[]) {
+        let $abis = abis
+            .map(methodAbi => $abiParser.parseMethod(methodAbi))
+            .filter(x => (x.inputs?.length ?? 0) === args.length);
+
+        if ($abis.length === 0) {
+            throw new Error(`ABI not found in overloads \n${abis.join('\n')}\n by arguments count. Got ${args.length} arguments`);
+        }
+        if ($abis.length === 1) {
+            return $abis[0];
+        }
+        throw new Error(`Not implemented exception. Got multiple overloads for the argument count ${args.length}. We should pick the ABI by parameters type.`)
     }
 
     protected $extractLogs (tx: TransactionReceipt, abiItem: AbiItem) {

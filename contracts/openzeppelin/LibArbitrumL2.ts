@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2022-08-11 00:10
+ *  AUTO-Generated Class: 2022-08-11 11:20
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -37,7 +37,7 @@ export class LibArbitrumL2 extends ContractBase {
 
 
 
-    abi = [{"inputs":[],"name":"ARBSYS","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"}]
+    abi: AbiItem[] = [{"inputs":[],"name":"ARBSYS","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"}]
 }
 
 type TSender = TAccount & {

@@ -16,4 +16,12 @@ contract Foo {
     function getName () public view returns (string memory) {
         return name;
     }
+
+
+    function someEcho () public pure returns (uint8) {
+        return 0;
+    }
+    function someEcho (uint8 val) public pure returns (uint8) {
+        return val;
+    }
 }

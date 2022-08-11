@@ -27,7 +27,6 @@ export abstract class Web3Client implements IWeb3Client {
     defaultTxType: 1 | 2 = 2;
 
     async sign(txData: TransactionRequest, privateKey: string): Promise<string> {
-
         let wallet = new Wallet(privateKey);
         let json = $txData.getJson(txData, this);
         let tx = await wallet.signTransaction(json);

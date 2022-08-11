@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2022-08-11 00:10
+ *  AUTO-Generated Class: 2022-08-11 11:20
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -37,13 +37,12 @@ export class IERC1363 extends ContractBase {
     }
 
     // 0x3177029f
-    async approveAndCall (sender: TSender, spender: TAddress, value: bigint): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'approveAndCall'), sender, spender, value);
-    }
-
+    async approveAndCall (sender: TSender, spender: TAddress, value: bigint): Promise<TxWriter>
     // 0xcae9ca51
-    async approveAndCall (sender: TSender, spender: TAddress, value: bigint, data: TBufferLike): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'approveAndCall'), sender, spender, value, data);
+    async approveAndCall (sender: TSender, spender: TAddress, value: bigint, data: TBufferLike): Promise<TxWriter>
+    async approveAndCall (sender: TSender, ...args): Promise<TxWriter> {
+        let abi = this.$getAbiItemOverload([ 'function approveAndCall(address, uint256) returns bool', 'function approveAndCall(address, uint256, bytes) returns bool' ], args);
+        return this.$write(abi, sender, ...args);
     }
 
     // 0x70a08231
@@ -67,13 +66,12 @@ export class IERC1363 extends ContractBase {
     }
 
     // 0x1296ee62
-    async transferAndCall (sender: TSender, to: TAddress, value: bigint): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'transferAndCall'), sender, to, value);
-    }
-
+    async transferAndCall (sender: TSender, to: TAddress, value: bigint): Promise<TxWriter>
     // 0x4000aea0
-    async transferAndCall (sender: TSender, to: TAddress, value: bigint, data: TBufferLike): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'transferAndCall'), sender, to, value, data);
+    async transferAndCall (sender: TSender, to: TAddress, value: bigint, data: TBufferLike): Promise<TxWriter>
+    async transferAndCall (sender: TSender, ...args): Promise<TxWriter> {
+        let abi = this.$getAbiItemOverload([ 'function transferAndCall(address, uint256) returns bool', 'function transferAndCall(address, uint256, bytes) returns bool' ], args);
+        return this.$write(abi, sender, ...args);
     }
 
     // 0x23b872dd
@@ -82,13 +80,12 @@ export class IERC1363 extends ContractBase {
     }
 
     // 0xc1d34b89
-    async transferFromAndCall (sender: TSender, from: TAddress, to: TAddress, value: bigint, data: TBufferLike): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'transferFromAndCall'), sender, from, to, value, data);
-    }
-
+    async transferFromAndCall (sender: TSender, from: TAddress, to: TAddress, value: bigint, data: TBufferLike): Promise<TxWriter>
     // 0xd8fbe994
-    async transferFromAndCall (sender: TSender, from: TAddress, to: TAddress, value: bigint): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'transferFromAndCall'), sender, from, to, value);
+    async transferFromAndCall (sender: TSender, from: TAddress, to: TAddress, value: bigint): Promise<TxWriter>
+    async transferFromAndCall (sender: TSender, ...args): Promise<TxWriter> {
+        let abi = this.$getAbiItemOverload([ 'function transferFromAndCall(address, address, uint256, bytes) returns bool', 'function transferFromAndCall(address, address, uint256) returns bool' ], args);
+        return this.$write(abi, sender, ...args);
     }
 
     onApproval (fn: (event: EventLog, owner: TAddress, spender: TAddress, value: bigint) => void): ClientEventsStream<any> {
@@ -139,7 +136,7 @@ export class IERC1363 extends ContractBase {
         return logs.map(log => this.$extractLog(log, abi)) as any;
     }
 
-    abi = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"approveAndCall","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"approveAndCall","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transferAndCall","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"transferAndCall","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"transferFromAndCall","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transferFromAndCall","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"}]
+    abi: AbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"approveAndCall","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"approveAndCall","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transferAndCall","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"transferAndCall","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"transferFromAndCall","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transferFromAndCall","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"}]
 }
 
 type TSender = TAccount & {

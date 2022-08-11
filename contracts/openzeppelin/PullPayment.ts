@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2022-08-11 00:10
+ *  AUTO-Generated Class: 2022-08-11 11:20
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -42,7 +42,7 @@ export class PullPayment extends ContractBase {
 
 
 
-    abi = [{"inputs":[{"internalType":"address","name":"dest","type":"address"}],"name":"payments","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address payable","name":"payee","type":"address"}],"name":"withdrawPayments","outputs":[],"stateMutability":"nonpayable","type":"function"}]
+    abi: AbiItem[] = [{"inputs":[{"internalType":"address","name":"dest","type":"address"}],"name":"payments","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address payable","name":"payee","type":"address"}],"name":"withdrawPayments","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 }
 
 type TSender = TAccount & {
