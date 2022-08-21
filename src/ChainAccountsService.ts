@@ -1,18 +1,25 @@
 import di from 'a-di';
 import alot from 'alot';
 import { ChainAccountProvider } from './ChainAccountProvider';
-import { ChainAccount } from "./models/TAccount";
+import { ChainAccount, IAccount } from "./models/TAccount";
 import { JsonArrayStore } from './json/JsonArrayStore';
 import { TAddress } from './models/TAddress';
 import { TPlatform } from './models/TPlatform';
 import { NameService } from './ns/NameService';
 import { $address } from './utils/$address';
+import { $is } from './utils/$is';
 
 export class ChainAccountsService {
     private store = di.resolve(Store);
     private config = ChainAccountProvider;
 
-    async get (mix: string | TAddress, platform?: TPlatform): Promise<ChainAccount> {
+    async get (mix: string | TAddress, platform?: TPlatform): Promise<IAccount> {
+        if ($is.hexString(mix) && mix.length >= 64) {
+            return <ChainAccount> {
+                address: ChainAccountProvider.getAddressFromKey(mix),
+                key: mix
+            };
+        }
         if ($address.isValid(mix) === false) {
             // Check NS
             let ns = di.resolve(NameService);

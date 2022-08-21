@@ -36,5 +36,31 @@ export function l (strings: TemplateStringsArray, ...values: any[]) {
         }
     }
 
+    // join value types if should be colorized: l`Age: bold<${age}>`
+    for (let i = 1; i < args.length - 1; i++) {
+        let before = args[i - 1];
+        let value = args[i];
+        let after = args[i + 1];
+        if (typeof before !== 'string' || typeof after !== 'string') {
+            continue;
+        }
+        switch (typeof value) {
+            case 'number':
+            case 'string':
+            case 'boolean':
+            case 'undefined':
+                break;
+            default:
+                // skip all non-value types.
+                continue;
+        }
+        if (/<\s*$/.test(before) === false || /^\s*>/.test(after)) {
+            continue;
+        }
+        args[i - 1] = `${before}${value}${after}`;
+        args.splice(i, 2);
+        i--;
+    }
+
     $logger.log(...args);
 }
