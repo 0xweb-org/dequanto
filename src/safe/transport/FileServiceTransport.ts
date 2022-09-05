@@ -2,10 +2,8 @@ import { GnosisSafe } from '@dequanto-contracts/gnosis/GnosisSafe';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { ChainAccount } from '@dequanto/models/TAccount';
 import { TAddress } from '@dequanto/models/TAddress';
-import { $signRaw } from '@dequanto/utils/$signRaw';
-import SafeServiceClient, {
+import {
     ProposeTransactionProps,
-    SafeInfoResponse,
     SafeMultisigConfirmationListResponse,
     SafeMultisigConfirmationResponse,
     SafeMultisigTransactionEstimateResponse,

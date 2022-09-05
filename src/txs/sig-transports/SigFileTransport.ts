@@ -1,5 +1,6 @@
 import { $fn } from '@dequanto/utils/$fn';
 import { $logger } from '@dequanto/utils/$logger';
+import { $sign } from '@dequanto/utils/$sign';
 import { $txData } from '@dequanto/utils/$txData';
 import { File } from 'atma-io'
 import { utils } from 'ethers';
@@ -10,15 +11,23 @@ export class SigFileTransport {
     async create (path: string, txBuilder: TxDataBuilder): Promise<string> {
         let tx = $txData.getJson(txBuilder.data, txBuilder.client);
         let json = {
-            builder: {
-                tx,
-                config: txBuilder.config
+            account: {
+                address: txBuilder.account?.address
             },
+            tx,
+            config: txBuilder.config,
             raw: utils.serializeTransaction(<any> tx),
             signature: null,
         };
+
         await File.writeAsync(path, json);
-        $logger.log(`Tx data saved to the file "${path}". Sign the data, insert the signature to the "signature" field and save the file.`);
+
+        $logger.log('');
+        $logger.log(`Tx data saved to the file "${path}".`);
+        $logger.log(`Sign the data, insert the signature to the "signature" field and save the file.`);
+        $logger.log(`Waiting for the signature...`);
+        $logger.log(`... or you can close this process, and continue later with "0xweb tx send ${path}"`);
+        $logger.log('');
 
         return new Promise((resolve) => {
             File.watch(path, async () => {
@@ -28,8 +37,9 @@ export class SigFileTransport {
                     $logger.log(`Signature not found. Still waiting...`);
                     return;
                 }
-                resolve(json.signature);
-            })
+                let signed = await $sign.serializeTx(tx, json.signature);
+                resolve(signed);
+            });
         });
     }
 

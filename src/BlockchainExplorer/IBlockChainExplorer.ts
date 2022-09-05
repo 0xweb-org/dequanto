@@ -7,7 +7,7 @@ import { type Transaction } from 'web3-core';
 export interface IBlockChainExplorer extends IAbiProvider {
     localDb: IContractDetails[]
     getContractMeta(q: string): Promise<IContractDetails>;
-    getContractAbi (address: TAddress, opts?: { implementation: string }): Promise<{ abi: string, implementation: TAddress }>
+    getContractAbi (address: TAddress, opts?: { implementation?: string }): Promise<{ abi: string, implementation: TAddress }>
     getContractSource (address: string): Promise<{
         SourceCode: string
         ContractName: string

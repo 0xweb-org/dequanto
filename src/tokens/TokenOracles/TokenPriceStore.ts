@@ -16,7 +16,7 @@ export class TokenPriceStore {
         return stores[token] ?? (stores[token] = new TokenPriceStore(token));
     }
 
-    private prices = null as [number, number][]
+    private prices = [] as [number, number][]
     private pricesIdx = {} as {
         [day: string]: {
             [hour: string]: {

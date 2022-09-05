@@ -19,6 +19,7 @@ import { TxLogParser } from './receipt/TxLogParser';
 import { type PromiEvent } from 'web3-core';
 import { GnosisSafeHandler } from '@dequanto/safe/GnosisSafeHandler';
 import { $account } from '@dequanto/utils/$account';
+import { $gas } from '@dequanto/utils/$gas';
 import { ISafeServiceTransport } from '@dequanto/safe/transport/ISafeServiceTransport';
 import type { ProposeTransactionProps } from '@gnosis.pm/safe-service-client';
 import { SigFileTransport } from './sig-transports/SigFileTransport';
@@ -197,7 +198,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
                 tx.hash = hash;
                 this.onSent.resolve(hash);
                 this.emit('transactionHash', hash);
-                this.emit('log', `Tx hash received: ${hash}`);
+                this.emit('log', `Tx hash: ${hash}`);
             })
             // .on('confirmation', (confNumber, receipt) => {
             //     tx.hash = receipt.transactionHash ?? tx.hash;
@@ -240,8 +241,8 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
                     let hash = tx.hash;
                     let status = receipt.status;
-                    let gasFormatted = GasCalculator.formatUsed(this.builder, <any>receipt);
-                    this.emit('log', `Tx receipt received for ${hash}. Status: ${status}. Gas used: ${gasFormatted}`);
+                    let gasFormatted = $gas.formatUsed(this.builder.data, <any>receipt);
+                    this.emit('log', `Tx receipt: ${hash}.\n\tStatus: ${status}.\n\tGas used: ${gasFormatted}`);
 
                     this.onCompleted.resolve(receipt);
                 } catch (error) {
@@ -262,12 +263,12 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
                     // let client = await this.client.getWeb3();
                     // let tx = await this.client.getTransaction(err.receipt.transactionHash);
 
-                    // console.log('RECEIPT', err.receipt, tx);
+                    // $logger.log('RECEIPT', err.receipt, tx);
                     // try {
                     //     let result = await client.eth.call(tx, tx.blockNumber);
-                    //     console.log('RESULT', result);
+                    //     $logger.log('RESULT', result);
                     // } catch (err) {
-                    //     console.log('CALL ERROR', err);
+                    //     $logger.log('CALL ERROR', err);
                     // }
                     // throw new Error('asd');
                 }
@@ -327,7 +328,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
             let service = di.resolve(ChainAccountsService);
             let fromStorage = await service.get(addressOrName, this.client.platform);
             if (fromStorage) {
-                sender = fromStorage;
+                sender = fromStorage as ChainAccount;
             }
         }
         return sender;
@@ -455,7 +456,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
         let builder = TxDataBuilder.fromJSON(client, account, {
             config: json.builder.config,
-            data: json.builder.data,
+            tx: json.builder.tx,
         });
         let writer = TxWriter.create(client, builder, account, json.options);
         let txs = json.txs;
@@ -494,17 +495,3 @@ export type TTxWriterJson = {
     builder: ReturnType<TxDataBuilder['toJSON']>
 };
 
-
-
-namespace GasCalculator {
-
-    export function formatUsed (builder: TxDataBuilder, receipt: TransactionReceipt & { effectiveGasPrice }) {
-        let usage = receipt.gasUsed;
-        let price = BigInt(receipt.effectiveGasPrice ?? builder.data.gasPrice ?? 1);
-
-        let priceGwei = $bigint.toGweiFromWei(price);
-        let totalEth = $bigint.toEther(BigInt(usage) * price);
-
-        return `${totalEth}ETH(${usage}gas × ${priceGwei}gwei)`;
-    }
-}

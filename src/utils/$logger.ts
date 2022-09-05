@@ -10,8 +10,12 @@ export namespace $logger {
 
         console.log($date.format(new Date(), 'HH:mm:ss'), ...colored(args));
     }
+
     export function warn (...args: any) {
         console.warn($date.format(new Date(), 'HH:mm:ss'), ...colored(args));
+    }
+    export function error (...args: any) {
+        console.error($date.format(new Date(), 'HH:mm:ss'), ...colored(args));
     }
 
 
@@ -53,9 +57,6 @@ export function l (strings: TemplateStringsArray, ...values: any[]) {
             default:
                 // skip all non-value types.
                 continue;
-        }
-        if (/<\s*$/.test(before) === false || /^\s*>/.test(after)) {
-            continue;
         }
         args[i - 1] = `${before}${value}${after}`;
         args.splice(i, 2);

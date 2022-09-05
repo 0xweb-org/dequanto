@@ -28,11 +28,22 @@ export namespace $is {
         return val as any as bigint;
     }
 
-    export function Address (val: TAddress, message?: string): boolean {
+    export function Address (val: TAddress, message?: string): val is TAddress {
         if (typeof val !== 'string') {
             return false;
         }
         return /^0x[a-fA-F0-9]{40}$/g.test(val);
+    }
+
+    export function TxHash (val: TAddress): boolean {
+        if (hexString(val) === false) {
+            return false;
+        }
+        // 0x115f9d0e3c5d7538eb27466cf42ac68527703a14e93c0d1243131164af2d1c6c
+        if (val.length !== 2 + 64) {
+            return false;
+        }
+        return true;
     }
 
     export function hexString(str: string | any) {

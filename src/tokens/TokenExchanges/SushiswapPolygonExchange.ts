@@ -17,7 +17,7 @@ export class SushiswapPolygonExchange extends AmmV2ExchangeBase {
     config = $config.get('sushiswap');
 
     factoryAddress = '0xc35dadb65012ec5796536bd9864ed8773abc74c4'
-    masterChefAddress = $require.Address(this.config.masterChef, 'MasterChef Address');
+    masterChefAddress = $require.Address(this.config?.masterChef ?? '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F', 'MasterChef Address');
     vaultAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506'
 
     // private factory = $require.Address(this.config.factory, 'Factory Address');

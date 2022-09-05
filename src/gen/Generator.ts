@@ -11,6 +11,7 @@ import { class_Uri, obj_setProperty } from 'atma-utils';
 import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { $path } from '@dequanto/utils/$path';
+import { $logger } from '@dequanto/utils/$logger';
 
 export interface IGenerateOptions {
     platform: TPlatform
@@ -176,14 +177,14 @@ export class Generator {
             return null;
         }
 
-        console.log('Loading contract source code.');
+        $logger.log('Loading contract source code.');
         let meta = await this.explorer.getContractSource(implementation);
         if (meta?.SourceCode == null) {
-            console.log('No contract source found.');
+            $logger.log('No contract source found.');
             return null;
         }
         if (/^\s*\{/.test(meta.SourceCode) === false) {
-            console.log('Source contract as single file fetched.');
+            $logger.log('Source contract as single file fetched.');
             return {
                 [`${name}.sol`]: {
                     content: meta.SourceCode
@@ -200,10 +201,10 @@ export class Generator {
             let sources = JSON.parse(code);
             let files = sources.sources;
 
-            console.log(`Source code (${Object.keys(files).join(', ')}) fetched.`)
+            $logger.log(`Source code (${Object.keys(files).join(', ')}) fetched.`)
             return files;
         } catch (error) {
-            console.error(`Source code can't be parsed: `, code);
+            $logger.error(`Source code can't be parsed: `, code);
             throw new Error(`Source code can't be parsed: ${error.message}`);
         }
     }
@@ -213,16 +214,16 @@ export class Generator {
         let explorer = $require.notNull(this.explorer, `Explorer not resolved for network: ${this.options.platform}`);
 
         try {
-            console.log(`Loading contracts ABI for ${address}. `)
+            $logger.log(`Loading contracts ABI for ${address}. `)
             let { abi, implementation } = await explorer.getContractAbi(address, opts);
 
             let hasProxy = $address.eq(address, implementation) === false;
-            console.log(`Proxy detected: ${hasProxy ? 'YES' : 'NO' }`, hasProxy ? implementation : '');
+            $logger.log(`Proxy detected: ${hasProxy ? 'YES' : 'NO' }`, hasProxy ? implementation : '');
 
             let abiJson = JSON.parse(abi) as AbiItem[];
             return { abi: abiJson, implementation };
         } catch (error) {
-            console.error(error);
+            $logger.error(error);
             throw new Error(`ABI is not resolved from ${this.options.platform}/${address}: ${error.message ?? error}`);
         }
     }

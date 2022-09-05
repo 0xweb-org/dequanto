@@ -8,6 +8,7 @@ import { class_Uri } from 'atma-utils';
 import { File } from 'atma-io';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { ethers } from 'ethers';
+import { $logger } from '@dequanto/utils/$logger';
 
 
 export class HardhatProvider {
@@ -64,8 +65,7 @@ export class HardhatProvider {
         const contract = await Factory.deploy(...params);
         const receipt = await contract.deployed();
 
-        console.log(`Contract ${Ctor.name} deployed to ${contract.address}`);
-
+        $logger.log(`Contract ${Ctor.name} deployed to ${contract.address}`);
 
         return new Ctor(contract.address, client);
     }

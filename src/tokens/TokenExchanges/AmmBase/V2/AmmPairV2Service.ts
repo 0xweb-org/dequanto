@@ -12,6 +12,7 @@ import { UniswapExchange } from '@dequanto/tokens/TokenExchanges/UniswapExchange
 import { TokensService } from '@dequanto/tokens/TokensService';
 import { IToken } from '@dequanto/models/IToken';
 import { SushiswapPolygonExchange } from '../../SushiswapPolygonExchange';
+import { $require } from '@dequanto/utils/$require';
 
 
 
@@ -111,7 +112,8 @@ export class AmmPairV2Service {
 
 
         if (pool == null || pool.reserveTo < (50_000n * BigInt(pool.pair.to.decimals))) {
-            const SYMBOL = {eth: 'WETH', bsc: 'WBNB'}[platform];
+            const SYMBOL = { eth: 'WETH', bsc: 'WBNB', polygon: 'MATIC' }[platform];
+            $require.notNull(SYMBOL, `Native symbol for platform ${platform} not FOUND`);
             const nativeTokenPool = await this.getPoolInfo(address, SYMBOL);
 
             if (nativeTokenPool == null || nativeTokenPool.reserveTo < 10) {

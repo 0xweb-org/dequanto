@@ -1,9 +1,9 @@
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { ChainAccount } from '@dequanto/models/TAccount';
-import { hashPersonalMessage, ecsign } from 'ethereumjs-util';
 import { $buffer, TBytes } from './$buffer';
 import { $is } from './$is';
-
+import type { TransactionConfig } from 'web3-core';
+import { ethers } from 'ethers';
 
 export namespace $sign {
     export type TSignature = {
@@ -25,21 +25,52 @@ export namespace $sign {
             : null;
 
         if (key != null) {
-
             let sig = web3.eth.accounts.sign(str, key);
             let r = sig.r.substring(2)
             let s = sig.s.substring(2)
             let v = sig.v.substring(2);
-
             return toSignature({ r, s, v });
-
-        } else {
-            let signature =  accountPss == null
-                ? await web3.eth.sign(message.toString(), account.address)
-                : await web3.eth.personal.sign(message.toString(), account.address, accountPss);
-
-            return toSignature(splitSignature(signature));
         }
+
+        let signature =  accountPss == null
+            ? await web3.eth.sign(message.toString(), account.address)
+            : await web3.eth.personal.sign(message.toString(), account.address, accountPss);
+
+        return toSignature(splitSignature(signature));
+
+    }
+
+    export async function signTx (client: Web3Client, tx: TransactionConfig, account: ChainAccount, accountPss?: string): Promise<ReturnType<typeof splitSignature>> {
+        const web3 = await client.getWeb3();
+        const key = account.key != null
+            ? account.key
+            : null;
+
+        if (key != null) {
+            let sig = await web3.eth.accounts.signTransaction(tx, key);
+            return toSignature(sig);
+        }
+
+        let signed =  accountPss == null
+            ? await web3.eth.signTransaction(tx)
+            : await web3.eth.personal.signTransaction(tx, accountPss);
+
+        return toSignature(signed.tx);
+    }
+
+    export async function serializeTx (tx, signature: string | TSignature): Promise<string> {
+        let sig = typeof signature === 'string'
+            ? splitSignature(signature)
+            : signature;
+
+        if (sig?.r == null || sig?.v == null || sig?.s == null) {
+            throw new Error(`Invalid signature ${JSON.stringify(sig)}`);
+        }
+        if (Number(sig.v) === 0) {
+            // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
+            sig.v = '0x25';
+        }
+        return ethers.utils.serializeTransaction(tx, sig);
     }
 
     function splitSignature (signature: string): { v, r, s } {
@@ -50,6 +81,12 @@ export namespace $sign {
     }
     function toSignature (sign: { r, s, v }) {
         let { r, s, v } = sign;
+        r = remove0x(r);
+        s = remove0x(s);
+        if (typeof v === 'number') {
+            v = v.toString(16);
+        }
+        v = remove0x(v);
         return {
             v: `0x${v}`,
             r: `0x${r}`,
@@ -57,6 +94,9 @@ export namespace $sign {
             signature: `0x${r}${s}${v}`,
             signatureVRS: `0x${v}${r}${s}`
         }
+    }
+    function remove0x(hex:string) {
+        return hex.startsWith('0x') ? hex.substring(2) : hex;
     }
 
     function toBuffer (message: string | TBytes, opts?: { encoding?: 'utf8' | 'hex' }) {

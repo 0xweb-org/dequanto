@@ -7,25 +7,28 @@ import { utils } from 'ethers'
 import { TransactionDescription } from 'ethers/lib/utils';
 import { Transaction } from 'web3-core';
 import { ContractProvider } from './ContractProvider';
-
+import type { AbiItem } from 'web3-utils';
 
 export class TxContract {
 
-    private provider = di.resolve(ContractProvider, this.loader);
+    private provider = di.resolve(ContractProvider, this.explorer);
 
-    constructor (private loader: IBlockChainExplorer = di.resolve(Etherscan)) {
+    constructor (private explorer: IBlockChainExplorer = di.resolve(Etherscan)) {
 
     }
 
     async parseTrasaction (tx: Transaction): Promise<TransactionDescription> {
         const abi = await this.provider.getAbi(tx.to);
 
+        return this.parseTrasactionWithAbi(tx, abi);
+    }
+
+    async parseTrasactionWithAbi (tx: Transaction, abi): Promise<TransactionDescription> {
         const inter = new utils.Interface(abi);
         const decodedInput = inter.parseTransaction({
             data: tx.input,
             value: tx.value,
         });
-
         return decodedInput;
     }
 

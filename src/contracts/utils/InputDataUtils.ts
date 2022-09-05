@@ -4,8 +4,11 @@ import { type AbiItem } from 'web3-utils';
 import { $abiParser } from '../../utils/$abiParser';
 
 export namespace InputDataUtils {
-    export function split (inputData: string) {
+    export function split (inputData: string): { method: string, args: string[] } {
         let str = inputData.substring(2);
+        if (str === '') {
+            return { method: '', args: [] }
+        }
         let methodName = str.substring(0, 8);
         let params = str.substring(8);
         let args = [];

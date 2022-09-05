@@ -3,20 +3,12 @@ import alot from 'alot';
 import memd from 'memd';
 import { TAddress } from '@dequanto/models/TAddress';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
-import { TPSushiswap } from './TokenProviders/TPSushiswap';
-import { TPCoinmarketcap } from './TokenProviders/TPCoinmarketcap';
-import { TPOneInch } from './TokenProviders/TPOneInch';
 import { TPlatform } from '@dequanto/models/TPlatform';
-import { TPChain } from './TokenProviders/TPChain';
 import { IToken } from '@dequanto/models/IToken';
 import { ITokenProvider } from './TokenProviders/ITokenProvider';
 import { ERC20 } from '@dequanto/contracts/common/ERC20';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
-import { $address } from '@dequanto/utils/$address';
-import { ArbTokenProvider } from '@dequanto/chains/arbitrum/ArbTokenProvider';
-import { $require } from '@dequanto/utils/$require';
-import { $is } from '@dequanto/utils/$is';
 import { TokenDataProvider } from './TokenDataProvider';
 
 

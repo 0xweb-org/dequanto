@@ -107,7 +107,7 @@ export class AmmPriceV2Oracle {
 
         if (route == null || route.length === 0) {
             let error = new Error(`Route not found for Token ${token.address}`);
-            this.logger.write(error.message);
+            //this.logger.write(error.message);
             return { error };
         }
 
@@ -368,7 +368,7 @@ namespace TokenPrice {
         let toPrice = TokenUtils.calcPrice(amountActual, toToken, toUsd ?? fromUsd);
 
         //console.log('FromPice', fromPrice, fromAmount, fromToken, fromUsd, toUsd);
-        $logger.log(`Swap: ${fromToken.symbol}(${fromAmount})[${fromUsd}$] > ${toToken.symbol} (${amountActual})[${toUsd}$]; Price ${fromToken.symbol}: ${fromPrice}`);
+        //$logger.log(`Swap: ${fromToken.symbol}(${fromAmount})[${fromUsd}$] > ${toToken.symbol} (${amountActual})[${toUsd}$]; Price ${fromToken.symbol}: ${fromPrice}`);
 
 
         if (lp.date) {

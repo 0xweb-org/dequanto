@@ -7,6 +7,7 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TokenDataProvider } from '@dequanto/tokens/TokenDataProvider';
 
 export interface ITxLogsTransferData {
+    event: string
     token: IToken
     from: TAddress
     to: TAddress
@@ -28,6 +29,7 @@ export class TxLogsTransfer implements IKnownLogFormatter {
             let token = await tokenService.getTokenOrDefault(erc20Address);
             let [ from, to, amount ] = transfer.arguments;
             return {
+                event: transfer.event,
                 token,
                 from: from.value,
                 to: to.value,
@@ -49,6 +51,7 @@ export class TxLogsTransfer implements IKnownLogFormatter {
         let token = await tokenService.getTokenOrDefault(erc20Address);
         let [ from, to, amount ] = transfer.arguments;
         return {
+            event: transfer.event,
             token,
             from: from.value,
             to: to.value,

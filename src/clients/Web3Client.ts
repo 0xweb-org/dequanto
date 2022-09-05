@@ -14,6 +14,7 @@ import { Wallet } from 'ethers';
 import { $number } from '@dequanto/utils/$number';
 import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
 import { $txData } from '@dequanto/utils/$txData';
+import { $logger } from '@dequanto/utils/$logger';
 
 export abstract class Web3Client implements IWeb3Client {
 
@@ -294,7 +295,7 @@ export abstract class Web3Client implements IWeb3Client {
                 let complete = false;
                 while (complete === false) {
                     ++page;
-                    console.log(`Get past logs paged: ${page}/${pages}. Loaded ${logs.length}`);
+                    $logger.log(`Get past logs paged: ${page}/${pages}. Loaded ${logs.length}`);
                     let end = cursor + MAX;
                     if (end > to) {
                         end = options.toBlock as number;

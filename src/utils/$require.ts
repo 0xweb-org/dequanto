@@ -91,6 +91,14 @@ export namespace $require {
         }
         return val;
     }
+
+    export function TxHash (val: string, message: string = ''): string {
+        if ($is.TxHash(val) === false) {
+            throw new Error(`Value ${val} is not a valid tx hash. ${message}`);
+        }
+        return val;
+    }
+
     export function Token (token: IToken, message: string = ''): IToken {
         if (token == null) {
             throw new Error(`Token is undefined. ${message}`);

@@ -1,4 +1,4 @@
-import { TAccount } from "@dequanto/models/TAccount";
+import { IAccount, TAccount } from "@dequanto/models/TAccount";
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { InputDataUtils } from '@dequanto/contracts/utils/InputDataUtils';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -18,6 +18,7 @@ export class TxDataBuilder {
         public data: Partial<TransactionRequest>,
         public config: ITxConfig = null,
     ) {
+        this.data ??= {};
         this.data.value = this.data.value ?? 0;
     }
 
@@ -171,12 +172,12 @@ export class TxDataBuilder {
         throw new Error(`Not possible to increase the gas price, the price not set yet`);
     }
 
-    getTxData (client: Web3Client) {
+    getTxData (client?: Web3Client) {
         return <TransactionConfig> <any> {
             ...this.data,
 
             from: this.account?.address ?? void 0,
-            chainId: client.chainId,
+            chainId: this.data.chainId ?? client?.chainId,
         };
     }
 
@@ -192,20 +193,20 @@ export class TxDataBuilder {
     toJSON () {
         return {
             config: this.config,
-            data: this.data,
+            tx: this.data,
         }
     }
 
     static fromJSON (client: Web3Client, account: TAccount, json: {
         config: ITxConfig,
-        data: TransactionRequest,
+        tx: TransactionRequest,
     }) {
 
         let sender = $account.getSender(account);
         return new TxDataBuilder(
             client,
             sender,
-            json.data,
+            json.tx,
             json.config
         );
     }

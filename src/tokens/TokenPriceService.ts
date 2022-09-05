@@ -68,7 +68,6 @@ export class TokenPriceService {
             return { error: new Error(`Token has no decimals ${token.symbol}`) };
         }
 
-
         let { error, result } = await this.oracle.getPrice(token, opts);
         if (error != null) {
             return { error };
