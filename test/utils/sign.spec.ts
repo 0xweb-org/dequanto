@@ -2,6 +2,7 @@ import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
 import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client';
 import { $sign } from '@dequanto/utils/$sign';
 import { $signRaw } from '@dequanto/utils/$signRaw';
+import { TestNode } from '../hardhat/TestNode';
 
 UTest({
     async 'raw eip sign as in web3' () {
@@ -36,5 +37,22 @@ UTest({
         sig1 = await $sign.signEIPHashed(client, message, acc);
         sig2 = $signRaw.signEIPHashed(message, acc.key);
         eq_(sig1.signature, sig2.signature);
+    },
+    async 'sign tx and then recorver the address from rawTransaction and the signature' () {
+        let client = await TestNode.client();
+        let account = ChainAccountProvider.generate();
+        let tx = {
+            to: account.address,
+            value: 0,
+            nonce: 1,
+            gasLimit: 21000,
+            gasPrice: 1,
+            chainId: client.chainId
+        };
+        let sig = await $sign.signTx(client, { ...tx }, account);
+
+
+        let address = await $sign.recoverTx(client, { ...tx }, sig);
+        eq_(account.address, address);
     }
 })

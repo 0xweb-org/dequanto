@@ -4,14 +4,16 @@ import { $buffer, TBytes } from './$buffer';
 import { $is } from './$is';
 import type { TransactionConfig } from 'web3-core';
 import { ethers } from 'ethers';
+import { $signRaw } from './$signRaw';
+import { $contract } from './$contract';
 
 export namespace $sign {
     export type TSignature = {
         v: string
         r: string
         s: string
-        signature: string
-        signatureVRS: string
+        signature?: string
+        signatureVRS?: string
     };
 
     /** Adds  "Ethereum Signed Message" */
@@ -59,21 +61,24 @@ export namespace $sign {
     }
 
     export async function serializeTx (tx, signature: string | TSignature): Promise<string> {
-        let sig = typeof signature === 'string'
-            ? splitSignature(signature)
-            : signature;
-
-        if (sig?.r == null || sig?.v == null || sig?.s == null) {
-            throw new Error(`Invalid signature ${JSON.stringify(sig)}`);
-        }
+        let sig = getSignature(signature);
         if (Number(sig.v) === 0) {
             // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
             sig.v = '0x25';
         }
-        return ethers.utils.serializeTransaction(tx, sig);
+        return ethers.utils.serializeTransaction(tx, {
+            ...sig,
+            v: Number(sig.v)
+        });
+    }
+    export async function recoverTx(client: Web3Client, tx: TransactionConfig, signature: string | TSignature) {
+        const web3 = await client.getWeb3();
+        const sig = getSignature(signature);
+        const rawTransaction = await serializeTx(tx, sig);
+        return web3.eth.accounts.recoverTransaction(rawTransaction);
     }
 
-    function splitSignature (signature: string): { v, r, s } {
+    function splitSignature (signature: string): TSignature {
         let r = signature.substring(2, 2 + 64);
         let s = signature.substring(2 + 64, 2 + 64 + 64);
         let v = signature.substring(2 + 64 + 64);
@@ -112,5 +117,17 @@ export namespace $sign {
             return $buffer.fromString(message, opts?.encoding ?? 'utf8');
         }
         return message;
+    }
+
+
+    function getSignature(signature: string | TSignature): TSignature {
+        let sig = typeof signature === 'string'
+                ? splitSignature(signature)
+                : signature;
+
+        if (sig?.r == null || sig?.v == null || sig?.s == null) {
+            throw new Error(`Invalid signature ${JSON.stringify(sig)}`);
+        }
+        return sig;
     }
 }

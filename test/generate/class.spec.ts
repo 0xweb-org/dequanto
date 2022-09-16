@@ -2,7 +2,7 @@ import hh from 'hardhat';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { Generator } from '@dequanto/gen/Generator';
 import { $path } from '@dequanto/utils/$path';
-import { File } from 'atma-io';
+import { Directory, File } from 'atma-io';
 import { $date } from '@dequanto/utils/$date';
 import { l } from '@dequanto/utils/$logger';
 
@@ -53,11 +53,10 @@ UTest({
         let source = await File.readAsync(genPath, { skipHooks: true });
         has_(source, 'onTransfer');
     },
-    async '!generate and check with deployed contract' () {
+    async 'generate and check with deployed contract' () {
         await hh.run('compile', {
             sources: '/test/fixtures/contracts'
         });
-
         const gen = new Generator({
             name: 'Foo',
             platform: 'eth',

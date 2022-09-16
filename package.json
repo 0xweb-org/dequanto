@@ -30,7 +30,7 @@
     "bcrypt": "^5.0.1",
     "ethers": "^5.5.1",
     "everlog": "^1.0.10",
-    "includejs": "^0.16.5",
+    "includejs": "^0.16.9",
     "memd": "^0.3.11",
     "papaparse": "^5.3.1",
     "web3": "^1.6.0",

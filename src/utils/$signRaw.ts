@@ -1,6 +1,8 @@
 import { hashPersonalMessage, ecsign } from 'ethereumjs-util';
 import { $buffer } from './$buffer';
 import { $is } from './$is';
+import { ethers, utils } from 'ethers'
+import { TAddress } from '@dequanto/models/TAddress';
 
 export namespace $signRaw {
     export function signEC (message: string | Buffer, privateKey: string | Buffer) {
@@ -16,7 +18,7 @@ export namespace $signRaw {
         return {
             v: `0x${v}`,
             r: `0x${r}`,
-            s: `0x${s}`,
+            s: Number(`0x${s}`),
             signature: `0x${r}${s}${v}`,
             signatureVRS: `0x${v}${r}${s}`
         }
@@ -25,6 +27,10 @@ export namespace $signRaw {
         const buffer = toBuffer(message);
         const hash = hashPersonalMessage(buffer as Buffer);
         return signEC(hash, privateKey);
+    }
+
+    export function ecrecover (message: string, signature: string | { v, r, s}): TAddress {
+        return utils.recoverAddress(message, signature) as TAddress;
     }
 
     function toBuffer (message: string | Buffer, opts?: { encoding?: 'utf8' | 'hex' }) {
