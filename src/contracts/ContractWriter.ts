@@ -12,6 +12,7 @@ import { $logger } from '@dequanto/utils/$logger';
 import { $class } from '@dequanto/utils/$class';
 import { ChainAccountsService } from '@dequanto/ChainAccountsService';
 import { $account } from '@dequanto/utils/$account';
+import { $require } from '@dequanto/utils/$require';
 
 interface IChainAccountSender extends ChainAccount {
     value?: number | string | bigint
@@ -59,6 +60,7 @@ export class ContractWriter implements IContractWriter {
         }
     ): Promise<TxWriter> {
 
+        $require.notNull(account, 'Account parameter is undefined.');
 
         let value = typeof account !== 'string'
             ? account.value

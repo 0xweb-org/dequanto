@@ -20,6 +20,7 @@ export class TxDataBuilder {
     ) {
         this.data ??= {};
         this.data.value = this.data.value ?? 0;
+        this.data.chainId = client.chainId;
     }
 
     setInputDataWithTypes(types: any[], paramaters: any[]): this {
@@ -177,7 +178,7 @@ export class TxDataBuilder {
             ...this.data,
 
             from: this.account?.address ?? void 0,
-            chainId: this.data.chainId ?? client?.chainId,
+            chainId: this.data.chainId ?? client?.chainId ?? this.client?.chainId,
         };
     }
 

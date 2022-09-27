@@ -16,8 +16,6 @@ import { $address } from '@dequanto/utils/$address';
 
 export class FileServiceTransport implements ISafeServiceTransport {
 
-    private file = new File(this.path, { cached: false })
-
     constructor (public client: Web3Client, public owner: ChainAccount, public path: string) {
 
     }

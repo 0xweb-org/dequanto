@@ -53,6 +53,7 @@ export function l (strings: TemplateStringsArray, ...values: any[]) {
             case 'string':
             case 'boolean':
             case 'undefined':
+            case 'bigint':
                 break;
             default:
                 // skip all non-value types.

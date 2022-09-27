@@ -19,6 +19,9 @@ export namespace $account {
     }
 
     export function isSafe (account:TAccount): account is SafeAccount {
+        if (account == null) {
+            return false;
+        }
         if (typeof account === 'string') {
             return /^safe\//.test(account);
         }

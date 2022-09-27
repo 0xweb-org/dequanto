@@ -23,6 +23,8 @@ import { $gas } from '@dequanto/utils/$gas';
 import { ISafeServiceTransport } from '@dequanto/safe/transport/ISafeServiceTransport';
 import type { ProposeTransactionProps } from '@gnosis.pm/safe-service-client';
 import { SigFileTransport } from './sig-transports/SigFileTransport';
+import { $txData } from '@dequanto/utils/$txData';
+import { $sign } from '@dequanto/utils/$sign';
 
 interface ITxWriterEvents {
     transactionHash (hash: string)
@@ -41,6 +43,9 @@ export interface ITxWriterOptions {
 
     /** Tx Data will be saved to the store(e.g. a File), and will wait until the signature appears in the store. */
     sigTransport?: string
+
+    /** Provide a pre-signed signature for this transaction data. */
+    signature?: string
 
     /**
      * The callback is executed on error, to give the opportunity to build a new Tx to resubmit the tx.
@@ -157,10 +162,17 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
             : await this.builder.signToString(sender.key);
 
 
-        if (signedTxBuffer == null && this.options?.sigTransport != null) {
-            let transport = di.resolve(SigFileTransport);
-            signedTxBuffer = await transport.create(this.options.sigTransport, this.builder);
+        if (signedTxBuffer == null) {
+            if (this.options?.sigTransport != null) {
+                let transport = di.resolve(SigFileTransport);
+                signedTxBuffer = await transport.create(this.options.sigTransport, this.builder);
+            }
+            if (this.options?.signature) {
+                let tx = $txData.getJson(this.builder.data, this.client);
+                signedTxBuffer = await $sign.serializeTx(tx, this.options.signature);
+            }
         }
+
 
         let tx = <TxWriter['tx']> {
             timestamp: Date.now(),
@@ -216,6 +228,9 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
             //     }
             // })
             .on('error', error => {
+                this.onSent.reject(error);
+                this.onCompleted.reject(error);
+
                 this.clearTimer(tx);
                 this.logger.logError(error);
                 this.emit('error', error);
