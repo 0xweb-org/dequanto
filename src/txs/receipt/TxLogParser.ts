@@ -3,8 +3,6 @@ import { $contract } from '@dequanto/utils/$contract';
 import { TransactionReceipt } from 'web3-core';
 import { TxTopicProvider } from './TxTopicProvider';
 import { TPlatform } from '@dequanto/models/TPlatform';
-import { ITxLogItem } from './ITxLogItem';
-
 
 export class TxLogParser {
 

@@ -17,6 +17,7 @@ import { ClientErrorUtil } from './utils/ClientErrorUtil';
 import { IWeb3ClientOptions } from './interfaces/IWeb3Client';
 import { $logger } from '@dequanto/utils/$logger';
 
+declare let app;
 
 export interface IPoolClientConfig {
     url?: string
@@ -131,7 +132,7 @@ export class ClientPool {
     }
 
     getOptionForFetchableRange (): number {
-        const DEFAULT = 1_000;
+        const DEFAULT = null;
         let max = alot(this.clients).max(x => x.config?.fetchableBlockRange ?? 0);
         if (max === 0) {
             return DEFAULT;
@@ -237,16 +238,25 @@ export class ClientPool {
     }
 
     async getNodeInfos (): Promise<IWeb3ClientStatus[]> {
+        async function peerCount (wClient) {
+            /** @TODO Public nodes smt. do not allow net_peerCount methods. Allow to switch this on/off on node-url-config level */
+            try {
+                return await wClient.eth.net.getPeerCount();
+            } catch (error) {
+                return `ERROR: ${error.message}`;
+            }
+        }
         let nodes = await alot(this.clients).mapAsync(async (wClient, idx) => {
 
             let url = wClient.config.url;
             try {
                 let start = Date.now();
-                let [ syncing, blockNumber, peers ] = await Promise.all([
+                let [ syncing, blockNumber, peers, node ] = await Promise.all([
                     wClient.eth.isSyncing(),
                     wClient.eth.getBlockNumber(),
-                    /** @TODO Public nodes smt. do not allow net_peerCount methods. Allow to switch this on/off on node-url-config level */
-                    wClient.eth.net.getPeerCount(),
+                    peerCount(wClient),
+                    wClient.eth.getNodeInfo(),
+
                 ]);
 
                 let ping = Math.round((Date.now() - start) / 3);
@@ -259,6 +269,7 @@ export class ClientPool {
                     blockNumberBehind: 0,
                     peers: peers,
                     pingMs: ping,
+                    node: node,
                     i: idx,
                 };
 

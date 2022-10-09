@@ -2,6 +2,7 @@ import { type AbiItem } from 'web3-utils';
 import { utils }  from 'ethers';
 import { $contract } from './$contract';
 import Web3 from 'web3';
+import { $require } from './$require';
 
 export namespace $abiUtils {
 
@@ -34,6 +35,42 @@ export namespace $abiUtils {
         let signature = `${abi.name}(${types.join(',')})`;
         let hash = $contract.keccak256(signature);
         return hash;
+    }
+
+    export function checkInterfaceOf (abi: AbiItem[], iface: AbiItem[]): { ok: boolean, missing?: string } {
+        if (iface == null || iface.length === 0) {
+            return { ok: false };
+        }
+        for (let item of iface) {
+            if (item.type === 'constructor') {
+                continue;
+            }
+            let inAbi = abi.some(x => abiEquals(x, item));
+            if (inAbi === false) {
+                return { ok: false, missing: item.name };
+            }
+        }
+        return { ok: true };
+    }
+
+    function abiEquals (a: AbiItem, b: AbiItem) {
+        if (a.name !== b.name) {
+            return false;
+        }
+        let aInputs = a.inputs ?? [];
+        let bInputs = b.inputs ?? [];
+        if (aInputs.length !== bInputs.length) {
+            return false;
+        }
+        //@TODO: may be better AbiInput comparison?
+        for (let i = 0; i < aInputs.length; i++) {
+            let aInput = aInputs[i];
+            let bInput = bInputs[i];
+            if (aInput?.type !== bInput?.type) {
+                return false;
+            }
+        }
+        return true;
     }
 
     function serializeMethodSignatureArgumentType (input: AbiItem['inputs'][0]) {

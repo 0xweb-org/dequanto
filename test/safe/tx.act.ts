@@ -70,7 +70,7 @@ UTest({
             }
         });
 
-        let { hash, threshold } = await handler.createTransaction(txWriter, 0n);
+        let { safeTxHash: hash, threshold } = await handler.createTransaction(txWriter, 0n);
 
         await handler.confirmTx(hash, owner2);
         await handler.confirmTx(hash, owner1);

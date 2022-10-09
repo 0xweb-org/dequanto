@@ -1,6 +1,7 @@
 import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { ChainAccountsService } from '@dequanto/ChainAccountsService';
+import { IWeb3EndpointOptions } from '@dequanto/clients/interfaces/IWeb3EndpointOptions';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { TPlatform } from '@dequanto/models/TPlatform';
@@ -25,8 +26,8 @@ export interface IPlatformTools {
 export class PlatformFactory {
 
     @memd.deco.memoize()
-    async get (platform: TPlatform): Promise<IPlatformTools> {
-        let client = Web3ClientFactory.get(platform);
+    async get (platform: TPlatform, opts?: IWeb3EndpointOptions): Promise<IPlatformTools> {
+        let client = Web3ClientFactory.get(platform, opts);
         let tokens = TokensServiceFactory.get(platform);
         let explorer = BlockChainExplorerProvider.get(platform);
         let accounts = new ChainAccountsService();

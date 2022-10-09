@@ -260,9 +260,9 @@ export abstract class Web3Client implements IWeb3Client {
 
     async getPastLogs (options: PastLogsOptions) {
 
-        const getBlock = async (block: BlockNumber | Date) => {
+        const getBlock = async (block: BlockNumber | Date, $default) => {
             if (block == null) {
-                return 'latest';
+                return $default;
             }
             if (block instanceof Date) {
                 let resolver = di.resolve(BlockDateResolver, this);
@@ -271,8 +271,8 @@ export abstract class Web3Client implements IWeb3Client {
             return block;
         };
 
-        options.fromBlock = await getBlock(options.fromBlock);
-        options.toBlock = await getBlock(options.toBlock);
+        options.fromBlock = await getBlock(options.fromBlock, 0);
+        options.toBlock = await getBlock(options.toBlock, 'latest');
         options.topics = options.topics?.map(topic => {
             if (typeof topic === 'string' && topic.startsWith('0x')) {
                 return '0x' + topic.substring(2).padStart(64, '0');
@@ -280,40 +280,59 @@ export abstract class Web3Client implements IWeb3Client {
             return topic;
         });
 
-        let MAX = this.pool.getOptionForFetchableRange();
-        if (typeof options.fromBlock === 'number') {
-            let to = options.toBlock;
-            if (typeof to !== 'number') {
-                to = await this.getBlockNumber();
-            }
-            let range = to - options.fromBlock;
-            if (range > MAX) {
-                let logs = [];
-                let cursor = options.fromBlock;
-                let pages = Math.ceil(range / MAX);
-                let page = 0;
-                let complete = false;
-                while (complete === false) {
-                    ++page;
-                    $logger.log(`Get past logs paged: ${page}/${pages}. Loaded ${logs.length}`);
-                    let end = cursor + MAX;
-                    if (end > to) {
-                        end = options.toBlock as number;
-                        complete = true;
+
+
+        const fetch = async (maxBlockRange: number) => {
+            let fromBlock = options.fromBlock ?? 0;
+
+            if (typeof fromBlock === 'number') {
+                let to = options.toBlock;
+                if (typeof to !== 'number') {
+                    to = await this.getBlockNumber();
+                }
+                let range = to - fromBlock;
+                if (typeof maxBlockRange === 'number' && range > maxBlockRange) {
+                    let logs = [];
+                    let cursor = fromBlock;
+                    let pages = Math.ceil(range / maxBlockRange);
+                    let page = 0;
+                    let complete = false;
+                    while (complete === false) {
+                        ++page;
+                        let end = cursor + maxBlockRange;
+                        if (end > to) {
+                            end = options.toBlock as number;
+                            complete = true;
+                        }
+                        $logger.log(`Get past logs paged: ${page}/${pages} (Block start: ${cursor}). Loaded ${logs.length}`);
+                        let paged = await this.pool.call(web3 => web3.eth.getPastLogs({
+                            ...options,
+                            fromBlock: cursor,
+                            toBlock: end ?? undefined,
+                        }));
+                        logs.push(...paged);
+                        cursor += maxBlockRange + 1;
                     }
-                    let paged = await this.pool.call(web3 => web3.eth.getPastLogs({
-                        ...options,
-                        fromBlock: cursor,
-                        toBlock: end ?? undefined,
-                    }));
-                    logs.push(...paged);
-                    cursor += MAX + 1;
+                    return logs;
                 }
             }
+
+            return this.pool.call(web3 => {
+                return web3.eth.getPastLogs(options)
+            });
+        };
+
+        try {
+            let MAX = this.pool.getOptionForFetchableRange();
+            return await fetch(MAX);
+        } catch (err) {
+            let match = /\b(?<maxRange>\d+)\b/.exec(err.message);
+            if (match) {
+                let max = Number(match.groups.maxRange);
+                return await fetch(max);
+            }
+            throw err;
         }
-        return this.pool.call(web3 => {
-            return web3.eth.getPastLogs(options)
-        });
     }
 
     getNodeInfos () {

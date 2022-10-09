@@ -156,10 +156,10 @@ export abstract class ContractBase {
     }): Promise<PastLogsOptions> {
         let filters: PastLogsOptions = {};
 
-        if (options.fromBlock) {
+        if (options.fromBlock != null) {
             filters.fromBlock = await $block.ensureNumber(options.fromBlock, this.client);
         }
-        if (options.toBlock) {
+        if (options.toBlock != null) {
             filters.toBlock = await $block.ensureNumber(options.toBlock, this.client);
         }
 

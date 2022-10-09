@@ -8,4 +8,13 @@ export interface IToken {
     address: TAddress
     decimals?: number
     logo?: string
+    type?: 'ERC20'
+}
+
+export interface IToken721 {
+    name?: string
+    platform: TPlatform
+    address: TAddress
+    tokenId: bigint
+    type?: 'ERC721'
 }

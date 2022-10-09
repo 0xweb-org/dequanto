@@ -24,7 +24,7 @@ import { utils } from 'ethers'
 
 import { type AbiItem } from 'web3-utils';
 import { $contract } from '@dequanto/utils/$contract';
-import { $buffer } from '@dequanto/utils/$buffer';
+import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 
 
 export class GnosisSafeHandler {
@@ -112,10 +112,10 @@ export class GnosisSafeHandler {
 
         let value = BigInt(writer.builder.data.value?.toString() ?? 0);
 
-        let { hash, threshold } = await this.createTransaction(writer, value);
+        let { safeTxHash, threshold, safeTxData } = await this.createTransaction(writer, value);
 
         await $fn.waitForObject(async () => {
-            let confirmations = await this.getTxConfirmations(hash);
+            let confirmations = await this.getTxConfirmations(safeTxHash);
             if (confirmations.count >= threshold) {
                 return [null, {}];
             }
@@ -126,24 +126,21 @@ export class GnosisSafeHandler {
             intervalMs: 3000
         });
 
-        let tx = await this.submitTransaction(hash, { threshold });
+        let tx = await this.submitTransaction(safeTxHash, { threshold });
         return tx;
     }
 
-
-    async createTransaction(writer: TxWriter, value: bigint) {
-        let builder = writer.builder;
+    async createTxHash (builder: TxDataBuilder, value?: bigint) {
         let txData = builder.getTxData(this.client);
 
         let safeTxEstimation: SafeMultisigTransactionEstimate & { data } = {
             to: $address.toChecksum(txData.to),
-            value: Number(value) as any,
+            value: $bigint.toHex(value ?? BigInt(txData.value?.toString() ?? 0n)),
             data: txData.data ?? null,
             operation: 0,
         }
 
         let safeInfo = await this.transport.getSafeInfo(this.safeAddress);
-
 
         // let estimated = await this.transport.estimateSafeTransaction(this.safeAddress, safeTxEstimation);
 
@@ -159,33 +156,59 @@ export class GnosisSafeHandler {
             gasPrice: 0,
         };
 
-        let hash = await this.getTransactionHash({
+        let safeTxHash = await this.getTransactionHash({
             ...safeTxData,
         });
 
+        return {
+            safeInfo,
+            safeTxData,
+            safeTxHash,
+        };
+    }
+
+    async createTxSignature(safeTxHash: string) {
+        return {
+            signature: {
+                signer: $address.toChecksum(this.owner.address),
+                data: $signRaw.signEC(safeTxHash, this.owner.key).signature
+            }
+        };
+    }
+
+    async createTransaction(writer: TxWriter, value: bigint) {
+        let builder = writer.builder;
+        let {
+            safeTxHash,
+            safeTxData,
+            safeInfo,
+        } = await this.createTxHash(builder, value);
+
+        let {
+            signature,
+        } = await this.createTxSignature(safeTxHash);
+
         let signatures = new Map();
-        signatures.set(this.owner.address.toLowerCase(), {
-            signer: $address.toChecksum(this.owner.address),
-            data: $signRaw.signEC(hash, this.owner.key).signature
-        });
+        signatures.set(this.owner.address.toLowerCase(), signature);
 
         // https://docs.gnosis-safe.io/tutorials/tutorial_tx_service_initiate_sign
-        let args: ProposeTransactionProps = {
+        let txProps: ProposeTransactionProps = {
             safeAddress: $address.toChecksum(this.safeAddress),
             senderAddress: $address.toChecksum(this.owner.address),
             safeTransaction: <SafeTransaction>{
                 data: safeTxData,
-                signatures: signatures
+                signatures: signatures,
             },
-            safeTxHash: hash,
+            safeTxHash,
         };
 
-        await this.transport.proposeTransaction(args);
+        await this.transport.proposeTransaction(txProps);
 
-        writer.emit('safeTxProposed', args);
+        writer.emit('safeTxProposed', txProps);
         return {
             threshold: Number(safeInfo.threshold),
-            hash
+            safeTxData,
+            safeTxHash
         };
     }
 
