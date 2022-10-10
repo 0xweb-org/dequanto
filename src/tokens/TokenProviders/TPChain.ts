@@ -1,4 +1,5 @@
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
+import type { Web3Client } from '@dequanto/clients/Web3Client';
 import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TPlatform } from '@dequanto/models/TPlatform';
@@ -6,7 +7,7 @@ import { ITokenProvider } from './ITokenProvider';
 
 export class TPChain implements ITokenProvider {
 
-    constructor (public platform: TPlatform, public explorer?: IBlockChainExplorer) {
+    constructor (public platform: TPlatform, public client?: Web3Client) {
 
     }
 
@@ -15,13 +16,25 @@ export class TPChain implements ITokenProvider {
             return null;
         }
 
+        let erc20 = new ERC20(address, this.client);
+
         try {
-            let source = await this.explorer?.getContractSource(address);
-            return <Partial<IToken>> {
-                address: address,
-                symbol: source
-                    .ContractName
-                    ?.replace(/bep20/i, ''),
+            let [
+                symbol,
+                name,
+                decimals,
+            ] = await Promise.all([
+                erc20.symbol(),
+                erc20.name(),
+                erc20.decimals(),
+            ]);
+
+            return <IToken> {
+                platform,
+                address,
+                symbol,
+                name,
+                decimals,
             };
 
         } catch (error) {

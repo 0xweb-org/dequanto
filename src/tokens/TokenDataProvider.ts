@@ -9,11 +9,13 @@ import { $address } from '@dequanto/utils/$address';
 import { $is } from '@dequanto/utils/$is';
 import { $require } from '@dequanto/utils/$require';
 import { ITokenProvider } from './TokenProviders/ITokenProvider';
-import { TPChain } from './TokenProviders/TPChain';
+import { TPExplorer as TPExplorer } from './TokenProviders/TPExplorer';
 import { TPCoinmarketcap } from './TokenProviders/TPCoinmarketcap';
 import { TPOneInch } from './TokenProviders/TPOneInch';
 import { TPSushiswap } from './TokenProviders/TPSushiswap';
 import { TPConfig } from './TokenProviders/TPConfig';
+import { Web3Client } from '@dequanto/clients/Web3Client';
+import { TPChain } from './TokenProviders/TPChain';
 
 export class TokenDataProvider {
 
@@ -27,11 +29,12 @@ export class TokenDataProvider {
         // new TPUniswap(),
         new TPCoinmarketcap(),
         new ArbTokenProvider(),
-        new TPChain(this.platform, this.explorer),
+        new TPExplorer(this.platform, this.explorer),
+        new TPChain(this.platform, this.client),
     ] as ITokenProvider[];
 
 
-    constructor(private platform: TPlatform, private explorer?: IBlockChainExplorer) {
+    constructor(private platform: TPlatform, private explorer?: IBlockChainExplorer, private client?: Web3Client) {
 
     }
 
@@ -104,7 +107,7 @@ export class TokenDataProvider {
     async getTokenByAddress (address: TAddress, chainLookup: boolean = true): Promise<[IToken, ITokenProvider]> {
         let [ token, provider ] = await alot(this.providers)
             .mapAsync(async provider => {
-                if (provider instanceof TPChain && chainLookup === false) {
+                if (provider instanceof TPExplorer && chainLookup === false) {
                     return [null, null];;
                 }
                 return [await provider.getByAddress(this.platform, address), provider];
@@ -119,7 +122,7 @@ export class TokenDataProvider {
     async getTokenBySymbol (symbol: string, chainLookup: boolean = true): Promise<[IToken, ITokenProvider]> {
         let [ token, provider ] = await alot(this.providers)
             .mapAsync(async provider => {
-                if (provider instanceof TPChain && chainLookup === false) {
+                if (provider instanceof TPExplorer && chainLookup === false) {
                     return [null, null];
                 }
                 return [await provider.getBySymbol(this.platform, symbol), provider];
