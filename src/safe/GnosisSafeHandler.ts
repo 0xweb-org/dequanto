@@ -114,6 +114,11 @@ export class GnosisSafeHandler {
 
         let { safeTxHash, threshold, safeTxData } = await this.createTransaction(writer, value);
 
+        if (writer.options.txOutput != null) {
+            await writer.saveTxAndExit({ safeTxHash, safeTxData });
+            return;
+        }
+
         await $fn.waitForObject(async () => {
             let confirmations = await this.getTxConfirmations(safeTxHash);
             if (confirmations.count >= threshold) {

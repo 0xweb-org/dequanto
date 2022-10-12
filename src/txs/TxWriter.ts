@@ -44,6 +44,9 @@ export interface ITxWriterOptions {
     /** Tx Data will be saved to the store(e.g. a File), and will wait until the signature appears in the store. */
     sigTransport?: string
 
+    /** Write the Tx Data to a JSON file, without submit to the blockchain */
+    txOutput?: string
+
     /** Provide a pre-signed signature for this transaction data. */
     signature?: string
 
@@ -154,6 +157,12 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
         if (this.builder.data.nonce == null) {
             await this.builder.setNonce();
+        }
+
+        if (this.options?.txOutput != null) {
+            // handle none blockchain
+            await this.saveTxAndExit()
+            return;
         }
 
         let key = sender?.key;
@@ -463,11 +472,19 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         };
     }
 
-    static async fromJSON (json: TTxWriterJson, client?: Web3Client): Promise<TxWriter> {
+    //** We can save the Tx Data for later reuse/blockchain send */
+    async saveTxAndExit (additionalProperties?) {
+        let path = this.options?.txOutput;
+        await this.builder.save(path, additionalProperties);
+        this.onSent.resolve(path);
+        this.onCompleted.reject(new Error(`Transaction is not submited to the blockchain. It has been saved to "${path}". Listen to "onSent" promise`))
+    }
+
+    static async fromJSON (json: TTxWriterJson, client?: Web3Client, account?: TAccount): Promise<TxWriter> {
         client = client ?? Web3ClientFactory.get(json.platform);
 
 
-        let account = json.account;
+        account = account ?? json.account;
 
         let builder = TxDataBuilder.fromJSON(client, account, {
             config: json.builder.config,

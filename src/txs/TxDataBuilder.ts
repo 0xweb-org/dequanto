@@ -8,6 +8,7 @@ import { type TransactionRequest } from '@ethersproject/abstract-provider';
 import { type TransactionConfig } from 'web3-core';
 import { type AbiItem } from 'web3-utils';
 import { ITxConfig } from './ITxConfig';
+import { File } from 'atma-io';
 
 export class TxDataBuilder {
     protected static nonce: number = -1
@@ -193,9 +194,20 @@ export class TxDataBuilder {
 
     toJSON () {
         return {
-            config: this.config,
+            account: {
+                address: this.account?.address,
+            },
             tx: this.data,
-        }
+            config: this.config,
+        };
+    }
+
+    async save (path: string, additionalProperties?) {
+        let json = this.toJSON();
+        await File.writeAsync(path, {
+            ...json,
+            ...(additionalProperties ?? {})
+        });
     }
 
     static fromJSON (client: Web3Client, account: TAccount, json: {
