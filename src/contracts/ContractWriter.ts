@@ -1,16 +1,15 @@
 import di from 'a-di';
+import type { AbiItem } from 'web3-utils';
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
-import { type AbiItem } from 'web3-utils';
 import { ITxWriterOptions, TxWriter } from '@dequanto/txs/TxWriter';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $abiParser } from '../utils/$abiParser';
-import { ChainAccount, SafeAccount, TAccount } from "@dequanto/models/TAccount";
+import { ChainAccount, TAccount } from "@dequanto/models/TAccount";
 import { ITxConfig } from '@dequanto/txs/ITxConfig';
 import { $logger } from '@dequanto/utils/$logger';
 import { $class } from '@dequanto/utils/$class';
-import { ChainAccountsService } from '@dequanto/ChainAccountsService';
 import { $account } from '@dequanto/utils/$account';
 import { $require } from '@dequanto/utils/$require';
 

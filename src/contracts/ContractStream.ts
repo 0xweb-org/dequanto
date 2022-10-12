@@ -1,8 +1,8 @@
+import di from 'a-di';
 import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
-import di from 'a-di';
 
 export class ContractStream  {
 

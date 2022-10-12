@@ -1,9 +1,9 @@
-import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
 import type { Web3Client } from '@dequanto/clients/Web3Client';
 import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { ITokenProvider } from './ITokenProvider';
+import { ContractReader } from '@dequanto/contracts/ContractReader';
 
 export class TPChain implements ITokenProvider {
 
@@ -16,17 +16,16 @@ export class TPChain implements ITokenProvider {
             return null;
         }
 
-        let erc20 = new ERC20(address, this.client);
-
+        let reader = new ContractReader(this.client)
         try {
             let [
                 symbol,
                 name,
                 decimals,
             ] = await Promise.all([
-                erc20.symbol(),
-                erc20.name(),
-                erc20.decimals(),
+                reader.readAsync(address, 'function symbol() returns string'),
+                reader.readAsync(address, 'function name() returns string'),
+                reader.readAsync(address, 'function decimals() returns uint8'),
             ]);
 
             return <IToken> {

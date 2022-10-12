@@ -1,30 +1,30 @@
 import '../env/BigIntSerializer'
 import di from 'a-di';
+import type { ProposeTransactionProps } from '@gnosis.pm/safe-service-client';
+import type { PromiEvent } from 'web3-core';
+import { $bigint } from '@dequanto/utils/$bigint';
+import { $txData } from '@dequanto/utils/$txData';
+import { $sign } from '@dequanto/utils/$sign';
+import { $logger } from '@dequanto/utils/$logger';
+import { $promise } from '@dequanto/utils/$promise';
+import { $account } from '@dequanto/utils/$account';
+import { $gas } from '@dequanto/utils/$gas';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { class_Dfr, class_EventEmitter } from 'atma-utils';
 import { TransactionReceipt } from 'web3-core';
 import { TxDataBuilder } from './TxDataBuilder';
 import { TxLogger } from './TxLogger';
 import { ChainAccount, SafeAccount, TAccount } from "@dequanto/models/TAccount";
-import { $bigint } from '@dequanto/utils/$bigint';
 import { TAddress } from '@dequanto/models/TAddress';
 import { ChainAccountsService } from '@dequanto/ChainAccountsService';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { TPlatform } from '@dequanto/models/TPlatform';
-import { $promise } from '@dequanto/utils/$promise';
 import { ClientErrorUtil } from '@dequanto/clients/utils/ClientErrorUtil';
-import { $logger } from '@dequanto/utils/$logger';
 import { ITxLogItem } from './receipt/ITxLogItem';
 import { TxLogParser } from './receipt/TxLogParser';
-import { type PromiEvent } from 'web3-core';
 import { GnosisSafeHandler } from '@dequanto/safe/GnosisSafeHandler';
-import { $account } from '@dequanto/utils/$account';
-import { $gas } from '@dequanto/utils/$gas';
 import { ISafeServiceTransport } from '@dequanto/safe/transport/ISafeServiceTransport';
-import type { ProposeTransactionProps } from '@gnosis.pm/safe-service-client';
 import { SigFileTransport } from './sig-transports/SigFileTransport';
-import { $txData } from '@dequanto/utils/$txData';
-import { $sign } from '@dequanto/utils/$sign';
 
 interface ITxWriterEvents {
     transactionHash (hash: string)
