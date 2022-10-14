@@ -8,11 +8,13 @@ export namespace AbiDeserializer {
 
     export function process(result: any, types: AbiOutput[]) {
         let type: 'array' | 'object' | AbiNativeType = $abiParser.getReturnTypeFromTypes(types);
-        if (type === 'array') {
-            return toArray(result, types)
-        }
-        if (type === 'object') {
-            return toObject(result, types);
+        if (typeof result === 'object') {
+            if (type === 'array') {
+                return toArray(result, types)
+            }
+            if (type === 'object') {
+                return toObject(result, types);
+            }
         }
         return toType(result, types[0]);
     }

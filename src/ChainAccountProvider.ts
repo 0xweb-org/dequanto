@@ -49,7 +49,7 @@ export namespace ChainAccountProvider {
             ...(opts ?? {}),
             address: wallet.address,
             key: wallet.privateKey,
-        }
+        };
     }
 
     class AccountsConfigProvider {

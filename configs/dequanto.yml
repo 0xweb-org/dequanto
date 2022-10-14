@@ -9,6 +9,8 @@ blockchainExplorer:
   eth:
     key: 'FGCTXVXMZAPPW91KCZ91AMZFGBY1GZZB51'
     host: 'https://api.etherscan.io'
+  eth:goerli:
+    host: 'https://api-goerli.etherscan.io'
   polygon:
     key: 'AQHXXI3KIU5FC8Y1WXX8A346PENKUX7BCE'
     host: 'https://api.polygonscan.com'
@@ -21,6 +23,11 @@ web3:
     endpoints:
       - url: 'https://mainnet.infura.io/v3/e38914b4ccbc4a60a71a1d6a336bc00f'
       - url: 'wss://mainnet.infura.io/ws/v3/e38914b4ccbc4a60a71a1d6a336bc00f'
+
+  eth:goerli:
+    endpoints:
+      - url: 'https://goerli.infura.io/v3/e38914b4ccbc4a60a71a1d6a336bc00f'
+      - url: 'wss://goerli.infura.io/ws/v3/e38914b4ccbc4a60a71a1d6a336bc00f'
 
   # semi-private accounts at https://rpc.maticvigil.com/
   polygon:

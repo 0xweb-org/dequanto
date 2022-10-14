@@ -9,6 +9,7 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $logger } from '@dequanto/utils/$logger';
 import { $promise } from '@dequanto/utils/$promise';
+import { TPlatform } from '@dequanto/models/TPlatform';
 
 
 
@@ -25,8 +26,8 @@ export namespace BlockChainExplorerFactory {
     export function create (opts: {
         ABI_CACHE: string
         CONTRACTS: IContractDetails[]
-        getWeb3: () => Web3Client
-        getConfig: () => { key: string, host: string }
+        getWeb3: (platform?: TPlatform) => Web3Client
+        getConfig: (platform?: TPlatform) => { key: string, host: string }
     }) {
 
         const client = new Client();
@@ -34,9 +35,9 @@ export namespace BlockChainExplorerFactory {
         return class implements IBlockChainExplorer {
 
             localDb: IContractDetails[] = opts.CONTRACTS
-            config = opts.getConfig()
+            config = opts.getConfig(this.platform)
 
-            constructor () {
+            constructor (public platform?: TPlatform) {
                 this.getContractAbi = memd.fn.memoize(this.getContractAbi, {
                     trackRef: true,
                     persistance: new memd.FsTransport({
@@ -73,7 +74,7 @@ export namespace BlockChainExplorerFactory {
                 let abiJson = JSON.parse(abi);
                 if (params?.implementation) {
                     if (/0x.{64}/.test(params.implementation)) {
-                        let web3 = opts.getWeb3();
+                        let web3 = opts.getWeb3(this.platform);
 
                         let stat = await web3.getNodeInfos();
 
@@ -88,7 +89,7 @@ export namespace BlockChainExplorerFactory {
                     throw new Error(`Implement ${params.implementation} support`);
                 }
                 if (isOpenZeppelinProxy(abiJson)) {
-                    let web3 = opts.getWeb3();
+                    let web3 = opts.getWeb3(this.platform);
                     let uin256Hex = await web3.getStorageAt(
                         address,
                         `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`
@@ -98,7 +99,7 @@ export namespace BlockChainExplorerFactory {
                 }
 
                 if (hasImplementationSlot(abiJson)) {
-                    let web3 = opts.getWeb3();
+                    let web3 = opts.getWeb3(this.platform);
                     let uin256Hex = await web3.readContract({
                         address: address,
                         abi: abiJson,
@@ -109,7 +110,7 @@ export namespace BlockChainExplorerFactory {
                     return this.getContractAbi(hex);
                 }
                 if (hasTargetSlot(abiJson)) {
-                    let web3 = opts.getWeb3();
+                    let web3 = opts.getWeb3(this.platform);
                     let uin256Hex = await web3.readContract({
                         address: address,
                         abi: abiJson,

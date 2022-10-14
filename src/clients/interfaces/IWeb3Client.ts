@@ -1,4 +1,5 @@
 import { TBufferLike } from '@dequanto/models/TBufferLike';
+import { TPlatform } from '@dequanto/models/TPlatform';
 import { TransactionRequest } from '@ethersproject/abstract-provider';
 
 import type Web3 from 'web3';
@@ -16,6 +17,7 @@ export interface IWeb3Client {
 
 export interface IWeb3ClientOptions {
     endpoints: IPoolClientConfig[]
+    platform?: TPlatform
     chainId?: number
     // alias to `provider`
     web3?: Web3 | provider

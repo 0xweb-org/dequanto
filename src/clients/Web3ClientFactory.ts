@@ -16,6 +16,12 @@ export namespace Web3ClientFactory {
                 return di.resolve(BscWeb3Client, opts);
             case 'eth':
                 return di.resolve(EthWeb3Client, opts);
+            case 'eth:goerli':
+                return di.resolve(EthWeb3Client, {
+                    platform: platform,
+                    chainId: 5,
+                    ...(opts ?? {})
+                });
             case 'polygon':
                 return di.resolve(PolyWeb3Client, opts);
             case 'arbitrum':
