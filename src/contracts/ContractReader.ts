@@ -1,11 +1,15 @@
 import di from 'a-di';
-import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
+import alot from 'alot';
 import { type AbiItem } from 'web3-utils';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { $abiParser } from '../utils/$abiParser';
+import { type Web3Client } from '@dequanto/clients/Web3Client';
+import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
 import { AbiDeserializer } from './utils/AbiDeserializer';
 import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
 import { TAddress } from '@dequanto/models/TAddress';
+import { class_Dfr } from 'atma-utils';
+import { $is } from '@dequanto/utils/$is';
+import { $logger } from '@dequanto/utils/$logger';
+import { $abiParser } from '../utils/$abiParser';
 
 
 export interface IContractReader {
@@ -16,6 +20,7 @@ export interface IContractReader {
 }
 export class ContractReader implements IContractReader {
     private blockNumberTask: Promise<number>;
+    private options: Parameters<Web3Client['readContract']>[0]['options'] = {};
 
     constructor(public client: Web3Client = di.resolve(EthWeb3Client)) {
 
@@ -33,6 +38,10 @@ export class ContractReader implements IContractReader {
         } else {
             this.blockNumberTask = null;
         }
+        return this;
+    }
+    withAddress (address: TAddress): IContractReader {
+        this.options.from = address;
         return this;
     }
 
@@ -67,6 +76,7 @@ export class ContractReader implements IContractReader {
                 method: method,
                 arguments: params,
                 blockNumber: blockNumber,
+                options: this.options
             });
             if (result == null) {
                 throw new Error(`Function call returned undefined`);
@@ -80,6 +90,33 @@ export class ContractReader implements IContractReader {
         }
     }
 
+    public async executeBatch <T extends readonly unknown[] | []>(values: T): Promise<{ -readonly [P in keyof T]: Awaited<T[P]> }> {
+
+        let requests = await alot(values as any[])
+            .mapAsync(async x => await x)
+            .toArrayAsync() as ContractReaderUtils.DefferedRequest[];
+
+        // all inputs should be deferred requests
+        let invalid = requests.find(x => $is.Address(x.request?.address) === false);
+        if (invalid != null) {
+            $logger.error('Invalid object', invalid);
+            throw new Error(`Invalid Deferred Request at position ${ requests.indexOf(invalid) }`);
+        }
+
+        let inputs = await alot(requests).mapAsync(async req => {
+            return {
+                address: req.request.address,
+                abi: req.request.abi,
+                params: req.request.params,
+                blockNumber: req.request.blockNumber,
+                options: req.request.options,
+            } as ContractReaderUtils.IContractReadParams;
+        }).toArrayAsync();
+
+        let results = await ContractReaderUtils.readAsyncBatch(this.client, inputs);
+        return results as any;
+    }
+
     async getLogs () {
 
     }
@@ -87,5 +124,77 @@ export class ContractReader implements IContractReader {
     static async read (client: Web3Client, address: TAddress, methodAbi: string){
         let reader = new ContractReader(client);
         return reader.readAsync(address, methodAbi);
+    }
+}
+
+export namespace ContractReaderUtils {
+
+
+    export class DefferedRequest<T = any> {
+
+        public promise: class_Dfr<T> & {
+            request: DefferedRequest
+        }
+
+        constructor (
+            public request: {
+                address: TAddress,
+                abi: string | AbiItem,
+                params: any[],
+                blockNumber?: Date | number,
+                options?: {
+                    from?: TAddress
+                },
+            }
+        ) {
+
+            this.promise = Object.assign(new class_Dfr(), {
+                request: this
+            });
+        }
+    }
+
+
+    export interface IContractReadParams {
+        address: TAddress,
+        abi: string | AbiItem
+        params?: any[]
+
+        blockNumber?: number | Date
+        options?: {
+            from?: TAddress
+        }
+    }
+
+    export async function readAsyncBatch(client: Web3Client, requests: IContractReadParams[]) {
+
+        let reqs = await alot(requests).map(async request => {
+            let abi = request.abi;
+            if (typeof abi === 'string') {
+                abi = $abiParser.parseMethod(abi);
+            }
+            let blockNumber = request.blockNumber;
+            if (blockNumber instanceof Date) {
+                let resolver = di.resolve(BlockDateResolver, client);
+                blockNumber = await resolver.getBlockNumberFor(blockNumber);
+            }
+            return {
+                address: request.address,
+                abi: [ abi ],
+                method: abi.name,
+                arguments: request.params,
+                blockNumber: blockNumber,
+                options: request.options
+            };
+        }).toArrayAsync();
+
+        let results = await client.readContractBatch(reqs);
+        return results.map((result, i) => {
+            if (result == null || result instanceof Error) {
+                return result;
+            }
+            let outputs = reqs[i].abi[0].outputs;
+            return AbiDeserializer.process(result, outputs);
+        });
     }
 }

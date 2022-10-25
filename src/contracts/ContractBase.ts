@@ -15,7 +15,7 @@ import { $contract } from '@dequanto/utils/$contract';
 import { $class } from '@dequanto/utils/$class';
 import { $block } from '@dequanto/utils/$block';
 import { $abiParser } from '@dequanto/utils/$abiParser';
-import { ContractReader } from './ContractReader';
+import { ContractReader, ContractReaderUtils } from './ContractReader';
 import { ContractWriter } from './ContractWriter';
 import { ContractStream } from './ContractStream';
 import { TxTopicInMemoryProvider } from '@dequanto/txs/receipt/TxTopicInMemoryProvider';
@@ -24,6 +24,7 @@ import { TxTopicInMemoryProvider } from '@dequanto/txs/receipt/TxTopicInMemoryPr
 export abstract class ContractBase {
     private blockNumber?: number;
     private blockDate?: Date;
+    //private from?: TAddress;
 
     /** 1.4 for medium*/
     private gasPriorityFee?: number
@@ -55,6 +56,11 @@ export abstract class ContractBase {
             args: $contract.normalizeArgs(Array.from(decodedInput.args))
         };
     }
+    public async $executeBatch <T extends readonly unknown[] | []>(values: T): Promise<{ -readonly [P in keyof T]: Awaited<T[P]> }> {
+
+        let reader = await this.getContractReader();
+        return reader.executeBatch(values);
+    }
 
     public $config (builderConfig?: ITxConfig, writerConfig?: ITxWriterOptions): this {
         let $contract = $class.curry(this, {
@@ -85,8 +91,20 @@ export abstract class ContractBase {
         return $contract;
     }
 
-    protected async $read (abi: string | AbiItem, ...params) {
-        let reader = await this.getContractReader();
+    protected $read (abi: string | AbiItem, ...params) {
+        if (this.builderConfig?.send === 'manual') {
+            let req = new ContractReaderUtils.DefferedRequest({
+                address: this.address,
+                abi,
+                params,
+                blockNumber: this.blockNumber ?? this.blockDate,
+                options: {
+                    from: this.builderConfig?.from
+                }
+            });
+            return req;
+        }
+        let reader = this.getContractReader();
         return reader.readAsync(this.address, abi, ...params);
     }
 
@@ -97,7 +115,6 @@ export abstract class ContractBase {
 
 
     protected async $write (abi: string | AbiItem, account: TAccount & {  value?: number | string | bigint }, ...params): Promise<TxWriter> {
-
         let writer = await this.getContractWriter();
         return writer.writeAsync(account, abi, params, {
             builderConfig: this.builderConfig,
@@ -115,7 +132,7 @@ export abstract class ContractBase {
             return arr[0];
         }
         if (argsCount == null) {
-            throw new Error(`Found multiple AbiItems for ${name}. Args Count not specified to pick one`);
+            throw new Error(`Found multiple AbiItems for ${name}. Args count not specified to pick one`);
         }
         return arr.find(x => (x.inputs?.length ?? 0) === argsCount)
     }
@@ -179,19 +196,23 @@ export abstract class ContractBase {
         return filters;
     }
 
-    private async getContractReader () {
-        let reader = await this.getContractReaderInner();
+    private getContractReader () {
+        let reader = this.getContractReaderInner();
         if (this.blockDate != null) {
             reader.forBlockAt(this.blockDate);
         }
         if (this.blockNumber != null) {
             reader.forBlock(this.blockNumber);
         }
+        let from = this.builderConfig?.from;
+        if (from != null) {
+            reader.withAddress(from);
+        }
         return reader;
     }
 
     @memd.deco.memoize({ perInstance: true })
-    private async getContractReaderInner () {
+    private getContractReaderInner () {
         let reader = di.resolve(ContractReader, this.client);
         return reader;
     }

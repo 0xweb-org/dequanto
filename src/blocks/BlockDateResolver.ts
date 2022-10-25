@@ -19,7 +19,7 @@ export class BlockDateResolver {
 
     }
 
-    async getBlockNumberFor (date: Date) {
+    async getBlockNumberFor (date: Date): Promise<number> {
         this.q = date;
 
         let avg = this.AVG_INITIAL[this.client.platform];

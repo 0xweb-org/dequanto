@@ -15,6 +15,7 @@ import { $number } from '@dequanto/utils/$number';
 import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
 import { $txData } from '@dequanto/utils/$txData';
 import { $logger } from '@dequanto/utils/$logger';
+import { class_Dfr } from 'atma-utils';
 
 export abstract class Web3Client implements IWeb3Client {
 
@@ -93,14 +94,7 @@ export abstract class Web3Client implements IWeb3Client {
         return web3.eth.subscribe(...args as Parameters<Web3['eth']['subscribe']>);
     }
 
-    readContract (data: {
-        address: TAddress,
-        abi: any
-        method: string,
-        arguments?: any[]
-        options?: { from?: string, },
-        blockNumber?: number
-    }) {
+    readContract (data: Web3ContractRequest.IContractRequest) {
         let { address, method, abi, options, blockNumber, arguments: params } = data;
         return this.pool.call(async web3 => {
             let contract = new web3.eth.Contract(abi, address);
@@ -116,6 +110,17 @@ export abstract class Web3Client implements IWeb3Client {
             return result;
         }, {
             trace: ClientPoolTrace.createContractCall(address, method, params)
+        });
+    }
+
+    readContractBatch (requests: Web3ContractRequest.IContractRequest[]) {
+        let trace = new ClientPoolTrace();
+        trace.action = `Batch requests: ${ requests.map(x => x.address) }`;
+        return this.pool.call(async web3 => {
+            let batch = new Web3ContractRequest.BatchRequest(web3, requests);
+            return batch.execute();
+        }, {
+            trace
         });
     }
 
@@ -360,5 +365,80 @@ export abstract class Web3Client implements IWeb3Client {
             ...(opts ?? {})
         };
         return new Ctor(param);
+    }
+}
+
+
+namespace Web3ContractRequest {
+
+    export interface IContractRequest {
+        address: TAddress,
+        abi: any
+        method: string,
+        arguments?: any[]
+        options?: {
+            from?: TAddress
+        }
+        blockNumber?: number
+    }
+
+    export function request (web3: Web3, request: IContractRequest, onComplete: Function) {
+        let { contract, method, params, callArgs } = prepair(web3, request);
+        return contract.methods[method](...params).call.request(...callArgs, onComplete);
+    }
+
+
+    export function call (web3: Web3, request: IContractRequest) {
+        let { contract, method, params, callArgs } = prepair(web3, request);
+        return contract.methods[method](...params).call(...callArgs);
+    }
+
+    export class BatchRequest {
+        private promise = new class_Dfr();
+        private results = new Array(this.requests.length);
+        private awaitables = this.requests.length;
+        //-private wasCompleted = false;
+
+        constructor (private web3: Web3, private requests: IContractRequest[]) {
+
+        }
+        async execute (): Promise<any[]> {
+            let web3 = this.web3;
+            let batch = new web3.BatchRequest();
+            let arr = this.requests.map((req, i) => {
+                return request(web3, req, (err, result) => {
+                    this.onCompleted(i, err, result);
+                });
+            });
+
+            arr.forEach(req => {
+                batch.add(req);
+            });
+            batch.execute();
+
+            return this.promise;
+        }
+
+        private onCompleted (i: number, error: Error, result?) {
+            this.results[i] = result ?? error;
+
+            if (--this.awaitables === 0) {
+                this.promise.resolve(this.results);
+            }
+        }
+    }
+
+    function prepair (web3: Web3, request: IContractRequest) {
+        let { address, method, abi, options, blockNumber, arguments: params } = request;
+        let contract = new web3.eth.Contract(abi, address);
+        let callArgs = [];
+        if (options != null) {
+            callArgs[0] = options;
+        }
+        if (blockNumber != null) {
+            callArgs[0] = null;
+            callArgs[1] = blockNumber;
+        }
+        return { contract, method, params, callArgs };
     }
 }

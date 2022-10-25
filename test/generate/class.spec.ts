@@ -5,6 +5,7 @@ import { $path } from '@dequanto/utils/$path';
 import { Directory, File } from 'atma-io';
 import { $date } from '@dequanto/utils/$date';
 import { l } from '@dequanto/utils/$logger';
+import { ContractReader } from '@dequanto/contracts/ContractReader';
 
 declare let include;
 
@@ -13,7 +14,7 @@ UTest({
         timeout: $date.parseTimespan('5min'),
     },
 
-    async 'generate polygons WETH' () {
+    async '!generate polygons WETH' () {
 
         const gen = new Generator({
             name: 'WETH',
@@ -31,6 +32,22 @@ UTest({
         let weth = new WETH.WETH();
         let decimals = await weth.decimals();
         eq_(decimals, 18);
+
+        '> read in batch'
+
+        let nameReq = weth
+            .$config({ send: 'manual' })
+            .name();
+
+        let totalSupplyReq = await weth
+            .$config({ send: 'manual' })
+            .totalSupply();
+
+        let reader = new ContractReader(weth.client);
+        let [ name, totalSupply ] = await reader.executeBatch([ nameReq, totalSupplyReq ]);
+
+        eq_(name, 'Wrapped Ether');
+        gt_(totalSupply, 1000n);
     },
     async 'generate from class meta comments and check the sources' () {
         let genPath = `/test/tmp/polygon/DaiTokenContractBase/DaiTokenContractBase.ts`
