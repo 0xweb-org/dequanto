@@ -18,7 +18,7 @@ export namespace $signRaw {
         return {
             v: `0x${v}`,
             r: `0x${r}`,
-            s: Number(`0x${s}`),
+            s: `0x${s}`,
             signature: `0x${r}${s}${v}`,
             signatureVRS: `0x${v}${r}${s}`
         }

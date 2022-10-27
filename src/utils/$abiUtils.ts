@@ -1,8 +1,7 @@
 import { type AbiItem } from 'web3-utils';
+import Web3 from 'web3';
 import { utils }  from 'ethers';
 import { $contract } from './$contract';
-import Web3 from 'web3';
-import { $require } from './$require';
 
 export namespace $abiUtils {
 
