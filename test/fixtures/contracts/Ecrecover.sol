@@ -4,8 +4,11 @@ import "hardhat/console.sol";
 
 contract Ecrecover {
 
-    constructor() {
+    address public _owner;
+    mapping(address => uint8) nonces;
 
+    constructor() {
+        _owner = msg.sender;
     }
 
 

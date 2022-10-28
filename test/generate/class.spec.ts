@@ -14,7 +14,7 @@ UTest({
         timeout: $date.parseTimespan('5min'),
     },
 
-    async '!generate polygons WETH' () {
+    async 'generate polygons WETH' () {
 
         const gen = new Generator({
             name: 'WETH',

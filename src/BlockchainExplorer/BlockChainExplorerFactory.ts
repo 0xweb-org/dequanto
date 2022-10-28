@@ -27,7 +27,7 @@ export namespace BlockChainExplorerFactory {
         ABI_CACHE: string
         CONTRACTS: IContractDetails[]
         getWeb3: (platform?: TPlatform) => Web3Client
-        getConfig: (platform?: TPlatform) => { key: string, host: string }
+        getConfig: (platform?: TPlatform) => { key: string, host: string, www: string }
     }) {
 
         const client = new Client();
@@ -55,10 +55,9 @@ export namespace BlockChainExplorerFactory {
             async getContractMeta (name: string)
             async getContractMeta (address: string)
             async getContractMeta (q: string): Promise<IContractDetails> {
+
                 q = q.toLowerCase();
-
                 let info = this.localDb.find(x => x.address.toLowerCase() === q || x.name?.toLowerCase() === q);
-
                 return info;
             }
 
@@ -69,16 +68,24 @@ export namespace BlockChainExplorerFactory {
                 }
 
                 let url = `${this.config.host}/api?module=contract&action=getabi&address=${address}&apikey=${this.config.key}`;
-                let abi: string = await client.get(url);
+                let abi: string;
+
+                try {
+                    abi = await client.get(url);
+                } catch (err) {
+                    let addressByByteCode = await this.getSimilarContract(address);
+                    if (addressByByteCode != null) {
+                        $logger.log(`Found similar byte code address: ${addressByByteCode}`);
+                        return this.getContractAbi(addressByByteCode);
+                    }
+                    throw err;
+                }
 
                 let abiJson = JSON.parse(abi);
                 if (params?.implementation) {
                     if (/0x.{64}/.test(params.implementation)) {
                         let web3 = opts.getWeb3(this.platform);
 
-                        let stat = await web3.getNodeInfos();
-
-                        //-let x = (BigInt($contract.keccak256("eip1967.proxy.implementation")) - 1n).toString(16);
                         let uin256Hex = await web3.getStorageAt(
                         '0x5a58505a96d1dbf8df91cb21b54419fc36e93fde',
                         `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`
@@ -170,6 +177,26 @@ export namespace BlockChainExplorerFactory {
                 return events;
             }
 
+            async getSimilarContract(address: TAddress) {
+                let url = `${this.config.www}/address/${address}#code`;
+                let html = await client.getHtml(url);
+                let rgx = /This contract matches/ig;
+                let match = rgx.exec(html);
+                if (match == null) {
+                    return null;
+                }
+
+                let rgxAddress = /0x[a-f\d]{40}/g;
+
+                rgxAddress.lastIndex = match.index;
+
+                let matchAddress = rgxAddress.exec(html);
+                if (matchAddress == null) {
+                    return null;
+                }
+                return matchAddress[0];
+            }
+
 
             async loadTxs(type: 'tokentx' | 'txlistinternal' | 'txlist', address: TAddress, params?: {
                 fromBlockNumber?: number,
@@ -240,6 +267,15 @@ class Client {
     @memd.deco.queued({ throttle: 1000 / 5 })
     async get (url: string) {
         return this.getInner(url)
+    }
+
+    @memd.deco.queued({ throttle: 1000 / 5 })
+    async getHtml (url: string) {
+        let resp = await axios.get(url);
+        if (resp.status !== 200) {
+            throw new Error(`${url} not loaded with status ${resp.status}.`);
+        }
+        return resp.data;
     }
 
     async getPaged (url: string) {

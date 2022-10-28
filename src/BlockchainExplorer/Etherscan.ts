@@ -29,6 +29,7 @@ export class Etherscan extends BlockChainExplorerFactory.create({
         return {
             key: config?.key,
             host: config?.host,
+            www: config?.www,
         };
     }
 }) {

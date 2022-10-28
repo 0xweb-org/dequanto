@@ -6,17 +6,22 @@ blockchainExplorer:
   bsc:
     key: 'MB1EM53BDJFKDIHUZ5JJT946BJJUQIHFP2'
     host: 'https://api.bscscan.com'
+    www: 'https://bscscan.com'
   eth:
     key: 'FGCTXVXMZAPPW91KCZ91AMZFGBY1GZZB51'
     host: 'https://api.etherscan.io'
+    www: 'https://etherscan.io'
   eth:goerli:
     host: 'https://api-goerli.etherscan.io'
+    www: 'https://goerli.etherscan.io'
   polygon:
     key: 'AQHXXI3KIU5FC8Y1WXX8A346PENKUX7BCE'
     host: 'https://api.polygonscan.com'
+    www: 'https://polygonscan.com'
   xdai:
     key: ''
     host: 'https://blockscout.com/xdai/mainnet'
+    www: 'https://blockscout.com/xdai/mainnet'
 
 web3:
   eth:

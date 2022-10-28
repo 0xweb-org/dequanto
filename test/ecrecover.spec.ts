@@ -3,7 +3,6 @@ import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $contract } from '@dequanto/utils/$contract';
-import { $sign } from '@dequanto/utils/$sign';
 import { $signRaw } from '@dequanto/utils/$signRaw';
 
 UTest({
@@ -30,7 +29,6 @@ UTest({
         ]);
 
         let hash = $contract.keccak256(encodedParams);
-
         let { v, r, s } = await $signRaw.signEC(hash, signer.key);
 
         let reader = new ContractReader(client);
@@ -48,4 +46,4 @@ UTest({
 
         eq_(isValid, true);
     }
-})
+});
