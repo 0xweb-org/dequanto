@@ -10,6 +10,7 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { $logger } from '@dequanto/utils/$logger';
 import { $promise } from '@dequanto/utils/$promise';
 import { TPlatform } from '@dequanto/models/TPlatform';
+import { $address } from '@dequanto/utils/$address';
 
 
 
@@ -87,8 +88,8 @@ export namespace BlockChainExplorerFactory {
                         let web3 = opts.getWeb3(this.platform);
 
                         let uin256Hex = await web3.getStorageAt(
-                        '0x5a58505a96d1dbf8df91cb21b54419fc36e93fde',
-                        `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`
+                            '0x5a58505a96d1dbf8df91cb21b54419fc36e93fde',
+                            `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`
                         );
                         let hex = uin256Hex.replace(/0x0+/, '0x');
                         return this.getContractAbi(hex)
@@ -97,11 +98,13 @@ export namespace BlockChainExplorerFactory {
                 }
                 if (isOpenZeppelinProxy(abiJson)) {
                     let web3 = opts.getWeb3(this.platform);
-                    let uin256Hex = await web3.getStorageAt(
-                        address,
-                        `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`
-                    );
-                    let hex = uin256Hex.replace(/0x0+/, '0x');
+                    // (BigInt($contract.keccak256("eip1967.proxy.implementation")) - 1n).toString(16);
+                    let uint256Hex = await web3.getStorageAt(address,`0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`);
+                    if ($address.isEmpty(uint256Hex)) {
+                        // keccak-256 hash of "org.zeppelinos.proxy.implementation"
+                        uint256Hex = await web3.getStorageAt(address, `0x7050c9e0f4ca769c69bd3a8ef740bc37934f8e2c036e5a723fd8ee048ed3f8c3`);
+                    }
+                    let hex = uint256Hex.replace(/0x0+/, '0x');
                     return this.getContractAbi(hex)
                 }
 
