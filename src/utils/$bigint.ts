@@ -84,7 +84,20 @@ export namespace $bigint {
         return val / round;
     }
 
-    export function toHex (num: bigint) {
+    export function toHex (num: string | bigint | number) {
+        if (num == null) {
+            return '0x0'
+        };
+        if (typeof num === 'string') {
+            if (num.startsWith('0x')) {
+                return num;
+            }
+            try {
+                num = BigInt(num);
+            } catch (error) {
+                throw new Error(`Invalid BigInt ${num}`)
+            }
+        }
         return `0x${num.toString(16)}`;
     }
 
