@@ -436,8 +436,8 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         innerWriter.on('log', message => this.emit('log', message));
     }
 
-    /** Use this transfer in case of additional account funding */
-    private async transferNative (from: ChainAccount, to: TAddress, amount: bigint): Promise<TxWriter> {
+    /** Use this transfer also in case of additional account funding */
+    public async transferNative (from: ChainAccount, to: TAddress, amount: bigint): Promise<TxWriter> {
         let txBuilder = new TxDataBuilder(this.client, from, {
             to: to,
             value: $bigint.toHex(amount)

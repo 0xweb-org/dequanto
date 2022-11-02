@@ -8,7 +8,7 @@ import { BlockHeader, BlockTransactionString, Syncing } from 'web3-eth';
 import { ClientPool, IPoolClientConfig, IPoolWeb3Request } from './ClientPool';
 import { ClientPoolTrace } from './ClientPoolStats';
 import { IWeb3Client, IWeb3ClientOptions } from './interfaces/IWeb3Client';
-import { type BlockNumber, Log, LogsOptions, type PastLogsOptions, type TransactionConfig } from 'web3-core';
+import { type BlockNumber, Log, LogsOptions, type PastLogsOptions, type TransactionConfig, Transaction, TransactionReceipt } from 'web3-core';
 import { Subscription } from 'web3-core-subscriptions';
 import { Wallet } from 'ethers';
 import { $number } from '@dequanto/utils/$number';
@@ -94,7 +94,7 @@ export abstract class Web3Client implements IWeb3Client {
         return web3.eth.subscribe(...args as Parameters<Web3['eth']['subscribe']>);
     }
 
-    readContract (data: Web3ContractRequest.IContractRequest) {
+    readContract (data: Web3BatchRequests.IContractRequest) {
         let { address, method, abi, options, blockNumber, arguments: params } = data;
         return this.pool.call(async web3 => {
             let contract = new web3.eth.Contract(abi, address);
@@ -113,11 +113,11 @@ export abstract class Web3Client implements IWeb3Client {
         });
     }
 
-    readContractBatch (requests: Web3ContractRequest.IContractRequest[]) {
+    readContractBatch (requests: Web3BatchRequests.IContractRequest[]) {
         let trace = new ClientPoolTrace();
         trace.action = `Batch requests: ${ requests.map(x => x.address) }`;
         return this.pool.call(async web3 => {
-            let batch = new Web3ContractRequest.BatchRequest(web3, requests);
+            let batch = new Web3BatchRequests.BatchRequest(web3, requests);
             return batch.execute();
         }, {
             trace
@@ -151,9 +151,23 @@ export abstract class Web3Client implements IWeb3Client {
             return web3.eth.getTransaction(txHash);
         }, opts);
     }
+    getTransactions (hashes: TAddress[], opts?: IPoolWeb3Request): Promise<Transaction[]> {
+        return this.pool.call(web3 => {
+            let reqs = hashes.map(hash => cb => (web3.eth.getTransaction as any).request(hash, cb));
+            let batch = new Web3BatchRequests.BatchRequest(web3, reqs);
+            return batch.execute();
+        }, opts);
+    }
     getTransactionReceipt (txHash: TAddress) {
         return this.pool.call(web3 => {
             return web3.eth.getTransactionReceipt(txHash);
+        });
+    }
+    getTransactionReceipts (hashes: TAddress[]): Promise<TransactionReceipt[]> {
+        return this.pool.call(web3 => {
+            let reqs = hashes.map(hash => cb => (web3.eth.getTransactionReceipt as any).request(hash, cb));
+            let batch = new Web3BatchRequests.BatchRequest(web3, reqs);
+            return batch.execute();
         });
     }
     getBlock (nr: number): Promise<BlockTransactionString> {
@@ -223,7 +237,7 @@ export abstract class Web3Client implements IWeb3Client {
         let web3 = await this.getWeb3(options);
         return web3.eth.getAccounts();
     }
-    async getChainId (options: IPoolWeb3Request): Promise<number> {
+    async getChainId (options?: IPoolWeb3Request): Promise<number> {
         let web3 = await this.getWeb3(options);
         return web3.eth.getChainId()
     }
@@ -369,7 +383,7 @@ export abstract class Web3Client implements IWeb3Client {
 }
 
 
-namespace Web3ContractRequest {
+namespace Web3BatchRequests {
 
     export interface IContractRequest {
         address: TAddress,
@@ -381,8 +395,15 @@ namespace Web3ContractRequest {
         }
         blockNumber?: number
     }
+    export type IRequestBuilder = (cb: Function) => IRPCRequest
 
-    export function request (web3: Web3, request: IContractRequest, onComplete: Function) {
+    export interface IRPCRequest {
+        method: string
+        params: any
+        callback: Function
+    }
+
+    export function contractRequest (web3: Web3, request: IContractRequest, onComplete: Function) {
         let { contract, method, params, callArgs } = prepair(web3, request);
         return contract.methods[method](...params).call.request(...callArgs, onComplete);
     }
@@ -399,16 +420,20 @@ namespace Web3ContractRequest {
         private awaitables = this.requests.length;
         //-private wasCompleted = false;
 
-        constructor (private web3: Web3, private requests: IContractRequest[]) {
+        constructor (private web3: Web3, private requests: (IContractRequest | IRequestBuilder)[]) {
 
         }
         async execute (): Promise<any[]> {
             let web3 = this.web3;
             let batch = new web3.BatchRequest();
             let arr = this.requests.map((req, i) => {
-                return request(web3, req, (err, result) => {
+                const cb = (err, result) => {
                     this.onCompleted(i, err, result);
-                });
+                };
+                if (typeof req === 'function') {
+                    return req(cb);
+                }
+                return contractRequest(web3, req, cb);
             });
 
             arr.forEach(req => {

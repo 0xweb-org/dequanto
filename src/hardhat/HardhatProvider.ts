@@ -29,7 +29,10 @@ export class HardhatProvider {
     client(network: 'hardhat' | 'localhost' = 'hardhat') {
         if (network == 'localhost') {
             return new HardhatWeb3Client({
-                endpoints: [ { url: 'http://127.0.0.1:8545' } ]
+                endpoints: [
+                    { url: 'http://127.0.0.1:8545' },
+                    { url: 'ws://127.0.0.1:8545' }
+                ]
             });
         }
         const web3 = this.hh.web3;

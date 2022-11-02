@@ -113,7 +113,7 @@ export class ClientPool {
     async getWeb3 (options?: IPoolWeb3Request) {
         let wClient = await this.next(null, options, { manual: true });
         if (wClient == null) {
-            throw new Error(`Not client found in ${this.clients.length} Clients`);
+            throw new Error(`No client found in ${this.clients.length} Clients with options: ${ JSON.stringify(options) }` );
         }
         return wClient?.web3;
     }
@@ -340,6 +340,9 @@ export class ClientPool {
         if (opts?.ws === true) {
             if (this.ws == null) {
                 this.ws = clients.find(x => x.config.url?.startsWith('ws'));
+            }
+            if (this.ws == null) {
+                this.ws = clients.find(x => x.config.web3 != null);
             }
             return this.ws;
         }

@@ -18,7 +18,6 @@ export class TestNode {
         //> in-memory
         const web3 = (hre as any).web3;
 
-        global.check = web3;
 
         // clean default configuration
         $config.set('web3.hardhat.endpoints', []);
@@ -35,7 +34,7 @@ export class TestNode {
     static async start () {
         if (await isPortBusy(PORT) === false) {
             let shell = new Shell({
-                command: 'npx hardhat node',
+                command: 'node --openssl-legacy-provider ./node_modules/hardhat/internal/cli/cli.js node --hostname 127.0.0.1',
                 matchReady: /Started HTTP/i,
                 silent: true
             });
