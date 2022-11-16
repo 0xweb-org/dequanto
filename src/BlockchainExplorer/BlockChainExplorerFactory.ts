@@ -247,20 +247,34 @@ export namespace BlockChainExplorerFactory {
 function isOpenZeppelinProxy(abi: AbiItem[]) {
     let $interface = ['upgradeTo', 'implementation'];
     return $interface.every(name => {
-        return abi.some(item => item.type === 'function' && item.name === name);
-    })
+        return hasMethod(abi, name);
+    });
 }
 function hasImplementationSlot (abi: AbiItem[]) {
-    let $interface = ['proxyOwner', 'implementation'];
-    return $interface.every(name => {
-        return abi.some(item => item.type === 'function' && item.name === name);
-    })
+    let $required = [ 'implementation' ];
+    let hasRequired = $required.every(name => {
+        return hasMethod(abi, name);
+    });
+    if (hasRequired === false) {
+        return false;
+    }
+    let $some = ['proxyOwner', 'proxyType'];
+    let hasOneOf = $some.some(name => {
+        return hasMethod(abi, name);
+    });
+    if (hasOneOf === false) {
+        return false;
+    }
+    return true;
 }
 function hasTargetSlot (abi: AbiItem[]) {
     let $interface = ['upgrade', 'getTarget'];
     return $interface.every(name => {
-        return abi.some(item => item.type === 'function' && item.name === name);
+        return hasMethod(abi, name);
     })
+}
+function hasMethod (abi: AbiItem[], name: string) {
+    return abi.some(item => item.type === 'function' && item.name === name);
 }
 
 
