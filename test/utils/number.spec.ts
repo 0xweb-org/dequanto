@@ -37,5 +37,16 @@ UTest({
             let distinct = alot(values).distinct().toArray();
             eq_(distinct.length, values.length, 'Has repeated values. Random?');
         }
+    },
+    'should parse number' () {
+        [
+            [ '5.3', 5.3 ],
+            [ '5.3K', 5300 ],
+            [ '5.321M', 5321000 ],
+            [ '5.321B', 5321000000 ],
+
+        ].forEach(([val, expect]) => {
+            eq_($number.parse(val), expect);
+        });
     }
 })
