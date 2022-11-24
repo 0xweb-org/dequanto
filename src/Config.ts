@@ -36,6 +36,8 @@ export class Config {
     }
     web3: {
         [platform in TPlatform]: {
+            chainId?: number
+            chainToken?: string
             endpoints: IProviderEndpoint[]
         }
     }

@@ -3,35 +3,35 @@ import { $number } from '@dequanto/utils/$number';
 import { Transaction } from 'web3-core';
 
 export class TxQueueLoader {
-    opts = {
+    private opts = {
         threads: 4,
         timeout: 20000,
         // log every N ms
         logTimeWindow: 5000,
     };
 
-    status = {
+    private status = {
         errors: 0,
         processed: 0,
         avgLoadTime: 0,
     }
 
-    busy = [] as TxLoader[]
+    private busy = [] as TxLoader[]
 
-    errors = [] as {
+    private errors = [] as {
         date: Date
         hash: string
         error: Error
     }[]
 
-    lastError: {
+    private lastError: {
         date: Date
         hash: string
         error: Error
     }
 
-    queue: string[] = []
-    seen: string[] = []
+    private queue: string[] = []
+    private seen: string[] = []
 
     push (hash: string) {
         if (this.seen.includes(hash) === false) {

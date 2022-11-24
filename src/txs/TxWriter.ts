@@ -1,7 +1,11 @@
 import '../env/BigIntSerializer'
 import di from 'a-di';
+import { class_Dfr, class_EventEmitter } from 'atma-utils';
+
 import type { ProposeTransactionProps } from '@gnosis.pm/safe-service-client';
-import type { PromiEvent } from 'web3-core';
+import type { TransactionRequest } from '@ethersproject/abstract-provider';
+import { TransactionReceipt, type PromiEvent } from 'web3-core';
+
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $txData } from '@dequanto/utils/$txData';
 import { $sign } from '@dequanto/utils/$sign';
@@ -10,11 +14,9 @@ import { $promise } from '@dequanto/utils/$promise';
 import { $account } from '@dequanto/utils/$account';
 import { $gas } from '@dequanto/utils/$gas';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { class_Dfr, class_EventEmitter } from 'atma-utils';
-import { TransactionReceipt } from 'web3-core';
 import { TxDataBuilder } from './TxDataBuilder';
 import { TxLogger } from './TxLogger';
-import { ChainAccount, SafeAccount, TAccount } from "@dequanto/models/TAccount";
+import { ChainAccount, IAccount, SafeAccount, TAccount } from "@dequanto/models/TAccount";
 import { TAddress } from '@dequanto/models/TAddress';
 import { ChainAccountsService } from '@dequanto/ChainAccountsService';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
@@ -502,7 +504,12 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     }
 
 
-    static write (client: Web3Client, builder: TxDataBuilder, account: TAccount, options?: ITxWriterOptions): TxWriter {
+    static write (
+        client: Web3Client,
+        builder: TxDataBuilder,
+        account: TAccount,
+        options?: ITxWriterOptions
+    ): TxWriter {
         let writer = new TxWriter(client, builder, account);
         writer.write(options);
         return writer;
@@ -515,6 +522,24 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         options?: ITxWriterOptions
     ): TxWriter {
         return new TxWriter(client, builder, account);
+    }
+
+    static async writeTxData (
+        client: Web3Client,
+        data: Partial<TransactionRequest>,
+        account: TAccount,
+        options?: ITxWriterOptions
+    ): Promise<TxWriter> {
+        let txBuilder = new TxDataBuilder(client, account as IAccount, data);
+
+        await Promise.all([
+            txBuilder.setGas(),
+            txBuilder.setNonce(),
+        ]);
+
+        let w = new TxWriter(client, txBuilder, account);
+        w.send(options);
+        return w;
     }
 }
 

@@ -22,6 +22,10 @@ blockchainExplorer:
     key: ''
     host: 'https://blockscout.com/xdai/mainnet'
     www: 'https://blockscout.com/xdai/mainnet'
+  celo:
+    key: '3A9ZR89MEUQ51YC3SI1VAYAATFW419EEYR'
+    host: 'https://api.celoscan.io'
+    www: 'https://celoscan.io'
 
 web3:
   eth:
@@ -54,6 +58,13 @@ web3:
   hardhat:
     endpoints:
       - url: 'http://127.0.0.1:8545/'
+
+  celo:
+    chainId: 42220
+    chainToken: CELO
+    endpoints:
+      - url: 'https://forno.celo.org'
+      - url: 'wss://forno.celo.org/ws'
 
 
 ns:

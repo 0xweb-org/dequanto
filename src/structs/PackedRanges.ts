@@ -1,11 +1,17 @@
 import alot from 'alot';
 
 /**
- *  Allows in a compact way to add/remove a number to the range; check if number was added.
+ * Defines a RANGE: [FROM_NUMBER, TO_NUMBER | Infinity)
+ *
+ * - Walking/Iterating/Visiting through the range marks the visited number as ADD.
+ *
+ * - Possible to ADD the number manually, for example for persistance/restore properties
+ *
+ * - Check if NUMBER was already visited/iterated
+ *
  */
-
 export class PackedRanges {
-    private ranges: [number, number][] = [];
+    protected ranges: [number, number][] = [];
 
     from: number = 0
     to: number

@@ -11,4 +11,5 @@ export interface IWeb3EndpointOptions {
     web3?: Web3
     platform?: TPlatform
     chainId?: number
+    chainToken?: string
 }

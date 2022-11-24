@@ -11,8 +11,18 @@ import { $logger } from '@dequanto/utils/$logger';
 import { $promise } from '@dequanto/utils/$promise';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { $address } from '@dequanto/utils/$address';
+import { $require } from '@dequanto/utils/$require';
+import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
+import { $config } from '@dequanto/utils/$config';
 
+export interface IBlockChainExplorerParams {
 
+    platform?: string
+    ABI_CACHE?: string
+    CONTRACTS?: IContractDetails[]
+    getWeb3?: (platform?: TPlatform) => Web3Client
+    getConfig?: (platform?: TPlatform) => { key: string, host: string, www: string }
+}
 
 export namespace BlockChainExplorerFactory {
 
@@ -24,14 +34,11 @@ export namespace BlockChainExplorerFactory {
         sort?: 'asc' | 'desc'
     }
 
-    export function create (opts: {
-        ABI_CACHE: string
-        CONTRACTS: IContractDetails[]
-        getWeb3: (platform?: TPlatform) => Web3Client
-        getConfig: (platform?: TPlatform) => { key: string, host: string, www: string }
-    }) {
+    export function create (opts: IBlockChainExplorerParams) {
 
         const client = new Client();
+
+        opts = ensureDefaults(opts);
 
         return class implements IBlockChainExplorer {
 
@@ -277,6 +284,43 @@ function hasMethod (abi: AbiItem[], name: string) {
     return abi.some(item => item.type === 'function' && item.name === name);
 }
 
+function ensureDefaults (opts: IBlockChainExplorerParams) {
+    let hasNull = opts.ABI_CACHE == null
+        || opts.CONTRACTS == null
+        || opts.getConfig == null
+        || opts.getWeb3 == null;
+
+    if (hasNull === false) {
+        return opts;
+    }
+
+    let platform = opts.platform;
+    $require.notNull(platform, `Generic Blockchain Explorer Config should contain platform name`);
+
+    opts.ABI_CACHE ??= `./cache/${platform}/abis.json`
+    opts.CONTRACTS ??= [];
+    opts.getWeb3 ??= (_) => {
+        return Web3ClientFactory.get(platform);
+    };
+    opts.getConfig ??= () => {
+        let config = $config.get(`blockchainExplorer.${platform}`);
+
+        let mainnet = /(?<mainnet>\w+):/.exec(platform)?.groups?.mainnet;
+        if (mainnet != null) {
+            let mainnetConfig = $config.get(`blockchainExplorer.${mainnet}`);
+            config = {
+                ...(mainnetConfig ?? {}),
+                ...(config ?? {})
+            };
+        }
+        return {
+            key: config?.key,
+            host: config?.host,
+            www: config?.www,
+        };
+    };
+
+}
 
 
 class Client {

@@ -1,9 +1,8 @@
-import { BlockChainExplorerFactory } from './BlockChainExplorerFactory';
-
+import di from 'a-di';
 import { $config } from '@dequanto/utils/$config';
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
-import di from 'a-di';
 import { TPlatform } from '@dequanto/models/TPlatform';
+import { BlockChainExplorerFactory } from './BlockChainExplorerFactory';
 
 
 const contracts = $config.get('contracts.eth', [])

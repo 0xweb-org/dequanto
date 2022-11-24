@@ -5,6 +5,8 @@ import { Bscscan } from './Bscscan';
 import { Etherscan } from './Etherscan';
 import { Polyscan } from './Polyscan';
 import { XDaiscan } from '@dequanto/chains/xdai/XDaiscan';
+import { $config } from '@dequanto/utils/$config';
+import { BlockChainExplorerFactory } from './BlockChainExplorerFactory';
 
 export namespace BlockChainExplorerProvider {
     export function get (platform: TPlatform) {
@@ -22,7 +24,21 @@ export namespace BlockChainExplorerProvider {
             case 'hardhat':
                 return null;
             default:
+                let cfg = $config.get(`blockchainExplorer.${platform}`);
+                if (cfg != null) {
+                    return createScanApiClient(platform);
+                }
                 throw new Error(`Unsupported platform ${platform} for block chain explorer`);
         }
     }
+}
+
+
+
+function createScanApiClient (platform: TPlatform | string) {
+
+    let ClientConstructor = BlockChainExplorerFactory.create({
+        platform,
+    });
+    return new ClientConstructor();
 }

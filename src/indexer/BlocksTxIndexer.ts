@@ -1,5 +1,5 @@
 import { BlockTransactionString } from 'web3-eth';
-import { Transaction } from 'web3-core';
+import { Transaction, TransactionReceipt } from 'web3-core';
 import { BlocksWalker } from './handlers/BlocksWalker';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TPlatform } from '@dequanto/models/TPlatform';
@@ -10,10 +10,21 @@ import { $logger } from '@dequanto/utils/$logger';
 export interface IBlocksTxIndexerOptions {
     /** Name of the indexer */
     name?: string
+
+    /** Save indexer progress (visited blocks) to a file */
     persistance?: boolean
+
+    /** Load transactions from the block and provide them to the visitor method */
     loadTransactions?: boolean
+
+    /** Load receipts from the block and provide them to the visitor method */
+    loadReceipts?: boolean
 }
-export type TBlockListener = (client: Web3Client, block: BlockTransactionString, txs?: Transaction[]) => Promise<void>
+export type TBlockListener = (
+    client: Web3Client,
+    block: BlockTransactionString,
+    data?: { txs?: Transaction[], receipts?: TransactionReceipt[] }
+) => Promise<void>
 
 export class BlocksTxIndexer {
     private client: Web3Client;
@@ -29,9 +40,11 @@ export class BlocksTxIndexer {
             name: `${opts?.name ?? 'indexer'}_${this.platform}`,
             client: this.client,
             loadTransactions: opts?.loadTransactions ?? true,
+            loadReceipts: opts?.loadReceipts ?? false,
             persistance: opts?.persistance ?? true,
-            visitor: async (block, txs) => {
-                return this.indexTransactions(block, txs)
+
+            visitor: async (block, data) => {
+                return this.indexTransactions(block, data)
             }
         });
     }
@@ -55,11 +68,11 @@ export class BlocksTxIndexer {
         }
     }
 
-    private async indexTransactions (block: BlockTransactionString, txs: Transaction[]) {
+    private async indexTransactions (block: BlockTransactionString, data: { txs?: Transaction[], receipts?: TransactionReceipt[] }) {
         for (let i = 0; i < this.listeners.length; i++) {
             let indexer = this.listeners[i];
             try {
-                await indexer(this.client, block, txs);
+                await indexer(this.client, block, data);
             } catch (error) {
                 $logger.log(error);
             }

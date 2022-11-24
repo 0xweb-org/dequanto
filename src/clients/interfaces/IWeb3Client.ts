@@ -19,6 +19,8 @@ export interface IWeb3ClientOptions {
     endpoints: IPoolClientConfig[]
     platform?: TPlatform
     chainId?: number
+    // Token symbol: e.g. ETH
+    chainToken?: string
     // alias to `provider`
     web3?: Web3 | provider
     provider?: Web3 | provider

@@ -175,6 +175,13 @@ export abstract class Web3Client implements IWeb3Client {
             return web3.eth.getBlock(nr);
         });
     }
+    getBlocks (nrs: number[]): Promise<BlockTransactionString[]> {
+        return this.pool.call(web3 => {
+            let reqs = nrs.map(nr => cb => (web3.eth.getBlock as any).request(nr, cb));
+            let batch = new Web3BatchRequests.BatchRequest(web3, reqs);
+            return batch.execute();
+        });
+    }
     getPendingTransactions () {
         return this.pool.call(web3 => {
             return web3.eth.getPendingTransactions();
@@ -278,8 +285,7 @@ export abstract class Web3Client implements IWeb3Client {
     }
 
     async getPastLogs (options: PastLogsOptions) {
-
-        const getBlock = async (block: BlockNumber | Date, $default) => {
+        const getBlock = async (block: BlockNumber | Date, $default: string | number) => {
             if (block == null) {
                 return $default;
             }
@@ -288,6 +294,18 @@ export abstract class Web3Client implements IWeb3Client {
                 return resolver.getBlockNumberFor(block);
             }
             return block;
+        };
+        const getBlockNumber = async (block: number | string) => {
+            if (typeof block === 'number') {
+                return block;
+            }
+            if (block == null || block === 'latest') {
+                return this.getBlockNumber();
+            }
+            if (block.startsWith('0x')) {
+                return Number(block);
+            }
+            throw new Error(`Invalid block number`);
         };
 
         options.fromBlock = await getBlock(options.fromBlock, 0);
@@ -299,59 +317,18 @@ export abstract class Web3Client implements IWeb3Client {
             return topic;
         });
 
-
-
-        const fetch = async (maxBlockRange: number) => {
-            let fromBlock = options.fromBlock ?? 0;
-
-            if (typeof fromBlock === 'number') {
-                let to = options.toBlock;
-                if (typeof to !== 'number') {
-                    to = await this.getBlockNumber();
-                }
-                let range = to - fromBlock;
-                if (typeof maxBlockRange === 'number' && range > maxBlockRange) {
-                    let logs = [];
-                    let cursor = fromBlock;
-                    let pages = Math.ceil(range / maxBlockRange);
-                    let page = 0;
-                    let complete = false;
-                    while (complete === false) {
-                        ++page;
-                        let end = cursor + maxBlockRange;
-                        if (end > to) {
-                            end = options.toBlock as number;
-                            complete = true;
-                        }
-                        $logger.log(`Get past logs paged: ${page}/${pages} (Block start: ${cursor}). Loaded ${logs.length}`);
-                        let paged = await this.pool.call(web3 => web3.eth.getPastLogs({
-                            ...options,
-                            fromBlock: cursor,
-                            toBlock: end ?? undefined,
-                        }));
-                        logs.push(...paged);
-                        cursor += maxBlockRange + 1;
-                    }
-                    return logs;
-                }
-            }
-
-            return this.pool.call(web3 => {
-                return web3.eth.getPastLogs(options)
-            });
-        };
-
-        try {
-            let MAX = this.pool.getOptionForFetchableRange();
-            return await fetch(MAX);
-        } catch (err) {
-            let match = /\b(?<maxRange>\d+)\b/.exec(err.message);
-            if (match) {
-                let max = Number(match.groups.maxRange);
-                return await fetch(max);
-            }
-            throw err;
-        }
+        let MAX = this.pool.getOptionForFetchableRange();
+        let [ fromBlock, toBlock ] = await Promise.all([
+            getBlockNumber(options.fromBlock as any),
+            getBlockNumber(options.toBlock as any),
+        ]);
+        return await RangeWorker.fetchWithLimits(this, options, {
+            maxBlockRange: MAX,
+            maxResultCount: null,
+        }, {
+            fromBlock,
+            toBlock
+        });
     }
 
     getNodeInfos () {
@@ -424,6 +401,10 @@ namespace Web3BatchRequests {
 
         }
         async execute (): Promise<any[]> {
+            if (this.requests.length === 0) {
+                return this.promise.resolve(this.results);
+            }
+
             let web3 = this.web3;
             let batch = new web3.BatchRequest();
             let arr = this.requests.map((req, i) => {
@@ -440,7 +421,6 @@ namespace Web3BatchRequests {
                 batch.add(req);
             });
             batch.execute();
-
             return this.promise;
         }
 
@@ -465,5 +445,106 @@ namespace Web3BatchRequests {
             callArgs[1] = blockNumber;
         }
         return { contract, method, params, callArgs };
+    }
+}
+
+
+
+namespace RangeWorker {
+
+    export async function fetchWithLimits (
+        client: Web3Client,
+        options: PastLogsOptions,
+        limits: { maxBlockRange?: number, maxResultCount?: number },
+        ranges: { fromBlock: number, toBlock: number }
+    ) {
+        let { fromBlock, toBlock } = ranges;
+        let { maxBlockRange } = limits;
+        let range = toBlock - fromBlock;
+        if (maxBlockRange == null || range <= maxBlockRange) {
+            return fetch (client, options, ranges, limits);
+        }
+
+        let logs = [];
+        let cursor = fromBlock;
+        let pages = Math.ceil(range / maxBlockRange);
+        let page = 0;
+        let complete = false;
+        while (complete === false) {
+            ++page;
+            let end = cursor + maxBlockRange;
+            if (end > toBlock) {
+                end = options.toBlock as number;
+                complete = true;
+            }
+            $logger.log(`Get past logs paged: ${page}/${pages} (Block start: ${cursor}). Loaded ${logs.length}`);
+            let paged = await fetch(client, options, {
+                fromBlock: cursor,
+                toBlock: end ?? undefined,
+            }, limits);
+            logs.push(...paged);
+            cursor += maxBlockRange + 1;
+        }
+        return logs;
+
+    };
+
+
+    async function fetch (
+        client: Web3Client,
+        options: PastLogsOptions,
+        range: { fromBlock: number, toBlock: number },
+        knownLimits: { maxBlockRange?: number, maxResultCount?: number },
+    ) {
+        try {
+            let paged = await client.pool.call(web3 => web3.eth.getPastLogs({
+                ...options,
+                fromBlock: range.fromBlock,
+                toBlock: range.toBlock ?? undefined,
+            }));
+            return paged;
+        } catch (error) {
+            /**
+             * query returned more than 10000 results
+             */
+            $logger.log(`Range worker request: ${range.fromBlock}-${range.toBlock}. ${error.message.trim()}. Splitting range.`)
+            let matchCountLimit = /(?<count>\d+) results/.exec(error.message);
+            if (matchCountLimit) {
+                let count = Number(matchCountLimit.groups.count);
+
+                let half = Math.floor((range.toBlock - range.fromBlock) / 2);
+                let rangeA = {
+                    fromBlock: range.fromBlock,
+                    toBlock: range.fromBlock + half
+                };
+                let arr1 = await fetchWithLimits(client, options, {
+                    ...knownLimits,
+                    maxResultCount: count
+                }, rangeA);
+
+                let rangeB = {
+                    fromBlock: range.fromBlock + half,
+                    toBlock: range.toBlock
+                };
+                let arr2 = await fetchWithLimits(client, options, {
+                    ...knownLimits,
+                    maxResultCount: count
+                }, rangeB);
+
+                return [ ...(arr1 ?? []), ...(arr2 ?? []) ]
+            }
+
+            let maxRangeMatch = /\b(?<maxRange>\d+)\b/.exec(error.message);
+            if (maxRangeMatch && knownLimits.maxBlockRange == null) {
+                // handle unknown range, otherwise throw
+                let rangeLimit = Number(maxRangeMatch.groups.maxRange);
+                return await fetchWithLimits(client, options, {
+                    ...knownLimits,
+                    maxBlockRange: rangeLimit
+                }, range);
+            }
+
+            throw error;
+        }
     }
 }
