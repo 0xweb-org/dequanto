@@ -5,5 +5,5 @@ export interface ITokenProvider {
     getByAddress (platform: TPlatform, address: TAddress)
     getBySymbol  (platform: TPlatform, symbol: string)
 
-    redownloadTokens(): Promise<any>
+    redownloadTokens(): Promise<void | any>
 }

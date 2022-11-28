@@ -16,6 +16,7 @@ import { TPSushiswap } from './TokenProviders/TPSushiswap';
 import { TPConfig } from './TokenProviders/TPConfig';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TPChain } from './TokenProviders/TPChain';
+import { TPCoingecko } from './TokenProviders/TPCoingecko';
 
 export class TokenDataProvider {
 
@@ -28,6 +29,7 @@ export class TokenDataProvider {
         // @TODO uniswap thegraph api doesn't work any more
         // new TPUniswap(),
         new TPCoinmarketcap(),
+        new TPCoingecko(),
         new ArbTokenProvider(),
         new TPExplorer(this.platform, this.explorer),
         new TPChain(this.platform, this.client),

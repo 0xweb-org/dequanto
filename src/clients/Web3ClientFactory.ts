@@ -8,7 +8,6 @@ import { ArbWeb3Client } from '@dequanto/chains/arbitrum/ArbWeb3Client';
 import { XDaiWeb3Client } from '@dequanto/chains/xdai/XDaiWeb3Client';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { config } from '@dequanto/Config';
-import { Web3Client } from './Web3Client';
 import { $require } from '@dequanto/utils/$require';
 
 export namespace Web3ClientFactory {
