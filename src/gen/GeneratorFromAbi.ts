@@ -139,7 +139,7 @@ export class GeneratorFromAbi {
                     EtherscanStr = 'Evmscan';
                     EthWeb3ClientStr = 'EvmWeb3Client';
                     imports = [
-                        `import { EvmScan } from '@dequanto/BlockchainExplorer/Evmscan'`,
+                        `import { Evmscan } from '@dequanto/BlockchainExplorer/Evmscan'`,
                         `import { EvmWeb3Client } from '@dequanto/clients/EvmWeb3Client'`,
                     ];
                     Web3ClientOptions = `{ platform: '${opts.network}' }`;
