@@ -19,8 +19,8 @@ import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExp
 export class $NAME$ extends ContractBase {
     constructor(
         public address: TAddress = '$ADDRESS$',
-        public client: Web3Client = di.resolve($EthWeb3Client$),
-        public explorer: IBlockChainExplorer = di.resolve($Etherscan$)
+        public client: Web3Client = di.resolve($EthWeb3Client$, $Web3ClientOptions$),
+        public explorer: IBlockChainExplorer = di.resolve($Etherscan$, $EvmScanOptions$)
     ) {
         super(address, client, explorer)
     }

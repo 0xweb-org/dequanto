@@ -8,6 +8,7 @@ import { $date } from '@dequanto/utils/$date';
 import { $path } from '@dequanto/utils/$path';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { TPlatform } from '@dequanto/models/TPlatform';
+import { $config } from '@dequanto/utils/$config';
 
 export class GeneratorFromAbi {
 
@@ -84,6 +85,8 @@ export class GeneratorFromAbi {
         let EthWeb3ClientStr;
         let imports = [];
         let explorerUrl: string;
+        let Web3ClientOptions = '';
+        let EvmScanOptions = '';
         switch (opts.network) {
             case 'bsc':
                 EtherscanStr = 'Bscscan';
@@ -130,13 +133,36 @@ export class GeneratorFromAbi {
                 ];
                 explorerUrl = ``;
                 break;
-            default:
-                throw new Error(`Unknown network ${opts.network}`);
+            default: {
+                let web3Config = $config.get(`web3.${opts.network}`);
+                if (web3Config) {
+                    EtherscanStr = 'Evmscan';
+                    EthWeb3ClientStr = 'EvmWeb3Client';
+                    imports = [
+                        `import { EvmScan } from '@dequanto/BlockchainExplorer/Evmscan'`,
+                        `import { EvmWeb3Client } from '@dequanto/clients/EvmWeb3Client'`,
+                    ];
+                    Web3ClientOptions = `{ platform: '${opts.network}' }`;
+                    EvmScanOptions = `{ platform: '${opts.network}' }`;
+
+                    explorerUrl = '';
+                    let evmscan = $config.get(`blockchainExplorer.${opts.network}`)
+                    if (evmscan?.www) {
+                        explorerUrl = `${evmscan.www}/address/${opts.implementation}#code`;
+                    }
+                    break;
+                }
+
+                throw new Error(`Unknown network ${opts.network}, and no configuration found under "web3" field`);
+            }
         }
 
         let code = template
             .replace(/\$Etherscan\$/g, EtherscanStr)
             .replace(/\$EthWeb3Client\$/g, EthWeb3ClientStr)
+            .replace(/\$Web3ClientOptions\$/g, Web3ClientOptions)
+            .replace(/\$EvmScanOptions\$/g, EvmScanOptions)
+
             .replace(`/* IMPORTS */`, imports.join('\n'))
             .replace(`$NAME$`, Gen.toClassName(name))
             .replace(`$ADDRESS$`, opts.address ?? '')

@@ -9,6 +9,7 @@ import { XDaiWeb3Client } from '@dequanto/chains/xdai/XDaiWeb3Client';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { config } from '@dequanto/Config';
 import { $require } from '@dequanto/utils/$require';
+import { EvmWeb3Client } from './EvmWeb3Client';
 
 export namespace Web3ClientFactory {
 
@@ -35,35 +36,9 @@ export namespace Web3ClientFactory {
             default:
                 let cfg = config.web3[platform];
                 if (cfg != null) {
-                    return createEVMClient({ platform, ...cfg });
+                    return new EvmWeb3Client({ platform, ...cfg });
                 }
                 throw new Error(`Unsupported platform ${platform} for web3 client`);
         }
     }
-}
-
-
-function createEVMClient (opts: {
-    platform: string
-
-    chainId?: number
-    chainToken?: string
-    extends?: TPlatform
-    endpoints: any
-}) {
-
-    $require.Numeric(opts.chainId, `ChainID should be numeric. Got ${opts.chainId}`);
-
-    class Client extends EthWeb3Client {
-
-        constructor () {
-            super({
-                platform: opts.platform as TPlatform,
-                chainId: Number(opts.chainId),
-                chainToken: opts.chainToken,
-                endpoints: opts.endpoints
-            })
-        }
-    }
-    return new Client();
 }
