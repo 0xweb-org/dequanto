@@ -285,6 +285,8 @@ function hasMethod (abi: AbiItem[], name: string) {
 }
 
 function ensureDefaults (opts: IBlockChainExplorerParams) {
+    opts ??= {};
+
     let hasNull = opts.ABI_CACHE == null
         || opts.CONTRACTS == null
         || opts.getConfig == null
@@ -319,7 +321,7 @@ function ensureDefaults (opts: IBlockChainExplorerParams) {
             www: config?.www,
         };
     };
-
+    return opts;
 }
 
 
