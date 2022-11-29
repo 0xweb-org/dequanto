@@ -18,13 +18,16 @@ export class TokenService {
 
     }
 
-    async balanceOf(address: TAddress, token: string | IToken): Promise<bigint> {
+    async balanceOf(address: TAddress, token: string | IToken, params?: { forBlock?: number | Date }): Promise<bigint> {
         token = await this.getToken(token);
         let isNative = this.tokensProvider.isNative(token.address);
         if (isNative) {
             return this.client.getBalance(address);
         }
         let erc20 = await this.tokensProvider.erc20(token);
+        if (params?.forBlock != null) {
+            erc20 = erc20.forBlock(params.forBlock);
+        }
         let balance = await erc20.balanceOf(address);
         return balance;
     }
