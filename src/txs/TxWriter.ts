@@ -27,6 +27,7 @@ import { TxLogParser } from './receipt/TxLogParser';
 import { GnosisSafeHandler } from '@dequanto/safe/GnosisSafeHandler';
 import { ISafeServiceTransport } from '@dequanto/safe/transport/ISafeServiceTransport';
 import { SigFileTransport } from './sig-transports/SigFileTransport';
+import { $require } from '@dequanto/utils/$require';
 
 interface ITxWriterEvents {
     transactionHash (hash: string)
@@ -45,6 +46,9 @@ export interface ITxWriterOptions {
 
     /** Tx Data will be saved to the store(e.g. a File), and will wait until the signature appears in the store. */
     sigTransport?: string
+
+    /** Optionally disable waiting for the transport response */
+    sigTransportWait?: boolean
 
     /** Write the Tx Data to a JSON file, without submit to the blockchain */
     txOutput?: string
@@ -67,6 +71,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
     onSent = new class_Dfr<string>();
     onCompleted = new class_Dfr<TransactionReceipt>();
+    onSaved = new class_Dfr<string>();
     receipt: TransactionReceipt
 
     onConfirmed (waitForCount: number): Promise<string> {
@@ -139,6 +144,12 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
     private async sendTxInner () {
 
+        if (this.options?.txOutput != null) {
+            // handle none blockchain
+            await this.saveTxAndExit()
+            return;
+        }
+
         if (this.isSafe) {
             let safeAccount = this.account as SafeAccount;
             let sender = await this.getSender();
@@ -161,12 +172,6 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
             await this.builder.setNonce();
         }
 
-        if (this.options?.txOutput != null) {
-            // handle none blockchain
-            await this.saveTxAndExit()
-            return;
-        }
-
         let key = sender?.key;
         let signedTxBuffer = key == null
             ? null
@@ -176,7 +181,14 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         if (signedTxBuffer == null) {
             if (this.options?.sigTransport != null) {
                 let transport = di.resolve(SigFileTransport);
-                signedTxBuffer = await transport.create(this.options.sigTransport, this.builder);
+                let shouldWait = this.options?.sigTransportWait !== false;
+                let { signed, path } = await transport.create(this.options.sigTransport, this.builder, { wait: shouldWait });
+                if (path) {
+                    this.onSaved.resolve(path);
+                }
+                if (shouldWait === false) {
+                    return;
+                }
             }
             if (this.options?.signature) {
                 let tx = $txData.getJson(this.builder.data, this.client);
@@ -477,14 +489,15 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     //** We can save the Tx Data for later reuse/blockchain send */
     async saveTxAndExit (additionalProperties?) {
         let path = this.options?.txOutput;
+        $require.notNull(path, 'Save tx data to the file, but the path is undefined');
         await this.builder.save(path, additionalProperties);
         this.onSent.resolve(path);
-        this.onCompleted.reject(new Error(`Transaction is not submited to the blockchain. It has been saved to "${path}". Listen to "onSent" promise`))
+        this.onSaved.resolve(path);
+        this.onCompleted.reject(new Error(`Transaction is not submited to the blockchain. It has been saved to "${path}". Subscribe to the "onSaved" promise instead`))
     }
 
     static async fromJSON (json: TTxWriterJson, client?: Web3Client, account?: TAccount): Promise<TxWriter> {
         client = client ?? Web3ClientFactory.get(json.platform);
-
 
         account = account ?? json.account;
 
