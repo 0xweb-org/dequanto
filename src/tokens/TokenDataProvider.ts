@@ -17,6 +17,7 @@ import { TPConfig } from './TokenProviders/TPConfig';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TPChain } from './TokenProviders/TPChain';
 import { TPCoingecko } from './TokenProviders/TPCoingecko';
+import { $config } from '@dequanto/utils/$config';
 
 export class TokenDataProvider {
 
@@ -151,7 +152,7 @@ export class TokenDataProvider {
 namespace NativeTokens {
     const T1 = `0x0000000000000000000000000000000000000000`;
     const T2 = `0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee`;
-    const tokens = {
+    const TOKENS = {
         'ETH': <Partial<IToken>>{
             name: 'Ethereum Native Token',
             symbol: 'ETH',
@@ -209,13 +210,18 @@ namespace NativeTokens {
             return false;
         }
         symbol = symbol.toUpperCase();
-        if (symbol in tokens) {
+        if (symbol in TOKENS) {
             return true;
         }
         let byPlatform = PLATFORM_ALIASES[platform];
         if (byPlatform?.aliases?.includes(symbol)) {
             return true;
         }
+        if (platform in PLATFORMS  === false) {
+            resolveNativeTokenFromConfiguration(platform);
+            return symbol in TOKENS
+        }
+
         return false;
     }
 
@@ -225,18 +231,40 @@ namespace NativeTokens {
     }
 
     export function toNativeByAddress (platform: TPlatform, address: TAddress) {
-        const token = tokens[platform?.toUpperCase()];
+        const token = TOKENS[platform?.toUpperCase()];
         return {
             ...token,
             address: address
         };
     }
     export function getNative (platform: TPlatform): IToken {
+        if(platform in PLATFORMS === false){
+            resolveNativeTokenFromConfiguration(platform);
+        }
         let symbol = PLATFORMS[platform]
         if (symbol == null) {
             throw new Error(`${platform} platform is not support`);
         }
-        return tokens[symbol.toUpperCase()];
+        return TOKENS[symbol.toUpperCase()];
+    }
+
+    function resolveNativeTokenFromConfiguration (platform: TPlatform) {
+        let web3Config = $config.get(`web3.${platform}`);
+        if (web3Config == null || web3Config.chainToken == null) {
+            return null;
+        }
+
+        let symbol = web3Config.chainToken
+        PLATFORMS[platform] = symbol;
+        TOKENS[symbol] = {
+            name: symbol,
+            symbol: symbol,
+            decimals: 18,
+            icon: null,
+            platform: platform,
+            address: T1,
+        };
+        return TOKENS[symbol];
     }
 }
 
