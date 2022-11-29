@@ -26,6 +26,10 @@ blockchainExplorer:
     key: '3A9ZR89MEUQ51YC3SI1VAYAATFW419EEYR'
     host: 'https://api.celoscan.io'
     www: 'https://celoscan.io'
+  heco:
+    key: '...'
+    host: 'https://api.hecoinfo.com'
+    www: 'https://www.hecoinfo.com'
 
 web3:
   eth:
@@ -65,6 +69,13 @@ web3:
     endpoints:
       - url: 'https://forno.celo.org'
       - url: 'wss://forno.celo.org/ws'
+
+  heco:
+    chainId: 128
+    chainToken: HT
+    endpoints:
+      - url: 'https://http-mainnet.hecochain.com'
+      - url: 'wss://ws-mainnet.hecochain.com'
 
 
 ns:
