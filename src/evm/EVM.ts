@@ -8,6 +8,7 @@ import { JsonObjectStore } from '@dequanto/json/JsonObjectStore';
 import { $path } from '@dequanto/utils/$path';
 import { $abiParser } from '@dequanto/utils/$abiParser';
 import type { AbiItem } from 'web3-utils';
+import alot from 'alot';
 
 
 class Stores {
@@ -51,8 +52,8 @@ export class EVM {
         return this.opcodes;
     }
 
-    async getAbi (): Promise<AbiItem[]> {
-        let [ functions, events ] = await Promise.all([
+    async getAbi(): Promise<AbiItem[]> {
+        let [functions, events] = await Promise.all([
             this.getFunctions(),
             this.getEvents(),
         ]);
@@ -74,7 +75,7 @@ export class EVM {
         ];
     }
 
-    async getFunctions(): Promise<{signature, name}[]> {
+    async getFunctions(): Promise<{ signature, name }[]> {
         let hashes = this
             .getOpcodes()
             .filter(opcode => opcode.name === 'PUSH4')
@@ -85,17 +86,20 @@ export class EVM {
         return fns;
     }
 
-    private async resolveFunctions (hashes: string[]) {
+    private async resolveFunctions(hashes: string[]) {
         let fns = await this.store.functions.get();
-        return hashes.map(hash => {
-            return {
-                signature: `0x` + hash,
-                name: fns[hash] ?? null
-            };
-        });
+        return alot(hashes)
+            .distinct()
+            .map(hash => {
+                return {
+                    signature: `0x` + hash,
+                    name: fns[hash] ?? null
+                };
+            })
+            .toArray();
     }
 
-    async getEvents(): Promise<{ signature, name }[]>  {
+    async getEvents(): Promise<{ signature, name }[]> {
         let hashes = this.getOpcodes()
             .filter(opcode => opcode.name === 'PUSH32')
             .map(opcode => opcode.pushData?.toString('hex') ?? null)
@@ -105,14 +109,17 @@ export class EVM {
         return events;
     }
 
-    private async resolveEvents (hashes: string[]) {
+    private async resolveEvents(hashes: string[]) {
         let events = await this.store.events.get();
-        return hashes.map(hash => {
-            return {
-                signature: `0x` + hash,
-                name: events[hash] ?? null
-            };
-        })
+        return alot(hashes)
+            .distinct()
+            .map(hash => {
+                return {
+                    signature: `0x` + hash,
+                    name: events[hash] ?? null
+                };
+            })
+            .toArray();
     }
 
 }
