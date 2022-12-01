@@ -11,7 +11,10 @@ import { class_Uri, obj_setProperty } from 'atma-utils';
 import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { $path } from '@dequanto/utils/$path';
-import { $logger } from '@dequanto/utils/$logger';
+import { $logger, l } from '@dequanto/utils/$logger';
+import { Web3Client } from '@dequanto/clients/Web3Client';
+import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
+import { EVM } from '@dequanto/evm/EVM';
 
 export interface IGenerateOptions {
     platform: TPlatform
@@ -50,6 +53,7 @@ const KEYS = {
 export class Generator {
 
     explorer: IBlockChainExplorer;
+    client: Web3Client;
 
     constructor (public options: IGenerateOptions) {
         let {
@@ -57,6 +61,7 @@ export class Generator {
         } = options;
 
         this.explorer = BlockChainExplorerProvider.get(platform);
+        this.client = Web3ClientFactory.get(platform);
 
         if (options.defaultAddress == null && $address.isValid(options.source.abi)) {
             options.defaultAddress = options.source.abi;
@@ -154,7 +159,7 @@ export class Generator {
         if (abi.startsWith('0x')) {
             let { abi, implementation: impl } = await this.getAbiByAddress(opts);
             abiJson = abi;
-            implementation= impl;
+            implementation = impl;
         } else {
             let path = abi;
             let location = this.options.location;
@@ -223,8 +228,19 @@ export class Generator {
             let abiJson = JSON.parse(abi) as AbiItem[];
             return { abi: abiJson, implementation };
         } catch (error) {
-            $logger.error(error);
-            throw new Error(`ABI is not resolved from ${this.options.platform}/${address}: ${error.message ?? error}`);
+            let message = `ABI is not resolved from ${this.options.platform}/${address}: ${error.message ?? error}. Extract from bytecode...`;
+            l`${message}`
+
+            let web3 = await this.client.getWeb3();
+            let code = await web3.eth.getCode(address);
+            if (code == null || code === '' || code === '0x') {
+                throw new Error(`${this.options.platform}:${address} is not a contract`);
+            }
+
+            let evm = new EVM(code);
+            let abi = await evm.getAbi();
+
+            return { abi };
         }
     }
 }

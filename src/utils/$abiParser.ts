@@ -51,7 +51,7 @@ export namespace $abiParser {
         }
 
         let fnName = match.groups.methodName;
-        let $return = match.groups.return?.trim() ?? 'uint256';
+        let $return = match.groups.return?.trim() ?? '';
 
         outputs = parseArguments($return);
 

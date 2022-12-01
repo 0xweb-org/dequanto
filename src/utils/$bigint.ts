@@ -137,4 +137,43 @@ export namespace $bigint {
 
         return $base ** $exp;
     }
+
+    export function sign(value: bigint) {
+        if (value > 0n) {
+            return 1n;
+        }
+        if (value < 0n) {
+            return -1n;
+        }
+        return 0n;
+    }
+
+    export function abs(value: bigint) {
+        if (sign(value) === -1n) {
+            return -value;
+        }
+        return value;
+    }
+
+    export function sqrt(value: bigint) {
+        return rootNth(value);
+    }
+
+    function rootNth(value: bigint, k = 2n) {
+        if (value < 0n) {
+            throw Error(`Sqrt of ${value} is not allowed`);
+        }
+
+        let o = 0n;
+        let x = value;
+        let limit = 100;
+
+        while (x ** k !== k && x !== o && --limit) {
+            o = x;
+            x = ((k - 1n) * x + value / x ** (k - 1n)) / k;
+        }
+        return x;
+    }
+
+
 }
