@@ -1,6 +1,19 @@
-import * as Papa from 'papaparse'
 
 export namespace $csv {
+    class CSV {
+        /** Lazy library reference */
+        private papa = require('papaparse');
+        parse (csv: string) {
+            return this.papa.parse(csv);
+        }
+        serialize (params: {
+            fields?: string[]
+            data: string[][]
+        }) {
+
+        }
+    }
+
     export function stringify(data: { header?: string[], rows: (any[])[]}) {
         if (Array.isArray(data.rows) === false) {
             console.error('Rows', data.rows);
@@ -14,16 +27,17 @@ export namespace $csv {
                 }
             });
         }
-
-        let str = Papa.unparse({
+        let csv = new CSV();
+        let str = csv.serialize({
             fields: data.header,
             data: data.rows
         });
         return str;
     }
 
-    export function parseToObjects <T = any> (csv, columns: string[], opts?: { hasHeader: boolean }): T[] {
-        let result = Papa.parse(csv);
+    export function parseToObjects <T = any> (csv: string, columns: string[], opts?: { hasHeader: boolean }): T[] {
+        let csvParser = new CSV();
+        let result = csvParser.parse(csv);
         let rows = result.data;
         if (opts?.hasHeader === true) {
             rows = rows.slice(1);
@@ -46,8 +60,10 @@ export namespace $csv {
         }).filter(Boolean);
     }
 
-    export function parseToRows (csv): string[][] {
-        let result = Papa.parse(csv);
+    export function parseToRows (csv: string): string[][] {
+        let csvParser = new CSV();
+
+        let result = csvParser.parse(csv);
         let rows = result.data;
         return rows;
     }
