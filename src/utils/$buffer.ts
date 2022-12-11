@@ -26,7 +26,8 @@ class NodeBufferUtils implements IBufferUtils {
         return Buffer.from(utils.normalizeHex(hex), 'hex');
     }
     toHex(buffer: Buffer): string {
-        return '0x' + (buffer as Buffer).toString('hex');
+        let hex = (buffer as Buffer).toString('hex');
+        return `0x${hex}`;
     }
 
     concat (buffers: Buffer[]) {

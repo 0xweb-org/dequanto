@@ -66,9 +66,9 @@ export namespace $abiType {
     const AbiTsTypesRgx = [
 
         {
-            rgx: /u?int(?<bits>\d+)/,
+            rgx: /u?int(?<bits>\d+)?/,
             fromMatch (match: RegExpMatchArray) {
-                let bits = Number(match.groups.bits);
+                let bits = Number(match.groups.bits ?? 256);
                 if (bits > 64) {
                     return 'bigint';
                 }

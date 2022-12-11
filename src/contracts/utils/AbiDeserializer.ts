@@ -1,3 +1,4 @@
+import { $str } from '@dequanto/solidity/utils/$str';
 import { $abiType } from '@dequanto/utils/$abiType';
 import { type AbiItem, AbiOutput } from 'web3-utils';
 import { $abiParser } from '../../utils/$abiParser';
@@ -27,12 +28,15 @@ export namespace AbiDeserializer {
         }
         if (typeof val === 'string') {
             let tsType = $abiType.getTsType(type.type);
-
             switch (tsType) {
                 case 'bigint':
                     return BigInt(val);
                 case 'number':
                     return Number(val);
+                case 'boolean':
+                    return Boolean(Number(val));
+                case 'string':
+                    return $str.fromHex(val);
             }
         }
         if (type.type === 'tuple[]') {

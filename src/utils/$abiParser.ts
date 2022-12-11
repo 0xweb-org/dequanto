@@ -1,4 +1,4 @@
-import { type AbiItem, AbiOutput } from 'web3-utils';
+import type { AbiItem, AbiInput, AbiOutput } from 'web3-utils';
 
 interface IParameter {
     name?: string
@@ -74,7 +74,7 @@ export namespace $abiParser {
     // (uint256, uint256)
     // (uint256 foo, uint256 bar)
     // (uint256 foo, uint256 bar)[]
-    export function parseArguments (line: string) {
+    export function parseArguments (line: string): AbiInput[] {
         line = line?.trim();
 
         if (!line || line === '()') {
