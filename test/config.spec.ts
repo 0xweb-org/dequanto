@@ -5,7 +5,7 @@ UTest({
         $config.reloadEnv();
 
         let val = $config.get('settings.base');
-        eq_(val, null);
+        eq_(val ?? './', './');
     },
     async 'get value from cli' () {
         $config.reloadEnv(['--config', '"settings.base=foo"']);

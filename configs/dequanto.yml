@@ -47,8 +47,8 @@ web3:
   polygon:
     endpoints:
       - url: 'https://polygon-rpc.com'
-      - url: 'https://rpc-mainnet.maticvigil.com/v1/d41908ce4587e7646e975270498ce8da070112a2'
-      - url: 'wss://rpc-mainnet.maticvigil.com/ws/v1/d41908ce4587e7646e975270498ce8da070112a2'
+      #- url: 'https://rpc-mainnet.maticvigil.com/v1/d41908ce4587e7646e975270498ce8da070112a2'
+      #- url: 'wss://rpc-mainnet.maticvigil.com/ws/v1/d41908ce4587e7646e975270498ce8da070112a2'
 
   # from https://docs.binance.org/smart-chain/developer/rpc.html
   bsc:
