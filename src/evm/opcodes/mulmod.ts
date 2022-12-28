@@ -1,17 +1,18 @@
-import EVM from '../classes/evm.class';
-import Opcode from '../interfaces/opcode.interface';
+import { EVM } from '../EVM';
+import Opcode from '../interfaces/IOpcode';
 import { MUL } from './mul';
 import { MOD } from './mod';
-import * as BigNumber from '../../node_modules/big-integer';
+import { $is } from '@dequanto/utils/$is';
+
 
 export default (opcode: Opcode, state: EVM): void => {
     const left = state.stack.pop();
     const right = state.stack.pop();
     const mod = state.stack.pop();
-    if (BigNumber.isInstance(left) && BigNumber.isInstance(right) && BigNumber.isInstance(mod)) {
-        state.stack.push(left.multiply(right).mod(mod));
-    } else if (BigNumber.isInstance(left) && BigNumber.isInstance(right)) {
-        state.stack.push(new MOD(left.multiply(right), mod));
+    if ($is.BigInt(left) && $is.BigInt(right) && $is.BigInt(mod)) {
+        state.stack.push(left * right % mod);
+    } else if ($is.BigInt(left) && $is.BigInt(right)) {
+        state.stack.push(new MOD(left * right, mod));
     } else {
         state.stack.push(new MOD(new MUL(left, right), mod));
     }

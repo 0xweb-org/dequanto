@@ -1,3 +1,4 @@
+import { $abiType } from '@dequanto/utils/$abiType';
 import { ISlotVarDefinition, SlotsParser } from '../SlotsParser';
 import { SlotsReader } from '../SlotsReader';
 import { $types } from '../utils/$types';
@@ -15,7 +16,7 @@ export class SlotMappingReader extends ASlotReader {
         let { slot } = this;
 
 
-        let mapValueType = $types.mapping.getValueType(slot.type);
+        let mapValueType = $abiType.mapping.getValueType(slot.type);
         let mapValueSlots = await SlotsParser.slotsFromAbi(mapValueType);
 
 

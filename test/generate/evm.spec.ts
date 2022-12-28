@@ -1,4 +1,5 @@
 import { EVM } from '@dequanto/evm/evm';
+import alot from 'alot';
 
 UTest({
     async 'parse the bytecode of a proxy contract' () {
@@ -14,6 +15,15 @@ UTest({
             type: 'function'
         });
 
+        let implementation = abi.find(x => x.name === 'implementation');
+        has_(implementation, {
+            name: 'implementation',
+            inputs: [],
+            outputs: [],
+            type: 'function',
+            stateMutability: 'view',
+        });
+
         let upgraded = abi.find(x => x.name === 'Upgraded');
         has_(upgraded, {
             name: 'Upgraded',
@@ -21,5 +31,34 @@ UTest({
             outputs: [],
             type: 'event'
         });
+    },
+    async 'parse Counter.sol bytecode (raw and optimized)' () {
+        // fixtures/contracts/Counter.sol
+        // playground https://www.evm.codes/playground?fork=merge
+        let bytecodeRaw = '0x608060405234801561001057600080fd5b50610298806100206000396000f3fe608060405234801561001057600080fd5b50600436106100575760003560e01c806306661abd1461005c578063371303c01461007a57806360fe47b1146100845780636d4ce63c146100a0578063b3bcfa82146100be575b600080fd5b6100646100c8565b6040516100719190610168565b60405180910390f35b6100826100ce565b005b61009e6004803603810190610099919061012c565b6100e9565b005b6100a86100f3565b6040516100b59190610168565b60405180910390f35b6100c66100fc565b005b60005481565b60016000808282546100e09190610183565b92505081905550565b8060008190555050565b60008054905090565b600160008082825461010e91906101d9565b92505081905550565b6000813590506101268161024b565b92915050565b60006020828403121561014257610141610246565b5b600061015084828501610117565b91505092915050565b6101628161020d565b82525050565b600060208201905061017d6000830184610159565b92915050565b600061018e8261020d565b91506101998361020d565b9250827fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff038211156101ce576101cd610217565b5b828201905092915050565b60006101e48261020d565b91506101ef8361020d565b92508282101561020257610201610217565b5b828203905092915050565b6000819050919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b600080fd5b6102548161020d565b811461025f57600080fd5b5056fea264697066735822122062cca91a84d90195cd174bf9ce7cf864efc93252479096b852535063f7e92b4964736f6c63430008070033';
+        let bytecodeOptimized = '0x608060405234801561001057600080fd5b50610116806100206000396000f3fe6080604052348015600f57600080fd5b506004361060465760003560e01c806306661abd14604b578063371303c01460655780636d4ce63c14606d578063b3bcfa82146074575b600080fd5b605360005481565b60405190815260200160405180910390f35b606b607a565b005b6000546053565b606b6091565b6001600080828254608a919060a1565b9091555050565b6001600080828254608a919060b6565b6000821982111560b15760b160ca565b500190565b60008282101560c55760c560ca565b500390565b634e487b7160e01b600052601160045260246000fdfea2646970667358221220d78cb4047b3907a7f2dd4dab13d5542ad887714825380b6619c247a5b79565d064736f6c63430008070033'
+
+        let bytecodes = [
+            bytecodeRaw,
+            bytecodeOptimized
+        ];
+
+        await alot(bytecodes)
+            .forEachAsync(async bytecode => {
+                const evm = new EVM(bytecode);
+
+                await evm.prepair();
+
+                let getOpCodes = evm.getMethodOpcodes('get()');
+                let hasSStore = getOpCodes.opcodes.find(x => x.name === 'SSTORE');
+                eq_(hasSStore, null);
+                //console.log(getOpCodes.opcodes.map(x => x.name));
+
+                let incOpCodes = evm.getMethodOpcodes('inc()');
+                let incHasSStore = incOpCodes.opcodes.find(x => x.name === 'SSTORE');
+                //console.log(incOpCodes.opcodes.map(x => x.name));
+                notEq_(incHasSStore, null);
+            })
+            .toArrayAsync({ threads: 1 });
     }
 })

@@ -15,6 +15,7 @@ import { AmmVaultV2Contract } from './AmmBase/V2/AmmVaultV2Contract';
 import { TokensServiceBsc } from '../TokensServiceBsc';
 import { $is } from '@dequanto/utils/$is';
 import { $address } from '@dequanto/utils/$address';
+import { $require } from '@dequanto/utils/$require';
 
 
 interface ILPPair extends IToken {
@@ -82,7 +83,7 @@ export abstract class AmmV2ExchangeBase {
 
 
     async calcSwap (from: IToken, to: IToken, fromAmount: bigint): Promise<{ amount: bigint, priceImpact: number }> {
-        $is.BigInt(fromAmount);
+        $require.BigInt(fromAmount);
 
         if (fromAmount === 0n) {
             return {
@@ -102,8 +103,8 @@ export abstract class AmmV2ExchangeBase {
             return null;
         }
 
-        $is.BigInt(lpReserves?._reserve0, `Reserve 0 not valid for LPAddress ${lpAddress}`);
-        $is.BigInt(lpReserves?._reserve1, `Reserve 1 not valid for LPAddress ${lpAddress}`);
+        $require.BigInt(lpReserves?._reserve0, `Reserve 0 not valid for LPAddress ${lpAddress}`);
+        $require.BigInt(lpReserves?._reserve1, `Reserve 1 not valid for LPAddress ${lpAddress}`);
 
         let [ fromI, toI] = BigInt(from.address) < BigInt(to.address) ? [0, 1] : [1, 0];
 

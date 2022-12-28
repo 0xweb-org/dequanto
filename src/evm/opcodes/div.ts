@@ -1,6 +1,6 @@
-import EVM from '../classes/evm.class';
-import Opcode from '../interfaces/opcode.interface';
-import * as BigNumber from '../../node_modules/big-integer';
+import { $is } from '@dequanto/utils/$is';
+import { EVM } from '../EVM';
+import Opcode from '../interfaces/IOpcode';
 import stringify from '../utils/stringify';
 
 export class DIV {
@@ -25,9 +25,9 @@ export class DIV {
 export default (opcode: Opcode, state: EVM): void => {
     const left = state.stack.pop();
     const right = state.stack.pop();
-    if (BigNumber.isInstance(left) && BigNumber.isInstance(right)) {
-        state.stack.push(left.divide(right));
-    } else if (BigNumber.isInstance(right) && right.equals(1)) {
+    if ($is.BigInt(left) && $is.BigInt(right)) {
+        state.stack.push(left / right);
+    } else if ($is.BigInt(right) && right === 1n) {
         state.stack.push(left);
     } else {
         state.stack.push(new DIV(left, right));

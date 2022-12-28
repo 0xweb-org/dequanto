@@ -1,6 +1,7 @@
-import EVM from '../classes/evm.class';
-import Opcode from '../interfaces/opcode.interface';
-import * as BigNumber from '../../node_modules/big-integer';
+import { $is } from '@dequanto/utils/$is';
+import { EVM } from '../EVM';
+import Opcode from '../interfaces/IOpcode';
+
 import stringify from '../utils/stringify';
 
 export class CALLDATALOAD {
@@ -17,21 +18,15 @@ export class CALLDATALOAD {
     }
 
     toString() {
-        if (BigNumber.isInstance(this.location) && this.location.isZero()) {
+        if ($is.BigInt(this.location) && this.location === 0n) {
             return 'msg.data';
         } else if (
-            BigNumber.isInstance(this.location) &&
-            this.location
-                .subtract(4)
-                .mod(32)
-                .isZero()
+            $is.BigInt(this.location) &&
+            (this.location - 4n) % 32n === 0n
         ) {
             return (
                 '_arg' +
-                this.location
-                    .subtract(4)
-                    .divide(32)
-                    .toString()
+                ((this.location - 4n) / 32n).toString()
             );
         } else {
             return 'msg.data[' + stringify(this.location) + ']';

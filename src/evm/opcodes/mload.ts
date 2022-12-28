@@ -1,6 +1,6 @@
-import EVM from '../classes/evm.class';
-import Opcode from '../interfaces/opcode.interface';
-import * as BigNumber from '../../node_modules/big-integer';
+import { $is } from '@dequanto/utils/$is';
+import { EVM } from '../EVM';
+import Opcode from '../interfaces/IOpcode';
 import stringify from '../utils/stringify';
 
 export class MLOAD {
@@ -22,8 +22,8 @@ export class MLOAD {
 
 export default (opcode: Opcode, state: EVM): void => {
     const memoryLocation = state.stack.pop();
-    if (BigNumber.isInstance(memoryLocation) && memoryLocation.toJSNumber() in state.memory) {
-        state.stack.push(state.memory[memoryLocation.toJSNumber()]);
+    if ($is.BigInt(memoryLocation) && Number(memoryLocation) in state.memory) {
+        state.stack.push(state.memory[Number(memoryLocation)]);
     } else {
         state.stack.push(new MLOAD(memoryLocation));
     }

@@ -42,7 +42,13 @@ export namespace $require {
 
     export function Function<T>(val: T, message: string): T {
         if (typeof val !== 'function') {
-            throw new Error(`Value is not a function`);
+            throw new Error(`Value is not a function ${message}`);
+        }
+        return val;
+    }
+    export function String<T>(val: T, message): T {
+        if (typeof val !== 'string') {
+            throw new Error(`Value ${val} is not a string ${message}`);
         }
         return val;
     }

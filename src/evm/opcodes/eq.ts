@@ -1,6 +1,6 @@
-import EVM from '../classes/evm.class';
-import Opcode from '../interfaces/opcode.interface';
-import * as BigNumber from '../../node_modules/big-integer';
+import { $is } from '@dequanto/utils/$is';
+import { EVM } from '../EVM';
+import Opcode from '../interfaces/IOpcode';
 import stringify from '../utils/stringify';
 
 export class SIG {
@@ -42,27 +42,27 @@ export class EQ {
 export default (opcode: Opcode, state: EVM): void => {
     let left = state.stack.pop();
     let right = state.stack.pop();
-    if (BigNumber.isInstance(left) && BigNumber.isInstance(right)) {
-        state.stack.push(BigNumber(left.equals(right) === true ? 1 : 0));
+    if ($is.BigInt(left) && $is.BigInt(right)) {
+        state.stack.push(left === right ? 1n : 0n);
     } else {
         if (
-            BigNumber.isInstance(left) &&
+            $is.BigInt(left) &&
             right.name === 'DIV' &&
-            BigNumber.isInstance(right.right)
+            $is.BigInt(right.right)
         ) {
-            left = left.multiply(right.right);
+            left = left * right.right;
             right = right.left;
         }
         if (
-            BigNumber.isInstance(right) &&
+            $is.BigInt(right) &&
             left.name === 'DIV' &&
-            BigNumber.isInstance(left.right)
+            $is.BigInt(left.right)
         ) {
-            right = right.multiply(left.right);
+            right = right * left.right;
             left = left.left;
         }
         if (
-            BigNumber.isInstance(left) &&
+            $is.BigInt(left) &&
             /^[0]+$/.test(left.toString(16).substring(8)) &&
             right.name === 'CALLDATALOAD' &&
             right.location.equals(0)
@@ -74,7 +74,7 @@ export default (opcode: Opcode, state: EVM): void => {
                 )
             );
         } else if (
-            BigNumber.isInstance(right) &&
+            $is.BigInt(right) &&
             /^[0]+$/.test(right.toString(16).substring(8)) &&
             left.name === 'CALLDATALOAD' &&
             left.location.equals(0)

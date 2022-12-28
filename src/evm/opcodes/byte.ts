@@ -1,6 +1,7 @@
-import EVM from '../classes/evm.class';
-import Opcode from '../interfaces/opcode.interface';
-import * as BigNumber from '../../node_modules/big-integer';
+import { $is } from '@dequanto/utils/$is';
+import { EVM } from '../EVM';
+import Opcode from '../interfaces/IOpcode';
+
 import stringify from '../utils/stringify';
 
 export class BYTE {
@@ -25,8 +26,8 @@ export class BYTE {
 export default (opcode: Opcode, state: EVM): void => {
     const position = state.stack.pop();
     const data = state.stack.pop();
-    if (BigNumber.isInstance(data) && BigNumber.isInstance(position)) {
-        state.stack.push(data.shiftRight(position).and(1));
+    if ($is.BigInt(data) && $is.BigInt(position)) {
+        state.stack.push((data >> position) & 1n);
     } else {
         state.stack.push(new BYTE(position, data));
     }

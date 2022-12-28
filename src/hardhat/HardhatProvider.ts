@@ -102,7 +102,8 @@ export class HardhatProvider {
         const receipt = await contract.deployed();
         return {
             contract,
-            abi
+            abi,
+            bytecode
         };
     }
 

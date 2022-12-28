@@ -1,5 +1,5 @@
-import EVM from '../classes/evm.class';
-import Opcode from '../interfaces/opcode.interface';
+import { EVM } from '../EVM';
+import Opcode from '../interfaces/IOpcode';
 
 export class MSIZE {
     readonly name: string;

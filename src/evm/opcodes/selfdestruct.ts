@@ -1,5 +1,5 @@
-import EVM from '../classes/evm.class';
-import Opcode from '../interfaces/opcode.interface';
+import { EVM } from '../EVM';
+import Opcode from '../interfaces/IOpcode';
 import stringify from '../utils/stringify';
 
 export class SELFDESTRUCT {

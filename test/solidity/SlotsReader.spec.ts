@@ -17,7 +17,21 @@ UTest({
 
         let { contract, abi } = await provider.deploySol(path, { arguments: [ hex ], client });
         let slots = await SlotsParser.slots({ path }, 'Vault');
-        //-console.log(slots);
+
+
+        let keys = slots.map(x => x.name);
+        deepEq_(keys, [
+            'count',
+            'owner',
+            'isTrue',
+            'u16',
+            'password',
+            'data',
+            'users',
+            'idToUser',
+            'dynamicSlotString',
+            'singleSlotString',
+        ]);
 
         let reader = SlotsReader.createWithClient(client, contract.address, slots);
 
@@ -71,11 +85,11 @@ UTest({
 
         let provider = new HardhatProvider();
         let client = await provider.client();
-        let path = '/test/fixtures/slots/Foo.sol';
+        let path = '/test/fixtures/slots/FooStorage.sol';
 
 
         let { contract, abi } = await provider.deploySol(path, { client });
-        let slots = await SlotsParser.slots({ path }, 'Foo');
+        let slots = await SlotsParser.slots({ path }, 'FooStorage');
 
         let reader = SlotsReader.createWithClient(client, contract.address, slots);
 

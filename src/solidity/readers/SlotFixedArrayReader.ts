@@ -6,6 +6,7 @@ import { ISlotVarDefinition } from '../SlotsParser';
 import { $str } from '../utils/$str';
 import { $types } from '../utils/$types';
 import { ASlotReader } from './SlotReaders';
+import { $abiType } from '@dequanto/utils/$abiType';
 
 export class SlotFixedArrayReader extends ASlotReader {
 
@@ -15,7 +16,7 @@ export class SlotFixedArrayReader extends ASlotReader {
 
     async read(idx: number = 0) {
         let { slot } = this;
-        let arrLength = $types.array.getLength(slot.type);
+        let arrLength = $abiType.array.getLength(slot.type);
         $require.True(idx < arrLength, `${idx} is out of bounds for the array[${arrLength}]`);
 
         let itemSize = slot.size / arrLength;
@@ -24,7 +25,7 @@ export class SlotFixedArrayReader extends ASlotReader {
         if (itemSize !== 0 && slot.size < 256) {
             value = '0x' + $str.sliceFromEnd(memory, slot.position, itemSize);
         }
-        let baseType = $types.array.getBaseType(slot.type);
+        let baseType = $abiType.array.getBaseType(slot.type);
         let abi = $abiParser.parseArguments(baseType);
         let deserialized = AbiDeserializer.process(value, abi);
         return deserialized;
@@ -32,7 +33,7 @@ export class SlotFixedArrayReader extends ASlotReader {
 
     async fetchAll () {
         let slot = this.slot;
-        let arrLength = $types.array.getLength(slot.type);
+        let arrLength = $abiType.array.getLength(slot.type);
 
         return await alot.fromRange(0, arrLength).mapAsync(async i => {
             return this.read(i);

@@ -1,8 +1,8 @@
-import EVM from '../classes/evm.class';
-import Opcode from '../interfaces/opcode.interface';
-import * as BigNumber from '../../node_modules/big-integer';
+import { EVM } from '../EVM';
+import Opcode from '../interfaces/IOpcode';
+
 
 export default (opcode: Opcode, state: EVM): void => {
     const pushDataLength = parseInt(opcode.name.replace('PUSH', ''), 10);
-    state.stack.push(BigNumber(opcode.pushData!.toString('hex'), 16));
+    state.stack.push(BigInt('0x' + opcode.pushData.toString('hex')));
 };

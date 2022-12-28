@@ -22,6 +22,7 @@ import { $abiParser } from '@dequanto/utils/$abiParser';
 import type { AbiInput } from 'web3-utils';
 import { $types } from './utils/$types';
 import { class_Uri } from 'atma-utils';
+import { $abiType } from '@dequanto/utils/$abiType';
 
 export interface ISlotVarDefinition {
     slot: number
@@ -29,6 +30,12 @@ export interface ISlotVarDefinition {
     name: string
     type: string
     size: number
+}
+
+
+interface ISlotsParserOption {
+    /* Optionally provide additional sources in memory */
+    files?: { path: string, content: string }[]
 }
 
 export namespace SlotsParser {
@@ -57,8 +64,9 @@ export namespace SlotsParser {
         return slotsDef;
     }
 
-    export async function slots (source: { path: string, code?: string }, contractName: string): Promise<ISlotVarDefinition[]> {
-        const sourceFile = new SourceFile(source.path, source.code);
+
+    export async function slots (source: { path: string, code?: string }, contractName: string, opts?: ISlotsParserOption): Promise<ISlotVarDefinition[]> {
+        const sourceFile = new SourceFile(source.path, source.code, opts?.files);
         const chain = await sourceFile.getContractInheritanceChain(contractName);
         return await extractSlots(chain);
     }
@@ -217,7 +225,8 @@ namespace TypeUtil {
             if (definition.type === 'ContractDefinition') {
                 return Types.sizeOf('address');
             }
-            let members = definition.members.map(x => get(x.typeName, this.ctx));
+            let ctx = this.ctx;
+            let members = definition.members.map(x => get(x.typeName, ctx));
             let sizes = await alot(members).sumAsync(x => x.sizeOf());
             return sizes;
         }
@@ -226,8 +235,10 @@ namespace TypeUtil {
             if (definition.type === 'ContractDefinition') {
                 return 'address';
             }
+            let ctx = this.ctx;
+            ctx.contract = definition.parent;
             let members = await alot(definition.members).mapAsync(async x => {
-                let util = get(x.typeName, this.ctx);
+                let util = get(x.typeName, ctx);
                 let type = await util.serialize();
                 return `${type} ${x.name}`;
             }).toArrayAsync();
@@ -313,7 +324,7 @@ namespace TypeAbiUtil {
             if (length === Infinity) {
                 return length;
             }
-            let baseType = $types.array.getBaseType(this.input.type);
+            let baseType = $abiType.array.getBaseType(this.input.type);
             let single = await get({
                 type: baseType,
                 name: '',
@@ -329,7 +340,7 @@ namespace TypeAbiUtil {
             return this.input.type;
         }
         private length () {
-            return $types.array.getLength(this.input.type)
+            return $abiType.array.getLength(this.input.type)
         }
     }
     class UserDefinedTypeNameUtil implements ITypeUtil {
@@ -426,14 +437,36 @@ namespace Ast {
         let vars = alot(declarations).mapMany(x => x.variables).toArray() as VariableDeclaration[];
         return vars;
     }
-    export function getUserDefinedType (node: ContractDefinition | SourceUnit, name: string): StructDefinition | ContractDefinition {
+    export function getUserDefinedType (node: ContractDefinition | SourceUnit, name: string): (StructDefinition | ContractDefinition) & { parent? } {
+        let [ key, ...nestings] = name.split('.');
+        let nodeFound = getUserDefinedTypeRaw(node, key);
+        if (nodeFound == null) {
+            let cursor = node as any;
+            while (nodeFound == null && cursor.parent != null) {
+                nodeFound = getUserDefinedTypeRaw(cursor.parent, key);
+                cursor = cursor.parent;
+            }
+        }
+        while (nestings.length > 0 && nodeFound != null) {
+            key = nestings.shift();
+            nodeFound = getUserDefinedTypeRaw(nodeFound as any, key);
+        }
+        return nodeFound as any;
+    }
+
+    function getUserDefinedTypeRaw (node: ContractDefinition | SourceUnit , name: string): StructDefinition | ContractDefinition {
         let arr = node.type === 'ContractDefinition'
             ? node.subNodes
             : node.children;
 
-        return arr
+        let nodeFound = arr
             .filter(x => x.type === 'StructDefinition' || x.type === 'ContractDefinition')
             .find(x => (x as any).name === name) as StructDefinition | ContractDefinition;
+
+        if (nodeFound) {
+            return nodeFound;
+        }
+        return null;
     }
 }
 
@@ -445,14 +478,29 @@ type TSourceFileImport = {
 
 class SourceFile {
     public file = new File(this.path);
-    constructor (public path: string, public source?: string) {
+    constructor (public path: string, public source?: string, public inMemoryFile?: ISlotsParserOption['files']) {
 
     }
 
     @memd.deco.memoize({ perInstance: true })
     async getAst () {
         this.source = this.source ?? await this.file.readAsync({ skipHooks: true });
-        return Ast.parse(this.source);
+        let ast = Ast.parse(this.source);
+
+        ast.children?.forEach(node => {
+            this.reapplyParents(node, ast);
+        })
+        return ast;
+    }
+
+    private reapplyParents (node, parent) {
+        node.parent = parent;
+        let arr = node.children ?? node.subNodes;
+        if (Array.isArray(arr)) {
+            arr.forEach(child => {
+                this.reapplyParents(child, node);
+            });
+        }
     }
 
     @memd.deco.memoize({ perInstance: true })
@@ -461,7 +509,7 @@ class SourceFile {
         let importNodes = Ast.getImports(ast);
 
         let imports = await alot(importNodes).mapAsync(async node => {
-            return await SourceFileImports.resolveSourceFile(this, node);
+            return await SourceFileImports.resolveSourceFile(this, node, this.inMemoryFile);
         }).toArrayAsync();
 
         return imports;
@@ -523,8 +571,19 @@ class SourceFile {
 }
 
 namespace SourceFileImports {
-    export async function resolveSourceFile (parent: SourceFile, importNode: ImportDirective): Promise<TSourceFileImport> {
+    export async function resolveSourceFile (parent: SourceFile, importNode: ImportDirective, inMemFiles?: { path: string, content: string }[]): Promise<TSourceFileImport> {
         let importPath = importNode.path;
+        if (inMemFiles != null) {
+            let file = inMemFiles.find(file => {
+                return getFileName(importPath)?.toLowerCase() === getFileName(file.path)?.toLowerCase();
+            });
+            if (file != null) {
+                return {
+                    path: file.path,
+                    file: new SourceFile(file.path, file.content, inMemFiles)
+                };
+            }
+        }
 
         let parentUri = parent.file.uri as class_Uri;
         let directory = parentUri.toDir();
@@ -543,7 +602,7 @@ namespace SourceFileImports {
 
         let paths: string[] = [
             class_Uri.combine(directory, path),
-            class_Uri.combine(directory,  /(?<name>[^\\/]+)$/.exec(path)?.groups?.name),
+            class_Uri.combine(directory,  getFileName(path)),
             class_Uri.combine('/node_modules/', path),
         ];
 
@@ -552,5 +611,8 @@ namespace SourceFileImports {
             path: found,
             lookupPaths: paths
         };
+    }
+    function getFileName (path: string) {
+        return /(?<name>[^\\/]+)$/.exec(path)?.groups?.name;
     }
 }

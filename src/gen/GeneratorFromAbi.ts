@@ -1,14 +1,19 @@
-import { TAddress } from '@dequanto/models/TAddress';
+import alot from 'alot';
 import { type AbiItem } from 'web3-utils';
+import { TAddress } from '@dequanto/models/TAddress';
 import { File } from 'atma-io';
 import { class_Uri } from 'atma-utils';
-import alot from 'alot';
 import { $abiType } from '@dequanto/utils/$abiType';
 import { $date } from '@dequanto/utils/$date';
 import { $path } from '@dequanto/utils/$path';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { $config } from '@dequanto/utils/$config';
+import { $logger } from '@dequanto/utils/$logger';
+import { GeneratorStorageReader } from './GeneratorStorageReader';
+import { Web3Client } from '@dequanto/clients/Web3Client';
+import { Str } from './utils/Str';
+import { $gen } from './utils/$gen';
 
 export class GeneratorFromAbi {
 
@@ -19,13 +24,15 @@ export class GeneratorFromAbi {
     async generate (abiJson: AbiItem[], opts: {
         network: TPlatform
         name: string
+        contractName: string
         address: TAddress
         output: string
         implementation: TAddress
         saveAbi?: boolean
         sources?: {
             [file: string]: { content: string }
-        }
+        },
+        client?: Web3Client
     }) {
 
         let methodsArr = alot(abiJson)
@@ -157,6 +164,22 @@ export class GeneratorFromAbi {
             }
         }
 
+        let storageReaderProperty = '';
+        let storageReaderClass = '';
+        try {
+            let storageReaderGenerator = new GeneratorStorageReader();
+            let reader = await storageReaderGenerator.generate({ ...opts });
+            let property = reader.className
+                ? `storage = new ${reader.className}(this.address, this.client, this.explorer);`
+                : '';
+
+            storageReaderClass = reader.code;
+            storageReaderProperty = property;
+            $logger.log(`Storage Reader generated`);
+        } catch (error) {
+            $logger.log(`Storage Reader is skipped: ${error.message}`);
+        }
+
         let code = template
             .replace(/\$Etherscan\$/g, EtherscanStr)
             .replace(/\$EthWeb3Client\$/g, EthWeb3ClientStr)
@@ -164,7 +187,7 @@ export class GeneratorFromAbi {
             .replace(/\$EvmScanOptions\$/g, EvmScanOptions)
 
             .replace(`/* IMPORTS */`, imports.join('\n'))
-            .replace(`$NAME$`, Gen.toClassName(name))
+            .replace(`$NAME$`, $gen.toClassName(name))
             .replace(`$ADDRESS$`, opts.address ?? '')
             .replace(`/* METHODS */`, methods)
             .replace(`/* EVENTS */`, events)
@@ -174,6 +197,9 @@ export class GeneratorFromAbi {
             .replace(`$DATE$`, $date.format(new Date(), 'yyyy-MM-dd HH:mm'))
             .replace(`$EXPLORER_URL$`, explorerUrl)
             .replace(`/* $EVENT_INTERFACES$ */`, eventInterfaces.join('\n'))
+
+            .replace(`/* STORAGE_READER_PROPERTY */`, storageReaderProperty)
+            .replace(`/* STORAGE_READER_CLASS */`, storageReaderClass)
             ;
 
 
@@ -191,7 +217,7 @@ export class GeneratorFromAbi {
             await File.writeAsync(path, abiJson);
         }
 
-        console.log(`ABI wrapper class created: ${path}`);
+        $logger.log(`ABI wrapper class created: ${path}`);
 
         let sources = opts.sources;
         let sourceFiles = [];
@@ -201,7 +227,7 @@ export class GeneratorFromAbi {
                 let path = class_Uri.combine(opts.output, directory, filename, sourceFilename);
                 await File.writeAsync(path, entry.value.content, { skipHooks: true });
 
-                console.log(`Source code saved: ${path}`);
+                $logger.log(`Source code saved: ${path}`);
                 return path;
             }).toArrayAsync();
         }
@@ -214,14 +240,6 @@ export class GeneratorFromAbi {
 
 
 namespace Gen {
-
-    export function toClassName (name: string) {
-        let str = name.replace(/[^\w_\-\\/]/g, '');
-        str = str.replace(/[\-\\/](\w)/g, (full, letter) => {
-            return letter.toUpperCase();
-        });
-        return str[0].toUpperCase() + str.substring(1);
-    }
 
 
     export function serializeMethodTs (abi: AbiItem) {
@@ -486,40 +504,4 @@ namespace Gen {
 }
 
 
-namespace Str {
-    export function formatMethod (str: string) {
-        str = trim(str);
-        str = indent(str, '    ');
-        return str;
-    }
-    export function trim (str: string) {
-        let lines = str.split('\n');
-        let min = alot(lines).min(x => {
-            if (x.trim() === '') {
-                return Number.MAX_SAFE_INTEGER;
-            }
-            let match = /^\s+/.exec(x);
-            if (match == null) {
-                return Number.MAX_SAFE_INTEGER;
-            }
-            return match[0].length;
-        });
 
-        lines = lines.map((line, i) => {
-            let x = line.substring(min);
-            if ((i === 0) || (lines.length === i + 1)) {
-                if (x === '') {
-                    return null;
-                }
-            }
-            return x;
-        }).filter(Boolean);
-        return lines.join('\n');
-    }
-    export function indent (str: string, indent: string) {
-        return str
-            .split('\n')
-            .map(x => `${indent}${x}`)
-            .join('\n');
-    }
-}

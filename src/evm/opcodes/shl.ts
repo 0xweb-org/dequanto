@@ -1,6 +1,6 @@
-import EVM from '../classes/evm.class';
-import Opcode from '../interfaces/opcode.interface';
-import * as BigNumber from '../../node_modules/big-integer';
+import { $is } from '@dequanto/utils/$is';
+import { EVM } from '../EVM';
+import Opcode from '../interfaces/IOpcode';
 import stringify from '../utils/stringify';
 
 export class SHL {
@@ -23,11 +23,20 @@ export class SHL {
 }
 
 export default (opcode: Opcode, state: EVM): void => {
-    const left = state.stack.pop();
-    const right = state.stack.pop();
-    if (BigNumber.isInstance(left) && BigNumber.isInstance(right)) {
-        state.stack.push(left.shiftLeft(right));
-    } else {
-        state.stack.push(new SHL(left, right));
+
+    const shift = state.stack.pop();
+    const value = state.stack.pop();
+
+    if ($is.BigInt(shift) && $is.BigInt(value)) {
+        if (shift > 255n) {
+            state.stack.push(0n);
+            return;
+        }
+        let result = value << shift;
+        let trimmed = BigInt('0x' + result.toString(16).slice(-64));
+        state.stack.push(trimmed);
+        return;
     }
+
+    state.stack.push(new SHL(shift, value));
 };

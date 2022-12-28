@@ -1,6 +1,6 @@
-import EVM from '../classes/evm.class';
-import Opcode from '../interfaces/opcode.interface';
-import * as BigNumber from '../../node_modules/big-integer';
+import { $is } from '@dequanto/utils/$is';
+import { EVM } from '../EVM';
+import Opcode from '../interfaces/IOpcode';
 import stringify from '../utils/stringify';
 
 export class AND {
@@ -25,31 +25,31 @@ export class AND {
 export default (opcode: Opcode, state: EVM): void => {
     const left = state.stack.pop();
     const right = state.stack.pop();
-    if (BigNumber.isInstance(left) && BigNumber.isInstance(right)) {
-        state.stack.push(left.and(right));
-    } else if (BigNumber.isInstance(left) && /^[f]+$/.test(left.toString(16))) {
+    if ($is.BigInt(left) && $is.BigInt(right)) {
+        state.stack.push(left & right);
+    } else if ($is.BigInt(left) && /^[f]+$/.test(left.toString(16))) {
         right.size = left.toString(16).length;
         state.stack.push(right);
-    } else if (BigNumber.isInstance(right) && /^[f]+$/.test(right.toString(16))) {
+    } else if ($is.BigInt(right) && /^[f]+$/.test(right.toString(16))) {
         left.size = right.toString(16).length;
         state.stack.push(left);
         /*} else if (
-        BigNumber.isInstance(left) &&
+        $is.BigInt(left) &&
         left.equals('1461501637330902918203684832716283019655932542975')
     ) {*/
         /* 2 ** 160 */
         /*    state.stack.push(right);
     } else if (
-        BigNumber.isInstance(right) &&
+        $is.BigInt(right) &&
         right.equals('1461501637330902918203684832716283019655932542975')
     ) {*/
         /* 2 ** 160 */
         /*    state.stack.push(left);*/
     } else if (
-        BigNumber.isInstance(left) &&
+        $is.BigInt(left) &&
         right instanceof AND &&
-        BigNumber.isInstance(right.left) &&
-        left.equals(right.left)
+        $is.BigInt(right.left) &&
+        left === right.left
     ) {
         state.stack.push(right.right);
     } else {

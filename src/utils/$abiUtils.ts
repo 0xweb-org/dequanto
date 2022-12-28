@@ -2,6 +2,7 @@ import { type AbiItem } from 'web3-utils';
 import Web3 from 'web3';
 import { utils }  from 'ethers';
 import { $contract } from './$contract';
+import { $abiParser } from './$abiParser';
 
 export namespace $abiUtils {
 
@@ -15,14 +16,20 @@ export namespace $abiUtils {
     }
 
     /** Returns complete method/event hash */
-    export function getMethodHash (abi: AbiItem) {
+    export function getMethodHash (mix: string | AbiItem) {
+        let abi = typeof mix === 'string'
+            ? $abiParser.parseMethod(mix)
+            : mix;
         let types = abi.inputs?.map(serializeMethodSignatureArgumentType) ?? [];
         let signature = `${abi.name}(${types.join(',')})`;
         let hash = $contract.keccak256(signature);
         return hash;
     }
 
-    export function getMethodSignature (abi: AbiItem) {
+    export function getMethodSignature (mix: string | AbiItem) {
+        let abi = typeof mix === 'string'
+            ? $abiParser.parseMethod(mix)
+            : mix;
         let types = abi.inputs?.map(serializeMethodSignatureArgumentType) ?? [];
         let signature = `${abi.name}(${types.join(',')})`;
         let hash = $contract.keccak256(signature);

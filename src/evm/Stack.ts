@@ -15,7 +15,7 @@ export default class Stack {
 
     pop(): any {
         if (this.elements.length === 0) {
-            throw new Error('POP with empty stack');
+           // throw new Error('POP with empty stack');
         } else {
             return this.elements.shift();
         }

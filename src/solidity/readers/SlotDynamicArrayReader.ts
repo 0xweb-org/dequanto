@@ -5,6 +5,7 @@ import { SlotsReader } from '../SlotsReader';
 import { $types } from '../utils/$types';
 import { DataReaderArray } from './DataReaders';
 import { ASlotReader } from './SlotReaders';
+import { $abiType } from '@dequanto/utils/$abiType';
 
 export class SlotDynamicArrayReader extends ASlotReader {
 
@@ -31,7 +32,7 @@ export class SlotDynamicArrayReader extends ASlotReader {
         this._length = await this.length();
         $require.True(idx < this._length, `${idx} is out of bounds for the array[${this._length}]`);
 
-        let arrBaseType = $types.array.getBaseType(slot.type);
+        let arrBaseType = $abiType.array.getBaseType(slot.type);
         let arrBaseTypeSlots = await SlotsParser.slotsFromAbi(arrBaseType);
 
         let slotsCountPerItem = 1 + arrBaseTypeSlots[arrBaseTypeSlots.length - 1].slot;

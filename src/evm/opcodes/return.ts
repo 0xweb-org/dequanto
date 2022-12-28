@@ -1,9 +1,9 @@
-import EVM from '../classes/evm.class';
-import Opcode from '../interfaces/opcode.interface';
+import { EVM } from '../EVM';
+import Opcode from '../interfaces/IOpcode';
 import { MLOAD } from './mload';
 import { hex2a } from '../utils/hex';
-import * as BigNumber from '../../node_modules/big-integer';
 import stringify from '../utils/stringify';
+import { $is } from '@dequanto/utils/$is';
 
 export class RETURN {
     readonly name: string;
@@ -39,12 +39,12 @@ export class RETURN {
             return 'return;';
         } else if (
             this.items.length === 1 &&
-            (BigNumber.isInstance(this.items[0]) || this.items[0].static)
+            ($is.BigInt(this.items[0]) || this.items[0].static)
         ) {
             return 'return ' + this.items[0] + ';';
         } else if (
             this.items.length === 3 &&
-            this.items.every((item: any) => BigNumber.isInstance(item)) &&
+            this.items.every((item: any) => $is.BigInt(item)) &&
             this.items[0].equals(32)
         ) {
             return 'return "' + hex2a(this.items[2].toString(16)) + '";';
@@ -58,11 +58,11 @@ export default (opcode: Opcode, state: EVM): void => {
     const memoryStart = state.stack.pop();
     const memoryLength = state.stack.pop();
     state.halted = true;
-    if (BigNumber.isInstance(memoryStart) && BigNumber.isInstance(memoryLength)) {
+    if ($is.BigInt(memoryStart) && $is.BigInt(memoryLength)) {
         const items = [];
         for (
-            let i = memoryStart.toJSNumber();
-            i < memoryStart.add(memoryLength).toJSNumber();
+            let i = Number(memoryStart);
+            i < Number(memoryStart) + Number(memoryLength);
             i += 32
         ) {
             if (i in state.memory) {

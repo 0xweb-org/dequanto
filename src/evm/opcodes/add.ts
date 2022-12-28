@@ -1,6 +1,7 @@
-import EVM from '../classes/evm.class';
-import Opcode from '../interfaces/opcode.interface';
-import * as BigNumber from '../../node_modules/big-integer';
+import { $is } from '@dequanto/utils/$is';
+import { EVM } from '../EVM';
+import Opcode from '../interfaces/IOpcode';
+import { BigNumber } from '../utils/BigNumber';
 import stringify from '../utils/stringify';
 
 export class ADD {
@@ -36,11 +37,11 @@ export class ADD {
 export default (opcode: Opcode, state: EVM): void => {
     const left = state.stack.pop();
     const right = state.stack.pop();
-    if (BigNumber.isInstance(left) && BigNumber.isInstance(right)) {
-        state.stack.push(left.add(right));
-    } else if (BigNumber.isInstance(left) && left.isZero()) {
+    if ($is.BigInt(left) && $is.BigInt(right)) {
+        state.stack.push(left + right);
+    } else if ($is.BigInt(left) && left === 0n) {
         state.stack.push(right);
-    } else if (BigNumber.isInstance(right) && right.isZero()) {
+    } else if ($is.BigInt(right) && right === 0n) {
         state.stack.push(left);
     } else {
         state.stack.push(new ADD(left, right));

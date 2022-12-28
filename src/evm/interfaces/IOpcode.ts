@@ -1,4 +1,4 @@
-export default interface Opcode {
+export default interface IOpcode {
     pc: number;
     pushData?: Buffer;
     name: string;

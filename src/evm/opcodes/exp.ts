@@ -1,6 +1,7 @@
-import EVM from '../classes/evm.class';
-import Opcode from '../interfaces/opcode.interface';
-import * as BigNumber from '../../node_modules/big-integer';
+import { $is } from '@dequanto/utils/$is';
+import { EVM } from '../EVM';
+import Opcode from '../interfaces/IOpcode';
+
 import stringify from '../utils/stringify';
 
 export class EXP {
@@ -25,8 +26,8 @@ export class EXP {
 export default (opcode: Opcode, state: EVM): void => {
     const left = state.stack.pop();
     const right = state.stack.pop();
-    if (BigNumber.isInstance(left) && BigNumber.isInstance(right)) {
-        state.stack.push(left.pow(right));
+    if ($is.BigInt(left) && $is.BigInt(right)) {
+        state.stack.push(left ** right);
     } else {
         state.stack.push(new EXP(left, right));
     }

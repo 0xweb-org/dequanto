@@ -1,6 +1,4 @@
-'use strict';
-
-var codes = {
+const CODES = {
   // 0x0 range - arithmetic ops
   // name, baseCost, off stack, on stack, dynamic, async
   0x00: ['STOP', 0, 0, 0, false],
@@ -165,7 +163,7 @@ var codes = {
 };
 
 export function findOpcode(op, full, freeLogs?) {
-  var code = codes[op] ? codes[op] : ['INVALID', 0, 0, 0, false, false];
+  var code = CODES[op] ? CODES[op] : ['INVALID', 0, 0, 0, false, false];
   var opcode = code[0];
 
   if (full) {

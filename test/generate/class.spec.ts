@@ -6,6 +6,8 @@ import { Directory, File } from 'atma-io';
 import { $date } from '@dequanto/utils/$date';
 import { l } from '@dequanto/utils/$logger';
 import { ContractReader } from '@dequanto/contracts/ContractReader';
+import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client';
+import Web3 from 'web3';
 
 declare let include;
 
@@ -48,6 +50,10 @@ UTest({
 
         eq_(name, 'Wrapped Ether');
         gt_(totalSupply, 1000n);
+
+        let nameFromSlot = await weth.storage._name();
+        eq_(nameFromSlot, name);
+
     },
     async 'generate from class meta comments and check the sources' () {
         let genPath = `/test/tmp/polygon/DaiTokenContractBase/DaiTokenContractBase.ts`

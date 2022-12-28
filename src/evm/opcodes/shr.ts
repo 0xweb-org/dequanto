@@ -1,7 +1,7 @@
-import EVM from '../classes/evm.class';
-import Opcode from '../interfaces/opcode.interface';
-import * as BigNumber from '../../node_modules/big-integer';
+import { EVM } from '../EVM';
+import Opcode from '../interfaces/IOpcode';
 import stringify from '../utils/stringify';
+import { $is } from '@dequanto/utils/$is';
 
 export class SHR {
     readonly name: string;
@@ -25,8 +25,8 @@ export class SHR {
 export default (opcode: Opcode, state: EVM): void => {
     const left = state.stack.pop();
     const right = state.stack.pop();
-    if (BigNumber.isInstance(left) && BigNumber.isInstance(right)) {
-        state.stack.push(left.shiftRight(right));
+    if ($is.BigInt(left) && $is.BigInt(right)) {
+        state.stack.push(left >> right);
     } else {
         state.stack.push(new SHR(left, right));
     }

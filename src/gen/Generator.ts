@@ -142,11 +142,13 @@ export class Generator {
         return await generator.generate(abiJson, {
             network: network,
             name: name,
+            contractName: sources?.contractName,
             address: address,
             output: output,
             implementation: implementation,
-            sources: sources,
-            saveAbi: this.options.saveAbi
+            sources: sources?.files,
+            saveAbi: this.options.saveAbi,
+            client: this.client,
         });
     }
 
@@ -177,7 +179,12 @@ export class Generator {
         $require.notNull(abiJson, `Abi not resolved from ${abi}`);
         return { abiJson, implementation };
     }
-    private async getSources (implementation: TAddress, name: string) {
+    private async getSources (implementation: TAddress, name: string): Promise<{
+        contractName: string,
+        files: {
+            [path: string]: { content: string }
+        }
+    }> {
         if ($address.isValid(implementation) === false) {
             return null;
         }
@@ -191,8 +198,11 @@ export class Generator {
         if (/^\s*\{/.test(meta.SourceCode) === false) {
             $logger.log('Source contract as single file fetched.');
             return {
-                [`${name}.sol`]: {
-                    content: meta.SourceCode
+                contractName: meta.ContractName,
+                files: {
+                    [`${name}.sol`]: {
+                        content: meta.SourceCode
+                    }
                 }
             };
         }
@@ -207,7 +217,10 @@ export class Generator {
             let files = sources.sources;
 
             $logger.log(`Source code (${Object.keys(files).join(', ')}) fetched.`)
-            return files;
+            return {
+                contractName: meta.ContractName,
+                files
+            };
         } catch (error) {
             $logger.error(`Source code can't be parsed: `, code);
             throw new Error(`Source code can't be parsed: ${error.message}`);

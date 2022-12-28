@@ -8,6 +8,7 @@ import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { type AbiItem } from 'web3-utils';
 import { TransactionReceipt, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
@@ -20,7 +21,7 @@ export class $NAME$ extends ContractBase {
     constructor(
         public address: TAddress = '$ADDRESS$',
         public client: Web3Client = di.resolve($EthWeb3Client$, $Web3ClientOptions$),
-        public explorer: IBlockChainExplorer = di.resolve($Etherscan$, $EvmScanOptions$)
+        public explorer: IBlockChainExplorer = di.resolve($Etherscan$, $EvmScanOptions$),
     ) {
         super(address, client, explorer)
     }
@@ -34,6 +35,8 @@ export class $NAME$ extends ContractBase {
 /* EVENTS_FETCHERS */
 
     abi: AbiItem[] = $ABI$
+
+    /* STORAGE_READER_PROPERTY */
 }
 
 type TSender = TAccount & {
@@ -42,3 +45,4 @@ type TSender = TAccount & {
 
 /* $EVENT_INTERFACES$ */
 
+/* STORAGE_READER_CLASS */

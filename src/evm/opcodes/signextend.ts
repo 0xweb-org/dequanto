@@ -1,24 +1,25 @@
-import EVM from '../classes/evm.class';
-import Opcode from '../interfaces/opcode.interface';
+import { EVM } from '../EVM';
+import Opcode from '../interfaces/IOpcode';
 import { SHL } from './shl';
 import { SAR } from './sar';
 import { SUB } from './sub';
-import * as BigNumber from '../../node_modules/big-integer';
+import { $is } from '@dequanto/utils/$is';
+
 
 export default (opcode: Opcode, state: EVM): void => {
     const left = state.stack.pop();
     const right = state.stack.pop();
-    if (BigNumber.isInstance(left) && BigNumber.isInstance(right)) {
+    if ($is.BigInt(left) && $is.BigInt(right)) {
         state.stack.push(
-            right.shiftLeft(BigNumber(32).subtract(left)).shiftRight(BigNumber(32).subtract(left))
+            (right << (32n - left)) >> (32n - left)
         );
-    } else if (BigNumber.isInstance(left)) {
+    } else if ($is.BigInt(left)) {
         state.stack.push(
-            new SAR(new SHL(right, BigNumber(32).subtract(left)), BigNumber(32).subtract(left))
+            new SAR(new SHL(right, 32n - left), 32n - left)
         );
     } else {
         state.stack.push(
-            new SAR(new SHL(right, new SUB(BigNumber(32), left)), new SUB(BigNumber(32), left))
+            new SAR(new SHL(right, new SUB(32n, left)), new SUB(32n, left))
         );
     }
 };

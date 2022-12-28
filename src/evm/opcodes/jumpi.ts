@@ -1,7 +1,8 @@
-import EVM from '../classes/evm.class';
-import Opcode from '../interfaces/opcode.interface';
-import * as BigNumber from '../../node_modules/big-integer';
-import * as functionHashes from '../../data/functionHashes.json';
+import { $is } from '@dequanto/utils/$is';
+import { EVM } from '../EVM';
+import Opcode from '../interfaces/IOpcode';
+
+
 import stringify from '../utils/stringify';
 
 const updateCallDataLoad = (item: any, types: any) => {
@@ -10,7 +11,7 @@ const updateCallDataLoad = (item: any, types: any) => {
             if (
                 typeof item[i] === 'object' &&
                 item[i].name === 'CALLDATALOAD' &&
-                BigNumber.isInstance(item[i].location)
+                $is.BigInt(item[i].location)
             ) {
                 const argNumber = item[i].location
                     .subtract(4)
@@ -59,7 +60,7 @@ export class TopLevelFunction {
     readonly items: any;
     readonly returns: any;
 
-    constructor(items: any, hash: any, gasUsed: number) {
+    constructor(state: EVM, items: any, hash: any, gasUsed: number) {
         this.name = 'Function';
         this.hash = hash;
         this.gasUsed = gasUsed;
@@ -80,9 +81,9 @@ export class TopLevelFunction {
         if (this.items.length === 1 && this.items[0].name === 'RETURN') {
             this.constant = true;
         }
-        if (this.hash in functionHashes) {
-            const functionName = (functionHashes as any)[this.hash].split('(')[0];
-            const argumentTypes = (functionHashes as any)[this.hash]
+        if (this.hash in state.store.functionHashes) {
+            const functionName = (state.store.functionHashes)[this.hash].split('(')[0];
+            const argumentTypes = (state.store.functionHashes)[this.hash]
                 .replace(functionName, '')
                 .substr(1)
                 .slice(0, -1)
@@ -111,7 +112,7 @@ export class TopLevelFunction {
             )
         ) {
             returns[0].forEach((item: any) => {
-                if (BigNumber.isInstance(item)) {
+                if ($is.BigInt(item)) {
                     this.returns.push('uint256');
                 } else if (item.type) {
                     this.returns.push(item.type);
@@ -207,26 +208,26 @@ export default (opcode: Opcode, state: EVM): void => {
     const jumpLocation = state.stack.pop();
     const jumpCondition = state.stack.pop();
     const opcodes = state.getOpcodes();
-    if (!BigNumber.isInstance(jumpLocation)) {
+    if (!$is.BigInt(jumpLocation)) {
         state.halted = true;
         state.instructions.push(new JUMPI(jumpCondition, jumpLocation));
     } else {
-        const jumpLocationData = opcodes.find((o: any) => o.pc === jumpLocation.toJSNumber());
+        const jumpLocationData = opcodes.find((o: any) => o.pc === Number(jumpLocation));
         if (!jumpLocationData || jumpLocationData.name !== 'JUMPDEST') {
             state.halted = true;
             state.instructions.push(new JUMPI(jumpCondition, jumpLocation));
-        } else if (BigNumber.isInstance(jumpCondition)) {
+        } else if ($is.BigInt(jumpCondition)) {
             const jumpIndex = opcodes.indexOf(jumpLocationData);
             if (
                 jumpIndex >= 0 &&
-                !jumpCondition.equals(0) &&
-                !(opcode.pc + ':' + jumpLocation.toJSNumber() in state.jumps)
+                jumpCondition !== 0n &&
+                !(opcode.pc + ':' + Number(jumpLocation) in state.jumps)
             ) {
-                state.jumps[opcode.pc + ':' + jumpLocation.toJSNumber()] = true;
+                state.jumps[opcode.pc + ':' + Number(jumpLocation)] = true;
                 state.pc = jumpIndex;
             }
         } else if (
-            !(opcode.pc + ':' + jumpLocation.toJSNumber() in state.jumps) &&
+            !(opcode.pc + ':' + Number(jumpLocation) in state.jumps) &&
             jumpCondition.name === 'SIG'
         ) {
             const jumpIndex = opcodes.indexOf(jumpLocationData);
@@ -235,18 +236,19 @@ export default (opcode: Opcode, state: EVM): void => {
                 functionClone.pc = jumpIndex;
                 const functionCloneTree = functionClone.parse();
                 state.functions[jumpCondition.hash] = new TopLevelFunction(
+                    state,
                     functionCloneTree,
                     jumpCondition.hash,
                     functionClone.gasUsed
                 );
                 if (
-                    jumpCondition.hash in functionHashes &&
+                    jumpCondition.hash in state.store.functionHashes &&
                     functionCloneTree.length === 1 &&
                     functionCloneTree[0].name === 'RETURN' &&
                     functionCloneTree[0].items.every((item: any) => item.name === 'MappingLoad')
                 ) {
                     functionCloneTree[0].items.forEach((item: any) => {
-                        const fullFunction = (functionHashes as any)[jumpCondition.hash];
+                        const fullFunction = (state.store.functionHashes)[jumpCondition.hash];
                         state.mappings[item.location].name = fullFunction.split('(')[0];
                         if (
                             item.structlocation &&
@@ -257,12 +259,12 @@ export default (opcode: Opcode, state: EVM): void => {
                     });
                     delete state.functions[jumpCondition.hash];
                 } else if (
-                    jumpCondition.hash in functionHashes &&
+                    jumpCondition.hash in state.store.functionHashes &&
                     state.functions[jumpCondition.hash].items.length === 1 &&
                     state.functions[jumpCondition.hash].items[0].name === 'RETURN' &&
                     state.functions[jumpCondition.hash].items[0].items.length === 1 &&
                     state.functions[jumpCondition.hash].items[0].items[0].name === 'SLOAD' &&
-                    BigNumber.isInstance(
+                    $is.BigInt(
                         state.functions[jumpCondition.hash].items[0].items[0].location
                     )
                 ) {
@@ -272,13 +274,13 @@ export default (opcode: Opcode, state: EVM): void => {
                             state.variables
                         )
                     ) {
-                        const fullFunction = (functionHashes as any)[jumpCondition.hash];
+                        const fullFunction = (state.store.functionHashes)[jumpCondition.hash];
                         state.variables[
                             state.functions[jumpCondition.hash].items[0].items[0].location
                         ] = new Variable(fullFunction.split('(')[0], []);
                         delete state.functions[jumpCondition.hash];
                     } else {
-                        const fullFunction = (functionHashes as any)[jumpCondition.hash];
+                        const fullFunction = (state.store.functionHashes)[jumpCondition.hash];
                         state.variables[
                             state.functions[jumpCondition.hash].items[0].items[0].location
                         ].label = fullFunction.split('(')[0];
@@ -287,10 +289,10 @@ export default (opcode: Opcode, state: EVM): void => {
                 }
             }
         } else if (
-            !(opcode.pc + ':' + jumpLocation.toJSNumber() in state.jumps) &&
+            !(opcode.pc + ':' + Number(jumpLocation) in state.jumps) &&
             ((jumpCondition.name === 'LT' &&
                 jumpCondition.left.name === 'CALLDATASIZE' &&
-                BigNumber.isInstance(jumpCondition.right) &&
+                $is.BigInt(jumpCondition.right) &&
                 jumpCondition.right.equals(4)) ||
                 (jumpCondition.name === 'ISZERO' && jumpCondition.item.name === 'CALLDATASIZE'))
         ) {
@@ -302,7 +304,7 @@ export default (opcode: Opcode, state: EVM): void => {
                 const trueCloneTree = trueClone.parse();
                 const falseClone = state.clone();
                 falseClone.pc = state.pc + 1;
-                const falseCloneTree: any = falseClone.parse();
+                const falseCloneTree = falseClone.parse();
                 if (
                     trueCloneTree.length > 0 &&
                     trueCloneTree.length === falseCloneTree.length &&
@@ -312,6 +314,7 @@ export default (opcode: Opcode, state: EVM): void => {
                         falseCloneTree.map((item: any) => stringify(item)).join('')
                 ) {
                     state.functions[''] = new TopLevelFunction(
+                        state,
                         trueCloneTree,
                         '',
                         trueCloneTree.gasUsed
@@ -328,9 +331,9 @@ export default (opcode: Opcode, state: EVM): void => {
             } else {
                 state.instructions.push(new JUMPI(jumpCondition, jumpLocation));
             }
-        } else if (!(opcode.pc + ':' + jumpLocation.toJSNumber() in state.jumps)) {
+        } else if (!(opcode.pc + ':' + Number(jumpLocation) in state.jumps)) {
             const jumpIndex = opcodes.indexOf(jumpLocationData);
-            state.jumps[opcode.pc + ':' + jumpLocation.toJSNumber()] = true;
+            state.jumps[opcode.pc + ':' + Number(jumpLocation)] = true;
             if (jumpIndex >= 0) {
                 state.halted = true;
                 const trueClone: any = state.clone();

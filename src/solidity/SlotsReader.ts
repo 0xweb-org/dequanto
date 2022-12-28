@@ -1,3 +1,4 @@
+import alot from 'alot';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { $require } from '@dequanto/utils/$require';
 import { ISlotVarDefinition } from './SlotsParser';
@@ -5,7 +6,6 @@ import { SlotValueReader } from './readers/SlotValueReader';
 import { SlotFixedArrayReader } from './readers/SlotFixedArrayReader';
 import { SlotDynamicArrayReader } from './readers/SlotDynamicArrayReader';
 import { DataReaderInner, IDataReader } from './readers/DataReaders';
-import alot from 'alot';
 import { TAddress } from '@dequanto/models/TAddress';
 import { ASlotReader } from './readers/SlotReaders';
 import { Constructor } from 'atma-utils';

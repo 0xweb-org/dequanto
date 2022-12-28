@@ -24,6 +24,9 @@ export namespace $config {
         $global.app.config?.$set?.(path, value);
     }
 
+    /**
+     * Reloads dequanto env config from cli ARGUMENTS and DQ_SETTINGS__** environment
+     */
     export function reloadEnv(argv?: string[], env?: { [key: string]: string }) {
 
         if (argv == null && typeof process !== 'undefined' && process.argv) {

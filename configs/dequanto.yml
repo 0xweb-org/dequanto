@@ -34,6 +34,7 @@ blockchainExplorer:
 web3:
   eth:
     endpoints:
+      - url: 'https://eth.public-rpc.com'
       - url: 'https://mainnet.infura.io/v3/e38914b4ccbc4a60a71a1d6a336bc00f'
       - url: 'wss://mainnet.infura.io/ws/v3/e38914b4ccbc4a60a71a1d6a336bc00f'
 
@@ -45,12 +46,14 @@ web3:
   # semi-private accounts at https://rpc.maticvigil.com/
   polygon:
     endpoints:
+      - url: 'https://polygon-rpc.com'
       - url: 'https://rpc-mainnet.maticvigil.com/v1/d41908ce4587e7646e975270498ce8da070112a2'
       - url: 'wss://rpc-mainnet.maticvigil.com/ws/v1/d41908ce4587e7646e975270498ce8da070112a2'
 
   # from https://docs.binance.org/smart-chain/developer/rpc.html
   bsc:
     endpoints:
+      - url: 'https://bscrpc.com'
       - url: 'https://bsc-dataseed.binance.org/'
       - url: 'https://bsc-dataseed1.defibit.io/'
       - url: 'wss://bsc-ws-node.nariox.org:443'

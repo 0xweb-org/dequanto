@@ -1,4 +1,5 @@
 import { $is } from './$is';
+import { $require } from './$require';
 
 export namespace $bigint {
 
@@ -121,8 +122,8 @@ export namespace $bigint {
     }
 
     export function divToFloat (a: bigint, b: bigint, precision = 100_000n): number {
-        $is.BigInt(a);
-        $is.BigInt(b);
+        $require.BigInt(a);
+        $require.BigInt(b);
 
         let r = (a * precision) / b;
         if (r < Number.MAX_SAFE_INTEGER) {

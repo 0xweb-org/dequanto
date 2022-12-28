@@ -1,9 +1,9 @@
-import EVM from '../classes/evm.class';
-import Opcode from '../interfaces/opcode.interface';
-import * as BigNumber from '../../node_modules/big-integer';
+import { EVM } from '../EVM';
+import Opcode from '../interfaces/IOpcode';
 import { LT } from './lt';
 import { GT } from './gt';
 import stringify from '../utils/stringify';
+import { $is } from '@dequanto/utils/$is';
 
 export class ISZERO {
     readonly name: string;
@@ -24,8 +24,8 @@ export class ISZERO {
 
 export default (opcode: Opcode, state: EVM): void => {
     const item = state.stack.pop();
-    if (BigNumber.isInstance(item)) {
-        state.stack.push(BigNumber(item.isZero() === true ? 1 : 0));
+    if ($is.BigInt(item)) {
+        state.stack.push(item === 0n ? 1n : 0n);
     } else if (item.name === 'LT') {
         if (item.equal) {
             state.stack.push(new GT(item.left, item.right));
