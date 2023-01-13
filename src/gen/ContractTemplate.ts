@@ -10,11 +10,15 @@ import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { type AbiItem } from 'web3-utils';
-import { TransactionReceipt, EventLog } from 'web3-core';
+import type { BlockTransactionString } from 'web3-eth';
+import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { SubjectStream } from '@dequanto/class/SubjectStream';
+
+
 
 /* IMPORTS */
 export class $NAME$ extends ContractBase {
@@ -27,6 +31,14 @@ export class $NAME$ extends ContractBase {
     }
 
 /* METHODS */
+
+    onTx <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTx']>[0]): SubjectStream<{
+        tx: Transaction
+        block: BlockTransactionString
+        calldata: IMethods[TMethod]
+    }> {
+        return this.$onTx(options);
+    }
 
 /* EVENTS */
 
@@ -45,4 +57,7 @@ type TSender = TAccount & {
 
 /* $EVENT_INTERFACES$ */
 
+/* $METHOD_INTERFACES$ */
+
 /* STORAGE_READER_CLASS */
+

@@ -26,12 +26,15 @@ export class HardhatProvider {
     }
 
 
+    @memd.deco.memoize()
     client(network: 'hardhat' | 'localhost' = 'hardhat') {
         if (network == 'localhost') {
             return new HardhatWeb3Client({
                 endpoints: [
                     { url: 'http://127.0.0.1:8545' },
-                    { url: 'ws://127.0.0.1:8545' }
+                    // Use `manual`, will be used for subscriptions only, otherwise BatchRequests will fail, as not implemented yet
+                    // https://github.com/NomicFoundation/hardhat/issues/1324
+                    { url: 'ws://127.0.0.1:8545', manual: true },
                 ]
             });
         }
@@ -77,7 +80,7 @@ export class HardhatProvider {
         client?: Web3Client
         arguments?: any[],
         deployer?:  Ethers.Signer | ChainAccount
-    }): Promise<{ contract: Ethers.Contract, abi }> {
+    }): Promise<{ contract: Ethers.Contract, abi, bytecode }> {
 
         const client = options?.client ?? this.client();
         const args = options?.arguments ?? [];
@@ -108,12 +111,15 @@ export class HardhatProvider {
     }
 
     private getEthersProvider (client: Web3Client) {
-        if (client.options.web3) {
+        if (client.options.web3 != null) {
             let ethers: typeof Ethers & { provider /* hardhat */ } = this.hh.ethers;
             return ethers.provider;
         }
 
         let url = client.options?.endpoints[0].url;
+        if (url.startsWith('ws')) {
+            return new ethers.providers.WebSocketProvider(url);
+        }
         return new ethers.providers.JsonRpcProvider(url);
     }
 

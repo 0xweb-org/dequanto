@@ -62,6 +62,12 @@ web3:
     endpoints:
       - url: 'https://rpc.gnosischain.com/'
 
+  arbitrum:
+    chainId: 42161
+    endpoints:
+      - url: 'https://arbitrum.public-rpc.com'
+
+
   hardhat:
     endpoints:
       - url: 'http://127.0.0.1:8545/'

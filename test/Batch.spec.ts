@@ -9,6 +9,9 @@ import { $txData } from '@dequanto/utils/$txData';
 import { TestNode } from './hardhat/TestNode';
 
 UTest({
+    $config: {
+        timeout: 20_000
+    },
     async $before () {
         await TestNode.start();
     },
@@ -45,13 +48,22 @@ UTest({
 
         let r2 = await (await writer.transferNative(acc1, acc2.address, $bigint.toWei(2))).wait();
 
-        let txs = await client.getTransactions([r1.transactionHash, r2.transactionHash])
+        l`Get Transactions`
+        let txs = await client.getTransactions([r1.transactionHash, r2.transactionHash]);
 
         eq_(txs[0].hash, r1.transactionHash);
         eq_(txs[1].hash, r2.transactionHash);
 
+        l`Get Receipts`
         let receipts = await client.getTransactionReceipts([r1.transactionHash, r2.transactionHash])
         eq_(receipts[0].transactionHash, r1.transactionHash);
         eq_(receipts[1].transactionHash, r2.transactionHash);
+
+        l`Get Blocks`
+        let blocks = await client.getBlocks([0,1]);
+        eq_(blocks.length, 2);
+
+        eq_(blocks[0].number, 0);
+        eq_(blocks[1].number, 1);
     }
 })

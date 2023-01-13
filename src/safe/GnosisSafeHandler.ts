@@ -25,6 +25,7 @@ import { utils } from 'ethers'
 import { type AbiItem } from 'web3-utils';
 import { $contract } from '@dequanto/utils/$contract';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
+import { $promise } from '@dequanto/utils/$promise';
 
 
 export class GnosisSafeHandler {
@@ -119,7 +120,7 @@ export class GnosisSafeHandler {
             return;
         }
 
-        await $fn.waitForObject(async () => {
+        await $promise.waitForObject(async () => {
             let confirmations = await this.getTxConfirmations(safeTxHash);
             if (confirmations.count >= threshold) {
                 return [null, {}];

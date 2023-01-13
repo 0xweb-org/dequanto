@@ -22,6 +22,12 @@ export namespace $hex {
         return hex.replace(/^0x(0{2})+/, '').replace(/(0{2})+$/, '');
     }
 
+    export function getNumber (hex: string, byteIndex: number, bytesCount: number = 1): number {
+        let start = hex.startsWith('0x') ? 2 : 0;
+        let i = start + byteIndex * 2;
+        return parseInt(hex.substring(i, i + 2 * bytesCount), 16);
+    }
+
     /**
      * Adds `0x` to the start if not present
      */

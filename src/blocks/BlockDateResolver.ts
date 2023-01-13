@@ -4,9 +4,9 @@ import alot from 'alot';
 
 export class BlockDateResolver {
     private AVG_INITIAL = {
-        eth: 12 * 1000,
-        bsc: 3 * 1000,
-        polygon: 3 * 1000,
+        eth: 12_000,
+        bsc: 3_000,
+        polygon: 3_000,
     };
 
     private closestTime: number;
@@ -22,10 +22,7 @@ export class BlockDateResolver {
     async getBlockNumberFor (date: Date): Promise<number> {
         this.q = date;
 
-        let avg = this.AVG_INITIAL[this.client.platform];
-        if (avg == null) {
-            throw new Error(`AVG Block Time not defined for ${this.client.platform}`);
-        }
+        let avg = this.AVG_INITIAL[this.client.platform] ?? this.AVG_INITIAL['eth'];
         let now = new Date();
         let topBlock = <IKnownBlock> {
             blockNumber: await this.client.getBlockNumberCached(),
@@ -92,10 +89,10 @@ export class BlockDateResolver {
         };
         this.push(info);
         this.refineAvg();
-
         return info;
     }
 
+    /** Add a know block to set */
     private push(info: IKnownBlock) {
         for (let i = 0; i < this.known.length; i++) {
             let x = this.known[i];
@@ -106,7 +103,6 @@ export class BlockDateResolver {
         }
         this.known.push(info);
     }
-
     /** Loads the block and gets the Date of the block */
     private async getBlockDate (blockNumber: number) {
         let block = await this.client.getBlock(blockNumber);
@@ -129,8 +125,7 @@ export class BlockDateResolver {
         let diff = this.diffTimeAbs(b1.date, b2.date);
         return Math.round(diff / Math.abs(b2.blockNumber - b1.blockNumber));
     }
-
-    /** Having N>1 blocks we can better find out the AVG block time */
+    /** With N>1 blocks we can better find out the AVG block time */
     private refineAvg () {
         for (let i = 1; i < this.known.length; i++) {
             let info = this.known[i];

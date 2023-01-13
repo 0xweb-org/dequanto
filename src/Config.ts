@@ -12,6 +12,9 @@ export interface IProviderEndpoint {
     url: string
     private?: boolean
     safe?: boolean
+
+    // Is not used in generall ClientPool, only retrievable via getWeb3 method.
+    manual?: boolean
 }
 export class Config {
     settings: {

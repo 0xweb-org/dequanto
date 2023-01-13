@@ -70,11 +70,7 @@ export class BlocksWalker {
             await this.restore();
         }
 
-        let onlyIncoming = from == null && to == null;
-        if (onlyIncoming) {
-            return;
-        }
-        if (from == null) {
+        if (to != null && from == null) {
             throw new Error(`FromBlock should be set while ToBlock(${to}) is present`);
         }
 
@@ -189,9 +185,6 @@ export class BlocksWalker {
                 ? await this.client.getTransactionReceipts(hashes)
                 : null;
 
-            // await alot(hashes).mapAsync(async hash => {
-            //     return this.client.getTransaction(hash);
-            // }).toArrayAsync({ threads: 8 });
             return { block, txs, receipts };
         }).toArrayAsync({ threads: 4 });
 
@@ -312,7 +305,6 @@ class RangeWalker {
         if (from != null && from > nr) {
             throw new Error(`To (${nr}) should be greater then From (${from})`);
         }
-
         this.range.to = nr;
     }
     process (toBlock?: number) {

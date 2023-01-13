@@ -6,14 +6,25 @@ import { Directory, File } from 'atma-io';
 import { $date } from '@dequanto/utils/$date';
 import { l } from '@dequanto/utils/$logger';
 import { ContractReader } from '@dequanto/contracts/ContractReader';
-import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client';
-import Web3 from 'web3';
+import { TestNode } from '../hardhat/TestNode';
+import { $promise } from '@dequanto/utils/$promise';
+import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
+import { $bigint } from '@dequanto/utils/$bigint';
+import { TxWriter } from '@dequanto/txs/TxWriter';
+import { $contract } from '@dequanto/utils/$contract';
+import { $txData } from '@dequanto/utils/$txData';
+import { Wallet } from 'ethers';
+import { $fn } from '@dequanto/utils/$fn';
 
 declare let include;
 
 UTest({
     $config: {
         timeout: $date.parseTimespan('5min'),
+    },
+
+    async $before () {
+        await TestNode.start();
     },
 
     async 'generate polygons WETH' () {
@@ -77,27 +88,47 @@ UTest({
         has_(source, 'onTransfer');
     },
     async 'generate and check with deployed contract' () {
+
+        let provider = new HardhatProvider();
+        let client = await provider.client('localhost');
+
+
         await hh.run('compile', {
             sources: '/test/fixtures/contracts'
         });
         const gen = new Generator({
             name: 'Foo',
-            platform: 'eth',
+            platform: 'hardhat',
             source: {
                 abi: './artifacts/test/fixtures/contracts/Foo.sol/Foo.json'
             },
             output: './test/tmp/eth/'
         });
         await gen.generate();
-        let { Foo } = await include.js('/test/tmp/eth/Foo/Foo.ts');
-        let provider = new HardhatProvider();
 
-        let foo:any = await provider.deployClass(Foo.Foo, { arguments: [ 'hello' ] });
+        let { Foo } = await include.js('/test/tmp/eth/Foo/Foo.ts');
+
+        let foo:any = await provider.deployClass(Foo.Foo, {
+            arguments: [ 'hello' ],
+            client
+        });
+
         let name = await foo.name();
         eq_(name, 'hello');
 
+        await $promise.wait(2000);
+
+        l`Subscribe to transactions stream`
+        const transactionsListener = [];
+        foo.onTx('*').subscribe((data) => {
+            transactionsListener.push(data.calldata);
+        });
+
+        l`Set new name`
         let tx = await foo.setName(provider.deployer(), 'bar');
-        await tx.wait();
+        let receipt = await tx.wait();
+        eq_(receipt.status, true);
+
 
         l`Check name was set`
         name = await foo.name();
@@ -118,5 +149,16 @@ UTest({
 
         let echoed = await foo.someEcho(2);
         eq_(echoed, 2);
+
+
+        await $promise.waitForTrue(() => transactionsListener.length > 0, {
+            timeoutMessage: `Transactions were not captured`,
+            timeoutMs: 4000,
+            intervalMs: 100,
+        });
+
+        let methods = transactionsListener.map(x => x.method);
+        deepEq_(methods, ['setName']);
+
     },
 })

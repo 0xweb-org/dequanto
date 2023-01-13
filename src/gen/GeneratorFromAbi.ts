@@ -53,6 +53,18 @@ export class GeneratorFromAbi {
             .map(Str.formatMethod)
             .toArray();
 
+        let methodInterfacesArr = alot(abiJson)
+            .filter(x => x.type === 'function')
+            .groupBy(x => x.name)
+            .map(group => {
+                let item = group.values[0];
+                return Gen.serializeMethodInterfacesTs(item.name, group.values);
+            })
+            .filter(Boolean)
+            .toArray();
+
+        let methodInterfacesAll = Gen.serializeMethodInterfacesAllTs(methodInterfacesArr);
+
         let eventsArr = abiJson
             .filter(x => x.type === 'event')
             .map(x => Gen.serializeEvent(x))
@@ -200,6 +212,7 @@ export class GeneratorFromAbi {
 
             .replace(`/* STORAGE_READER_PROPERTY */`, storageReaderProperty)
             .replace(`/* STORAGE_READER_CLASS */`, storageReaderClass)
+            .replace(`/* $METHOD_INTERFACES$ */`, methodInterfacesArr.map(x => x.code).join('\n\n') + '\n\n' + methodInterfacesAll.code + '\n\n')
             ;
 
 
@@ -255,6 +268,42 @@ namespace Gen {
             return serializeReadMethodTsOverloads(abis);
         }
         return serializeWriteMethodTsOverloads(abis);
+    }
+
+    // abi.length > 1 if has method overloads
+    export function serializeMethodInterfacesTs (name: string, abis: AbiItem[]) {
+        let args = abis.map(abi => {
+            let { fnInputArguments } = serializeArgumentsTs(abi);
+            return `[ ${fnInputArguments} ]`;
+        }).join(' | ');
+
+        let iface = `IMethod${name[0].toUpperCase()}${name.substring(1)}`;
+        let code = [
+            `interface ${iface} {`,
+            `  method: "${name}"`,
+            `  arguments: ${args}`,
+            `}`
+        ];
+        return {
+            method: name,
+            interface: iface,
+            code: code.join('\n')
+        };
+    }
+
+    export function serializeMethodInterfacesAllTs (methods: { method: string, interface: string }[] ) {
+        let fields = methods.map(method => {
+            return `  ${method.method}: ${method.interface}`;
+        });
+        let code = [
+            `interface IMethods {`,
+            ...fields,
+            `  '*': { method: string, arguments: any[] } `,
+            `}`
+        ];
+        return {
+            code: code.join('\n')
+        };
     }
 
     export function serializeEvent (abi: AbiItem) {

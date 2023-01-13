@@ -26,6 +26,7 @@ import { Dai_l2SaddleSwapContract } from './contracts/polygon/Dai_l2SaddleSwapCo
 import { ITxConfig } from '@dequanto/txs/ITxConfig';
 import { ITxWriterOptions } from '@dequanto/txs/TxWriter';
 import { $address } from '@dequanto/utils/$address';
+import { $promise } from '@dequanto/utils/$promise';
 
 type THopAddresses = typeof HopAddresses;
 
@@ -266,7 +267,7 @@ export class HopBridge implements IBridge {
 
     async waitForTransfer (transferId: string, symbol: string, toPlatform: TPlatform, toAccount: TAddress): Promise<void> {
 
-        let r = await $fn.waitForObject(async () => {
+        let r = await $promise.waitForObject(async () => {
             let val = await this.status(transferId, symbol, toPlatform);
             console.log(`${ $date.format(new Date(), 'HH:mm') } Checked for bridge transfer completion: ${val}`);
             if (val) {

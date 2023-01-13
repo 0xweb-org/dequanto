@@ -2,7 +2,7 @@
   "name": "dequanto",
   "version": "0.0.5",
   "scripts": {
-    "hardhat": "hardhat node",
+    "hardhat": "node --openssl-legacy-provider ./node_modules/hardhat/internal/cli/cli.js node --hostname 127.0.0.1 --verbose",
     "build": "tsc -p tsconfig-src.json",
     "test": "atma --openssl-legacy-provider test --config='settings.base=./'"
   },
@@ -11,7 +11,7 @@
     "@nomiclabs/hardhat-web3": "^2.0.0",
     "@openzeppelin/contracts": "^4.7.0",
     "evm": "^0.2.0",
-    "hardhat": "^2.6.7",
+    "hardhat": "^2.12.6",
     "shellbee": "^0.5.16",
     "ts-nameof": "^5.0.0"
   },
@@ -33,7 +33,7 @@
     "ethers": "^5.5.1",
     "everlog": "^1.0.10",
     "includejs": "^0.16.9",
-    "memd": "^0.3.11",
+    "memd": "^0.3.12",
     "papaparse": "^5.3.1",
     "web3": "^1.6.0",
     "web3-core": "^1.6.0",

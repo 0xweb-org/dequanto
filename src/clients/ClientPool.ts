@@ -4,8 +4,7 @@ import Web3 from 'web3';
 import { type AbiItem } from 'web3-utils';
 import { $date } from '@dequanto/utils/$date';
 import { $number } from '@dequanto/utils/$number';
-import { $fn } from '@dequanto/utils/$fn';
-import { PromiEvent, type provider } from 'web3-core';
+import { PromiEvent, WebsocketProvider, type provider } from 'web3-core';
 import { PromiEventWrap } from './model/PromiEventWrap';
 import { IWeb3ClientStatus } from './interfaces/IWeb3ClientStatus';
 import { ClientStatus } from './model/ClientStatus';
@@ -16,6 +15,7 @@ import { ClientEventsStream } from './ClientEventsStream';
 import { ClientErrorUtil } from './utils/ClientErrorUtil';
 import { IWeb3ClientOptions } from './interfaces/IWeb3Client';
 import { $logger } from '@dequanto/utils/$logger';
+import { $promise } from '@dequanto/utils/$promise';
 
 declare let app;
 
@@ -90,6 +90,7 @@ export class ClientPool {
                 }
                 throw ClientPoolTraceError.create(error, opts?.trace);
             }
+
             let { status, result, error, time } = await wClient.call(fn);
 
             opts
@@ -104,7 +105,6 @@ export class ClientPool {
             }
             if (status === ClientStatus.CallError) {
                 let error = ClientPoolTraceError.create(errors.pop(), opts?.trace);
-                //console.log(`Errored ${error.message}`);
                 throw error;
                 return result;
             }
@@ -434,12 +434,12 @@ export class ClientPool {
         (async () => {
             let nodeInfosAsync = clients.map(async (wClient, idx) => {
                 try {
-                    let clientInfo = {
+                    let clientInfo = <TClientInfo> {
                         i: idx,
                         error: null,
                         status: null,
                         blockNumberBehind: 0,
-                        blockNumber: await $fn.timeoutPromise(wClient.eth.getBlockNumber(), 20_000)
+                        blockNumber: await $promise.timeout(wClient.eth.getBlockNumber(), 20_000)
                     };
                     onIntermediateSuccess(clientInfo);
                     return clientInfo;
@@ -472,8 +472,8 @@ export class ClientPool {
 
             const blockLatest = alot(nodeInfos).max(x => x.blockNumber);
 
-            nodeInfos.forEach(node => {
-                node.blockNumberBehind = node.blockNumber - blockLatest;
+            nodeInfos.forEach(info => {
+                info.blockNumberBehind = info.blockNumber - blockLatest;
             });
             nodeInfos.forEach(info => {
                 this.clients[info.i].status = isOk(info);
@@ -499,11 +499,12 @@ export class ClientPool {
         function onIntermediateSuccess (info: TClientInfo) {
             const TOLERATE_BLOCK_COUNT = 5;
             const WAIT_POOL_OK = Math.min(3, clientInfos.length);
+            const count = clientInfos.push(info);
 
             if (isReady === true) {
                 return;
             }
-            if (clientInfos.push(info) < WAIT_POOL_OK) {
+            if (count < WAIT_POOL_OK) {
                 return;
             }
 
@@ -517,8 +518,9 @@ export class ClientPool {
             }
             if (ok.length >= WAIT_POOL_OK) {
                 ok.forEach(info => {
-                    clients[info.i].status = 'ok';
+                    clients[info.i].status = info.status = 'ok';
                 });
+
                 isReady = true;
                 ready.resolve();
             }

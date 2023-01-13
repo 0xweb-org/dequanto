@@ -3,13 +3,14 @@ import memd from 'memd';
 import alot from 'alot';
 import type { Web3Client } from '@dequanto/clients/Web3Client';
 import type { ITxWriterOptions, TxWriter } from '@dequanto/txs/TxWriter';
-import type { Log, PastLogsOptions, TransactionReceipt } from 'web3-core';
+import type { Log, PastLogsOptions, Transaction, TransactionReceipt } from 'web3-core';
 import type { BufferLike } from 'ethereumjs-util';
 import type { TAccount } from "@dequanto/models/TAccount";
 import type { AbiItem } from 'web3-utils';
 import type { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import type { TAddress } from '@dequanto/models/TAddress';
 import type { ITxConfig } from '@dequanto/txs/ITxConfig';
+import type { BlockTransactionString } from 'web3-eth';
 import { utils } from 'ethers'
 import { $contract } from '@dequanto/utils/$contract';
 import { $class } from '@dequanto/utils/$class';
@@ -19,6 +20,8 @@ import { ContractReader, ContractReaderUtils } from './ContractReader';
 import { ContractWriter } from './ContractWriter';
 import { ContractStream } from './ContractStream';
 import { TxTopicInMemoryProvider } from '@dequanto/txs/receipt/TxTopicInMemoryProvider';
+import { BlocksTxIndexer, TBlockListener } from '@dequanto/indexer/BlocksTxIndexer';
+import { SubjectStream } from '@dequanto/class/SubjectStream';
 
 
 export abstract class ContractBase {
@@ -113,6 +116,46 @@ export abstract class ContractBase {
         return stream.on(event, cb);
     }
 
+    protected $onTx (options?: BlockWalker.IBlockWalkerOptions): SubjectStream<{ tx: Transaction, block: BlockTransactionString, calldata: { method, arguments: any[] } }> {
+
+        options ??= {};
+
+        type TSubject =  { tx: Transaction, block: BlockTransactionString, calldata: { method, arguments: any[] } };
+        let stream = new SubjectStream<TSubject>();
+
+        BlockWalker.onBlock(this.client, options, async (client, block, { txs }) => {
+            txs = txs.filter(x => x.to === this.address);
+            if (txs.length === 0) {
+                return;
+            }
+
+            txs.forEach(tx => {
+                let calldata = this.parseInputData(tx.input);
+
+                let method = options.filter?.method;
+                if (method != null && method !== '*') {
+                    if (calldata.name !== method) {
+                        return;
+                    }
+                }
+                let args = options.filter?.arguments;
+                if (args != null) {
+                    for (let i = 0; i < args.length; i++) {
+                        let val = args[i];
+                        if (val != null && val != calldata.args[i]) {
+                            return;
+                        }
+                    }
+                }
+                stream.onValue({
+                    block,
+                    tx,
+                    calldata: { method: calldata.name, arguments: calldata.args }
+                });
+            })
+        });
+        return stream;
+    }
 
     protected async $write (abi: string | AbiItem, account: TAccount & {  value?: number | string | bigint }, ...params): Promise<TxWriter> {
         let writer = await this.getContractWriter();
@@ -121,7 +164,6 @@ export abstract class ContractBase {
             writerConfig: this.writerConfig,
         });
     }
-
 
     protected $getAbiItem (type: 'event' | 'function' | 'string', name: string, argsCount?: number) {
         let arr = this.abi.filter(x => x.type === type && x.name === name);
@@ -232,4 +274,44 @@ export abstract class ContractBase {
         let stream = di.resolve(ContractStream, this.address, this.abi, this.client);
         return stream;
     }
+}
+
+namespace BlockWalker {
+
+    export interface IBlockWalkerOptions {
+        name?: string,
+        persistance?: boolean,
+        //mempool?: boolean,
+        fromBlock?: number
+        filter?: {
+            method?: string,
+            arguments?: any[]
+        }
+    }
+
+    const indexers = {} as { [key: string]: BlocksTxIndexer } ;
+
+    export function onBlock (client: Web3Client, options: IBlockWalkerOptions, cb: TBlockListener ) {
+
+        let key = `${client.platform}_${options?.name ?? ''}_${options?.persistance ?? false}`;
+        let current = indexers[key];
+        if (current) {
+            current.onBlock(cb);
+            return current;
+        }
+
+        let indexer = new BlocksTxIndexer(client.platform, {
+            name: options.name,
+            persistance: options.persistance,
+            loadTransactions: true,
+            client: client,
+        });
+
+        indexers[key] = indexer;
+        indexer.onBlock(cb);
+        indexer.start();
+        return indexer;
+    }
+
+
 }

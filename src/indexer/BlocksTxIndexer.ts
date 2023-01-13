@@ -1,5 +1,5 @@
-import { BlockTransactionString } from 'web3-eth';
-import { Transaction, TransactionReceipt } from 'web3-core';
+import type { BlockTransactionString } from 'web3-eth';
+import type { Transaction, TransactionReceipt } from 'web3-core';
 import { BlocksWalker } from './handlers/BlocksWalker';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TPlatform } from '@dequanto/models/TPlatform';
@@ -19,6 +19,8 @@ export interface IBlocksTxIndexerOptions {
 
     /** Load receipts from the block and provide them to the visitor method */
     loadReceipts?: boolean
+
+    client?: Web3Client
 }
 export type TBlockListener = (
     client: Web3Client,
@@ -33,7 +35,7 @@ export class BlocksTxIndexer {
 
     constructor (public platform: TPlatform, public opts?: IBlocksTxIndexerOptions) {
 
-        this.client = Web3ClientFactory.get(platform, {
+        this.client = this.opts.client ?? Web3ClientFactory.get(platform, {
             ws: true
         });
         this.walker = new BlocksWalker({
@@ -63,6 +65,10 @@ export class BlocksTxIndexer {
 
         if (to == null) {
             this.client.subscribe('newBlockHeaders', (error, blockHeader) => {
+                if (error) {
+                    $logger.error(`Subscription to "newBlockHeaders" failed with`, error);
+                    return;
+                }
                 this.walker.processUntil(blockHeader.number);
             });
         }
