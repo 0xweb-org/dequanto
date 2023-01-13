@@ -136,6 +136,14 @@ export abstract class Web3Client implements IWeb3Client {
             return BigInt(weiStr);
         });
     }
+    getBalances (addresses: TAddress[], blockNumber?: number): Promise<bigint[]> {
+        return this.pool.call(async web3 => {
+            let reqs = addresses.map(address => cb => (web3.eth.getBalance as any).request(address, blockNumber, cb));
+            let batch = new Web3BatchRequests.BatchRequest<string>(web3, reqs);
+            let weiStrings = await batch.execute();
+            return weiStrings.map(weiStr => BigInt(weiStr));
+        });
+    }
     getTransactionCount(address: TAddress, type?: 'pending' | string) {
         return this.pool.call(web3 => {
             return web3.eth.getTransactionCount(address, type);
@@ -391,7 +399,7 @@ namespace Web3BatchRequests {
         return contract.methods[method](...params).call(...callArgs);
     }
 
-    export class BatchRequest {
+    export class BatchRequest<TReturnItem = any> {
         private promise = new class_Dfr();
         private results = new Array(this.requests.length);
         private awaitables = this.requests.length;
@@ -400,7 +408,7 @@ namespace Web3BatchRequests {
         constructor (private web3: Web3, private requests: (IContractRequest | IRequestBuilder)[]) {
 
         }
-        async execute (): Promise<any[]> {
+        async execute (): Promise<TReturnItem[]> {
             if (this.requests.length === 0) {
                 return this.promise.resolve(this.results);
             }

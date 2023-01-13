@@ -7,6 +7,7 @@ import { $bigint } from '@dequanto/utils/$bigint';
 import { $contract } from '@dequanto/utils/$contract';
 import { $txData } from '@dequanto/utils/$txData';
 import { TestNode } from './hardhat/TestNode';
+import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client';
 
 UTest({
     $config: {
@@ -14,6 +15,26 @@ UTest({
     },
     async $before () {
         await TestNode.start();
+    },
+    async 'check balances' () {
+        let provider = new HardhatProvider();
+        let client = await provider.client('localhost');
+
+        let acc1 = provider.deployer(1);
+        let acc2 = provider.deployer(2);
+
+        let balancesBatched = await client.getBalances([
+            acc1.address,
+            acc2.address,
+        ]);
+        let balancesSingle = await Promise.all([
+            client.getBalance(acc1.address),
+            client.getBalance(acc2.address),
+        ]);
+
+        eq_(balancesBatched[0], balancesSingle[0]);
+        eq_(balancesBatched[1], balancesSingle[1]);
+
     },
     async 'check subscriptions and batch tx resolver' () {
 

@@ -113,7 +113,7 @@ export class BlocksWalker {
 
     private isRestored = false;
 
-    @memd.deco.memoize()
+    @memd.deco.memoize({ perInstance: true })
     private async restore () {
         try {
             if (this.params.persistance !== false) {
