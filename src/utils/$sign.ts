@@ -4,8 +4,6 @@ import { $buffer, TBytes } from './$buffer';
 import { $is } from './$is';
 import type { TransactionConfig } from 'web3-core';
 import { ethers } from 'ethers';
-import { $signRaw } from './$signRaw';
-import { $contract } from './$contract';
 
 export namespace $sign {
     export type TSignature = {

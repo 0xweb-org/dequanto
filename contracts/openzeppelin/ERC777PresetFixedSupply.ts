@@ -1,27 +1,32 @@
 /**
- *  AUTO-Generated Class: 2022-08-11 11:20
+ *  AUTO-Generated Class: 2023-01-19 12:43
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
-import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
+import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { type AbiItem } from 'web3-utils';
-import { TransactionReceipt, EventLog } from 'web3-core';
+import type { BlockTransactionString } from 'web3-eth';
+import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { SubjectStream } from '@dequanto/class/SubjectStream';
+
+
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 export class ERC777PresetFixedSupply extends ContractBase {
     constructor(
         public address: TAddress = '',
-        public client: Web3Client = di.resolve(EthWeb3Client),
-        public explorer: IBlockChainExplorer = di.resolve(Etherscan)
+        public client: Web3Client = di.resolve(EthWeb3Client, ),
+        public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
     }
@@ -116,32 +121,47 @@ export class ERC777PresetFixedSupply extends ContractBase {
         return this.$write(this.$getAbiItem('function', 'transferFrom'), sender, holder, recipient, amount);
     }
 
-    onApproval (fn: (event: EventLog, owner: TAddress, spender: TAddress, value: bigint) => void): ClientEventsStream<any> {
-        return this.$on('Approval', fn);
+    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+        tx: Transaction
+        block: BlockTransactionString
+        calldata: IMethods[TMethod]
+    }> {
+        options ??= {};
+        options.filter ??= {};
+        options.filter.method = <any> method;
+        return <any> this.$onTransaction(options);
     }
 
-    onAuthorizedOperator (fn: (event: EventLog, operator: TAddress, tokenHolder: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('AuthorizedOperator', fn);
+    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+        return this.$onLog(event, cb);
     }
 
-    onBurned (fn: (event: EventLog, operator: TAddress, from: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike) => void): ClientEventsStream<any> {
-        return this.$on('Burned', fn);
+    onApproval (fn?: (event: TClientEventsStreamData<TLogApprovalParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalParameters>> {
+        return this.$onLog('Approval', fn);
     }
 
-    onMinted (fn: (event: EventLog, operator: TAddress, to: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike) => void): ClientEventsStream<any> {
-        return this.$on('Minted', fn);
+    onAuthorizedOperator (fn?: (event: TClientEventsStreamData<TLogAuthorizedOperatorParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogAuthorizedOperatorParameters>> {
+        return this.$onLog('AuthorizedOperator', fn);
     }
 
-    onRevokedOperator (fn: (event: EventLog, operator: TAddress, tokenHolder: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('RevokedOperator', fn);
+    onBurned (fn?: (event: TClientEventsStreamData<TLogBurnedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogBurnedParameters>> {
+        return this.$onLog('Burned', fn);
     }
 
-    onSent (fn: (event: EventLog, operator: TAddress, from: TAddress, to: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike) => void): ClientEventsStream<any> {
-        return this.$on('Sent', fn);
+    onMinted (fn?: (event: TClientEventsStreamData<TLogMintedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogMintedParameters>> {
+        return this.$onLog('Minted', fn);
     }
 
-    onTransfer (fn: (event: EventLog, from: TAddress, to: TAddress, value: bigint) => void): ClientEventsStream<any> {
-        return this.$on('Transfer', fn);
+    onRevokedOperator (fn?: (event: TClientEventsStreamData<TLogRevokedOperatorParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRevokedOperatorParameters>> {
+        return this.$onLog('RevokedOperator', fn);
+    }
+
+    onSent (fn?: (event: TClientEventsStreamData<TLogSentParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogSentParameters>> {
+        return this.$onLog('Sent', fn);
+    }
+
+    onTransfer (fn?: (event: TClientEventsStreamData<TLogTransferParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogTransferParameters>> {
+        return this.$onLog('Transfer', fn);
     }
 
     extractLogsApproval (tx: TransactionReceipt): ITxLogItem<TLogApproval>[] {
@@ -285,6 +305,8 @@ export class ERC777PresetFixedSupply extends ContractBase {
     }
 
     abi: AbiItem[] = [{"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"},{"internalType":"address[]","name":"defaultOperators","type":"address[]"},{"internalType":"uint256","name":"initialSupply","type":"uint256"},{"internalType":"address","name":"owner","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":true,"internalType":"address","name":"tokenHolder","type":"address"}],"name":"AuthorizedOperator","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"},{"indexed":false,"internalType":"bytes","name":"operatorData","type":"bytes"}],"name":"Burned","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"},{"indexed":false,"internalType":"bytes","name":"operatorData","type":"bytes"}],"name":"Minted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":true,"internalType":"address","name":"tokenHolder","type":"address"}],"name":"RevokedOperator","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"},{"indexed":false,"internalType":"bytes","name":"operatorData","type":"bytes"}],"name":"Sent","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"holder","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"}],"name":"authorizeOperator","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"tokenHolder","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"defaultOperators","outputs":[{"internalType":"address[]","name":"","type":"address[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"granularity","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"address","name":"tokenHolder","type":"address"}],"name":"isOperatorFor","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"},{"internalType":"bytes","name":"operatorData","type":"bytes"}],"name":"operatorBurn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"},{"internalType":"bytes","name":"operatorData","type":"bytes"}],"name":"operatorSend","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"}],"name":"revokeOperator","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"send","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"holder","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"}]
+
+    
 }
 
 type TSender = TAccount & {
@@ -293,23 +315,159 @@ type TSender = TAccount & {
 
     type TLogApproval = {
         owner: TAddress, spender: TAddress, value: bigint
-    }
+    };
+    type TLogApprovalParameters = [ owner: TAddress, spender: TAddress, value: bigint ];
     type TLogAuthorizedOperator = {
         operator: TAddress, tokenHolder: TAddress
-    }
+    };
+    type TLogAuthorizedOperatorParameters = [ operator: TAddress, tokenHolder: TAddress ];
     type TLogBurned = {
         operator: TAddress, from: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike
-    }
+    };
+    type TLogBurnedParameters = [ operator: TAddress, from: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike ];
     type TLogMinted = {
         operator: TAddress, to: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike
-    }
+    };
+    type TLogMintedParameters = [ operator: TAddress, to: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike ];
     type TLogRevokedOperator = {
         operator: TAddress, tokenHolder: TAddress
-    }
+    };
+    type TLogRevokedOperatorParameters = [ operator: TAddress, tokenHolder: TAddress ];
     type TLogSent = {
         operator: TAddress, from: TAddress, to: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike
-    }
+    };
+    type TLogSentParameters = [ operator: TAddress, from: TAddress, to: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike ];
     type TLogTransfer = {
         from: TAddress, to: TAddress, value: bigint
-    }
+    };
+    type TLogTransferParameters = [ from: TAddress, to: TAddress, value: bigint ];
+
+interface IEvents {
+  Approval: TLogApprovalParameters
+  AuthorizedOperator: TLogAuthorizedOperatorParameters
+  Burned: TLogBurnedParameters
+  Minted: TLogMintedParameters
+  RevokedOperator: TLogRevokedOperatorParameters
+  Sent: TLogSentParameters
+  Transfer: TLogTransferParameters
+  '*': any[] 
+}
+
+
+
+interface IMethodAllowance {
+  method: "allowance"
+  arguments: [ holder: TAddress, spender: TAddress ]
+}
+
+interface IMethodApprove {
+  method: "approve"
+  arguments: [ spender: TAddress, value: bigint ]
+}
+
+interface IMethodAuthorizeOperator {
+  method: "authorizeOperator"
+  arguments: [ operator: TAddress ]
+}
+
+interface IMethodBalanceOf {
+  method: "balanceOf"
+  arguments: [ tokenHolder: TAddress ]
+}
+
+interface IMethodBurn {
+  method: "burn"
+  arguments: [ amount: bigint, data: TBufferLike ]
+}
+
+interface IMethodDecimals {
+  method: "decimals"
+  arguments: [  ]
+}
+
+interface IMethodDefaultOperators {
+  method: "defaultOperators"
+  arguments: [  ]
+}
+
+interface IMethodGranularity {
+  method: "granularity"
+  arguments: [  ]
+}
+
+interface IMethodIsOperatorFor {
+  method: "isOperatorFor"
+  arguments: [ operator: TAddress, tokenHolder: TAddress ]
+}
+
+interface IMethodName {
+  method: "name"
+  arguments: [  ]
+}
+
+interface IMethodOperatorBurn {
+  method: "operatorBurn"
+  arguments: [ account: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike ]
+}
+
+interface IMethodOperatorSend {
+  method: "operatorSend"
+  arguments: [ _sender: TAddress, recipient: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike ]
+}
+
+interface IMethodRevokeOperator {
+  method: "revokeOperator"
+  arguments: [ operator: TAddress ]
+}
+
+interface IMethodSend {
+  method: "send"
+  arguments: [ recipient: TAddress, amount: bigint, data: TBufferLike ]
+}
+
+interface IMethodSymbol {
+  method: "symbol"
+  arguments: [  ]
+}
+
+interface IMethodTotalSupply {
+  method: "totalSupply"
+  arguments: [  ]
+}
+
+interface IMethodTransfer {
+  method: "transfer"
+  arguments: [ recipient: TAddress, amount: bigint ]
+}
+
+interface IMethodTransferFrom {
+  method: "transferFrom"
+  arguments: [ holder: TAddress, recipient: TAddress, amount: bigint ]
+}
+
+interface IMethods {
+  allowance: IMethodAllowance
+  approve: IMethodApprove
+  authorizeOperator: IMethodAuthorizeOperator
+  balanceOf: IMethodBalanceOf
+  burn: IMethodBurn
+  decimals: IMethodDecimals
+  defaultOperators: IMethodDefaultOperators
+  granularity: IMethodGranularity
+  isOperatorFor: IMethodIsOperatorFor
+  name: IMethodName
+  operatorBurn: IMethodOperatorBurn
+  operatorSend: IMethodOperatorSend
+  revokeOperator: IMethodRevokeOperator
+  send: IMethodSend
+  symbol: IMethodSymbol
+  totalSupply: IMethodTotalSupply
+  transfer: IMethodTransfer
+  transferFrom: IMethodTransferFrom
+  '*': { method: string, arguments: any[] } 
+}
+
+
+
+
 

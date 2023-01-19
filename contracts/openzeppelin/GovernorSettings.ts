@@ -1,27 +1,32 @@
 /**
- *  AUTO-Generated Class: 2022-08-11 11:20
+ *  AUTO-Generated Class: 2023-01-19 12:43
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
-import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
+import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { type AbiItem } from 'web3-utils';
-import { TransactionReceipt, EventLog } from 'web3-core';
+import type { BlockTransactionString } from 'web3-eth';
+import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { SubjectStream } from '@dequanto/class/SubjectStream';
+
+
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 export class GovernorSettings extends ContractBase {
     constructor(
         public address: TAddress = '',
-        public client: Web3Client = di.resolve(EthWeb3Client),
-        public explorer: IBlockChainExplorer = di.resolve(Etherscan)
+        public client: Web3Client = di.resolve(EthWeb3Client, ),
+        public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
     }
@@ -181,36 +186,51 @@ export class GovernorSettings extends ContractBase {
         return this.$read('function votingPeriod() returns uint256');
     }
 
-    onProposalCanceled (fn: (event: EventLog, proposalId: bigint) => void): ClientEventsStream<any> {
-        return this.$on('ProposalCanceled', fn);
+    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+        tx: Transaction
+        block: BlockTransactionString
+        calldata: IMethods[TMethod]
+    }> {
+        options ??= {};
+        options.filter ??= {};
+        options.filter.method = <any> method;
+        return <any> this.$onTransaction(options);
     }
 
-    onProposalCreated (fn: (event: EventLog, proposalId: bigint, proposer: TAddress, targets: TAddress[], values: bigint[], signatures: string[], calldatas: TBufferLike[], startBlock: bigint, endBlock: bigint, description: string) => void): ClientEventsStream<any> {
-        return this.$on('ProposalCreated', fn);
+    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+        return this.$onLog(event, cb);
     }
 
-    onProposalExecuted (fn: (event: EventLog, proposalId: bigint) => void): ClientEventsStream<any> {
-        return this.$on('ProposalExecuted', fn);
+    onProposalCanceled (fn?: (event: TClientEventsStreamData<TLogProposalCanceledParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogProposalCanceledParameters>> {
+        return this.$onLog('ProposalCanceled', fn);
     }
 
-    onProposalThresholdSet (fn: (event: EventLog, oldProposalThreshold: bigint, newProposalThreshold: bigint) => void): ClientEventsStream<any> {
-        return this.$on('ProposalThresholdSet', fn);
+    onProposalCreated (fn?: (event: TClientEventsStreamData<TLogProposalCreatedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogProposalCreatedParameters>> {
+        return this.$onLog('ProposalCreated', fn);
     }
 
-    onVoteCast (fn: (event: EventLog, voter: TAddress, proposalId: bigint, support: number, weight: bigint, reason: string) => void): ClientEventsStream<any> {
-        return this.$on('VoteCast', fn);
+    onProposalExecuted (fn?: (event: TClientEventsStreamData<TLogProposalExecutedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogProposalExecutedParameters>> {
+        return this.$onLog('ProposalExecuted', fn);
     }
 
-    onVoteCastWithParams (fn: (event: EventLog, voter: TAddress, proposalId: bigint, support: number, weight: bigint, reason: string, params: TBufferLike) => void): ClientEventsStream<any> {
-        return this.$on('VoteCastWithParams', fn);
+    onProposalThresholdSet (fn?: (event: TClientEventsStreamData<TLogProposalThresholdSetParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogProposalThresholdSetParameters>> {
+        return this.$onLog('ProposalThresholdSet', fn);
     }
 
-    onVotingDelaySet (fn: (event: EventLog, oldVotingDelay: bigint, newVotingDelay: bigint) => void): ClientEventsStream<any> {
-        return this.$on('VotingDelaySet', fn);
+    onVoteCast (fn?: (event: TClientEventsStreamData<TLogVoteCastParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogVoteCastParameters>> {
+        return this.$onLog('VoteCast', fn);
     }
 
-    onVotingPeriodSet (fn: (event: EventLog, oldVotingPeriod: bigint, newVotingPeriod: bigint) => void): ClientEventsStream<any> {
-        return this.$on('VotingPeriodSet', fn);
+    onVoteCastWithParams (fn?: (event: TClientEventsStreamData<TLogVoteCastWithParamsParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogVoteCastWithParamsParameters>> {
+        return this.$onLog('VoteCastWithParams', fn);
+    }
+
+    onVotingDelaySet (fn?: (event: TClientEventsStreamData<TLogVotingDelaySetParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogVotingDelaySetParameters>> {
+        return this.$onLog('VotingDelaySet', fn);
+    }
+
+    onVotingPeriodSet (fn?: (event: TClientEventsStreamData<TLogVotingPeriodSetParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogVotingPeriodSetParameters>> {
+        return this.$onLog('VotingPeriodSet', fn);
     }
 
     extractLogsProposalCanceled (tx: TransactionReceipt): ITxLogItem<TLogProposalCanceled>[] {
@@ -374,6 +394,8 @@ export class GovernorSettings extends ContractBase {
     }
 
     abi: AbiItem[] = [{"inputs":[],"name":"Empty","type":"error"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"ProposalCanceled","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"proposalId","type":"uint256"},{"indexed":false,"internalType":"address","name":"proposer","type":"address"},{"indexed":false,"internalType":"address[]","name":"targets","type":"address[]"},{"indexed":false,"internalType":"uint256[]","name":"values","type":"uint256[]"},{"indexed":false,"internalType":"string[]","name":"signatures","type":"string[]"},{"indexed":false,"internalType":"bytes[]","name":"calldatas","type":"bytes[]"},{"indexed":false,"internalType":"uint256","name":"startBlock","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"endBlock","type":"uint256"},{"indexed":false,"internalType":"string","name":"description","type":"string"}],"name":"ProposalCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"ProposalExecuted","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"oldProposalThreshold","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"newProposalThreshold","type":"uint256"}],"name":"ProposalThresholdSet","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"voter","type":"address"},{"indexed":false,"internalType":"uint256","name":"proposalId","type":"uint256"},{"indexed":false,"internalType":"uint8","name":"support","type":"uint8"},{"indexed":false,"internalType":"uint256","name":"weight","type":"uint256"},{"indexed":false,"internalType":"string","name":"reason","type":"string"}],"name":"VoteCast","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"voter","type":"address"},{"indexed":false,"internalType":"uint256","name":"proposalId","type":"uint256"},{"indexed":false,"internalType":"uint8","name":"support","type":"uint8"},{"indexed":false,"internalType":"uint256","name":"weight","type":"uint256"},{"indexed":false,"internalType":"string","name":"reason","type":"string"},{"indexed":false,"internalType":"bytes","name":"params","type":"bytes"}],"name":"VoteCastWithParams","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"oldVotingDelay","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"newVotingDelay","type":"uint256"}],"name":"VotingDelaySet","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"oldVotingPeriod","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"newVotingPeriod","type":"uint256"}],"name":"VotingPeriodSet","type":"event"},{"inputs":[],"name":"BALLOT_TYPEHASH","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"COUNTING_MODE","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"EXTENDED_BALLOT_TYPEHASH","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"},{"internalType":"uint8","name":"support","type":"uint8"}],"name":"castVote","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"},{"internalType":"uint8","name":"support","type":"uint8"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"castVoteBySig","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"},{"internalType":"uint8","name":"support","type":"uint8"},{"internalType":"string","name":"reason","type":"string"}],"name":"castVoteWithReason","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"},{"internalType":"uint8","name":"support","type":"uint8"},{"internalType":"string","name":"reason","type":"string"},{"internalType":"bytes","name":"params","type":"bytes"}],"name":"castVoteWithReasonAndParams","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"},{"internalType":"uint8","name":"support","type":"uint8"},{"internalType":"string","name":"reason","type":"string"},{"internalType":"bytes","name":"params","type":"bytes"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"castVoteWithReasonAndParamsBySig","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"targets","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"},{"internalType":"bytes[]","name":"calldatas","type":"bytes[]"},{"internalType":"bytes32","name":"descriptionHash","type":"bytes32"}],"name":"execute","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"blockNumber","type":"uint256"}],"name":"getVotes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"blockNumber","type":"uint256"},{"internalType":"bytes","name":"params","type":"bytes"}],"name":"getVotesWithParams","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"},{"internalType":"address","name":"account","type":"address"}],"name":"hasVoted","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address[]","name":"targets","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"},{"internalType":"bytes[]","name":"calldatas","type":"bytes[]"},{"internalType":"bytes32","name":"descriptionHash","type":"bytes32"}],"name":"hashProposal","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256[]","name":"","type":"uint256[]"},{"internalType":"uint256[]","name":"","type":"uint256[]"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC1155BatchReceived","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC1155Received","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC721Received","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"proposalDeadline","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"proposalSnapshot","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"proposalThreshold","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address[]","name":"targets","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"},{"internalType":"bytes[]","name":"calldatas","type":"bytes[]"},{"internalType":"string","name":"description","type":"string"}],"name":"propose","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"blockNumber","type":"uint256"}],"name":"quorum","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"target","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"relay","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"newProposalThreshold","type":"uint256"}],"name":"setProposalThreshold","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"newVotingDelay","type":"uint256"}],"name":"setVotingDelay","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"newVotingPeriod","type":"uint256"}],"name":"setVotingPeriod","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"state","outputs":[{"internalType":"enum IGovernor.ProposalState","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"version","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"votingDelay","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"votingPeriod","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"stateMutability":"payable","type":"receive"}]
+
+    
 }
 
 type TSender = TAccount & {
@@ -382,26 +404,242 @@ type TSender = TAccount & {
 
     type TLogProposalCanceled = {
         proposalId: bigint
-    }
+    };
+    type TLogProposalCanceledParameters = [ proposalId: bigint ];
     type TLogProposalCreated = {
         proposalId: bigint, proposer: TAddress, targets: TAddress[], values: bigint[], signatures: string[], calldatas: TBufferLike[], startBlock: bigint, endBlock: bigint, description: string
-    }
+    };
+    type TLogProposalCreatedParameters = [ proposalId: bigint, proposer: TAddress, targets: TAddress[], values: bigint[], signatures: string[], calldatas: TBufferLike[], startBlock: bigint, endBlock: bigint, description: string ];
     type TLogProposalExecuted = {
         proposalId: bigint
-    }
+    };
+    type TLogProposalExecutedParameters = [ proposalId: bigint ];
     type TLogProposalThresholdSet = {
         oldProposalThreshold: bigint, newProposalThreshold: bigint
-    }
+    };
+    type TLogProposalThresholdSetParameters = [ oldProposalThreshold: bigint, newProposalThreshold: bigint ];
     type TLogVoteCast = {
         voter: TAddress, proposalId: bigint, support: number, weight: bigint, reason: string
-    }
+    };
+    type TLogVoteCastParameters = [ voter: TAddress, proposalId: bigint, support: number, weight: bigint, reason: string ];
     type TLogVoteCastWithParams = {
         voter: TAddress, proposalId: bigint, support: number, weight: bigint, reason: string, params: TBufferLike
-    }
+    };
+    type TLogVoteCastWithParamsParameters = [ voter: TAddress, proposalId: bigint, support: number, weight: bigint, reason: string, params: TBufferLike ];
     type TLogVotingDelaySet = {
         oldVotingDelay: bigint, newVotingDelay: bigint
-    }
+    };
+    type TLogVotingDelaySetParameters = [ oldVotingDelay: bigint, newVotingDelay: bigint ];
     type TLogVotingPeriodSet = {
         oldVotingPeriod: bigint, newVotingPeriod: bigint
-    }
+    };
+    type TLogVotingPeriodSetParameters = [ oldVotingPeriod: bigint, newVotingPeriod: bigint ];
+
+interface IEvents {
+  ProposalCanceled: TLogProposalCanceledParameters
+  ProposalCreated: TLogProposalCreatedParameters
+  ProposalExecuted: TLogProposalExecutedParameters
+  ProposalThresholdSet: TLogProposalThresholdSetParameters
+  VoteCast: TLogVoteCastParameters
+  VoteCastWithParams: TLogVoteCastWithParamsParameters
+  VotingDelaySet: TLogVotingDelaySetParameters
+  VotingPeriodSet: TLogVotingPeriodSetParameters
+  '*': any[] 
+}
+
+
+
+interface IMethodBALLOT_TYPEHASH {
+  method: "BALLOT_TYPEHASH"
+  arguments: [  ]
+}
+
+interface IMethodCOUNTING_MODE {
+  method: "COUNTING_MODE"
+  arguments: [  ]
+}
+
+interface IMethodEXTENDED_BALLOT_TYPEHASH {
+  method: "EXTENDED_BALLOT_TYPEHASH"
+  arguments: [  ]
+}
+
+interface IMethodCastVote {
+  method: "castVote"
+  arguments: [ proposalId: bigint, support: number ]
+}
+
+interface IMethodCastVoteBySig {
+  method: "castVoteBySig"
+  arguments: [ proposalId: bigint, support: number, v: number, r: TBufferLike, s: TBufferLike ]
+}
+
+interface IMethodCastVoteWithReason {
+  method: "castVoteWithReason"
+  arguments: [ proposalId: bigint, support: number, reason: string ]
+}
+
+interface IMethodCastVoteWithReasonAndParams {
+  method: "castVoteWithReasonAndParams"
+  arguments: [ proposalId: bigint, support: number, reason: string, params: TBufferLike ]
+}
+
+interface IMethodCastVoteWithReasonAndParamsBySig {
+  method: "castVoteWithReasonAndParamsBySig"
+  arguments: [ proposalId: bigint, support: number, reason: string, params: TBufferLike, v: number, r: TBufferLike, s: TBufferLike ]
+}
+
+interface IMethodExecute {
+  method: "execute"
+  arguments: [ targets: TAddress[], values: bigint[], calldatas: TBufferLike[], descriptionHash: TBufferLike ]
+}
+
+interface IMethodGetVotes {
+  method: "getVotes"
+  arguments: [ account: TAddress, blockNumber: bigint ]
+}
+
+interface IMethodGetVotesWithParams {
+  method: "getVotesWithParams"
+  arguments: [ account: TAddress, blockNumber: bigint, params: TBufferLike ]
+}
+
+interface IMethodHasVoted {
+  method: "hasVoted"
+  arguments: [ proposalId: bigint, account: TAddress ]
+}
+
+interface IMethodHashProposal {
+  method: "hashProposal"
+  arguments: [ targets: TAddress[], values: bigint[], calldatas: TBufferLike[], descriptionHash: TBufferLike ]
+}
+
+interface IMethodName {
+  method: "name"
+  arguments: [  ]
+}
+
+interface IMethodOnERC1155BatchReceived {
+  method: "onERC1155BatchReceived"
+  arguments: [ input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TBufferLike ]
+}
+
+interface IMethodOnERC1155Received {
+  method: "onERC1155Received"
+  arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TBufferLike ]
+}
+
+interface IMethodOnERC721Received {
+  method: "onERC721Received"
+  arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: TBufferLike ]
+}
+
+interface IMethodProposalDeadline {
+  method: "proposalDeadline"
+  arguments: [ proposalId: bigint ]
+}
+
+interface IMethodProposalSnapshot {
+  method: "proposalSnapshot"
+  arguments: [ proposalId: bigint ]
+}
+
+interface IMethodProposalThreshold {
+  method: "proposalThreshold"
+  arguments: [  ]
+}
+
+interface IMethodPropose {
+  method: "propose"
+  arguments: [ targets: TAddress[], values: bigint[], calldatas: TBufferLike[], description: string ]
+}
+
+interface IMethodQuorum {
+  method: "quorum"
+  arguments: [ blockNumber: bigint ]
+}
+
+interface IMethodRelay {
+  method: "relay"
+  arguments: [ target: TAddress, value: bigint, data: TBufferLike ]
+}
+
+interface IMethodSetProposalThreshold {
+  method: "setProposalThreshold"
+  arguments: [ newProposalThreshold: bigint ]
+}
+
+interface IMethodSetVotingDelay {
+  method: "setVotingDelay"
+  arguments: [ newVotingDelay: bigint ]
+}
+
+interface IMethodSetVotingPeriod {
+  method: "setVotingPeriod"
+  arguments: [ newVotingPeriod: bigint ]
+}
+
+interface IMethodState {
+  method: "state"
+  arguments: [ proposalId: bigint ]
+}
+
+interface IMethodSupportsInterface {
+  method: "supportsInterface"
+  arguments: [ interfaceId: TBufferLike ]
+}
+
+interface IMethodVersion {
+  method: "version"
+  arguments: [  ]
+}
+
+interface IMethodVotingDelay {
+  method: "votingDelay"
+  arguments: [  ]
+}
+
+interface IMethodVotingPeriod {
+  method: "votingPeriod"
+  arguments: [  ]
+}
+
+interface IMethods {
+  BALLOT_TYPEHASH: IMethodBALLOT_TYPEHASH
+  COUNTING_MODE: IMethodCOUNTING_MODE
+  EXTENDED_BALLOT_TYPEHASH: IMethodEXTENDED_BALLOT_TYPEHASH
+  castVote: IMethodCastVote
+  castVoteBySig: IMethodCastVoteBySig
+  castVoteWithReason: IMethodCastVoteWithReason
+  castVoteWithReasonAndParams: IMethodCastVoteWithReasonAndParams
+  castVoteWithReasonAndParamsBySig: IMethodCastVoteWithReasonAndParamsBySig
+  execute: IMethodExecute
+  getVotes: IMethodGetVotes
+  getVotesWithParams: IMethodGetVotesWithParams
+  hasVoted: IMethodHasVoted
+  hashProposal: IMethodHashProposal
+  name: IMethodName
+  onERC1155BatchReceived: IMethodOnERC1155BatchReceived
+  onERC1155Received: IMethodOnERC1155Received
+  onERC721Received: IMethodOnERC721Received
+  proposalDeadline: IMethodProposalDeadline
+  proposalSnapshot: IMethodProposalSnapshot
+  proposalThreshold: IMethodProposalThreshold
+  propose: IMethodPropose
+  quorum: IMethodQuorum
+  relay: IMethodRelay
+  setProposalThreshold: IMethodSetProposalThreshold
+  setVotingDelay: IMethodSetVotingDelay
+  setVotingPeriod: IMethodSetVotingPeriod
+  state: IMethodState
+  supportsInterface: IMethodSupportsInterface
+  version: IMethodVersion
+  votingDelay: IMethodVotingDelay
+  votingPeriod: IMethodVotingPeriod
+  '*': { method: string, arguments: any[] } 
+}
+
+
+
+
 

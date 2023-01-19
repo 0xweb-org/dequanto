@@ -22,6 +22,8 @@ import { ContractStream } from './ContractStream';
 import { TxTopicInMemoryProvider } from '@dequanto/txs/receipt/TxTopicInMemoryProvider';
 import { BlocksTxIndexer, TBlockListener } from '@dequanto/indexer/BlocksTxIndexer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
+import { $logger } from '@dequanto/utils/$logger';
+import { $address } from '@dequanto/utils/$address';
 
 
 export abstract class ContractBase {
@@ -111,12 +113,16 @@ export abstract class ContractBase {
         return reader.readAsync(this.address, abi, ...params);
     }
 
-    protected $on (event: string, cb) {
+    protected $onLog (event: string, cb?) {
         let stream = this.getContractStream();
-        return stream.on(event, cb);
+        let events = stream.on(event);
+        if (cb) {
+            events.onData(cb);
+        }
+        return events;
     }
 
-    protected $onTx (options?: BlockWalker.IBlockWalkerOptions): SubjectStream<{ tx: Transaction, block: BlockTransactionString, calldata: { method, arguments: any[] } }> {
+    protected $onTransaction (options?: BlockWalker.IBlockWalkerOptions): SubjectStream<{ tx: Transaction, block: BlockTransactionString, calldata: { method, arguments: any[] } }> {
 
         options ??= {};
 
@@ -124,34 +130,38 @@ export abstract class ContractBase {
         let stream = new SubjectStream<TSubject>();
 
         BlockWalker.onBlock(this.client, options, async (client, block, { txs }) => {
-            txs = txs.filter(x => x.to === this.address);
+            txs = txs.filter(x => $address.eq(x.to, this.address));
             if (txs.length === 0) {
                 return;
             }
 
             txs.forEach(tx => {
-                let calldata = this.parseInputData(tx.input);
-
-                let method = options.filter?.method;
-                if (method != null && method !== '*') {
-                    if (calldata.name !== method) {
-                        return;
-                    }
-                }
-                let args = options.filter?.arguments;
-                if (args != null) {
-                    for (let i = 0; i < args.length; i++) {
-                        let val = args[i];
-                        if (val != null && val != calldata.args[i]) {
+                try {
+                    let calldata = this.parseInputData(tx.input);
+                    let method = options.filter?.method;
+                    if (method != null && method !== '*') {
+                        if (calldata.name !== method) {
                             return;
                         }
                     }
+                    let args = options.filter?.arguments;
+                    if (args != null) {
+                        for (let i = 0; i < args.length; i++) {
+                            let val = args[i];
+                            if (val != null && val != calldata.args[i]) {
+                                return;
+                            }
+                        }
+                    }
+                    stream.next({
+                        block,
+                        tx,
+                        calldata: { method: calldata.name, arguments: calldata.args }
+                    });
+                } catch (error) {
+                    $logger.log(`Unexpected exception onTx parser: ${error.message}`);
+                    stream.error(error);
                 }
-                stream.onValue({
-                    block,
-                    tx,
-                    calldata: { method: calldata.name, arguments: calldata.args }
-                });
             })
         });
         return stream;

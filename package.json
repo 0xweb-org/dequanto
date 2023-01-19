@@ -4,12 +4,15 @@
   "scripts": {
     "hardhat": "node --openssl-legacy-provider ./node_modules/hardhat/internal/cli/cli.js node --hostname 127.0.0.1 --verbose",
     "build": "tsc -p tsconfig-src.json",
-    "test": "atma --openssl-legacy-provider test --config='settings.base=./'"
+    "test": "atma --openssl-legacy-provider test --config='settings.base=./'",
+    "contracts": "atma act ./actions/contracts.act.ts"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.5",
     "@nomiclabs/hardhat-web3": "^2.0.0",
     "@openzeppelin/contracts": "^4.7.0",
+    "@types/sinon": "^10.0.13",
+    "atma-utest": "^0.21.30",
     "evm": "^0.2.0",
     "hardhat": "^2.12.6",
     "shellbee": "^0.5.16",

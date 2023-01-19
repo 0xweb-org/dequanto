@@ -1,27 +1,32 @@
 /**
- *  AUTO-Generated Class: 2022-08-11 11:20
+ *  AUTO-Generated Class: 2023-01-19 12:43
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
-import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
+import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { type AbiItem } from 'web3-utils';
-import { TransactionReceipt, EventLog } from 'web3-core';
+import type { BlockTransactionString } from 'web3-eth';
+import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { SubjectStream } from '@dequanto/class/SubjectStream';
+
+
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 export class AccessControl extends ContractBase {
     constructor(
         public address: TAddress = '',
-        public client: Web3Client = di.resolve(EthWeb3Client),
-        public explorer: IBlockChainExplorer = di.resolve(Etherscan)
+        public client: Web3Client = di.resolve(EthWeb3Client, ),
+        public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
     }
@@ -61,16 +66,31 @@ export class AccessControl extends ContractBase {
         return this.$read('function supportsInterface(bytes4) returns bool', interfaceId);
     }
 
-    onRoleAdminChanged (fn: (event: EventLog, role: TBufferLike, previousAdminRole: TBufferLike, newAdminRole: TBufferLike) => void): ClientEventsStream<any> {
-        return this.$on('RoleAdminChanged', fn);
+    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+        tx: Transaction
+        block: BlockTransactionString
+        calldata: IMethods[TMethod]
+    }> {
+        options ??= {};
+        options.filter ??= {};
+        options.filter.method = <any> method;
+        return <any> this.$onTransaction(options);
     }
 
-    onRoleGranted (fn: (event: EventLog, role: TBufferLike, account: TAddress, _sender: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('RoleGranted', fn);
+    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+        return this.$onLog(event, cb);
     }
 
-    onRoleRevoked (fn: (event: EventLog, role: TBufferLike, account: TAddress, _sender: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('RoleRevoked', fn);
+    onRoleAdminChanged (fn?: (event: TClientEventsStreamData<TLogRoleAdminChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRoleAdminChangedParameters>> {
+        return this.$onLog('RoleAdminChanged', fn);
+    }
+
+    onRoleGranted (fn?: (event: TClientEventsStreamData<TLogRoleGrantedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRoleGrantedParameters>> {
+        return this.$onLog('RoleGranted', fn);
+    }
+
+    onRoleRevoked (fn?: (event: TClientEventsStreamData<TLogRoleRevokedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRoleRevokedParameters>> {
+        return this.$onLog('RoleRevoked', fn);
     }
 
     extractLogsRoleAdminChanged (tx: TransactionReceipt): ITxLogItem<TLogRoleAdminChanged>[] {
@@ -134,6 +154,8 @@ export class AccessControl extends ContractBase {
     }
 
     abi: AbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"previousAdminRole","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"newAdminRole","type":"bytes32"}],"name":"RoleAdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleGranted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleRevoked","type":"event"},{"inputs":[],"name":"DEFAULT_ADMIN_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleAdmin","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"grantRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"hasRole","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"renounceRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"revokeRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"}]
+
+    
 }
 
 type TSender = TAccount & {
@@ -142,11 +164,73 @@ type TSender = TAccount & {
 
     type TLogRoleAdminChanged = {
         role: TBufferLike, previousAdminRole: TBufferLike, newAdminRole: TBufferLike
-    }
+    };
+    type TLogRoleAdminChangedParameters = [ role: TBufferLike, previousAdminRole: TBufferLike, newAdminRole: TBufferLike ];
     type TLogRoleGranted = {
         role: TBufferLike, account: TAddress, _sender: TAddress
-    }
+    };
+    type TLogRoleGrantedParameters = [ role: TBufferLike, account: TAddress, _sender: TAddress ];
     type TLogRoleRevoked = {
         role: TBufferLike, account: TAddress, _sender: TAddress
-    }
+    };
+    type TLogRoleRevokedParameters = [ role: TBufferLike, account: TAddress, _sender: TAddress ];
+
+interface IEvents {
+  RoleAdminChanged: TLogRoleAdminChangedParameters
+  RoleGranted: TLogRoleGrantedParameters
+  RoleRevoked: TLogRoleRevokedParameters
+  '*': any[] 
+}
+
+
+
+interface IMethodDEFAULT_ADMIN_ROLE {
+  method: "DEFAULT_ADMIN_ROLE"
+  arguments: [  ]
+}
+
+interface IMethodGetRoleAdmin {
+  method: "getRoleAdmin"
+  arguments: [ role: TBufferLike ]
+}
+
+interface IMethodGrantRole {
+  method: "grantRole"
+  arguments: [ role: TBufferLike, account: TAddress ]
+}
+
+interface IMethodHasRole {
+  method: "hasRole"
+  arguments: [ role: TBufferLike, account: TAddress ]
+}
+
+interface IMethodRenounceRole {
+  method: "renounceRole"
+  arguments: [ role: TBufferLike, account: TAddress ]
+}
+
+interface IMethodRevokeRole {
+  method: "revokeRole"
+  arguments: [ role: TBufferLike, account: TAddress ]
+}
+
+interface IMethodSupportsInterface {
+  method: "supportsInterface"
+  arguments: [ interfaceId: TBufferLike ]
+}
+
+interface IMethods {
+  DEFAULT_ADMIN_ROLE: IMethodDEFAULT_ADMIN_ROLE
+  getRoleAdmin: IMethodGetRoleAdmin
+  grantRole: IMethodGrantRole
+  hasRole: IMethodHasRole
+  renounceRole: IMethodRenounceRole
+  revokeRole: IMethodRevokeRole
+  supportsInterface: IMethodSupportsInterface
+  '*': { method: string, arguments: any[] } 
+}
+
+
+
+
 

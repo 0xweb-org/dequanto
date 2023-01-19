@@ -64,13 +64,20 @@ export class BlocksTxIndexer {
         await this.walker.start(from, to);
 
         if (to == null) {
-            this.client.subscribe('newBlockHeaders', (error, blockHeader) => {
+            await this.client.subscribe('newBlockHeaders', (error, blockHeader) => {
                 if (error) {
                     $logger.error(`Subscription to "newBlockHeaders" failed with`, error);
                     return;
                 }
-                this.walker.processUntil(blockHeader.number);
+                if (blockHeader.transactions?.length === 0) {
+                    // hardhat emits empty blocks
+                    return;
+                }
+                this.walker.processUntil(blockHeader.number + 1);
             });
+            // Reload the blocknumber, to ensure we didn't missed the block between walker starting and subscription
+            let newTo = await this.client.getBlockNumber();
+            this.walker.processUntil(newTo + 1);
         }
     }
 

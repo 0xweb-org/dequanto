@@ -1,21 +1,26 @@
 import di from 'a-di';
 import memd from 'memd';
 import Web3 from 'web3';
+import { Wallet } from 'ethers';
+
+import { type AbiItem } from 'web3-utils';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TPlatform } from '@dequanto/models/TPlatform';
-import { TransactionRequest } from '@ethersproject/abstract-provider';
-import { BlockHeader, BlockTransactionString, Syncing } from 'web3-eth';
+import type { TransactionRequest } from '@ethersproject/abstract-provider';
+import type { BlockHeader, BlockTransactionString, Syncing } from 'web3-eth';
+import type { IWeb3Client, IWeb3ClientOptions } from './interfaces/IWeb3Client';
+import type { BlockNumber, Log, LogsOptions, PastLogsOptions, TransactionConfig, Transaction, TransactionReceipt, EventLog, WebsocketProvider } from 'web3-core';
+import type { Subscription } from 'web3-core-subscriptions';
 import { ClientPool, IPoolClientConfig, IPoolWeb3Request } from './ClientPool';
 import { ClientPoolTrace } from './ClientPoolStats';
-import { IWeb3Client, IWeb3ClientOptions } from './interfaces/IWeb3Client';
-import { type BlockNumber, Log, LogsOptions, type PastLogsOptions, type TransactionConfig, Transaction, TransactionReceipt } from 'web3-core';
-import { Subscription } from 'web3-core-subscriptions';
-import { Wallet } from 'ethers';
-import { $number } from '@dequanto/utils/$number';
 import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
+import { $number } from '@dequanto/utils/$number';
 import { $txData } from '@dequanto/utils/$txData';
 import { $logger } from '@dequanto/utils/$logger';
 import { class_Dfr } from 'atma-utils';
+import { $promise } from '@dequanto/utils/$promise';
+import { ClientEventsStream } from './ClientEventsStream';
+import { $abiUtils } from '@dequanto/utils/$abiUtils';
 
 export abstract class Web3Client implements IWeb3Client {
 
@@ -55,8 +60,28 @@ export abstract class Web3Client implements IWeb3Client {
         this.pool = new ClientPool(this.options);
     }
 
-    getEventStream (address: TAddress, abi: any, event: string) {
-        return this.pool.getEventStream(address, abi, event);
+    getEventStream (address: TAddress, abi: AbiItem[], event: string) {
+        let eventAbi = abi.find(x => x.type === 'event' && x.name === event);
+        if (eventAbi == null) {
+            let events = abi.filter(x => x.type === 'event').map(x => x.name).join(', ');
+            throw new Error(`Event "${event}" not present in ABI. Events: ${ events }`);
+        }
+        let stream = new ClientEventsStream(address, eventAbi);
+        this
+            .subscribe('logs', {
+                address: address,
+                fromBlock: 'latest',
+                topics: [
+                    $abiUtils.getMethodHash(eventAbi)
+                ]
+            })
+            .then(subscription => {
+                stream.fromSubscription(subscription);
+            }, error => {
+                stream.error(error);
+            });
+
+        return stream;
     }
 
     with <TResult> (fn: (web3: Web3) => Promise<TResult>) {
@@ -83,14 +108,24 @@ export abstract class Web3Client implements IWeb3Client {
     ): Promise<Subscription<Syncing>>;
     subscribe(
         type: 'newBlockHeaders',
-        callback?: (error: Error, blockHeader: BlockHeader) => void
-    ): Promise<Subscription<BlockHeader>>;
+        callback?: (error: Error, blockHeader: BlockTransactionString) => void
+    ): Promise<Subscription<BlockTransactionString>>;
     subscribe(
         type: 'pendingTransactions',
         callback?: (error: Error, transactionHash: string) => void
     ): Promise<Subscription<string>>;
     async subscribe (...args): Promise<Subscription<any>>{
         let web3 = await this.getWeb3({ ws: true });
+
+        let provider = web3.eth.currentProvider as WebsocketProvider & { url };
+        if (provider.connected === false) {
+            provider.connect();
+            await $promise.waitForTrue(() => provider.connected, {
+                intervalMs: 200,
+                timeoutMessage: `Can not connect to ${provider.url}`,
+                timeoutMs: 20_000
+            });
+        }
         return web3.eth.subscribe(...args as Parameters<Web3['eth']['subscribe']>);
     }
 
@@ -176,6 +211,31 @@ export abstract class Web3Client implements IWeb3Client {
             let reqs = hashes.map(hash => cb => (web3.eth.getTransactionReceipt as any).request(hash, cb));
             let batch = new Web3BatchRequests.BatchRequest(web3, reqs);
             return batch.execute();
+        });
+    }
+    getTransactionTrace (hash: string) {
+        return this.pool.call(async web3 => {
+            let eth = web3.eth as (typeof web3.eth & { traceTransaction });
+
+            if (typeof eth.traceTransaction !== 'function') {
+                web3.eth.extend({
+                    methods: [
+                        {
+                            name: 'traceTransaction',
+                            call: 'debug_traceTransaction',
+                            params: 1,
+                        }
+                    ]
+                })
+            }
+
+            let result = await eth.traceTransaction(hash);
+            return result;
+
+        }, {
+            node: {
+                traceable: true
+            }
         });
     }
     getBlock (nr: number): Promise<BlockTransactionString> {

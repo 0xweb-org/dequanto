@@ -30,13 +30,24 @@ export interface IPoolClientConfig {
 
     /** max block range per request when getting for example the past logs*/
     fetchableBlockRange?: number
+
+    /** True if the node supports traceTransaction calls */
+    traceable?: boolean
 }
 export interface IPoolWeb3Request {
     ws?: boolean
     preferSafe?: boolean
     distinct?: boolean
     name?: string
+
+    /** HTTP Web3 Client traces */
     trace?: ClientPoolTrace
+
+    /** Supported node features */
+    node?: {
+        /** Supports traceTransaction */
+        traceable?: boolean
+    }
 }
 export class ClientPool {
 
@@ -217,13 +228,13 @@ export class ClientPool {
         return root as any as TResult;
     }
 
-    getEventStream (address: TAddress, abi: any, event: string) {
-        if (this.ws == null) {
-            this.ws = this.clients.find(x => x.config.url?.startsWith('ws'));
-        }
-        let stream = this.ws.getEventStream(address, abi, event);
-        return stream;
-    }
+    // getEventStream (address: TAddress, abi: AbiItem[], event: string) {
+    //     if (this.ws == null) {
+    //         this.ws = this.clients.find(x => x.config.url?.startsWith('ws'));
+    //     }
+    //     let stream = this.ws.getEventStream(address, abi, event);
+    //     return stream;
+    // }
 
     getNodeStats () {
         return this
@@ -349,6 +360,9 @@ export class ClientPool {
 
         if (opts?.ws === false) {
             clients = clients.filter(x => x.config.url?.startsWith('http'));
+        }
+        if (opts?.node?.traceable === true) {
+            clients = clients.filter(x => x.config.traceable === true);
         }
 
         if (this.discoveredPartial === false) {
@@ -680,20 +694,35 @@ class WClient {
         return result;
     }
 
-    getEventStream (address: TAddress, abi: AbiItem[], event: string, options = {}): ClientEventsStream {
-        let eventAbi = abi.find(x => x.type === 'event' && x.name === event);
-        if (eventAbi == null) {
-            let events = abi.filter(x => x.type === 'event').map(x => x.name).join(', ');
-            throw new Error(`Event "${event}" not present in ABI. Events: ${ events }`);
-        }
-        const contract = new this.eth.Contract(abi, address);
-        const stream =  contract
-            .events
-            [event](options);
+    // getEventStream (address: TAddress, abi: AbiItem[], event: string, options = {}): ClientEventsStream {
+    //     let eventAbi = abi.find(x => x.type === 'event' && x.name === event);
+    //     if (eventAbi == null) {
+    //         let events = abi.filter(x => x.type === 'event').map(x => x.name).join(', ');
+    //         throw new Error(`Event "${event}" not present in ABI. Events: ${ events }`);
+    //     }
+    //     let stream = new ClientEventsStream(this.address, this.abi)
+    //     this
+    //         .client
+    //         .subscribe('logs', {
+    //             address: this.address,
+    //             fromBlock: 'latest'
+    //         })
+    //         .then(subscription => {
+    //             stream.fromSubscription(subscription);
+    //         }, error => {
+    //             stream.error(error);
+    //         });
 
-        const worker = new ClientEventsStream(contract, eventAbi, stream)
-        return worker;
-    }
+    //     return stream;
+
+    //     // const contract = new this.eth.Contract(abi, address);
+    //     // const stream =  contract
+    //     //     .events
+    //     //     [event](options);
+
+    //     // const worker = new ClientEventsStream(address, eventAbi, stream)
+    //     // return worker;
+    // }
 
     callSync <TResult> (fn: (web3: Web3) => TResult ): { status: number, result?: TResult } {
         try {

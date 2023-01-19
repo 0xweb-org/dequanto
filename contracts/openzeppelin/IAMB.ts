@@ -1,27 +1,32 @@
 /**
- *  AUTO-Generated Class: 2022-08-11 11:20
+ *  AUTO-Generated Class: 2023-01-19 12:43
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
-import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
+import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { type AbiItem } from 'web3-utils';
-import { TransactionReceipt, EventLog } from 'web3-core';
+import type { BlockTransactionString } from 'web3-eth';
+import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { SubjectStream } from '@dequanto/class/SubjectStream';
+
+
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 export class IAMB extends ContractBase {
     constructor(
         public address: TAddress = '',
-        public client: Web3Client = di.resolve(EthWeb3Client),
-        public explorer: IBlockChainExplorer = di.resolve(Etherscan)
+        public client: Web3Client = di.resolve(EthWeb3Client, ),
+        public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
     }
@@ -91,20 +96,35 @@ export class IAMB extends ContractBase {
         return this.$read('function transactionHash() returns bytes32');
     }
 
-    onAffirmationCompleted (fn: (event: EventLog, _sender: TAddress, executor: TAddress, messageId: TBufferLike, status: boolean) => void): ClientEventsStream<any> {
-        return this.$on('AffirmationCompleted', fn);
+    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+        tx: Transaction
+        block: BlockTransactionString
+        calldata: IMethods[TMethod]
+    }> {
+        options ??= {};
+        options.filter ??= {};
+        options.filter.method = <any> method;
+        return <any> this.$onTransaction(options);
     }
 
-    onRelayedMessage (fn: (event: EventLog, _sender: TAddress, executor: TAddress, messageId: TBufferLike, status: boolean) => void): ClientEventsStream<any> {
-        return this.$on('RelayedMessage', fn);
+    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+        return this.$onLog(event, cb);
     }
 
-    onUserRequestForAffirmation (fn: (event: EventLog, messageId: TBufferLike, encodedData: TBufferLike) => void): ClientEventsStream<any> {
-        return this.$on('UserRequestForAffirmation', fn);
+    onAffirmationCompleted (fn?: (event: TClientEventsStreamData<TLogAffirmationCompletedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogAffirmationCompletedParameters>> {
+        return this.$onLog('AffirmationCompleted', fn);
     }
 
-    onUserRequestForSignature (fn: (event: EventLog, messageId: TBufferLike, encodedData: TBufferLike) => void): ClientEventsStream<any> {
-        return this.$on('UserRequestForSignature', fn);
+    onRelayedMessage (fn?: (event: TClientEventsStreamData<TLogRelayedMessageParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRelayedMessageParameters>> {
+        return this.$onLog('RelayedMessage', fn);
+    }
+
+    onUserRequestForAffirmation (fn?: (event: TClientEventsStreamData<TLogUserRequestForAffirmationParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogUserRequestForAffirmationParameters>> {
+        return this.$onLog('UserRequestForAffirmation', fn);
+    }
+
+    onUserRequestForSignature (fn?: (event: TClientEventsStreamData<TLogUserRequestForSignatureParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogUserRequestForSignatureParameters>> {
+        return this.$onLog('UserRequestForSignature', fn);
     }
 
     extractLogsAffirmationCompleted (tx: TransactionReceipt): ITxLogItem<TLogAffirmationCompleted>[] {
@@ -188,6 +208,8 @@ export class IAMB extends ContractBase {
     }
 
     abi: AbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":true,"internalType":"address","name":"executor","type":"address"},{"indexed":true,"internalType":"bytes32","name":"messageId","type":"bytes32"},{"indexed":false,"internalType":"bool","name":"status","type":"bool"}],"name":"AffirmationCompleted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":true,"internalType":"address","name":"executor","type":"address"},{"indexed":true,"internalType":"bytes32","name":"messageId","type":"bytes32"},{"indexed":false,"internalType":"bool","name":"status","type":"bool"}],"name":"RelayedMessage","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"messageId","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"encodedData","type":"bytes"}],"name":"UserRequestForAffirmation","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"messageId","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"encodedData","type":"bytes"}],"name":"UserRequestForSignature","type":"event"},{"inputs":[],"name":"destinationChainId","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_messageId","type":"bytes32"}],"name":"failedMessageDataHash","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_messageId","type":"bytes32"}],"name":"failedMessageReceiver","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_messageId","type":"bytes32"}],"name":"failedMessageSender","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"maxGasPerTx","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_messageId","type":"bytes32"}],"name":"messageCallStatus","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"messageId","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"messageSender","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"messageSourceChainId","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_contract","type":"address"},{"internalType":"bytes","name":"_data","type":"bytes"},{"internalType":"uint256","name":"_gas","type":"uint256"}],"name":"requireToConfirmMessage","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_contract","type":"address"},{"internalType":"bytes","name":"_data","type":"bytes"},{"internalType":"uint256","name":"_gas","type":"uint256"}],"name":"requireToPassMessage","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"sourceChainId","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"transactionHash","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"}]
+
+    
 }
 
 type TSender = TAccount & {
@@ -196,14 +218,114 @@ type TSender = TAccount & {
 
     type TLogAffirmationCompleted = {
         _sender: TAddress, executor: TAddress, messageId: TBufferLike, status: boolean
-    }
+    };
+    type TLogAffirmationCompletedParameters = [ _sender: TAddress, executor: TAddress, messageId: TBufferLike, status: boolean ];
     type TLogRelayedMessage = {
         _sender: TAddress, executor: TAddress, messageId: TBufferLike, status: boolean
-    }
+    };
+    type TLogRelayedMessageParameters = [ _sender: TAddress, executor: TAddress, messageId: TBufferLike, status: boolean ];
     type TLogUserRequestForAffirmation = {
         messageId: TBufferLike, encodedData: TBufferLike
-    }
+    };
+    type TLogUserRequestForAffirmationParameters = [ messageId: TBufferLike, encodedData: TBufferLike ];
     type TLogUserRequestForSignature = {
         messageId: TBufferLike, encodedData: TBufferLike
-    }
+    };
+    type TLogUserRequestForSignatureParameters = [ messageId: TBufferLike, encodedData: TBufferLike ];
+
+interface IEvents {
+  AffirmationCompleted: TLogAffirmationCompletedParameters
+  RelayedMessage: TLogRelayedMessageParameters
+  UserRequestForAffirmation: TLogUserRequestForAffirmationParameters
+  UserRequestForSignature: TLogUserRequestForSignatureParameters
+  '*': any[] 
+}
+
+
+
+interface IMethodDestinationChainId {
+  method: "destinationChainId"
+  arguments: [  ]
+}
+
+interface IMethodFailedMessageDataHash {
+  method: "failedMessageDataHash"
+  arguments: [ _messageId: TBufferLike ]
+}
+
+interface IMethodFailedMessageReceiver {
+  method: "failedMessageReceiver"
+  arguments: [ _messageId: TBufferLike ]
+}
+
+interface IMethodFailedMessageSender {
+  method: "failedMessageSender"
+  arguments: [ _messageId: TBufferLike ]
+}
+
+interface IMethodMaxGasPerTx {
+  method: "maxGasPerTx"
+  arguments: [  ]
+}
+
+interface IMethodMessageCallStatus {
+  method: "messageCallStatus"
+  arguments: [ _messageId: TBufferLike ]
+}
+
+interface IMethodMessageId {
+  method: "messageId"
+  arguments: [  ]
+}
+
+interface IMethodMessageSender {
+  method: "messageSender"
+  arguments: [  ]
+}
+
+interface IMethodMessageSourceChainId {
+  method: "messageSourceChainId"
+  arguments: [  ]
+}
+
+interface IMethodRequireToConfirmMessage {
+  method: "requireToConfirmMessage"
+  arguments: [ _contract: TAddress, _data: TBufferLike, _gas: bigint ]
+}
+
+interface IMethodRequireToPassMessage {
+  method: "requireToPassMessage"
+  arguments: [ _contract: TAddress, _data: TBufferLike, _gas: bigint ]
+}
+
+interface IMethodSourceChainId {
+  method: "sourceChainId"
+  arguments: [  ]
+}
+
+interface IMethodTransactionHash {
+  method: "transactionHash"
+  arguments: [  ]
+}
+
+interface IMethods {
+  destinationChainId: IMethodDestinationChainId
+  failedMessageDataHash: IMethodFailedMessageDataHash
+  failedMessageReceiver: IMethodFailedMessageReceiver
+  failedMessageSender: IMethodFailedMessageSender
+  maxGasPerTx: IMethodMaxGasPerTx
+  messageCallStatus: IMethodMessageCallStatus
+  messageId: IMethodMessageId
+  messageSender: IMethodMessageSender
+  messageSourceChainId: IMethodMessageSourceChainId
+  requireToConfirmMessage: IMethodRequireToConfirmMessage
+  requireToPassMessage: IMethodRequireToPassMessage
+  sourceChainId: IMethodSourceChainId
+  transactionHash: IMethodTransactionHash
+  '*': { method: string, arguments: any[] } 
+}
+
+
+
+
 

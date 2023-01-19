@@ -7,7 +7,6 @@ import { $bigint } from '@dequanto/utils/$bigint';
 import { $contract } from '@dequanto/utils/$contract';
 import { $txData } from '@dequanto/utils/$txData';
 import { TestNode } from './hardhat/TestNode';
-import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client';
 
 UTest({
     $config: {

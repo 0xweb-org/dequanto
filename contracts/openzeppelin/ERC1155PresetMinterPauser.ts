@@ -1,27 +1,32 @@
 /**
- *  AUTO-Generated Class: 2022-08-11 11:20
+ *  AUTO-Generated Class: 2023-01-19 12:43
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
-import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
+import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { type AbiItem } from 'web3-utils';
-import { TransactionReceipt, EventLog } from 'web3-core';
+import type { BlockTransactionString } from 'web3-eth';
+import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { SubjectStream } from '@dequanto/class/SubjectStream';
+
+
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 export class ERC1155PresetMinterPauser extends ContractBase {
     constructor(
         public address: TAddress = '',
-        public client: Web3Client = di.resolve(EthWeb3Client),
-        public explorer: IBlockChainExplorer = di.resolve(Etherscan)
+        public client: Web3Client = di.resolve(EthWeb3Client, ),
+        public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
     }
@@ -151,40 +156,55 @@ export class ERC1155PresetMinterPauser extends ContractBase {
         return this.$read('function uri(uint256) returns string', input0);
     }
 
-    onApprovalForAll (fn: (event: EventLog, account: TAddress, operator: TAddress, approved: boolean) => void): ClientEventsStream<any> {
-        return this.$on('ApprovalForAll', fn);
+    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+        tx: Transaction
+        block: BlockTransactionString
+        calldata: IMethods[TMethod]
+    }> {
+        options ??= {};
+        options.filter ??= {};
+        options.filter.method = <any> method;
+        return <any> this.$onTransaction(options);
     }
 
-    onPaused (fn: (event: EventLog, account: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('Paused', fn);
+    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+        return this.$onLog(event, cb);
     }
 
-    onRoleAdminChanged (fn: (event: EventLog, role: TBufferLike, previousAdminRole: TBufferLike, newAdminRole: TBufferLike) => void): ClientEventsStream<any> {
-        return this.$on('RoleAdminChanged', fn);
+    onApprovalForAll (fn?: (event: TClientEventsStreamData<TLogApprovalForAllParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalForAllParameters>> {
+        return this.$onLog('ApprovalForAll', fn);
     }
 
-    onRoleGranted (fn: (event: EventLog, role: TBufferLike, account: TAddress, _sender: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('RoleGranted', fn);
+    onPaused (fn?: (event: TClientEventsStreamData<TLogPausedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogPausedParameters>> {
+        return this.$onLog('Paused', fn);
     }
 
-    onRoleRevoked (fn: (event: EventLog, role: TBufferLike, account: TAddress, _sender: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('RoleRevoked', fn);
+    onRoleAdminChanged (fn?: (event: TClientEventsStreamData<TLogRoleAdminChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRoleAdminChangedParameters>> {
+        return this.$onLog('RoleAdminChanged', fn);
     }
 
-    onTransferBatch (fn: (event: EventLog, operator: TAddress, from: TAddress, to: TAddress, ids: bigint[], values: bigint[]) => void): ClientEventsStream<any> {
-        return this.$on('TransferBatch', fn);
+    onRoleGranted (fn?: (event: TClientEventsStreamData<TLogRoleGrantedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRoleGrantedParameters>> {
+        return this.$onLog('RoleGranted', fn);
     }
 
-    onTransferSingle (fn: (event: EventLog, operator: TAddress, from: TAddress, to: TAddress, id: bigint, value: bigint) => void): ClientEventsStream<any> {
-        return this.$on('TransferSingle', fn);
+    onRoleRevoked (fn?: (event: TClientEventsStreamData<TLogRoleRevokedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRoleRevokedParameters>> {
+        return this.$onLog('RoleRevoked', fn);
     }
 
-    onURI (fn: (event: EventLog, value: string, id: bigint) => void): ClientEventsStream<any> {
-        return this.$on('URI', fn);
+    onTransferBatch (fn?: (event: TClientEventsStreamData<TLogTransferBatchParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogTransferBatchParameters>> {
+        return this.$onLog('TransferBatch', fn);
     }
 
-    onUnpaused (fn: (event: EventLog, account: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('Unpaused', fn);
+    onTransferSingle (fn?: (event: TClientEventsStreamData<TLogTransferSingleParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogTransferSingleParameters>> {
+        return this.$onLog('TransferSingle', fn);
+    }
+
+    onURI (fn?: (event: TClientEventsStreamData<TLogURIParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogURIParameters>> {
+        return this.$onLog('URI', fn);
+    }
+
+    onUnpaused (fn?: (event: TClientEventsStreamData<TLogUnpausedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogUnpausedParameters>> {
+        return this.$onLog('Unpaused', fn);
     }
 
     extractLogsApprovalForAll (tx: TransactionReceipt): ITxLogItem<TLogApprovalForAll>[] {
@@ -368,6 +388,8 @@ export class ERC1155PresetMinterPauser extends ContractBase {
     }
 
     abi: AbiItem[] = [{"inputs":[{"internalType":"string","name":"uri","type":"string"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"account","type":"address"}],"name":"Paused","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"previousAdminRole","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"newAdminRole","type":"bytes32"}],"name":"RoleAdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleGranted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleRevoked","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256[]","name":"ids","type":"uint256[]"},{"indexed":false,"internalType":"uint256[]","name":"values","type":"uint256[]"}],"name":"TransferBatch","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"id","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"TransferSingle","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"string","name":"value","type":"string"},{"indexed":true,"internalType":"uint256","name":"id","type":"uint256"}],"name":"URI","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"account","type":"address"}],"name":"Unpaused","type":"event"},{"inputs":[],"name":"DEFAULT_ADMIN_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MINTER_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"PAUSER_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address[]","name":"accounts","type":"address[]"},{"internalType":"uint256[]","name":"ids","type":"uint256[]"}],"name":"balanceOfBatch","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256[]","name":"ids","type":"uint256[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"}],"name":"burnBatch","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleAdmin","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getRoleMember","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleMemberCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"grantRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"hasRole","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"mint","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256[]","name":"ids","type":"uint256[]"},{"internalType":"uint256[]","name":"amounts","type":"uint256[]"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"mintBatch","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"pause","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"paused","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"renounceRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"revokeRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256[]","name":"ids","type":"uint256[]"},{"internalType":"uint256[]","name":"amounts","type":"uint256[]"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeBatchTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"unpause","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"uri","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"}]
+
+    
 }
 
 type TSender = TAccount & {
@@ -376,29 +398,211 @@ type TSender = TAccount & {
 
     type TLogApprovalForAll = {
         account: TAddress, operator: TAddress, approved: boolean
-    }
+    };
+    type TLogApprovalForAllParameters = [ account: TAddress, operator: TAddress, approved: boolean ];
     type TLogPaused = {
         account: TAddress
-    }
+    };
+    type TLogPausedParameters = [ account: TAddress ];
     type TLogRoleAdminChanged = {
         role: TBufferLike, previousAdminRole: TBufferLike, newAdminRole: TBufferLike
-    }
+    };
+    type TLogRoleAdminChangedParameters = [ role: TBufferLike, previousAdminRole: TBufferLike, newAdminRole: TBufferLike ];
     type TLogRoleGranted = {
         role: TBufferLike, account: TAddress, _sender: TAddress
-    }
+    };
+    type TLogRoleGrantedParameters = [ role: TBufferLike, account: TAddress, _sender: TAddress ];
     type TLogRoleRevoked = {
         role: TBufferLike, account: TAddress, _sender: TAddress
-    }
+    };
+    type TLogRoleRevokedParameters = [ role: TBufferLike, account: TAddress, _sender: TAddress ];
     type TLogTransferBatch = {
         operator: TAddress, from: TAddress, to: TAddress, ids: bigint[], values: bigint[]
-    }
+    };
+    type TLogTransferBatchParameters = [ operator: TAddress, from: TAddress, to: TAddress, ids: bigint[], values: bigint[] ];
     type TLogTransferSingle = {
         operator: TAddress, from: TAddress, to: TAddress, id: bigint, value: bigint
-    }
+    };
+    type TLogTransferSingleParameters = [ operator: TAddress, from: TAddress, to: TAddress, id: bigint, value: bigint ];
     type TLogURI = {
         value: string, id: bigint
-    }
+    };
+    type TLogURIParameters = [ value: string, id: bigint ];
     type TLogUnpaused = {
         account: TAddress
-    }
+    };
+    type TLogUnpausedParameters = [ account: TAddress ];
+
+interface IEvents {
+  ApprovalForAll: TLogApprovalForAllParameters
+  Paused: TLogPausedParameters
+  RoleAdminChanged: TLogRoleAdminChangedParameters
+  RoleGranted: TLogRoleGrantedParameters
+  RoleRevoked: TLogRoleRevokedParameters
+  TransferBatch: TLogTransferBatchParameters
+  TransferSingle: TLogTransferSingleParameters
+  URI: TLogURIParameters
+  Unpaused: TLogUnpausedParameters
+  '*': any[] 
+}
+
+
+
+interface IMethodDEFAULT_ADMIN_ROLE {
+  method: "DEFAULT_ADMIN_ROLE"
+  arguments: [  ]
+}
+
+interface IMethodMINTER_ROLE {
+  method: "MINTER_ROLE"
+  arguments: [  ]
+}
+
+interface IMethodPAUSER_ROLE {
+  method: "PAUSER_ROLE"
+  arguments: [  ]
+}
+
+interface IMethodBalanceOf {
+  method: "balanceOf"
+  arguments: [ account: TAddress, id: bigint ]
+}
+
+interface IMethodBalanceOfBatch {
+  method: "balanceOfBatch"
+  arguments: [ accounts: TAddress[], ids: bigint[] ]
+}
+
+interface IMethodBurn {
+  method: "burn"
+  arguments: [ account: TAddress, id: bigint, value: bigint ]
+}
+
+interface IMethodBurnBatch {
+  method: "burnBatch"
+  arguments: [ account: TAddress, ids: bigint[], values: bigint[] ]
+}
+
+interface IMethodGetRoleAdmin {
+  method: "getRoleAdmin"
+  arguments: [ role: TBufferLike ]
+}
+
+interface IMethodGetRoleMember {
+  method: "getRoleMember"
+  arguments: [ role: TBufferLike, index: bigint ]
+}
+
+interface IMethodGetRoleMemberCount {
+  method: "getRoleMemberCount"
+  arguments: [ role: TBufferLike ]
+}
+
+interface IMethodGrantRole {
+  method: "grantRole"
+  arguments: [ role: TBufferLike, account: TAddress ]
+}
+
+interface IMethodHasRole {
+  method: "hasRole"
+  arguments: [ role: TBufferLike, account: TAddress ]
+}
+
+interface IMethodIsApprovedForAll {
+  method: "isApprovedForAll"
+  arguments: [ account: TAddress, operator: TAddress ]
+}
+
+interface IMethodMint {
+  method: "mint"
+  arguments: [ to: TAddress, id: bigint, amount: bigint, data: TBufferLike ]
+}
+
+interface IMethodMintBatch {
+  method: "mintBatch"
+  arguments: [ to: TAddress, ids: bigint[], amounts: bigint[], data: TBufferLike ]
+}
+
+interface IMethodPause {
+  method: "pause"
+  arguments: [  ]
+}
+
+interface IMethodPaused {
+  method: "paused"
+  arguments: [  ]
+}
+
+interface IMethodRenounceRole {
+  method: "renounceRole"
+  arguments: [ role: TBufferLike, account: TAddress ]
+}
+
+interface IMethodRevokeRole {
+  method: "revokeRole"
+  arguments: [ role: TBufferLike, account: TAddress ]
+}
+
+interface IMethodSafeBatchTransferFrom {
+  method: "safeBatchTransferFrom"
+  arguments: [ from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TBufferLike ]
+}
+
+interface IMethodSafeTransferFrom {
+  method: "safeTransferFrom"
+  arguments: [ from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TBufferLike ]
+}
+
+interface IMethodSetApprovalForAll {
+  method: "setApprovalForAll"
+  arguments: [ operator: TAddress, approved: boolean ]
+}
+
+interface IMethodSupportsInterface {
+  method: "supportsInterface"
+  arguments: [ interfaceId: TBufferLike ]
+}
+
+interface IMethodUnpause {
+  method: "unpause"
+  arguments: [  ]
+}
+
+interface IMethodUri {
+  method: "uri"
+  arguments: [ input0: bigint ]
+}
+
+interface IMethods {
+  DEFAULT_ADMIN_ROLE: IMethodDEFAULT_ADMIN_ROLE
+  MINTER_ROLE: IMethodMINTER_ROLE
+  PAUSER_ROLE: IMethodPAUSER_ROLE
+  balanceOf: IMethodBalanceOf
+  balanceOfBatch: IMethodBalanceOfBatch
+  burn: IMethodBurn
+  burnBatch: IMethodBurnBatch
+  getRoleAdmin: IMethodGetRoleAdmin
+  getRoleMember: IMethodGetRoleMember
+  getRoleMemberCount: IMethodGetRoleMemberCount
+  grantRole: IMethodGrantRole
+  hasRole: IMethodHasRole
+  isApprovedForAll: IMethodIsApprovedForAll
+  mint: IMethodMint
+  mintBatch: IMethodMintBatch
+  pause: IMethodPause
+  paused: IMethodPaused
+  renounceRole: IMethodRenounceRole
+  revokeRole: IMethodRevokeRole
+  safeBatchTransferFrom: IMethodSafeBatchTransferFrom
+  safeTransferFrom: IMethodSafeTransferFrom
+  setApprovalForAll: IMethodSetApprovalForAll
+  supportsInterface: IMethodSupportsInterface
+  unpause: IMethodUnpause
+  uri: IMethodUri
+  '*': { method: string, arguments: any[] } 
+}
+
+
+
+
 

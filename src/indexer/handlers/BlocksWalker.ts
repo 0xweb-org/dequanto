@@ -92,6 +92,7 @@ export class BlocksWalker {
     /**
      *  Can be called each time we get a new block from blockchain,
      *  the walker will process its current blocks and up until the specified number
+     *  @param nr Number is not included: [from, end)
      */
     async processUntil (nr: number) {
         if (this.isRestored === false) {
@@ -174,6 +175,8 @@ export class BlocksWalker {
         // reading block and transactions
         let start = Date.now();
         let blocks = await this.client.getBlocks(nrs);
+
+        let nr = await this.client.getBlockNumber();
 
         let grouped = await alot(blocks).mapAsync(async block => {
             let hashes = block.transactions;

@@ -1,27 +1,32 @@
 /**
- *  AUTO-Generated Class: 2022-08-11 11:20
+ *  AUTO-Generated Class: 2023-01-19 12:43
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
-import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
+import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { type AbiItem } from 'web3-utils';
-import { TransactionReceipt, EventLog } from 'web3-core';
+import type { BlockTransactionString } from 'web3-eth';
+import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { SubjectStream } from '@dequanto/class/SubjectStream';
+
+
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 export class ERC1155URIStorage extends ContractBase {
     constructor(
         public address: TAddress = '',
-        public client: Web3Client = di.resolve(EthWeb3Client),
-        public explorer: IBlockChainExplorer = di.resolve(Etherscan)
+        public client: Web3Client = di.resolve(EthWeb3Client, ),
+        public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
     }
@@ -66,20 +71,35 @@ export class ERC1155URIStorage extends ContractBase {
         return this.$read('function uri(uint256) returns string', tokenId);
     }
 
-    onApprovalForAll (fn: (event: EventLog, account: TAddress, operator: TAddress, approved: boolean) => void): ClientEventsStream<any> {
-        return this.$on('ApprovalForAll', fn);
+    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+        tx: Transaction
+        block: BlockTransactionString
+        calldata: IMethods[TMethod]
+    }> {
+        options ??= {};
+        options.filter ??= {};
+        options.filter.method = <any> method;
+        return <any> this.$onTransaction(options);
     }
 
-    onTransferBatch (fn: (event: EventLog, operator: TAddress, from: TAddress, to: TAddress, ids: bigint[], values: bigint[]) => void): ClientEventsStream<any> {
-        return this.$on('TransferBatch', fn);
+    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+        return this.$onLog(event, cb);
     }
 
-    onTransferSingle (fn: (event: EventLog, operator: TAddress, from: TAddress, to: TAddress, id: bigint, value: bigint) => void): ClientEventsStream<any> {
-        return this.$on('TransferSingle', fn);
+    onApprovalForAll (fn?: (event: TClientEventsStreamData<TLogApprovalForAllParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalForAllParameters>> {
+        return this.$onLog('ApprovalForAll', fn);
     }
 
-    onURI (fn: (event: EventLog, value: string, id: bigint) => void): ClientEventsStream<any> {
-        return this.$on('URI', fn);
+    onTransferBatch (fn?: (event: TClientEventsStreamData<TLogTransferBatchParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogTransferBatchParameters>> {
+        return this.$onLog('TransferBatch', fn);
+    }
+
+    onTransferSingle (fn?: (event: TClientEventsStreamData<TLogTransferSingleParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogTransferSingleParameters>> {
+        return this.$onLog('TransferSingle', fn);
+    }
+
+    onURI (fn?: (event: TClientEventsStreamData<TLogURIParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogURIParameters>> {
+        return this.$onLog('URI', fn);
     }
 
     extractLogsApprovalForAll (tx: TransactionReceipt): ITxLogItem<TLogApprovalForAll>[] {
@@ -163,6 +183,8 @@ export class ERC1155URIStorage extends ContractBase {
     }
 
     abi: AbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256[]","name":"ids","type":"uint256[]"},{"indexed":false,"internalType":"uint256[]","name":"values","type":"uint256[]"}],"name":"TransferBatch","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"id","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"TransferSingle","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"string","name":"value","type":"string"},{"indexed":true,"internalType":"uint256","name":"id","type":"uint256"}],"name":"URI","type":"event"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address[]","name":"accounts","type":"address[]"},{"internalType":"uint256[]","name":"ids","type":"uint256[]"}],"name":"balanceOfBatch","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256[]","name":"ids","type":"uint256[]"},{"internalType":"uint256[]","name":"amounts","type":"uint256[]"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeBatchTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"uri","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"}]
+
+    
 }
 
 type TSender = TAccount & {
@@ -171,14 +193,84 @@ type TSender = TAccount & {
 
     type TLogApprovalForAll = {
         account: TAddress, operator: TAddress, approved: boolean
-    }
+    };
+    type TLogApprovalForAllParameters = [ account: TAddress, operator: TAddress, approved: boolean ];
     type TLogTransferBatch = {
         operator: TAddress, from: TAddress, to: TAddress, ids: bigint[], values: bigint[]
-    }
+    };
+    type TLogTransferBatchParameters = [ operator: TAddress, from: TAddress, to: TAddress, ids: bigint[], values: bigint[] ];
     type TLogTransferSingle = {
         operator: TAddress, from: TAddress, to: TAddress, id: bigint, value: bigint
-    }
+    };
+    type TLogTransferSingleParameters = [ operator: TAddress, from: TAddress, to: TAddress, id: bigint, value: bigint ];
     type TLogURI = {
         value: string, id: bigint
-    }
+    };
+    type TLogURIParameters = [ value: string, id: bigint ];
+
+interface IEvents {
+  ApprovalForAll: TLogApprovalForAllParameters
+  TransferBatch: TLogTransferBatchParameters
+  TransferSingle: TLogTransferSingleParameters
+  URI: TLogURIParameters
+  '*': any[] 
+}
+
+
+
+interface IMethodBalanceOf {
+  method: "balanceOf"
+  arguments: [ account: TAddress, id: bigint ]
+}
+
+interface IMethodBalanceOfBatch {
+  method: "balanceOfBatch"
+  arguments: [ accounts: TAddress[], ids: bigint[] ]
+}
+
+interface IMethodIsApprovedForAll {
+  method: "isApprovedForAll"
+  arguments: [ account: TAddress, operator: TAddress ]
+}
+
+interface IMethodSafeBatchTransferFrom {
+  method: "safeBatchTransferFrom"
+  arguments: [ from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TBufferLike ]
+}
+
+interface IMethodSafeTransferFrom {
+  method: "safeTransferFrom"
+  arguments: [ from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TBufferLike ]
+}
+
+interface IMethodSetApprovalForAll {
+  method: "setApprovalForAll"
+  arguments: [ operator: TAddress, approved: boolean ]
+}
+
+interface IMethodSupportsInterface {
+  method: "supportsInterface"
+  arguments: [ interfaceId: TBufferLike ]
+}
+
+interface IMethodUri {
+  method: "uri"
+  arguments: [ tokenId: bigint ]
+}
+
+interface IMethods {
+  balanceOf: IMethodBalanceOf
+  balanceOfBatch: IMethodBalanceOfBatch
+  isApprovedForAll: IMethodIsApprovedForAll
+  safeBatchTransferFrom: IMethodSafeBatchTransferFrom
+  safeTransferFrom: IMethodSafeTransferFrom
+  setApprovalForAll: IMethodSetApprovalForAll
+  supportsInterface: IMethodSupportsInterface
+  uri: IMethodUri
+  '*': { method: string, arguments: any[] } 
+}
+
+
+
+
 

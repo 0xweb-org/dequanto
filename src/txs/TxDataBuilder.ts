@@ -9,6 +9,7 @@ import { type TransactionConfig } from 'web3-core';
 import { type AbiItem } from 'web3-utils';
 import { ITxConfig } from './ITxConfig';
 import { File } from 'atma-io';
+import { $number } from '@dequanto/utils/$number';
 
 export class TxDataBuilder {
     protected static nonce: number = -1
@@ -179,7 +180,7 @@ export class TxDataBuilder {
             ...this.data,
 
             from: this.account?.address ?? void 0,
-            chainId: this.data.chainId ?? client?.chainId ?? this.client?.chainId,
+            chainId: $number.toHex(this.data.chainId ?? client?.chainId ?? this.client?.chainId),
         };
     }
 

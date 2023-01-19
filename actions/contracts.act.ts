@@ -5,7 +5,7 @@ import alot from 'alot';
 
 UAction.create({
 
-    async '!gnosis' () {
+    async 'gnosis' () {
         const files = await Directory.readFilesAsync('./contracts/abi/gnosis/', '**.json');
         await alot(files)
             .forEachAsync(async file => {

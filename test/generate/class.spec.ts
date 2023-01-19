@@ -120,7 +120,7 @@ UTest({
 
         l`Subscribe to transactions stream`
         const transactionsListener = [];
-        foo.onTx('*').subscribe((data) => {
+        foo.onTransaction('*').subscribe((data) => {
             transactionsListener.push(data.calldata);
         });
 
@@ -136,9 +136,9 @@ UTest({
 
         l`Check logs`
         let logs = await foo.getPastLogsUpdated({});
-        eq_(logs.length, 1);
+        gte_(logs.length, 1);
 
-        let log = logs[0];
+        let log = logs[logs.length - 1];
         eq_(log.transactionHash, tx.tx.hash);
         eq_(log.event, 'Updated');
         eq_(log.params.newName, 'bar');

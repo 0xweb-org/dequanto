@@ -23,9 +23,6 @@ export class SubjectStream<T = any> {
         this.onInnerChanged = this.onInnerChanged.bind(this);
     }
     next(x: T) {
-        if (x === this.value) {
-            return;
-        }
         this.onValue(x)
     }
     onValue (val) {
@@ -94,6 +91,12 @@ export class SubjectStream<T = any> {
             let opts = row[2];
             if (opts?.once === true) {
                 this._cbs.splice(i, 1);
+            }
+            if (fn == null) {
+                if (index === 1) {
+                    console.info(`Error not handled`, x);
+                }
+                return;
             }
             fn(x);
         }

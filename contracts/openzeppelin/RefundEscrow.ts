@@ -1,27 +1,32 @@
 /**
- *  AUTO-Generated Class: 2022-08-11 11:20
+ *  AUTO-Generated Class: 2023-01-19 12:43
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
-import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
+import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { type AbiItem } from 'web3-utils';
-import { TransactionReceipt, EventLog } from 'web3-core';
+import type { BlockTransactionString } from 'web3-eth';
+import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { SubjectStream } from '@dequanto/class/SubjectStream';
+
+
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 export class RefundEscrow extends ContractBase {
     constructor(
         public address: TAddress = '',
-        public client: Web3Client = di.resolve(EthWeb3Client),
-        public explorer: IBlockChainExplorer = di.resolve(Etherscan)
+        public client: Web3Client = di.resolve(EthWeb3Client, ),
+        public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
     }
@@ -86,24 +91,39 @@ export class RefundEscrow extends ContractBase {
         return this.$read('function withdrawalAllowed(address) returns bool', input0);
     }
 
-    onDeposited (fn: (event: EventLog, payee: TAddress, weiAmount: bigint) => void): ClientEventsStream<any> {
-        return this.$on('Deposited', fn);
+    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+        tx: Transaction
+        block: BlockTransactionString
+        calldata: IMethods[TMethod]
+    }> {
+        options ??= {};
+        options.filter ??= {};
+        options.filter.method = <any> method;
+        return <any> this.$onTransaction(options);
     }
 
-    onOwnershipTransferred (fn: (event: EventLog, previousOwner: TAddress, newOwner: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('OwnershipTransferred', fn);
+    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+        return this.$onLog(event, cb);
     }
 
-    onRefundsClosed (fn: (event: EventLog, ) => void): ClientEventsStream<any> {
-        return this.$on('RefundsClosed', fn);
+    onDeposited (fn?: (event: TClientEventsStreamData<TLogDepositedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDepositedParameters>> {
+        return this.$onLog('Deposited', fn);
     }
 
-    onRefundsEnabled (fn: (event: EventLog, ) => void): ClientEventsStream<any> {
-        return this.$on('RefundsEnabled', fn);
+    onOwnershipTransferred (fn?: (event: TClientEventsStreamData<TLogOwnershipTransferredParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogOwnershipTransferredParameters>> {
+        return this.$onLog('OwnershipTransferred', fn);
     }
 
-    onWithdrawn (fn: (event: EventLog, payee: TAddress, weiAmount: bigint) => void): ClientEventsStream<any> {
-        return this.$on('Withdrawn', fn);
+    onRefundsClosed (fn?: (event: TClientEventsStreamData<TLogRefundsClosedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRefundsClosedParameters>> {
+        return this.$onLog('RefundsClosed', fn);
+    }
+
+    onRefundsEnabled (fn?: (event: TClientEventsStreamData<TLogRefundsEnabledParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRefundsEnabledParameters>> {
+        return this.$onLog('RefundsEnabled', fn);
+    }
+
+    onWithdrawn (fn?: (event: TClientEventsStreamData<TLogWithdrawnParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogWithdrawnParameters>> {
+        return this.$onLog('Withdrawn', fn);
     }
 
     extractLogsDeposited (tx: TransactionReceipt): ITxLogItem<TLogDeposited>[] {
@@ -207,6 +227,8 @@ export class RefundEscrow extends ContractBase {
     }
 
     abi: AbiItem[] = [{"inputs":[{"internalType":"address payable","name":"beneficiary_","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"payee","type":"address"},{"indexed":false,"internalType":"uint256","name":"weiAmount","type":"uint256"}],"name":"Deposited","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[],"name":"RefundsClosed","type":"event"},{"anonymous":false,"inputs":[],"name":"RefundsEnabled","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"payee","type":"address"},{"indexed":false,"internalType":"uint256","name":"weiAmount","type":"uint256"}],"name":"Withdrawn","type":"event"},{"inputs":[],"name":"beneficiary","outputs":[{"internalType":"address payable","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"beneficiaryWithdraw","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"close","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"refundee","type":"address"}],"name":"deposit","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"payee","type":"address"}],"name":"depositsOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"enableRefunds","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"state","outputs":[{"internalType":"enum RefundEscrow.State","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address payable","name":"payee","type":"address"}],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"withdrawalAllowed","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"}]
+
+    
 }
 
 type TSender = TAccount & {
@@ -215,17 +237,113 @@ type TSender = TAccount & {
 
     type TLogDeposited = {
         payee: TAddress, weiAmount: bigint
-    }
+    };
+    type TLogDepositedParameters = [ payee: TAddress, weiAmount: bigint ];
     type TLogOwnershipTransferred = {
         previousOwner: TAddress, newOwner: TAddress
-    }
+    };
+    type TLogOwnershipTransferredParameters = [ previousOwner: TAddress, newOwner: TAddress ];
     type TLogRefundsClosed = {
         
-    }
+    };
+    type TLogRefundsClosedParameters = [  ];
     type TLogRefundsEnabled = {
         
-    }
+    };
+    type TLogRefundsEnabledParameters = [  ];
     type TLogWithdrawn = {
         payee: TAddress, weiAmount: bigint
-    }
+    };
+    type TLogWithdrawnParameters = [ payee: TAddress, weiAmount: bigint ];
+
+interface IEvents {
+  Deposited: TLogDepositedParameters
+  OwnershipTransferred: TLogOwnershipTransferredParameters
+  RefundsClosed: TLogRefundsClosedParameters
+  RefundsEnabled: TLogRefundsEnabledParameters
+  Withdrawn: TLogWithdrawnParameters
+  '*': any[] 
+}
+
+
+
+interface IMethodBeneficiary {
+  method: "beneficiary"
+  arguments: [  ]
+}
+
+interface IMethodBeneficiaryWithdraw {
+  method: "beneficiaryWithdraw"
+  arguments: [  ]
+}
+
+interface IMethodClose {
+  method: "close"
+  arguments: [  ]
+}
+
+interface IMethodDeposit {
+  method: "deposit"
+  arguments: [ refundee: TAddress ]
+}
+
+interface IMethodDepositsOf {
+  method: "depositsOf"
+  arguments: [ payee: TAddress ]
+}
+
+interface IMethodEnableRefunds {
+  method: "enableRefunds"
+  arguments: [  ]
+}
+
+interface IMethodOwner {
+  method: "owner"
+  arguments: [  ]
+}
+
+interface IMethodRenounceOwnership {
+  method: "renounceOwnership"
+  arguments: [  ]
+}
+
+interface IMethodState {
+  method: "state"
+  arguments: [  ]
+}
+
+interface IMethodTransferOwnership {
+  method: "transferOwnership"
+  arguments: [ newOwner: TAddress ]
+}
+
+interface IMethodWithdraw {
+  method: "withdraw"
+  arguments: [ payee: TAddress ]
+}
+
+interface IMethodWithdrawalAllowed {
+  method: "withdrawalAllowed"
+  arguments: [ input0: TAddress ]
+}
+
+interface IMethods {
+  beneficiary: IMethodBeneficiary
+  beneficiaryWithdraw: IMethodBeneficiaryWithdraw
+  close: IMethodClose
+  deposit: IMethodDeposit
+  depositsOf: IMethodDepositsOf
+  enableRefunds: IMethodEnableRefunds
+  owner: IMethodOwner
+  renounceOwnership: IMethodRenounceOwnership
+  state: IMethodState
+  transferOwnership: IMethodTransferOwnership
+  withdraw: IMethodWithdraw
+  withdrawalAllowed: IMethodWithdrawalAllowed
+  '*': { method: string, arguments: any[] } 
+}
+
+
+
+
 

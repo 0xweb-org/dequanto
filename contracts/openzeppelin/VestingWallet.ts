@@ -1,27 +1,32 @@
 /**
- *  AUTO-Generated Class: 2022-08-11 11:20
+ *  AUTO-Generated Class: 2023-01-19 12:43
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
-import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
+import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { type AbiItem } from 'web3-utils';
-import { TransactionReceipt, EventLog } from 'web3-core';
+import type { BlockTransactionString } from 'web3-eth';
+import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { SubjectStream } from '@dequanto/class/SubjectStream';
+
+
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 export class VestingWallet extends ContractBase {
     constructor(
         public address: TAddress = '',
-        public client: Web3Client = di.resolve(EthWeb3Client),
-        public explorer: IBlockChainExplorer = di.resolve(Etherscan)
+        public client: Web3Client = di.resolve(EthWeb3Client, ),
+        public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
     }
@@ -68,12 +73,27 @@ export class VestingWallet extends ContractBase {
         return this.$read(abi, ...args);
     }
 
-    onERC20Released (fn: (event: EventLog, token: TAddress, amount: bigint) => void): ClientEventsStream<any> {
-        return this.$on('ERC20Released', fn);
+    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+        tx: Transaction
+        block: BlockTransactionString
+        calldata: IMethods[TMethod]
+    }> {
+        options ??= {};
+        options.filter ??= {};
+        options.filter.method = <any> method;
+        return <any> this.$onTransaction(options);
     }
 
-    onEtherReleased (fn: (event: EventLog, amount: bigint) => void): ClientEventsStream<any> {
-        return this.$on('EtherReleased', fn);
+    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+        return this.$onLog(event, cb);
+    }
+
+    onERC20Released (fn?: (event: TClientEventsStreamData<TLogERC20ReleasedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogERC20ReleasedParameters>> {
+        return this.$onLog('ERC20Released', fn);
+    }
+
+    onEtherReleased (fn?: (event: TClientEventsStreamData<TLogEtherReleasedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogEtherReleasedParameters>> {
+        return this.$onLog('EtherReleased', fn);
     }
 
     extractLogsERC20Released (tx: TransactionReceipt): ITxLogItem<TLogERC20Released>[] {
@@ -117,6 +137,8 @@ export class VestingWallet extends ContractBase {
     }
 
     abi: AbiItem[] = [{"inputs":[{"internalType":"address","name":"beneficiaryAddress","type":"address"},{"internalType":"uint64","name":"startTimestamp","type":"uint64"},{"internalType":"uint64","name":"durationSeconds","type":"uint64"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"token","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"ERC20Released","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"EtherReleased","type":"event"},{"inputs":[],"name":"beneficiary","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"duration","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"}],"name":"release","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"release","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"released","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"}],"name":"released","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"start","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint64","name":"timestamp","type":"uint64"}],"name":"vestedAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint64","name":"timestamp","type":"uint64"}],"name":"vestedAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"stateMutability":"payable","type":"receive"}]
+
+    
 }
 
 type TSender = TAccount & {
@@ -125,8 +147,62 @@ type TSender = TAccount & {
 
     type TLogERC20Released = {
         token: TAddress, amount: bigint
-    }
+    };
+    type TLogERC20ReleasedParameters = [ token: TAddress, amount: bigint ];
     type TLogEtherReleased = {
         amount: bigint
-    }
+    };
+    type TLogEtherReleasedParameters = [ amount: bigint ];
+
+interface IEvents {
+  ERC20Released: TLogERC20ReleasedParameters
+  EtherReleased: TLogEtherReleasedParameters
+  '*': any[] 
+}
+
+
+
+interface IMethodBeneficiary {
+  method: "beneficiary"
+  arguments: [  ]
+}
+
+interface IMethodDuration {
+  method: "duration"
+  arguments: [  ]
+}
+
+interface IMethodRelease {
+  method: "release"
+  arguments: [ token: TAddress ] | [  ]
+}
+
+interface IMethodReleased {
+  method: "released"
+  arguments: [  ] | [ token: TAddress ]
+}
+
+interface IMethodStart {
+  method: "start"
+  arguments: [  ]
+}
+
+interface IMethodVestedAmount {
+  method: "vestedAmount"
+  arguments: [ timestamp: number ] | [ token: TAddress, timestamp: number ]
+}
+
+interface IMethods {
+  beneficiary: IMethodBeneficiary
+  duration: IMethodDuration
+  release: IMethodRelease
+  released: IMethodReleased
+  start: IMethodStart
+  vestedAmount: IMethodVestedAmount
+  '*': { method: string, arguments: any[] } 
+}
+
+
+
+
 

@@ -1,27 +1,32 @@
 /**
- *  AUTO-Generated Class: 2022-08-11 11:20
+ *  AUTO-Generated Class: 2023-01-19 12:43
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
-import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
+import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { type AbiItem } from 'web3-utils';
-import { TransactionReceipt, EventLog } from 'web3-core';
+import type { BlockTransactionString } from 'web3-eth';
+import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { SubjectStream } from '@dequanto/class/SubjectStream';
+
+
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 export class ICompoundTimelock extends ContractBase {
     constructor(
         public address: TAddress = '',
-        public client: Web3Client = di.resolve(EthWeb3Client),
-        public explorer: IBlockChainExplorer = di.resolve(Etherscan)
+        public client: Web3Client = di.resolve(EthWeb3Client, ),
+        public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
     }
@@ -91,28 +96,43 @@ export class ICompoundTimelock extends ContractBase {
         return this.$write(this.$getAbiItem('function', 'setPendingAdmin'), sender, input0);
     }
 
-    onCancelTransaction (fn: (event: EventLog, txHash: TBufferLike, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint) => void): ClientEventsStream<any> {
-        return this.$on('CancelTransaction', fn);
+    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+        tx: Transaction
+        block: BlockTransactionString
+        calldata: IMethods[TMethod]
+    }> {
+        options ??= {};
+        options.filter ??= {};
+        options.filter.method = <any> method;
+        return <any> this.$onTransaction(options);
     }
 
-    onExecuteTransaction (fn: (event: EventLog, txHash: TBufferLike, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint) => void): ClientEventsStream<any> {
-        return this.$on('ExecuteTransaction', fn);
+    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+        return this.$onLog(event, cb);
     }
 
-    onNewAdmin (fn: (event: EventLog, newAdmin: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('NewAdmin', fn);
+    onCancelTransaction (fn?: (event: TClientEventsStreamData<TLogCancelTransactionParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogCancelTransactionParameters>> {
+        return this.$onLog('CancelTransaction', fn);
     }
 
-    onNewDelay (fn: (event: EventLog, newDelay: bigint) => void): ClientEventsStream<any> {
-        return this.$on('NewDelay', fn);
+    onExecuteTransaction (fn?: (event: TClientEventsStreamData<TLogExecuteTransactionParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogExecuteTransactionParameters>> {
+        return this.$onLog('ExecuteTransaction', fn);
     }
 
-    onNewPendingAdmin (fn: (event: EventLog, newPendingAdmin: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('NewPendingAdmin', fn);
+    onNewAdmin (fn?: (event: TClientEventsStreamData<TLogNewAdminParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogNewAdminParameters>> {
+        return this.$onLog('NewAdmin', fn);
     }
 
-    onQueueTransaction (fn: (event: EventLog, txHash: TBufferLike, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint) => void): ClientEventsStream<any> {
-        return this.$on('QueueTransaction', fn);
+    onNewDelay (fn?: (event: TClientEventsStreamData<TLogNewDelayParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogNewDelayParameters>> {
+        return this.$onLog('NewDelay', fn);
+    }
+
+    onNewPendingAdmin (fn?: (event: TClientEventsStreamData<TLogNewPendingAdminParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogNewPendingAdminParameters>> {
+        return this.$onLog('NewPendingAdmin', fn);
+    }
+
+    onQueueTransaction (fn?: (event: TClientEventsStreamData<TLogQueueTransactionParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogQueueTransactionParameters>> {
+        return this.$onLog('QueueTransaction', fn);
     }
 
     extractLogsCancelTransaction (tx: TransactionReceipt): ITxLogItem<TLogCancelTransaction>[] {
@@ -236,6 +256,8 @@ export class ICompoundTimelock extends ContractBase {
     }
 
     abi: AbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"txHash","type":"bytes32"},{"indexed":true,"internalType":"address","name":"target","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"},{"indexed":false,"internalType":"string","name":"signature","type":"string"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"},{"indexed":false,"internalType":"uint256","name":"eta","type":"uint256"}],"name":"CancelTransaction","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"txHash","type":"bytes32"},{"indexed":true,"internalType":"address","name":"target","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"},{"indexed":false,"internalType":"string","name":"signature","type":"string"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"},{"indexed":false,"internalType":"uint256","name":"eta","type":"uint256"}],"name":"ExecuteTransaction","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"newAdmin","type":"address"}],"name":"NewAdmin","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"newDelay","type":"uint256"}],"name":"NewDelay","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"newPendingAdmin","type":"address"}],"name":"NewPendingAdmin","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"txHash","type":"bytes32"},{"indexed":true,"internalType":"address","name":"target","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"},{"indexed":false,"internalType":"string","name":"signature","type":"string"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"},{"indexed":false,"internalType":"uint256","name":"eta","type":"uint256"}],"name":"QueueTransaction","type":"event"},{"inputs":[],"name":"GRACE_PERIOD","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MAXIMUM_DELAY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MINIMUM_DELAY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"acceptAdmin","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"admin","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"target","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"string","name":"signature","type":"string"},{"internalType":"bytes","name":"data","type":"bytes"},{"internalType":"uint256","name":"eta","type":"uint256"}],"name":"cancelTransaction","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"delay","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"target","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"string","name":"signature","type":"string"},{"internalType":"bytes","name":"data","type":"bytes"},{"internalType":"uint256","name":"eta","type":"uint256"}],"name":"executeTransaction","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"pendingAdmin","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"target","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"string","name":"signature","type":"string"},{"internalType":"bytes","name":"data","type":"bytes"},{"internalType":"uint256","name":"eta","type":"uint256"}],"name":"queueTransaction","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"name":"queuedTransactions","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"setDelay","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"setPendingAdmin","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}]
+
+    
 }
 
 type TSender = TAccount & {
@@ -244,20 +266,124 @@ type TSender = TAccount & {
 
     type TLogCancelTransaction = {
         txHash: TBufferLike, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint
-    }
+    };
+    type TLogCancelTransactionParameters = [ txHash: TBufferLike, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint ];
     type TLogExecuteTransaction = {
         txHash: TBufferLike, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint
-    }
+    };
+    type TLogExecuteTransactionParameters = [ txHash: TBufferLike, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint ];
     type TLogNewAdmin = {
         newAdmin: TAddress
-    }
+    };
+    type TLogNewAdminParameters = [ newAdmin: TAddress ];
     type TLogNewDelay = {
         newDelay: bigint
-    }
+    };
+    type TLogNewDelayParameters = [ newDelay: bigint ];
     type TLogNewPendingAdmin = {
         newPendingAdmin: TAddress
-    }
+    };
+    type TLogNewPendingAdminParameters = [ newPendingAdmin: TAddress ];
     type TLogQueueTransaction = {
         txHash: TBufferLike, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint
-    }
+    };
+    type TLogQueueTransactionParameters = [ txHash: TBufferLike, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint ];
+
+interface IEvents {
+  CancelTransaction: TLogCancelTransactionParameters
+  ExecuteTransaction: TLogExecuteTransactionParameters
+  NewAdmin: TLogNewAdminParameters
+  NewDelay: TLogNewDelayParameters
+  NewPendingAdmin: TLogNewPendingAdminParameters
+  QueueTransaction: TLogQueueTransactionParameters
+  '*': any[] 
+}
+
+
+
+interface IMethodGRACE_PERIOD {
+  method: "GRACE_PERIOD"
+  arguments: [  ]
+}
+
+interface IMethodMAXIMUM_DELAY {
+  method: "MAXIMUM_DELAY"
+  arguments: [  ]
+}
+
+interface IMethodMINIMUM_DELAY {
+  method: "MINIMUM_DELAY"
+  arguments: [  ]
+}
+
+interface IMethodAcceptAdmin {
+  method: "acceptAdmin"
+  arguments: [  ]
+}
+
+interface IMethodAdmin {
+  method: "admin"
+  arguments: [  ]
+}
+
+interface IMethodCancelTransaction {
+  method: "cancelTransaction"
+  arguments: [ target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint ]
+}
+
+interface IMethodDelay {
+  method: "delay"
+  arguments: [  ]
+}
+
+interface IMethodExecuteTransaction {
+  method: "executeTransaction"
+  arguments: [ target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint ]
+}
+
+interface IMethodPendingAdmin {
+  method: "pendingAdmin"
+  arguments: [  ]
+}
+
+interface IMethodQueueTransaction {
+  method: "queueTransaction"
+  arguments: [ target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint ]
+}
+
+interface IMethodQueuedTransactions {
+  method: "queuedTransactions"
+  arguments: [ input0: TBufferLike ]
+}
+
+interface IMethodSetDelay {
+  method: "setDelay"
+  arguments: [ input0: bigint ]
+}
+
+interface IMethodSetPendingAdmin {
+  method: "setPendingAdmin"
+  arguments: [ input0: TAddress ]
+}
+
+interface IMethods {
+  GRACE_PERIOD: IMethodGRACE_PERIOD
+  MAXIMUM_DELAY: IMethodMAXIMUM_DELAY
+  MINIMUM_DELAY: IMethodMINIMUM_DELAY
+  acceptAdmin: IMethodAcceptAdmin
+  admin: IMethodAdmin
+  cancelTransaction: IMethodCancelTransaction
+  delay: IMethodDelay
+  executeTransaction: IMethodExecuteTransaction
+  pendingAdmin: IMethodPendingAdmin
+  queueTransaction: IMethodQueueTransaction
+  queuedTransactions: IMethodQueuedTransactions
+  setDelay: IMethodSetDelay
+  setPendingAdmin: IMethodSetPendingAdmin
+  '*': { method: string, arguments: any[] } 
+}
+
+
+
+
 

@@ -1,27 +1,32 @@
 /**
- *  AUTO-Generated Class: 2022-08-11 11:20
+ *  AUTO-Generated Class: 2023-01-19 12:43
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
-import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
+import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { type AbiItem } from 'web3-utils';
-import { TransactionReceipt, EventLog } from 'web3-core';
+import type { BlockTransactionString } from 'web3-eth';
+import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { SubjectStream } from '@dequanto/class/SubjectStream';
+
+
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 export class ERC721PresetMinterPauserAutoId extends ContractBase {
     constructor(
         public address: TAddress = '',
-        public client: Web3Client = di.resolve(EthWeb3Client),
-        public explorer: IBlockChainExplorer = di.resolve(Etherscan)
+        public client: Web3Client = di.resolve(EthWeb3Client, ),
+        public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
     }
@@ -180,36 +185,51 @@ export class ERC721PresetMinterPauserAutoId extends ContractBase {
         return this.$write(this.$getAbiItem('function', 'unpause'), sender);
     }
 
-    onApproval (fn: (event: EventLog, owner: TAddress, approved: TAddress, tokenId: bigint) => void): ClientEventsStream<any> {
-        return this.$on('Approval', fn);
+    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+        tx: Transaction
+        block: BlockTransactionString
+        calldata: IMethods[TMethod]
+    }> {
+        options ??= {};
+        options.filter ??= {};
+        options.filter.method = <any> method;
+        return <any> this.$onTransaction(options);
     }
 
-    onApprovalForAll (fn: (event: EventLog, owner: TAddress, operator: TAddress, approved: boolean) => void): ClientEventsStream<any> {
-        return this.$on('ApprovalForAll', fn);
+    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+        return this.$onLog(event, cb);
     }
 
-    onPaused (fn: (event: EventLog, account: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('Paused', fn);
+    onApproval (fn?: (event: TClientEventsStreamData<TLogApprovalParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalParameters>> {
+        return this.$onLog('Approval', fn);
     }
 
-    onRoleAdminChanged (fn: (event: EventLog, role: TBufferLike, previousAdminRole: TBufferLike, newAdminRole: TBufferLike) => void): ClientEventsStream<any> {
-        return this.$on('RoleAdminChanged', fn);
+    onApprovalForAll (fn?: (event: TClientEventsStreamData<TLogApprovalForAllParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalForAllParameters>> {
+        return this.$onLog('ApprovalForAll', fn);
     }
 
-    onRoleGranted (fn: (event: EventLog, role: TBufferLike, account: TAddress, _sender: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('RoleGranted', fn);
+    onPaused (fn?: (event: TClientEventsStreamData<TLogPausedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogPausedParameters>> {
+        return this.$onLog('Paused', fn);
     }
 
-    onRoleRevoked (fn: (event: EventLog, role: TBufferLike, account: TAddress, _sender: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('RoleRevoked', fn);
+    onRoleAdminChanged (fn?: (event: TClientEventsStreamData<TLogRoleAdminChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRoleAdminChangedParameters>> {
+        return this.$onLog('RoleAdminChanged', fn);
     }
 
-    onTransfer (fn: (event: EventLog, from: TAddress, to: TAddress, tokenId: bigint) => void): ClientEventsStream<any> {
-        return this.$on('Transfer', fn);
+    onRoleGranted (fn?: (event: TClientEventsStreamData<TLogRoleGrantedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRoleGrantedParameters>> {
+        return this.$onLog('RoleGranted', fn);
     }
 
-    onUnpaused (fn: (event: EventLog, account: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('Unpaused', fn);
+    onRoleRevoked (fn?: (event: TClientEventsStreamData<TLogRoleRevokedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRoleRevokedParameters>> {
+        return this.$onLog('RoleRevoked', fn);
+    }
+
+    onTransfer (fn?: (event: TClientEventsStreamData<TLogTransferParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogTransferParameters>> {
+        return this.$onLog('Transfer', fn);
+    }
+
+    onUnpaused (fn?: (event: TClientEventsStreamData<TLogUnpausedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogUnpausedParameters>> {
+        return this.$onLog('Unpaused', fn);
     }
 
     extractLogsApproval (tx: TransactionReceipt): ITxLogItem<TLogApproval>[] {
@@ -373,6 +393,8 @@ export class ERC721PresetMinterPauserAutoId extends ContractBase {
     }
 
     abi: AbiItem[] = [{"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"},{"internalType":"string","name":"baseTokenURI","type":"string"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"account","type":"address"}],"name":"Paused","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"previousAdminRole","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"newAdminRole","type":"bytes32"}],"name":"RoleAdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleGranted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleRevoked","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"account","type":"address"}],"name":"Unpaused","type":"event"},{"inputs":[],"name":"DEFAULT_ADMIN_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MINTER_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"PAUSER_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleAdmin","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getRoleMember","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleMemberCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"grantRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"hasRole","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"mint","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"pause","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"paused","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"renounceRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"revokeRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"index","type":"uint256"}],"name":"tokenByIndex","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint256","name":"index","type":"uint256"}],"name":"tokenOfOwnerByIndex","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"unpause","outputs":[],"stateMutability":"nonpayable","type":"function"}]
+
+    
 }
 
 type TSender = TAccount & {
@@ -381,26 +403,236 @@ type TSender = TAccount & {
 
     type TLogApproval = {
         owner: TAddress, approved: TAddress, tokenId: bigint
-    }
+    };
+    type TLogApprovalParameters = [ owner: TAddress, approved: TAddress, tokenId: bigint ];
     type TLogApprovalForAll = {
         owner: TAddress, operator: TAddress, approved: boolean
-    }
+    };
+    type TLogApprovalForAllParameters = [ owner: TAddress, operator: TAddress, approved: boolean ];
     type TLogPaused = {
         account: TAddress
-    }
+    };
+    type TLogPausedParameters = [ account: TAddress ];
     type TLogRoleAdminChanged = {
         role: TBufferLike, previousAdminRole: TBufferLike, newAdminRole: TBufferLike
-    }
+    };
+    type TLogRoleAdminChangedParameters = [ role: TBufferLike, previousAdminRole: TBufferLike, newAdminRole: TBufferLike ];
     type TLogRoleGranted = {
         role: TBufferLike, account: TAddress, _sender: TAddress
-    }
+    };
+    type TLogRoleGrantedParameters = [ role: TBufferLike, account: TAddress, _sender: TAddress ];
     type TLogRoleRevoked = {
         role: TBufferLike, account: TAddress, _sender: TAddress
-    }
+    };
+    type TLogRoleRevokedParameters = [ role: TBufferLike, account: TAddress, _sender: TAddress ];
     type TLogTransfer = {
         from: TAddress, to: TAddress, tokenId: bigint
-    }
+    };
+    type TLogTransferParameters = [ from: TAddress, to: TAddress, tokenId: bigint ];
     type TLogUnpaused = {
         account: TAddress
-    }
+    };
+    type TLogUnpausedParameters = [ account: TAddress ];
+
+interface IEvents {
+  Approval: TLogApprovalParameters
+  ApprovalForAll: TLogApprovalForAllParameters
+  Paused: TLogPausedParameters
+  RoleAdminChanged: TLogRoleAdminChangedParameters
+  RoleGranted: TLogRoleGrantedParameters
+  RoleRevoked: TLogRoleRevokedParameters
+  Transfer: TLogTransferParameters
+  Unpaused: TLogUnpausedParameters
+  '*': any[] 
+}
+
+
+
+interface IMethodDEFAULT_ADMIN_ROLE {
+  method: "DEFAULT_ADMIN_ROLE"
+  arguments: [  ]
+}
+
+interface IMethodMINTER_ROLE {
+  method: "MINTER_ROLE"
+  arguments: [  ]
+}
+
+interface IMethodPAUSER_ROLE {
+  method: "PAUSER_ROLE"
+  arguments: [  ]
+}
+
+interface IMethodApprove {
+  method: "approve"
+  arguments: [ to: TAddress, tokenId: bigint ]
+}
+
+interface IMethodBalanceOf {
+  method: "balanceOf"
+  arguments: [ owner: TAddress ]
+}
+
+interface IMethodBurn {
+  method: "burn"
+  arguments: [ tokenId: bigint ]
+}
+
+interface IMethodGetApproved {
+  method: "getApproved"
+  arguments: [ tokenId: bigint ]
+}
+
+interface IMethodGetRoleAdmin {
+  method: "getRoleAdmin"
+  arguments: [ role: TBufferLike ]
+}
+
+interface IMethodGetRoleMember {
+  method: "getRoleMember"
+  arguments: [ role: TBufferLike, index: bigint ]
+}
+
+interface IMethodGetRoleMemberCount {
+  method: "getRoleMemberCount"
+  arguments: [ role: TBufferLike ]
+}
+
+interface IMethodGrantRole {
+  method: "grantRole"
+  arguments: [ role: TBufferLike, account: TAddress ]
+}
+
+interface IMethodHasRole {
+  method: "hasRole"
+  arguments: [ role: TBufferLike, account: TAddress ]
+}
+
+interface IMethodIsApprovedForAll {
+  method: "isApprovedForAll"
+  arguments: [ owner: TAddress, operator: TAddress ]
+}
+
+interface IMethodMint {
+  method: "mint"
+  arguments: [ to: TAddress ]
+}
+
+interface IMethodName {
+  method: "name"
+  arguments: [  ]
+}
+
+interface IMethodOwnerOf {
+  method: "ownerOf"
+  arguments: [ tokenId: bigint ]
+}
+
+interface IMethodPause {
+  method: "pause"
+  arguments: [  ]
+}
+
+interface IMethodPaused {
+  method: "paused"
+  arguments: [  ]
+}
+
+interface IMethodRenounceRole {
+  method: "renounceRole"
+  arguments: [ role: TBufferLike, account: TAddress ]
+}
+
+interface IMethodRevokeRole {
+  method: "revokeRole"
+  arguments: [ role: TBufferLike, account: TAddress ]
+}
+
+interface IMethodSafeTransferFrom {
+  method: "safeTransferFrom"
+  arguments: [ from: TAddress, to: TAddress, tokenId: bigint ] | [ from: TAddress, to: TAddress, tokenId: bigint, data: TBufferLike ]
+}
+
+interface IMethodSetApprovalForAll {
+  method: "setApprovalForAll"
+  arguments: [ operator: TAddress, approved: boolean ]
+}
+
+interface IMethodSupportsInterface {
+  method: "supportsInterface"
+  arguments: [ interfaceId: TBufferLike ]
+}
+
+interface IMethodSymbol {
+  method: "symbol"
+  arguments: [  ]
+}
+
+interface IMethodTokenByIndex {
+  method: "tokenByIndex"
+  arguments: [ index: bigint ]
+}
+
+interface IMethodTokenOfOwnerByIndex {
+  method: "tokenOfOwnerByIndex"
+  arguments: [ owner: TAddress, index: bigint ]
+}
+
+interface IMethodTokenURI {
+  method: "tokenURI"
+  arguments: [ tokenId: bigint ]
+}
+
+interface IMethodTotalSupply {
+  method: "totalSupply"
+  arguments: [  ]
+}
+
+interface IMethodTransferFrom {
+  method: "transferFrom"
+  arguments: [ from: TAddress, to: TAddress, tokenId: bigint ]
+}
+
+interface IMethodUnpause {
+  method: "unpause"
+  arguments: [  ]
+}
+
+interface IMethods {
+  DEFAULT_ADMIN_ROLE: IMethodDEFAULT_ADMIN_ROLE
+  MINTER_ROLE: IMethodMINTER_ROLE
+  PAUSER_ROLE: IMethodPAUSER_ROLE
+  approve: IMethodApprove
+  balanceOf: IMethodBalanceOf
+  burn: IMethodBurn
+  getApproved: IMethodGetApproved
+  getRoleAdmin: IMethodGetRoleAdmin
+  getRoleMember: IMethodGetRoleMember
+  getRoleMemberCount: IMethodGetRoleMemberCount
+  grantRole: IMethodGrantRole
+  hasRole: IMethodHasRole
+  isApprovedForAll: IMethodIsApprovedForAll
+  mint: IMethodMint
+  name: IMethodName
+  ownerOf: IMethodOwnerOf
+  pause: IMethodPause
+  paused: IMethodPaused
+  renounceRole: IMethodRenounceRole
+  revokeRole: IMethodRevokeRole
+  safeTransferFrom: IMethodSafeTransferFrom
+  setApprovalForAll: IMethodSetApprovalForAll
+  supportsInterface: IMethodSupportsInterface
+  symbol: IMethodSymbol
+  tokenByIndex: IMethodTokenByIndex
+  tokenOfOwnerByIndex: IMethodTokenOfOwnerByIndex
+  tokenURI: IMethodTokenURI
+  totalSupply: IMethodTotalSupply
+  transferFrom: IMethodTransferFrom
+  unpause: IMethodUnpause
+  '*': { method: string, arguments: any[] } 
+}
+
+
+
+
 

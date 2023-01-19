@@ -1,27 +1,32 @@
 /**
- *  AUTO-Generated Class: 2022-08-11 11:20
+ *  AUTO-Generated Class: 2023-01-19 12:43
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
-import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
+import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { type AbiItem } from 'web3-utils';
-import { TransactionReceipt, EventLog } from 'web3-core';
+import type { BlockTransactionString } from 'web3-eth';
+import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { SubjectStream } from '@dequanto/class/SubjectStream';
+
+
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 export class IERC1820Registry extends ContractBase {
     constructor(
         public address: TAddress = '',
-        public client: Web3Client = di.resolve(EthWeb3Client),
-        public explorer: IBlockChainExplorer = di.resolve(Etherscan)
+        public client: Web3Client = di.resolve(EthWeb3Client, ),
+        public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
     }
@@ -66,12 +71,27 @@ export class IERC1820Registry extends ContractBase {
         return this.$write(this.$getAbiItem('function', 'updateERC165Cache'), sender, account, interfaceId);
     }
 
-    onInterfaceImplementerSet (fn: (event: EventLog, account: TAddress, interfaceHash: TBufferLike, implementer: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('InterfaceImplementerSet', fn);
+    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+        tx: Transaction
+        block: BlockTransactionString
+        calldata: IMethods[TMethod]
+    }> {
+        options ??= {};
+        options.filter ??= {};
+        options.filter.method = <any> method;
+        return <any> this.$onTransaction(options);
     }
 
-    onManagerChanged (fn: (event: EventLog, account: TAddress, newManager: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('ManagerChanged', fn);
+    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+        return this.$onLog(event, cb);
+    }
+
+    onInterfaceImplementerSet (fn?: (event: TClientEventsStreamData<TLogInterfaceImplementerSetParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogInterfaceImplementerSetParameters>> {
+        return this.$onLog('InterfaceImplementerSet', fn);
+    }
+
+    onManagerChanged (fn?: (event: TClientEventsStreamData<TLogManagerChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogManagerChangedParameters>> {
+        return this.$onLog('ManagerChanged', fn);
     }
 
     extractLogsInterfaceImplementerSet (tx: TransactionReceipt): ITxLogItem<TLogInterfaceImplementerSet>[] {
@@ -115,6 +135,8 @@ export class IERC1820Registry extends ContractBase {
     }
 
     abi: AbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"bytes32","name":"interfaceHash","type":"bytes32"},{"indexed":true,"internalType":"address","name":"implementer","type":"address"}],"name":"InterfaceImplementerSet","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"newManager","type":"address"}],"name":"ManagerChanged","type":"event"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"bytes32","name":"_interfaceHash","type":"bytes32"}],"name":"getInterfaceImplementer","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"getManager","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"implementsERC165Interface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"implementsERC165InterfaceNoCache","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"interfaceName","type":"string"}],"name":"interfaceHash","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"bytes32","name":"_interfaceHash","type":"bytes32"},{"internalType":"address","name":"implementer","type":"address"}],"name":"setInterfaceImplementer","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"address","name":"newManager","type":"address"}],"name":"setManager","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"updateERC165Cache","outputs":[],"stateMutability":"nonpayable","type":"function"}]
+
+    
 }
 
 type TSender = TAccount & {
@@ -123,8 +145,74 @@ type TSender = TAccount & {
 
     type TLogInterfaceImplementerSet = {
         account: TAddress, interfaceHash: TBufferLike, implementer: TAddress
-    }
+    };
+    type TLogInterfaceImplementerSetParameters = [ account: TAddress, interfaceHash: TBufferLike, implementer: TAddress ];
     type TLogManagerChanged = {
         account: TAddress, newManager: TAddress
-    }
+    };
+    type TLogManagerChangedParameters = [ account: TAddress, newManager: TAddress ];
+
+interface IEvents {
+  InterfaceImplementerSet: TLogInterfaceImplementerSetParameters
+  ManagerChanged: TLogManagerChangedParameters
+  '*': any[] 
+}
+
+
+
+interface IMethodGetInterfaceImplementer {
+  method: "getInterfaceImplementer"
+  arguments: [ account: TAddress, _interfaceHash: TBufferLike ]
+}
+
+interface IMethodGetManager {
+  method: "getManager"
+  arguments: [ account: TAddress ]
+}
+
+interface IMethodImplementsERC165Interface {
+  method: "implementsERC165Interface"
+  arguments: [ account: TAddress, interfaceId: TBufferLike ]
+}
+
+interface IMethodImplementsERC165InterfaceNoCache {
+  method: "implementsERC165InterfaceNoCache"
+  arguments: [ account: TAddress, interfaceId: TBufferLike ]
+}
+
+interface IMethodInterfaceHash {
+  method: "interfaceHash"
+  arguments: [ interfaceName: string ]
+}
+
+interface IMethodSetInterfaceImplementer {
+  method: "setInterfaceImplementer"
+  arguments: [ account: TAddress, _interfaceHash: TBufferLike, implementer: TAddress ]
+}
+
+interface IMethodSetManager {
+  method: "setManager"
+  arguments: [ account: TAddress, newManager: TAddress ]
+}
+
+interface IMethodUpdateERC165Cache {
+  method: "updateERC165Cache"
+  arguments: [ account: TAddress, interfaceId: TBufferLike ]
+}
+
+interface IMethods {
+  getInterfaceImplementer: IMethodGetInterfaceImplementer
+  getManager: IMethodGetManager
+  implementsERC165Interface: IMethodImplementsERC165Interface
+  implementsERC165InterfaceNoCache: IMethodImplementsERC165InterfaceNoCache
+  interfaceHash: IMethodInterfaceHash
+  setInterfaceImplementer: IMethodSetInterfaceImplementer
+  setManager: IMethodSetManager
+  updateERC165Cache: IMethodUpdateERC165Cache
+  '*': { method: string, arguments: any[] } 
+}
+
+
+
+
 

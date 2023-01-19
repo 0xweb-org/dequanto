@@ -71,6 +71,9 @@ export class GeneratorFromAbi {
             .filter(Boolean)
             .map(Str.formatMethod);
             ;
+
+        let eventInterfacesAll = Gen.serializeEventsInterfacesAllTs(abiJson.filter(x => x.type === 'event'));
+
         let eventsExtractorsArr = abiJson
             .filter(x => x.type === 'event')
             .map(x => Gen.serializeEventExtractor(x))
@@ -208,10 +211,10 @@ export class GeneratorFromAbi {
             .replace(`$ABI$`, JSON.stringify(abiJson))
             .replace(`$DATE$`, $date.format(new Date(), 'yyyy-MM-dd HH:mm'))
             .replace(`$EXPLORER_URL$`, explorerUrl)
-            .replace(`/* $EVENT_INTERFACES$ */`, eventInterfaces.join('\n'))
+            .replace(`/* $EVENT_INTERFACES$ */`, eventInterfaces.join('\n') + '\n\n' + eventInterfacesAll.code + '\n\n')
 
             .replace(`/* STORAGE_READER_PROPERTY */`, storageReaderProperty)
-            .replace(`/* STORAGE_READER_CLASS */`, storageReaderClass)
+            .replace(`/* STORAGE_READER_CLASS */`, storageReaderClass || '')
             .replace(`/* $METHOD_INTERFACES$ */`, methodInterfacesArr.map(x => x.code).join('\n\n') + '\n\n' + methodInterfacesAll.code + '\n\n')
             ;
 
@@ -305,12 +308,26 @@ namespace Gen {
             code: code.join('\n')
         };
     }
+    export function serializeEventsInterfacesAllTs (events: AbiItem[] ) {
+        let fields = events.map(item => {
+            return `  ${item.name}: TLog${item.name}Parameters`;
+        });
+        let code = [
+            `interface IEvents {`,
+            ...fields,
+            `  '*': any[] `,
+            `}`
+        ];
+        return {
+            code: code.join('\n')
+        };
+    }
 
     export function serializeEvent (abi: AbiItem) {
         let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
         return `
-            on${abi.name} (fn: (event: EventLog, ${fnInputArguments}) => void): ClientEventsStream<any> {
-                return this.$on('${abi.name}', fn);
+            on${abi.name} (fn?: (event: TClientEventsStreamData<TLog${abi.name}Parameters>) => void): ClientEventsStream<TClientEventsStreamData<TLog${abi.name}Parameters>> {
+                return this.$onLog('${abi.name}', fn);
             }
         `;
     }
@@ -348,7 +365,8 @@ namespace Gen {
         return `
             type TLog${abi.name} = {
                 ${fnInputArguments}
-            }
+            };
+            type TLog${abi.name}Parameters = [ ${fnInputArguments.replace('\n', '')} ];
         `;
     }
 

@@ -1,43 +1,63 @@
 /**
- *  AUTO-Generated Class: 2022-08-11 11:20
+ *  AUTO-Generated Class: 2023-01-19 12:43
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
-import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
+import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { type AbiItem } from 'web3-utils';
-import { TransactionReceipt, EventLog } from 'web3-core';
+import type { BlockTransactionString } from 'web3-eth';
+import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { SubjectStream } from '@dequanto/class/SubjectStream';
+
+
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 export class BeaconProxy extends ContractBase {
     constructor(
         public address: TAddress = '',
-        public client: Web3Client = di.resolve(EthWeb3Client),
-        public explorer: IBlockChainExplorer = di.resolve(Etherscan)
+        public client: Web3Client = di.resolve(EthWeb3Client, ),
+        public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
     }
 
 
 
-    onAdminChanged (fn: (event: EventLog, previousAdmin: TAddress, newAdmin: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('AdminChanged', fn);
+    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+        tx: Transaction
+        block: BlockTransactionString
+        calldata: IMethods[TMethod]
+    }> {
+        options ??= {};
+        options.filter ??= {};
+        options.filter.method = <any> method;
+        return <any> this.$onTransaction(options);
     }
 
-    onBeaconUpgraded (fn: (event: EventLog, beacon: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('BeaconUpgraded', fn);
+    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+        return this.$onLog(event, cb);
     }
 
-    onUpgraded (fn: (event: EventLog, implementation: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('Upgraded', fn);
+    onAdminChanged (fn?: (event: TClientEventsStreamData<TLogAdminChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogAdminChangedParameters>> {
+        return this.$onLog('AdminChanged', fn);
+    }
+
+    onBeaconUpgraded (fn?: (event: TClientEventsStreamData<TLogBeaconUpgradedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogBeaconUpgradedParameters>> {
+        return this.$onLog('BeaconUpgraded', fn);
+    }
+
+    onUpgraded (fn?: (event: TClientEventsStreamData<TLogUpgradedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogUpgradedParameters>> {
+        return this.$onLog('Upgraded', fn);
     }
 
     extractLogsAdminChanged (tx: TransactionReceipt): ITxLogItem<TLogAdminChanged>[] {
@@ -101,6 +121,8 @@ export class BeaconProxy extends ContractBase {
     }
 
     abi: AbiItem[] = [{"inputs":[{"internalType":"address","name":"beacon","type":"address"},{"internalType":"bytes","name":"data","type":"bytes"}],"stateMutability":"payable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"previousAdmin","type":"address"},{"indexed":false,"internalType":"address","name":"newAdmin","type":"address"}],"name":"AdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"beacon","type":"address"}],"name":"BeaconUpgraded","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"implementation","type":"address"}],"name":"Upgraded","type":"event"},{"stateMutability":"payable","type":"fallback"},{"stateMutability":"payable","type":"receive"}]
+
+    
 }
 
 type TSender = TAccount & {
@@ -109,11 +131,33 @@ type TSender = TAccount & {
 
     type TLogAdminChanged = {
         previousAdmin: TAddress, newAdmin: TAddress
-    }
+    };
+    type TLogAdminChangedParameters = [ previousAdmin: TAddress, newAdmin: TAddress ];
     type TLogBeaconUpgraded = {
         beacon: TAddress
-    }
+    };
+    type TLogBeaconUpgradedParameters = [ beacon: TAddress ];
     type TLogUpgraded = {
         implementation: TAddress
-    }
+    };
+    type TLogUpgradedParameters = [ implementation: TAddress ];
+
+interface IEvents {
+  AdminChanged: TLogAdminChangedParameters
+  BeaconUpgraded: TLogBeaconUpgradedParameters
+  Upgraded: TLogUpgradedParameters
+  '*': any[] 
+}
+
+
+
+
+
+interface IMethods {
+  '*': { method: string, arguments: any[] } 
+}
+
+
+
+
 

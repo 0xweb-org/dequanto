@@ -1,27 +1,32 @@
 /**
- *  AUTO-Generated Class: 2022-08-11 11:20
+ *  AUTO-Generated Class: 2023-01-19 12:43
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
-import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
+import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { type AbiItem } from 'web3-utils';
-import { TransactionReceipt, EventLog } from 'web3-core';
+import type { BlockTransactionString } from 'web3-eth';
+import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { SubjectStream } from '@dequanto/class/SubjectStream';
+
+
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 export class Votes extends ContractBase {
     constructor(
         public address: TAddress = '',
-        public client: Web3Client = di.resolve(EthWeb3Client),
-        public explorer: IBlockChainExplorer = di.resolve(Etherscan)
+        public client: Web3Client = di.resolve(EthWeb3Client, ),
+        public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
     }
@@ -66,12 +71,27 @@ export class Votes extends ContractBase {
         return this.$read('function nonces(address) returns uint256', owner);
     }
 
-    onDelegateChanged (fn: (event: EventLog, delegator: TAddress, fromDelegate: TAddress, toDelegate: TAddress) => void): ClientEventsStream<any> {
-        return this.$on('DelegateChanged', fn);
+    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+        tx: Transaction
+        block: BlockTransactionString
+        calldata: IMethods[TMethod]
+    }> {
+        options ??= {};
+        options.filter ??= {};
+        options.filter.method = <any> method;
+        return <any> this.$onTransaction(options);
     }
 
-    onDelegateVotesChanged (fn: (event: EventLog, delegate: TAddress, previousBalance: bigint, newBalance: bigint) => void): ClientEventsStream<any> {
-        return this.$on('DelegateVotesChanged', fn);
+    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+        return this.$onLog(event, cb);
+    }
+
+    onDelegateChanged (fn?: (event: TClientEventsStreamData<TLogDelegateChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDelegateChangedParameters>> {
+        return this.$onLog('DelegateChanged', fn);
+    }
+
+    onDelegateVotesChanged (fn?: (event: TClientEventsStreamData<TLogDelegateVotesChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDelegateVotesChangedParameters>> {
+        return this.$onLog('DelegateVotesChanged', fn);
     }
 
     extractLogsDelegateChanged (tx: TransactionReceipt): ITxLogItem<TLogDelegateChanged>[] {
@@ -115,6 +135,8 @@ export class Votes extends ContractBase {
     }
 
     abi: AbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"delegator","type":"address"},{"indexed":true,"internalType":"address","name":"fromDelegate","type":"address"},{"indexed":true,"internalType":"address","name":"toDelegate","type":"address"}],"name":"DelegateChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"delegate","type":"address"},{"indexed":false,"internalType":"uint256","name":"previousBalance","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"newBalance","type":"uint256"}],"name":"DelegateVotesChanged","type":"event"},{"inputs":[],"name":"DOMAIN_SEPARATOR","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"delegatee","type":"address"}],"name":"delegate","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"delegatee","type":"address"},{"internalType":"uint256","name":"nonce","type":"uint256"},{"internalType":"uint256","name":"expiry","type":"uint256"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"delegateBySig","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"delegates","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"blockNumber","type":"uint256"}],"name":"getPastTotalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"blockNumber","type":"uint256"}],"name":"getPastVotes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"getVotes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"nonces","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]
+
+    
 }
 
 type TSender = TAccount & {
@@ -123,8 +145,74 @@ type TSender = TAccount & {
 
     type TLogDelegateChanged = {
         delegator: TAddress, fromDelegate: TAddress, toDelegate: TAddress
-    }
+    };
+    type TLogDelegateChangedParameters = [ delegator: TAddress, fromDelegate: TAddress, toDelegate: TAddress ];
     type TLogDelegateVotesChanged = {
         delegate: TAddress, previousBalance: bigint, newBalance: bigint
-    }
+    };
+    type TLogDelegateVotesChangedParameters = [ delegate: TAddress, previousBalance: bigint, newBalance: bigint ];
+
+interface IEvents {
+  DelegateChanged: TLogDelegateChangedParameters
+  DelegateVotesChanged: TLogDelegateVotesChangedParameters
+  '*': any[] 
+}
+
+
+
+interface IMethodDOMAIN_SEPARATOR {
+  method: "DOMAIN_SEPARATOR"
+  arguments: [  ]
+}
+
+interface IMethodDelegate {
+  method: "delegate"
+  arguments: [ delegatee: TAddress ]
+}
+
+interface IMethodDelegateBySig {
+  method: "delegateBySig"
+  arguments: [ delegatee: TAddress, nonce: bigint, expiry: bigint, v: number, r: TBufferLike, s: TBufferLike ]
+}
+
+interface IMethodDelegates {
+  method: "delegates"
+  arguments: [ account: TAddress ]
+}
+
+interface IMethodGetPastTotalSupply {
+  method: "getPastTotalSupply"
+  arguments: [ blockNumber: bigint ]
+}
+
+interface IMethodGetPastVotes {
+  method: "getPastVotes"
+  arguments: [ account: TAddress, blockNumber: bigint ]
+}
+
+interface IMethodGetVotes {
+  method: "getVotes"
+  arguments: [ account: TAddress ]
+}
+
+interface IMethodNonces {
+  method: "nonces"
+  arguments: [ owner: TAddress ]
+}
+
+interface IMethods {
+  DOMAIN_SEPARATOR: IMethodDOMAIN_SEPARATOR
+  delegate: IMethodDelegate
+  delegateBySig: IMethodDelegateBySig
+  delegates: IMethodDelegates
+  getPastTotalSupply: IMethodGetPastTotalSupply
+  getPastVotes: IMethodGetPastVotes
+  getVotes: IMethodGetVotes
+  nonces: IMethodNonces
+  '*': { method: string, arguments: any[] } 
+}
+
+
+
+
 

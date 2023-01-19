@@ -1,7 +1,6 @@
+import di from 'a-di';
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
 import { TxLogParser } from '@dequanto/txs/receipt/TxLogParser'
-import { TxLogsTransfer } from '@dequanto/txs/receipt/TxLogsTransfer';
-import di from 'a-di';
 import { File } from 'atma-io'
 import { TransactionReceipt } from 'web3-core';
 
