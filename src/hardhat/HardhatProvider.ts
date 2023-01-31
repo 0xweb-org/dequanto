@@ -101,12 +101,14 @@ export class HardhatProvider {
             throw new Error(`Filename not extracted from ${solContractPath}`);
         }
 
-        await this.hh.run('compile', {
+        let hhOptions = {
             sources: dir,
             root,
             artifacts,
             tsgen: false,
-        });
+        };
+        console.log(`HH options`, hhOptions);
+        await this.hh.run('compile', hhOptions);
 
         if (root == null) {
             root = process.cwd();
@@ -166,6 +168,7 @@ export class HardhatProvider {
         options.paths = {
             root
         };
+        console.log(`Create TMP file`, tmp);
         await File.writeAsync(tmp, solidityCode);
         try {
             return await this.deploySol(tmp, options);
