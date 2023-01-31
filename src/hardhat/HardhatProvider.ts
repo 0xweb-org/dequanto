@@ -124,6 +124,8 @@ export class HardhatProvider {
 
         let outputDir = class_Uri.combine(artifacts, solContractPath);
         let output = class_Uri.combine(outputDir, `${filename}.json`);
+        console.log(`Compiled OK Output ${output} outputDir ${outputDir}`);
+
         if (await File.existsAsync(output) === false) {
             let path = `${outputDir}/`;
             if (await Directory.existsAsync(path) === false) {
@@ -135,7 +137,7 @@ export class HardhatProvider {
                 throw new Error(`No JSONs output found in ${outputDir}`);
             }
             if (jsons.length === 1) {
-                output = jsons[0].uri.toLocalFile();
+                output = jsons[0].uri.toString();
             } else {
                 let jsonFile = jsons.find(file => {
                     return filename.includes(file.uri.filename);
@@ -143,7 +145,7 @@ export class HardhatProvider {
                 if (jsonFile == null) {
                     throw new Error(`Compiled JSON data not found for ${filename} in ${outputDir}`);
                 }
-                output = jsonFile.uri.toLocalFile();
+                output = jsonFile.uri.toString();
             }
         }
 
