@@ -11,6 +11,7 @@ const TokensServicePolygon_1 = require("./TokensServicePolygon");
 const TokensServiceXDai_1 = require("./TokensServiceXDai");
 const TokensServiceArbitrum_1 = require("@dequanto/chains/arbitrum/TokensServiceArbitrum");
 const TokensService_1 = require("./TokensService");
+const Config_1 = require("@dequanto/Config");
 var TokensServiceFactory;
 (function (TokensServiceFactory) {
     function get(platform) {
@@ -26,9 +27,14 @@ var TokensServiceFactory;
             case 'arbitrum':
                 return a_di_1.default.resolve(TokensServiceArbitrum_1.TokensServiceArbitrum);
             case 'hardhat':
-                return a_di_1.default.resolve(TokensService_1.TokensService, 'hardhat');
-            default:
+                return a_di_1.default.resolve(TokensService_1.TokensService, platform);
+            default: {
+                let cfg = Config_1.config.web3[platform];
+                if (cfg != null) {
+                    return a_di_1.default.resolve(TokensService_1.TokensService, platform);
+                }
                 throw new Error(`Unsupported platform ${platform} for TokensService`);
+            }
         }
     }
     TokensServiceFactory.get = get;

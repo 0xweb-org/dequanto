@@ -6,7 +6,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PackedRanges = void 0;
 const alot_1 = __importDefault(require("alot"));
 /**
- *  Allows in a compact way to add/remove a number to the range; check if number was added.
+ * Defines a RANGE: [FROM_NUMBER, TO_NUMBER | Infinity)
+ *
+ * - Walking/Iterating/Visiting through the range marks the visited number as ADD.
+ *
+ * - Possible to ADD the number manually, for example for persistance/restore properties
+ *
+ * - Check if NUMBER was already visited/iterated
+ *
  */
 class PackedRanges {
     constructor(opts) {

@@ -64,6 +64,7 @@ var $abiParser;
     // (uint256, uint256)
     // (uint256 foo, uint256 bar)
     // (uint256 foo, uint256 bar)[]
+    // ((uint256 foo, uint256 bar) foo, uint256 bar)
     function parseArguments(line) {
         line = line?.trim();
         if (!line || line === '()') {
@@ -78,8 +79,7 @@ var $abiParser;
             let parametersLine = line.substring(1, end);
             let isArray = line.endsWith('[]');
             let params = Parse.parametersLine(parametersLine);
-            let isTuple = params.every(x => Boolean(x.name));
-            if (isTuple && isArray) {
+            if (isArray) {
                 return [
                     {
                         name: '',
@@ -88,15 +88,29 @@ var $abiParser;
                     }
                 ];
             }
-            if (params.length === 1) {
-                line = params[0].type;
-                params = [
+            let delimiter = line.indexOf(',', end);
+            if (delimiter === -1) {
+                delimiter = line.length;
+            }
+            let tupleName = line.substring(end + 1, delimiter).trim();
+            if (tupleName) {
+                return [
                     {
-                        name: "",
-                        type: line,
-                    },
+                        name: tupleName,
+                        type: `tuple`,
+                        components: params
+                    }
                 ];
             }
+            // if (params.length === 1) {
+            //     line = params[0].type;
+            //     params = [
+            //         {
+            //             name: "",
+            //             type: line,
+            //         },
+            //     ];
+            // }
             return params;
         }
         // if (c === '{') {
@@ -109,10 +123,17 @@ var $abiParser;
         //         };
         //     });
         // }
+        let name = '';
+        let type = line;
+        let match = /^(?<type>.+)\s+(?<name>[\w_$]+)$/.exec(line);
+        if (match) {
+            name = match.groups.name;
+            type = match.groups.type;
+        }
         return [
             {
-                name: '',
-                type: line,
+                name,
+                type,
             },
         ];
     }
@@ -122,19 +143,33 @@ var Parse;
 (function (Parse) {
     // uint256 foo, uint bar, address qux
     function parametersLine(paramsStr) {
-        return paramsStr
-            .split(',')
-            .map(x => x.trim())
-            .filter(Boolean)
+        return splitByDelimiter(paramsStr, ',')
             .map(param => {
-            let [_type, _name] = param.split(/\s+/).map(x => x.trim()).filter(Boolean);
-            return {
-                name: _name ?? '',
-                type: _type.trim()
-            };
+            let params = $abiParser.parseArguments(param);
+            return params[0];
         });
     }
     Parse.parametersLine = parametersLine;
+    function splitByDelimiter(line, delimiter) {
+        let parts = [];
+        let start = 0;
+        for (let i = 0; i < line.length; i++) {
+            let c = line[i];
+            if (c === delimiter) {
+                parts.push(line.substring(start, i).trim());
+                start = i + 1;
+                continue;
+            }
+            if (c === '(') {
+                i = goToClosing(line, i, c);
+                continue;
+            }
+        }
+        // final part
+        parts.push(line.substring(start).trim());
+        return parts.filter(Boolean);
+    }
+    Parse.splitByDelimiter = splitByDelimiter;
     function goToClosing(str, startI, openChar, closeChar) {
         closeChar = closeChar ?? CLOSE_CHARS[openChar];
         let count = 0;

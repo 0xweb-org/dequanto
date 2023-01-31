@@ -209,6 +209,11 @@ class Web3Client {
             return batch.execute();
         });
     }
+    getCode(address) {
+        return this.pool.call(web3 => {
+            return web3.eth.getCode(address);
+        });
+    }
     getPendingTransactions() {
         return this.pool.call(web3 => {
             return web3.eth.getPendingTransactions();

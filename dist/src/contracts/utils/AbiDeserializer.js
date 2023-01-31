@@ -1,17 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AbiDeserializer = void 0;
+const _str_1 = require("@dequanto/solidity/utils/$str");
 const _abiType_1 = require("@dequanto/utils/$abiType");
+const _is_1 = require("@dequanto/utils/$is");
 const _abiParser_1 = require("../../utils/$abiParser");
 var AbiDeserializer;
 (function (AbiDeserializer) {
     function process(result, types) {
         let type = _abiParser_1.$abiParser.getReturnTypeFromTypes(types);
-        if (type === 'array') {
-            return toArray(result, types);
-        }
-        if (type === 'object') {
-            return toObject(result, types);
+        if (typeof result === 'object') {
+            if (type === 'array') {
+                return toArray(result, types);
+            }
+            if (type === 'object') {
+                return toObject(result, types);
+            }
         }
         return toType(result, types[0]);
     }
@@ -27,6 +31,12 @@ var AbiDeserializer;
                     return BigInt(val);
                 case 'number':
                     return Number(val);
+                case 'boolean':
+                    return Boolean(Number(val));
+                case 'string':
+                    return _is_1.$is.hexString(val)
+                        ? _str_1.$str.fromHex(val)
+                        : val;
             }
         }
         if (type.type === 'tuple[]') {

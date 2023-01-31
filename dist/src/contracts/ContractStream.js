@@ -1,20 +1,33 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContractStream = void 0;
-const EthWeb3Client_1 = require("@dequanto/clients/EthWeb3Client");
-const a_di_1 = __importDefault(require("a-di"));
+const ClientEventsStream_1 = require("@dequanto/clients/ClientEventsStream");
+const _require_1 = require("@dequanto/utils/$require");
 class ContractStream {
-    constructor(address, abi, client = a_di_1.default.resolve(EthWeb3Client_1.EthWeb3Client)) {
+    constructor(address, abi, client) {
         this.address = address;
         this.abi = abi;
         this.client = client;
+        _require_1.$require.Address(address);
     }
-    on(event, cb) {
+    on(event) {
+        if (event === '*') {
+            let stream = new ClientEventsStream_1.ClientEventsStream(this.address, this.abi);
+            this
+                .client
+                .subscribe('logs', {
+                address: this.address,
+                fromBlock: 'latest'
+            })
+                .then(subscription => {
+                stream.fromSubscription(subscription);
+            }, error => {
+                stream.error(error);
+            });
+            return stream;
+        }
         let stream = this.client.getEventStream(this.address, this.abi, event);
-        return stream.onData(cb);
+        return stream;
     }
 }
 exports.ContractStream = ContractStream;

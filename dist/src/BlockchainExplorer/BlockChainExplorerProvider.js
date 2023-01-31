@@ -10,6 +10,8 @@ const Bscscan_1 = require("./Bscscan");
 const Etherscan_1 = require("./Etherscan");
 const Polyscan_1 = require("./Polyscan");
 const XDaiscan_1 = require("@dequanto/chains/xdai/XDaiscan");
+const _config_1 = require("@dequanto/utils/$config");
+const Evmscan_1 = require("./Evmscan");
 var BlockChainExplorerProvider;
 (function (BlockChainExplorerProvider) {
     function get(platform) {
@@ -27,6 +29,10 @@ var BlockChainExplorerProvider;
             case 'hardhat':
                 return null;
             default:
+                let cfg = _config_1.$config.get(`blockchainExplorer.${platform}`);
+                if (cfg != null) {
+                    return (0, Evmscan_1.Evmscan)({ platform });
+                }
                 throw new Error(`Unsupported platform ${platform} for block chain explorer`);
         }
     }

@@ -12,25 +12,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BlocksWalker = void 0;
 const alot_1 = __importDefault(require("alot"));
 const memd_1 = __importDefault(require("memd"));
-const _array_1 = require("@dequanto/utils/$array");
-const atma_io_1 = require("atma-io");
-const PackedRanges_1 = require("../../structs/PackedRanges");
 const everlog_1 = require("everlog");
-const _date_1 = require("@dequanto/utils/$date");
+const atma_io_1 = require("atma-io");
 const atma_utils_1 = require("atma-utils");
-const _is_1 = require("@dequanto/utils/$is");
+const PackedRanges_1 = require("../../structs/PackedRanges");
+const _array_1 = require("@dequanto/utils/$array");
+const _date_1 = require("@dequanto/utils/$date");
 const _logger_1 = require("@dequanto/utils/$logger");
 const _block_1 = require("@dequanto/utils/$block");
+const _require_1 = require("@dequanto/utils/$require");
 class BlocksWalker {
     constructor(params) {
         this.params = params;
+        this.onEndPromise = new atma_utils_1.class_Dfr;
         this.client = this.params.client;
         this.visitor = this.params.visitor;
         this.status = {
             blockLoadTime: 0
         };
-        this.cachedState = new atma_io_1.FileSafe(`./db/block-indexers/${this.params.name}.json`);
-        this.fs = everlog_1.Everlog.createChannel(`indexer-${this.params.name}`, {
+        this.cachedState = new atma_io_1.FileSafe(`./0xweb/block-indexers/${this.params.name}.json`, {
+            cached: false,
+            processSafe: true,
+            threadSafe: true
+        });
+        this.everlog = everlog_1.Everlog.createChannel(`indexer-${this.params.name}`, {
             fields: [
                 { name: 'Date', type: 'date' },
                 { name: 'Total', type: 'number' },
@@ -49,30 +54,28 @@ class BlocksWalker {
         if (this.isRestored === false) {
             await this.restore();
         }
-        let onlyIncoming = from == null && to == null;
-        if (onlyIncoming) {
-            return;
-        }
-        if (from == null) {
+        if (to != null && from == null) {
             throw new Error(`FromBlock should be set while ToBlock(${to}) is present`);
         }
         this.walker.setFrom(await this.getBlockNumber(from));
         this.walker.setTo(await this.getBlockNumber(to));
-        _is_1.$is.Number(this.ranges.from, 'From should be a number');
-        _is_1.$is.Number(this.ranges.to, 'To should be a number');
+        _require_1.$require.Number(this.ranges.from, 'From should be a number');
+        _require_1.$require.Number(this.ranges.to, 'To should be a number');
         this.walker.process();
-        _logger_1.$logger.log(`BlocksWalker starting. Processing: ${this.ranges.from}-${to}. Completed: ${this.ranges.totalAdded()}; ToDo: ${this.ranges.totalLeft()}`);
+        _logger_1.$logger.log(`BlocksWalker starting. Processing: ${this.ranges.from}-${to ?? 'latest'}. Completed: ${this.ranges.totalAdded()}; ToDo: ${this.ranges.totalLeft()}`);
     }
     /**
      *  Can be called each time we get a new block from blockchain,
      *  the walker will process its current blocks and up until the specified number
+     *  @param nr Number is not included: [from, end)
      */
     async processUntil(nr) {
         if (this.isRestored === false) {
             await this.restore();
         }
         this.walker.process(nr);
-        return this.onEndPromise = new atma_utils_1.class_Dfr;
+        this.onEndPromise.defer();
+        return this.onEndPromise;
     }
     stats() {
         return {
@@ -93,7 +96,7 @@ class BlocksWalker {
         catch (error) { }
         this.walker = new RangeWalker({
             range: this.ranges,
-            onVisit: (nr) => this.processBlock(nr),
+            onVisit: (nrs) => this.processBlocks(nrs),
             onResult: (error, nr) => {
                 this.save();
                 this.log();
@@ -131,19 +134,27 @@ class BlocksWalker {
         }
         return _block_1.$block.ensureNumber(mix, this.client);
     }
-    async processBlock(nr) {
+    async processBlocks(nrs) {
         // reading block and transactions
         let start = Date.now();
-        let block = await this.client.getBlock(nr);
-        let txs = null;
-        if (this.params.loadTransactions !== false) {
+        let blocks = await this.client.getBlocks(nrs);
+        let nr = await this.client.getBlockNumber();
+        let grouped = await (0, alot_1.default)(blocks).mapAsync(async (block) => {
             let hashes = block.transactions;
-            txs = await (0, alot_1.default)(hashes).mapAsync(async (hash) => {
-                return this.client.getTransaction(hash);
-            }).toArrayAsync({ threads: 8 });
-        }
-        this.status.blockLoadTime = Date.now() - start;
-        await this.visitor(block, txs);
+            let txs = this.params.loadTransactions
+                ? await this.client.getTransactions(hashes)
+                : null;
+            let receipts = this.params.loadReceipts
+                ? await this.client.getTransactionReceipts(hashes)
+                : null;
+            return { block, txs, receipts };
+        }).toArrayAsync({ threads: 4 });
+        this.status.blockLoadTime = (Date.now() - start) / nrs.length;
+        await (0, alot_1.default)(grouped)
+            .forEachAsync(async ({ block, txs, receipts }) => {
+            await this.visitor(block, { txs, receipts });
+        })
+            .toArrayAsync({ threads: 4 });
     }
     async save() {
         if (this.params.persistance !== false) {
@@ -163,12 +174,12 @@ class BlocksWalker {
             this.walker.status.errors,
             error,
         ];
-        this.fs.writeRow(row);
+        this.everlog.writeRow(row);
         _logger_1.$logger.log(row.join());
     }
 }
 __decorate([
-    memd_1.default.deco.memoize()
+    memd_1.default.deco.memoize({ perInstance: true })
 ], BlocksWalker.prototype, "restore", null);
 __decorate([
     memd_1.default.deco.throttle(1000 * 4)
@@ -181,6 +192,7 @@ class RangeWalker {
     constructor(params) {
         this.opts = {
             threads: 1,
+            batch: 1,
             timeout: 20000,
             // log every N ms
             logTimeWindow: 5000,
@@ -192,6 +204,7 @@ class RangeWalker {
         };
         this.busy = [];
         this.errors = [];
+        this.opts.batch = params.batch ?? this.opts.batch;
         this.range = params.range;
         this.onVisit = params.onVisit;
         this.onResult = params.onResult;
@@ -212,6 +225,7 @@ class RangeWalker {
         this.range.from = nr;
     }
     setTo(nr) {
+        nr += 1;
         let { from } = this.range;
         if (from != null && from > nr) {
             throw new Error(`To (${nr}) should be greater then From (${from})`);
@@ -255,44 +269,49 @@ class RangeWalker {
         if (this.busy.length > this.opts.threads) {
             return;
         }
-        let next = this.range.next();
-        if (next == null) {
+        let arr = [];
+        while (arr.length < this.opts.batch) {
+            let next = this.range.next();
+            if (next == null) {
+                break;
+            }
+            arr.push(next);
+        }
+        if (arr.length === 0) {
             this.onComplete?.();
             return null;
         }
-        let workerData = {
-            nr: next,
-            startedAt: Date.now()
-        };
+        let workersData = arr.map(nr => ({ nr, startedAt: Date.now() }));
         let error = null;
         try {
-            this.busy.push(workerData);
-            await this.onVisit(next);
+            this.busy.push(...workersData);
+            await this.onVisit(arr);
         }
         catch (err) {
             _logger_1.$logger.log('BlocksWalker.tick error', err);
             error = err;
         }
-        this.onResult?.(error, workerData.nr);
-        this.onTickComplete(workerData, error);
+        this.onResult?.(error, arr);
+        this.onTickComplete(workersData, error);
     }
-    onTickComplete(workerData, error) {
+    onTickComplete(workersData, error) {
+        let lastWorkerData = workersData[workersData.length - 1];
         if (error != null) {
             this.lastError = {
-                ...workerData,
-                duration: Date.now() - workerData.startedAt,
+                ...lastWorkerData,
+                duration: Date.now() - lastWorkerData.startedAt,
                 error
             };
             this.errors.push(this.lastError);
             this.status.errors += 1;
             _logger_1.$logger.log(error);
         }
-        let time = Date.now() - workerData.startedAt;
         let prevAvgTime = this.status.avgTime;
         let prevTotal = this.status.processed;
+        let time = (Date.now() - lastWorkerData.startedAt) / workersData.length;
         this.status.avgTime = Math.round((prevAvgTime * prevTotal + time) / (prevTotal + 1));
-        this.status.processed += 1;
-        _array_1.$array.remove(this.busy, workerData);
+        this.status.processed += workersData.length;
+        workersData.forEach(x => _array_1.$array.remove(this.busy, x));
         this.tick();
     }
 }

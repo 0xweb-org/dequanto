@@ -15,7 +15,7 @@ const memd_1 = __importDefault(require("memd"));
 class TokenPriceStore {
     constructor(token) {
         this.token = token;
-        this.prices = null;
+        this.prices = [];
         this.pricesIdx = {};
         this.store = new JsonArrayStore_1.JsonArrayStore({
             path: `./db/tokens/${this.token}.json`,

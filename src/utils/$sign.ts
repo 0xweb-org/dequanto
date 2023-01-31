@@ -47,6 +47,10 @@ export namespace $sign {
             : null;
 
         if (key != null) {
+            if (typeof tx.chainId === 'string') {
+                // chainIDBN in @ethereumjs supports HEX only if base is specified, otherwise 10 base is taken, and hex numbers are wrongly parsed to a number
+                tx.chainId = Number(tx.chainId);
+            }
             let sig = await web3.eth.accounts.signTransaction(tx, key);
             return toSignature(sig);
         }

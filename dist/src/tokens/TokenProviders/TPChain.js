@@ -1,22 +1,29 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TPChain = void 0;
+const ContractReader_1 = require("@dequanto/contracts/ContractReader");
 class TPChain {
-    constructor(platform, explorer) {
+    constructor(platform, client) {
         this.platform = platform;
-        this.explorer = explorer;
+        this.client = client;
     }
     async getByAddress(platform, address) {
         if (this.platform !== platform) {
             return null;
         }
+        let reader = new ContractReader_1.ContractReader(this.client);
         try {
-            let source = await this.explorer?.getContractSource(address);
+            let [symbol, name, decimals,] = await Promise.all([
+                reader.readAsync(address, 'function symbol() returns string'),
+                reader.readAsync(address, 'function name() returns string'),
+                reader.readAsync(address, 'function decimals() returns uint8'),
+            ]);
             return {
-                address: address,
-                symbol: source
-                    .ContractName
-                    ?.replace(/bep20/i, ''),
+                platform,
+                address,
+                symbol,
+                name,
+                decimals,
             };
         }
         catch (error) {

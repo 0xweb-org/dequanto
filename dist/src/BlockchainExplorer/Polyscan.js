@@ -20,6 +20,7 @@ class Polyscan extends BlockChainExplorerFactory_1.BlockChainExplorerFactory.cre
         return {
             key: config?.key,
             host: config?.host,
+            www: config?.www,
         };
     }
 }) {

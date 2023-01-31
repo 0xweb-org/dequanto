@@ -4,49 +4,72 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GeneratorFromAbi = void 0;
+const alot_1 = __importDefault(require("alot"));
 const atma_io_1 = require("atma-io");
 const atma_utils_1 = require("atma-utils");
-const alot_1 = __importDefault(require("alot"));
 const _abiType_1 = require("@dequanto/utils/$abiType");
 const _date_1 = require("@dequanto/utils/$date");
 const _path_1 = require("@dequanto/utils/$path");
 const _abiUtils_1 = require("@dequanto/utils/$abiUtils");
+const _config_1 = require("@dequanto/utils/$config");
+const _logger_1 = require("@dequanto/utils/$logger");
+const GeneratorStorageReader_1 = require("./GeneratorStorageReader");
+const Str_1 = require("./utils/Str");
+const _gen_1 = require("./utils/$gen");
 class GeneratorFromAbi {
     static get Gen() {
         return Gen;
     }
     async generate(abiJson, opts) {
-        let methodsArr = abiJson
-            .map(item => {
-            if (item.type === 'function') {
+        let methodsArr = (0, alot_1.default)(abiJson)
+            .filter(x => x.type === 'function')
+            .groupBy(x => x.name)
+            .map(group => {
+            if (group.values.length === 1) {
+                let item = group.values[0];
                 return Gen.serializeMethodTs(item);
+            }
+            if (group.values.length > 1) {
+                let items = group.values;
+                return Gen.serializeMethodTsOverloads(items);
             }
             return null;
         })
             .filter(Boolean)
-            .map(Str.formatMethod);
-        ;
+            .map(Str_1.Str.formatMethod)
+            .toArray();
+        let methodInterfacesArr = (0, alot_1.default)(abiJson)
+            .filter(x => x.type === 'function')
+            .groupBy(x => x.name)
+            .map(group => {
+            let item = group.values[0];
+            return Gen.serializeMethodInterfacesTs(item.name, group.values);
+        })
+            .filter(Boolean)
+            .toArray();
+        let methodInterfacesAll = Gen.serializeMethodInterfacesAllTs(methodInterfacesArr);
         let eventsArr = abiJson
             .filter(x => x.type === 'event')
             .map(x => Gen.serializeEvent(x))
             .filter(Boolean)
-            .map(Str.formatMethod);
+            .map(Str_1.Str.formatMethod);
         ;
+        let eventInterfacesAll = Gen.serializeEventsInterfacesAllTs(abiJson.filter(x => x.type === 'event'));
         let eventsExtractorsArr = abiJson
             .filter(x => x.type === 'event')
             .map(x => Gen.serializeEventExtractor(x))
             .filter(Boolean)
-            .map(Str.formatMethod);
+            .map(Str_1.Str.formatMethod);
         let eventsFetchersArr = abiJson
             .filter(x => x.type === 'event')
             .map(x => Gen.serializeEventFetcher(x))
             .filter(Boolean)
-            .map(Str.formatMethod);
+            .map(Str_1.Str.formatMethod);
         let eventInterfaces = abiJson
             .filter(x => x.type === 'event')
             .map(x => Gen.serializeEventInterface(x))
             .filter(Boolean)
-            .map(Str.formatMethod);
+            .map(Str_1.Str.formatMethod);
         ;
         let methods = methodsArr.join('\n\n');
         let events = eventsArr.join('\n\n');
@@ -59,6 +82,8 @@ class GeneratorFromAbi {
         let EthWeb3ClientStr;
         let imports = [];
         let explorerUrl;
+        let Web3ClientOptions = '';
+        let EvmScanOptions = '';
         switch (opts.network) {
             case 'bsc':
                 EtherscanStr = 'Bscscan';
@@ -105,14 +130,49 @@ class GeneratorFromAbi {
                 ];
                 explorerUrl = ``;
                 break;
-            default:
-                throw new Error(`Unknown network ${opts.network}`);
+            default: {
+                let web3Config = _config_1.$config.get(`web3.${opts.network}`);
+                if (web3Config) {
+                    EtherscanStr = 'Evmscan';
+                    EthWeb3ClientStr = 'EvmWeb3Client';
+                    imports = [
+                        `import { Evmscan } from '@dequanto/BlockchainExplorer/Evmscan'`,
+                        `import { EvmWeb3Client } from '@dequanto/clients/EvmWeb3Client'`,
+                    ];
+                    Web3ClientOptions = `{ platform: '${opts.network}' }`;
+                    EvmScanOptions = `{ platform: '${opts.network}' }`;
+                    explorerUrl = '';
+                    let evmscan = _config_1.$config.get(`blockchainExplorer.${opts.network}`);
+                    if (evmscan?.www) {
+                        explorerUrl = `${evmscan.www}/address/${opts.implementation}#code`;
+                    }
+                    break;
+                }
+                throw new Error(`Unknown network ${opts.network}, and no configuration found under "web3" field`);
+            }
+        }
+        let storageReaderProperty = '';
+        let storageReaderClass = '';
+        try {
+            let storageReaderGenerator = new GeneratorStorageReader_1.GeneratorStorageReader();
+            let reader = await storageReaderGenerator.generate({ ...opts });
+            let property = reader.className
+                ? `storage = new ${reader.className}(this.address, this.client, this.explorer);`
+                : '';
+            storageReaderClass = reader.code;
+            storageReaderProperty = property;
+            _logger_1.$logger.log(`Storage Reader generated`);
+        }
+        catch (error) {
+            _logger_1.$logger.log(`Storage Reader is skipped: ${error.message}`);
         }
         let code = template
             .replace(/\$Etherscan\$/g, EtherscanStr)
             .replace(/\$EthWeb3Client\$/g, EthWeb3ClientStr)
+            .replace(/\$Web3ClientOptions\$/g, Web3ClientOptions)
+            .replace(/\$EvmScanOptions\$/g, EvmScanOptions)
             .replace(`/* IMPORTS */`, imports.join('\n'))
-            .replace(`$NAME$`, Gen.toClassName(name))
+            .replace(`$NAME$`, _gen_1.$gen.toClassName(name))
             .replace(`$ADDRESS$`, opts.address ?? '')
             .replace(`/* METHODS */`, methods)
             .replace(`/* EVENTS */`, events)
@@ -121,7 +181,10 @@ class GeneratorFromAbi {
             .replace(`$ABI$`, JSON.stringify(abiJson))
             .replace(`$DATE$`, _date_1.$date.format(new Date(), 'yyyy-MM-dd HH:mm'))
             .replace(`$EXPLORER_URL$`, explorerUrl)
-            .replace(`/* $EVENT_INTERFACES$ */`, eventInterfaces.join('\n'));
+            .replace(`/* $EVENT_INTERFACES$ */`, eventInterfaces.join('\n') + '\n\n' + eventInterfacesAll.code + '\n\n')
+            .replace(`/* STORAGE_READER_PROPERTY */`, storageReaderProperty)
+            .replace(`/* STORAGE_READER_CLASS */`, storageReaderClass || '')
+            .replace(`/* $METHOD_INTERFACES$ */`, methodInterfacesArr.map(x => x.code).join('\n\n') + '\n\n' + methodInterfacesAll.code + '\n\n');
         let directory = name;
         let filename = /[^\\/]+$/.exec(name)[0];
         let path = /\.ts$/.test(opts.output)
@@ -132,7 +195,7 @@ class GeneratorFromAbi {
             let path = atma_utils_1.class_Uri.combine(opts.output, directory, `${filename}.json`);
             await atma_io_1.File.writeAsync(path, abiJson);
         }
-        console.log(`ABI wrapper class created: ${path}`);
+        _logger_1.$logger.log(`ABI wrapper class created: ${path}`);
         let sources = opts.sources;
         let sourceFiles = [];
         if (sources) {
@@ -140,7 +203,7 @@ class GeneratorFromAbi {
                 let sourceFilename = /\/?([^/]+$)/.exec(entry.key)[1];
                 let path = atma_utils_1.class_Uri.combine(opts.output, directory, filename, sourceFilename);
                 await atma_io_1.File.writeAsync(path, entry.value.content, { skipHooks: true });
-                console.log(`Source code saved: ${path}`);
+                _logger_1.$logger.log(`Source code saved: ${path}`);
                 return path;
             }).toArrayAsync();
         }
@@ -153,14 +216,6 @@ class GeneratorFromAbi {
 exports.GeneratorFromAbi = GeneratorFromAbi;
 var Gen;
 (function (Gen) {
-    function toClassName(name) {
-        let str = name.replace(/[^\w_\-\\/]/g, '');
-        str = str.replace(/[\-\\/](\w)/g, (full, letter) => {
-            return letter.toUpperCase();
-        });
-        return str[0].toUpperCase() + str.substring(1);
-    }
-    Gen.toClassName = toClassName;
     function serializeMethodTs(abi) {
         let isRead = isReader(abi);
         if (isRead) {
@@ -169,11 +224,69 @@ var Gen;
         return serializeWriteMethodTs(abi);
     }
     Gen.serializeMethodTs = serializeMethodTs;
+    function serializeMethodTsOverloads(abis) {
+        let isRead = abis.every(abi => isReader(abi));
+        if (isRead) {
+            return serializeReadMethodTsOverloads(abis);
+        }
+        return serializeWriteMethodTsOverloads(abis);
+    }
+    Gen.serializeMethodTsOverloads = serializeMethodTsOverloads;
+    // abi.length > 1 if has method overloads
+    function serializeMethodInterfacesTs(name, abis) {
+        let args = abis.map(abi => {
+            let { fnInputArguments } = serializeArgumentsTs(abi);
+            return `[ ${fnInputArguments} ]`;
+        }).join(' | ');
+        let iface = `IMethod${name[0].toUpperCase()}${name.substring(1)}`;
+        let code = [
+            `interface ${iface} {`,
+            `  method: "${name}"`,
+            `  arguments: ${args}`,
+            `}`
+        ];
+        return {
+            method: name,
+            interface: iface,
+            code: code.join('\n')
+        };
+    }
+    Gen.serializeMethodInterfacesTs = serializeMethodInterfacesTs;
+    function serializeMethodInterfacesAllTs(methods) {
+        let fields = methods.map(method => {
+            return `  ${method.method}: ${method.interface}`;
+        });
+        let code = [
+            `interface IMethods {`,
+            ...fields,
+            `  '*': { method: string, arguments: any[] } `,
+            `}`
+        ];
+        return {
+            code: code.join('\n')
+        };
+    }
+    Gen.serializeMethodInterfacesAllTs = serializeMethodInterfacesAllTs;
+    function serializeEventsInterfacesAllTs(events) {
+        let fields = events.map(item => {
+            return `  ${item.name}: TLog${item.name}Parameters`;
+        });
+        let code = [
+            `interface IEvents {`,
+            ...fields,
+            `  '*': any[] `,
+            `}`
+        ];
+        return {
+            code: code.join('\n')
+        };
+    }
+    Gen.serializeEventsInterfacesAllTs = serializeEventsInterfacesAllTs;
     function serializeEvent(abi) {
         let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
         return `
-            on${abi.name} (fn: (event: EventLog, ${fnInputArguments}) => void): ClientEventsStream<any> {
-                return this.$on('${abi.name}', fn);
+            on${abi.name} (fn?: (event: TClientEventsStreamData<TLog${abi.name}Parameters>) => void): ClientEventsStream<TClientEventsStreamData<TLog${abi.name}Parameters>> {
+                return this.$onLog('${abi.name}', fn);
             }
         `;
     }
@@ -214,7 +327,8 @@ var Gen;
         return `
             type TLog${abi.name} = {
                 ${fnInputArguments}
-            }
+            };
+            type TLog${abi.name}Parameters = [ ${fnInputArguments.replace('\n', '')} ];
         `;
     }
     Gen.serializeEventInterface = serializeEventInterface;
@@ -250,6 +364,25 @@ var Gen;
             }
         `;
     }
+    function serializeReadMethodTsOverloads(abis) {
+        let overrides = abis.map(abi => {
+            let { fnInputArguments, fnResult } = serializeArgumentsTs(abi);
+            return `
+            // ${_abiUtils_1.$abiUtils.getMethodSignature(abi)}
+            async ${abi.name} (${fnInputArguments}): ${fnResult}
+            `;
+        }).join('\n');
+        let abi = abis[0];
+        let { fnResult } = serializeArgumentsTs(abi);
+        let sigs = abis.map(abi => serializeMethodAbi(abi)).map(x => `'${x}'`).join(', ');
+        return `
+            ${overrides}
+            async ${abi.name} (...args): ${fnResult} {
+                let abi = this.$getAbiItemOverload([ ${sigs} ], args);
+                return this.$read(abi, ...args);
+            }
+        `;
+    }
     function serializeWriteMethodTs(abi) {
         let { fnInputArguments, callInputArguments } = serializeArgumentsTs(abi);
         if (callInputArguments) {
@@ -259,6 +392,24 @@ var Gen;
             // ${_abiUtils_1.$abiUtils.getMethodSignature(abi)}
             async ${abi.name} (sender: TSender, ${fnInputArguments}): Promise<TxWriter> {
                 return this.$write(this.$getAbiItem('function', '${abi.name}'), sender${callInputArguments});
+            }
+        `;
+    }
+    function serializeWriteMethodTsOverloads(abis) {
+        let overrides = abis.map(abi => {
+            let { fnInputArguments, fnResult } = serializeArgumentsTs(abi);
+            return `
+            // ${_abiUtils_1.$abiUtils.getMethodSignature(abi)}
+            async ${abi.name} (sender: TSender, ${fnInputArguments}): Promise<TxWriter>
+            `;
+        }).join('\n');
+        let abi = abis[0];
+        let sigs = abis.map(abi => serializeMethodAbi(abi)).map(x => `'${x}'`).join(', ');
+        return `
+            ${overrides}
+            async ${abi.name} (sender: TSender, ...args): Promise<TxWriter> {
+                let abi = this.$getAbiItemOverload([ ${sigs} ], args);
+                return this.$write(abi, sender, ...args);
             }
         `;
     }
@@ -361,43 +512,3 @@ var Gen;
     //     }
     // ];
 })(Gen || (Gen = {}));
-var Str;
-(function (Str) {
-    function formatMethod(str) {
-        str = trim(str);
-        str = indent(str, '    ');
-        return str;
-    }
-    Str.formatMethod = formatMethod;
-    function trim(str) {
-        let lines = str.split('\n');
-        let min = (0, alot_1.default)(lines).min(x => {
-            if (x.trim() === '') {
-                return Number.MAX_SAFE_INTEGER;
-            }
-            let match = /^\s+/.exec(x);
-            if (match == null) {
-                return Number.MAX_SAFE_INTEGER;
-            }
-            return match[0].length;
-        });
-        lines = lines.map((line, i) => {
-            let x = line.substring(min);
-            if ((i === 0) || (lines.length === i + 1)) {
-                if (x === '') {
-                    return null;
-                }
-            }
-            return x;
-        }).filter(Boolean);
-        return lines.join('\n');
-    }
-    Str.trim = trim;
-    function indent(str, indent) {
-        return str
-            .split('\n')
-            .map(x => `${indent}${x}`)
-            .join('\n');
-    }
-    Str.indent = indent;
-})(Str || (Str = {}));

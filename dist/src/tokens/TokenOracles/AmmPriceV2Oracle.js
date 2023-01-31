@@ -16,7 +16,6 @@ const TokenPriceStore_1 = require("./TokenPriceStore");
 const _bigint_1 = require("@dequanto/utils/$bigint");
 const AmmPairV2Service_1 = require("../TokenExchanges/AmmBase/V2/AmmPairV2Service");
 const SushiswapPolygonExchange_1 = require("../TokenExchanges/SushiswapPolygonExchange");
-const _logger_1 = require("@dequanto/utils/$logger");
 class AmmPriceV2Oracle {
     constructor(client, explorer) {
         this.client = client;
@@ -83,7 +82,6 @@ class AmmPriceV2Oracle {
             : await this.pairService.resolveBestStableRoute(this.client.platform, token.address));
         if (route == null || route.length === 0) {
             let error = new Error(`Route not found for Token ${token.address}`);
-            this.logger.write(error.message);
             return { error };
         }
         let pools = await (0, alot_1.default)(route).mapAsync(async (lp) => {
@@ -289,7 +287,7 @@ var TokenPrice;
         let fromPrice = TokenUtils_1.TokenUtils.calcPrice(fromAmount, fromToken, fromUsd ?? toUsd);
         let toPrice = TokenUtils_1.TokenUtils.calcPrice(amountActual, toToken, toUsd ?? fromUsd);
         //console.log('FromPice', fromPrice, fromAmount, fromToken, fromUsd, toUsd);
-        _logger_1.$logger.log(`Swap: ${fromToken.symbol}(${fromAmount})[${fromUsd}$] > ${toToken.symbol} (${amountActual})[${toUsd}$]; Price ${fromToken.symbol}: ${fromPrice}`);
+        //$logger.log(`Swap: ${fromToken.symbol}(${fromAmount})[${fromUsd}$] > ${toToken.symbol} (${amountActual})[${toUsd}$]; Price ${fromToken.symbol}: ${fromPrice}`);
         if (lp.date) {
             // Cache prices
             let fromStore = TokenPriceStore_1.TokenPriceStore.forToken(fromToken.address);

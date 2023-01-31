@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GnosisSafe = void 0;
 /**
- *  AUTO-Generated Class: 2022-07-07 00:45
+ *  AUTO-Generated Class: 2023-01-31 13:27
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 const a_di_1 = __importDefault(require("a-di"));
@@ -140,41 +140,50 @@ class GnosisSafe extends ContractBase_1.ContractBase {
     async swapOwner(sender, prevOwner, oldOwner, newOwner) {
         return this.$write(this.$getAbiItem('function', 'swapOwner'), sender, prevOwner, oldOwner, newOwner);
     }
+    onTransaction(method, options) {
+        options ?? (options = {});
+        options.filter ?? (options.filter = {});
+        options.filter.method = method;
+        return this.$onTransaction(options);
+    }
+    onLog(event, cb) {
+        return this.$onLog(event, cb);
+    }
     onAddedOwner(fn) {
-        return this.$on('AddedOwner', fn);
+        return this.$onLog('AddedOwner', fn);
     }
     onApproveHash(fn) {
-        return this.$on('ApproveHash', fn);
+        return this.$onLog('ApproveHash', fn);
     }
     onChangedMasterCopy(fn) {
-        return this.$on('ChangedMasterCopy', fn);
+        return this.$onLog('ChangedMasterCopy', fn);
     }
     onChangedThreshold(fn) {
-        return this.$on('ChangedThreshold', fn);
+        return this.$onLog('ChangedThreshold', fn);
     }
     onDisabledModule(fn) {
-        return this.$on('DisabledModule', fn);
+        return this.$onLog('DisabledModule', fn);
     }
     onEnabledModule(fn) {
-        return this.$on('EnabledModule', fn);
+        return this.$onLog('EnabledModule', fn);
     }
     onExecutionFailure(fn) {
-        return this.$on('ExecutionFailure', fn);
+        return this.$onLog('ExecutionFailure', fn);
     }
     onExecutionFromModuleFailure(fn) {
-        return this.$on('ExecutionFromModuleFailure', fn);
+        return this.$onLog('ExecutionFromModuleFailure', fn);
     }
     onExecutionFromModuleSuccess(fn) {
-        return this.$on('ExecutionFromModuleSuccess', fn);
+        return this.$onLog('ExecutionFromModuleSuccess', fn);
     }
     onExecutionSuccess(fn) {
-        return this.$on('ExecutionSuccess', fn);
+        return this.$onLog('ExecutionSuccess', fn);
     }
     onRemovedOwner(fn) {
-        return this.$on('RemovedOwner', fn);
+        return this.$onLog('RemovedOwner', fn);
     }
     onSignMsg(fn) {
-        return this.$on('SignMsg', fn);
+        return this.$onLog('SignMsg', fn);
     }
     extractLogsAddedOwner(tx) {
         let abi = this.$getAbiItem('event', 'AddedOwner');

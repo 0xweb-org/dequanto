@@ -13,6 +13,9 @@ const atma_io_1 = require("atma-io");
 const atma_utils_1 = require("atma-utils");
 const BlockChainExplorerProvider_1 = require("@dequanto/BlockchainExplorer/BlockChainExplorerProvider");
 const _path_1 = require("@dequanto/utils/$path");
+const _logger_1 = require("@dequanto/utils/$logger");
+const Web3ClientFactory_1 = require("@dequanto/clients/Web3ClientFactory");
+const EVM_1 = require("@dequanto/evm/EVM");
 const KEYS = {
     'platform': 1,
     'name': 1,
@@ -27,6 +30,7 @@ class Generator {
         this.options = options;
         let { platform, } = options;
         this.explorer = BlockChainExplorerProvider_1.BlockChainExplorerProvider.get(platform);
+        this.client = Web3ClientFactory_1.Web3ClientFactory.get(platform);
         if (options.defaultAddress == null && _address_1.$address.isValid(options.source.abi)) {
             options.defaultAddress = options.source.abi;
         }
@@ -96,11 +100,13 @@ class Generator {
         return await generator.generate(abiJson, {
             network: network,
             name: name,
+            contractName: sources?.contractName,
             address: address,
             output: output,
             implementation: implementation,
-            sources: sources,
-            saveAbi: this.options.saveAbi
+            sources: sources?.files,
+            saveAbi: this.options.saveAbi,
+            client: this.client,
         });
     }
     async getAbi(opts) {
@@ -133,17 +139,20 @@ class Generator {
         if (_address_1.$address.isValid(implementation) === false) {
             return null;
         }
-        console.log('Loading contract source code.');
+        _logger_1.$logger.log('Loading contract source code.');
         let meta = await this.explorer.getContractSource(implementation);
         if (meta?.SourceCode == null) {
-            console.log('No contract source found.');
+            _logger_1.$logger.log('No contract source found.');
             return null;
         }
         if (/^\s*\{/.test(meta.SourceCode) === false) {
-            console.log('Source contract as single file fetched.');
+            _logger_1.$logger.log('Source contract as single file fetched.');
             return {
-                [`${name}.sol`]: {
-                    content: meta.SourceCode
+                contractName: meta.ContractName,
+                files: {
+                    [`${name}.sol`]: {
+                        content: meta.SourceCode
+                    }
                 }
             };
         }
@@ -154,11 +163,14 @@ class Generator {
         try {
             let sources = JSON.parse(code);
             let files = sources.sources;
-            console.log(`Source code (${Object.keys(files).join(', ')}) fetched.`);
-            return files;
+            _logger_1.$logger.log(`Source code (${Object.keys(files).join(', ')}) fetched.`);
+            return {
+                contractName: meta.ContractName,
+                files
+            };
         }
         catch (error) {
-            console.error(`Source code can't be parsed: `, code);
+            _logger_1.$logger.error(`Source code can't be parsed: `, code);
             throw new Error(`Source code can't be parsed: ${error.message}`);
         }
     }
@@ -166,16 +178,23 @@ class Generator {
         let address = _address_1.$address.expectValid(this.options.source?.abi, 'contract address is not valid');
         let explorer = _require_1.$require.notNull(this.explorer, `Explorer not resolved for network: ${this.options.platform}`);
         try {
-            console.log(`Loading contracts ABI for ${address}. `);
+            _logger_1.$logger.log(`Loading contracts ABI for ${address}. `);
             let { abi, implementation } = await explorer.getContractAbi(address, opts);
             let hasProxy = _address_1.$address.eq(address, implementation) === false;
-            console.log(`Proxy detected: ${hasProxy ? 'YES' : 'NO'}`, hasProxy ? implementation : '');
+            _logger_1.$logger.log(`Proxy detected: ${hasProxy ? 'YES' : 'NO'}`, hasProxy ? implementation : '');
             let abiJson = JSON.parse(abi);
             return { abi: abiJson, implementation };
         }
         catch (error) {
-            console.error(error);
-            throw new Error(`ABI is not resolved from ${this.options.platform}/${address}: ${error.message ?? error}`);
+            let message = `ABI is not resolved from ${this.options.platform}/${address}: ${error.message ?? error}. Extract from bytecode...`;
+            (0, _logger_1.l) `${message}`;
+            let code = await this.client.getCode();
+            if (code == null || code === '' || code === '0x') {
+                throw new Error(`${this.options.platform}:${address} is not a contract`);
+            }
+            let evm = new EVM_1.EVM(code);
+            let abi = await evm.getAbi();
+            return { abi };
         }
     }
 }

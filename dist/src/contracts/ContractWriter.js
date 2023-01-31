@@ -12,6 +12,7 @@ const _abiParser_1 = require("../utils/$abiParser");
 const _logger_1 = require("@dequanto/utils/$logger");
 const _class_1 = require("@dequanto/utils/$class");
 const _account_1 = require("@dequanto/utils/$account");
+const _require_1 = require("@dequanto/utils/$require");
 class ContractWriter {
     constructor(address, client = a_di_1.default.resolve(EthWeb3Client_1.EthWeb3Client)) {
         this.address = address;
@@ -34,6 +35,7 @@ class ContractWriter {
     * @returns {TxWriter}
      */
     async writeAsync(account, interfaceAbi, params, configs) {
+        _require_1.$require.notNull(account, 'Account parameter is undefined.');
         let value = typeof account !== 'string'
             ? account.value
             : null;

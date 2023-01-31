@@ -10,12 +10,15 @@ const Etherscan_1 = require("@dequanto/BlockchainExplorer/Etherscan");
 const ethers_1 = require("ethers");
 const ContractProvider_1 = require("./ContractProvider");
 class TxContract {
-    constructor(loader = a_di_1.default.resolve(Etherscan_1.Etherscan)) {
-        this.loader = loader;
-        this.provider = a_di_1.default.resolve(ContractProvider_1.ContractProvider, this.loader);
+    constructor(explorer = a_di_1.default.resolve(Etherscan_1.Etherscan)) {
+        this.explorer = explorer;
+        this.provider = a_di_1.default.resolve(ContractProvider_1.ContractProvider, this.explorer);
     }
     async parseTrasaction(tx) {
         const abi = await this.provider.getAbi(tx.to);
+        return this.parseTrasactionWithAbi(tx, abi);
+    }
+    async parseTrasactionWithAbi(tx, abi) {
         const inter = new ethers_1.utils.Interface(abi);
         const decodedInput = inter.parseTransaction({
             data: tx.input,

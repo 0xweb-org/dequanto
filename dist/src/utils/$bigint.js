@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.$bigint = void 0;
-const _is_1 = require("./$is");
+const _require_1 = require("./$require");
 var $bigint;
 (function ($bigint_1) {
     $bigint_1.ETHER_DECIMALS = 18;
@@ -88,6 +88,21 @@ var $bigint;
     }
     $bigint_1.toEtherSafe = toEtherSafe;
     function toHex(num) {
+        if (num == null) {
+            return '0x0';
+        }
+        ;
+        if (typeof num === 'string') {
+            if (num.startsWith('0x')) {
+                return num;
+            }
+            try {
+                num = BigInt(num);
+            }
+            catch (error) {
+                throw new Error(`Invalid BigInt ${num}`);
+            }
+        }
         return `0x${num.toString(16)}`;
     }
     $bigint_1.toHex = toHex;
@@ -112,8 +127,8 @@ var $bigint;
     }
     $bigint_1.multWithFloat = multWithFloat;
     function divToFloat(a, b, precision = 100000n) {
-        _is_1.$is.BigInt(a);
-        _is_1.$is.BigInt(b);
+        _require_1.$require.BigInt(a);
+        _require_1.$require.BigInt(b);
         let r = (a * precision) / b;
         if (r < Number.MAX_SAFE_INTEGER) {
             return Number(r) / Number(precision);
@@ -127,4 +142,38 @@ var $bigint;
         return $base ** $exp;
     }
     $bigint_1.pow = pow;
+    function sign(value) {
+        if (value > 0n) {
+            return 1n;
+        }
+        if (value < 0n) {
+            return -1n;
+        }
+        return 0n;
+    }
+    $bigint_1.sign = sign;
+    function abs(value) {
+        if (sign(value) === -1n) {
+            return -value;
+        }
+        return value;
+    }
+    $bigint_1.abs = abs;
+    function sqrt(value) {
+        return rootNth(value);
+    }
+    $bigint_1.sqrt = sqrt;
+    function rootNth(value, k = 2n) {
+        if (value < 0n) {
+            throw Error(`Sqrt of ${value} is not allowed`);
+        }
+        let o = 0n;
+        let x = value;
+        let limit = 100;
+        while (x ** k !== k && x !== o && --limit) {
+            o = x;
+            x = ((k - 1n) * x + value / x ** (k - 1n)) / k;
+        }
+        return x;
+    }
 })($bigint = exports.$bigint || (exports.$bigint = {}));

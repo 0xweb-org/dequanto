@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.$hex = void 0;
+const _buffer_1 = require("./$buffer");
 var $hex;
 (function ($hex) {
     /**
@@ -14,7 +15,7 @@ var $hex;
         if (hex.length === length + 2) {
             return hex;
         }
-        hex = hex.substring(2)[opts.padEnd ? 'padEnd' : 'padStart'](length, '0');
+        hex = hex.substring(2)[opts?.padEnd ? 'padEnd' : 'padStart'](length, '0');
         return `0x${hex}`;
     }
     $hex.padBytes = padBytes;
@@ -37,6 +38,32 @@ var $hex;
             : hex;
     }
     $hex.raw = raw;
+    function toHex(value) {
+        switch (typeof value) {
+            case 'string': {
+                if (value.startsWith('0x')) {
+                    return value;
+                }
+                return _buffer_1.$buffer.toHex(_buffer_1.$buffer.fromString(value));
+            }
+            case 'number':
+            case 'bigint':
+                let hex = value.toString(16);
+                return '0x' + hex;
+            case 'boolean':
+                return value ? '0x1' : '0x0';
+        }
+        throw new Error(`Invalid value to convert to hex: ${value}`);
+    }
+    $hex.toHex = toHex;
+    function toHexBuffer(value) {
+        value = toHex(value);
+        if (value.length % 2 === 1) {
+            value = '0x0' + value.substring(2);
+        }
+        return value;
+    }
+    $hex.toHexBuffer = toHexBuffer;
     /**
      * Adds `0x` to the start if not present
      */

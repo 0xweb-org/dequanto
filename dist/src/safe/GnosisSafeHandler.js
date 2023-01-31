@@ -12,15 +12,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GnosisSafeHandler = void 0;
 const a_di_1 = __importDefault(require("a-di"));
 const memd_1 = __importDefault(require("memd"));
+const alot_1 = __importDefault(require("alot"));
 const EthWeb3Client_1 = require("@dequanto/clients/EthWeb3Client");
 const safe_core_sdk_1 = __importDefault(require("@gnosis.pm/safe-core-sdk"));
 const _address_1 = require("@dequanto/utils/$address");
 const _signRaw_1 = require("@dequanto/utils/$signRaw");
 const ContractWriter_1 = require("@dequanto/contracts/ContractWriter");
-const _fn_1 = require("@dequanto/utils/$fn");
 const _gnosis_1 = require("./$gnosis");
 const GnosisServiceTransport_1 = require("./transport/GnosisServiceTransport");
-const alot_1 = __importDefault(require("alot"));
+const _logger_1 = require("@dequanto/utils/$logger");
+const _bigint_1 = require("@dequanto/utils/$bigint");
+const ethers_1 = require("ethers");
+const _contract_1 = require("@dequanto/utils/$contract");
+const _promise_1 = require("@dequanto/utils/$promise");
 class GnosisSafeHandler {
     constructor(config) {
         this.safeAddress = config.safeAddress;
@@ -64,7 +68,7 @@ class GnosisSafeHandler {
         let args = [
             tx.to,
             tx.value,
-            tx.data,
+            tx.data ?? '0x',
             tx.operation,
             tx.safeTxGas,
             tx.baseGas,
@@ -78,28 +82,31 @@ class GnosisSafeHandler {
     }
     async execute(writer) {
         let value = BigInt(writer.builder.data.value?.toString() ?? 0);
-        let { hash, threshold } = await this.createTransaction(writer, value);
-        await _fn_1.$fn.waitForObject(async () => {
-            let confirmations = await this.getTxConfirmations(hash);
+        let { safeTxHash, threshold, safeTxData } = await this.createTransaction(writer, value);
+        if (writer.options.txOutput != null) {
+            await writer.saveTxAndExit({ safeTxHash, safeTxData });
+            return;
+        }
+        await _promise_1.$promise.waitForObject(async () => {
+            let confirmations = await this.getTxConfirmations(safeTxHash);
             if (confirmations.count >= threshold) {
                 return [null, {}];
             }
             const addr = confirmations.results?.map(x => x.owner)?.join(', ');
-            console.log(`Require ${threshold} confirmations. Got ${confirmations.count} (${addr}). Waiting`);
+            _logger_1.$logger.log(`Require ${threshold} confirmations. Got ${confirmations.count} (${addr}). Waiting`);
             return [null, null];
         }, {
             intervalMs: 3000
         });
-        let tx = await this.submitTransaction(hash, { threshold });
+        let tx = await this.submitTransaction(safeTxHash, { threshold });
         return tx;
     }
-    async createTransaction(writer, value) {
-        let builder = writer.builder;
+    async createTxHash(builder, value) {
         let txData = builder.getTxData(this.client);
         let safeTxEstimation = {
             to: _address_1.$address.toChecksum(txData.to),
-            value: Number(value),
-            data: txData.data,
+            value: _bigint_1.$bigint.toHex(value ?? BigInt(txData.value?.toString() ?? 0n)),
+            data: txData.data ?? null,
             operation: 0,
         };
         let safeInfo = await this.transport.getSafeInfo(this.safeAddress);
@@ -113,29 +120,45 @@ class GnosisSafeHandler {
             nonce: safeInfo.nonce,
             gasPrice: 0,
         };
-        let hash = await this.getTransactionHash({
+        let safeTxHash = await this.getTransactionHash({
             ...safeTxData,
         });
+        return {
+            safeInfo,
+            safeTxData,
+            safeTxHash,
+        };
+    }
+    async createTxSignature(safeTxHash) {
+        return {
+            signature: {
+                signer: _address_1.$address.toChecksum(this.owner.address),
+                data: _signRaw_1.$signRaw.signEC(safeTxHash, this.owner.key).signature
+            }
+        };
+    }
+    async createTransaction(writer, value) {
+        let builder = writer.builder;
+        let { safeTxHash, safeTxData, safeInfo, } = await this.createTxHash(builder, value);
+        let { signature, } = await this.createTxSignature(safeTxHash);
         let signatures = new Map();
-        signatures.set(this.owner.address.toLowerCase(), {
-            signer: _address_1.$address.toChecksum(this.owner.address),
-            data: _signRaw_1.$signRaw.signEC(hash, this.owner.key).signature
-        });
+        signatures.set(this.owner.address.toLowerCase(), signature);
         // https://docs.gnosis-safe.io/tutorials/tutorial_tx_service_initiate_sign
-        let args = {
+        let txProps = {
             safeAddress: _address_1.$address.toChecksum(this.safeAddress),
             senderAddress: _address_1.$address.toChecksum(this.owner.address),
             safeTransaction: {
                 data: safeTxData,
-                signatures: signatures
+                signatures: signatures,
             },
-            safeTxHash: hash,
+            safeTxHash,
         };
-        await this.transport.proposeTransaction(args);
-        writer.emit('safeTxProposed', args);
+        await this.transport.proposeTransaction(txProps);
+        writer.emit('safeTxProposed', txProps);
         return {
             threshold: Number(safeInfo.threshold),
-            hash
+            safeTxData,
+            safeTxHash
         };
     }
     async getSafeSdk() {
@@ -152,8 +175,8 @@ class GnosisSafeHandler {
     getTransactionHash(params) {
         let args = [
             params.to,
-            params.value,
-            params.data,
+            params.value ? _bigint_1.$bigint.toHex(params.value) : 0,
+            params.data ?? '0x',
             params.operation,
             params.safeTxGas,
             params.baseGas ?? 0,
@@ -170,6 +193,17 @@ class GnosisSafeHandler {
                 SafeAbi.getTransactionHash
             ]
         });
+    }
+    static parseSafeTx(buffer, value) {
+        const inter = new ethers_1.utils.Interface([SafeAbi.execTransaction]);
+        const decodedInput = inter.parseTransaction({
+            data: buffer,
+            value: value,
+        });
+        return {
+            name: decodedInput.name,
+            args: _contract_1.$contract.normalizeArgs(Array.from(decodedInput.args))
+        };
     }
 }
 __decorate([

@@ -15,12 +15,14 @@ class ClientDebugMethods {
                         {
                             name: 'traceTransaction',
                             call: 'debug_traceTransaction',
-                            params: 1,
+                            params: 2,
                         }
                     ]
                 });
             }
-            let result = await eth.traceTransaction(hash);
+            let result = await eth.traceTransaction(hash, {
+                tracer: 'callTracer'
+            });
             return result;
         }, {
             node: {

@@ -18,6 +18,9 @@ var $account;
     }
     $account.getSender = getSender;
     function isSafe(account) {
+        if (account == null) {
+            return false;
+        }
         if (typeof account === 'string') {
             return /^safe\//.test(account);
         }

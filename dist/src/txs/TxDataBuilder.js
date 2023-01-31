@@ -4,13 +4,17 @@ exports.TxDataBuilder = void 0;
 const InputDataUtils_1 = require("@dequanto/contracts/utils/InputDataUtils");
 const _account_1 = require("@dequanto/utils/$account");
 const _bigint_1 = require("@dequanto/utils/$bigint");
+const atma_io_1 = require("atma-io");
+const _number_1 = require("@dequanto/utils/$number");
 class TxDataBuilder {
     constructor(client, account, data, config = null) {
         this.client = client;
         this.account = account;
         this.data = data;
         this.config = config;
+        this.data ?? (this.data = {});
         this.data.value = this.data.value ?? 0;
+        this.data.chainId = client.chainId;
     }
     setInputDataWithTypes(types, paramaters) {
         this.data.data = InputDataUtils_1.InputDataUtils.encodeWithTypes(this.client, types, paramaters);
@@ -133,7 +137,7 @@ class TxDataBuilder {
         return {
             ...this.data,
             from: this.account?.address ?? void 0,
-            chainId: client.chainId,
+            chainId: _number_1.$number.toHex(this.data.chainId ?? client?.chainId ?? this.client?.chainId),
         };
     }
     /** Returns base64 string of the Tx Data */
@@ -145,13 +149,23 @@ class TxDataBuilder {
     }
     toJSON() {
         return {
+            account: {
+                address: this.account?.address,
+            },
+            tx: this.data,
             config: this.config,
-            data: this.data,
         };
+    }
+    async save(path, additionalProperties) {
+        let json = this.toJSON();
+        await atma_io_1.File.writeAsync(path, {
+            ...json,
+            ...(additionalProperties ?? {})
+        });
     }
     static fromJSON(client, account, json) {
         let sender = _account_1.$account.getSender(account);
-        return new TxDataBuilder(client, sender, json.data, json.config);
+        return new TxDataBuilder(client, sender, json.tx, json.config);
     }
     static normalize(data) {
         for (let key in data) {

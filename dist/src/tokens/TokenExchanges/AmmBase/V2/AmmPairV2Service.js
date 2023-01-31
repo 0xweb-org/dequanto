@@ -18,6 +18,7 @@ const PancakeswapExchange_1 = require("@dequanto/tokens/TokenExchanges/Pancakesw
 const UniswapExchange_1 = require("@dequanto/tokens/TokenExchanges/UniswapExchange");
 const TokensService_1 = require("@dequanto/tokens/TokensService");
 const SushiswapPolygonExchange_1 = require("../../SushiswapPolygonExchange");
+const _require_1 = require("@dequanto/utils/$require");
 ;
 class AmmPairV2Service {
     constructor(client, explorer) {
@@ -50,7 +51,8 @@ class AmmPairV2Service {
             .sortByAsync(({ reserveTo }) => reserveTo, 'desc')
             .firstAsync();
         if (pool == null || pool.reserveTo < (50000n * BigInt(pool.pair.to.decimals))) {
-            const SYMBOL = { eth: 'WETH', bsc: 'WBNB' }[platform];
+            const SYMBOL = { eth: 'WETH', bsc: 'WBNB', polygon: 'MATIC' }[platform];
+            _require_1.$require.notNull(SYMBOL, `Native symbol for platform ${platform} not FOUND`);
             const nativeTokenPool = await this.getPoolInfo(address, SYMBOL);
             if (nativeTokenPool == null || nativeTokenPool.reserveTo < 10) {
                 return null;

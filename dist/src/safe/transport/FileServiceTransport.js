@@ -9,7 +9,6 @@ class FileServiceTransport {
         this.client = client;
         this.owner = owner;
         this.path = path;
-        this.file = new atma_io_1.File(this.path, { cached: false });
     }
     async getTx(safeTxHash) {
         let current = await this.get();

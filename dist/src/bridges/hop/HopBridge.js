@@ -18,11 +18,11 @@ const atma_utils_1 = require("atma-utils");
 const Dai_l2AmmWrapperContract_1 = require("./contracts/polygon/Dai_l2AmmWrapperContract");
 const HopAddresses_1 = require("./HopAddresses");
 const Dai_l2BridgeContract_1 = require("./contracts/polygon/Dai_l2BridgeContract");
-const _fn_1 = require("@dequanto/utils/$fn");
 const PlatformFactory_1 = require("@dequanto/chains/PlatformFactory");
 const _require_1 = require("@dequanto/utils/$require");
 const Dai_l2SaddleSwapContract_1 = require("./contracts/polygon/Dai_l2SaddleSwapContract");
 const _address_1 = require("@dequanto/utils/$address");
+const _promise_1 = require("@dequanto/utils/$promise");
 class HopBridge {
     constructor() {
         this.name = 'hop';
@@ -182,7 +182,7 @@ class HopBridge {
         return result;
     }
     async waitForTransfer(transferId, symbol, toPlatform, toAccount) {
-        let r = await _fn_1.$fn.waitForObject(async () => {
+        let r = await _promise_1.$promise.waitForObject(async () => {
             let val = await this.status(transferId, symbol, toPlatform);
             console.log(`${_date_1.$date.format(new Date(), 'HH:mm')} Checked for bridge transfer completion: ${val}`);
             if (val) {

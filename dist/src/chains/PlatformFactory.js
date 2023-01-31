@@ -18,8 +18,8 @@ const TokensServiceFactory_1 = require("@dequanto/tokens/TokensServiceFactory");
 const TokenTransferService_1 = require("@dequanto/tokens/TokenTransferService");
 const memd_1 = __importDefault(require("memd"));
 class PlatformFactory {
-    async get(platform) {
-        let client = Web3ClientFactory_1.Web3ClientFactory.get(platform);
+    async get(platform, opts) {
+        let client = Web3ClientFactory_1.Web3ClientFactory.get(platform, opts);
         let tokens = TokensServiceFactory_1.TokensServiceFactory.get(platform);
         let explorer = BlockChainExplorerProvider_1.BlockChainExplorerProvider.get(platform);
         let accounts = new ChainAccountsService_1.ChainAccountsService();

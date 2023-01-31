@@ -20,6 +20,7 @@ class Bscscan extends BlockChainExplorerFactory_1.BlockChainExplorerFactory.crea
         return {
             key: config?.key,
             host: config?.host,
+            www: config?.www,
         };
     }
 }) {

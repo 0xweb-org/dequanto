@@ -4,6 +4,7 @@ exports.$signRaw = void 0;
 const ethereumjs_util_1 = require("ethereumjs-util");
 const _buffer_1 = require("./$buffer");
 const _is_1 = require("./$is");
+const ethers_1 = require("ethers");
 var $signRaw;
 (function ($signRaw) {
     function signEC(message, privateKey) {
@@ -26,6 +27,10 @@ var $signRaw;
         return signEC(hash, privateKey);
     }
     $signRaw.signEIPHashed = signEIPHashed;
+    function ecrecover(message, signature) {
+        return ethers_1.utils.recoverAddress(message, signature);
+    }
+    $signRaw.ecrecover = ecrecover;
     function toBuffer(message, opts) {
         if (typeof message === 'string') {
             let encoding = opts?.encoding;

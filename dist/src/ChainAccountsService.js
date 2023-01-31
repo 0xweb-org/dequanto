@@ -10,12 +10,19 @@ const ChainAccountProvider_1 = require("./ChainAccountProvider");
 const JsonArrayStore_1 = require("./json/JsonArrayStore");
 const NameService_1 = require("./ns/NameService");
 const _address_1 = require("./utils/$address");
+const _is_1 = require("./utils/$is");
 class ChainAccountsService {
     constructor() {
         this.store = a_di_1.default.resolve(Store);
         this.config = ChainAccountProvider_1.ChainAccountProvider;
     }
     async get(mix, platform) {
+        if (_is_1.$is.hexString(mix) && mix.length >= 64) {
+            return {
+                address: ChainAccountProvider_1.ChainAccountProvider.getAddressFromKey(mix),
+                key: mix
+            };
+        }
         if (_address_1.$address.isValid(mix) === false) {
             // Check NS
             let ns = a_di_1.default.resolve(NameService_1.NameService);

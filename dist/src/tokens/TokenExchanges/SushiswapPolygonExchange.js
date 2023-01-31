@@ -20,7 +20,7 @@ class SushiswapPolygonExchange extends AmmV2ExchangeBase_1.AmmV2ExchangeBase {
         this.name = 'sushiswap';
         this.config = _config_1.$config.get('sushiswap');
         this.factoryAddress = '0xc35dadb65012ec5796536bd9864ed8773abc74c4';
-        this.masterChefAddress = _require_1.$require.Address(this.config.masterChef, 'MasterChef Address');
+        this.masterChefAddress = _require_1.$require.Address(this.config?.masterChef ?? '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F', 'MasterChef Address');
         this.vaultAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
     }
 }

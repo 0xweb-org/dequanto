@@ -21,8 +21,8 @@ const AmmMasterChefV2Contract_1 = require("./AmmBase/V2/AmmMasterChefV2Contract"
 const AmmPairV2Contract_1 = require("./AmmBase/V2/AmmPairV2Contract");
 const AmmVaultV2Contract_1 = require("./AmmBase/V2/AmmVaultV2Contract");
 const TokensServiceBsc_1 = require("../TokensServiceBsc");
-const _is_1 = require("@dequanto/utils/$is");
 const _address_1 = require("@dequanto/utils/$address");
+const _require_1 = require("@dequanto/utils/$require");
 class AmmV2ExchangeBase {
     constructor(client, explorer) {
         this.client = client;
@@ -47,7 +47,7 @@ class AmmV2ExchangeBase {
         return a_di_1.default.resolve(AmmPairV2Contract_1.AmmPairV2Contract, pair, this.client, this.explorer);
     }
     async calcSwap(from, to, fromAmount) {
-        _is_1.$is.BigInt(fromAmount);
+        _require_1.$require.BigInt(fromAmount);
         if (fromAmount === 0n) {
             return {
                 amount: 0n,
@@ -63,8 +63,8 @@ class AmmV2ExchangeBase {
         if (lpReserves == null || lpReserves._reserve0 < 1000n) {
             return null;
         }
-        _is_1.$is.BigInt(lpReserves?._reserve0, `Reserve 0 not valid for LPAddress ${lpAddress}`);
-        _is_1.$is.BigInt(lpReserves?._reserve1, `Reserve 1 not valid for LPAddress ${lpAddress}`);
+        _require_1.$require.BigInt(lpReserves?._reserve0, `Reserve 0 not valid for LPAddress ${lpAddress}`);
+        _require_1.$require.BigInt(lpReserves?._reserve1, `Reserve 1 not valid for LPAddress ${lpAddress}`);
         let [fromI, toI] = BigInt(from.address) < BigInt(to.address) ? [0, 1] : [1, 0];
         let reserveFrom = lpReserves[`_reserve${fromI}`];
         let reserveTo = lpReserves[`_reserve${toI}`];

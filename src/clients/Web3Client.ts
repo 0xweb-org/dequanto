@@ -3,13 +3,13 @@ import memd from 'memd';
 import Web3 from 'web3';
 import { Wallet } from 'ethers';
 
-import { type AbiItem } from 'web3-utils';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TPlatform } from '@dequanto/models/TPlatform';
+import type { AbiItem } from 'web3-utils';
+import type { TAddress } from '@dequanto/models/TAddress';
+import type { TPlatform } from '@dequanto/models/TPlatform';
 import type { TransactionRequest } from '@ethersproject/abstract-provider';
-import type { BlockHeader, BlockTransactionString, Syncing } from 'web3-eth';
+import type { BlockTransactionString, Syncing } from 'web3-eth';
 import type { IWeb3Client, IWeb3ClientOptions } from './interfaces/IWeb3Client';
-import type { BlockNumber, Log, LogsOptions, PastLogsOptions, TransactionConfig, Transaction, TransactionReceipt, EventLog, WebsocketProvider } from 'web3-core';
+import type { BlockNumber, Log, LogsOptions, PastLogsOptions, TransactionConfig, Transaction, TransactionReceipt, WebsocketProvider } from 'web3-core';
 import type { Subscription } from 'web3-core-subscriptions';
 import { ClientPool, IPoolClientConfig, IPoolWeb3Request } from './ClientPool';
 import { ClientPoolTrace } from './ClientPoolStats';
@@ -37,7 +37,6 @@ export abstract class Web3Client implements IWeb3Client {
     async sign(txData: TransactionRequest, privateKey: string): Promise<string> {
         let wallet = new Wallet(privateKey);
         let json = $txData.getJson(txData, this);
-        debugger;
         let tx = await wallet.signTransaction(json);
         return tx;
     }

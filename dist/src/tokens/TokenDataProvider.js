@@ -16,15 +16,19 @@ const ArbTokenProvider_1 = require("@dequanto/chains/arbitrum/ArbTokenProvider")
 const _address_1 = require("@dequanto/utils/$address");
 const _is_1 = require("@dequanto/utils/$is");
 const _require_1 = require("@dequanto/utils/$require");
-const TPChain_1 = require("./TokenProviders/TPChain");
+const TPExplorer_1 = require("./TokenProviders/TPExplorer");
 const TPCoinmarketcap_1 = require("./TokenProviders/TPCoinmarketcap");
 const TPOneInch_1 = require("./TokenProviders/TPOneInch");
 const TPSushiswap_1 = require("./TokenProviders/TPSushiswap");
 const TPConfig_1 = require("./TokenProviders/TPConfig");
+const TPChain_1 = require("./TokenProviders/TPChain");
+const TPCoingecko_1 = require("./TokenProviders/TPCoingecko");
+const _config_1 = require("@dequanto/utils/$config");
 class TokenDataProvider {
-    constructor(platform, explorer) {
+    constructor(platform, explorer, client) {
         this.platform = platform;
         this.explorer = explorer;
+        this.client = client;
         this.config = new TPConfig_1.TPConfig();
         this.providers = [
             this.config,
@@ -33,8 +37,10 @@ class TokenDataProvider {
             // @TODO uniswap thegraph api doesn't work any more
             // new TPUniswap(),
             new TPCoinmarketcap_1.TPCoinmarketcap(),
+            new TPCoingecko_1.TPCoingecko(),
             new ArbTokenProvider_1.ArbTokenProvider(),
-            new TPChain_1.TPChain(this.platform, this.explorer),
+            new TPExplorer_1.TPExplorer(this.platform, this.explorer),
+            new TPChain_1.TPChain(this.platform, this.client),
         ];
     }
     async getTokenOrDefault(address, chainLookup = true) {
@@ -87,7 +93,7 @@ class TokenDataProvider {
     async getTokenByAddress(address, chainLookup = true) {
         let [token, provider] = await (0, alot_1.default)(this.providers)
             .mapAsync(async (provider) => {
-            if (provider instanceof TPChain_1.TPChain && chainLookup === false) {
+            if (provider instanceof TPExplorer_1.TPExplorer && chainLookup === false) {
                 return [null, null];
                 ;
             }
@@ -102,7 +108,7 @@ class TokenDataProvider {
     async getTokenBySymbol(symbol, chainLookup = true) {
         let [token, provider] = await (0, alot_1.default)(this.providers)
             .mapAsync(async (provider) => {
-            if (provider instanceof TPChain_1.TPChain && chainLookup === false) {
+            if (provider instanceof TPExplorer_1.TPExplorer && chainLookup === false) {
                 return [null, null];
             }
             return [await provider.getBySymbol(this.platform, symbol), provider];
@@ -134,7 +140,7 @@ var NativeTokens;
 (function (NativeTokens) {
     const T1 = `0x0000000000000000000000000000000000000000`;
     const T2 = `0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee`;
-    const tokens = {
+    const TOKENS = {
         'ETH': {
             name: 'Ethereum Native Token',
             symbol: 'ETH',
@@ -187,12 +193,16 @@ var NativeTokens;
             return false;
         }
         symbol = symbol.toUpperCase();
-        if (symbol in tokens) {
+        if (symbol in TOKENS) {
             return true;
         }
         let byPlatform = PLATFORM_ALIASES[platform];
         if (byPlatform?.aliases?.includes(symbol)) {
             return true;
+        }
+        if (platform in PLATFORMS === false) {
+            resolveNativeTokenFromConfiguration(platform);
+            return symbol in TOKENS;
         }
         return false;
     }
@@ -203,7 +213,7 @@ var NativeTokens;
     }
     NativeTokens.isNativeByAddress = isNativeByAddress;
     function toNativeByAddress(platform, address) {
-        const token = tokens[platform?.toUpperCase()];
+        const token = TOKENS[platform?.toUpperCase()];
         return {
             ...token,
             address: address
@@ -211,11 +221,31 @@ var NativeTokens;
     }
     NativeTokens.toNativeByAddress = toNativeByAddress;
     function getNative(platform) {
+        if (platform in PLATFORMS === false) {
+            resolveNativeTokenFromConfiguration(platform);
+        }
         let symbol = PLATFORMS[platform];
         if (symbol == null) {
             throw new Error(`${platform} platform is not support`);
         }
-        return tokens[symbol.toUpperCase()];
+        return TOKENS[symbol.toUpperCase()];
     }
     NativeTokens.getNative = getNative;
+    function resolveNativeTokenFromConfiguration(platform) {
+        let web3Config = _config_1.$config.get(`web3.${platform}`);
+        if (web3Config == null || web3Config.chainToken == null) {
+            return null;
+        }
+        let symbol = web3Config.chainToken;
+        PLATFORMS[platform] = symbol;
+        TOKENS[symbol] = {
+            name: symbol,
+            symbol: symbol,
+            decimals: 18,
+            icon: null,
+            platform: platform,
+            address: T1,
+        };
+        return TOKENS[symbol];
+    }
 })(NativeTokens || (NativeTokens = {}));

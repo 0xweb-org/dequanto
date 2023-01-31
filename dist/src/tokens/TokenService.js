@@ -14,13 +14,16 @@ class TokenService {
         this.client = client;
         this.tokensProvider = TokensServiceFactory_1.TokensServiceFactory.get(this.client.platform);
     }
-    async balanceOf(address, token) {
+    async balanceOf(address, token, params) {
         token = await this.getToken(token);
         let isNative = this.tokensProvider.isNative(token.address);
         if (isNative) {
-            return this.client.getBalance(address);
+            return this.client.getBalance(address, params?.forBlock);
         }
         let erc20 = await this.tokensProvider.erc20(token);
+        if (params?.forBlock != null) {
+            erc20 = erc20.forBlock(params.forBlock);
+        }
         let balance = await erc20.balanceOf(address);
         return balance;
     }
