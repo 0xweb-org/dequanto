@@ -2,13 +2,14 @@ import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExp
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
 import { ISlotVarDefinition } from '@dequanto/solidity/SlotsParser';
-import { SlotsReader } from '@dequanto/solidity/SlotsReader';
+import { SlotsStorage } from '@dequanto/solidity/SlotsStorage';
 
 export class ContractStorageReaderBase {
 
 
 
-    $reader: SlotsReader;
+    public $storage: SlotsStorage;
+
 
     constructor (
         public address: TAddress,
@@ -19,7 +20,7 @@ export class ContractStorageReaderBase {
     }
 
 
-    protected $createReader(slots: ISlotVarDefinition[]) {
-        this.$reader = SlotsReader.createWithClient(this.client, this.address, slots);
+    protected $createHandler(slots: ISlotVarDefinition[]) {
+        this.$storage = SlotsStorage.createWithClient(this.client, this.address, slots);
     }
 }

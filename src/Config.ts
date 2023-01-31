@@ -15,6 +15,8 @@ export interface IProviderEndpoint {
 
     // Is not used in generall ClientPool, only retrievable via getWeb3 method.
     manual?: boolean
+
+    traceable?: boolean
 }
 export class Config {
     settings: {

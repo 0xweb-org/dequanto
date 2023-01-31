@@ -45,7 +45,7 @@ var $abiParser;
             throw new Error(`Invalid method abi ${methodAbi}. Expect like 'foo(uint256):address'`);
         }
         let fnName = match.groups.methodName;
-        let $return = match.groups.return?.trim() ?? 'uint256';
+        let $return = match.groups.return?.trim() ?? '';
         outputs = parseArguments($return);
         let inputs = Parse.parametersLine(match.groups.params ?? '');
         return {

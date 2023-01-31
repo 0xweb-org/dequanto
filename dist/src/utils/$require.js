@@ -45,11 +45,18 @@ var $require;
     $require.Numeric = Numeric;
     function Function(val, message) {
         if (typeof val !== 'function') {
-            throw new Error(`Value is not a function`);
+            throw new Error(`Value is not a function ${message}`);
         }
         return val;
     }
     $require.Function = Function;
+    function String(val, message) {
+        if (typeof val !== 'string') {
+            throw new Error(`Value ${val} is not a string ${message}`);
+        }
+        return val;
+    }
+    $require.String = String;
     function notNull(val, message) {
         if (val == null) {
             throw new Error(`Value is undefined. ${message}`);
@@ -100,6 +107,13 @@ var $require;
         return val;
     }
     $require.Address = Address;
+    function TxHash(val, message = '') {
+        if (_is_1.$is.TxHash(val) === false) {
+            throw new Error(`Value ${val} is not a valid tx hash. ${message}`);
+        }
+        return val;
+    }
+    $require.TxHash = TxHash;
     function Token(token, message = '') {
         if (token == null) {
             throw new Error(`Token is undefined. ${message}`);

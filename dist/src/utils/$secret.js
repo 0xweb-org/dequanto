@@ -4,8 +4,8 @@ exports.$secret = void 0;
 const _machine_1 = require("./$machine");
 var $secret;
 (function ($secret) {
-    async function getPin() {
-        let pin = getPinFromCli() ?? getPinFromEnv();
+    async function getPin(parameters) {
+        let pin = parameters?.pin ?? getPinFromCli() ?? getPinFromEnv();
         if (pin == null || pin.length === 0) {
             return null;
         }

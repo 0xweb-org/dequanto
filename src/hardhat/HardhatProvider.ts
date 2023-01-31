@@ -5,10 +5,11 @@ import type { Constructor } from 'atma-utils/mixin';
 import { ChainAccount } from "@dequanto/models/TAccount";
 import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client';
 import { class_Uri } from 'atma-utils';
-import { File } from 'atma-io';
+import { File, env, Directory } from 'atma-io';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { ethers } from 'ethers';
 import { $logger } from '@dequanto/utils/$logger';
+import { $number } from '@dequanto/utils/$number';
 
 
 export class HardhatProvider {
@@ -79,7 +80,11 @@ export class HardhatProvider {
     async deploySol (solContractPath: string, options?: {
         client?: Web3Client
         arguments?: any[],
-        deployer?:  Ethers.Signer | ChainAccount
+        deployer?:  Ethers.Signer | ChainAccount,
+        paths?: {
+            root?: string
+            artifacts?: string
+        }
     }): Promise<{ contract: Ethers.Contract, abi, bytecode }> {
 
         const client = options?.client ?? this.client();
@@ -88,17 +93,59 @@ export class HardhatProvider {
 
         const dir = solContractPath.replace(/[^\/]+$/, '');
         const filename = /(?<filename>[^\/]+)\.\w+$/.exec(solContractPath)?.groups.filename;
+
+        let root = options?.paths?.root;
+        let artifacts = options?.paths?.artifacts;
+
         if (filename == null) {
             throw new Error(`Filename not extracted from ${solContractPath}`);
         }
 
         await this.hh.run('compile', {
-            sources: dir
+            sources: dir,
+            root,
+            artifacts,
+            tsgen: false,
         });
 
-        let output = class_Uri.combine('./artifacts/', solContractPath, `${filename}.json`);
-        let { abi, bytecode } = await File.readAsync<{ abi, bytecode }> (output);
+        if (root == null) {
+            root = process.cwd();
+        }
+        if (artifacts == null && root != null) {
+            artifacts = class_Uri.combine(root, 'artifacts/');
+        }
 
+        if (root != null && solContractPath.toLowerCase().includes(root.toLowerCase())) {
+            let i = solContractPath.toLowerCase().indexOf(root.toLowerCase());
+            solContractPath = solContractPath.substring(i + root.length);
+        }
+
+        let outputDir = class_Uri.combine(artifacts, solContractPath);
+        let output = class_Uri.combine(outputDir, `${filename}.json`);
+        if (await File.existsAsync(output) === false) {
+            let path = `${outputDir}/`;
+            if (await Directory.existsAsync(path) === false) {
+                throw new Error(`No JSONs found in ${outputDir}, nor ${output}`);
+            }
+            let files = await Directory.readFilesAsync(path);
+            let jsons = files.filter(x => /(?<!dbg)\.json$/.test(x.uri.file));
+            if (jsons.length === 0) {
+                throw new Error(`No JSONs output found in ${outputDir}`);
+            }
+            if (jsons.length === 1) {
+                output = jsons[0].uri.toLocalFile();
+            } else {
+                let jsonFile = jsons.find(file => {
+                    return filename.includes(file.uri.filename);
+                });
+                if (jsonFile == null) {
+                    throw new Error(`Compiled JSON data not found for ${filename} in ${outputDir}`);
+                }
+                output = jsonFile.uri.toLocalFile();
+            }
+        }
+
+        let { abi, bytecode } = await File.readAsync<{ abi, bytecode }> (output);
         let Factory: Ethers.ContractFactory = await this.getFactory([abi, bytecode], client, signer);
 
         const contract = await Factory.deploy(...args);
@@ -108,6 +155,24 @@ export class HardhatProvider {
             abi,
             bytecode
         };
+    }
+
+    async deployCode (solidityCode: string, options?: Parameters<HardhatProvider['deploySol']>[1]) {
+        let className = /contract\s+(?<name>[\w]+)/.exec(solidityCode).groups.name;
+        let rnd = $number.randomInt(0, 10**10);
+        let tmp = env.getTmpPath(`hardhat/contracts/${className}_${rnd}.sol`);
+        let root = tmp.replace(/contracts\/[^/]+$/, '');
+
+        options.paths = {
+            root
+        };
+        await File.writeAsync(tmp, solidityCode);
+        try {
+            return await this.deploySol(tmp, options);
+        } finally {
+            await Directory.removeAsync(root);
+        }
+
     }
 
     private getEthersProvider (client: Web3Client) {

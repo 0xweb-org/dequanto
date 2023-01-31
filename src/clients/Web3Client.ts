@@ -21,6 +21,7 @@ import { class_Dfr } from 'atma-utils';
 import { $promise } from '@dequanto/utils/$promise';
 import { ClientEventsStream } from './ClientEventsStream';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { ClientDebugMethods } from './debug/ClientDebugMethods';
 
 export abstract class Web3Client implements IWeb3Client {
 
@@ -36,6 +37,7 @@ export abstract class Web3Client implements IWeb3Client {
     async sign(txData: TransactionRequest, privateKey: string): Promise<string> {
         let wallet = new Wallet(privateKey);
         let json = $txData.getJson(txData, this);
+        debugger;
         let tx = await wallet.signTransaction(json);
         return tx;
     }
@@ -43,6 +45,7 @@ export abstract class Web3Client implements IWeb3Client {
 
     public options: IWeb3ClientOptions;
     public pool: ClientPool;
+    public debug:ClientDebugMethods;
 
     constructor (options: IWeb3ClientOptions)
     constructor (endpoints: IPoolClientConfig[] )
@@ -58,6 +61,7 @@ export abstract class Web3Client implements IWeb3Client {
             throw new Error(`Neither Node endpoints nor web3 instance provided`);
         }
         this.pool = new ClientPool(this.options);
+        this.debug = new ClientDebugMethods(this, this.options.debug)
     }
 
     getEventStream (address: TAddress, abi: AbiItem[], event: string) {
@@ -249,6 +253,11 @@ export abstract class Web3Client implements IWeb3Client {
             let batch = new Web3BatchRequests.BatchRequest(web3, reqs);
             return batch.execute();
         });
+    }
+    getCode (address: TAddress) {
+        return this.pool.call(web3 => {
+            return web3.eth.getCode(address);
+        })
     }
     getPendingTransactions () {
         return this.pool.call(web3 => {

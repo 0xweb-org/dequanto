@@ -17,10 +17,10 @@ const _cli_1 = require("./utils/$cli");
 const atma_utils_1 = require("atma-utils");
 const atma_io_1 = require("atma-io");
 class Config {
-    static async fetch() {
-        let unlockedAccountsKey = await _secret_1.$secret.getPin();
-        let configPathAccounts = _cli_1.$cli.getParamValue('config-accounts') ?? '%APPDATA%/.dequanto/accounts.json';
-        let configPathGlobal = _cli_1.$cli.getParamValue('config-global') ?? '%APPDATA%/.dequanto/config.yml';
+    static async fetch(parameters) {
+        let unlockedAccountsKey = await _secret_1.$secret.getPin(parameters);
+        let configPathAccounts = _cli_1.$cli.getParamValue('config-accounts', parameters) ?? '%APPDATA%/.dequanto/accounts.json';
+        let configPathGlobal = _cli_1.$cli.getParamValue('config-global', parameters) ?? '%APPDATA%/.dequanto/config.yml';
         let dequantoConfigs = 'dequanto/configs/';
         let [
         //- inApp,

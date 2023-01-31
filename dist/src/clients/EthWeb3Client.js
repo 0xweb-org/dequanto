@@ -8,11 +8,11 @@ class EthWeb3Client extends Web3Client_1.Web3Client {
     constructor(opts) {
         super({
             ...(opts ?? {}),
-            endpoints: ClientEndpoints_1.ClientEndpoints.filterEndpoints(_config_1.$config.get('web3.eth.endpoints'), opts)
+            endpoints: ClientEndpoints_1.ClientEndpoints.filterEndpoints(opts?.endpoints ?? _config_1.$config.get(`web3.${opts?.platform ?? 'eth'}.endpoints`), opts)
         });
-        this.platform = 'eth';
+        this.platform = this.options.platform ?? 'eth';
         this.chainId = this.options.chainId ?? 1;
-        this.chainToken = 'ETH';
+        this.chainToken = this.options.chainToken ?? 'ETH';
         this.TIMEOUT = 15 * 60 * 1000;
         this.defaultGasLimit = 2000000;
     }

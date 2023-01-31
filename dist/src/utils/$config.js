@@ -24,6 +24,9 @@ var $config;
         $global.app.config?.$set?.(path, value);
     }
     $config.set = set;
+    /**
+     * Reloads dequanto env config from cli ARGUMENTS and DQ_SETTINGS__** environment
+     */
     function reloadEnv(argv, env) {
         if (argv == null && typeof process !== 'undefined' && process.argv) {
             argv = process.argv;

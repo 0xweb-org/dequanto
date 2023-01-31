@@ -7,6 +7,7 @@ import type {
     ASTNode,
     ContractDefinition,
     ElementaryTypeName,
+    EnumDefinition,
     ImportDirective,
     Mapping,
     SourceUnit,
@@ -40,9 +41,8 @@ interface ISlotsParserOption {
 
 export namespace SlotsParser {
 
-    export async function slotsFromAbi (abiDef: string) {
+    export async function slotsFromAbi (abiDef: string): Promise<ISlotVarDefinition[]> {
         let inputs = $abiParser.parseArguments(abiDef);
-
         let slotsDef = await alot(inputs)
             .mapAsync(async input => {
                 let util = TypeAbiUtil.get(input)
@@ -65,7 +65,7 @@ export namespace SlotsParser {
     }
 
 
-    export async function slots (source: { path: string, code?: string }, contractName: string, opts?: ISlotsParserOption): Promise<ISlotVarDefinition[]> {
+    export async function slots (source: { path: string, code?: string }, contractName?: string, opts?: ISlotsParserOption): Promise<ISlotVarDefinition[]> {
         const sourceFile = new SourceFile(source.path, source.code, opts?.files);
         const chain = await sourceFile.getContractInheritanceChain(contractName);
         return await extractSlots(chain);
@@ -130,7 +130,7 @@ export namespace SlotsParser {
                 offset.position = 0;
                 return;
             }
-            if (size.size <= MAX - offset.position) {
+            if (size.size <= MAX - offset.position && TypeUtil.isComplexType(size.type) === false) {
                 size.slot = offset.slot;
                 size.position = offset.position;
                 offset.position += size.size;
@@ -180,6 +180,10 @@ namespace TypeUtil {
         throw new Error(`Unknow type ${type.type}`);
     }
 
+    export function isComplexType (type: string) {
+        return type.endsWith(']') || type.endsWith(')');
+    }
+
     class ElementaryTypeNameUtil implements ITypeUtil {
         constructor (public type: ElementaryTypeName) {
 
@@ -225,6 +229,10 @@ namespace TypeUtil {
             if (definition.type === 'ContractDefinition') {
                 return Types.sizeOf('address');
             }
+            if (definition.type === 'EnumDefinition') {
+                let count = Math.ceil(definition.members.length / 256);
+                return Types.sizeOf(`uint${ 8 * count }`)
+            }
             let ctx = this.ctx;
             let members = definition.members.map(x => get(x.typeName, ctx));
             let sizes = await alot(members).sumAsync(x => x.sizeOf());
@@ -234,6 +242,9 @@ namespace TypeUtil {
             let definition = await this.getDefinition();
             if (definition.type === 'ContractDefinition') {
                 return 'address';
+            }
+            if (definition.type === 'EnumDefinition') {
+                return 'enum';
             }
             let ctx = this.ctx;
             ctx.contract = definition.parent;
@@ -408,7 +419,17 @@ namespace Types {
         if (bytesMatch) {
             return Number(bytesMatch.groups.size) * 8;
         }
-        console.log('SIZE_OF', type);
+        if ($types.isFixedArray(type)) {
+            let baseType = $abiType.array.getBaseType(type);
+            let baseTypeSize = sizeOf(baseType);
+            let length = $abiType.array.getLength(type);
+            return baseTypeSize * length;
+        }
+        if ($types.isStruct(type)) {
+            let inputs = $abiParser.parseArguments(type);
+            let size = alot(inputs).sum(input => sizeOf(input.type));
+            return size;
+        }
         return Infinity;
     }
 }
@@ -419,10 +440,15 @@ namespace Ast {
     }
 
     export function getContract (ast: SourceUnit, contractName: string): ContractDefinition {
-        const contract = ast
+        let contracts = ast
             .children
-            .find(x => x.type === 'ContractDefinition' && x.name === contractName) as ContractDefinition;
+            .filter(x => x.type === 'ContractDefinition') as ContractDefinition[];
 
+        if (contractName == null) {
+            return contracts[contracts.length - 1];
+        }
+
+        let contract = contracts.find(x => x.name === contractName);
         return contract;
     }
 
@@ -437,7 +463,7 @@ namespace Ast {
         let vars = alot(declarations).mapMany(x => x.variables).toArray() as VariableDeclaration[];
         return vars;
     }
-    export function getUserDefinedType (node: ContractDefinition | SourceUnit, name: string): (StructDefinition | ContractDefinition) & { parent? } {
+    export function getUserDefinedType (node: ContractDefinition | SourceUnit, name: string): (StructDefinition | ContractDefinition | EnumDefinition) & { parent? } {
         let [ key, ...nestings] = name.split('.');
         let nodeFound = getUserDefinedTypeRaw(node, key);
         if (nodeFound == null) {
@@ -454,14 +480,14 @@ namespace Ast {
         return nodeFound as any;
     }
 
-    function getUserDefinedTypeRaw (node: ContractDefinition | SourceUnit , name: string): StructDefinition | ContractDefinition {
+    function getUserDefinedTypeRaw (node: ContractDefinition | SourceUnit , name: string): StructDefinition | ContractDefinition | EnumDefinition {
         let arr = node.type === 'ContractDefinition'
             ? node.subNodes
             : node.children;
 
         let nodeFound = arr
-            .filter(x => x.type === 'StructDefinition' || x.type === 'ContractDefinition')
-            .find(x => (x as any).name === name) as StructDefinition | ContractDefinition;
+            .filter(x => x.type === 'StructDefinition' || x.type === 'ContractDefinition' || x.type === 'EnumDefinition')
+            .find(x => (x as any).name === name) as StructDefinition | ContractDefinition | EnumDefinition;
 
         if (nodeFound) {
             return nodeFound;
@@ -485,6 +511,9 @@ class SourceFile {
     @memd.deco.memoize({ perInstance: true })
     async getAst () {
         this.source = this.source ?? await this.file.readAsync({ skipHooks: true });
+        if (this.source == null) {
+            throw new Error(`Source not loaded ${this.file.uri.toLocalFile()}`);
+        }
         let ast = Ast.parse(this.source);
 
         ast.children?.forEach(node => {
@@ -515,10 +544,13 @@ class SourceFile {
         return imports;
     }
 
-    async getContractInheritanceChain(name: string): Promise<{ file: SourceFile, contract: ContractDefinition }[]> {
+    async getContractInheritanceChain(name?: string): Promise<{ file: SourceFile, contract: ContractDefinition }[]> {
         let contract = await this.getContract(name);
         if (contract == null) {
             return [];
+        }
+        if (name == null) {
+            name = contract.name;
         }
 
         let chain = [ { file: this as SourceFile, contract } ];
@@ -548,12 +580,12 @@ class SourceFile {
         return chain;
     }
 
-    async getContract (name: string): Promise<ContractDefinition> {
+    async getContract (name?: string): Promise<ContractDefinition> {
         let ast = await this.getAst();
         let contract = await Ast.getContract(ast, name);
         return contract;
     }
-    async getUserDefinedType(name): Promise<ContractDefinition | StructDefinition> {
+    async getUserDefinedType(name): Promise<ContractDefinition | StructDefinition | EnumDefinition> {
         let ast = await this.getAst();
         let typeDef = await Ast.getUserDefinedType(ast, name);
         if (typeDef) {

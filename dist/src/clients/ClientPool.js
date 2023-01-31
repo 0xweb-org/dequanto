@@ -15,13 +15,13 @@ const memd_1 = __importDefault(require("memd"));
 const web3_1 = __importDefault(require("web3"));
 const _date_1 = require("@dequanto/utils/$date");
 const _number_1 = require("@dequanto/utils/$number");
-const _fn_1 = require("@dequanto/utils/$fn");
 const PromiEventWrap_1 = require("./model/PromiEventWrap");
 const ClientStatus_1 = require("./model/ClientStatus");
 const ClientPoolStats_1 = require("./ClientPoolStats");
 const atma_utils_1 = require("atma-utils");
-const ClientEventsStream_1 = require("./ClientEventsStream");
 const ClientErrorUtil_1 = require("./utils/ClientErrorUtil");
+const _logger_1 = require("@dequanto/utils/$logger");
+const _promise_1 = require("@dequanto/utils/$promise");
 class ClientPool {
     constructor(config) {
         this.discoveredPartial = false;
@@ -77,7 +77,6 @@ class ClientPool {
             }
             if (status === ClientStatus_1.ClientStatus.CallError) {
                 let error = ClientPoolStats_1.ClientPoolTraceError.create(errors.pop(), opts?.trace);
-                //console.log(`Errored ${error.message}`);
                 throw error;
                 return result;
             }
@@ -86,7 +85,7 @@ class ClientPool {
     async getWeb3(options) {
         let wClient = await this.next(null, options, { manual: true });
         if (wClient == null) {
-            throw new Error(`Not client found in ${this.clients.length} Clients`);
+            throw new Error(`No client found in ${this.clients.length} Clients with options: ${JSON.stringify(options)}`);
         }
         return wClient?.web3;
     }
@@ -103,7 +102,7 @@ class ClientPool {
     async releaseWeb3() {
     }
     getOptionForFetchableRange() {
-        const DEFAULT = 1000;
+        const DEFAULT = null;
         let max = (0, alot_1.default)(this.clients).max(x => x.config?.fetchableBlockRange ?? 0);
         if (max === 0) {
             return DEFAULT;
@@ -138,22 +137,14 @@ class ClientPool {
                     return;
                 }
                 if (ClientErrorUtil_1.ClientErrorUtil.isAlreadyKnown(error)) {
-                    console.log(`TxWriter ERROR ${error.message}. Check pending...`);
+                    _logger_1.$logger.log(`TxWriter ERROR ${error.message}. Check pending...`);
                     let web3 = await this.getWeb3();
                     let txs = await web3.eth.getPendingTransactions();
-                    console.log('PENDING ', txs?.map(x => x.hash));
-                    // throw anyways
-                    // this.callPromiEvent(
-                    //     fn, opts, used, errors, root
-                    // );
-                    // return;
+                    _logger_1.$logger.log('PENDING ', txs?.map(x => x.hash));
+                    // throw anyway
                 }
                 root.emit('error', error);
                 root.reject(error);
-            });
-            promiEvent.catch(error => {
-                console.log('!!client CATCH', error);
-                //root.reject(error);
             });
             used.set(wClient, 1);
             if (typeof opts?.parallel === 'number') {
@@ -169,13 +160,13 @@ class ClientPool {
         })();
         return root;
     }
-    getEventStream(address, abi, event) {
-        if (this.ws == null) {
-            this.ws = this.clients.find(x => x.config.url?.startsWith('ws'));
-        }
-        let stream = this.ws.getEventStream(address, abi, event);
-        return stream;
-    }
+    // getEventStream (address: TAddress, abi: AbiItem[], event: string) {
+    //     if (this.ws == null) {
+    //         this.ws = this.clients.find(x => x.config.url?.startsWith('ws'));
+    //     }
+    //     let stream = this.ws.getEventStream(address, abi, event);
+    //     return stream;
+    // }
     getNodeStats() {
         return this
             .clients
@@ -188,15 +179,24 @@ class ClientPool {
         });
     }
     async getNodeInfos() {
+        async function peerCount(wClient) {
+            /** @TODO Public nodes smt. do not allow net_peerCount methods. Allow to switch this on/off on node-url-config level */
+            try {
+                return await wClient.eth.net.getPeerCount();
+            }
+            catch (error) {
+                return `ERROR: ${error.message}`;
+            }
+        }
         let nodes = await (0, alot_1.default)(this.clients).mapAsync(async (wClient, idx) => {
             let url = wClient.config.url;
             try {
                 let start = Date.now();
-                let [syncing, blockNumber, peers] = await Promise.all([
+                let [syncing, blockNumber, peers, node] = await Promise.all([
                     wClient.eth.isSyncing(),
                     wClient.eth.getBlockNumber(),
-                    /** @TODO Public nodes smt. do not allow net_peerCount methods. Allow to switch this on/off on node-url-config level */
-                    wClient.eth.net.getPeerCount(),
+                    peerCount(wClient),
+                    wClient.eth.getNodeInfo(),
                 ]);
                 let ping = Math.round((Date.now() - start) / 3);
                 let syncData = typeof syncing === 'boolean' ? null : syncing;
@@ -208,6 +208,7 @@ class ClientPool {
                     blockNumberBehind: 0,
                     peers: peers,
                     pingMs: ping,
+                    node: node,
                     i: idx,
                 };
             }
@@ -269,10 +270,16 @@ class ClientPool {
             if (this.ws == null) {
                 this.ws = clients.find(x => x.config.url?.startsWith('ws'));
             }
+            if (this.ws == null) {
+                this.ws = clients.find(x => x.config.web3 != null);
+            }
             return this.ws;
         }
         if (opts?.ws === false) {
             clients = clients.filter(x => x.config.url?.startsWith('http'));
+        }
+        if (opts?.node?.traceable === true) {
+            clients = clients.filter(x => x.config.traceable === true);
         }
         if (this.discoveredPartial === false) {
             await this.discoverLive().ready;
@@ -344,7 +351,7 @@ class ClientPool {
                         error: null,
                         status: null,
                         blockNumberBehind: 0,
-                        blockNumber: await _fn_1.$fn.timeoutPromise(wClient.eth.getBlockNumber(), 20000)
+                        blockNumber: await _promise_1.$promise.timeout(wClient.eth.getBlockNumber(), 20000)
                     };
                     onIntermediateSuccess(clientInfo);
                     return clientInfo;
@@ -374,8 +381,8 @@ class ClientPool {
                 return;
             }
             const blockLatest = (0, alot_1.default)(nodeInfos).max(x => x.blockNumber);
-            nodeInfos.forEach(node => {
-                node.blockNumberBehind = node.blockNumber - blockLatest;
+            nodeInfos.forEach(info => {
+                info.blockNumberBehind = info.blockNumber - blockLatest;
             });
             nodeInfos.forEach(info => {
                 this.clients[info.i].status = isOk(info);
@@ -399,10 +406,11 @@ class ClientPool {
         function onIntermediateSuccess(info) {
             const TOLERATE_BLOCK_COUNT = 5;
             const WAIT_POOL_OK = Math.min(3, clientInfos.length);
+            const count = clientInfos.push(info);
             if (isReady === true) {
                 return;
             }
-            if (clientInfos.push(info) < WAIT_POOL_OK) {
+            if (count < WAIT_POOL_OK) {
                 return;
             }
             let maxBlockNumber = (0, alot_1.default)(clientInfos).max(x => x.blockNumber);
@@ -415,7 +423,7 @@ class ClientPool {
             }
             if (ok.length >= WAIT_POOL_OK) {
                 ok.forEach(info => {
-                    clients[info.i].status = 'ok';
+                    clients[info.i].status = info.status = 'ok';
                 });
                 isReady = true;
                 ready.resolve();
@@ -557,18 +565,32 @@ class WClient {
         });
         return result;
     }
-    getEventStream(address, abi, event, options = {}) {
-        let eventAbi = abi.find(x => x.type === 'event' && x.name === event);
-        if (eventAbi == null) {
-            let events = abi.filter(x => x.type === 'event').map(x => x.name).join(', ');
-            throw new Error(`Event "${event}" not present in ABI. Events: ${events}`);
-        }
-        const contract = new this.eth.Contract(abi, address);
-        const stream = contract
-            .events[event](options);
-        const worker = new ClientEventsStream_1.ClientEventsStream(contract, eventAbi, stream);
-        return worker;
-    }
+    // getEventStream (address: TAddress, abi: AbiItem[], event: string, options = {}): ClientEventsStream {
+    //     let eventAbi = abi.find(x => x.type === 'event' && x.name === event);
+    //     if (eventAbi == null) {
+    //         let events = abi.filter(x => x.type === 'event').map(x => x.name).join(', ');
+    //         throw new Error(`Event "${event}" not present in ABI. Events: ${ events }`);
+    //     }
+    //     let stream = new ClientEventsStream(this.address, this.abi)
+    //     this
+    //         .client
+    //         .subscribe('logs', {
+    //             address: this.address,
+    //             fromBlock: 'latest'
+    //         })
+    //         .then(subscription => {
+    //             stream.fromSubscription(subscription);
+    //         }, error => {
+    //             stream.error(error);
+    //         });
+    //     return stream;
+    //     // const contract = new this.eth.Contract(abi, address);
+    //     // const stream =  contract
+    //     //     .events
+    //     //     [event](options);
+    //     // const worker = new ClientEventsStream(address, eventAbi, stream)
+    //     // return worker;
+    // }
     callSync(fn) {
         try {
             let result = fn(this.web3);

@@ -94,7 +94,8 @@ UTest({
 
 
         await hh.run('compile', {
-            sources: '/test/fixtures/contracts'
+            sources: '/test/fixtures/contracts',
+            tsgen: false
         });
         const gen = new Generator({
             name: 'Foo',

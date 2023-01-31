@@ -24,4 +24,19 @@ export interface IWeb3ClientOptions {
     // alias to `provider`
     web3?: Web3 | provider
     provider?: Web3 | provider
+
+    debug?: {
+        setStorageAt?: {
+            call: 'hardhat_setStorageAt' | string
+            params: 3 | number
+        },
+        setCode?: {
+            call: 'hardhat_setCode' | string
+            params: 2 | number
+        },
+        setBalance?: {
+            call: 'hardhat_setBalance' | string,
+            params: 2 | number
+        }
+    }
 }

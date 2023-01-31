@@ -7,6 +7,9 @@ var InputDataUtils;
 (function (InputDataUtils) {
     function split(inputData) {
         let str = inputData.substring(2);
+        if (str === '') {
+            return { method: '', args: [] };
+        }
         let methodName = str.substring(0, 8);
         let params = str.substring(8);
         let args = [];

@@ -13,7 +13,8 @@ class NodeBufferUtils {
         return Buffer.from(utils.normalizeHex(hex), 'hex');
     }
     toHex(buffer) {
-        return '0x' + buffer.toString('hex');
+        let hex = buffer.toString('hex');
+        return `0x${hex}`;
     }
     concat(buffers) {
         return Buffer.concat(buffers);

@@ -49,7 +49,26 @@ var $number;
         if (typeof mix === 'number') {
             return mix;
         }
-        return parseFloat(mix.replace(/,+/g, '.'));
+        let factor = null;
+        // string
+        let c = mix[mix.length - 1];
+        if (c === 'k' || c === 'K') {
+            factor = 1000;
+            mix = mix.substring(0, mix.length - 1);
+        }
+        if (c === 'm' || c === 'M') {
+            factor = 1000000;
+            mix = mix.substring(0, mix.length - 1);
+        }
+        if (c === 'b' || c === 'B') {
+            factor = 1000000000;
+            mix = mix.substring(0, mix.length - 1);
+        }
+        let value = parseFloat(mix.replace(/,+/g, '.'));
+        if (factor != null) {
+            value *= factor;
+        }
+        return value;
     }
     $number.parse = parse;
     function round(mix, digits = 0, round = 'round') {

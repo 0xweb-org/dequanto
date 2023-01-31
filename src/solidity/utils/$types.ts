@@ -7,6 +7,9 @@ export namespace $types {
     export function isDynamicArray (type: string) {
         return /\[\s*\]$/.test(type);
     }
+    export function isStruct (type: string) {
+        return /^\(.+\)$/.test(type);
+    }
     export function isMapping(type: string) {
         return /mapping\(.+\)$/.test(type);
     }

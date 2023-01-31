@@ -4,9 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.$abiUtils = void 0;
+const web3_1 = __importDefault(require("web3"));
 const ethers_1 = require("ethers");
 const _contract_1 = require("./$contract");
-const web3_1 = __importDefault(require("web3"));
+const _abiParser_1 = require("./$abiParser");
 var $abiUtils;
 (function ($abiUtils) {
     function encodePacked(...args) {
@@ -19,14 +20,20 @@ var $abiUtils;
     }
     $abiUtils.encode = encode;
     /** Returns complete method/event hash */
-    function getMethodHash(abi) {
+    function getMethodHash(mix) {
+        let abi = typeof mix === 'string'
+            ? _abiParser_1.$abiParser.parseMethod(mix)
+            : mix;
         let types = abi.inputs?.map(serializeMethodSignatureArgumentType) ?? [];
         let signature = `${abi.name}(${types.join(',')})`;
         let hash = _contract_1.$contract.keccak256(signature);
         return hash;
     }
     $abiUtils.getMethodHash = getMethodHash;
-    function getMethodSignature(abi) {
+    function getMethodSignature(mix) {
+        let abi = typeof mix === 'string'
+            ? _abiParser_1.$abiParser.parseMethod(mix)
+            : mix;
         let types = abi.inputs?.map(serializeMethodSignatureArgumentType) ?? [];
         let signature = `${abi.name}(${types.join(',')})`;
         let hash = _contract_1.$contract.keccak256(signature);
@@ -40,6 +47,41 @@ var $abiUtils;
         return hash;
     }
     $abiUtils.getTopicSignature = getTopicSignature;
+    function checkInterfaceOf(abi, iface) {
+        if (iface == null || iface.length === 0) {
+            return { ok: false };
+        }
+        for (let item of iface) {
+            if (item.type === 'constructor') {
+                continue;
+            }
+            let inAbi = abi.some(x => abiEquals(x, item));
+            if (inAbi === false) {
+                return { ok: false, missing: item.name };
+            }
+        }
+        return { ok: true };
+    }
+    $abiUtils.checkInterfaceOf = checkInterfaceOf;
+    function abiEquals(a, b) {
+        if (a.name !== b.name) {
+            return false;
+        }
+        let aInputs = a.inputs ?? [];
+        let bInputs = b.inputs ?? [];
+        if (aInputs.length !== bInputs.length) {
+            return false;
+        }
+        //@TODO: may be better AbiInput comparison?
+        for (let i = 0; i < aInputs.length; i++) {
+            let aInput = aInputs[i];
+            let bInput = bInputs[i];
+            if (aInput?.type !== bInput?.type) {
+                return false;
+            }
+        }
+        return true;
+    }
     function serializeMethodSignatureArgumentType(input) {
         if (input.type === 'tuple') {
             let types = input.components.map(x => serializeMethodSignatureArgumentType(x));

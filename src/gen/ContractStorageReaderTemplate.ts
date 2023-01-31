@@ -8,7 +8,7 @@ class $NAME$ extends ContractStorageReaderBase {
     ) {
         super(address, client, explorer);
 
-        this.$createReader(this.$slots);
+        this.$createHandler(this.$slots);
     }
 
 /* METHODS */

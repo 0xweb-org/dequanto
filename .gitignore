@@ -3,3 +3,5 @@
 /cache/
 /artifacts/
 /0xweb/
+hardhat-*.config.js
+del.act.ts

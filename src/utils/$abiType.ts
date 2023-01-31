@@ -182,6 +182,7 @@ export namespace $abiType {
 
 
     const AbiTsTypes = {
+        'enum': 'number',
         'uint': 'number',
         'int': 'number',
 
@@ -207,6 +208,13 @@ export namespace $abiType {
                     return 'bigint';
                 }
                 return 'number';
+            },
+            type: null,
+        },
+        {
+            rgx: /bytes(?<bits>\d+)?/,
+            fromMatch (match: RegExpMatchArray) {
+                return 'TBufferLike';
             },
             type: null,
         },

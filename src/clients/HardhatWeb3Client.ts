@@ -18,7 +18,21 @@ export class HardhatWeb3Client extends Web3Client {
     constructor (opts?: IWeb3EndpointOptions) {
         super({
             ...(opts ?? {}),
-            endpoints: ClientEndpoints.filterEndpoints($config.get('web3.hardhat.endpoints'), opts)
+            endpoints: ClientEndpoints.filterEndpoints($config.get('web3.hardhat.endpoints'), opts),
+            debug: {
+                setStorageAt: {
+                    call: 'hardhat_setStorageAt',
+                    params: 3
+                },
+                setCode: {
+                    call: 'hardhat_setCode',
+                    params: 2,
+                },
+                setBalance: {
+                    call: 'hardhat_setBalance',
+                    params: 2
+                }
+            }
         });
     }
 }

@@ -10,18 +10,15 @@ class BlockDateResolver {
     constructor(client) {
         this.client = client;
         this.AVG_INITIAL = {
-            eth: 12 * 1000,
-            bsc: 3 * 1000,
-            polygon: 3 * 1000,
+            eth: 12000,
+            bsc: 3000,
+            polygon: 3000,
         };
         this.known = [];
     }
     async getBlockNumberFor(date) {
         this.q = date;
-        let avg = this.AVG_INITIAL[this.client.platform];
-        if (avg == null) {
-            throw new Error(`AVG Block Time not defined for ${this.client.platform}`);
-        }
+        let avg = this.AVG_INITIAL[this.client.platform] ?? this.AVG_INITIAL['eth'];
         let now = new Date();
         let topBlock = {
             blockNumber: await this.client.getBlockNumberCached(),
@@ -69,6 +66,9 @@ class BlockDateResolver {
             return null;
         }
         let blockNumber = anchor.blockNumber + diffCount;
+        if (blockNumber < 0) {
+            throw new Error(`Date Out of range: ${this.q.toISOString()}. Based on the AVG block time, the blockchain was not active on that date`);
+        }
         let date = await this.getBlockDate(blockNumber);
         let info = {
             blockNumber: blockNumber,
@@ -78,6 +78,7 @@ class BlockDateResolver {
         this.refineAvg();
         return info;
     }
+    /** Add a know block to set */
     push(info) {
         for (let i = 0; i < this.known.length; i++) {
             let x = this.known[i];
@@ -110,7 +111,7 @@ class BlockDateResolver {
         let diff = this.diffTimeAbs(b1.date, b2.date);
         return Math.round(diff / Math.abs(b2.blockNumber - b1.blockNumber));
     }
-    /** Having N>1 blocks we can better find out the AVG block time */
+    /** With N>1 blocks we can better find out the AVG block time */
     refineAvg() {
         for (let i = 1; i < this.known.length; i++) {
             let info = this.known[i];

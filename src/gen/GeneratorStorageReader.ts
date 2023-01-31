@@ -86,7 +86,7 @@ export class GeneratorStorageReader {
 
         return `
             async ${name}(${parametersTypes ?? ''}): Promise<${returnType}> {
-                return this.$reader.for('${name}').read(${parametersCall ?? ''})
+                return this.$storage.get('${name}', ${ parametersCall ?? '' });
             }
         `;
     }

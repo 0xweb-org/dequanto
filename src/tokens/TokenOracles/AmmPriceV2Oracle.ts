@@ -16,7 +16,7 @@ import { TokenPriceStore } from './TokenPriceStore';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { AmmPairV2Service, ISwapPool, ISwapPoolInfo } from '../TokenExchanges/AmmBase/V2/AmmPairV2Service';
 import { SushiswapPolygonExchange } from '../TokenExchanges/SushiswapPolygonExchange';
-import { $logger } from '@dequanto/utils/$logger';
+
 
 
 interface ISwapOptions {
@@ -107,7 +107,6 @@ export class AmmPriceV2Oracle {
 
         if (route == null || route.length === 0) {
             let error = new Error(`Route not found for Token ${token.address}`);
-            //this.logger.write(error.message);
             return { error };
         }
 
@@ -122,9 +121,10 @@ export class AmmPriceV2Oracle {
                             date: cacheableDate,
                             priceFrom: price
                         }
-                    }
+                    };
                 }
             }
+
             let poolPair = this.exchange.pairContract(lp.address);
             let lpReserves = await poolPair
                 .forBlock(opts?.block ?? opts?.date)

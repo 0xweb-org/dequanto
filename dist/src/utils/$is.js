@@ -3,31 +3,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.$is = void 0;
 var $is;
 (function ($is) {
-    function Number(val, message = 'Invalid.', opts) {
-        if (typeof val !== 'number') {
-            throw new Error(`Value is not a number. ${message}`);
-        }
-        if (opts?.min != null && val < opts.min) {
-            throw new Error(`Value ${val} is less than ${opts.min}. ${message}`);
-        }
-        if (opts?.max != null && val > opts.max) {
-            throw new Error(`Value ${val} is greater than ${opts.max}. ${message}`);
-        }
-        return val;
+    function Number(val) {
+        return typeof val === 'number' && isNaN(val) === false;
     }
     $is.Number = Number;
-    function notNull(val, message) {
-        if (val == null) {
-            throw new Error(`Value is undefined. ${message}`);
-        }
-        return val;
+    function notNull(val) {
+        return val != null;
     }
     $is.notNull = notNull;
-    function BigInt(val, message) {
-        if (typeof val !== 'bigint') {
-            throw new Error(`Value is undefined. ${message}`);
-        }
-        return val;
+    function BigInt(val) {
+        return typeof val === 'bigint';
     }
     $is.BigInt = BigInt;
     function Address(val, message) {
@@ -37,6 +22,17 @@ var $is;
         return /^0x[a-fA-F0-9]{40}$/g.test(val);
     }
     $is.Address = Address;
+    function TxHash(val) {
+        if (hexString(val) === false) {
+            return false;
+        }
+        // 0x115f9d0e3c5d7538eb27466cf42ac68527703a14e93c0d1243131164af2d1c6c
+        if (val.length !== 2 + 64) {
+            return false;
+        }
+        return true;
+    }
+    $is.TxHash = TxHash;
     function hexString(str) {
         if (typeof str !== 'string') {
             return false;

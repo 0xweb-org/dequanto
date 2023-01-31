@@ -74,6 +74,7 @@ export namespace $abiParser {
     // (uint256, uint256)
     // (uint256 foo, uint256 bar)
     // (uint256 foo, uint256 bar)[]
+    // ((uint256 foo, uint256 bar) foo, uint256 bar)
     export function parseArguments (line: string): AbiInput[] {
         line = line?.trim();
 
@@ -90,10 +91,8 @@ export namespace $abiParser {
             let end = Parse.goToClosing(line, 0, c);
             let parametersLine = line.substring(1, end);
             let isArray = line.endsWith('[]');
-
             let params = Parse.parametersLine(parametersLine);
-            let isTuple = params.every(x => Boolean(x.name));
-            if (isTuple && isArray) {
+            if (isArray) {
                 return [
                     {
                         name: '',
@@ -102,17 +101,32 @@ export namespace $abiParser {
                     }
                 ];
             }
-
-            if (params.length === 1) {
-                line = params[0].type;
-
-                params = [
+            let delimiter = line.indexOf(',', end);
+            if (delimiter === -1) {
+                delimiter = line.length;
+            }
+            let tupleName = line.substring(end + 1, delimiter).trim();
+            if (tupleName) {
+                return [
                     {
-                        name: "",
-                        type: line,
-                    },
+                        name: tupleName,
+                        type: `tuple`,
+                        components: params
+                    }
                 ];
             }
+
+
+            // if (params.length === 1) {
+            //     line = params[0].type;
+
+            //     params = [
+            //         {
+            //             name: "",
+            //             type: line,
+            //         },
+            //     ];
+            // }
 
             return params;
         }
@@ -129,10 +143,18 @@ export namespace $abiParser {
         //         };
         //     });
         // }
+
+        let name = '';
+        let type = line;
+        let match = /^(?<type>.+)\s+(?<name>[\w_$]+)$/.exec(line);
+        if (match) {
+            name = match.groups.name;
+            type = match.groups.type;
+        }
         return [
             {
-                name: '',
-                type: line,
+                name,
+                type,
             },
         ];
     }
@@ -141,19 +163,32 @@ export namespace $abiParser {
 namespace Parse {
     // uint256 foo, uint bar, address qux
     export function parametersLine (paramsStr: string) {
-        return paramsStr
-            .split(',')
-            .map(x => x.trim())
-            .filter(Boolean)
+        return splitByDelimiter(paramsStr, ',')
             .map(param => {
-                let [_type, _name] = param.split(/\s+/).map(x => x.trim()).filter(Boolean);
-                return {
-                    name: _name ?? '',
-                    type: _type.trim()
-                };
+                let params = $abiParser.parseArguments(param);
+                return params[0];
             });
     }
 
+    export function splitByDelimiter (line: string, delimiter: string) {
+        let parts = [];
+        let start = 0;
+        for (let i = 0; i < line.length; i++) {
+            let c = line[i];
+            if (c === delimiter) {
+                parts.push(line.substring(start, i).trim());
+                start = i + 1;
+                continue;
+            }
+            if (c === '(') {
+                i = goToClosing(line, i, c);
+                continue;
+            }
+        }
+        // final part
+        parts.push(line.substring(start).trim());
+        return parts.filter(Boolean);
+    }
 
     export function goToClosing (str: string, startI: number, openChar: string, closeChar?: string) {
         closeChar = closeChar ?? CLOSE_CHARS[openChar];

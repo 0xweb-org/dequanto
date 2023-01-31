@@ -105,7 +105,6 @@ export class OpcodesWalker {
                 throw new Error(`Jump to ${destination} should be a destination opcode, got ${destOpcode?.name}`);
             }
         }
-        console.log('END', this.current);
         return {
             opcodes: visited,
             exit: 'END'
