@@ -107,11 +107,11 @@ export class HardhatProvider {
             artifacts,
             tsgen: false,
         };
-        console.log(`HH options`, hhOptions);
+
         await this.hh.run('compile', hhOptions);
 
         if (root == null) {
-            root = process.cwd();
+            root = 'file://' + process.cwd();
         }
         if (artifacts == null && root != null) {
             artifacts = class_Uri.combine(root, 'artifacts/');
@@ -168,7 +168,6 @@ export class HardhatProvider {
         options.paths = {
             root
         };
-        console.log(`Create TMP file`, tmp);
         await File.writeAsync(tmp, solidityCode);
         try {
             return await this.deploySol(tmp, options);
