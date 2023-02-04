@@ -398,7 +398,7 @@ namespace Gen {
         return `
             // ${$abiUtils.getMethodSignature(abi)}
             async ${abi.name} (${fnInputArguments}): ${fnResult} {
-                return this.$read('${serializeMethodAbi(abi)}'${callInputArguments});
+                return this.$read(this.$getAbiItem('function', '${abi.name}')${callInputArguments});
             }
         `;
     }

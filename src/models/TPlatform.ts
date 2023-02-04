@@ -1,1 +1,10 @@
-export type TPlatform = 'eth' | 'eth:goerli' |  'bsc' | 'polygon' | 'arbitrum' | 'xdai' | 'boba' | 'hardhat' | string;
+export type TPlatform = 'eth'
+    | 'eth:goerli'
+    | 'bsc'
+    | 'polygon'
+    | 'arbitrum'
+    | 'xdai'
+    | 'boba'
+    | 'hardhat'
+    | 'optimism'
+    | string;

@@ -30,6 +30,10 @@ blockchainExplorer:
     key: '...'
     host: 'https://api.hecoinfo.com'
     www: 'https://www.hecoinfo.com'
+  optimism:
+    key: '8SG776V5FEBDJMHTMETG3PT6KT1921X6AS'
+    host: 'https://api-optimistic.etherscan.io/'
+    www: 'https://optimistic.etherscan.io/'
 
 web3:
   eth:
@@ -67,6 +71,10 @@ web3:
     endpoints:
       - url: 'https://arbitrum.public-rpc.com'
 
+  optimism:
+    chainId: 10
+    endpoints:
+      - url: 'https://mainnet.optimism.io'
 
   hardhat:
     endpoints:

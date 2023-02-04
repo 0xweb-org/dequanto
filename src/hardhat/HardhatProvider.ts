@@ -124,8 +124,6 @@ export class HardhatProvider {
 
         let outputDir = class_Uri.combine(artifacts, solContractPath);
         let output = class_Uri.combine(outputDir, `${filename}.json`);
-        console.log(`Compiled OK Output ${output} outputDir ${outputDir}`);
-
         if (await File.existsAsync(output) === false) {
             let path = `${outputDir}/`;
             if (await Directory.existsAsync(path) === false) {
@@ -174,7 +172,7 @@ export class HardhatProvider {
         try {
             return await this.deploySol(tmp, options);
         } finally {
-            await Directory.removeAsync(root);
+            //await Directory.removeAsync(root);
         }
 
     }
