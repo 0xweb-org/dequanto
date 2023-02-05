@@ -1,7 +1,6 @@
-import type { AbiItem } from 'web3-utils';
 import alot from 'alot';
-import { findOpcode } from './opcodes';
-import opcodeFunctions from './utils/opcodes';
+import type { AbiItem } from 'web3-utils';
+import { OpcodesInfo } from './OpcodesInfo';
 import { JsonObjectStore } from '@dequanto/json/JsonObjectStore';
 import { $path } from '@dequanto/utils/$path';
 import { $abiParser } from '@dequanto/utils/$abiParser';
@@ -83,7 +82,7 @@ export class EVM {
     public getOpcodes(): Opcode[] {
         if (this.opcodes.length === 0) {
             for (let index = 0; index < this.code.length; index++) {
-                const currentOp = findOpcode(this.code[index], true);
+                const currentOp = OpcodesInfo.get(this.code[index], true);
                 currentOp.pc = index;
                 this.opcodes.push(currentOp);
                 if (currentOp.name.startsWith('PUSH')) {
