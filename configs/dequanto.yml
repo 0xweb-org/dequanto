@@ -32,8 +32,12 @@ blockchainExplorer:
     www: 'https://www.hecoinfo.com'
   optimism:
     key: '8SG776V5FEBDJMHTMETG3PT6KT1921X6AS'
-    host: 'https://api-optimistic.etherscan.io/'
-    www: 'https://optimistic.etherscan.io/'
+    host: 'https://api-optimistic.etherscan.io'
+    www: 'https://optimistic.etherscan.io'
+  avalanche:
+    key: 'TMEXUDTD37PNTAIDJACPHQTP5BB42XD8Q3'
+    host: 'https://api.snowtrace.io'
+    www: 'https://snowtrace.io'
 
 web3:
   eth:
@@ -75,6 +79,13 @@ web3:
     chainId: 10
     endpoints:
       - url: 'https://mainnet.optimism.io'
+
+  avalanche:
+    chainId: 43114
+    chainToken: AVAX
+    endpoints:
+      - url: 'https://avalanche-evm.publicnode.com'
+      - url: 'https://api.avax.network/ext/bc/C/rpc'
 
   hardhat:
     endpoints:
