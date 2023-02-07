@@ -9,7 +9,14 @@ export interface IBlockChainExplorer extends IAbiProvider {
     getContractMeta(q: string): Promise<IContractDetails>;
     getContractAbi (address: TAddress, opts?: { implementation?: string }): Promise<{ abi: string, implementation: TAddress }>
     getContractSource (address: string): Promise<{
-        SourceCode: string
+        SourceCode: {
+            contractName: string
+            files: {
+                [filename: string]: {
+                    content: string
+                }
+            }
+        }
         ContractName: string
         ABI: string
     }>

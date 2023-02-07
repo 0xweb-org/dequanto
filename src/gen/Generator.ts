@@ -195,36 +195,7 @@ export class Generator {
             $logger.log('No contract source found.');
             return null;
         }
-        if (/^\s*\{/.test(meta.SourceCode) === false) {
-            $logger.log('Source contract as single file fetched.');
-            return {
-                contractName: meta.ContractName,
-                files: {
-                    [`${name}.sol`]: {
-                        content: meta.SourceCode
-                    }
-                }
-            };
-        }
-
-        let code = meta
-            .SourceCode
-            .replace(/\{\{/g, '{')
-            .replace(/\}\}/g, '}')
-
-        try {
-            let sources = JSON.parse(code);
-            let files = sources.sources;
-
-            $logger.log(`Source code (${Object.keys(files).join(', ')}) fetched.`)
-            return {
-                contractName: meta.ContractName,
-                files
-            };
-        } catch (error) {
-            $logger.error(`Source code can't be parsed: `, code);
-            throw new Error(`Source code can't be parsed: ${error.message}`);
-        }
+        return meta.SourceCode;
     }
 
     private async getAbiByAddress (opts: { implementation: string }) {

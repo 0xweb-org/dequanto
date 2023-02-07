@@ -146,13 +146,76 @@ export namespace BlockChainExplorerFactory {
             }
 
             async getContractSource (address: string): Promise<{
-                SourceCode: string
+                SourceCode: {
+                    contractName: string
+                    files: {
+                        [filename: string]: {
+                            content: string
+                        }
+                    }
+                }
                 ContractName: string
                 ABI: string
             }> {
                 let url = `${this.config.host}/api?module=contract&action=getsourcecode&address=${address}&apikey=${this.config.key}`;
                 let result = await client.get(url);
-                return Array.isArray(result) ? result[0] : result;
+
+
+                let json = Array.isArray(result) ? result[0] : result;
+
+                function parseSourceCode (contractName: string, code: string): {
+                    contractName: string
+                    files: {
+                        [filename: string]: {
+                            content: string
+                        }
+                    }
+                } {
+                    if (typeof code !== 'string') {
+                        return code;
+                    }
+
+                    if (/^\s*\{/.test(code) === false) {
+                        // single source code (not a serialized JSON)
+                        return {
+                            contractName: contractName,
+                            files: {
+                                [`${contractName}.sol`]: {
+                                    content: code
+                                }
+                            }
+                        };
+                    }
+                    try {
+                        let sources = parseJson(code);
+                        let files = sources.sources ?? sources;
+                        return {
+                            contractName: contractName,
+                            files
+                        };
+                    } catch (error) {
+                        throw new Error(`Source code (${url}) can't be parsed: ${error.message}`);
+                    }
+                }
+                function parseJson (str: string) {
+                    try {
+                        return JSON.parse(str)
+                    } catch (error) {
+                        // etherscan returns code wrapped into {{}}
+                    }
+                    str = str
+                        .replace(/\{\{/g, '{')
+                        .replace(/\}\}/g, '}')
+                        // @TODO check etherscan serialized jsons. Does it always has "{{...}}" wrappings
+
+
+                    return JSON.parse(str)
+                }
+
+                return {
+                    ...json,
+                    SourceCode: parseSourceCode(json.ContractName, json.SourceCode)
+                };
             }
 
             async getTransactions (addr: TAddress, params?: TxFilter): Promise<Transaction[]> {
