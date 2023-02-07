@@ -244,7 +244,7 @@ export class Generator {
             let message = `ABI is not resolved from ${this.options.platform}/${address}: ${error.message ?? error}. Extract from bytecode...`;
             l`${message}`
 
-            let code = await this.client.getCode();
+            let code = await this.client.getCode(address);
             if (code == null || code === '' || code === '0x') {
                 throw new Error(`${this.options.platform}:${address} is not a contract`);
             }
