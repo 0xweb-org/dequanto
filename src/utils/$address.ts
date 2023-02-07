@@ -33,6 +33,10 @@ export namespace $address {
     export function toBytes32 (address: TAddress) {
         return address.toLowerCase().substring(2).padStart(32, '0');
     }
+    export function fromBytes32 (hex: string) {
+        const SIZE = 40;
+        return '0x' + hex.substring(hex.length - SIZE);
+    }
 
     export function toChecksum (address: TAddress) {
         return web3.utils.toChecksumAddress(address);

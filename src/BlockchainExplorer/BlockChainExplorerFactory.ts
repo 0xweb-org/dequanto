@@ -69,7 +69,15 @@ export namespace BlockChainExplorerFactory {
                 return info;
             }
 
-            async getContractAbi (address: TAddress, params?: { implementation: string }): Promise<{ abi: string, implementation: TAddress }> {
+            async getContractAbi (address: TAddress, params?: {
+                // address or slot
+                implementation: TAddress | string
+            }): Promise<{ abi: string, implementation: TAddress }> {
+
+                if ($address.isValid(params?.implementation)) {
+                    return this.getContractAbi(params.implementation);
+                }
+
                 let info = await this.getContractMeta(address);
                 if (info?.proxy) {
                     address = info.proxy;
@@ -93,12 +101,11 @@ export namespace BlockChainExplorerFactory {
                 if (params?.implementation) {
                     if (/0x.{64}/.test(params.implementation)) {
                         let web3 = opts.getWeb3(this.platform);
-
                         let uin256Hex = await web3.getStorageAt(
-                            '0x5a58505a96d1dbf8df91cb21b54419fc36e93fde',
-                            `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`
+                            address,
+                            params.implementation
                         );
-                        let hex = uin256Hex.replace(/0x0+/, '0x');
+                        let hex = $address.fromBytes32(uin256Hex);
                         return this.getContractAbi(hex)
                     }
                     throw new Error(`Implement ${params.implementation} support`);
@@ -111,31 +118,29 @@ export namespace BlockChainExplorerFactory {
                         // keccak-256 hash of "org.zeppelinos.proxy.implementation"
                         uint256Hex = await web3.getStorageAt(address, `0x7050c9e0f4ca769c69bd3a8ef740bc37934f8e2c036e5a723fd8ee048ed3f8c3`);
                     }
-                    let hex = uint256Hex.replace(/0x0+/, '0x');
+                    let hex =  $address.fromBytes32(uint256Hex);
                     return this.getContractAbi(hex)
                 }
 
                 if (hasImplementationSlot(abiJson)) {
                     let web3 = opts.getWeb3(this.platform);
-                    let uin256Hex = await web3.readContract({
+                    let implAddress = await web3.readContract({
                         address: address,
                         abi: abiJson,
                         method: 'implementation',
                         arguments: []
                     });
-                    let hex = uin256Hex.replace(/0x0+/, '0x');
-                    return this.getContractAbi(hex);
+                    return this.getContractAbi(implAddress);
                 }
                 if (hasTargetSlot(abiJson)) {
                     let web3 = opts.getWeb3(this.platform);
-                    let uin256Hex = await web3.readContract({
+                    let implAddress = await web3.readContract({
                         address: address,
                         abi: abiJson,
                         method: 'getTarget',
                         arguments: []
                     });
-                    let hex = uin256Hex.replace(/0x0+/, '0x');
-                    return this.getContractAbi(hex);
+                    return this.getContractAbi(implAddress);
                 }
                 return { abi, implementation: address };
             }
