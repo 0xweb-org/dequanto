@@ -7,4 +7,5 @@ export type TPlatform = 'eth'
     | 'boba'
     | 'hardhat'
     | 'optimism'
+    | 'avalanche'
     | string;
