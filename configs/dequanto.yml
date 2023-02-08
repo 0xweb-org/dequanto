@@ -38,6 +38,11 @@ blockchainExplorer:
     key: 'TMEXUDTD37PNTAIDJACPHQTP5BB42XD8Q3'
     host: 'https://api.snowtrace.io'
     www: 'https://snowtrace.io'
+  cronos:
+    key: 'V5A6VRJ5TR9KIQEI7HIHVGK5C9NYCQS36E'
+    host: 'https://api.cronoscan.com'
+    www: 'https://cronoscan.com'
+
 
 web3:
   eth:
@@ -86,6 +91,12 @@ web3:
     endpoints:
       - url: 'https://avalanche-evm.publicnode.com'
       - url: 'https://api.avax.network/ext/bc/C/rpc'
+
+  cronos:
+    chainId: 25
+    chainToken: CRO
+    endpoints:
+      - url: https://evm.cronos.org
 
   hardhat:
     endpoints:

@@ -300,11 +300,16 @@ UTest({
                 let v1 = await storage.get('users["0xa000000000000000000000000000000000000000"].balance');
                 eq_(v1, 11n);
 
+                let struct = await storage.get('users["0xa000000000000000000000000000000000000000"]');
+                deepEq_(struct, {
+                    ID: 10n,
+                    balance: 11n
+                });
+
                 deepEq_([
                     await storage.get('users["0xB000000000000000000000000000000000000000"].ID'),
                     await storage.get('users["0xB000000000000000000000000000000000000000"].balance'),
                 ], [ 12n, 13n ]);
-
 
                 await storage.set('users["0xa000000000000000000000000000000000000000"].balance', 500n);
 
