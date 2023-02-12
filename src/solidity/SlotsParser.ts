@@ -613,7 +613,10 @@ class SourceFile {
         let contract = await Ast.getContract(ast, name);
         return contract;
     }
-    async getUserDefinedType(name: string): Promise<ContractDefinition | StructDefinition | EnumDefinition> {
+    async getUserDefinedType(name: string, skipImports?: { [path: string]: boolean }): Promise<ContractDefinition | StructDefinition | EnumDefinition> {
+        // Fix infintie recursion of nested imports;
+        skipImports ??= {};
+
         let ast = await this.getAst();
         let typeDef = await Ast.getUserDefinedType(ast, name);
         if (typeDef) {
@@ -621,8 +624,13 @@ class SourceFile {
         }
 
         let imports = await this.getImports();
+
+        // Track imports we have already looked in to prevent the infinitive loop
+        imports = imports.filter(x => x.path in skipImports === false);
+        imports.forEach(x => skipImports[x.path] = true);
+
         typeDef = await alot(imports)
-            .mapAsync(x => x.file?.getUserDefinedType(name))
+            .mapAsync(x => x.file?.getUserDefinedType(name, skipImports))
             .filterAsync(x => x != null)
             .firstAsync();
 
