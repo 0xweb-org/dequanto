@@ -258,11 +258,39 @@ namespace TypeUtil {
         }
         private async getDefinition () {
             let name = this.type.namePath;
+            // Search inside the contract
             let typeDef = Ast.getUserDefinedType(this.ctx.contract, name);
             if (typeDef) {
                 return typeDef;
             }
+            // Search in the source file
             typeDef = await this.ctx.file.getUserDefinedType(name);
+            if (typeDef) {
+                return typeDef;
+            }
+            // Search inside the base contracts
+            let baseContracts = this.ctx.contract.baseContracts;
+            if (baseContracts?.length > 0) {
+                typeDef = await alot(baseContracts)
+                    .mapAsync(async $base => {
+                        let namePath = $base.baseName?.namePath;
+                        if (namePath == null) {
+                            return null;
+                        }
+                        let contract = await this.ctx.file.getUserDefinedType(namePath);
+                        if (contract == null || contract.type !== 'ContractDefinition') {
+                            return null;
+                        }
+                        return Ast.getUserDefinedType(contract, name);
+                    })
+                    .firstAsync(x => x != null);
+
+                if (typeDef) {
+                    return typeDef;
+                }
+            }
+
+
 
             $require.notNull(typeDef, `UserDefined Type not resolved ${name} in ${this.ctx.file?.path}`);
             return typeDef;
@@ -585,7 +613,7 @@ class SourceFile {
         let contract = await Ast.getContract(ast, name);
         return contract;
     }
-    async getUserDefinedType(name): Promise<ContractDefinition | StructDefinition | EnumDefinition> {
+    async getUserDefinedType(name: string): Promise<ContractDefinition | StructDefinition | EnumDefinition> {
         let ast = await this.getAst();
         let typeDef = await Ast.getUserDefinedType(ast, name);
         if (typeDef) {

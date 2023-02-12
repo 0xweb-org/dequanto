@@ -42,6 +42,11 @@ blockchainExplorer:
     key: 'V5A6VRJ5TR9KIQEI7HIHVGK5C9NYCQS36E'
     host: 'https://api.cronoscan.com'
     www: 'https://cronoscan.com'
+  fantom:
+    key: '9PFA8WNHPCRAZS2GEJXPNN83SZS84JWGG7'
+    host: 'https://api.ftmscan.com'
+    www: 'https://ftmscan.com'
+
 
 
 web3:
@@ -116,6 +121,12 @@ web3:
       - url: 'https://http-mainnet.hecochain.com'
       - url: 'wss://ws-mainnet.hecochain.com'
 
+  fantom:
+    chainId: 250
+    chainToken: FTM
+    endpoints:
+      - url: 'https://rpc.fantom.network'
+      - url: 'https://rpcapi.fantom.network'
 
 ns:
   ens:

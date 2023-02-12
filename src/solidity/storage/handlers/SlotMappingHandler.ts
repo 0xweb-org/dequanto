@@ -13,6 +13,7 @@ export class SlotMappingHandler extends ASlotsStorageHandler {
     }
 
     async get(keys: IAccessorItem[]): Promise<any> {
+        console.log(this.slot, keys);
         if (keys == null || keys.length === 0) {
             return this.fetchAll();
         }
