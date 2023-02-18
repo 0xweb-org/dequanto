@@ -46,6 +46,10 @@ blockchainExplorer:
     key: '9PFA8WNHPCRAZS2GEJXPNN83SZS84JWGG7'
     host: 'https://api.ftmscan.com'
     www: 'https://ftmscan.com'
+  aurora:
+      key: ''
+      host: 'https://explorer.aurora.dev'
+      www: 'https://explorer.aurora.dev'
 
 
 
@@ -127,6 +131,11 @@ web3:
     endpoints:
       - url: 'https://rpc.fantom.network'
       - url: 'https://rpcapi.fantom.network'
+
+  aurora:
+    chainId: 1313161554
+    endpoints:
+      - url: 'https://mainnet.aurora.dev'
 
 ns:
   ens:

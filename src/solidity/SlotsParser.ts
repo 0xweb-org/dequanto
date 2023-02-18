@@ -233,7 +233,10 @@ namespace TypeUtil {
                 let count = Math.ceil(definition.members.length / 256);
                 return Types.sizeOf(`uint${ 8 * count }`)
             }
-            let ctx = this.ctx;
+            let ctx = {
+                ...this.ctx,
+                contract: definition.parent,
+            };
             let members = definition.members.map(x => get(x.typeName, ctx));
             let sizes = await alot(members).sumAsync(x => x.sizeOf());
             return sizes;
@@ -246,8 +249,10 @@ namespace TypeUtil {
             if (definition.type === 'EnumDefinition') {
                 return 'enum';
             }
-            let ctx = this.ctx;
-            ctx.contract = definition.parent;
+            let ctx = {
+                ...this.ctx,
+                contract: definition.parent,
+            };
             let members = await alot(definition.members).mapAsync(async x => {
                 let util = get(x.typeName, ctx);
                 let type = await util.serialize();
