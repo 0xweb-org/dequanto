@@ -68,22 +68,27 @@ export namespace SlotsParser {
     export async function slots (source: { path: string, code?: string }, contractName?: string, opts?: ISlotsParserOption): Promise<ISlotVarDefinition[]> {
         const sourceFile = new SourceFile(source.path, source.code, opts?.files);
         const chain = await sourceFile.getContractInheritanceChain(contractName);
+
         return await extractSlots(chain);
     }
 
-    async function extractSlots(contracts: { contract: ContractDefinition, file: SourceFile }[]) {
+    async function extractSlots(inheritanceChain: { contract: ContractDefinition, file: SourceFile }[]) {
         let offset = { slot: 0, position: 0 };
 
-        let arr = await alot(contracts)
-            .mapManyAsync(async contract => {
-                let slots = await extractSlotsSingle(contract, offset);
+        //let inheritanceChainContracts = [ ...inheritanceChain.map(x => x.contract)].reverse();
+        let arr = await alot(inheritanceChain)
+            .mapManyAsync(async (item, i) => {
+                let slots = await extractSlotsSingle({
+                    ...item,
+                    //contractBase: inheritanceChainContracts.slice(inheritanceChainContracts.length - i)
+                }, offset);
                 return slots;
             })
             .toArrayAsync({ threads: 1 });
 
         return arr;
     }
-    async function extractSlotsSingle (contract: { contract: ContractDefinition, file: SourceFile }, offset: { slot: number, position: number }) {
+    async function extractSlotsSingle (contract: TypeUtil.ITypeCtx, offset: { slot: number, position: number }) {
 
         let vars = Ast.getVariableDeclarations(contract.contract);
         vars = vars.filter(x => x.isDeclaredConst !== true)
@@ -154,12 +159,13 @@ export namespace SlotsParser {
 }
 
 namespace TypeUtil {
-    interface ITypeUtil {
+    export interface ITypeUtil {
         sizeOf(): Promise<number>
         serialize(): Promise<string>
     }
-    interface ITypeCtx {
+    export interface ITypeCtx {
         contract: ContractDefinition
+        contractBase?: ContractDefinition[]
         file: SourceFile
     };
 

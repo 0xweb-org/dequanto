@@ -72,7 +72,7 @@ export namespace $bigint {
         if (val < Number.MAX_SAFE_INTEGER) {
             return Number(val) / Number(round);
         }
-        throw new Error(`Ether overflow: ${val}. Decimals: ${decimals}`);
+        throw new Error(`Ether overflow: ${val}. Amount: ${amount} Decimals: ${decimals}`);
     }
 
     export function toEtherSafe (amount: string | number | bigint, decimals: number | string = ETHER_DECIMALS, round = 100000n): number | bigint {

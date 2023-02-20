@@ -47,23 +47,26 @@ blockchainExplorer:
     host: 'https://api.ftmscan.com'
     www: 'https://ftmscan.com'
   aurora:
-      key: ''
-      host: 'https://explorer.aurora.dev'
-      www: 'https://explorer.aurora.dev'
-
+    key: ''
+    host: 'https://explorer.aurora.dev'
+    www: 'https://explorer.aurora.dev'
+  arbitrum:
+    key: 'SD1353XFNU8QYTP4KDK58AHMZBQCE79Q1J'
+    host: 'https://api.arbiscan.io'
+    www: 'https://arbiscan.io'
 
 
 web3:
   eth:
     endpoints:
       - url: 'https://eth.public-rpc.com'
-      - url: 'https://mainnet.infura.io/v3/e38914b4ccbc4a60a71a1d6a336bc00f'
-      - url: 'wss://mainnet.infura.io/ws/v3/e38914b4ccbc4a60a71a1d6a336bc00f'
+      - url: 'https://mainnet.infura.io/v3/a83f91c556054576a4c608ad4312720b'
+      - url: 'wss://mainnet.infura.io/ws/v3/a83f91c556054576a4c608ad4312720b'
 
   eth:goerli:
     endpoints:
-      - url: 'https://goerli.infura.io/v3/e38914b4ccbc4a60a71a1d6a336bc00f'
-      - url: 'wss://goerli.infura.io/ws/v3/e38914b4ccbc4a60a71a1d6a336bc00f'
+      - url: 'https://goerli.infura.io/v3/a83f91c556054576a4c608ad4312720b'
+      - url: 'wss://goerli.infura.io/ws/v3/a83f91c556054576a4c608ad4312720b'
 
   # semi-private accounts at https://rpc.maticvigil.com/
   polygon:

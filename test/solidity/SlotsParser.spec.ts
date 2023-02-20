@@ -1,4 +1,5 @@
 import { SlotsParser } from '@dequanto/solidity/SlotsParser';
+import { l } from '@dequanto/utils/$logger';
 
 UTest({
     async 'should extract slots from contract' () {
@@ -181,6 +182,19 @@ UTest({
 
         eq_(names[10], 'nonces');
         eq_(types[10], 'mapping(address => uint256)');
+    },
+    async 'should parse AavePriceOracle.sol' () {
+        let slots = await SlotsParser.slots({ path: './test/fixtures/slots/PriceOracle.sol' }, 'PriceOracle');
 
-    }
+        eq_(slots.length, 13);
+
+        l`type Exp should be found and rewritten`
+        has_(slots[5], {
+            slot: 4,
+            position: 0,
+            name: 'maxSwings',
+            size: Infinity,
+            type: 'mapping(address => (uint256 mantissa))'
+        });
+    },
 })
