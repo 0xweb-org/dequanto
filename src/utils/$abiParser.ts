@@ -56,13 +56,14 @@ export namespace $abiParser {
         outputs = parseArguments($return);
 
         let inputs = Parse.parametersLine(match.groups.params ?? '')
-
+        let isSig = /^0x[A-F\d]{8}$/i.test(fnName);
         return <AbiItem> {
             constant: false,
             payable: false,
             //"stateMutability": "view",
 
             name: fnName,
+            signature: isSig ? fnName : void 0,
             inputs: inputs,
             outputs: outputs,
             type: match.groups.type ?? 'function',

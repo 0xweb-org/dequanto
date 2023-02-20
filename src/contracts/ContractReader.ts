@@ -68,7 +68,6 @@ export class ContractReader implements IContractReader {
 
         let method = abi.name;
         let abiArr = [ abi ];
-
         try {
             let result = await this.client.readContract({
                 address,

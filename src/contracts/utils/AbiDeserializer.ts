@@ -9,6 +9,10 @@ export namespace AbiDeserializer {
     type AbiNativeType = string;
 
     export function process(result: any, types: AbiOutput[]) {
+        if (types == null || types.length === 0) {
+            // return as-is
+            return result;
+        }
         let type: 'array' | 'object' | AbiNativeType = $abiParser.getReturnTypeFromTypes(types);
         if (typeof result === 'object') {
             if (type === 'array') {

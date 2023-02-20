@@ -135,6 +135,9 @@ export abstract class Web3Client implements IWeb3Client {
     readContract (data: Web3BatchRequests.IContractRequest) {
         let { address, method, abi, options, blockNumber, arguments: params } = data;
         return this.pool.call(async web3 => {
+
+            let sig = abi[0].signature;
+
             let contract = new web3.eth.Contract(abi, address);
             let callArgs = [];
             if (options != null) {
@@ -143,6 +146,9 @@ export abstract class Web3Client implements IWeb3Client {
             if (blockNumber != null) {
                 callArgs[0] = null;
                 callArgs[1] = blockNumber;
+            }
+            if (sig) {
+                abi[0].signature = sig;
             }
             let result = await contract.methods[method](...params).call(...callArgs);
             return result;

@@ -2,19 +2,12 @@ import hh from 'hardhat';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { Generator } from '@dequanto/gen/Generator';
 import { $path } from '@dequanto/utils/$path';
-import { Directory, File } from 'atma-io';
+import { File } from 'atma-io';
 import { $date } from '@dequanto/utils/$date';
 import { l } from '@dequanto/utils/$logger';
 import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { TestNode } from '../hardhat/TestNode';
 import { $promise } from '@dequanto/utils/$promise';
-import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-import { $bigint } from '@dequanto/utils/$bigint';
-import { TxWriter } from '@dequanto/txs/TxWriter';
-import { $contract } from '@dequanto/utils/$contract';
-import { $txData } from '@dequanto/utils/$txData';
-import { Wallet } from 'ethers';
-import { $fn } from '@dequanto/utils/$fn';
 
 declare let include;
 
@@ -117,7 +110,16 @@ UTest({
         let name = await foo.name();
         eq_(name, 'hello');
 
-        await $promise.wait(2000);
+        //await $promise.wait(2000);
+
+        l`> Get name with Contract Reader`
+        let reader = new ContractReader(client);
+        let nameFromReader = await reader.readAsync(foo.address, 'name() returns (string)');
+        eq_(nameFromReader, 'hello');
+
+        l`> Get name with Contract Reader and method SIGNATURE`
+        let nameFromReaderWithSig = await reader.readAsync(foo.address, '0x06fdde03() returns (string)');
+        eq_(nameFromReaderWithSig, 'hello');
 
         l`Subscribe to transactions stream`
         const transactionsListener = [];
