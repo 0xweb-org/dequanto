@@ -192,7 +192,7 @@ export class GeneratorFromAbi {
             storageReaderProperty = property;
             $logger.log(`Storage Reader generated`);
         } catch (error) {
-            $logger.log(`Storage Reader is skipped: ${error.message}`);
+            $logger.log(`Storage Reader is skipped due to the error: ${error.message}`);
         }
 
         let code = template

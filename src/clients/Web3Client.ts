@@ -148,6 +148,7 @@ export abstract class Web3Client implements IWeb3Client {
                 callArgs[1] = blockNumber;
             }
             if (sig) {
+                // If signature was provided in ABI (ensure we reset it to ABI, as eth.Contract constructor recalculates method signatures)
                 abi[0].signature = sig;
             }
             let result = await contract.methods[method](...params).call(...callArgs);

@@ -24,6 +24,7 @@ import type { AbiInput } from 'web3-utils';
 import { $types } from './utils/$types';
 import { class_Uri } from 'atma-utils';
 import { $abiType } from '@dequanto/utils/$abiType';
+import { $logger } from '@dequanto/utils/$logger';
 
 export interface ISlotVarDefinition {
     slot: number
@@ -473,9 +474,15 @@ namespace Types {
     }
 }
 namespace Ast {
-    export function parse(code: string): SourceUnit {
-        const ast = parser.parse(code);
-        return ast;
+    export function parse(code: string, opts?: { path: string }): SourceUnit {
+        try {
+            const ast = parser.parse(code);
+            return ast;
+        } catch (error) {
+            let path = opts?.path ?? `${code.substring(0, 500)}...`;
+            $logger.error(`Parser error in ${path}`);
+            throw error;
+        }
     }
 
     export function getContract (ast: SourceUnit, contractName: string): ContractDefinition {
@@ -553,11 +560,11 @@ class SourceFile {
         if (this.source == null) {
             throw new Error(`Source not loaded ${this.file.uri.toLocalFile()}`);
         }
-        let ast = Ast.parse(this.source);
+        let ast = Ast.parse(this.source, { path: this.path });
 
         ast.children?.forEach(node => {
             this.reapplyParents(node, ast);
-        })
+        });
         return ast;
     }
 

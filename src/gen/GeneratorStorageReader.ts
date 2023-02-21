@@ -54,7 +54,6 @@ export class GeneratorStorageReader {
 
         let slots = await SlotsParser.slots({ code: file.content, path: file.path }, contractName, { files })
 
-
         let methods = this.serializeSlots(slots);
         let codeMethods = methods.join('\n\n');
 
