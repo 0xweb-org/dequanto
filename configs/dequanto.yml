@@ -22,6 +22,10 @@ blockchainExplorer:
     key: ''
     host: 'https://blockscout.com/xdai/mainnet'
     www: 'https://blockscout.com/xdai/mainnet'
+  gnosis:
+    key: 'V6ENPXHS2E74MCBUXWG8WGYTA3ZPYN2WT3'
+    host: 'https://api.gnosisscan.io/'
+    www: 'https://gnosisscan.io'
   celo:
     key: '3A9ZR89MEUQ51YC3SI1VAYAATFW419EEYR'
     host: 'https://api.celoscan.io'
@@ -54,7 +58,10 @@ blockchainExplorer:
     key: 'SD1353XFNU8QYTP4KDK58AHMZBQCE79Q1J'
     host: 'https://api.arbiscan.io'
     www: 'https://arbiscan.io'
-
+  metis:
+    key: ''
+    host: 'https://andromeda-explorer.metis.io/api'
+    www: 'https://andromeda-explorer.metis.io'
 
 web3:
   eth:
@@ -86,6 +93,14 @@ web3:
   xdai:
     endpoints:
       - url: 'https://rpc.gnosischain.com/'
+      - url: 'wss://rpc.gnosischain.com/wss'
+
+  gnosis:
+    chainId: 100
+    chainToken: xDAI
+    endpoints:
+      - url: 'https://rpc.gnosischain.com/'
+      - url: 'wss://rpc.gnosischain.com/wss'
 
   arbitrum:
     chainId: 42161
@@ -139,6 +154,12 @@ web3:
     chainId: 1313161554
     endpoints:
       - url: 'https://mainnet.aurora.dev'
+
+  metis:
+    chainId: 1088
+    chainToken: METIS
+    endpoints:
+      - url: https://andromeda.metis.io/?owner=1088
 
 ns:
   ens:

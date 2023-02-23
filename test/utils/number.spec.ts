@@ -22,7 +22,7 @@ UTest({
         },
         async 'float' () {
             let min = 0.01;
-            let max = 0.020001;
+            let max = 0.0200001;
 
             let values = alot
                 .fromRange(0, 20)

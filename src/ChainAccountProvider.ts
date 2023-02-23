@@ -41,7 +41,13 @@ export namespace ChainAccountProvider {
         const wallet = new Wallet(bytes);
         return wallet.address;
     }
-
+    export function getAccountFromMnemonic(mnemonic: string, index = 0) {
+        const wallet = Wallet.fromMnemonic(mnemonic, `m/44'/60'/0'/${index}`);
+        return {
+            key: wallet.privateKey,
+            address: wallet.address,
+        };
+    }
     export function generate (opts?: { name?: string, platform?: TPlatform }): ChainAccount {
         const bytes = $crypto.randomBytes(32);
         const wallet = new Wallet(bytes);
