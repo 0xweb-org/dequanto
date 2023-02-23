@@ -596,7 +596,7 @@ contract PriceOracle is Exponential {
      * map: assetAddress -> Exp
      */
     mapping(address => Exp) public _assetPrices;
-    
+
     /**
      * @dev Mapping of asset addresses to aggregator.
      */
@@ -1273,7 +1273,7 @@ contract PriceOracle is Exponential {
             _aggregator != _oldAssetAggregator,
             "_setAssetAggregator: Old and new address cannot be the same."
         );
-        
+
         aggregator[_asset] = IAggregator(_aggregator);
         emit SetAssetAggregator(_asset, address(_aggregator));
 
@@ -1316,7 +1316,7 @@ contract PriceOracle is Exponential {
             _getReaderPrice(_asset) > 0,
             "_disableAssetAggregator: The price of local assets cannot be 0!"
         );
-        
+
         aggregator[_asset] = IAggregator(address(0));
         emit SetAssetAggregator(_asset, address(0));
 
@@ -1350,7 +1350,7 @@ contract PriceOracle is Exponential {
         }
 
         _statusOracle.getAssetPriceStatus(_asset);
-        
+
         statusOracle[_asset] = _statusOracle;
         emit SetAssetStatusOracle(_asset, _statusOracle);
 
@@ -1388,7 +1388,7 @@ contract PriceOracle is Exponential {
                 );
         }
         statusOracle[_asset] = IStatusOracle(0);
-        
+
         emit SetAssetStatusOracle(_asset, IStatusOracle(0));
 
         return uint256(Error.NO_ERROR);
@@ -1415,7 +1415,7 @@ contract PriceOracle is Exponential {
             return 0;
 
         return srcMul(
-            uint256(_aggregatorPrice), 
+            uint256(_aggregatorPrice),
             10 ** (srcSub(36, srcAdd(uint256(IERC20(_asset).decimals()), uint256(_assetAggregator.decimals()))))
         );
     }
@@ -1434,7 +1434,7 @@ contract PriceOracle is Exponential {
         uint256 _assetPrice = _getAssetAggregatorPrice(_asset);
         if (_assetPrice == 0)
             return _getReaderPrice(_asset);
-        
+
         return _assetPrice;
     }
 

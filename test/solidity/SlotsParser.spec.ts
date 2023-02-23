@@ -184,7 +184,7 @@ UTest({
         eq_(types[10], 'mapping(address => uint256)');
     },
     async 'should parse AavePriceOracle.sol' () {
-        let slots = await SlotsParser.slots({ path: './test/fixtures/slots/PriceOracle.sol' }, 'PriceOracle');
+        let slots = await SlotsParser.slots({ path: './test/fixtures/parser/PriceOracle.sol' }, 'PriceOracle');
 
         eq_(slots.length, 13);
 
