@@ -17,11 +17,11 @@ import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
 import { $number } from '@dequanto/utils/$number';
 import { $txData } from '@dequanto/utils/$txData';
 import { $logger } from '@dequanto/utils/$logger';
-import { class_Dfr } from 'atma-utils';
 import { $promise } from '@dequanto/utils/$promise';
 import { ClientEventsStream } from './ClientEventsStream';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { ClientDebugMethods } from './debug/ClientDebugMethods';
+import { Web3BatchRequests } from './Web3BatchRequests';
 
 export abstract class Web3Client implements IWeb3Client {
 
@@ -162,10 +162,12 @@ export abstract class Web3Client implements IWeb3Client {
         let trace = new ClientPoolTrace();
         trace.action = `Batch requests: ${ requests.map(x => x.address) }`;
         return this.pool.call(async web3 => {
+
             let batch = new Web3BatchRequests.BatchRequest(web3, requests);
             return batch.execute();
         }, {
-            trace
+            trace,
+            batchRequestCount: requests.length
         });
     }
 
@@ -185,9 +187,9 @@ export abstract class Web3Client implements IWeb3Client {
         return this.pool.call(async web3 => {
             let reqs = addresses.map(address => cb => (web3.eth.getBalance as any).request(address, blockNumber, cb));
             let batch = new Web3BatchRequests.BatchRequest<string>(web3, reqs);
-            let weiStrings = await batch.execute();
-            return weiStrings.map(weiStr => BigInt(weiStr));
-        });
+            let weiStringsResults = await batch.execute();
+            return weiStringsResults.map(x => BigInt(x.result));
+        }, { batchRequestCount: addresses.length });
     }
     getTransactionCount(address: TAddress, type?: 'pending' | string) {
         return this.pool.call(web3 => {
@@ -204,12 +206,16 @@ export abstract class Web3Client implements IWeb3Client {
             return web3.eth.getTransaction(txHash);
         }, opts);
     }
-    getTransactions (hashes: TAddress[], opts?: IPoolWeb3Request): Promise<Transaction[]> {
-        return this.pool.call(web3 => {
-            let reqs = hashes.map(hash => cb => (web3.eth.getTransaction as any).request(hash, cb));
+    getTransactions (txHashes: TAddress[], opts?: IPoolWeb3Request): Promise<Transaction[]> {
+        return this.pool.call(async web3 => {
+            let reqs = txHashes.map(hash => cb => (web3.eth.getTransaction as any).request(hash, cb));
             let batch = new Web3BatchRequests.BatchRequest(web3, reqs);
-            return batch.execute();
-        }, opts);
+            let results = await batch.execute();
+            return results.map(x => x.result);
+        }, {
+            ...(opts ?? {}),
+            batchRequestCount: txHashes.length
+        });
     }
     getTransactionReceipt (txHash: TAddress) {
         return this.pool.call(web3 => {
@@ -217,11 +223,12 @@ export abstract class Web3Client implements IWeb3Client {
         });
     }
     getTransactionReceipts (hashes: TAddress[]): Promise<TransactionReceipt[]> {
-        return this.pool.call(web3 => {
+        return this.pool.call(async web3 => {
             let reqs = hashes.map(hash => cb => (web3.eth.getTransactionReceipt as any).request(hash, cb));
             let batch = new Web3BatchRequests.BatchRequest(web3, reqs);
-            return batch.execute();
-        });
+            let results = await batch.execute();
+            return results.map(x => x.result);
+        }, { batchRequestCount: hashes.length });
     }
     getTransactionTrace (hash: string) {
         return this.pool.call(async web3 => {
@@ -254,10 +261,13 @@ export abstract class Web3Client implements IWeb3Client {
         });
     }
     getBlocks (nrs: number[]): Promise<BlockTransactionString[]> {
-        return this.pool.call(web3 => {
+        return this.pool.call(async web3 => {
             let reqs = nrs.map(nr => cb => (web3.eth.getBlock as any).request(nr, cb));
             let batch = new Web3BatchRequests.BatchRequest(web3, reqs);
-            return batch.execute();
+            let results = await batch.execute();
+            return results.map(x => x.result);
+        }, {
+            batchRequestCount: nrs.length
         });
     }
     getCode (address: TAddress) {
@@ -441,96 +451,6 @@ export abstract class Web3Client implements IWeb3Client {
         return new Ctor(param);
     }
 }
-
-
-namespace Web3BatchRequests {
-
-    export interface IContractRequest {
-        address: TAddress,
-        abi: any
-        method: string,
-        arguments?: any[]
-        options?: {
-            from?: TAddress
-        }
-        blockNumber?: number
-    }
-    export type IRequestBuilder = (cb: Function) => IRPCRequest
-
-    export interface IRPCRequest {
-        method: string
-        params: any
-        callback: Function
-    }
-
-    export function contractRequest (web3: Web3, request: IContractRequest, onComplete: Function) {
-        let { contract, method, params, callArgs } = prepair(web3, request);
-        return contract.methods[method](...params).call.request(...callArgs, onComplete);
-    }
-
-
-    export function call (web3: Web3, request: IContractRequest) {
-        let { contract, method, params, callArgs } = prepair(web3, request);
-        return contract.methods[method](...params).call(...callArgs);
-    }
-
-    export class BatchRequest<TReturnItem = any> {
-        private promise = new class_Dfr();
-        private results = new Array(this.requests.length);
-        private awaitables = this.requests.length;
-        //-private wasCompleted = false;
-
-        constructor (private web3: Web3, private requests: (IContractRequest | IRequestBuilder)[]) {
-
-        }
-        async execute (): Promise<TReturnItem[]> {
-            if (this.requests.length === 0) {
-                return this.promise.resolve(this.results);
-            }
-
-            let web3 = this.web3;
-            let batch = new web3.BatchRequest();
-            let arr = this.requests.map((req, i) => {
-                const cb = (err, result) => {
-                    this.onCompleted(i, err, result);
-                };
-                if (typeof req === 'function') {
-                    return req(cb);
-                }
-                return contractRequest(web3, req, cb);
-            });
-
-            arr.forEach(req => {
-                batch.add(req);
-            });
-            batch.execute();
-            return this.promise;
-        }
-
-        private onCompleted (i: number, error: Error, result?) {
-            this.results[i] = result ?? error;
-
-            if (--this.awaitables === 0) {
-                this.promise.resolve(this.results);
-            }
-        }
-    }
-
-    function prepair (web3: Web3, request: IContractRequest) {
-        let { address, method, abi, options, blockNumber, arguments: params } = request;
-        let contract = new web3.eth.Contract(abi, address);
-        let callArgs = [];
-        if (options != null) {
-            callArgs[0] = options;
-        }
-        if (blockNumber != null) {
-            callArgs[0] = null;
-            callArgs[1] = blockNumber;
-        }
-        return { contract, method, params, callArgs };
-    }
-}
-
 
 
 namespace RangeWorker {

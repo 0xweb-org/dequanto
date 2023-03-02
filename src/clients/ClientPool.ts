@@ -1,21 +1,20 @@
 import alot from 'alot';
 import memd from 'memd';
 import Web3 from 'web3';
-import { type AbiItem } from 'web3-utils';
 import { $date } from '@dequanto/utils/$date';
 import { $number } from '@dequanto/utils/$number';
-import { PromiEvent, WebsocketProvider, type provider } from 'web3-core';
+import { PromiEvent, type provider } from 'web3-core';
 import { PromiEventWrap } from './model/PromiEventWrap';
 import { IWeb3ClientStatus } from './interfaces/IWeb3ClientStatus';
 import { ClientStatus } from './model/ClientStatus';
 import { ClientPoolTrace, ClientPoolTraceError } from './ClientPoolStats';
 import { class_Dfr } from 'atma-utils';
-import { TAddress } from '@dequanto/models/TAddress';
-import { ClientEventsStream } from './ClientEventsStream';
 import { ClientErrorUtil } from './utils/ClientErrorUtil';
 import { IWeb3ClientOptions } from './interfaces/IWeb3Client';
-import { $logger } from '@dequanto/utils/$logger';
+import { $logger, l } from '@dequanto/utils/$logger';
 import { $promise } from '@dequanto/utils/$promise';
+import { $array } from '@dequanto/utils/$array';
+import { RateLimitGuard } from './handlers/RateLimitGuard';
 
 declare let app;
 
@@ -33,6 +32,9 @@ export interface IPoolClientConfig {
 
     /** True if the node supports traceTransaction calls */
     traceable?: boolean
+
+    // requestCout/timeSpan: e.g. 100/1min
+    rateLimit?: string
 }
 export interface IPoolWeb3Request {
     ws?: boolean
@@ -48,6 +50,9 @@ export interface IPoolWeb3Request {
         /** Supports traceTransaction */
         traceable?: boolean
     }
+
+    // Amount of batch requests to be performed, sothat we can choose the appropriate wClient and handle the rate limits correctly
+    batchRequestCount?: number
 }
 export class ClientPool {
 
@@ -84,6 +89,7 @@ export class ClientPool {
     }
 
     async call <TResult> (fn: (web3: Web3) => Promise<TResult>, opts?: IPoolWeb3Request): Promise<TResult> {
+        // Client - Retries
         let used = new Map<WClient, number>();
         let errors = [];
 
@@ -102,23 +108,44 @@ export class ClientPool {
                 throw ClientPoolTraceError.create(error, opts?.trace);
             }
 
-            let { status, result, error, time } = await wClient.call(fn);
+            let wClientUsage = used.get(wClient);
+            let { status, result, error, time } = await wClient.call(fn, opts);
 
             opts
                 ?.trace
                 ?.onComplete({ status, error, time, url: wClient.config.url })
 
-            used.set(wClient, 1);
+
+            if (wClientUsage == null) {
+                // per default NO_RETRIES
+                used.set(wClient, 0);
+            } else {
+                // decrease retry count
+                used.set(wClient, wClientUsage - 1);
+            }
+
             errors.push(error ?? result);
 
             if (status == ClientStatus.Ok) {
                 return result;
+            }
+            if (status == ClientStatus.RateLimited) {
+                let rateLimitInfo = RateLimitGuard.extractRateLimitFromError(error);
+
+                wClient.updateRateLimitInfo(rateLimitInfo);
+
+                if (wClientUsage == null) {
+                    const RETRIES = 5;
+                    used.set(wClient, RETRIES);
+                }
             }
             if (status === ClientStatus.CallError) {
                 let error = ClientPoolTraceError.create(errors.pop(), opts?.trace);
                 throw error;
                 return result;
             }
+
+            // if not the CallError, process the while loop to check another NodeProvider
         }
     }
     async getWeb3 (options?: IPoolWeb3Request) {
@@ -303,45 +330,6 @@ export class ClientPool {
         return nodes;
     }
 
-    // callSubscribtion <TResult> (
-    //     event: any
-    //     , cb: (error, result) => void
-    //     , opts?: { preferSafe?: boolean }
-    //     , used:  Map<WClient, number> = new  Map<WClient, number>()
-    //     , errors = []
-    //     , root?: PromiEventWrap
-    // ) {
-    //     root = root ?? new PromiEventWrap();
-
-    //     let wClient = this.next(used);
-    //     if (wClient == null) {
-    //         setTimeout(() => {
-    //             let error = new Error('Clients not found');
-    //             root.emit('error', error);
-    //             root.reject(error);
-    //         });
-    //         return root as any as TResult;
-    //     }
-
-    //     let promiEvent = wClient.callSubscription(fn);
-
-    //     root.bind(promiEvent);
-
-    //     promiEvent.on('error', error => {
-    //         if (ErrorUtil.isConnectionFailed(error)) {
-    //             this.callPromiEvent(
-    //                 fn, opts, used, errors, root
-    //             );
-    //             return;
-    //         }
-    //         root.emit('error', error);
-    //         root.reject(error);
-    //     });
-
-    //     used.set(wClient, 1);
-    //     return root as any as TResult;
-    // }
-
     private async next (used?: Map<WClient, number>, opts?: IPoolWeb3Request, params?: { manual?: boolean }): Promise<WClient> {
         let clients = this.clients;
         if (params?.manual !== true) {
@@ -384,7 +372,7 @@ export class ClientPool {
 
         let available = used == null
             ? clients
-            : clients.filter(x => used.has(x) === false);
+            : clients.filter(x => used.has(x) === false || used.get(x) > 0);
 
         if (available.length === 0) {
             if (this.discoveredFull === false) {
@@ -413,9 +401,37 @@ export class ClientPool {
         let arr = healthy.length > 0
             ? healthy
             : available;
-        let i = $number.randomInt(0, arr.length);
-        let client = arr[i];
-        return client;
+
+        return await this.getClientWithLowestWaitTime(arr);
+    }
+
+
+    private async getClientWithLowestWaitTime (clients: WClient[]): Promise<WClient> {
+        if (clients.length === 0) {
+            return null;
+        }
+
+        clients = $array.shuffle(clients);
+
+        let minWait = Infinity;
+        let minClient: WClient = null;
+        for (let i = 0; i < clients.length; i++) {
+            let client = clients[i];
+            let waitMs = client.getRateLimitGuardTime();
+            if (waitMs === 0) {
+                return client;
+            }
+            if (minWait > waitMs) {
+                minWait = waitMs;
+                minClient = client;
+            }
+        }
+
+        const MAX_WAIT = 60_000;
+        if (minWait > MAX_WAIT) {
+            throw new Error(`rate limit overflows. Waiting ${minWait}ms`);
+        }
+        return minClient;
     }
 
     /**
@@ -546,7 +562,7 @@ export class ClientPool {
 
 class WClient {
     lastStatus = 0;
-    lastDate: Date = new Date(2000);
+    lastDate = new Date(2000).getTime();
 
     status: 'ok' | 'off' | 'ping' = 'ok'
 
@@ -559,6 +575,7 @@ class WClient {
     web3: Web3
     eth: Web3['eth']
     config: IPoolClientConfig
+    rateLimitGuard: RateLimitGuard
 
     healthy () {
         if (this.getRequestCount() === 0) {
@@ -571,10 +588,20 @@ class WClient {
         if (health > .5) {
             return true;
         }
-        if (Date.now() - this.lastDate.getTime() > $date.parseTimespan('10m')) {
+        if (Date.now() - this.lastDate > $date.parseTimespan('10m')) {
             return true;
         }
         return false;
+    }
+
+    updateRateLimitInfo (info: ReturnType<typeof RateLimitGuard['extractRateLimitFromError']>) {
+        if (this.rateLimitGuard == null) {
+            this.rateLimitGuard = new RateLimitGuard({
+                id: this.config.url ?? 'web3',
+                rates: []
+            });
+        }
+        this.rateLimitGuard.updateRateLimitInfo(info);
     }
 
     constructor (mix: IPoolClientConfig) {
@@ -596,6 +623,14 @@ class WClient {
         }
         this.web3.eth.handleRevert = true;
         this.eth = this.web3.eth;
+
+        if (mix.rateLimit) {
+            let rates = RateLimitGuard.parseRateLimit(mix.rateLimit);
+            this.rateLimitGuard = new RateLimitGuard({
+                id: this.config?.url ?? 'web3',
+                rates: rates
+            })
+        }
     }
 
     async send <TResult> (fn: (web3: Web3) => PromiEvent<TResult> ): Promise<{ status: ClientStatus, error?, result?: PromiEvent<TResult> }> {
@@ -639,7 +674,14 @@ class WClient {
     //         return { status: Status.CallError, result: error }
     //     }
     // }
-    async call <TResult extends PromiseLike<any>> (fn: (web3: Web3) => TResult ): Promise<{ status: ClientStatus, error?, result?: TResult, time: number }> {
+
+    async call <TResult extends PromiseLike<any>> (fn: (web3: Web3) => TResult, options?: {
+        // For the rate limit guard, to make sure we wait enough time to proceed with batch request for example
+        batchRequestCount?: number
+    }): Promise<{ status: ClientStatus, error?, result?: TResult, time: number }> {
+        let now = Date.now();
+        await this.rateLimitGuard?.wait(options?.batchRequestCount ?? 1, now);
+
         return new Promise((resolve, reject) => {
             let start = Date.now();
             let result = fn(this.web3);
@@ -649,13 +691,16 @@ class WClient {
                     let time = Date.now() - start;
                     let status = ClientStatus.Ok;
                     this.onComplete(status, time);
+                    this.rateLimitGuard?.onComplete(now);
                     resolve({ status, result, time })
                 },
                 error => {
                     let time = Date.now() - start;
                     let status =  ClientStatus.CallError;
 
-                    if (ClientErrorUtil.isConnectionFailed (error)) {
+                    if (RateLimitGuard.isRateLimited(error)) {
+                        status = ClientStatus.RateLimited;
+                    } else if (ClientErrorUtil.isConnectionFailed (error)) {
                         status = ClientStatus.NetworkError;
                     }
                     this.onComplete(status, time);
@@ -694,35 +739,6 @@ class WClient {
         return result;
     }
 
-    // getEventStream (address: TAddress, abi: AbiItem[], event: string, options = {}): ClientEventsStream {
-    //     let eventAbi = abi.find(x => x.type === 'event' && x.name === event);
-    //     if (eventAbi == null) {
-    //         let events = abi.filter(x => x.type === 'event').map(x => x.name).join(', ');
-    //         throw new Error(`Event "${event}" not present in ABI. Events: ${ events }`);
-    //     }
-    //     let stream = new ClientEventsStream(this.address, this.abi)
-    //     this
-    //         .client
-    //         .subscribe('logs', {
-    //             address: this.address,
-    //             fromBlock: 'latest'
-    //         })
-    //         .then(subscription => {
-    //             stream.fromSubscription(subscription);
-    //         }, error => {
-    //             stream.error(error);
-    //         });
-
-    //     return stream;
-
-    //     // const contract = new this.eth.Contract(abi, address);
-    //     // const stream =  contract
-    //     //     .events
-    //     //     [event](options);
-
-    //     // const worker = new ClientEventsStream(address, eventAbi, stream)
-    //     // return worker;
-    // }
 
     callSync <TResult> (fn: (web3: Web3) => TResult ): { status: number, result?: TResult } {
         try {
@@ -754,4 +770,14 @@ class WClient {
         return this.requests.success + this.requests.fail;
     }
 
+    /**
+     * Checks the rate limit wait time, so that the POOL can select the wClient with shortest wait time
+     **/
+    getRateLimitGuardTime () {
+        return this.rateLimitGuard?.checkWaitTime() ?? 0;
+    }
+
 }
+
+
+

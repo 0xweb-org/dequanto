@@ -68,6 +68,7 @@ web3:
     endpoints:
       - url: 'https://eth.public-rpc.com'
       - url: 'https://mainnet.infura.io/v3/a83f91c556054576a4c608ad4312720b'
+        rateLimit: 100/1s;5000/1m
       - url: 'wss://mainnet.infura.io/ws/v3/a83f91c556054576a4c608ad4312720b'
 
   eth:goerli:
