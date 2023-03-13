@@ -20,7 +20,7 @@ UTest({
         await TestNode.start();
     },
 
-    async 'generate polygons WETH' () {
+    async '!generate polygons WETH' () {
 
         const gen = new Generator({
             name: 'WETH',

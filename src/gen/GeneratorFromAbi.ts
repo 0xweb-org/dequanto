@@ -184,13 +184,18 @@ export class GeneratorFromAbi {
         try {
             let storageReaderGenerator = new GeneratorStorageReader();
             let reader = await storageReaderGenerator.generate({ ...opts });
+
             let property = reader.className
                 ? `storage = new ${reader.className}(this.address, this.client, this.explorer);`
                 : '';
 
             storageReaderClass = reader.code;
             storageReaderProperty = property;
-            $logger.log(`Storage Reader generated`);
+            if (property) {
+                $logger.log(`Storage Reader generated`);
+            } else {
+                $logger.log(`Storage Reader NOT generated as the className not found`);
+            }
         } catch (error) {
             $logger.log(`Storage Reader is skipped due to the error: ${error.message}`);
         }
