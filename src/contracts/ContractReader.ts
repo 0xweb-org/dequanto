@@ -13,7 +13,8 @@ import { $abiParser } from '../utils/$abiParser';
 
 
 export interface IContractReader {
-    forBlock (blockNumber: number | undefined): IContractReader
+    forBlock (mix: number | Date | undefined): IContractReader
+    forBlockNumber (blockNumber: number | undefined): IContractReader
     forBlockAt (date: Date | undefined): IContractReader
     readAsync<T = any>(address: string, methodAbi: string | AbiItem, ...params: any[]): Promise<T>
 
@@ -25,7 +26,16 @@ export class ContractReader implements IContractReader {
     constructor(public client: Web3Client = di.resolve(EthWeb3Client)) {
 
     }
-    forBlock (blockNumber: number | undefined): IContractReader {
+    forBlock (mix: number | Date | undefined) {
+        if (mix == null) {
+            return this
+        }
+        if (typeof mix === 'number') {
+            return this.forBlockNumber(mix);
+        }
+        return this.forBlockAt(mix);
+    }
+    forBlockNumber (blockNumber: number | undefined): IContractReader {
         this.blockNumberTask = blockNumber == null
             ? null
             : Promise.resolve(blockNumber);
@@ -53,7 +63,7 @@ export class ContractReader implements IContractReader {
         return this.client.getStorageAt(address, position, blockNumber);
     }
 
-    async readAsync(address: string, methodAbi: string | AbiItem, ...params: any[]) {
+    async readAsync <TResult = any> (address: string, methodAbi: string | AbiItem, ...params: any[]) {
         let blockNumber: number = void 0;
         if (this.blockNumberTask != null) {
             blockNumber = await this.blockNumberTask;
@@ -80,7 +90,7 @@ export class ContractReader implements IContractReader {
             if (result == null) {
                 throw new Error(`Function call returned undefined`);
             }
-            return AbiDeserializer.process(result, abi.outputs);
+            return AbiDeserializer.process(result, abi.outputs) as TResult;
 
         } catch (error) {
             let args = params.map((x, i) => `[${i}] ${x}`).join('\n');

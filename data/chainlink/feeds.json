@@ -1,0 +1,3674 @@
+[
+  {
+    "platform": "eth",
+    "address": "0xBcE206caE7f0ec07b545EddE332A47C2F75bbeb3",
+    "asset": "Japanese Yen",
+    "pair": [
+      "JPY",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x8b6d9085f310396C6E4f0012783E9f850eaa8a82",
+    "asset": "Terra USD",
+    "pair": [
+      "UST",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xccA02FFEFAcE21325befD6616cB4Ba5fCB047480",
+    "asset": "Shapeshift FOX",
+    "pair": [
+      "FOX",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xb49f677943BC038e9857d61E7d053CaA2C1734C1",
+    "asset": "Euro",
+    "pair": [
+      "EUR",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x7ece4e4E206eD913D991a074A19C192142726797",
+    "asset": "Ocean Protocol",
+    "pair": [
+      "OCEAN",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xDC3EA94CD0AC27d9A86C180091e7f78C683d3699",
+    "asset": "Synthetix Network",
+    "pair": [
+      "SNX",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x8c110B94C5f1d347fAcF5E1E938AB2db60E3c9a8",
+    "asset": "Spell Token",
+    "pair": [
+      "SPELL",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x0e773A17a01E2c92F5d4c53435397E2bd48e215F",
+    "asset": "GitCoin",
+    "pair": [
+      "GTC",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x38C5ae3ee324ee027D88c5117ee58d07c9b4699b",
+    "asset": "Hedera Hashgraph",
+    "pair": [
+      "HBAR",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xF6f5b570aB6E39E55558AfD8E1E30c5f20E6527E",
+    "asset": "British Pound (GBP)",
+    "pair": [
+      "GBPT",
+      "PoR"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xaEA2808407B7319A31A383B6F8B60f04BCa23cE2",
+    "asset": "Ethereum Classic",
+    "pair": [
+      "ETC",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xf3584F4dd3b467e73C2339EfD008665a70A4185c",
+    "asset": "WTI Crude",
+    "pair": [
+      "WTI",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x971E8F1B779A5F1C36e1cd7ef44Ba1Cc2F5EeE0f",
+    "asset": "Brazilian Real",
+    "pair": [
+      "BRL",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xAc559F25B1619171CbC396a50854A3240b6A4e99",
+    "asset": "Ethereum",
+    "pair": [
+      "ETH",
+      "BTC"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xFF3EEb22B5E3dE6e705b44749C2559d704923FD7",
+    "asset": "Avalanche",
+    "pair": [
+      "AVAX",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xbc535B134DdF81fc83254a3D0Ed2C0C60144405E",
+    "asset": "Playdapp",
+    "pair": [
+      "PLA",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xad35Bd71b9aFE6e4bDc266B345c198eaDEf9Ad94",
+    "asset": "sUSD (Synthetix)",
+    "pair": [
+      "SUSD",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xbcD05A3E0c11f340cCcD9a4Efe05eEB2b33AB67A",
+    "asset": "Euro (EUR)",
+    "pair": [
+      "EURS",
+      "RESERVES"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x91b99C9b75aF469a71eE1AB528e8da994A5D7030",
+    "asset": "Indonesian Rupiah",
+    "pair": [
+      "IDR",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x773616E4d11A78F511299002da57A0a94577F1f4",
+    "asset": "DAI",
+    "pair": [
+      "DAI",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x050c048c9a0CD0e76f166E2539F87ef2acCEC58f",
+    "asset": "Serum",
+    "pair": [
+      "SRM",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x8B4fC5b68cD50eAc1dD33f695901624a4a1A0A8b",
+    "asset": "Axie Infinity",
+    "pair": [
+      "AXS",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x7A364e8770418566e3eb2001A96116E6138Eb32F",
+    "asset": "Magic Internet Money",
+    "pair": [
+      "MIM",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xEb0adf5C06861d6c07174288ce4D0a8128164003",
+    "asset": "Pancakeswap",
+    "pair": [
+      "CAKE",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x31e0a88fecB6eC0a411DBe0e9E76391498296EE9",
+    "asset": "FEI Protocol",
+    "pair": [
+      "FEI",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xaE2EbE3c4D20cE13cE47cbb49b6d7ee631Cd816e",
+    "asset": "Injective Protocol",
+    "pair": [
+      "INJ",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xF0985f7E2CaBFf22CecC5a71282a89582c382EFE",
+    "asset": "FTX Token",
+    "pair": [
+      "FTT",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x3d44925a8E9F9DFd90390E58e92Ec16c996A331b",
+    "asset": "Tomochain",
+    "pair": [
+      "TOMO",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xaaB2f6b45B28E962B3aCd1ee4fC88aEdDf557756",
+    "asset": "YFII Finance",
+    "pair": [
+      "YFII",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x2a784368b1D492f458Bf919389F42c18315765F5",
+    "asset": "Rarible",
+    "pair": [
+      "RARI",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xA792Ebd0E4465DB2657c7971519Cfa0f0275F428",
+    "asset": "Bitcoin mining difficulty",
+    "pair": [
+      "BTC",
+      "Difficulty"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x3D7aE7E594f2f2091Ad8798313450130d0Aba3a0",
+    "asset": "Liquity USD",
+    "pair": [
+      "LUSD",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xffa4Bb3a24B60C0262DBAaD60d77a3c3fa6173e8",
+    "asset": "Trustswap",
+    "pair": [
+      "SWAP",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xc40ec815A2f8eb9912BD688d3bdE6B6D50A37ff2",
+    "asset": "ARPA Chain",
+    "pair": [
+      "ARPA",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x483d36F6a1d063d580c7a24F9A42B346f3a69fbb",
+    "asset": "RAI Reflex Index",
+    "pair": [
+      "RAI",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x15c8eA24Ba2d36671Fa22aD4Cff0a8eafe144352",
+    "asset": "Cosmos",
+    "pair": [
+      "ATOM",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xC1438AA3823A6Ba0C159CfA8D98dF5A994bA120b",
+    "asset": "Balancer",
+    "pair": [
+      "BAL",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x9e37a8Ee3bFa8eD6783Db031Dc458d200b226074",
+    "asset": "Casper Network",
+    "pair": [
+      "CSPR",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x605D5c2fBCeDb217D7987FC0951B5753069bC360",
+    "asset": "Indian Rupee",
+    "pair": [
+      "INR",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x2465CefD3b488BE410b941b1d4b2767088e2A028",
+    "asset": "Dogecoin",
+    "pair": [
+      "DOGE",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x7D476f061F8212A8C9317D5784e72B4212436E93",
+    "asset": "Omisego",
+    "pair": [
+      "OMG",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x9613A51Ad59EE375e6D8fa12eeef0281f1448739",
+    "asset": "Dodo",
+    "pair": [
+      "DODO",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xCe1051646393087e706288C1B57Fd26446657A7f",
+    "asset": "Meta",
+    "pair": [
+      "FB",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x029849bbc0b1d93b85a8b6190e979fd38F5760E2",
+    "asset": "DeFi Pulse Index",
+    "pair": [
+      "DPI",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xde9299851FaC41c6AA43Ec96Cd33C28F74837AA9",
+    "asset": "BoringDAO",
+    "pair": [
+      "BORING",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419",
+    "asset": "Ethereum",
+    "pair": [
+      "ETH",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x7b33EbfA52F215a30FaD5a71b3FeE57a4831f1F0",
+    "asset": "BitDAO",
+    "pair": [
+      "BIT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xD9BdD9f5ffa7d89c846A5E3231a093AE4b3469D2",
+    "asset": "Flow",
+    "pair": [
+      "FLOW",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x0f59666EDE214281e956cb3b2D0d69415AfF4A01",
+    "asset": "Ren",
+    "pair": [
+      "REN",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x2885d15b8Af22648b98B122b22FDF4D2a56c6023",
+    "asset": "0x",
+    "pair": [
+      "ZRX",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xBAEbEFc1D023c0feCcc047Bff42E75F15Ff213E6",
+    "asset": "Immutable X",
+    "pair": [
+      "IMX",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x1ceDaaB50936881B3e449e47e40A2cDAF5576A4a",
+    "asset": "Tesla",
+    "pair": [
+      "TSLA",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x5c4939a2ab3A2a9f93A518d81d4f8D0Bc6a68980",
+    "asset": "Nikkei 225",
+    "pair": [
+      "N225",
+      "JPY"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x36D39936BeA501755921beB5A382a88179070219",
+    "asset": "Alphabet",
+    "pair": [
+      "GOOGL",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x8e0b7e6062272B5eF4524250bFFF8e5Bd3497757",
+    "asset": "sUSD (Synthetix)",
+    "pair": [
+      "SUSD",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x82A44D92D6c329826dc557c5E1Be6ebeC5D5FeB9",
+    "asset": "Decentraland",
+    "pair": [
+      "MANA",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x7bAC85A8a13A4BcD8abb3eB7d6b4d632c5a57676",
+    "asset": "Polygon (MATIC)",
+    "pair": [
+      "MATIC",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xa20623070413d42a5C01Db2c8111640DD7A5A03a",
+    "asset": "Terra USD",
+    "pair": [
+      "UST",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x9b0FC4bb9981e5333689d69BdBF66351B9861E62",
+    "asset": "Ocean Protocol",
+    "pair": [
+      "OCEAN",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x7F0D2c2838c6AC24443d13e23d99490017bDe370",
+    "asset": "FEI Protocol",
+    "pair": [
+      "FEI",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xCed2660c6Dd1Ffd856A5A82C67f3482d88C50b12",
+    "asset": "Ripple",
+    "pair": [
+      "XRP",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x2c881B6f3f6B5ff6C975813F87A4dad0b241C15b",
+    "asset": "Origin Protocol",
+    "pair": [
+      "OGN",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xE23FA0e8dd05D6f66a6e8c98cab2d9AE82A7550c",
+    "asset": "FTSE 100",
+    "pair": [
+      "FTSE",
+      "GBP"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xa34317DB73e77d453b1B8d04550c44D10e981C8e",
+    "asset": "Canadian Dollar",
+    "pair": [
+      "CAD",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xdd22A54e05410D8d1007c38b5c7A3eD74b855281",
+    "asset": "Barnbridge",
+    "pair": [
+      "BOND",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x5c0Ab2d9b5a7ed9f470386e82BB36A3613cDd4b5",
+    "asset": "Pound Sterling",
+    "pair": [
+      "GBP",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x14d04Fff8D21bd62987a5cE9ce543d2F1edF5D3E",
+    "asset": "FRAX",
+    "pair": [
+      "FRAX",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x58921Ac140522867bf50b9E009599Da0CA4A2379",
+    "asset": "Badger DAO",
+    "pair": [
+      "BADGER",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x614715d2Af89E6EC99A233818275142cE88d1Cfd",
+    "asset": "Binance USD",
+    "pair": [
+      "BUSD",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xe7015CCb7E5F788B8c1010FC22343473EaaC3741",
+    "asset": "Keep3r v1",
+    "pair": [
+      "KP3R",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xB9E1E3A9feFf48998E45Fa90847ed4D467E8BcfD",
+    "asset": "FRAX",
+    "pair": [
+      "FRAX",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x06E4164E24E72B879D93360D1B9fA05838A62EB5",
+    "asset": "Kusama",
+    "pair": [
+      "KSM",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xa175FA75795c6Fb2aFA48B72d22054ee0DeDa4aC",
+    "asset": "Orchid bandwidth",
+    "pair": [
+      "OXT",
+      "10 GBs"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x28D126ef0903C51BC86A92F566C4A9048d0e54cF",
+    "asset": "0Chain",
+    "pair": [
+      "ZCN",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x194a9AaF2e0b67c35915cD01101585A33Fe25CAa",
+    "asset": "Alchemix",
+    "pair": [
+      "ALCX",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x9B97304EA12EFed0FAd976FBeCAad46016bf269e",
+    "asset": "Pax Gold",
+    "pair": [
+      "PAXG",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x553303d460EE0afB37EdFf9bE42922D8FF63220e",
+    "asset": "Uniswap",
+    "pair": [
+      "UNI",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xf817B69EA583CAFF291E287CaE00Ea329d22765C",
+    "asset": "Uma",
+    "pair": [
+      "UMA",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x478909D4D798f3a1F11fFB25E4920C959B4aDe0b",
+    "asset": "dYdX",
+    "pair": [
+      "DYDX",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x2Da4983a622a8498bb1a21FaE9D8F6C664939962",
+    "asset": "0x",
+    "pair": [
+      "ZRX",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x352f2Bc3039429fC2fe62004a1575aE74001CfcE",
+    "asset": "Bored Ape Yacht Club",
+    "pair": [
+      "Price",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xa89f5d2365ce98B3cD68012b6f503ab1416245Fc",
+    "asset": "Gemini Dollar",
+    "pair": [
+      "GUSD",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x0A8cD0115B1EE87EbA5b8E06A9a15ED93e230f7a",
+    "asset": "BTC",
+    "pair": [
+      "HBTC",
+      "PoR"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x8994115d287207144236c13Be5E2bDbf6357D9Fd",
+    "asset": "Amazon",
+    "pair": [
+      "AMZN",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xdbd020CAeF83eFd542f4De03e3cF0C28A4428bd5",
+    "asset": "Compound",
+    "pair": [
+      "COMP",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xFb0cADFEa136E9E343cfb55B863a6Df8348ab912",
+    "asset": "Dash",
+    "pair": [
+      "DASH",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x86392dC19c0b719886221c78AB11eb8Cf5c52812",
+    "asset": "Lido Staked ETH",
+    "pair": [
+      "STETH",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x89c7926c7c15fD5BFDB1edcFf7E7fC8283B578F6",
+    "asset": "Alpha Finance",
+    "pair": [
+      "ALPHA",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xc7de7f4d4C9c991fF62a07D18b3E31e349833A18",
+    "asset": "APECoin",
+    "pair": [
+      "APE",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x0a1d1b9847d602e789be38B802246161FFA24930",
+    "asset": "Cartesi",
+    "pair": [
+      "CTSI",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xDC4BDB458C6361093069Ca2aD30D74cc152EdC75",
+    "asset": "Cosmos",
+    "pair": [
+      "ATOM",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x833D8Eb16D306ed1FbB5D7A2E019e106B960965A",
+    "asset": "Binance USD",
+    "pair": [
+      "BUSD",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xDaeA8386611A157B08829ED4997A8A62B557014C",
+    "asset": "Melon",
+    "pair": [
+      "MLN",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x17D054eCac33D91F7340645341eFB5DE9009F1C1",
+    "asset": "The Graph",
+    "pair": [
+      "GRT",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x84e3946C6df27b453315a1B38e4dECEF23d9F16F",
+    "asset": "FTX Token",
+    "pair": [
+      "FTT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x5C00128d4d1c2F4f652C267d7bcdD7aC99C16E16",
+    "asset": "Ethereum Name Service",
+    "pair": [
+      "ENS",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xbA9B2a360eb8aBdb677d6d7f27E12De11AA052ef",
+    "asset": "Orion Protocol",
+    "pair": [
+      "ORN",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x169E633A2D1E6c10dD91238Ba11c4A708dfEF37C",
+    "asset": "Fast Gas",
+    "pair": [
+      "Fast Gas",
+      "Gwei"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x8fFfFfd4AfB6115b954Bd326cbe7B4BA576818f6",
+    "asset": "Circle USD",
+    "pair": [
+      "USDC",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x4e844125952D32AcdF339BE976c98E22F6F318dB",
+    "asset": "Lido DAO",
+    "pair": [
+      "LDO",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x56a4857acbcfe3a66965c251628B1c9f1c408C19",
+    "asset": "Decentraland",
+    "pair": [
+      "MANA",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x449d117117838fFA61263B61dA6301AA2a88B13A",
+    "asset": "Swiss Franc",
+    "pair": [
+      "CHF",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xEe9F2375b4bdF6387aa8265dD4FB8F16512A1d46",
+    "asset": "Tether",
+    "pair": [
+      "USDT",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x77F9710E7d0A19669A13c055F62cd80d313dF022",
+    "asset": "Australian Dollar",
+    "pair": [
+      "AUD",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xE1329B3f6513912CAf589659777b66011AEE5880",
+    "asset": "Huobi Token",
+    "pair": [
+      "HT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x8f83670260F8f7708143b836a2a6F11eF0aBac01",
+    "asset": "Aragon",
+    "pair": [
+      "ANT",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x8a12Be339B0cD1829b91Adc01977caa5E9ac121e",
+    "asset": "Curve DAO",
+    "pair": [
+      "CRV",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x3a08ebBaB125224b7b6474384Ee39fBb247D2200",
+    "asset": "Pax Dollar",
+    "pair": [
+      "PAX",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x66a47b7206130e6FF64854EF0E1EDfa237E65339",
+    "asset": "Badger DAO",
+    "pair": [
+      "BADGER",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xdeb288F737066589598e9214E782fa5A8eD689e8",
+    "asset": "Bitcoin",
+    "pair": [
+      "BTC",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x2F05888D185970f178f40610306a0Cc305e52bBF",
+    "asset": "Request Network",
+    "pair": [
+      "REQ",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x0d16d4528239e9ee52fa531af613AcdB23D88c94",
+    "asset": "Basic Attention Token",
+    "pair": [
+      "BAT",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x1E6cF0D433de4FE882A437ABC654F58E1e78548c",
+    "asset": "Bancor",
+    "pair": [
+      "BNT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x9cB2A01A7E64992d32A34db7cEea4c919C391f6A",
+    "asset": "Numeraire",
+    "pair": [
+      "NMR",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x01435677FB11763550905594A16B645847C1d0F3",
+    "asset": "Korean Won",
+    "pair": [
+      "KRW",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x90c2098473852E2F07678Fe1B6d595b1bd9b16Ed",
+    "asset": "Olympus",
+    "pair": [
+      "OHM",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x611E0d2709416E002A3f38085e4e1cf77c015921",
+    "asset": "Harvest Finance",
+    "pair": [
+      "FARM",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x1F9eB026e549a5f47A6aa834689053117239334A",
+    "asset": "District 0x",
+    "pair": [
+      "DNT",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xcDa3708C5c2907FCca52BB3f9d3e4c2028b89319",
+    "asset": "Ontology",
+    "pair": [
+      "ONT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xA027702dbb89fbd58938e4324ac03B58d812b0E1",
+    "asset": "Yearn Finance",
+    "pair": [
+      "YFI",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xb9583cfBdEeacd2705546F392E43F8E03eB92216",
+    "asset": "Mantra DAO",
+    "pair": [
+      "OM",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x4ad7B025127e89263242aB68F0f9c4E5C033B489",
+    "asset": "RAI Reflex Index",
+    "pair": [
+      "RAI",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xd962fC30A72A84cE50161031391756Bf2876Af5D",
+    "asset": "Convex Finance",
+    "pair": [
+      "CVX",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xec1D1B3b0443256cc3860e24a46F108e699484Aa",
+    "asset": "Maker",
+    "pair": [
+      "MKR",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x96c45535d235148Dc3ABA1E48A6E3cFB3510f4E2",
+    "asset": "IoTeX",
+    "pair": [
+      "IOTX",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x231e764B44b2C1b7Ca171fa8021A24ed520Cde10",
+    "asset": "Adex",
+    "pair": [
+      "ADX",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x01D391A48f4F7339aC64CA2c83a07C22F95F587a",
+    "asset": "Tether Euro",
+    "pair": [
+      "EURT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xEC8761a0A73c34329CA5B1D3Dc7eD07F30e836e2",
+    "asset": "Total cryptocurrency market cap",
+    "pair": [
+      "Total Marketcap",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xd75AAaE4AF0c398ca13e2667Be57AF2ccA8B5de6",
+    "asset": "Orchid Protocol",
+    "pair": [
+      "OXT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x160AC928A16C93eD4895C2De6f81ECcE9a7eB7b4",
+    "asset": "Loopring",
+    "pair": [
+      "LRC",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x3886BA987236181D98F2401c507Fb8BeA7871dF2",
+    "asset": "TrueUSD",
+    "pair": [
+      "TUSD",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xDb299D394817D8e7bBe297E84AFfF7106CF92F5f",
+    "asset": "APY",
+    "pair": [
+      "APY",
+      "TVL"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xec746eCF986E2927Abd291a2A1716c940100f8Ba",
+    "asset": "True USD",
+    "pair": [
+      "TUSD",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x0606Be69451B1C9861Ac6b3626b99093b713E801",
+    "asset": "Filecoin",
+    "pair": [
+      "FIL",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x021Fb44bfeafA0999C7b07C4791cf4B859C3b431",
+    "asset": "Microsoft",
+    "pair": [
+      "MSFT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xCf61d1841B178fe82C8895fe60c2EDDa08314416",
+    "asset": "Bancor",
+    "pair": [
+      "BNT",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x9a72298ae3886221820B1c878d12D872087D3a23",
+    "asset": "Olympus v2",
+    "pair": [
+      "OHMv2",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x1B39Ee86Ec5979ba5C322b826B3ECb8C79991699",
+    "asset": "Compound",
+    "pair": [
+      "COMP",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x96d15851CBac05aEe4EFD9eA3a3DD9BDEeC9fC28",
+    "asset": "Gemini Dollar",
+    "pair": [
+      "GUSD",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x536218f9E9Eb48863970252233c8F271f554C2d0",
+    "asset": "",
+    "pair": [
+      "RETH",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x6Ebc52C8C1089be9eB3945C4350B68B8E4C2233f",
+    "asset": "Frax Share",
+    "pair": [
+      "FXS",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xD2A593BF7594aCE1faD597adb697b5645d5edDB2",
+    "asset": "DefiPulse Index",
+    "pair": [
+      "DPI",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x57C9aB3e56EE4a83752c181f241120a3DBba06a1",
+    "asset": "Omisego",
+    "pair": [
+      "OMG",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x759bBC1be8F90eE6457C44abc7d443842a976d02",
+    "asset": "Reserve Rights",
+    "pair": [
+      "RSR",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x86cF33a451dE9dc61a2862FD94FF4ad4Bd65A5d2",
+    "asset": "The Graph",
+    "pair": [
+      "GRT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xCC1f5d9e6956447630d703C8e93b2345c2DE3D13",
+    "asset": "Calculated xSushi",
+    "pair": [
+      "XSUSHI",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xBE456fd14720C3aCCc30A2013Bffd782c9Cb75D5",
+    "asset": "US Dollar (USD) total reserves",
+    "pair": [
+      "TUSD",
+      "RESERVES"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x1B58B67B2b2Df71b4b0fb6691271E83A0fa36aC5",
+    "asset": "Crypto Volatility Index",
+    "pair": [
+      "CV",
+      "Index"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x7c5d4F8345e66f68099581Db340cd65B078C41f4",
+    "asset": "Yearn Finance",
+    "pair": [
+      "YFI",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x26929b85fE284EeAB939831002e1928183a10fb1",
+    "asset": "Truefi",
+    "pair": [
+      "TRU",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x01cE1210Fe8153500F60f7131d63239373D7E26C",
+    "asset": "Perpetual Protocol",
+    "pair": [
+      "PERP",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xfAC81Ea9Dd29D8E9b212acd6edBEb6dE38Cb43Af",
+    "asset": "USDK",
+    "pair": [
+      "USDK",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xF4030086522a5bEEa4988F8cA5B36dbC97BeE88c",
+    "asset": "Bitcoin",
+    "pair": [
+      "BTC",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x67eF3CAF8BeB93149F48e8d20920BEC9b4320510",
+    "asset": "Coinbase Wrapped Staked ETH",
+    "pair": [
+      "CBETH",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x656c0544eF4C98A6a98491833A89204Abb045d6b",
+    "asset": "Kyber Network Crystal",
+    "pair": [
+      "KNC",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xa81FE04086865e63E12dD3776978E49DEEa2ea4e",
+    "asset": "Bitcoin (BTC)",
+    "pair": [
+      "WBTC",
+      "PoR"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x13A8F2cC27ccC2761ca1b21d2F3E762445f201CE",
+    "asset": "Tokenlon",
+    "pair": [
+      "LON",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x8dD1CD88F43aF196ae478e91b9F5E4Ac69A97C61",
+    "asset": "Shiba Inu",
+    "pair": [
+      "SHIB",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x79291A9d692Df95334B1a0B3B4AE6bC606782f8c",
+    "asset": "Synthetix Network",
+    "pair": [
+      "SNX",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x7eed379bf00005CfeD29feD4009669dE9Bcc21ce",
+    "asset": "Ankr",
+    "pair": [
+      "ANKR",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xD4CE430C3b67b3E2F7026D86E7128588629e2455",
+    "asset": "Augur",
+    "pair": [
+      "REP",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x4D2574c790d836b8C886615d927e9BA585B10EbA",
+    "asset": "Bitcoin block height",
+    "pair": [
+      "BTC",
+      "Height"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x14e613AC84a31f709eadbdF89C6CC390fDc9540A",
+    "asset": "BNB",
+    "pair": [
+      "BNB",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x3b41D5571468904D4e53b6a8d93A6BaC43f02dC9",
+    "asset": "Perpetual Protocol",
+    "pair": [
+      "PERP",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x716BB8c60D409e54b8Fb5C4f6aBC50E794DA048a",
+    "asset": "Gold in troy ounces (oz t)",
+    "pair": [
+      "PAXG",
+      "RESERVES"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x2B1248028fe48864c4f1c305E524e2e6702eAFDF",
+    "asset": "Phala Network",
+    "pair": [
+      "PHA",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x23905C55dC11D609D5d11Dc604905779545De9a7",
+    "asset": "Enjin Coin",
+    "pair": [
+      "ENJ",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xFb0CfD6c19e25DB4a08D8a204a387cEa48Cc138f",
+    "asset": "Swipe",
+    "pair": [
+      "SXP",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xC3a8033Dc5f2FFc8AD9bE10f39063886055E22B7",
+    "asset": "Alchemix USD",
+    "pair": [
+      "ALUSD",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x8917800a6BDd8fA8b7c94E25aE2219Db28050622",
+    "asset": "Wrapped Filecoin",
+    "pair": [
+      "eFIL",
+      "PoR"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xeb988B77b94C186053282BfcD8B7ED55142D3cAB",
+    "asset": "Chain",
+    "pair": [
+      "XCN",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xfdFD9C85aD200c506Cf9e21F1FD8dd01932FBB23",
+    "asset": "Wrapped Bitcoin",
+    "pair": [
+      "WBTC",
+      "BTC"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xAed0c38402a5d19df6E4c03F4E2DceD6e29c1ee9",
+    "asset": "DAI",
+    "pair": [
+      "DAI",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x35E3f7E558C04cE7eEE1629258EcbbA03B36Ec56",
+    "asset": "The Sandbox",
+    "pair": [
+      "SAND",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x0BDb051e10c9718d1C29efbad442E88D38958274",
+    "asset": "Band Protocol",
+    "pair": [
+      "BAND",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x4ffC43a60e009B551865A93d232E33Fce9f01507",
+    "asset": "Solana",
+    "pair": [
+      "SOL",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x2c1d072e956AFFC0D435Cb7AC38EF18d24d9127c",
+    "asset": "Chainlink",
+    "pair": [
+      "LINK",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xf482Ed35406933F321f293aC0e4c6c8f59a22fA5",
+    "asset": "US Dollar (USD)",
+    "pair": [
+      "PAX",
+      "RESERVES"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x3147D7203354Dc06D9fd350c7a2437bcA92387a4",
+    "asset": "Ren",
+    "pair": [
+      "REN",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x67C2e69c5272B94AF3C90683a9947C39Dc605ddE",
+    "asset": "Netflix",
+    "pair": [
+      "NFLX",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xa554F3a8D05f22aC7e105311211AAbAf727e1CcB",
+    "asset": "Umee",
+    "pair": [
+      "UMEE",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xA8B9A447C73191744D5B79BcE864F343455E1150",
+    "asset": "Azuki",
+    "pair": [
+      "Price",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x01B6710B01cF3dd8Ae64243097d91aFb03728Fdd",
+    "asset": "Cryptopunks",
+    "pair": [
+      "Price",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x09023c0DA49Aaf8fc3fA3ADF34C6A7016D38D5e3",
+    "asset": "Pax Dollar",
+    "pair": [
+      "USDP",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xc546d2d06144F9DD42815b8bA46Ee7B8FcAFa4a2",
+    "asset": "BNB",
+    "pair": [
+      "BNB",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x24551a8Fb2A7211A25a17B1481f043A8a8adC7f2",
+    "asset": "Maker",
+    "pair": [
+      "MKR",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x6AF09DF7563C363B5763b9102712EbeD3b9e859B",
+    "asset": "Litecoin",
+    "pair": [
+      "LTC",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x83441C3A10F4D05de6e0f2E849A850Ccf27E6fa7",
+    "asset": "Golem",
+    "pair": [
+      "GLM",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x875D60C44cfbC38BaA4Eb2dDB76A767dEB91b97e",
+    "asset": "THORChain",
+    "pair": [
+      "RUNE",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x3E7d1eAB13ad0104d2750B8863b489D65364e32D",
+    "asset": "Tether USD",
+    "pair": [
+      "USDT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xD10aBbC76679a20055E167BB80A24ac851b37056",
+    "asset": "APECoin",
+    "pair": [
+      "APE",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xB09fC5fD3f11Cf9eb5E1C5Dba43114e3C9f477b5",
+    "asset": "Turkish Lira",
+    "pair": [
+      "TRY",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x72AFAECF99C9d9C8215fF44C77B94B99C28741e8",
+    "asset": "1inch",
+    "pair": [
+      "1INCH",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x00Cb80Cf097D9aA9A3779ad8EE7cF98437eaE050",
+    "asset": "Cronos",
+    "pair": [
+      "CRO",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xc355e4C0B3ff4Ed0B49EaACD55FE29B311f42976",
+    "asset": "Alchemix",
+    "pair": [
+      "ALCX",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xCd627aA160A6fA45Eb793D19Ef54f5062F20f33f",
+    "asset": "Curve DAO",
+    "pair": [
+      "CRV",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x492575FDD11a0fCf2C6C719867890a7648d526eB",
+    "asset": "Ampleforth",
+    "pair": [
+      "AMPL",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xAE48c91dF1fE419994FFDa27da09D5aC69c30f55",
+    "asset": "Cardano",
+    "pair": [
+      "ADA",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xf8fF43E991A81e6eC886a3D281A2C6cC19aE70Fc",
+    "asset": "Kyber Network",
+    "pair": [
+      "KNC",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x0a87e12689374A4EF49729582B474a1013cceBf8",
+    "asset": "Ethernity Chain",
+    "pair": [
+      "ERN",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x2DE7E4a9488488e0058B95854CC2f7955B35dC9b",
+    "asset": "Fantom",
+    "pair": [
+      "FTM",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x1C07AFb8E2B827c5A4739C6d59Ae3A5035f28734",
+    "asset": "Polkadot",
+    "pair": [
+      "DOT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xDC530D9457755926550b59e8ECcdaE7624181557",
+    "asset": "Chainlink",
+    "pair": [
+      "LINK",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xe5Dc0A609Ab8bCF15d3f35cFaa1Ff40f521173Ea",
+    "asset": "Wrapped NXM",
+    "pair": [
+      "WNXM",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xCc70F09A6CC17553b2E31954cD36E4A2d89501f7",
+    "asset": "Sushi",
+    "pair": [
+      "SUSHI",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xdF2917806E30300537aEB49A7663062F4d1F2b5F",
+    "asset": "Balancer",
+    "pair": [
+      "BAL",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xD6aA3D25116d8dA79Ea0246c4826EB951872e02e",
+    "asset": "Uniswap",
+    "pair": [
+      "UNI",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x84a24deCA415Acc0c395872a9e6a63E27D6225c8",
+    "asset": "Tribe",
+    "pair": [
+      "TRIBE",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xf600984CCa37cd562E74E3EE514289e3613ce8E4",
+    "asset": "Illuvium",
+    "pair": [
+      "ILV",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x134fE0a225Fb8e6683617C13cEB6B3319fB4fb82",
+    "asset": "Wing Finance",
+    "pair": [
+      "WING",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x139C8512Cde1778e9b9a8e721ce1aEbd4dD43587",
+    "asset": "Apple",
+    "pair": [
+      "AAPL",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xe25277fF4bbF9081C75Ab0EB13B4A13a721f3E13",
+    "asset": "Singapore Dollar",
+    "pair": [
+      "SGD",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xe572CeF69f43c2E488b33924AF04BDacE19079cf",
+    "asset": "Sushi",
+    "pair": [
+      "SUSHI",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x9F0F69428F923D6c95B781F89E165C9b2df9789D",
+    "asset": "Bitcoin Cash",
+    "pair": [
+      "BCH",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x75FbD83b4bd51dEe765b2a01e8D3aa1B020F9d33",
+    "asset": "Celsius",
+    "pair": [
+      "CEL",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xc929ad75B72593967DE83E7F7Cda0493458261D9",
+    "asset": "1inch",
+    "pair": [
+      "1INCH",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xeccBeEd9691d8521385259AE596CF00D68429de0",
+    "asset": "Haven Protocol",
+    "pair": [
+      "XHV",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x3977CFc9e4f29C184D4675f4EB8e0013236e5f3e",
+    "asset": "New Zealand Dollar",
+    "pair": [
+      "NZD",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xe20CA8D7546932360e37E9D72c1a47334af57706",
+    "asset": "Ampleforth",
+    "pair": [
+      "AMPL",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xF017fcB346A1885194689bA23Eff2fE6fA5C483b",
+    "asset": "Coinbase Wrapped Staked ETH",
+    "pair": [
+      "CBETH",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x4cba1e1fdc738D0fe8DB3ee07728E2Bc4DA676c6",
+    "asset": "iExec RLC",
+    "pair": [
+      "RLC",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x9441D7556e7820B5ca42082cfa99487D56AcA958",
+    "asset": "Basic Attention Token",
+    "pair": [
+      "BAT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xC12A6d1D827e23318266Ef16Ba6F397F2F91dA9b",
+    "asset": "NEAR Protocol",
+    "pair": [
+      "NEAR",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xBf739E677Edf6cF3408857404746cAcfd7120EB2",
+    "asset": "Audius",
+    "pair": [
+      "AUDIO",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xCfE54B5cD566aB89272946F602D76Ea879CAb4a8",
+    "asset": "Lido Staked ETH",
+    "pair": [
+      "STETH",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x24D9aB51950F3d62E9144fdC2f3135DAA6Ce8D1B",
+    "asset": "Enjin Coin",
+    "pair": [
+      "ENJ",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xF05D9B6C08757EAcb1fbec18e36A1B7566a13DEB",
+    "asset": "Calculated xSushi",
+    "pair": [
+      "XSUSHI",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x379589227b15F1a12195D3f2d90bBc9F31f95235",
+    "asset": "Silver",
+    "pair": [
+      "XAG",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x6Df09E975c830ECae5bd4eD9d90f3A95a4f88012",
+    "asset": "Aave",
+    "pair": [
+      "AAVE",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x7D77Fd73E468baECe26852776BeaF073CDc55fA0",
+    "asset": "Ampleforth Governance",
+    "pair": [
+      "FORTH",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x547a514d5e3769680Ce22B2361c10Ea13619e8a9",
+    "asset": "Aave",
+    "pair": [
+      "AAVE",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xcC445B35b3636bC7cC7051f4769D8982ED0d449A",
+    "asset": "Numeraire",
+    "pair": [
+      "NMR",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x986b5E1e1755e3C2440e960477f25201B0a8bbD4",
+    "asset": "Circle USD",
+    "pair": [
+      "USDC",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xe2F95bC12FE8a3C35684Be7586C39fD7c0E5b403",
+    "asset": "Highstreet",
+    "pair": [
+      "HIGH",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x214eD9Da11D2fbe465a6fc601a91E62EbEc1a0D6",
+    "asset": "Gold",
+    "pair": [
+      "XAU",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x10a43289895eAff840E8d45995BBa89f9115ECEe",
+    "asset": "EOS",
+    "pair": [
+      "EOS",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xFA66458Cce7Dd15D8650015c4fce4D278271618F",
+    "asset": "Monero",
+    "pair": [
+      "XMR",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xC9CbF687f43176B302F03f5e58470b77D07c61c6",
+    "asset": "Convex Finance",
+    "pair": [
+      "CVX",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x456834f736094Fb0AAD40a9BBc9D4a0f37818A54",
+    "asset": "ForTube",
+    "pair": [
+      "FOR",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x82597CFE6af8baad7c0d441AA82cbC3b51759607",
+    "asset": "CREAM Finance",
+    "pair": [
+      "CREAM",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0xeF8A4aF35cd47424672E3C590aBD37FBB7A7759a",
+    "asset": "Chinese Yuan",
+    "pair": [
+      "CNY",
+      "USD"
+    ]
+  },
+  {
+    "platform": "eth",
+    "address": "0x9ae96129ed8FE0C707D6eeBa7b90bB1e139e543e",
+    "asset": "Celo",
+    "pair": [
+      "CELO",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x461c7B8D370a240DdB46B402748381C3210136b3",
+    "asset": "Silver",
+    "pair": [
+      "XAG",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xC70aAF9092De3a4E5000956E672cDf5E996B4610",
+    "asset": "DeFi Pulse Index",
+    "pair": [
+      "DPI",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xacb51F1a83922632ca02B25a8164c10748001BdE",
+    "asset": "Polkadot",
+    "pair": [
+      "DOT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x4B7590d928A2de5075d45e00bD245329eac8Cd6e",
+    "asset": "Wootrade ETH-USDT",
+    "pair": [
+      "ETH",
+      "USDT"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xB34BCE11040702f71c11529D00179B2959BcE6C0",
+    "asset": "Polish Zloty",
+    "pair": [
+      "PLN",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x8Ec0eC2e0F26D8253ABf39Db4B1793D76B49C6D5",
+    "asset": "Origin Protocol",
+    "pair": [
+      "OGN",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x062Df9C4efd2030e243ffCc398b652e8b8F95C6f",
+    "asset": "Australian Dollar",
+    "pair": [
+      "AUD",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x3FabBfb300B1e2D7c9B84512fe9D30aeDF24C410",
+    "asset": "The Graph",
+    "pair": [
+      "GRT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xcc73e00db7a6FD589a30BbE2E957086b8d7D3331",
+    "asset": "Sea Limited",
+    "pair": [
+      "SE",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x84227A76a04289473057BEF706646199D7C58c34",
+    "asset": "Internet Computer Protocol",
+    "pair": [
+      "ICP",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x97371dF4492605486e23Da797fA68e55Fc38a13f",
+    "asset": "Lido Staked Matic",
+    "pair": [
+      "stMATIC",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x692AE5510cA9070095A496dbcFBCDA99D4024Cd9",
+    "asset": "Stellar",
+    "pair": [
+      "XLM",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x7d620D05c317A426903596432A5ca83375dC8d2A",
+    "asset": "IOTA (MIOTA)",
+    "pair": [
+      "MIOTA",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xbE23a3AA13038CfC28aFd0ECe4FdE379fE7fBfc4",
+    "asset": "Aave",
+    "pair": [
+      "AAVE",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xAB594600376Ec9fD91F8e885dADF0CE036862dE0",
+    "asset": "Polygon (MATIC)",
+    "pair": [
+      "MATIC",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xDE31F8bFBD8c84b5360CFACCa3539B938dd78ae6",
+    "asset": "Wrapped Bitcoin",
+    "pair": [
+      "WBTC",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xdf0Fb4e4F928d2dCB76f438575fDD8682386e13C",
+    "asset": "Uniswap",
+    "pair": [
+      "UNI",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x7899dd75C329eFe63e35b02bC7d60D3739FB23c5",
+    "asset": "Kava",
+    "pair": [
+      "KAVA",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x0f6914d8e7e1214CDb3A4C6fbf729b75C69DF608",
+    "asset": "Pax Gold",
+    "pair": [
+      "PAXG",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xA50D8f101a37B8Ea3D3d670C8b4D66Bdd2D0989c",
+    "asset": "Wootrade MATIC-USDT",
+    "pair": [
+      "MATIC",
+      "USDT"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x33D9B1BAaDcF4b26ab6F8E83e9cb8a611B2B3956",
+    "asset": "UMA",
+    "pair": [
+      "UMA",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xd8d483d813547CfB624b8Dc33a00F2fcbCd2D428",
+    "asset": "MAI",
+    "pair": [
+      "MIMATIC",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x00DBeB1e45485d53DF7C2F0dF1Aa0b6Dc30311d3",
+    "asset": "FRAX",
+    "pair": [
+      "FRAX",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x2409987e514Ad8B0973C2b90ee1D95051DF0ECB9",
+    "asset": "Chiliz",
+    "pair": [
+      "CHZ",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xdcda79097C44353Dee65684328793695bd34A629",
+    "asset": "Ocean Protocol",
+    "pair": [
+      "OCEAN",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x24C0e0FC8cCb21e2fb3e1A8A4eC4b29458664f79",
+    "asset": "Playdapp",
+    "pair": [
+      "PLA",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x7C5D415B64312D38c56B54358449d0a4058339d2",
+    "asset": "True USD",
+    "pair": [
+      "TUSD",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x26a1D7FbA480A91b00aFe1EC97d535de3c313276",
+    "asset": "Wootrade BTC-USDT",
+    "pair": [
+      "BTC",
+      "USDT"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x440A341bbC9FA86aA60A195e2409a547e48d4C0C",
+    "asset": "Enjin Coin",
+    "pair": [
+      "ENJ",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xa058689f4bCa95208bba3F265674AE95dED75B6D",
+    "asset": "Quickswap",
+    "pair": [
+      "QUICK",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x289833F252eaB98582D62db94Bd75aB48AD9CF0D",
+    "asset": "Alpha Finance",
+    "pair": [
+      "ALPHA",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x171b16562EA3476F5C61d1b8dad031DbA0768545",
+    "asset": "Mexican Peso",
+    "pair": [
+      "MXN",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x3710abeb1A0Fc7C2EC59C26c8DAA7a448ff6125A",
+    "asset": "Shiba Inu",
+    "pair": [
+      "SHIB",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x0A6513e40db6EB1b165753AD52E80663aeA50545",
+    "asset": "Tether USD",
+    "pair": [
+      "USDT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x73366Fe0AA0Ded304479862808e02506FE556a98",
+    "asset": "Euro",
+    "pair": [
+      "EUR",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x87eF348CADd1Ed7cc7A5F4Fefb20325216AA2cEb",
+    "asset": "Lido Staked ETH",
+    "pair": [
+      "STETH",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x6EA4d89474d9410939d429B786208c74853A5B47",
+    "asset": "0x",
+    "pair": [
+      "ZRX",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x10C8264C0935b3B9870013e057f330Ff3e9C56dC",
+    "asset": "Solana",
+    "pair": [
+      "SOL",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xa07703E5C2eD1516107c7c72A494493Dcb99C676",
+    "asset": "Filecoin",
+    "pair": [
+      "FIL",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xd78325DcA0F90F0FFe53cCeA1B02Bb12E1bf8FdB",
+    "asset": "Turkish Lira",
+    "pair": [
+      "TRY",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xc86105DccF9BD629Cea7Fd41f94c6050bF96D57F",
+    "asset": "Mantra DAO",
+    "pair": [
+      "OM",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x2A8758b7257102461BC958279054e372C2b1bDE6",
+    "asset": "Compound",
+    "pair": [
+      "COMP",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x099a2540848573e94fb1Ca0Fa420b00acbBc845a",
+    "asset": "Pound Sterling",
+    "pair": [
+      "GBP",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x0Cf1D8c6651F4188E55fCe6AB25261948108F197",
+    "asset": "Vietnamese Dong",
+    "pair": [
+      "VND",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x4205eC5fd179A843caa7B0860a8eC7D980013359",
+    "asset": "Digibyte",
+    "pair": [
+      "DGB",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xf9d5AAC6E5572AEFa6bd64108ff86a222F69B64d",
+    "asset": "Tether",
+    "pair": [
+      "USDT",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x8CE3cAc0E6635ce04783709ca3CC4F5fc5304299",
+    "asset": "Singapore Dollar",
+    "pair": [
+      "SGD",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x6C0fe985D3cAcbCdE428b84fc9431792694d0f51",
+    "asset": "Frax Share",
+    "pair": [
+      "FXS",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xBB3eF70953fC3766bec4Ab7A9BF05B6E4caf89c6",
+    "asset": "Smooth Love Potion",
+    "pair": [
+      "SLP",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xd6285F06203D938ab713Fa6A315e7d23247DDE95",
+    "asset": "EOS",
+    "pair": [
+      "EOS",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xF9680D99D6C9589e2a93a78A04A279e509205945",
+    "asset": "Ethereum",
+    "pair": [
+      "ETH",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xE6d13eF6Fb49230791C0F21927f091F2B8E2c566",
+    "asset": "Tanzanian Shilling",
+    "pair": [
+      "TZS",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xbd92B4919ae82be8473859295dEF0e778A626302",
+    "asset": "Swedish Krona",
+    "pair": [
+      "SEK",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xDA0F8Df6F5dB15b346f4B8D1156722027E194E60",
+    "asset": "Indian Rupee",
+    "pair": [
+      "INR",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x1b32682C033b2DD7EFdC615FA82d353e254F39b5",
+    "asset": "Alphabet",
+    "pair": [
+      "GOOGL",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xFC539A559e170f848323e19dfD66007520510085",
+    "asset": "DAI",
+    "pair": [
+      "DAI",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xC5878bDf8a89FA3bF0DC8389ae8EE6DE601D01bC",
+    "asset": "Hedera Hashgraph",
+    "pair": [
+      "HBAR",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x17414Eb5159A082e8d41D243C1601c2944401431",
+    "asset": "Sushi",
+    "pair": [
+      "SUSHI",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x6F8F9e75C0285AecE30ADFe1BCc1955f145d971A",
+    "asset": "Huobi Token",
+    "pair": [
+      "HT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xc9ECF45956f576681bDc01F79602A79bC2667B0c",
+    "asset": "Celsius",
+    "pair": [
+      "CEL",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xA6813d97eB2E0b50d0111385011a884097F74B30",
+    "asset": "",
+    "pair": [
+      "XPT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x443C5116CdF663Eb387e72C688D276e702135C87",
+    "asset": "1inch",
+    "pair": [
+      "1INCH",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x4746DeC9e833A82EC7C2C1356372CcF2cfcD2F3D",
+    "asset": "DAI",
+    "pair": [
+      "DAI",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x9d3A43c111E7b2C6601705D9fcF7a70c95b1dc55",
+    "asset": "Yearn Finance",
+    "pair": [
+      "YFI",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x9b88d07B2354eF5f4579690356818e07371c7BeD",
+    "asset": "Angle Protocol",
+    "pair": [
+      "AGEUR",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x93FfEE768F74208a7b9f2a4426f0F6BCbb1D09de",
+    "asset": "Omisego",
+    "pair": [
+      "OMG",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x82d43B72573f902F960126a19581BcBbA5b014F5",
+    "asset": "Hong Kong Dollar",
+    "pair": [
+      "HKD",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x2e48b7924FBe04d575BA229A59b64547d9da16e9",
+    "asset": "DefiPulse Index",
+    "pair": [
+      "DPI",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x5ec151834040B4D453A1eA46aA634C1773b36084",
+    "asset": "Convex",
+    "pair": [
+      "CVX",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xB90DA3ff54C3ED09115abf6FbA0Ff4645586af2c",
+    "asset": "Brazilian Real",
+    "pair": [
+      "BRL",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x2346Ce62bd732c62618944E51cbFa09D985d86D2",
+    "asset": "Basic Attention Token",
+    "pair": [
+      "BAT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x5b4586C911144A947D7814Fd71fe0872b8334748",
+    "asset": "Meta",
+    "pair": [
+      "FB",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x0C466540B2ee1a31b441671eac0ca886e051E410",
+    "asset": "Gold",
+    "pair": [
+      "XAU",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xD94427eDee70E4991b4b8DdCc848f2B58ED01C0b",
+    "asset": "Dash",
+    "pair": [
+      "DASH",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xbF90A5D9B6EE9019028dbFc2a9E50056d5252894",
+    "asset": "Synthetix Network",
+    "pair": [
+      "SNX",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x03CD157746c61F44597dD54C6f6702105258C722",
+    "asset": "Balancer",
+    "pair": [
+      "BAL",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xBE6FB0AB6302B693368D0E9001fAF77ecc6571db",
+    "asset": "Monero",
+    "pair": [
+      "XMR",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x162d8c5bF15eB6BEe003a1ffc4049C92114bc931",
+    "asset": "Uniswap",
+    "pair": [
+      "UNI",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xc76f762CedF0F78a439727861628E0fdfE1e70c2",
+    "asset": "Swiss Franc",
+    "pair": [
+      "CHF",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xB527769842f997d56dD1Ff73C34192141b69077e",
+    "asset": "Crypto Volatility Index",
+    "pair": [
+      "CV",
+      "Index"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x5787BefDc0ECd210Dfa948264631CD53E68F7802",
+    "asset": "Chainlink",
+    "pair": [
+      "LINK",
+      "MATIC"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x3fd911749Fce21a38704B76FFaBcB6BeF2567F2E",
+    "asset": "Emirati Dirham",
+    "pair": [
+      "AED",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x836a579B39d22b2147c1C229920d27880C915578",
+    "asset": "Quickswap",
+    "pair": [
+      "QUICK",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xA1CbF3Fe43BC3501e3Fc4b573e822c70e76A7512",
+    "asset": "Decentraland",
+    "pair": [
+      "MANA",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xd4a120c26d57B910C56c910CdD13EeBFA3135502",
+    "asset": "South African Rand",
+    "pair": [
+      "ZAR",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xDf3f72Be10d194b58B1BB56f2c4183e661cB2114",
+    "asset": "Ethereum Classic",
+    "pair": [
+      "ETC",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xACA44ABb8B04D07D883202F99FA5E3c53ed57Fb5",
+    "asset": "Canadian Dollar",
+    "pair": [
+      "CAD",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x336584C8E6Dc19637A5b36206B1c79923111b405",
+    "asset": "Curve DAO",
+    "pair": [
+      "CRV",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x218231089Bebb2A31970c3b77E96eCfb3BA006D1",
+    "asset": "Philippines Peso",
+    "pair": [
+      "PHP",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xbaf9327b6564454F4a3364C33eFeEf032b4b4444",
+    "asset": "Dogecoin",
+    "pair": [
+      "DOGE",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x3CD95aB66D27736d09994c0555Ef488E496a81b2",
+    "asset": "DeFiChain",
+    "pair": [
+      "DFI",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x59161117086a4C7A9beDA16C66e40Bdaa1C5a8B6",
+    "asset": "Dodo",
+    "pair": [
+      "DODO",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x58326c0F831b2Dbf7234A4204F28Bba79AA06d5f",
+    "asset": "Fantom",
+    "pair": [
+      "FTM",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xA338e0492B2F944E9F8C0653D3AD1484f2657a37",
+    "asset": "Wrapped Bitcoin",
+    "pair": [
+      "WBTC",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x3D49406EDd4D52Fb7FFd25485f32E073b529C924",
+    "asset": "The Sandbox",
+    "pair": [
+      "SAND",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x38611b09F8f2D520c14eA973765C225Bf57B9Eac",
+    "asset": "Theta Token",
+    "pair": [
+      "THETA",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x5d37E4b374E6907de8Fc7fb33EE3b0af403C7403",
+    "asset": "Stader MaticX",
+    "pair": [
+      "MaticX",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xBC08c639e579a391C4228F20d0C29d0690092DF0",
+    "asset": "ZCash",
+    "pair": [
+      "ZEC",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xF5724884b6E99257cC003375e6b844bC776183f9",
+    "asset": "Bancor",
+    "pair": [
+      "BNT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x74b3587A23eE786A43C8529c2e98D3C05a8fb1fB",
+    "asset": "Neo",
+    "pair": [
+      "NEO",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x67935f65D1577ced9f4929D3679A157E95C1c02c",
+    "asset": "Ether",
+    "pair": [
+      "marketcap",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xEB99F173cf7d9a6dC4D889C2Ad7103e8383b6Efa",
+    "asset": "Litecoin",
+    "pair": [
+      "LTC",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xd133F916e04ed5D67b231183d85Be12eAA018320",
+    "asset": "Magic Internet Money",
+    "pair": [
+      "MIM",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xc907E116054Ad103354f2D350FD2514433D57F6f",
+    "asset": "Bitcoin",
+    "pair": [
+      "BTC",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x8d5eB34C509261533235b91350d359EdcB969D33",
+    "asset": "Israeli Shekel",
+    "pair": [
+      "ILS",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x7E7B45b08F68EC69A99AAb12e42FcCB078e10094",
+    "asset": "Apple",
+    "pair": [
+      "AAPL",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xDD229Ce42f11D8Ee7fFf29bDB71C7b81352e11be",
+    "asset": "Aavegotchi",
+    "pair": [
+      "GHST",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x785ba89291f676b5386652eB12b30cF361020694",
+    "asset": "Ripple",
+    "pair": [
+      "XRP",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x567E67f456c7453c583B6eFA6F18452cDee1F5a8",
+    "asset": "Tesla",
+    "pair": [
+      "TSLA",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x19b0F0833C78c0848109E3842D34d2fDF2cA69BA",
+    "asset": "Bitcoin",
+    "pair": [
+      "BTC",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x817A7D43f0277Ca480AE03Ec76Fc63A2EC7114bA",
+    "asset": "FTX Token",
+    "pair": [
+      "FTT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x8803DD6705F0d38e79790B02A2C43594A0538D22",
+    "asset": "Bitcoin SV",
+    "pair": [
+      "BSV",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x6a99EC84819FB7007dd5D032068742604E755c56",
+    "asset": "Woo Network",
+    "pair": [
+      "WOO",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x0F1d5Bd7be9B30Fc09E110cd6504Bd450e53cb0E",
+    "asset": "Storj",
+    "pair": [
+      "STORJ",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x2Ac3F3Bfac8fC9094BC3f0F9041a51375235B992",
+    "asset": "APE Coin",
+    "pair": [
+      "APE",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xE0dC07D5ED74741CeeDA61284eE56a2A0f7A4Cc9",
+    "asset": "Binance USD",
+    "pair": [
+      "BUSD",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xD78bc11ef3256e3CE9dC0DF0fa7be9E9afc07f95",
+    "asset": "VeChain",
+    "pair": [
+      "VET",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x1CF68C76803c9A415bE301f50E82e44c64B7F1D4",
+    "asset": "Curve DAO",
+    "pair": [
+      "CRV",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xF626964Ba5e81405f47e8004F0b276Bb974742B5",
+    "asset": "Badger DAO",
+    "pair": [
+      "BADGER",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xBAaF11CeDA1d1Ca9Cf01748F8196653c9656a400",
+    "asset": "Livepeer",
+    "pair": [
+      "LPT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x327e23A4855b6F663a28c5161541d69Af8973302",
+    "asset": "Polygon (MATIC)",
+    "pair": [
+      "MATIC",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x82a6c4AF830caa6c97bb504425f6A66165C2c26e",
+    "asset": "BNB",
+    "pair": [
+      "BNB",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xb77fa460604b9C6435A235D057F7D319AC83cb53",
+    "asset": "Chainlink",
+    "pair": [
+      "LINK",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x327d9822e9932996f55b39F557AEC838313da8b7",
+    "asset": "Bitcoin Cash",
+    "pair": [
+      "BCH",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x58527C2dCC755297bB81f9334b80b2B6032d8524",
+    "asset": "Barnbridge",
+    "pair": [
+      "BOND",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x882554df528115a743c4537828DA8D5B58e52544",
+    "asset": "Cardano",
+    "pair": [
+      "ADA",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x18617D05eE1692Ad7EAFee9839459da16097AFd8",
+    "asset": "Stafi",
+    "pair": [
+      "FIS",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xe01eA2fbd8D76ee323FbEd03eB9a8625EC981A10",
+    "asset": "Avalanche",
+    "pair": [
+      "AVAX",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xa070427bF5bA5709f70e98b94Cb2F435a242C46C",
+    "asset": "Maker",
+    "pair": [
+      "MKR",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xa302a0B8a499fD0f00449df0a490DedE21105955",
+    "asset": "New Zealand Dollar",
+    "pair": [
+      "NZD",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xE7eF3246654aC0fd0E22fC30DCe40466CFDF597c",
+    "asset": "Euro Tether",
+    "pair": [
+      "EURT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x5164Ad28fb12a5e55946090Ec3eE1B748AFb3785",
+    "asset": "Thai Baht",
+    "pair": [
+      "THB",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x4cE90F28C6357A7d3F47D680723d18AF3684cD00",
+    "asset": "Olympus v2",
+    "pair": [
+      "OHMv2",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xefb7e6be8356cCc6827799B6A7348eE674A80EaE",
+    "asset": "Circle USD",
+    "pair": [
+      "USDC",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x80a5cb83ce268Ed11a6EFC4bBF0beC39dF35Db21",
+    "asset": "Indonesian Rupiah",
+    "pair": [
+      "IDR",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x04bB437Aa63E098236FA47365f0268547f6EAB32",
+    "asset": "Chinese Yuan",
+    "pair": [
+      "CNY",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xDFb138ba3A6CCe675A6F5961323Be31eE42E40ff",
+    "asset": "Harvest Finance",
+    "pair": [
+      "FARM",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xbd238a35Fb47aE22F0cC551f14ffB8E8f04FCA21",
+    "asset": "Dogecoin",
+    "pair": [
+      "marketcap",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x24B820870F726dA9B0D83B0B28a93885061dbF50",
+    "asset": "Korean Won",
+    "pair": [
+      "KRW",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x307cCF7cBD17b69A487b9C3dbe483931Cf3E1833",
+    "asset": "Tron",
+    "pair": [
+      "TRX",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x807b59d12520830D1864286FA0271c27baa94197",
+    "asset": "Maker",
+    "pair": [
+      "MKR",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x1C4A8C3A28b0B3c3a0a6E7650694d9Cd5dB12DE5",
+    "asset": "LEO Token",
+    "pair": [
+      "LEO",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x03Bc6D9EFed65708D35fDaEfb25E87631a0a3437",
+    "asset": "Algorand",
+    "pair": [
+      "ALGO",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x691e26AB58ff05800E028b0876A41B720b26FC65",
+    "asset": "Tezos",
+    "pair": [
+      "XTZ",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x10e5f3DFc81B3e5Ef4e648C4454D04e79E1E41E2",
+    "asset": "Kyber Network",
+    "pair": [
+      "KNC",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x82C9d4E88862f194C2bd874a106a90dDD0D35AAB",
+    "asset": "Badger DAO",
+    "pair": [
+      "BADGER",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xB89D583B72aBF9C3a7e6e093251C2fCad3365312",
+    "asset": "Melon",
+    "pair": [
+      "MLN",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xC43081d9EA6d1c53f1F0e525504d47Dd60de12da",
+    "asset": "Microsoft",
+    "pair": [
+      "MSFT",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x5DB6e61B6159B20F068dc15A47dF2E5931b14f29",
+    "asset": "Alchemix",
+    "pair": [
+      "ALCX",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x72484B12719E23115761D5DA1646945632979bB6",
+    "asset": "Aave",
+    "pair": [
+      "AAVE",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x86F87CB74238a6f24606534A2fCc05469Eb2bcF5",
+    "asset": "Klaytn",
+    "pair": [
+      "KLAY",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xD106B538F2A868c28Ca1Ec7E298C3325E0251d66",
+    "asset": "Balancer",
+    "pair": [
+      "BAL",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xf9184b8E5da48C19fA4E06f83f77742e748cca96",
+    "asset": "Amazon",
+    "pair": [
+      "AMZN",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xd9FFdb71EbE7496cC440152d43986Aae0AB76665",
+    "asset": "Chainlink",
+    "pair": [
+      "LINK",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x666bb13b3ED3816504E8c30D0F9B9C16b371774b",
+    "asset": "Nexo",
+    "pair": [
+      "NEXO",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x9c371aE34509590E10aB98205d2dF5936A1aD875",
+    "asset": "Axie Infinity",
+    "pair": [
+      "AXS",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xDe6302Dfa0ac45B2B1b1a23304469DA630b2F59B",
+    "asset": "Colombian Peso",
+    "pair": [
+      "COP",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x7f45273fD7C644714825345670414Ea649b50b16",
+    "asset": "RAI Reflex Index",
+    "pair": [
+      "RAI",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xe638249AF9642CdA55A92245525268482eE4C67b",
+    "asset": "Aavegotchi",
+    "pair": [
+      "GHST",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x10f964234cae09cB6a9854B56FF7D4F38Cda5E6a",
+    "asset": "",
+    "pair": [
+      "WSTETH",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xD647a6fC9BC6402301583C91decC5989d8Bc382D",
+    "asset": "Japanese Yen",
+    "pair": [
+      "JPY",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x49B0c695039243BBfEb8EcD054EB70061fd54aa0",
+    "asset": "Sushi",
+    "pair": [
+      "SUSHI",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x18E4058491C3F58bC2f747A9E64cA256Ed6B318d",
+    "asset": "Bitcoin Market Cap",
+    "pair": [
+      "marketcap",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x9896A1eA7A00F5f32Ab131eBbeE07487B0af31D0",
+    "asset": "Yearn Finance",
+    "pair": [
+      "YFI",
+      "ETH"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0xfE4A8cc5b5B2366C1B58Bea3858e81843581b2F7",
+    "asset": "Circle USD",
+    "pair": [
+      "USDC",
+      "USD"
+    ]
+  },
+  {
+    "platform": "polygon",
+    "address": "0x213b030E24C906ee3b98EC7538Cc6D3D3C82aF55",
+    "asset": "Aragon",
+    "pair": [
+      "ANT",
+      "USD"
+    ]
+  }
+]

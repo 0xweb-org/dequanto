@@ -3,6 +3,18 @@ import { $hex } from '@dequanto/utils/$hex';
 import { $require } from '@dequanto/utils/$require';
 
 export namespace $str {
+    export function isNullOrWhiteSpace(x: string) {
+        if (x == null) {
+            return true;
+        }
+        if (typeof x !== 'string') {
+            throw new Error(`isNullOrWhiteSpace expects a string parameter, but got ${typeof x} - ${x}`);
+        }
+        if (x.trim() === '') {
+            return true;
+        }
+        return false;
+    }
     export function sliceFromEnd (hex: string, positionBits: number, bits: number) {
         let len = bits / 8 * 2;
         let position = positionBits / 8 * 2;

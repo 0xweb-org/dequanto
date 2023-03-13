@@ -1,20 +1,22 @@
 import di from 'a-di';
 import alot from 'alot';
 import memd from 'memd';
+import { env } from 'atma-io';
+import { $bigint } from '@dequanto/utils/$bigint';
+import { $date } from '@dequanto/utils/$date';
+
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { $address } from '@dequanto/utils/$address';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TPlatform } from '@dequanto/models/TPlatform';
-import { AmmV2ExchangeBase } from '@dequanto/tokens/TokenExchanges/AmmV2ExchangeBase';
-import { PancakeswapExchange } from '@dequanto/tokens/TokenExchanges/PancakeswapExchange';
-import { UniswapExchange } from '@dequanto/tokens/TokenExchanges/UniswapExchange';
 import { TokensService } from '@dequanto/tokens/TokensService';
-import { IToken } from '@dequanto/models/IToken';
+import { IToken, ITokenBase } from '@dequanto/models/IToken';
+
+import { AmmV2ExchangeBase } from '../../AmmV2ExchangeBase';
 import { SushiswapPolygonExchange } from '../../SushiswapPolygonExchange';
-import { $require } from '@dequanto/utils/$require';
-
-
+import { PancakeswapExchange } from '../../PancakeswapExchange';
+import { UniswapExchange } from '../../UniswapExchange';
 
 export interface ISwapPoolInfo {
     address: TAddress
@@ -36,12 +38,12 @@ export interface ISwapPool extends ISwapPoolInfo {
 
 
 export interface ISwapRouted {
-    outToken: IToken
+    outToken: ITokenBase
     outAmount: bigint
     outUsd: number
     outUsdPrice: number
 
-    inToken: IToken
+    inToken: ITokenBase
     inAmount: bigint
     inUsd: number
     inUsdPrice: number
@@ -70,12 +72,14 @@ export interface ISwapped {
 }
 
 
+const CACHE_PATH = `.dequanto/cache/dex-pools.json`;
+const CACHE_SECONDS = $date.parseTimespan('7d', { get: 's' });
 
 export class AmmPairV2Service {
-    exchange: AmmV2ExchangeBase
-    tokensService = di.resolve(TokensService, this.client.platform, this.explorer);
+    private exchange: AmmV2ExchangeBase
+    private tokensService = di.resolve(TokensService, this.client.platform, this.explorer);
 
-    targetCoins: string[]
+    private targetCoins: string[]
 
     constructor(public client: Web3Client, public explorer: IBlockChainExplorer) {
         switch (client.platform) {
@@ -99,7 +103,13 @@ export class AmmPairV2Service {
     @memd.deco.memoize({
         perInstance: true,
         trackRef: true,
-        persistance: new memd.FsTransport({ path:  `./cache/pools.json` })
+        maxAge: CACHE_SECONDS,
+        key: (ctx, platform, address) => {
+            let self = ctx.this as AmmPairV2Service;
+            let key = `bestRoute_${platform}_${address}`;
+            return key;
+        },
+        persistance: new memd.FsTransport({ path:  env.appdataDir.combine(CACHE_PATH).toString() })
     })
     async resolveBestStableRoute (platform: TPlatform, address: TAddress): Promise<ISwapPoolInfo[]> {
         let pool = await alot(this.targetCoins)
@@ -112,8 +122,8 @@ export class AmmPairV2Service {
 
 
         if (pool == null || pool.reserveTo < (50_000n * BigInt(pool.pair.to.decimals))) {
-            const SYMBOL = { eth: 'WETH', bsc: 'WBNB', polygon: 'MATIC' }[platform];
-            $require.notNull(SYMBOL, `Native symbol for platform ${platform} not FOUND`);
+            // if NO or low-liquidity pool found, check the WETH pool
+            const SYMBOL = { bsc: 'WBNB', polygon: 'MATIC' }[platform] ?? 'WETH';
             const nativeTokenPool = await this.getPoolInfo(address, SYMBOL);
 
             if (nativeTokenPool == null || nativeTokenPool.reserveTo < 10) {
@@ -149,13 +159,23 @@ export class AmmPairV2Service {
         return out;
     }
 
+    @memd.deco.memoize({
+        perInstance: true,
+        trackRef: true,
+        key: (ctx, fromAddress, toSymbol) => {
+            let self = ctx.this as AmmPairV2Service;
+            let key = `pool_${self.client.platform}_${fromAddress}_${toSymbol}`;
+            return key;
+        },
+        persistance: new memd.FsTransport({ path: CACHE_PATH })
+    })
     private async getPoolInfo (fromAddress: TAddress, symbol: string): Promise<{ pair: ISwapPoolInfo, reserveTo: number }> {
         let toToken = await this.tokensService.getTokenOrDefault(symbol);
         if (toToken == null) {
             return null;
         }
 
-        let lpAddress = await this.getPair(fromAddress, toToken.address);
+        let lpAddress = await this.exchange.factoryContract.getPair(fromAddress, toToken.address);
         if ($address.isEmpty(lpAddress)) {
             return null;
         }
@@ -180,13 +200,8 @@ export class AmmPairV2Service {
 
         return {
             pair: PairUtil.createPairInfo(fromToken, toToken, lpAddress),
-            reserveTo: Number(reserveTo / 10n ** BigInt(toToken.decimals ?? 18)),
+            reserveTo: $bigint.toEther(reserveTo, toToken.decimals),
         };
-    }
-
-    @memd.deco.memoize()
-    private async getPair (from: TAddress, to: TAddress) {
-        return await this.exchange.factoryContract.getPair(from, to);
     }
 }
 

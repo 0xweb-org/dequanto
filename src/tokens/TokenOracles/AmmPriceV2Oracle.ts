@@ -16,27 +16,15 @@ import { TokenPriceStore } from './TokenPriceStore';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { AmmPairV2Service, ISwapPool, ISwapPoolInfo } from '../TokenExchanges/AmmBase/V2/AmmPairV2Service';
 import { SushiswapPolygonExchange } from '../TokenExchanges/SushiswapPolygonExchange';
+import { ISwapOptions } from './IOracle';
 
 
-
-interface ISwapOptions {
-    /** default: 1 */
-    amount?: number
-
-    amountWei?: bigint
-
-    date?: Date
-    block?: number
-    route?: string[]
-    store?: TokenPriceStore
-    pairs?: { address: TAddress, from: IToken, to: IToken }[]
-}
 export class AmmPriceV2Oracle {
 
-    exchange: AmmV2ExchangeBase
-    tokensService = di.resolve(TokensService, this.client.platform, this.explorer)
-    pairService = di.resolve(AmmPairV2Service, this.client, this.explorer)
-    logger = di.resolve(LoggerService, 'AmmPriceV2Oracle');
+    private exchange: AmmV2ExchangeBase
+    private tokensService = di.resolve(TokensService, this.client.platform, this.explorer)
+    private pairService = di.resolve(AmmPairV2Service, this.client, this.explorer)
+    private logger = di.resolve(LoggerService, 'AmmPriceV2Oracle');
 
     constructor(public client: Web3Client, public explorer: IBlockChainExplorer) {
         switch (client.platform) {

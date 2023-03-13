@@ -1,5 +1,4 @@
 import di from 'a-di';
-import alot from 'alot';
 import memd from 'memd';
 import { TAddress } from '@dequanto/models/TAddress';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';

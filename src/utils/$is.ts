@@ -11,7 +11,6 @@ export namespace $is {
     export function BigInt<T> (val: bigint | any): val is bigint {
         return typeof val === 'bigint';
     }
-
     export function Address (val: TAddress, message?: string): val is TAddress {
         if (typeof val !== 'string') {
             return false;
