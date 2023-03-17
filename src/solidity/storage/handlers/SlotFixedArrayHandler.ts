@@ -12,7 +12,12 @@ export class SlotFixedArrayHandler extends ASlotFixedArray {
         if (keys == null || keys.length === 0) {
             return this.fetchAll();
         }
-        let storage = await this.getStorageInner(keys);
+        let key = keys.shift();
+        if (key.key === 'length') {
+            return $abiType.array.getLength(this.slot.type);
+        }
+
+        let storage = await this.getStorageInner(key);
         return storage.get(keys);
     }
 
@@ -20,7 +25,8 @@ export class SlotFixedArrayHandler extends ASlotFixedArray {
         if (keys == null || keys.length === 0) {
             throw new Error(`saveAll not implemented`);
         }
-        let storage = await this.getStorageInner(keys);
+        let key = keys.shift();
+        let storage = await this.getStorageInner(key);
         return storage.set(keys, value);
     }
 
@@ -36,8 +42,8 @@ export class SlotFixedArrayHandler extends ASlotFixedArray {
     }
 
 
-    private async getStorageInner (keys: IAccessorItem[]) {
-        let key = keys.shift();
+    private async getStorageInner (key: IAccessorItem) {
+
         if (key.type !== 'index') {
             throw new Error(`Expected to get the Array index as a Key got ${key.key} as ${key.type}`);
         }

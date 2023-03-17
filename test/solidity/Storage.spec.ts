@@ -206,6 +206,9 @@ UTest({
                 eq_(v1, 17n);
             },
             async 'read and write dynamic sized array' () {
+                let length = await storage.get('dynamicSized.length');
+                eq_(length, 3n);
+
                 let v0 = await storage.get('dynamicSized[0]');
                 eq_(v0, 5n);
 

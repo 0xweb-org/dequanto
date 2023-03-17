@@ -16,7 +16,7 @@ UTest({
 
         hex = $hex.padBytes(hex, 32, { padEnd: true });
 
-        let { contract, abi } = await provider.deploySol(path, { arguments: [ hex ], client });
+        let { contract, abi } = await provider.deploySol(path, { arguments: [hex], client });
         let slots = await SlotsParser.slots({ path }, 'Vault');
 
 
@@ -99,7 +99,7 @@ UTest({
     },
 
     'arrays': {
-        async 'should read packed flags from single slot' () {
+        async 'should read packed flags from single slot'() {
             let code = `
                 contract Counter {
                     bool public flag = true;
@@ -125,7 +125,7 @@ UTest({
                 contract.flags(1),
                 contract.flags(2),
             ]);
-            deepEq_(flags, [ true, true, true ]);
+            deepEq_(flags, [true, true, true]);
 
             l`Read with SLOTS Readers`
             let slots = await SlotsParser.slots({ path: '', code });
@@ -146,7 +146,7 @@ UTest({
                 storage.get('flags[1]'),
                 storage.get('flags[2]'),
             ]);
-            deepEq_(flags, [ true, true, true ]);
+            deepEq_(flags, [true, true, true]);
 
             l`Read fixed size num array`
             let halfs = await Promise.all([
@@ -155,14 +155,36 @@ UTest({
                 storage.get('halfs[2]'),
             ]);
 
-            deepEq_(halfs, [ 1n, 2n, 3n ]);
+            deepEq_(halfs, [1n, 2n, 3n]);
 
             l`Read fixed size num array`
             let nums = await Promise.all([
                 storage.get('nums[0]'),
                 storage.get('nums[1]'),
             ]);
-            deepEq_(nums, [ 4n, 5n]);
+            deepEq_(nums, [4n, 5n]);
         }
+    },
+    async 'should read mapping value'() {
+        let code = `
+            contract A {
+                uint public countA = 3;
+                mapping (uint => uint) dict;
+                uint public countB = 4;
+                constructor () {
+                    dict[3] = 7;
+                }
+            }
+        `;
+
+        let provider = new HardhatProvider();
+        let client = await provider.client();
+
+        let { contract, abi } = await provider.deployCode(code, { client });
+
+        let slots = await SlotsParser.slots({ path: '', code });
+        let storage = SlotsStorage.createWithClient(client, contract.address, slots);
+
+        eq_(await storage.get('dict[3]'), 7);
     }
 })

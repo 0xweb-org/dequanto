@@ -34,7 +34,7 @@ export class SlotMappingHandler extends ASlotsStorageHandler {
         throw new Error(`SlotMappingReader doesn't support fetchAll method, as size could be infinite`);
     }
 
-    private async getStorageInner(key: IAccessorItem): Promise<any> {
+    private async getStorageInner(key: IAccessorItem): Promise<SlotsStorage> {
 
         let { slot } = this;
         let mapValueType = $abiType.mapping.getValueType(slot.type);
