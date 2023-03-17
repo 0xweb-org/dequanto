@@ -33,19 +33,8 @@ UTest({
         });
 
         let isInterface = await evm.checkInterfaceOf([
-            {
-                name: 'upgradeTo',
-                inputs: [ { name: '', type: 'address' } ],
-                outputs: [],
-                type: 'function'
-            },
-            {
-                name: 'implementation',
-                inputs: [],
-                outputs: [],
-                type: 'function',
-                stateMutability: 'view',
-            }
+            'upgradeTo(address)',
+            'implementation()',
         ]);
         eq_(isInterface.ok, true);
     },

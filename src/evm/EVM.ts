@@ -152,12 +152,15 @@ export class EVM {
         return fns;
     }
 
-    async checkInterfaceOf (iface: AbiItem[]): Promise<{ ok: boolean, missing?: string }> {
+    async checkInterfaceOf (iface: (AbiItem | string)[]): Promise<{ ok: boolean, missing?: string }> {
         if (iface == null || iface.length === 0) {
             return { ok: false };
         }
         let methods = await this.getFunctions();
         for (let item of iface) {
+            if (typeof item === 'string') {
+                item = $abiParser.parseMethod(item);
+            }
             if (item.type !== 'function') {
                 continue;
             }
