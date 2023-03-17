@@ -12,6 +12,7 @@ import IStorage from './interfaces/IStorage';
 import { OpcodesWalker } from './OpcodesWalker';
 import { $logger } from '@dequanto/utils/$logger';
 import IOpcode from './interfaces/IOpcode';
+import { $abiUtils } from '@dequanto/utils/$abiUtils';
 
 
 /**
@@ -149,6 +150,23 @@ export class EVM {
 
         let fns = await this.resolveFunctions(hashes);
         return fns;
+    }
+
+    async checkInterfaceOf (iface: AbiItem[]): Promise<{ ok: boolean, missing?: string }> {
+        if (iface == null || iface.length === 0) {
+            return { ok: false };
+        }
+        let methods = await this.getFunctions();
+        for (let item of iface) {
+            if (item.type !== 'function') {
+                continue;
+            }
+            let inAbi = methods.some(x => x.signature === $abiUtils.getMethodSignature(item));
+            if (inAbi === false) {
+                return { ok: false, missing: item.name };
+            }
+        }
+        return { ok: true };
     }
 
     private async resolveFunctions(hashes: string[]) {

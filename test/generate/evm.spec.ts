@@ -31,6 +31,23 @@ UTest({
             outputs: [],
             type: 'event'
         });
+
+        let isInterface = await evm.checkInterfaceOf([
+            {
+                name: 'upgradeTo',
+                inputs: [ { name: '', type: 'address' } ],
+                outputs: [],
+                type: 'function'
+            },
+            {
+                name: 'implementation',
+                inputs: [],
+                outputs: [],
+                type: 'function',
+                stateMutability: 'view',
+            }
+        ]);
+        eq_(isInterface.ok, true);
     },
     async 'parse Counter.sol bytecode (raw and optimized)' () {
         // fixtures/contracts/Counter.sol
