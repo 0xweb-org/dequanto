@@ -3,6 +3,8 @@ import Web3 from 'web3';
 import { utils }  from 'ethers';
 import { $contract } from './$contract';
 import { $abiParser } from './$abiParser';
+import { $hex } from './$hex';
+import { $is } from './$is';
 
 export namespace $abiUtils {
 
@@ -37,6 +39,10 @@ export namespace $abiUtils {
     }
 
     export function getTopicSignature (abi: AbiItem) {
+        if ($is.hexString(abi.name)) {
+            // anonymous event
+            return abi.name;
+        }
         let types = abi.inputs?.map(serializeMethodSignatureArgumentType) ?? [];
         let signature = `${abi.name}(${types.join(',')})`;
         let hash = $contract.keccak256(signature);

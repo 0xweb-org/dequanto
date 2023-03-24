@@ -181,8 +181,12 @@ export class RateLimitGuard {
         return ms;
     }
 
+    public getSpanLimit () {
+        return alot(this.rates).min(x => x.spanLimit);
+    }
+
     @memd.deco.queued()
-    async wait(count = 1, now = Date.now()) {
+    public async wait(count = 1, now = Date.now()) {
 
         if (this.backoff != null) {
             let ms = this.backoff - Date.now();
@@ -312,10 +316,6 @@ class ShortEpochRateLimitData {
         if ((ticks.length + ticksCount) <= this.spanLimit) {
             // We can add requests to current span
             return 0;
-        }
-        if (ticksCount > this.spanLimit) {
-            // Too much  requests for a span
-            throw new Error(`Invalid request amount (${ticksCount}) per single time span. Allowed max: ${this.spanLimit}`);
         }
 
         let timeWeCanAdd = ticks[0] + this.spanMs;

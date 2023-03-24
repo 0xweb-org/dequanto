@@ -15,6 +15,7 @@ import { $logger, l } from '@dequanto/utils/$logger';
 import { $promise } from '@dequanto/utils/$promise';
 import { $array } from '@dequanto/utils/$array';
 import { RateLimitGuard } from './handlers/RateLimitGuard';
+import { Web3BatchRequests } from './Web3BatchRequests';
 
 declare let app;
 
@@ -54,6 +55,7 @@ export interface IPoolWeb3Request {
     // Amount of batch requests to be performed, sothat we can choose the appropriate wClient and handle the rate limits correctly
     batchRequestCount?: number
 }
+
 export class ClientPool {
 
     private discoveredPartial = false;
@@ -88,7 +90,19 @@ export class ClientPool {
         throw result;
     }
 
-    async call <TResult> (fn: (web3: Web3) => Promise<TResult>, opts?: IPoolWeb3Request): Promise<TResult> {
+    async callBatched (args: {
+        requests: (web3: Web3) => Promise<any[]>
+        map?: (results: any[]) => any
+    }, opts?: IPoolWeb3Request) {
+        return this.call(async (web3, wClient) => {
+            let requests = await args.requests(web3);
+            let results = await wClient.callBatched(requests);
+            let mapped = args?.map?.(results) ?? results;
+            return mapped;
+        }, opts);
+    }
+
+    async call <TResult> (fn: (web3: Web3, wClient?: WClient) => Promise<TResult>, opts?: IPoolWeb3Request): Promise<TResult> {
         // Client - Retries
         let used = new Map<WClient, number>();
         let errors = [];
@@ -130,10 +144,6 @@ export class ClientPool {
                 return result;
             }
             if (status == ClientStatus.RateLimited) {
-                let rateLimitInfo = RateLimitGuard.extractRateLimitFromError(error);
-
-                wClient.updateRateLimitInfo(rateLimitInfo);
-
                 if (wClientUsage == null) {
                     const RETRIES = 5;
                     used.set(wClient, RETRIES);
@@ -594,7 +604,7 @@ class WClient {
         return false;
     }
 
-    updateRateLimitInfo (info: ReturnType<typeof RateLimitGuard['extractRateLimitFromError']>) {
+    private updateRateLimitInfo (info: ReturnType<typeof RateLimitGuard['extractRateLimitFromError']>) {
         if (this.rateLimitGuard == null) {
             this.rateLimitGuard = new RateLimitGuard({
                 id: this.config.url ?? 'web3',
@@ -655,39 +665,47 @@ class WClient {
         });
     }
 
-    // async call <TResult> (fn: (web3: Web3) => Promise<TResult> ): Promise<{ status: number, result?: TResult }> {
-    //     try {
-    //         let result = await fn(this.web3);
+    async callBatched<TResult = any>(requests: (Web3BatchRequests.IContractRequest | Web3BatchRequests.IRequestBuilder)[]): Promise<TResult[]> {
+        let spanLimit = this.rateLimitGuard?.getSpanLimit() ?? requests.length;
+        let output = [] as TResult[];
+        let errors = [];
+        while (requests.length > 0) {
+            let page = requests.splice(0, spanLimit);
+            let { status, error, result: pageResult } = await this.call(async (web3) => {
+                let batch = new Web3BatchRequests.BatchRequest(web3, page);
+                let results = await batch.execute();
+                return results;
+            });
+            if (status === ClientStatus.Ok) {
+                let batchResults = pageResult.map(x => x.result);
+                output.push(...batchResults);
+                continue;
+            }
+            if (status === ClientStatus.RateLimited) {
+                spanLimit = this.rateLimitGuard?.getSpanLimit() ?? requests.length;
+            }
+            errors.push(error);
+            if (errors.length > 2) {
+                throw error;
+            }
+            requests.unshift(...page);
+        }
+        return output;
+    }
 
-    //         this.lastStatus = Status.Ok;
-    //         this.requests.success++;
-
-    //         return { status: Status.Ok, result };
-
-    //     } catch (error) {
-    //         console.log(error);
-    //         if (this.isConnectionFailed (error)) {
-    //             this.lastStatus = Status.NetworkError;
-    //             this.requests.fail++;
-    //             return { status: Status.NetworkError, result: error };
-    //         }
-    //         return { status: Status.CallError, result: error }
-    //     }
-    // }
-
-    async call <TResult extends PromiseLike<any>> (fn: (web3: Web3) => TResult, options?: {
+    async call <TResult extends PromiseLike<any>> (fn: (web3: Web3, wClient?: WClient) => TResult, options?: {
         // For the rate limit guard, to make sure we wait enough time to proceed with batch request for example
         batchRequestCount?: number
-    }): Promise<{ status: ClientStatus, error?, result?: TResult, time: number }> {
+    }): Promise<{ status: ClientStatus, error?, result?: Awaited<TResult>, time: number }> {
         let now = Date.now();
         await this.rateLimitGuard?.wait(options?.batchRequestCount ?? 1, now);
 
         return new Promise((resolve, reject) => {
             let start = Date.now();
-            let result = fn(this.web3);
+            let result = fn(this.web3, this);
 
             result.then(
-                _ => {
+                result => {
                     let time = Date.now() - start;
                     let status = ClientStatus.Ok;
                     this.onComplete(status, time);
@@ -700,6 +718,9 @@ class WClient {
 
                     if (RateLimitGuard.isRateLimited(error)) {
                         status = ClientStatus.RateLimited;
+
+                        let rateLimitInfo = RateLimitGuard.extractRateLimitFromError(error);
+                        this.updateRateLimitInfo(rateLimitInfo);
                     } else if (ClientErrorUtil.isConnectionFailed (error)) {
                         status = ClientStatus.NetworkError;
                     }

@@ -168,23 +168,46 @@ UTest({
     async 'should read mapping value'() {
         let code = `
             contract A {
+
                 uint public countA = 3;
                 mapping (uint => uint) dict;
+                mapping (address => mapping(address => uint)) allowances;
+
+                struct User {
+                    uint foo;
+                    uint bar;
+                }
+                mapping (address => User) users;
+                mapping (address => mapping(address => User)) deepUsers;
+
                 uint public countB = 4;
                 constructor () {
                     dict[3] = 7;
+                    address key1 = address(0x1000000000000000000000000000000000000001);
+                    allowances[msg.sender][key1] = 5;
+
+                    users[msg.sender] = User(1,2);
+                    deepUsers[msg.sender][key1] = User(4,8);
                 }
             }
         `;
 
         let provider = new HardhatProvider();
         let client = await provider.client();
-
+        let deployer = provider.deployer();
         let { contract, abi } = await provider.deployCode(code, { client });
 
         let slots = await SlotsParser.slots({ path: '', code });
         let storage = SlotsStorage.createWithClient(client, contract.address, slots);
 
         eq_(await storage.get('dict[3]'), 7);
+        eq_(await storage.get(`allowances["${deployer.address}"]["0x1000000000000000000000000000000000000001"]`), 5);
+
+        eq_(await storage.get(`users["${deployer.address}"].foo`), 1);
+        eq_(await storage.get(`users["${deployer.address}"]["bar"]`), 2);
+
+        eq_(await storage.get(`deepUsers["${deployer.address}"]["0x1000000000000000000000000000000000000001"].foo`), 4);
+        eq_(await storage.get(`deepUsers["${deployer.address}"]["0x1000000000000000000000000000000000000001"].bar`), 8);
+
     }
 })

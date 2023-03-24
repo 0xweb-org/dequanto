@@ -4,6 +4,7 @@ import { $config } from './$config';
 export namespace $path {
     let root: string = null;
 
+    /*** Gets dequanto root path (cwd or npm global modules) */
     export function resolve (path: string) {
         return class_Uri.combine(root ?? (root = getRoot()), path)
     }
@@ -16,6 +17,9 @@ export namespace $path {
             return true;
         }
         return false;
+    }
+    export function hasExt (path: string) {
+        return /\.\w+($|\?)/.test(path);
     }
 
     function getRoot () {

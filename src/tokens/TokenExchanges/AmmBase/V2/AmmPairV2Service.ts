@@ -16,7 +16,8 @@ import { IToken, ITokenBase } from '@dequanto/models/IToken';
 import { AmmV2ExchangeBase } from '../../AmmV2ExchangeBase';
 import { SushiswapPolygonExchange } from '../../SushiswapPolygonExchange';
 import { PancakeswapExchange } from '../../PancakeswapExchange';
-import { UniswapExchange } from '../../UniswapExchange';
+import { UniswapV2Exchange } from '../../UniswapV2Exchange';
+import { $cache } from '@dequanto/utils/$cache';
 
 export interface ISwapPoolInfo {
     address: TAddress
@@ -72,7 +73,7 @@ export interface ISwapped {
 }
 
 
-const CACHE_PATH = `.dequanto/cache/dex-pools.json`;
+const CACHE_PATH = $cache.file(`dex-pools.json`);
 const CACHE_SECONDS = $date.parseTimespan('7d', { get: 's' });
 
 export class AmmPairV2Service {
@@ -88,7 +89,7 @@ export class AmmPairV2Service {
                 this.targetCoins = ['BUSD', 'USDT'];
                 break;
             case 'eth':
-                this.exchange = di.resolve(UniswapExchange, this.client, this.explorer);
+                this.exchange = di.resolve(UniswapV2Exchange, this.client, this.explorer);
                 this.targetCoins = ['USDC', 'USDT', 'DAI'];
                 break;
             case 'polygon':
@@ -109,7 +110,7 @@ export class AmmPairV2Service {
             let key = `bestRoute_${platform}_${address}`;
             return key;
         },
-        persistance: new memd.FsTransport({ path:  env.appdataDir.combine(CACHE_PATH).toString() })
+        persistance: new memd.FsTransport({ path:  CACHE_PATH })
     })
     async resolveBestStableRoute (platform: TPlatform, address: TAddress): Promise<ISwapPoolInfo[]> {
         let pool = await alot(this.targetCoins)

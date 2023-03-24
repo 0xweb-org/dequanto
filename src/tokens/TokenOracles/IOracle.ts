@@ -15,6 +15,11 @@ export interface IOracleResult {
     quote: ITokenBase
     price: number
     date: Date
+    source?: {
+        name: string
+        address?: TAddress
+        liquidity?: number
+    }
 }
 
 export interface ISwapOptions {

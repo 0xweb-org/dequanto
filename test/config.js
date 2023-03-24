@@ -1,7 +1,6 @@
 module.exports = {
     suites: {
-        selenium : {
-            exec: 'node',
+        node : {
             tests: 'test/**.spec.ts'
         }
     }

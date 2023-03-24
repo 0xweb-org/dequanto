@@ -69,6 +69,19 @@ export namespace BlockChainExplorerFactory {
                 return info;
             }
 
+            async getContractCreation(address: TAddress): Promise<{ creator: TAddress, txHash: string }> {
+                let url = `${this.config.host}/api?module=contract&action=getcontractcreation&contractaddresses=${address}&apikey=${this.config.key}`;
+                let result = await client.get(url);
+                let json = Array.isArray(result) ? result[0] : result;
+                if (json == null) {
+                    throw new Error(`EMPTY_RESPONSE: ContractCreation response is empty for ${address}`);
+                }
+                return {
+                    creator: json.contractCreator,
+                    txHash: json.txHash
+                };
+            }
+
             async getContractAbi (address: TAddress, params?: {
                 // address or slot
                 implementation: TAddress | string
@@ -159,8 +172,6 @@ export namespace BlockChainExplorerFactory {
             }> {
                 let url = `${this.config.host}/api?module=contract&action=getsourcecode&address=${address}&apikey=${this.config.key}`;
                 let result = await client.get(url);
-
-
                 let json = Array.isArray(result) ? result[0] : result;
 
                 function parseSourceCode (contractName: string, code: string): {
@@ -443,7 +454,7 @@ class Client {
             throw new Error(str);
         }
         if (data.result == null) {
-            console.warn(`Blockchain "${url}" explorer returned empty result`, data);
+            $logger.warn(`Blockchain "${url}" explorer returned empty result`, data);
         }
         return data.result;
     }

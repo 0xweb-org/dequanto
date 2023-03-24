@@ -1,10 +1,13 @@
 import { $abiType } from '@dequanto/utils/$abiType';
-import { ISlotVarDefinition, SlotsParser } from '../../SlotsParser';
+import { SlotsParser } from '../../SlotsParser';
 import { SlotsStorage } from '../../SlotsStorage';
 import { $types } from '../../utils/$types';
 import { SlotsStorageTransportForMapping } from '../SlotsStorageTransport';
 import { ASlotsStorageHandler } from '../SlotsStorageHandler';
 import { IAccessorItem } from '../Accessor';
+import { ISlotVarDefinition } from '@dequanto/solidity/SlotsParser/models';
+import alot from 'alot';
+import { File } from 'atma-io';
 
 export class SlotMappingHandler extends ASlotsStorageHandler {
 
@@ -31,19 +34,40 @@ export class SlotMappingHandler extends ASlotsStorageHandler {
     }
 
     async fetchAll () {
-        throw new Error(`SlotMappingReader doesn't support fetchAll method, as size could be infinite`);
+        let mapping = await this.transport.extractMappingKeys({
+            slot: this.slot
+        });
+        let entries = await alot(mapping.keys)
+            .mapAsync(async key => {
+                let accessor = key.map(x => ({ type: 'key', key: x }));
+                let value = await this.get(accessor as any[]);
+                return { key, value }
+            })
+            // Load all keys at once. The underlying layer can handle the batching
+            .toArrayAsync({ threads: mapping.keys.length });
+
+        await File.writeAsync(`./del/keys${this.slot.name}.json`, entries);
+        return alot(entries).toDictionary(x => x.key, x => x.value);
     }
 
-    private async getStorageInner(key: IAccessorItem): Promise<SlotsStorage> {
+    private async getStorageInner(accessor: IAccessorItem): Promise<SlotsStorage> {
 
         let { slot } = this;
         let mapValueType = $abiType.mapping.getValueType(slot.type);
+        let mapKeyType = $abiType.mapping.getKeyType(slot.type);
         let mapValueSlots = await SlotsParser.slotsFromAbi(mapValueType);
+        let key = accessor.key;
+        if (typeof key === 'string' && mapKeyType.includes('int') && isNaN(Number(key)) === false) {
+            // just to fix the errors when we used string literals as the key, for example
+            // mapping(uint => address) foo;
+            // foo['5'] = 5
+            key = Number(key);
+        }
 
         let transport = new SlotsStorageTransportForMapping(
             this.transport,
             this.slot.slot,
-            key.key,
+            key,
             mapValueSlots.length
         );
         let storage = new SlotsStorage(transport, mapValueSlots);

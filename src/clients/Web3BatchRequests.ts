@@ -74,6 +74,7 @@ export namespace Web3BatchRequests {
             });
 
             this.awaitables = this.requests.length - startFromIdx;
+
             batch.execute();
             return this.promise;
         }
@@ -116,7 +117,6 @@ export namespace Web3BatchRequests {
                     .mapAsync(resp => ({ result: resp }))
                     .toArrayAsync({ threads: 1 });
 
-                console.log('!!!!!!!!!!!!!!!!!!!!!!!! callByOne OK');
                 this.promise.resolve(results);
 
             } catch (error) {

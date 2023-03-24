@@ -1,3 +1,4 @@
+import { $types } from '@dequanto/solidity/utils/$types';
 import alot from 'alot';
 import { type AbiInput } from 'web3-utils';
 import { $require } from './$require';
@@ -5,14 +6,10 @@ export namespace $abiType {
 
     export function getTsTypeFromDefinition (type: string) {
         type = type.trim();
-
-        let rgxArray = /\[(?<size>\d+)?\]$/;
-        let isArray = rgxArray.test(type);
-        if (isArray) {
+        if ($types.isArray(type)) {
             let baseType = array.getBaseType(type);
             let baseTsType = getTsTypeFromDefinition(baseType);
-            let match = rgxArray.exec(type);
-            return `${baseTsType}${match[0]}`;
+            return `${baseTsType}[${array.serializeLength(type)}]`;
         }
 
         if (type.startsWith('(')) {
@@ -82,7 +79,7 @@ export namespace $abiType {
             return `{ ${keys} }`;
         }
 
-        if (type.startsWith('mapping')) {
+        if ($types.isMapping(type)) {
             let valueType = $abiType.mapping.getValueType(type);
             let keyType = $abiType.mapping.getKeyType(type);
 
@@ -149,6 +146,10 @@ export namespace $abiType {
 
             return Number(match.groups.len ?? Infinity);
         }
+        export function serializeLength (arrayType: string) {
+            let match = /\[(?<len>\d+)?\]$/.exec(arrayType);
+            return match?.groups?.len ?? '';
+        }
     }
     export namespace mapping {
         export function getKeyType (mappingType: string) {
@@ -177,6 +178,9 @@ export namespace $abiType {
             }
             throw new Error(`Mapping value was not extracted from ${mappingType}`);
         }
+        // export function isMapping (type: string) {
+        //     return type.startsWith('mapping');
+        // }
     }
 
 

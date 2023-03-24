@@ -32,5 +32,9 @@ export namespace BlockChainExplorerProvider {
                 throw new Error(`Unsupported platform ${platform} for block chain explorer`);
         }
     }
+
+    export function create(options) {
+        return BlockChainExplorerFactory.create(options);
+    }
 }
 

@@ -12,9 +12,10 @@ import { ChainlinkFeedProvider, IChainlinkFeedInfo } from './ChainlinkFeedProvid
 import { $require } from '@dequanto/utils/$require';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
+import { $cache } from '@dequanto/utils/$cache';
 
 
-const CACHE_PATH = `.dequanto/cache/chainlink-feeds.json`;
+const CACHE_PATH = $cache.file(`chainlink-feeds.json`);
 
 export class ChainlinkOracle implements IOracle {
 
@@ -81,7 +82,7 @@ export class ChainlinkOracle implements IOracle {
             let key = `cl_feed_${feed.address}`;
             return key;
         },
-        persistance: new memd.FsTransport({ path:  env.appdataDir.combine(CACHE_PATH).toString() })
+        persistance: new memd.FsTransport({ path:  CACHE_PATH })
     })
     private async config (feed: IChainlinkFeedInfo) {
         let reader = this.getReader(feed.platform)

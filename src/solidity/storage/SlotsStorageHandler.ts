@@ -1,5 +1,5 @@
 import { TAddress } from '@dequanto/models/TAddress';
-import { ISlotVarDefinition } from '../SlotsParser';
+import { ISlotVarDefinition } from '../SlotsParser/models';
 import { IAccessorItem } from './Accessor';
 import { ISlotsStorageTransport } from './SlotsStorageTransport';
 

@@ -159,7 +159,8 @@ export class HardhatProvider {
         };
     }
 
-    async deployCode (solidityCode: string, options?: Parameters<HardhatProvider['deploySol']>[1]) {
+    async deployCode (solidityCode: string, options: Parameters<HardhatProvider['deploySol']>[1] = {}) {
+
         let className = /contract\s+(?<name>[\w]+)/.exec(solidityCode).groups.name;
         let rnd = $number.randomInt(0, 10**10);
         let tmp = env.getTmpPath(`hardhat/contracts/${className}_${rnd}.sol`);

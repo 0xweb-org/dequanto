@@ -1,7 +1,6 @@
 import alot from 'alot';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { $require } from '@dequanto/utils/$require';
-import { ISlotVarDefinition } from './SlotsParser';
 import { SlotValueHandler } from './storage/handlers/SlotValueHandler';
 import { SlotFixedArrayHandler } from './storage/handlers/SlotFixedArrayHandler';
 import { SlotDynamicArrayHandler } from './storage/handlers/SlotDynamicArrayHandler';
@@ -13,6 +12,9 @@ import { SlotMappingHandler } from './storage/handlers/SlotMappingHandler';
 import { SlotStringHandler } from './storage/handlers/SlotStringHandler';
 import { Accessor, IAccessorItem } from './storage/Accessor';
 import { SlotStructHandler } from './storage/handlers/SlotStructHandler';
+import { ISlotVarDefinition } from './SlotsParser/models';
+import { $abiType } from '@dequanto/utils/$abiType';
+import { $types } from './utils/$types';
 
 export class SlotsStorage {
 
@@ -31,7 +33,13 @@ export class SlotsStorage {
             return this.fetchAll();
         }
         let { handler } = await this.getStorageFor(keys);
-        return handler.get(keys);
+
+        try {
+            return await handler.get(keys);
+        } catch (error) {
+            error.message += '\n -> ' + path;
+            throw error;
+        }
     }
 
     async set(path: string | IAccessorItem[], value: any): Promise<void> {
@@ -117,6 +125,19 @@ export class SlotsStorage {
         if (keys.length > 0) {
             let key = keys.shift();
             slot = this.slots.find(x => x.name === key.key);
+
+            if (slot == null && this.slots.length === 1 && this.slots[0].name === '') {
+                slot = this.slots[0];
+                let type =  slot.type;
+                // Check if we have the mapping or array, then the key is the mapping key or array index
+                let isDynamicKey = $types.isArray(type) || $types.isMapping(type);
+                if (isDynamicKey) {
+                    keys.unshift(key);
+                } else {
+                    slot = null;
+                }
+            }
+
             $require.notNull(slot, `StateVariable ${key.key} not found. Available: ${this.slots.map(x => x.name).join(', ')}`);
         } else {
             if (this.slots.length !== 1) {

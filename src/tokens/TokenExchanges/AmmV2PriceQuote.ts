@@ -3,23 +3,23 @@ import alot from 'alot';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IToken } from '@dequanto/models/IToken';
-import { AmmV2ExchangeBase } from '../TokenExchanges/AmmV2ExchangeBase';
-import { PancakeswapExchange } from '../TokenExchanges/PancakeswapExchange';
-import { UniswapExchange } from '../TokenExchanges/UniswapExchange';
+import { AmmV2ExchangeBase } from './AmmV2ExchangeBase';
+import { PancakeswapExchange } from './PancakeswapExchange';
+import { UniswapV2Exchange } from './UniswapV2Exchange';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TokenUtils } from '../utils/TokenUtils';
 import { TokensService } from '../TokensService';
 import { $address } from '@dequanto/utils/$address';
 import { LoggerService } from '@dequanto/loggers/LoggerService';
 import { TResult, TResultAsync } from '@dequanto/models/TResult';
-import { TokenPriceStore } from './TokenPriceStore';
+import { TokenPriceStore } from '../TokenOracles/TokenPriceStore';
 import { $bigint } from '@dequanto/utils/$bigint';
-import { AmmPairV2Service, ISwapPool, ISwapPoolInfo } from '../TokenExchanges/AmmBase/V2/AmmPairV2Service';
-import { SushiswapPolygonExchange } from '../TokenExchanges/SushiswapPolygonExchange';
-import { ISwapOptions } from './IOracle';
+import { AmmPairV2Service, ISwapPool, ISwapPoolInfo } from './AmmBase/V2/AmmPairV2Service';
+import { SushiswapPolygonExchange } from './SushiswapPolygonExchange';
+import { ISwapOptions } from '../TokenOracles/IOracle';
 
 
-export class AmmPriceV2Oracle {
+export class AmmV2PriceQuote {
 
     private exchange: AmmV2ExchangeBase
     private tokensService = di.resolve(TokensService, this.client.platform, this.explorer)
@@ -32,7 +32,7 @@ export class AmmPriceV2Oracle {
                 this.exchange = di.resolve(PancakeswapExchange, this.client, this.explorer);
                 break;
             case 'eth':
-                this.exchange = di.resolve(UniswapExchange, this.client, this.explorer);
+                this.exchange = di.resolve(UniswapV2Exchange, this.client, this.explorer);
                 break;
             case 'polygon':
                 this.exchange = di.resolve(SushiswapPolygonExchange, this.client, this.explorer);
@@ -199,7 +199,7 @@ export class TokenRangePriceService {
     private cache = new Map<string,  TResultAsync<ISwapRouted>>()
     private INTERVAL = 5 * 60 * 1000;
 
-    constructor (private service: AmmPriceV2Oracle) {
+    constructor (private service: AmmV2PriceQuote) {
 
     }
 

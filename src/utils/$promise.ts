@@ -1,3 +1,4 @@
+import { TError } from '@dequanto/models/TError';
 import { class_EventEmitter } from 'atma-utils';
 
 export namespace $promise {
@@ -21,6 +22,18 @@ export namespace $promise {
             };
             eventEmitter.on(event, cb);
         });
+    }
+
+    export async function catched<T, TErr extends Error = TError > (fn: () => Promise<T>): Promise<{ result?: T, error?: TError}>
+    export async function catched<T, TErr extends Error = TError & { code?: string | number } > (promise: Promise<T>): Promise<{ result?: T, error?: TError}>
+    export async function catched<T, TErr extends Error = TError & { code?: string | number } > (mix: Promise<T> | (() => Promise<T>)): Promise<{ result?: T, error?: TError}> {
+        try {
+            let promise = typeof mix === 'function' ? mix() : mix;
+            let result = await promise;
+            return { result };
+        } catch (error) {
+            return { error };
+        }
     }
 
     export function timeout<T extends Promise<any>> (promise: T, ms: number): T {

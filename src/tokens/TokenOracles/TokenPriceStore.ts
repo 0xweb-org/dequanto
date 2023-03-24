@@ -2,6 +2,7 @@ import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
 import { JsonObjectStore } from '@dequanto/json/JsonObjectStore';
 import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';
+import { $cache } from '@dequanto/utils/$cache';
 import memd from 'memd';
 
 interface ITokenPriceOptions {
@@ -26,7 +27,7 @@ export class TokenPriceStore {
     }
 
     private store =  new JsonArrayStore<[number, number]>({
-        path: `./db/tokens/${this.token}.json`,
+        path: $cache.file(`tokens/${this.token}.json`),
         key: x => String(x[0])
     });
 

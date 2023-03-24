@@ -162,7 +162,6 @@ export abstract class Web3Client implements IWeb3Client {
         let trace = new ClientPoolTrace();
         trace.action = `Batch requests: ${ requests.map(x => x.address) }`;
         return this.pool.call(async web3 => {
-
             let batch = new Web3BatchRequests.BatchRequest(web3, requests);
             return batch.execute();
         }, {
@@ -271,8 +270,12 @@ export abstract class Web3Client implements IWeb3Client {
         });
     }
     getCode (address: TAddress) {
-        return this.pool.call(web3 => {
-            return web3.eth.getCode(address);
+        return this.pool.call(async web3 => {
+            let code = await web3.eth.getCode(address);
+            if (code === '0x' || code === '') {
+                code = null;
+            }
+            return code;
         })
     }
     getPendingTransactions () {
@@ -309,6 +312,13 @@ export abstract class Web3Client implements IWeb3Client {
     getStorageAt (address: TAddress, position: string | number | bigint, blockNumber?: number) {
         return this.pool.call(web3 => {
             return web3.eth.getStorageAt(address, <any> position, blockNumber);
+        });
+    }
+    getStorageAtBatched (address: TAddress, slots: (string | number | bigint)[], blockNumber?: number) {
+        return this.pool.callBatched({
+            async requests (web3) {
+                return slots.map(position => cb => (web3.eth.getStorageAt as any).request(address, position, blockNumber, cb));
+            }
         });
     }
     getGasPrice (): Promise<{ price: bigint, base?: bigint, priority?: bigint }> {
@@ -377,7 +387,7 @@ export abstract class Web3Client implements IWeb3Client {
         });
     }
 
-    async getPastLogs (options: PastLogsOptions) {
+    async getPastLogs (options: PastLogsOptions): Promise<Log[]> {
         const getBlock = async (block: BlockNumber | Date, $default: string | number) => {
             if (block == null) {
                 return $default;
@@ -537,10 +547,10 @@ namespace RangeWorker {
                 return [ ...(arr1 ?? []), ...(arr2 ?? []) ]
             }
 
-            let maxRangeMatch = /\b(?<maxRange>\d+)\b/.exec(error.message);
+            let maxRangeMatch = /\b(?<maxRange>\d+)\b/.exec(error.message)?.groups?.maxRange;
             if (maxRangeMatch && knownLimits.maxBlockRange == null) {
                 // handle unknown range, otherwise throw
-                let rangeLimit = Number(maxRangeMatch.groups.maxRange);
+                let rangeLimit = Number(maxRangeMatch);
                 return await fetchWithLimits(client, options, {
                     ...knownLimits,
                     maxBlockRange: rangeLimit

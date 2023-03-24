@@ -9,9 +9,9 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { $require } from '@dequanto/utils/$require';
 
 
-export class UniswapExchange extends AmmV2ExchangeBase {
+export class UniswapV2Exchange extends AmmV2ExchangeBase {
 
-    name = 'uniswap'
+    name = 'uniswapV2'
 
     config = $config.get('uniswapV2')
 

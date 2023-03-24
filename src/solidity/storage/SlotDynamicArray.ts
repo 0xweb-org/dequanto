@@ -1,6 +1,7 @@
 import { $abiType } from '@dequanto/utils/$abiType';
 import { $require } from '@dequanto/utils/$require';
-import { ISlotVarDefinition, SlotsParser } from '../SlotsParser';
+import { SlotsParser } from '../SlotsParser';
+import { ISlotVarDefinition } from '../SlotsParser/models';
 import { $types } from '../utils/$types';
 import { ASlotsStorageHandler } from './SlotsStorageHandler';
 

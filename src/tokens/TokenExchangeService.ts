@@ -12,7 +12,7 @@ import { PancakeswapExchange } from './TokenExchanges/PancakeswapExchange';
 import { TokensService } from './TokensService';
 import { TokenUtils } from './utils/TokenUtils';
 import { ERC20 } from '@dequanto/contracts/common/ERC20';
-import { UniswapExchange } from './TokenExchanges/UniswapExchange';
+import { UniswapV2Exchange } from './TokenExchanges/UniswapV2Exchange';
 import { SushiswapPolygonExchange } from './TokenExchanges/SushiswapPolygonExchange';
 import { $logger } from '@dequanto/utils/$logger';
 import { $require } from '@dequanto/utils/$require';
@@ -32,7 +32,7 @@ export class TokenExchangeService {
                 this.stables = ['BUSD', 'USDT'];
                 break;
             case 'eth':
-                this.exchange = di.resolve(UniswapExchange, this.client, this.explorer);
+                this.exchange = di.resolve(UniswapV2Exchange, this.client, this.explorer);
                 this.stables = ['USDC', 'USDT', 'DAI'];
                 break;
             case 'polygon':

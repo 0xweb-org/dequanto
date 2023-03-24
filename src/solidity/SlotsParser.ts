@@ -1,45 +1,23 @@
 import alot from 'alot';
-import memd from 'memd';
 
-import * as parser from '@solidity-parser/parser';
 import type {
     ArrayTypeName,
-    ASTNode,
     ContractDefinition,
     ElementaryTypeName,
-    EnumDefinition,
-    ImportDirective,
     Mapping,
-    SourceUnit,
-    StateVariableDeclaration,
-    StructDefinition,
     TypeName,
-    UserDefinedTypeName,
-    VariableDeclaration
+    UserDefinedTypeName
 } from '@solidity-parser/parser/dist/src/ast-types';
-import { File } from 'atma-io';
+
 import { $require } from '@dequanto/utils/$require';
 import { $abiParser } from '@dequanto/utils/$abiParser';
-import type { AbiInput } from 'web3-utils';
 import { $types } from './utils/$types';
-import { class_Uri } from 'atma-utils';
 import { $abiType } from '@dequanto/utils/$abiType';
-import { $logger } from '@dequanto/utils/$logger';
+import { SourceFile } from './SlotsParser/SourceFile';
+import { Ast } from './SlotsParser/Ast';
+import { ISlotsParserOption, ISlotVarDefinition } from './SlotsParser/models';
 
-export interface ISlotVarDefinition {
-    slot: number
-    position: number
-    name: string
-    type: string
-    size: number
-}
-
-
-interface ISlotsParserOption {
-    /* Optionally provide additional sources in memory */
-    files?: { path: string, content: string }[]
-}
-
+import type { AbiInput } from 'web3-utils';
 export namespace SlotsParser {
 
     export async function slotsFromAbi (abiDef: string): Promise<ISlotVarDefinition[]> {
@@ -473,232 +451,4 @@ namespace Types {
         return Infinity;
     }
 }
-namespace Ast {
-    export function parse(code: string, opts?: { path: string }): SourceUnit {
-        try {
-            const ast = parser.parse(code);
-            return ast;
-        } catch (error) {
-            let path = opts?.path ?? `${code.substring(0, 500)}...`;
-            $logger.error(`Parser error in ${path}`);
-            throw error;
-        }
-    }
 
-    export function getContract (ast: SourceUnit, contractName: string): ContractDefinition {
-        let contracts = ast
-            .children
-            .filter(x => x.type === 'ContractDefinition') as ContractDefinition[];
-
-        if (contractName == null) {
-            return contracts[contracts.length - 1];
-        }
-
-        let contract = contracts.find(x => x.name === contractName);
-        return contract;
-    }
-
-    export function getImports (ast: SourceUnit): ImportDirective[]  {
-        const imports = ast
-            .children
-            .filter(x => x.type === 'ImportDirective') as ImportDirective[];
-        return imports;
-    }
-    export function getVariableDeclarations (contract: ContractDefinition) {
-        let declarations = contract.subNodes.filter(x => x.type === 'StateVariableDeclaration') as StateVariableDeclaration[];
-        let vars = alot(declarations).mapMany(x => x.variables).toArray() as VariableDeclaration[];
-        return vars;
-    }
-    export function getUserDefinedType (node: ContractDefinition | SourceUnit, name: string): (StructDefinition | ContractDefinition | EnumDefinition) & { parent? } {
-        let [ key, ...nestings] = name.split('.');
-        let nodeFound = getUserDefinedTypeRaw(node, key);
-        if (nodeFound == null) {
-            let cursor = node as any;
-            while (nodeFound == null && cursor.parent != null) {
-                nodeFound = getUserDefinedTypeRaw(cursor.parent, key);
-                cursor = cursor.parent;
-            }
-        }
-        while (nestings.length > 0 && nodeFound != null) {
-            key = nestings.shift();
-            nodeFound = getUserDefinedTypeRaw(nodeFound as any, key);
-        }
-        return nodeFound as any;
-    }
-
-    function getUserDefinedTypeRaw (node: ContractDefinition | SourceUnit , name: string): StructDefinition | ContractDefinition | EnumDefinition {
-        let arr = node.type === 'ContractDefinition'
-            ? node.subNodes
-            : node.children;
-
-        let nodeFound = arr
-            .filter(x => x.type === 'StructDefinition' || x.type === 'ContractDefinition' || x.type === 'EnumDefinition')
-            .find(x => (x as any).name === name) as StructDefinition | ContractDefinition | EnumDefinition;
-
-        if (nodeFound) {
-            return nodeFound;
-        }
-        return null;
-    }
-}
-
-type TSourceFileImport = {
-    error?: string
-    path: string
-    file: SourceFile
-}
-
-class SourceFile {
-    public file = new File(this.path);
-    constructor (public path: string, public source?: string, public inMemoryFile?: ISlotsParserOption['files']) {
-
-    }
-
-    @memd.deco.memoize({ perInstance: true })
-    async getAst () {
-        this.source = this.source ?? await this.file.readAsync({ skipHooks: true });
-        if (this.source == null) {
-            throw new Error(`Source not loaded ${this.file.uri.toLocalFile()}`);
-        }
-        let ast = Ast.parse(this.source, { path: this.path });
-
-        ast.children?.forEach(node => {
-            this.reapplyParents(node, ast);
-        });
-        return ast;
-    }
-
-    private reapplyParents (node, parent) {
-        node.parent = parent;
-        let arr = node.children ?? node.subNodes;
-        if (Array.isArray(arr)) {
-            arr.forEach(child => {
-                this.reapplyParents(child, node);
-            });
-        }
-    }
-
-    @memd.deco.memoize({ perInstance: true })
-    async getImports (): Promise<TSourceFileImport[]> {
-        let ast = await this.getAst();
-        let importNodes = Ast.getImports(ast);
-
-        let imports = await alot(importNodes).mapAsync(async node => {
-            return await SourceFileImports.resolveSourceFile(this, node, this.inMemoryFile);
-        }).toArrayAsync();
-
-        return imports;
-    }
-
-    async getContractInheritanceChain(name?: string): Promise<{ file: SourceFile, contract: ContractDefinition }[]> {
-        let contract = await this.getContract(name);
-        if (contract == null) {
-            return [];
-        }
-        if (name == null) {
-            name = contract.name;
-        }
-
-        let chain = [ { file: this as SourceFile, contract } ];
-        if (contract.baseContracts?.length > 0) {
-            let arr = await alot(contract.baseContracts).mapManyAsync(async base => {
-                let name = base.baseName.namePath;
-                let contracts = await this.getContractInheritanceChain(name);
-                if (contracts.length > 0) {
-                    return contracts;
-                }
-                let imports = await this.getImports();
-                let contractFromImport = await alot(imports)
-                    .mapAsync(async imp => {
-                        return await imp.file?.getContractInheritanceChain(name)
-                    })
-                    .filterAsync(arr => arr.length > 0)
-                    .firstAsync();
-
-                if (contractFromImport != null) {
-                    return contractFromImport;
-                }
-                return null;
-            }).toArrayAsync();
-
-            chain.unshift(...arr);
-        }
-        return chain;
-    }
-
-    async getContract (name?: string): Promise<ContractDefinition> {
-        let ast = await this.getAst();
-        let contract = await Ast.getContract(ast, name);
-        return contract;
-    }
-    async getUserDefinedType(name: string, skipImports?: { [path: string]: boolean }): Promise<ContractDefinition | StructDefinition | EnumDefinition> {
-        // Fix infintie recursion of nested imports;
-        skipImports ??= {};
-
-        let ast = await this.getAst();
-        let typeDef = await Ast.getUserDefinedType(ast, name);
-        if (typeDef) {
-            return typeDef;
-        }
-
-        let imports = await this.getImports();
-
-        // Track imports we have already looked in to prevent the infinitive loop
-        imports = imports.filter(x => x.path in skipImports === false);
-        imports.forEach(x => skipImports[x.path] = true);
-
-        typeDef = await alot(imports)
-            .mapAsync(x => x.file?.getUserDefinedType(name, skipImports))
-            .filterAsync(x => x != null)
-            .firstAsync();
-
-        return typeDef;
-    }
-}
-
-namespace SourceFileImports {
-    export async function resolveSourceFile (parent: SourceFile, importNode: ImportDirective, inMemFiles?: { path: string, content: string }[]): Promise<TSourceFileImport> {
-        let importPath = importNode.path;
-        if (inMemFiles != null) {
-            let file = inMemFiles.find(file => {
-                return getFileName(importPath)?.toLowerCase() === getFileName(file.path)?.toLowerCase();
-            });
-            if (file != null) {
-                return {
-                    path: file.path,
-                    file: new SourceFile(file.path, file.content, inMemFiles)
-                };
-            }
-        }
-
-        let parentUri = parent.file.uri as class_Uri;
-        let directory = parentUri.toDir();
-
-        let { path: filePath, lookupPaths } = await findFilePath(directory, importPath);
-        if (filePath == null) {
-            throw new Error(`Import file ${importPath} not found in ${lookupPaths.join(', ')}`);
-        }
-        return {
-            path: filePath,
-            file: new SourceFile(filePath)
-        };
-    }
-
-    async function findFilePath (directory: string, path: string) {
-
-        let paths: string[] = [
-            class_Uri.combine(directory, path),
-            class_Uri.combine(directory,  getFileName(path)),
-            class_Uri.combine('/node_modules/', path),
-        ];
-
-        let found = await alot(paths).findAsync(async path => await File.existsAsync(path));
-        return {
-            path: found,
-            lookupPaths: paths
-        };
-    }
-    function getFileName (path: string) {
-        return /(?<name>[^\\/]+)$/.exec(path)?.groups?.name;
-    }
-}

@@ -58,6 +58,17 @@ export namespace $require {
         }
         return val;
     }
+    export function notEmpty<T extends string | Array<any>> (val: T, message: string): T {
+        if (val == null) {
+            throw new Error(`Value is undefined. ${message}`);
+        }
+        if (typeof val === 'string' && val.trim().length === 0) {
+            throw new Error(`Value is empty string. ${message}`);
+        } else if (Array.isArray(val) && val.length === 0) {
+            throw new Error(`Value is empty array. ${message}`);
+        }
+        return val;
+    }
 
     export function True(value: boolean, message: string) {
         if (value !== true) {

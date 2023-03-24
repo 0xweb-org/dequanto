@@ -16,6 +16,7 @@ import { TokensServiceBsc } from '../TokensServiceBsc';
 import { $is } from '@dequanto/utils/$is';
 import { $address } from '@dequanto/utils/$address';
 import { $require } from '@dequanto/utils/$require';
+import { $cache } from '@dequanto/utils/$cache';
 
 
 interface ILPPair extends IToken {
@@ -33,7 +34,7 @@ export abstract class AmmV2ExchangeBase {
     @memd.deco.memoize({ perInstance: true })
     get pairsStore () {
         return new JsonArrayStore<ILPPair>({
-            path: `/cache/dequanto/${this.client.platform}/amm/${this.name}/pairs.json`,
+            path: $cache.file(`ammv2-pairs.json`),
             key: x => x.address
         });
     }

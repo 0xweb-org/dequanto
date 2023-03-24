@@ -84,18 +84,6 @@ export class ChainlinkFeedProvider {
         let uniqueStats = alot(tokens).distinctBy(x => x.pair[0]).toArray().length;
         l`Feeds with unique base: ${uniqueStats}`;
 
-        let noUSDStats = alot(tokens)
-            .groupBy(x => x.pair[0])
-            .filter(g => {
-                let hasUSD = g.values.some(x => x.pair[1] === 'USD');
-                if (hasUSD === false) {
-                    l`NO USD QUOTE for ${g.key}`;
-                }
-                return hasUSD === false;
-            })
-            .toArray();
-        l`Feed with no USD quote ${ noUSDStats.length}`
-
         await this.store.saveAll(tokens);
         return tokens;
     }

@@ -8,7 +8,7 @@ import { TokensService } from './TokensService';
 import { $address } from '@dequanto/utils/$address';
 import { TResultAsync } from '@dequanto/models/TResult';
 import { ISwapped, ISwapPool, ISwapRouted } from './TokenExchanges/AmmBase/V2/AmmPairV2Service';
-import { AmmPriceV2Oracle } from './TokenOracles/AmmPriceV2Oracle';
+import { AmmV2PriceQuote } from './TokenExchanges/AmmV2PriceQuote';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $logger } from '@dequanto/utils/$logger';
 
@@ -36,7 +36,7 @@ export class TokenPriceService {
 
     private tokens = di.resolve(TokensService, this.client.platform, this.explorer)
     private oracle = di.resolve(
-        AmmPriceV2Oracle
+        AmmV2PriceQuote
         , this.client
         , this.explorer
     );
