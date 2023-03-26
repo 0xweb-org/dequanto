@@ -3,7 +3,6 @@ import { AbiDeserializer } from '@dequanto/contracts/utils/AbiDeserializer';
 import { $abiParser } from '@dequanto/utils/$abiParser';
 import { $buffer } from '@dequanto/utils/$buffer';
 import { $require } from '@dequanto/utils/$require';
-import { ISlotVarDefinition } from '../../SlotsParser';
 import { SlotsStorageTransportForArray } from '../SlotsStorageTransport';
 import { ASlotsStorageHandler } from '../SlotsStorageHandler';
 import { IAccessorItem } from '../Accessor';
@@ -11,6 +10,7 @@ import { $contract } from '@dequanto/utils/$contract';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $hex } from '@dequanto/utils/$hex';
+import { ISlotVarDefinition } from '@dequanto/solidity/SlotsParser/models';
 
 export class SlotStringHandler extends ASlotsStorageHandler {
 
@@ -79,7 +79,7 @@ export class SlotStringHandler extends ASlotsStorageHandler {
         let slotCount = Math.ceil(size / SLOT_SIZE);
 
         $require.Number(slotCount, `Slots count is not a number for ${size}`);
-        $require.True(slotCount < 50, `The string is too big. Prevented to make ${slotCount} requests`);
+        $require.True(slotCount < 50, `The string is too big. Prevented to make ${slotCount} requests in ${this.slot.name} at slot ${this.slot.slot}`);
 
         return await alot
             .fromRange(0, slotCount)

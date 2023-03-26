@@ -11,6 +11,7 @@ const Etherscan_1 = require("./Etherscan");
 const Polyscan_1 = require("./Polyscan");
 const XDaiscan_1 = require("@dequanto/chains/xdai/XDaiscan");
 const _config_1 = require("@dequanto/utils/$config");
+const BlockChainExplorerFactory_1 = require("./BlockChainExplorerFactory");
 const Evmscan_1 = require("./Evmscan");
 var BlockChainExplorerProvider;
 (function (BlockChainExplorerProvider) {
@@ -37,4 +38,8 @@ var BlockChainExplorerProvider;
         }
     }
     BlockChainExplorerProvider.get = get;
+    function create(options) {
+        return BlockChainExplorerFactory_1.BlockChainExplorerFactory.create(options);
+    }
+    BlockChainExplorerProvider.create = create;
 })(BlockChainExplorerProvider = exports.BlockChainExplorerProvider || (exports.BlockChainExplorerProvider = {}));

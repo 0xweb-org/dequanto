@@ -161,10 +161,15 @@ class GeneratorFromAbi {
                 : '';
             storageReaderClass = reader.code;
             storageReaderProperty = property;
-            _logger_1.$logger.log(`Storage Reader generated`);
+            if (property) {
+                _logger_1.$logger.log(`Storage Reader generated`);
+            }
+            else {
+                _logger_1.$logger.log(`Storage Reader NOT generated as the className not found`);
+            }
         }
         catch (error) {
-            _logger_1.$logger.log(`Storage Reader is skipped: ${error.message}`);
+            _logger_1.$logger.log(`Storage Reader is skipped due to the error: ${error.message}`);
         }
         let code = template
             .replace(/\$Etherscan\$/g, EtherscanStr)
@@ -360,7 +365,7 @@ var Gen;
         return `
             // ${_abiUtils_1.$abiUtils.getMethodSignature(abi)}
             async ${abi.name} (${fnInputArguments}): ${fnResult} {
-                return this.$read('${serializeMethodAbi(abi)}'${callInputArguments});
+                return this.$read(this.$getAbiItem('function', '${abi.name}')${callInputArguments});
             }
         `;
     }

@@ -18,7 +18,16 @@ class ContractReader {
         this.client = client;
         this.options = {};
     }
-    forBlock(blockNumber) {
+    forBlock(mix) {
+        if (mix == null) {
+            return this;
+        }
+        if (typeof mix === 'number') {
+            return this.forBlockNumber(mix);
+        }
+        return this.forBlockAt(mix);
+    }
+    forBlockNumber(blockNumber) {
         this.blockNumberTask = blockNumber == null
             ? null
             : Promise.resolve(blockNumber);
@@ -139,10 +148,10 @@ var ContractReaderUtils;
                 options: request.options
             };
         }).toArrayAsync();
-        let results = await client.readContractBatch(reqs);
-        return results.map((result, i) => {
-            if (result == null || result instanceof Error) {
-                return result;
+        let outputs = await client.readContractBatch(reqs);
+        return outputs.map(({ result, error }, i) => {
+            if (result == null || error != null) {
+                return { error: error ?? new Error(`Empty output`) };
             }
             let outputs = reqs[i].abi[0].outputs;
             return AbiDeserializer_1.AbiDeserializer.process(result, outputs);

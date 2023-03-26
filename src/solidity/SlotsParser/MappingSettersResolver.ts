@@ -50,7 +50,7 @@ type TEventEmitStatement = {
     abi?: AbiItem
     name: string;
     args: {
-        node: Identifier | IndexAccess | MemberAccess;
+        node: Identifier | IndexAccess | MemberAccess | FunctionCall;
         key: any;
         location: TVariableLocation;
     }[]
@@ -83,7 +83,7 @@ export namespace MappingSettersResolver {
                 return await extractSettersSingle(
                     mappingVarName,
                     item.contract,
-                    chain.slice(0, i).reverse()
+                    chain.slice(0, i)
                 );
             })
             .toArrayAsync({ threads: 1 });

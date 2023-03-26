@@ -47,7 +47,22 @@ var BlockChainExplorerFactory;
                 let info = this.localDb.find(x => x.address.toLowerCase() === q || x.name?.toLowerCase() === q);
                 return info;
             }
+            async getContractCreation(address) {
+                let url = `${this.config.host}/api?module=contract&action=getcontractcreation&contractaddresses=${address}&apikey=${this.config.key}`;
+                let result = await client.get(url);
+                let json = Array.isArray(result) ? result[0] : result;
+                if (json == null) {
+                    throw new Error(`EMPTY_RESPONSE: ContractCreation response is empty for ${address}`);
+                }
+                return {
+                    creator: json.contractCreator,
+                    txHash: json.txHash
+                };
+            }
             async getContractAbi(address, params) {
+                if (_address_1.$address.isValid(params?.implementation)) {
+                    return this.getContractAbi(params.implementation);
+                }
                 let info = await this.getContractMeta(address);
                 if (info?.proxy) {
                     address = info.proxy;
@@ -69,8 +84,8 @@ var BlockChainExplorerFactory;
                 if (params?.implementation) {
                     if (/0x.{64}/.test(params.implementation)) {
                         let web3 = opts.getWeb3(this.platform);
-                        let uin256Hex = await web3.getStorageAt('0x5a58505a96d1dbf8df91cb21b54419fc36e93fde', `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`);
-                        let hex = uin256Hex.replace(/0x0+/, '0x');
+                        let uin256Hex = await web3.getStorageAt(address, params.implementation);
+                        let hex = _address_1.$address.fromBytes32(uin256Hex);
                         return this.getContractAbi(hex);
                     }
                     throw new Error(`Implement ${params.implementation} support`);
@@ -83,37 +98,79 @@ var BlockChainExplorerFactory;
                         // keccak-256 hash of "org.zeppelinos.proxy.implementation"
                         uint256Hex = await web3.getStorageAt(address, `0x7050c9e0f4ca769c69bd3a8ef740bc37934f8e2c036e5a723fd8ee048ed3f8c3`);
                     }
-                    let hex = uint256Hex.replace(/0x0+/, '0x');
+                    let hex = _address_1.$address.fromBytes32(uint256Hex);
                     return this.getContractAbi(hex);
                 }
                 if (hasImplementationSlot(abiJson)) {
                     let web3 = opts.getWeb3(this.platform);
-                    let uin256Hex = await web3.readContract({
+                    let implAddress = await web3.readContract({
                         address: address,
                         abi: abiJson,
                         method: 'implementation',
                         arguments: []
                     });
-                    let hex = uin256Hex.replace(/0x0+/, '0x');
-                    return this.getContractAbi(hex);
+                    return this.getContractAbi(implAddress);
                 }
                 if (hasTargetSlot(abiJson)) {
                     let web3 = opts.getWeb3(this.platform);
-                    let uin256Hex = await web3.readContract({
+                    let implAddress = await web3.readContract({
                         address: address,
                         abi: abiJson,
                         method: 'getTarget',
                         arguments: []
                     });
-                    let hex = uin256Hex.replace(/0x0+/, '0x');
-                    return this.getContractAbi(hex);
+                    return this.getContractAbi(implAddress);
                 }
                 return { abi, implementation: address };
             }
             async getContractSource(address) {
                 let url = `${this.config.host}/api?module=contract&action=getsourcecode&address=${address}&apikey=${this.config.key}`;
                 let result = await client.get(url);
-                return Array.isArray(result) ? result[0] : result;
+                let json = Array.isArray(result) ? result[0] : result;
+                function parseSourceCode(contractName, code) {
+                    if (typeof code !== 'string') {
+                        return code;
+                    }
+                    if (/^\s*\{/.test(code) === false) {
+                        // single source code (not a serialized JSON)
+                        return {
+                            contractName: contractName,
+                            files: {
+                                [`${contractName}.sol`]: {
+                                    content: code
+                                }
+                            }
+                        };
+                    }
+                    try {
+                        let sources = parseJson(code);
+                        let files = sources.sources ?? sources;
+                        return {
+                            contractName: contractName,
+                            files
+                        };
+                    }
+                    catch (error) {
+                        throw new Error(`Source code (${url}) can't be parsed: ${error.message}`);
+                    }
+                }
+                function parseJson(str) {
+                    try {
+                        return JSON.parse(str);
+                    }
+                    catch (error) {
+                        // etherscan returns code wrapped into {{}}
+                    }
+                    str = str
+                        .replace(/\{\{/g, '{')
+                        .replace(/\}\}/g, '}');
+                    // @TODO check etherscan serialized jsons. Does it always has "{{...}}" wrappings
+                    return JSON.parse(str);
+                }
+                return {
+                    ...json,
+                    SourceCode: parseSourceCode(json.ContractName, json.SourceCode)
+                };
             }
             async getTransactions(addr, params) {
                 return this.loadTxs('txlist', addr, params);
@@ -308,7 +365,7 @@ class Client {
             throw new Error(str);
         }
         if (data.result == null) {
-            console.warn(`Blockchain "${url}" explorer returned empty result`, data);
+            _logger_1.$logger.warn(`Blockchain "${url}" explorer returned empty result`, data);
         }
         return data.result;
     }

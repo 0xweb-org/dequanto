@@ -52,6 +52,14 @@ var ChainAccountProvider;
         return wallet.address;
     }
     ChainAccountProvider.getAddressFromKey = getAddressFromKey;
+    function getAccountFromMnemonic(mnemonic, index = 0) {
+        const wallet = ethers_1.Wallet.fromMnemonic(mnemonic, `m/44'/60'/0'/${index}`);
+        return {
+            key: wallet.privateKey,
+            address: wallet.address,
+        };
+    }
+    ChainAccountProvider.getAccountFromMnemonic = getAccountFromMnemonic;
     function generate(opts) {
         const bytes = _crypto_1.$crypto.randomBytes(32);
         const wallet = new ethers_1.Wallet(bytes);

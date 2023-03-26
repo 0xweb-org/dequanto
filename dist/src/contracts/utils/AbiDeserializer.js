@@ -8,6 +8,10 @@ const _abiParser_1 = require("../../utils/$abiParser");
 var AbiDeserializer;
 (function (AbiDeserializer) {
     function process(result, types) {
+        if (types == null || types.length === 0) {
+            // return as-is
+            return result;
+        }
         let type = _abiParser_1.$abiParser.getReturnTypeFromTypes(types);
         if (typeof result === 'object') {
             if (type === 'array') {

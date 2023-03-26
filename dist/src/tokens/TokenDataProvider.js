@@ -57,7 +57,7 @@ class TokenDataProvider {
             ? await this.getTokenByAddress(mix, false)
             : await this.getTokenBySymbol(mix, false);
         if (token == null) {
-            throw new Error(`Token ${mix} not found`);
+            throw new Error(`Token ${mix} not found for "${this.platform}"`);
         }
         return token;
     }

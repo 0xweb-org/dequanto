@@ -4,19 +4,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.$abiType = void 0;
+const _types_1 = require("@dequanto/solidity/utils/$types");
 const alot_1 = __importDefault(require("alot"));
 const _require_1 = require("./$require");
 var $abiType;
 (function ($abiType_1) {
     function getTsTypeFromDefinition(type) {
         type = type.trim();
-        let rgxArray = /\[(?<size>\d+)?\]$/;
-        let isArray = rgxArray.test(type);
-        if (isArray) {
+        if (_types_1.$types.isArray(type)) {
             let baseType = array.getBaseType(type);
             let baseTsType = getTsTypeFromDefinition(baseType);
-            let match = rgxArray.exec(type);
-            return `${baseTsType}${match[0]}`;
+            return `${baseTsType}[${array.serializeLength(type)}]`;
         }
         if (type.startsWith('(')) {
             let entries = [];
@@ -78,7 +76,7 @@ var $abiType;
             let keys = entries.map(x => `${x.name}: ${x.ts}`).join(', ');
             return `{ ${keys} }`;
         }
-        if (type.startsWith('mapping')) {
+        if (_types_1.$types.isMapping(type)) {
             let valueType = $abiType.mapping.getValueType(type);
             let keyType = $abiType.mapping.getKeyType(type);
             let keyTsType = getTsTypeFromDefinition(keyType);
@@ -141,6 +139,11 @@ var $abiType;
             return Number(match.groups.len ?? Infinity);
         }
         array.getLength = getLength;
+        function serializeLength(arrayType) {
+            let match = /\[(?<len>\d+)?\]$/.exec(arrayType);
+            return match?.groups?.len ?? '';
+        }
+        array.serializeLength = serializeLength;
     })(array = $abiType_1.array || ($abiType_1.array = {}));
     let mapping;
     (function (mapping) {
@@ -171,6 +174,9 @@ var $abiType;
             throw new Error(`Mapping value was not extracted from ${mappingType}`);
         }
         mapping.getValueType = getValueType;
+        // export function isMapping (type: string) {
+        //     return type.startsWith('mapping');
+        // }
     })(mapping = $abiType_1.mapping || ($abiType_1.mapping = {}));
     const AbiTsTypes = {
         'enum': 'number',

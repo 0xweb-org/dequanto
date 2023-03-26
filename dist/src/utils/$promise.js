@@ -20,6 +20,17 @@ var $promise;
         });
     }
     $promise.fromEvent = fromEvent;
+    async function catched(mix) {
+        try {
+            let promise = typeof mix === 'function' ? mix() : mix;
+            let result = await promise;
+            return { result };
+        }
+        catch (error) {
+            return { error };
+        }
+    }
+    $promise.catched = catched;
     function timeout(promise, ms) {
         let err = new Error(`Promise timeouted in ${ms}ms`);
         return new Promise((resolve, reject) => {

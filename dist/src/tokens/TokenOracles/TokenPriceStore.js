@@ -11,6 +11,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TokenPriceStore = void 0;
 const JsonArrayStore_1 = require("@dequanto/json/JsonArrayStore");
+const _cache_1 = require("@dequanto/utils/$cache");
 const memd_1 = __importDefault(require("memd"));
 class TokenPriceStore {
     constructor(token) {
@@ -18,7 +19,7 @@ class TokenPriceStore {
         this.prices = [];
         this.pricesIdx = {};
         this.store = new JsonArrayStore_1.JsonArrayStore({
-            path: `./db/tokens/${this.token}.json`,
+            path: _cache_1.$cache.file(`tokens/${this.token}.json`),
             key: x => String(x[0])
         });
     }

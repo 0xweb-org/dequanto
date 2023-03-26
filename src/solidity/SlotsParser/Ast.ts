@@ -21,10 +21,11 @@ import {
 import { $logger } from '@dequanto/utils/$logger';
 
 export namespace Ast {
-    export function parse(code: string, opts?: { path: string; }): SourceUnit {
+    export function parse(code: string, opts?: { path: string; }): { ast: SourceUnit, version: string } {
         try {
             const ast = parser.parse(code);
-            return ast;
+            const version = /pragma[^\d]+(?<version>[\d\.]+)/.exec(code)?.groups?.version;
+            return { ast, version };
         } catch (error) {
             let path = opts?.path ?? `${code.substring(0, 500)}...`;
             $logger.error(`Parser error in ${path}`);

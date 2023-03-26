@@ -8,6 +8,7 @@ const web3_1 = __importDefault(require("web3"));
 const ethers_1 = require("ethers");
 const _contract_1 = require("./$contract");
 const _abiParser_1 = require("./$abiParser");
+const _is_1 = require("./$is");
 var $abiUtils;
 (function ($abiUtils) {
     function encodePacked(...args) {
@@ -41,6 +42,10 @@ var $abiUtils;
     }
     $abiUtils.getMethodSignature = getMethodSignature;
     function getTopicSignature(abi) {
+        if (_is_1.$is.hexString(abi.name)) {
+            // anonymous event
+            return abi.name;
+        }
         let types = abi.inputs?.map(serializeMethodSignatureArgumentType) ?? [];
         let signature = `${abi.name}(${types.join(',')})`;
         let hash = _contract_1.$contract.keccak256(signature);

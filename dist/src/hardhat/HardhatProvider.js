@@ -69,6 +69,7 @@ class HardhatProvider {
         const signer = options?.deployer ?? this.deployer();
         const dir = solContractPath.replace(/[^\/]+$/, '');
         const filename = /(?<filename>[^\/]+)\.\w+$/.exec(solContractPath)?.groups.filename;
+        const filenameRndSuffix = filename.replace(/_\d+$/, '');
         let root = options?.paths?.root;
         let artifacts = options?.paths?.artifacts;
         if (filename == null) {
@@ -93,7 +94,6 @@ class HardhatProvider {
         }
         let outputDir = atma_utils_1.class_Uri.combine(artifacts, solContractPath);
         let output = atma_utils_1.class_Uri.combine(outputDir, `${filename}.json`);
-        console.log(`Compiled OK Output ${output} outputDir ${outputDir}`);
         if (await atma_io_1.File.existsAsync(output) === false) {
             let path = `${outputDir}/`;
             if (await atma_io_1.Directory.existsAsync(path) === false) {
@@ -102,17 +102,18 @@ class HardhatProvider {
             let files = await atma_io_1.Directory.readFilesAsync(path);
             let jsons = files.filter(x => /(?<!dbg)\.json$/.test(x.uri.file));
             if (jsons.length === 0) {
-                throw new Error(`No JSONs output found in ${outputDir}`);
+                throw new Error(`No JSONs output found in "${outputDir}/"`);
             }
             if (jsons.length === 1) {
                 output = jsons[0].uri.toString();
             }
             else {
                 let jsonFile = jsons.find(file => {
-                    return filename.includes(file.uri.filename);
+                    return file.uri.file === `${filename}.json` || file.uri.file === `${filenameRndSuffix}.json`;
                 });
                 if (jsonFile == null) {
-                    throw new Error(`Compiled JSON data not found for ${filename} in ${outputDir}`);
+                    _logger_1.$logger.log(`Files: ${files.map(file => file.uri.file).join(', ')}`);
+                    throw new Error(`Compiled JSON data not found for "${filename}" in "${outputDir}/"`);
                 }
                 output = jsonFile.uri.toString();
             }
@@ -127,8 +128,9 @@ class HardhatProvider {
             bytecode
         };
     }
-    async deployCode(solidityCode, options) {
-        let className = /contract\s+(?<name>[\w]+)/.exec(solidityCode).groups.name;
+    async deployCode(solidityCode, options = {}) {
+        let matches = Array.from(solidityCode.matchAll(/contract\s+(?<name>[\w]+)/g));
+        let className = matches[matches.length - 1].groups.name;
         let rnd = _number_1.$number.randomInt(0, 10 ** 10);
         let tmp = atma_io_1.env.getTmpPath(`hardhat/contracts/${className}_${rnd}.sol`);
         let root = tmp.replace(/contracts\/[^/]+$/, '');
@@ -140,7 +142,7 @@ class HardhatProvider {
             return await this.deploySol(tmp, options);
         }
         finally {
-            await atma_io_1.Directory.removeAsync(root);
+            //await Directory.removeAsync(root);
         }
     }
     getEthersProvider(client) {

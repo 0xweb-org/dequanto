@@ -59,6 +59,9 @@ class ContractBase {
         return $contract;
     }
     forBlock(mix) {
+        if (mix == null) {
+            return this;
+        }
         if (typeof mix === 'undefined' || typeof mix === 'number') {
             return this.forBlockNumber(mix);
         }
@@ -214,7 +217,7 @@ class ContractBase {
             reader.forBlockAt(this.blockDate);
         }
         if (this.blockNumber != null) {
-            reader.forBlock(this.blockNumber);
+            reader.forBlockNumber(this.blockNumber);
         }
         let from = this.builderConfig?.from;
         if (from != null) {

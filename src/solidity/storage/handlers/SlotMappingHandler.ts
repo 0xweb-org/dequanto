@@ -46,7 +46,6 @@ export class SlotMappingHandler extends ASlotsStorageHandler {
             // Load all keys at once. The underlying layer can handle the batching
             .toArrayAsync({ threads: mapping.keys.length });
 
-        await File.writeAsync(`./del/keys${this.slot.name}.json`, entries);
         return alot(entries).toDictionary(x => x.key, x => x.value);
     }
 

@@ -22,6 +22,9 @@ const atma_utils_1 = require("atma-utils");
 const ClientErrorUtil_1 = require("./utils/ClientErrorUtil");
 const _logger_1 = require("@dequanto/utils/$logger");
 const _promise_1 = require("@dequanto/utils/$promise");
+const _array_1 = require("@dequanto/utils/$array");
+const RateLimitGuard_1 = require("./handlers/RateLimitGuard");
+const Web3BatchRequests_1 = require("./Web3BatchRequests");
 class ClientPool {
     constructor(config) {
         this.discoveredPartial = false;
@@ -50,7 +53,16 @@ class ClientPool {
         }
         throw result;
     }
+    async callBatched(args, opts) {
+        return this.call(async (web3, wClient) => {
+            let requests = await args.requests(web3);
+            let results = await wClient.callBatched(requests);
+            let mapped = args?.map?.(results) ?? results;
+            return mapped;
+        }, opts);
+    }
     async call(fn, opts) {
+        // Client - Retries
         let used = new Map();
         let errors = [];
         while (true) {
@@ -66,20 +78,35 @@ class ClientPool {
                 }
                 throw ClientPoolStats_1.ClientPoolTraceError.create(error, opts?.trace);
             }
-            let { status, result, error, time } = await wClient.call(fn);
+            let wClientUsage = used.get(wClient);
+            let { status, result, error, time } = await wClient.call(fn, opts);
             opts
                 ?.trace
                 ?.onComplete({ status, error, time, url: wClient.config.url });
-            used.set(wClient, 1);
+            if (wClientUsage == null) {
+                // per default NO_RETRIES
+                used.set(wClient, 0);
+            }
+            else {
+                // decrease retry count
+                used.set(wClient, wClientUsage - 1);
+            }
             errors.push(error ?? result);
             if (status == ClientStatus_1.ClientStatus.Ok) {
                 return result;
+            }
+            if (status == ClientStatus_1.ClientStatus.RateLimited) {
+                if (wClientUsage == null) {
+                    const RETRIES = 5;
+                    used.set(wClient, RETRIES);
+                }
             }
             if (status === ClientStatus_1.ClientStatus.CallError) {
                 let error = ClientPoolStats_1.ClientPoolTraceError.create(errors.pop(), opts?.trace);
                 throw error;
                 return result;
             }
+            // if not the CallError, process the while loop to check another NodeProvider
         }
     }
     async getWeb3(options) {
@@ -228,39 +255,6 @@ class ClientPool {
         });
         return nodes;
     }
-    // callSubscribtion <TResult> (
-    //     event: any
-    //     , cb: (error, result) => void
-    //     , opts?: { preferSafe?: boolean }
-    //     , used:  Map<WClient, number> = new  Map<WClient, number>()
-    //     , errors = []
-    //     , root?: PromiEventWrap
-    // ) {
-    //     root = root ?? new PromiEventWrap();
-    //     let wClient = this.next(used);
-    //     if (wClient == null) {
-    //         setTimeout(() => {
-    //             let error = new Error('Clients not found');
-    //             root.emit('error', error);
-    //             root.reject(error);
-    //         });
-    //         return root as any as TResult;
-    //     }
-    //     let promiEvent = wClient.callSubscription(fn);
-    //     root.bind(promiEvent);
-    //     promiEvent.on('error', error => {
-    //         if (ErrorUtil.isConnectionFailed(error)) {
-    //             this.callPromiEvent(
-    //                 fn, opts, used, errors, root
-    //             );
-    //             return;
-    //         }
-    //         root.emit('error', error);
-    //         root.reject(error);
-    //     });
-    //     used.set(wClient, 1);
-    //     return root as any as TResult;
-    // }
     async next(used, opts, params) {
         let clients = this.clients;
         if (params?.manual !== true) {
@@ -299,7 +293,7 @@ class ClientPool {
         }
         let available = used == null
             ? clients
-            : clients.filter(x => used.has(x) === false);
+            : clients.filter(x => used.has(x) === false || used.get(x) > 0);
         if (available.length === 0) {
             if (this.discoveredFull === false) {
                 await this.discoverLive().completed;
@@ -324,9 +318,31 @@ class ClientPool {
         let arr = healthy.length > 0
             ? healthy
             : available;
-        let i = _number_1.$number.randomInt(0, arr.length);
-        let client = arr[i];
-        return client;
+        return await this.getClientWithLowestWaitTime(arr);
+    }
+    async getClientWithLowestWaitTime(clients) {
+        if (clients.length === 0) {
+            return null;
+        }
+        clients = _array_1.$array.shuffle(clients);
+        let minWait = Infinity;
+        let minClient = null;
+        for (let i = 0; i < clients.length; i++) {
+            let client = clients[i];
+            let waitMs = client.getRateLimitGuardTime();
+            if (waitMs === 0) {
+                return client;
+            }
+            if (minWait > waitMs) {
+                minWait = waitMs;
+                minClient = client;
+            }
+        }
+        const MAX_WAIT = 60000;
+        if (minWait > MAX_WAIT) {
+            throw new Error(`rate limit overflows. Waiting ${minWait}ms`);
+        }
+        return minClient;
     }
     /**
      * We may have tens of Nodes to communicate with. Discover LIVE and operating nodes.
@@ -439,7 +455,7 @@ exports.ClientPool = ClientPool;
 class WClient {
     constructor(mix) {
         this.lastStatus = 0;
-        this.lastDate = new Date(2000);
+        this.lastDate = new Date(2000).getTime();
         this.status = 'ok';
         this.requests = {
             success: 0,
@@ -467,6 +483,13 @@ class WClient {
         }
         this.web3.eth.handleRevert = true;
         this.eth = this.web3.eth;
+        if (mix.rateLimit) {
+            let rates = RateLimitGuard_1.RateLimitGuard.parseRateLimit(mix.rateLimit);
+            this.rateLimitGuard = new RateLimitGuard_1.RateLimitGuard({
+                id: this.config?.url ?? 'web3',
+                rates: rates
+            });
+        }
     }
     healthy() {
         if (this.getRequestCount() === 0) {
@@ -479,10 +502,19 @@ class WClient {
         if (health > .5) {
             return true;
         }
-        if (Date.now() - this.lastDate.getTime() > _date_1.$date.parseTimespan('10m')) {
+        if (Date.now() - this.lastDate > _date_1.$date.parseTimespan('10m')) {
             return true;
         }
         return false;
+    }
+    updateRateLimitInfo(info) {
+        if (this.rateLimitGuard == null) {
+            this.rateLimitGuard = new RateLimitGuard_1.RateLimitGuard({
+                id: this.config.url ?? 'web3',
+                rates: []
+            });
+        }
+        this.rateLimitGuard.updateRateLimitInfo(info);
     }
     async send(fn) {
         return new Promise((resolve, reject) => {
@@ -501,35 +533,54 @@ class WClient {
             });
         });
     }
-    // async call <TResult> (fn: (web3: Web3) => Promise<TResult> ): Promise<{ status: number, result?: TResult }> {
-    //     try {
-    //         let result = await fn(this.web3);
-    //         this.lastStatus = Status.Ok;
-    //         this.requests.success++;
-    //         return { status: Status.Ok, result };
-    //     } catch (error) {
-    //         console.log(error);
-    //         if (this.isConnectionFailed (error)) {
-    //             this.lastStatus = Status.NetworkError;
-    //             this.requests.fail++;
-    //             return { status: Status.NetworkError, result: error };
-    //         }
-    //         return { status: Status.CallError, result: error }
-    //     }
-    // }
-    async call(fn) {
+    async callBatched(requests) {
+        let spanLimit = this.rateLimitGuard?.getSpanLimit() ?? requests.length;
+        let output = [];
+        let errors = [];
+        while (requests.length > 0) {
+            let page = requests.splice(0, spanLimit);
+            let { status, error, result: pageResult } = await this.call(async (web3) => {
+                let batch = new Web3BatchRequests_1.Web3BatchRequests.BatchRequest(web3, page);
+                let results = await batch.execute();
+                return results;
+            });
+            if (status === ClientStatus_1.ClientStatus.Ok) {
+                let batchResults = pageResult.map(x => x.result);
+                output.push(...batchResults);
+                continue;
+            }
+            if (status === ClientStatus_1.ClientStatus.RateLimited) {
+                spanLimit = this.rateLimitGuard?.getSpanLimit() ?? requests.length;
+            }
+            errors.push(error);
+            if (errors.length > 2) {
+                throw error;
+            }
+            requests.unshift(...page);
+        }
+        return output;
+    }
+    async call(fn, options) {
+        let now = Date.now();
+        await this.rateLimitGuard?.wait(options?.batchRequestCount ?? 1, now);
         return new Promise((resolve, reject) => {
             let start = Date.now();
-            let result = fn(this.web3);
-            result.then(_ => {
+            let result = fn(this.web3, this);
+            result.then(result => {
                 let time = Date.now() - start;
                 let status = ClientStatus_1.ClientStatus.Ok;
                 this.onComplete(status, time);
+                this.rateLimitGuard?.onComplete(now);
                 resolve({ status, result, time });
             }, error => {
                 let time = Date.now() - start;
                 let status = ClientStatus_1.ClientStatus.CallError;
-                if (ClientErrorUtil_1.ClientErrorUtil.isConnectionFailed(error)) {
+                if (RateLimitGuard_1.RateLimitGuard.isRateLimited(error)) {
+                    status = ClientStatus_1.ClientStatus.RateLimited;
+                    let rateLimitInfo = RateLimitGuard_1.RateLimitGuard.extractRateLimitFromError(error);
+                    this.updateRateLimitInfo(rateLimitInfo);
+                }
+                else if (ClientErrorUtil_1.ClientErrorUtil.isConnectionFailed(error)) {
                     status = ClientStatus_1.ClientStatus.NetworkError;
                 }
                 this.onComplete(status, time);
@@ -565,32 +616,6 @@ class WClient {
         });
         return result;
     }
-    // getEventStream (address: TAddress, abi: AbiItem[], event: string, options = {}): ClientEventsStream {
-    //     let eventAbi = abi.find(x => x.type === 'event' && x.name === event);
-    //     if (eventAbi == null) {
-    //         let events = abi.filter(x => x.type === 'event').map(x => x.name).join(', ');
-    //         throw new Error(`Event "${event}" not present in ABI. Events: ${ events }`);
-    //     }
-    //     let stream = new ClientEventsStream(this.address, this.abi)
-    //     this
-    //         .client
-    //         .subscribe('logs', {
-    //             address: this.address,
-    //             fromBlock: 'latest'
-    //         })
-    //         .then(subscription => {
-    //             stream.fromSubscription(subscription);
-    //         }, error => {
-    //             stream.error(error);
-    //         });
-    //     return stream;
-    //     // const contract = new this.eth.Contract(abi, address);
-    //     // const stream =  contract
-    //     //     .events
-    //     //     [event](options);
-    //     // const worker = new ClientEventsStream(address, eventAbi, stream)
-    //     // return worker;
-    // }
     callSync(fn) {
         try {
             let result = fn(this.web3);
@@ -616,5 +641,11 @@ class WClient {
     }
     getRequestCount() {
         return this.requests.success + this.requests.fail;
+    }
+    /**
+     * Checks the rate limit wait time, so that the POOL can select the wClient with shortest wait time
+     **/
+    getRateLimitGuardTime() {
+        return this.rateLimitGuard?.checkWaitTime() ?? 0;
     }
 }

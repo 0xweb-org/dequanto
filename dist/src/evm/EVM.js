@@ -5,13 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EVM = void 0;
 const alot_1 = __importDefault(require("alot"));
-const opcodes_1 = require("./opcodes");
+const OpcodesInfo_1 = require("./OpcodesInfo");
 const JsonObjectStore_1 = require("@dequanto/json/JsonObjectStore");
 const _path_1 = require("@dequanto/utils/$path");
 const _abiParser_1 = require("@dequanto/utils/$abiParser");
 const Stack_1 = __importDefault(require("./Stack"));
 const OpcodesWalker_1 = require("./OpcodesWalker");
 const _logger_1 = require("@dequanto/utils/$logger");
+const _abiUtils_1 = require("@dequanto/utils/$abiUtils");
 /**
  * Functions to SKIP
  * 08c379a0 - Error(string)
@@ -68,7 +69,7 @@ class EVM {
     getOpcodes() {
         if (this.opcodes.length === 0) {
             for (let index = 0; index < this.code.length; index++) {
-                const currentOp = (0, opcodes_1.findOpcode)(this.code[index], true);
+                const currentOp = OpcodesInfo_1.OpcodesInfo.get(this.code[index], true);
                 currentOp.pc = index;
                 this.opcodes.push(currentOp);
                 if (currentOp.name.startsWith('PUSH')) {
@@ -130,6 +131,25 @@ class EVM {
             .filter(x => SKIP.includes(x) === false);
         let fns = await this.resolveFunctions(hashes);
         return fns;
+    }
+    async checkInterfaceOf(iface) {
+        if (iface == null || iface.length === 0) {
+            return { ok: false };
+        }
+        let methods = await this.getFunctions();
+        for (let item of iface) {
+            if (typeof item === 'string') {
+                item = _abiParser_1.$abiParser.parseMethod(item);
+            }
+            if (item.type !== 'function') {
+                continue;
+            }
+            let inAbi = methods.some(x => x.signature === _abiUtils_1.$abiUtils.getMethodSignature(item));
+            if (inAbi === false) {
+                return { ok: false, missing: item.name };
+            }
+        }
+        return { ok: true };
     }
     async resolveFunctions(hashes) {
         let fns = await this.store.functions.get();

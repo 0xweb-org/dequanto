@@ -67,7 +67,7 @@ class SlotStringHandler extends SlotsStorageHandler_1.ASlotsStorageHandler {
         let SLOT_SIZE = 64;
         let slotCount = Math.ceil(size / SLOT_SIZE);
         _require_1.$require.Number(slotCount, `Slots count is not a number for ${size}`);
-        _require_1.$require.True(slotCount < 50, `The string is too big. Prevented to make ${slotCount} requests`);
+        _require_1.$require.True(slotCount < 50, `The string is too big. Prevented to make ${slotCount} requests in ${this.slot.name} at slot ${this.slot.slot}`);
         return await alot_1.default
             .fromRange(0, slotCount)
             .mapAsync(async (i) => {

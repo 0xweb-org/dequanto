@@ -19,11 +19,11 @@ const BlockDateResolver_1 = require("@dequanto/blocks/BlockDateResolver");
 const _number_1 = require("@dequanto/utils/$number");
 const _txData_1 = require("@dequanto/utils/$txData");
 const _logger_1 = require("@dequanto/utils/$logger");
-const atma_utils_1 = require("atma-utils");
 const _promise_1 = require("@dequanto/utils/$promise");
 const ClientEventsStream_1 = require("./ClientEventsStream");
 const _abiUtils_1 = require("@dequanto/utils/$abiUtils");
 const ClientDebugMethods_1 = require("./debug/ClientDebugMethods");
+const Web3BatchRequests_1 = require("./Web3BatchRequests");
 class Web3Client {
     constructor(mix) {
         this.TIMEOUT = 3 * 60 * 1000;
@@ -97,6 +97,7 @@ class Web3Client {
     readContract(data) {
         let { address, method, abi, options, blockNumber, arguments: params } = data;
         return this.pool.call(async (web3) => {
+            let sig = abi[0].signature;
             let contract = new web3.eth.Contract(abi, address);
             let callArgs = [];
             if (options != null) {
@@ -105,6 +106,10 @@ class Web3Client {
             if (blockNumber != null) {
                 callArgs[0] = null;
                 callArgs[1] = blockNumber;
+            }
+            if (sig) {
+                // If signature was provided in ABI (ensure we reset it to ABI, as eth.Contract constructor recalculates method signatures)
+                abi[0].signature = sig;
             }
             let result = await contract.methods[method](...params).call(...callArgs);
             return result;
@@ -116,10 +121,11 @@ class Web3Client {
         let trace = new ClientPoolStats_1.ClientPoolTrace();
         trace.action = `Batch requests: ${requests.map(x => x.address)}`;
         return this.pool.call(async (web3) => {
-            let batch = new Web3BatchRequests.BatchRequest(web3, requests);
+            let batch = new Web3BatchRequests_1.Web3BatchRequests.BatchRequest(web3, requests);
             return batch.execute();
         }, {
-            trace
+            trace,
+            batchRequestCount: requests.length
         });
     }
     encodeParameters(types, paramaters) {
@@ -136,10 +142,10 @@ class Web3Client {
     getBalances(addresses, blockNumber) {
         return this.pool.call(async (web3) => {
             let reqs = addresses.map(address => cb => web3.eth.getBalance.request(address, blockNumber, cb));
-            let batch = new Web3BatchRequests.BatchRequest(web3, reqs);
-            let weiStrings = await batch.execute();
-            return weiStrings.map(weiStr => BigInt(weiStr));
-        });
+            let batch = new Web3BatchRequests_1.Web3BatchRequests.BatchRequest(web3, reqs);
+            let weiStringsResults = await batch.execute();
+            return weiStringsResults.map(x => BigInt(x.result));
+        }, { batchRequestCount: addresses.length });
     }
     getTransactionCount(address, type) {
         return this.pool.call(web3 => {
@@ -156,12 +162,16 @@ class Web3Client {
             return web3.eth.getTransaction(txHash);
         }, opts);
     }
-    getTransactions(hashes, opts) {
-        return this.pool.call(web3 => {
-            let reqs = hashes.map(hash => cb => web3.eth.getTransaction.request(hash, cb));
-            let batch = new Web3BatchRequests.BatchRequest(web3, reqs);
-            return batch.execute();
-        }, opts);
+    getTransactions(txHashes, opts) {
+        return this.pool.call(async (web3) => {
+            let reqs = txHashes.map(hash => cb => web3.eth.getTransaction.request(hash, cb));
+            let batch = new Web3BatchRequests_1.Web3BatchRequests.BatchRequest(web3, reqs);
+            let results = await batch.execute();
+            return results.map(x => x.result);
+        }, {
+            ...(opts ?? {}),
+            batchRequestCount: txHashes.length
+        });
     }
     getTransactionReceipt(txHash) {
         return this.pool.call(web3 => {
@@ -169,11 +179,12 @@ class Web3Client {
         });
     }
     getTransactionReceipts(hashes) {
-        return this.pool.call(web3 => {
+        return this.pool.call(async (web3) => {
             let reqs = hashes.map(hash => cb => web3.eth.getTransactionReceipt.request(hash, cb));
-            let batch = new Web3BatchRequests.BatchRequest(web3, reqs);
-            return batch.execute();
-        });
+            let batch = new Web3BatchRequests_1.Web3BatchRequests.BatchRequest(web3, reqs);
+            let results = await batch.execute();
+            return results.map(x => x.result);
+        }, { batchRequestCount: hashes.length });
     }
     getTransactionTrace(hash) {
         return this.pool.call(async (web3) => {
@@ -203,15 +214,22 @@ class Web3Client {
         });
     }
     getBlocks(nrs) {
-        return this.pool.call(web3 => {
+        return this.pool.call(async (web3) => {
             let reqs = nrs.map(nr => cb => web3.eth.getBlock.request(nr, cb));
-            let batch = new Web3BatchRequests.BatchRequest(web3, reqs);
-            return batch.execute();
+            let batch = new Web3BatchRequests_1.Web3BatchRequests.BatchRequest(web3, reqs);
+            let results = await batch.execute();
+            return results.map(x => x.result);
+        }, {
+            batchRequestCount: nrs.length
         });
     }
     getCode(address) {
-        return this.pool.call(web3 => {
-            return web3.eth.getCode(address);
+        return this.pool.call(async (web3) => {
+            let code = await web3.eth.getCode(address);
+            if (code === '0x' || code === '') {
+                code = null;
+            }
+            return code;
         });
     }
     getPendingTransactions() {
@@ -248,6 +266,13 @@ class Web3Client {
     getStorageAt(address, position, blockNumber) {
         return this.pool.call(web3 => {
             return web3.eth.getStorageAt(address, position, blockNumber);
+        });
+    }
+    getStorageAtBatched(address, slots, blockNumber) {
+        return this.pool.callBatched({
+            async requests(web3) {
+                return slots.map(position => cb => web3.eth.getStorageAt.request(address, position, blockNumber, cb));
+            }
         });
     }
     getGasPrice() {
@@ -383,70 +408,6 @@ __decorate([
     memd_1.default.deco.memoize({ maxAge: 30 })
 ], Web3Client.prototype, "getBlockNumberCached", null);
 exports.Web3Client = Web3Client;
-var Web3BatchRequests;
-(function (Web3BatchRequests) {
-    function contractRequest(web3, request, onComplete) {
-        let { contract, method, params, callArgs } = prepair(web3, request);
-        return contract.methods[method](...params).call.request(...callArgs, onComplete);
-    }
-    Web3BatchRequests.contractRequest = contractRequest;
-    function call(web3, request) {
-        let { contract, method, params, callArgs } = prepair(web3, request);
-        return contract.methods[method](...params).call(...callArgs);
-    }
-    Web3BatchRequests.call = call;
-    class BatchRequest {
-        //-private wasCompleted = false;
-        constructor(web3, requests) {
-            this.web3 = web3;
-            this.requests = requests;
-            this.promise = new atma_utils_1.class_Dfr();
-            this.results = new Array(this.requests.length);
-            this.awaitables = this.requests.length;
-        }
-        async execute() {
-            if (this.requests.length === 0) {
-                return this.promise.resolve(this.results);
-            }
-            let web3 = this.web3;
-            let batch = new web3.BatchRequest();
-            let arr = this.requests.map((req, i) => {
-                const cb = (err, result) => {
-                    this.onCompleted(i, err, result);
-                };
-                if (typeof req === 'function') {
-                    return req(cb);
-                }
-                return contractRequest(web3, req, cb);
-            });
-            arr.forEach(req => {
-                batch.add(req);
-            });
-            batch.execute();
-            return this.promise;
-        }
-        onCompleted(i, error, result) {
-            this.results[i] = result ?? error;
-            if (--this.awaitables === 0) {
-                this.promise.resolve(this.results);
-            }
-        }
-    }
-    Web3BatchRequests.BatchRequest = BatchRequest;
-    function prepair(web3, request) {
-        let { address, method, abi, options, blockNumber, arguments: params } = request;
-        let contract = new web3.eth.Contract(abi, address);
-        let callArgs = [];
-        if (options != null) {
-            callArgs[0] = options;
-        }
-        if (blockNumber != null) {
-            callArgs[0] = null;
-            callArgs[1] = blockNumber;
-        }
-        return { contract, method, params, callArgs };
-    }
-})(Web3BatchRequests || (Web3BatchRequests = {}));
 var RangeWorker;
 (function (RangeWorker) {
     async function fetchWithLimits(client, options, limits, ranges) {
@@ -516,10 +477,10 @@ var RangeWorker;
                 }, rangeB);
                 return [...(arr1 ?? []), ...(arr2 ?? [])];
             }
-            let maxRangeMatch = /\b(?<maxRange>\d+)\b/.exec(error.message);
+            let maxRangeMatch = /\b(?<maxRange>\d+)\b/.exec(error.message)?.groups?.maxRange;
             if (maxRangeMatch && knownLimits.maxBlockRange == null) {
                 // handle unknown range, otherwise throw
-                let rangeLimit = Number(maxRangeMatch.groups.maxRange);
+                let rangeLimit = Number(maxRangeMatch);
                 return await fetchWithLimits(client, options, {
                     ...knownLimits,
                     maxBlockRange: rangeLimit

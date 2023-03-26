@@ -47,7 +47,6 @@ export namespace SlotsParser {
     export async function slots (source: { path: string, code?: string }, contractName?: string, opts?: ISlotsParserOption): Promise<ISlotVarDefinition[]> {
         const sourceFile = new SourceFile(source.path, source.code, opts?.files);
         const chain = await sourceFile.getContractInheritanceChain(contractName);
-
         return await extractSlots(chain);
     }
 
@@ -55,7 +54,7 @@ export namespace SlotsParser {
         let offset = { slot: 0, position: 0 };
 
         //let inheritanceChainContracts = [ ...inheritanceChain.map(x => x.contract)].reverse();
-        let arr = await alot(inheritanceChain)
+        let slotsDef = await alot(inheritanceChain)
             .mapManyAsync(async (item, i) => {
                 let slots = await extractSlotsSingle({
                     ...item,
@@ -65,7 +64,15 @@ export namespace SlotsParser {
             })
             .toArrayAsync({ threads: 1 });
 
-        return arr;
+        // remove duplicates, take the first declaration. (sorting is last..first)
+        slotsDef = alot(slotsDef.reverse())
+            .distinctBy(x => x.name)
+            .toArray()
+            .reverse();
+
+        slotsDef = applyPositions(slotsDef, offset);
+
+        return slotsDef;
     }
     async function extractSlotsSingle (contract: TypeUtil.ITypeCtx, offset: { slot: number, position: number }) {
 
@@ -89,7 +96,13 @@ export namespace SlotsParser {
             })
             .toArrayAsync();
 
-        slotsDef = applyPositions(slotsDef, offset);
+        // // remove duplicates, take the first declaration. (sorting is last..first)
+        // slotsDef = alot(slotsDef.reverse())
+        //     .distinctBy(x => x.name)
+        //     .toArray()
+        //     .reverse();
+
+        // slotsDef = applyPositions(slotsDef, offset);
 
         return slotsDef;
     }

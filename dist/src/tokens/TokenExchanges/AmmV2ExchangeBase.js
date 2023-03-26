@@ -23,6 +23,7 @@ const AmmVaultV2Contract_1 = require("./AmmBase/V2/AmmVaultV2Contract");
 const TokensServiceBsc_1 = require("../TokensServiceBsc");
 const _address_1 = require("@dequanto/utils/$address");
 const _require_1 = require("@dequanto/utils/$require");
+const _cache_1 = require("@dequanto/utils/$cache");
 class AmmV2ExchangeBase {
     constructor(client, explorer) {
         this.client = client;
@@ -30,7 +31,7 @@ class AmmV2ExchangeBase {
     }
     get pairsStore() {
         return new JsonArrayStore_1.JsonArrayStore({
-            path: `/cache/dequanto/${this.client.platform}/amm/${this.name}/pairs.json`,
+            path: _cache_1.$cache.file(`ammv2-pairs.json`),
             key: x => x.address
         });
     }

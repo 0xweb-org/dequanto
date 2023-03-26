@@ -15,6 +15,7 @@ const SlotMappingHandler_1 = require("./storage/handlers/SlotMappingHandler");
 const SlotStringHandler_1 = require("./storage/handlers/SlotStringHandler");
 const Accessor_1 = require("./storage/Accessor");
 const SlotStructHandler_1 = require("./storage/handlers/SlotStructHandler");
+const _types_1 = require("./utils/$types");
 class SlotsStorage {
     constructor(transport, slots) {
         this.transport = transport;
@@ -30,7 +31,13 @@ class SlotsStorage {
             return this.fetchAll();
         }
         let { handler } = await this.getStorageFor(keys);
-        return handler.get(keys);
+        try {
+            return await handler.get(keys);
+        }
+        catch (error) {
+            error.message += '\n -> ' + path;
+            throw error;
+        }
     }
     async set(path, value) {
         let keys = this.getKeys(path);
@@ -102,6 +109,18 @@ class SlotsStorage {
         if (keys.length > 0) {
             let key = keys.shift();
             slot = this.slots.find(x => x.name === key.key);
+            if (slot == null && this.slots.length === 1 && this.slots[0].name === '') {
+                slot = this.slots[0];
+                let type = slot.type;
+                // Check if we have the mapping or array, then the key is the mapping key or array index
+                let isDynamicKey = _types_1.$types.isArray(type) || _types_1.$types.isMapping(type);
+                if (isDynamicKey) {
+                    keys.unshift(key);
+                }
+                else {
+                    slot = null;
+                }
+            }
             _require_1.$require.notNull(slot, `StateVariable ${key.key} not found. Available: ${this.slots.map(x => x.name).join(', ')}`);
         }
         else {

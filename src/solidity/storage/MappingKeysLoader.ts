@@ -115,7 +115,6 @@ export class MappingKeysLoader {
         };
 
         let logs = await this.client.getPastLogs(filters);
-        await File.writeAsync(`./del/events_${topic0}.json`, logs);
         return logs;
     }
 }

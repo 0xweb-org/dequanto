@@ -15,6 +15,7 @@ import type {
     ImportDirective,
     StructDefinition
 } from '@solidity-parser/parser/dist/src/ast-types';
+import { $semver } from '@dequanto/utils/$semver';
 
 
 export class TSourceFileContract {
@@ -23,6 +24,7 @@ export class TSourceFileContract {
 }
 
 export class SourceFile {
+    public version: string;
     public file = new File(this.path);
     constructor(public path: string, public source?: string, public inMemoryFile?: ISlotsParserOption['files']) {
     }
@@ -33,7 +35,9 @@ export class SourceFile {
         if (this.source == null) {
             throw new Error(`Source not loaded ${this.file.uri.toLocalFile()}`);
         }
-        let ast = Ast.parse(this.source, { path: this.path });
+        let { ast, version } = Ast.parse(this.source, { path: this.path });
+
+        this.version = version;
 
         ast.children?.forEach(node => {
             this.reapplyParents(node, ast);
@@ -74,7 +78,13 @@ export class SourceFile {
 
         let chain = [{ file: this as SourceFile, contract }];
         if (contract.baseContracts?.length > 0) {
-            let arr = await alot(contract.baseContracts).mapManyAsync(async (base) => {
+
+            let baseContracts = [...contract.baseContracts]
+            if ($semver.compare(this.version, '<', '0.5.0')) {
+                baseContracts.reverse();
+            }
+
+            let arr = await alot(baseContracts).mapManyAsync(async (base) => {
                 let name = base.baseName.namePath;
                 let contracts = await this.getContractInheritanceChain(name);
                 if (contracts.length > 0) {

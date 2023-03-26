@@ -41,6 +41,11 @@ var $address;
         return address.toLowerCase().substring(2).padStart(32, '0');
     }
     $address.toBytes32 = toBytes32;
+    function fromBytes32(hex) {
+        const SIZE = 40;
+        return '0x' + hex.substring(hex.length - SIZE);
+    }
+    $address.fromBytes32 = fromBytes32;
     function toChecksum(address) {
         return web3_1.default.utils.toChecksumAddress(address);
     }

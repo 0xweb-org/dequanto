@@ -64,6 +64,19 @@ var $require;
         return val;
     }
     $require.notNull = notNull;
+    function notEmpty(val, message) {
+        if (val == null) {
+            throw new Error(`Value is undefined. ${message}`);
+        }
+        if (typeof val === 'string' && val.trim().length === 0) {
+            throw new Error(`Value is empty string. ${message}`);
+        }
+        else if (Array.isArray(val) && val.length === 0) {
+            throw new Error(`Value is empty array. ${message}`);
+        }
+        return val;
+    }
+    $require.notEmpty = notEmpty;
     function True(value, message) {
         if (value !== true) {
             throw new Error(`Got false expression ${message}`);

@@ -6,6 +6,7 @@ const _config_1 = require("./$config");
 var $path;
 (function ($path) {
     let root = null;
+    /*** Gets dequanto root path (cwd or npm global modules) */
     function resolve(path) {
         return atma_utils_1.class_Uri.combine(root ?? (root = getRoot()), path);
     }
@@ -21,6 +22,10 @@ var $path;
         return false;
     }
     $path.isAbsolute = isAbsolute;
+    function hasExt(path) {
+        return /\.\w+($|\?)/.test(path);
+    }
+    $path.hasExt = hasExt;
     function getRoot() {
         let base = _config_1.$config.get('settings.base');
         if (base != null) {

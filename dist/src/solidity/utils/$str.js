@@ -5,6 +5,19 @@ const _buffer_1 = require("@dequanto/utils/$buffer");
 const _hex_1 = require("@dequanto/utils/$hex");
 var $str;
 (function ($str) {
+    function isNullOrWhiteSpace(x) {
+        if (x == null) {
+            return true;
+        }
+        if (typeof x !== 'string') {
+            throw new Error(`isNullOrWhiteSpace expects a string parameter, but got ${typeof x} - ${x}`);
+        }
+        if (x.trim() === '') {
+            return true;
+        }
+        return false;
+    }
+    $str.isNullOrWhiteSpace = isNullOrWhiteSpace;
     function sliceFromEnd(hex, positionBits, bits) {
         let len = bits / 8 * 2;
         let position = positionBits / 8 * 2;

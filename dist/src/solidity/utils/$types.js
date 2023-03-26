@@ -11,6 +11,12 @@ var $types;
         return /\[\s*\]$/.test(type);
     }
     $types.isDynamicArray = isDynamicArray;
+    function isArray(type) {
+        let rgxArray = /\[(?<size>\d+)?\]$/;
+        let isArray = rgxArray.test(type);
+        return isArray;
+    }
+    $types.isArray = isArray;
     function isStruct(type) {
         return /^\(.+\)$/.test(type);
     }

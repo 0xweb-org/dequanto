@@ -145,34 +145,7 @@ class Generator {
             _logger_1.$logger.log('No contract source found.');
             return null;
         }
-        if (/^\s*\{/.test(meta.SourceCode) === false) {
-            _logger_1.$logger.log('Source contract as single file fetched.');
-            return {
-                contractName: meta.ContractName,
-                files: {
-                    [`${name}.sol`]: {
-                        content: meta.SourceCode
-                    }
-                }
-            };
-        }
-        let code = meta
-            .SourceCode
-            .replace(/\{\{/g, '{')
-            .replace(/\}\}/g, '}');
-        try {
-            let sources = JSON.parse(code);
-            let files = sources.sources;
-            _logger_1.$logger.log(`Source code (${Object.keys(files).join(', ')}) fetched.`);
-            return {
-                contractName: meta.ContractName,
-                files
-            };
-        }
-        catch (error) {
-            _logger_1.$logger.error(`Source code can't be parsed: `, code);
-            throw new Error(`Source code can't be parsed: ${error.message}`);
-        }
+        return meta.SourceCode;
     }
     async getAbiByAddress(opts) {
         let address = _address_1.$address.expectValid(this.options.source?.abi, 'contract address is not valid');
@@ -188,7 +161,7 @@ class Generator {
         catch (error) {
             let message = `ABI is not resolved from ${this.options.platform}/${address}: ${error.message ?? error}. Extract from bytecode...`;
             (0, _logger_1.l) `${message}`;
-            let code = await this.client.getCode();
+            let code = await this.client.getCode(address);
             if (code == null || code === '' || code === '0x') {
                 throw new Error(`${this.options.platform}:${address} is not a contract`);
             }

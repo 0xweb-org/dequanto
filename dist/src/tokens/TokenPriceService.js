@@ -8,7 +8,7 @@ const a_di_1 = __importDefault(require("a-di"));
 const TokenUtils_1 = require("./utils/TokenUtils");
 const TokensService_1 = require("./TokensService");
 const _address_1 = require("@dequanto/utils/$address");
-const AmmPriceV2Oracle_1 = require("./TokenOracles/AmmPriceV2Oracle");
+const AmmV2PriceQuote_1 = require("./TokenExchanges/AmmV2PriceQuote");
 const _bigint_1 = require("@dequanto/utils/$bigint");
 const _logger_1 = require("@dequanto/utils/$logger");
 class TokenPriceService {
@@ -16,7 +16,7 @@ class TokenPriceService {
         this.client = client;
         this.explorer = explorer;
         this.tokens = a_di_1.default.resolve(TokensService_1.TokensService, this.client.platform, this.explorer);
-        this.oracle = a_di_1.default.resolve(AmmPriceV2Oracle_1.AmmPriceV2Oracle, this.client, this.explorer);
+        this.oracle = a_di_1.default.resolve(AmmV2PriceQuote_1.AmmV2PriceQuote, this.client, this.explorer);
     }
     async getPrice(mix, opts) {
         let token;

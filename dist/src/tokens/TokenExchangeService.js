@@ -13,7 +13,7 @@ const PancakeswapExchange_1 = require("./TokenExchanges/PancakeswapExchange");
 //import { UniswapExchange } from './TokenExchanges/UniswapExchange';
 const TokensService_1 = require("./TokensService");
 const TokenUtils_1 = require("./utils/TokenUtils");
-const UniswapExchange_1 = require("./TokenExchanges/UniswapExchange");
+const UniswapV2Exchange_1 = require("./TokenExchanges/UniswapV2Exchange");
 const SushiswapPolygonExchange_1 = require("./TokenExchanges/SushiswapPolygonExchange");
 const _logger_1 = require("@dequanto/utils/$logger");
 const _require_1 = require("@dequanto/utils/$require");
@@ -28,7 +28,7 @@ class TokenExchangeService {
                 this.stables = ['BUSD', 'USDT'];
                 break;
             case 'eth':
-                this.exchange = a_di_1.default.resolve(UniswapExchange_1.UniswapExchange, this.client, this.explorer);
+                this.exchange = a_di_1.default.resolve(UniswapV2Exchange_1.UniswapV2Exchange, this.client, this.explorer);
                 this.stables = ['USDC', 'USDT', 'DAI'];
                 break;
             case 'polygon':

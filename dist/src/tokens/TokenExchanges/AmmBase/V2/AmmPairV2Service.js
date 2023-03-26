@@ -13,13 +13,17 @@ exports.AmmPairV2Service = void 0;
 const a_di_1 = __importDefault(require("a-di"));
 const alot_1 = __importDefault(require("alot"));
 const memd_1 = __importDefault(require("memd"));
+const _bigint_1 = require("@dequanto/utils/$bigint");
+const _date_1 = require("@dequanto/utils/$date");
 const _address_1 = require("@dequanto/utils/$address");
-const PancakeswapExchange_1 = require("@dequanto/tokens/TokenExchanges/PancakeswapExchange");
-const UniswapExchange_1 = require("@dequanto/tokens/TokenExchanges/UniswapExchange");
 const TokensService_1 = require("@dequanto/tokens/TokensService");
 const SushiswapPolygonExchange_1 = require("../../SushiswapPolygonExchange");
-const _require_1 = require("@dequanto/utils/$require");
+const PancakeswapExchange_1 = require("../../PancakeswapExchange");
+const UniswapV2Exchange_1 = require("../../UniswapV2Exchange");
+const _cache_1 = require("@dequanto/utils/$cache");
 ;
+const CACHE_PATH = _cache_1.$cache.file(`dex-pools.json`);
+const CACHE_SECONDS = _date_1.$date.parseTimespan('7d', { get: 's' });
 class AmmPairV2Service {
     constructor(client, explorer) {
         this.client = client;
@@ -31,7 +35,7 @@ class AmmPairV2Service {
                 this.targetCoins = ['BUSD', 'USDT'];
                 break;
             case 'eth':
-                this.exchange = a_di_1.default.resolve(UniswapExchange_1.UniswapExchange, this.client, this.explorer);
+                this.exchange = a_di_1.default.resolve(UniswapV2Exchange_1.UniswapV2Exchange, this.client, this.explorer);
                 this.targetCoins = ['USDC', 'USDT', 'DAI'];
                 break;
             case 'polygon':
@@ -51,8 +55,8 @@ class AmmPairV2Service {
             .sortByAsync(({ reserveTo }) => reserveTo, 'desc')
             .firstAsync();
         if (pool == null || pool.reserveTo < (50000n * BigInt(pool.pair.to.decimals))) {
-            const SYMBOL = { eth: 'WETH', bsc: 'WBNB', polygon: 'MATIC' }[platform];
-            _require_1.$require.notNull(SYMBOL, `Native symbol for platform ${platform} not FOUND`);
+            // if NO or low-liquidity pool found, check the WETH pool
+            const SYMBOL = { bsc: 'WBNB', polygon: 'MATIC' }[platform] ?? 'WETH';
             const nativeTokenPool = await this.getPoolInfo(address, SYMBOL);
             if (nativeTokenPool == null || nativeTokenPool.reserveTo < 10) {
                 return null;
@@ -86,7 +90,7 @@ class AmmPairV2Service {
         if (toToken == null) {
             return null;
         }
-        let lpAddress = await this.getPair(fromAddress, toToken.address);
+        let lpAddress = await this.exchange.factoryContract.getPair(fromAddress, toToken.address);
         if (_address_1.$address.isEmpty(lpAddress)) {
             return null;
         }
@@ -107,23 +111,35 @@ class AmmPairV2Service {
         let fromToken = await this.tokensService.getTokenOrDefault(fromAddress);
         return {
             pair: PairUtil.createPairInfo(fromToken, toToken, lpAddress),
-            reserveTo: Number(reserveTo / 10n ** BigInt(toToken.decimals ?? 18)),
+            reserveTo: _bigint_1.$bigint.toEther(reserveTo, toToken.decimals),
         };
-    }
-    async getPair(from, to) {
-        return await this.exchange.factoryContract.getPair(from, to);
     }
 }
 __decorate([
     memd_1.default.deco.memoize({
         perInstance: true,
         trackRef: true,
-        persistance: new memd_1.default.FsTransport({ path: `./cache/pools.json` })
+        maxAge: CACHE_SECONDS,
+        key: (ctx, platform, address) => {
+            let self = ctx.this;
+            let key = `bestRoute_${platform}_${address}`;
+            return key;
+        },
+        persistance: new memd_1.default.FsTransport({ path: CACHE_PATH })
     })
 ], AmmPairV2Service.prototype, "resolveBestStableRoute", null);
 __decorate([
-    memd_1.default.deco.memoize()
-], AmmPairV2Service.prototype, "getPair", null);
+    memd_1.default.deco.memoize({
+        perInstance: true,
+        trackRef: true,
+        key: (ctx, fromAddress, toSymbol) => {
+            let self = ctx.this;
+            let key = `pool_${self.client.platform}_${fromAddress}_${toSymbol}`;
+            return key;
+        },
+        persistance: new memd_1.default.FsTransport({ path: CACHE_PATH })
+    })
+], AmmPairV2Service.prototype, "getPoolInfo", null);
 exports.AmmPairV2Service = AmmPairV2Service;
 var PairUtil;
 (function (PairUtil) {

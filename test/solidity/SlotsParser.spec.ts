@@ -1,3 +1,4 @@
+import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { SlotsParser } from '@dequanto/solidity/SlotsParser';
 import { l } from '@dequanto/utils/$logger';
 
@@ -145,6 +146,7 @@ UTest({
     },
     async 'should parse weth.sol' () {
         let slots = await SlotsParser.slots({ path: './test/fixtures/scan/WETH.sol'}, 'MaticWETH');
+
         let names = slots.map(x => x.name);
         let types = slots.map(x => x.type);
 
@@ -183,6 +185,93 @@ UTest({
         eq_(names[10], 'nonces');
         eq_(types[10], 'mapping(address => uint256)');
     },
+    async 'should parse multi inheritance' () {
+         const input = `
+            contract FooHolder {
+                uint foo = 3;
+            }
+            contract BarHolder {
+                uint bar = 2;
+            }
+            contract Token is BarHolder, FooHolder {
+                uint256 totalSupply = 4;
+            }
+        `;
+
+        const slots = await SlotsParser.slots({
+            code: input,
+            path: './test/solidity/Parser.sol'
+        }, 'Token');
+
+        eq_(slots[0].name, 'bar');
+        eq_(slots[1].name, 'foo');
+        eq_(slots[2].name, 'totalSupply');
+
+        let provider = new HardhatProvider();
+        let client = provider.client();
+        let { contract } = await provider.deployCode(input, { client });
+
+        let barValue = await client.getStorageAt(contract.address, 0);
+        eq_(Number(barValue), 2)
+
+        let fooValue = await client.getStorageAt(contract.address, 1);
+        eq_(Number(fooValue), 3)
+
+        let totalSupply = await client.getStorageAt(contract.address, 2);
+        eq_(Number(totalSupply), 4)
+    },
+    async 'should parse sol versions lower then 0.5.0' () {
+
+        return new UTest({
+            async 'parse enjtoken' () {
+                const slots = await SlotsParser.slots({
+                    path: './test/fixtures/parser/v04/ENJToken.sol'
+                }, 'ENJToken');
+
+                let items = slots.map(x => [x.slot, x.name, x.type]);
+                let names = slots.map(x => x.name);
+                deepEq_(names, [
+                    'owner',
+                    'newOwner',
+                    'standard',
+                    'name',
+                    'symbol',
+                    'decimals',
+                    'balanceOf',
+                    'allowance',
+                    'totalSupply',
+                    'crowdFundAddress',
+                    'advisorAddress',
+                    'incentivisationFundAddress',
+                    'enjinTeamAddress',
+                    'totalAllocatedToAdvisors',
+                    'totalAllocatedToTeam',
+                    'totalAllocated',
+                    'isReleasedToPublic',
+                    'teamTranchesReleased',
+                    'maxTeamTranches',
+                ])
+            },
+            async 'parse presale' () {
+                const slots = await SlotsParser.slots({
+                    path: './test/fixtures/parser/v04/MultiSigWallet.sol'
+                }, 'MultiSigWallet');
+
+                let items = slots.map(x => [x.slot, x.name, x.type]);
+                let names = slots.map(x => x.name);
+                deepEq_(names, [
+                    'transactions',
+                    'confirmations',
+                    'isOwner',
+                    'owners',
+                    'required',
+                    'transactionCount'
+                ]);
+            },
+
+        })
+
+   },
     async 'should parse AavePriceOracle.sol' () {
         let slots = await SlotsParser.slots({ path: './test/fixtures/parser/PriceOracle.sol' }, 'PriceOracle');
 

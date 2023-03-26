@@ -93,6 +93,7 @@ export class HardhatProvider {
 
         const dir = solContractPath.replace(/[^\/]+$/, '');
         const filename = /(?<filename>[^\/]+)\.\w+$/.exec(solContractPath)?.groups.filename;
+        const filenameRndSuffix = filename.replace(/_\d+$/, '');
 
         let root = options?.paths?.root;
         let artifacts = options?.paths?.artifacts;
@@ -132,16 +133,17 @@ export class HardhatProvider {
             let files = await Directory.readFilesAsync(path);
             let jsons = files.filter(x => /(?<!dbg)\.json$/.test(x.uri.file));
             if (jsons.length === 0) {
-                throw new Error(`No JSONs output found in ${outputDir}`);
+                throw new Error(`No JSONs output found in "${outputDir}/"`);
             }
             if (jsons.length === 1) {
                 output = jsons[0].uri.toString();
             } else {
                 let jsonFile = jsons.find(file => {
-                    return filename.includes(file.uri.filename);
+                    return file.uri.file === `${filename}.json` || file.uri.file === `${filenameRndSuffix}.json`;
                 });
                 if (jsonFile == null) {
-                    throw new Error(`Compiled JSON data not found for ${filename} in ${outputDir}`);
+                    $logger.log(`Files: ${ files.map(file => file.uri.file ).join(', ')}`);
+                    throw new Error(`Compiled JSON data not found for "${filename}" in "${outputDir}/"`);
                 }
                 output = jsonFile.uri.toString();
             }
@@ -161,7 +163,8 @@ export class HardhatProvider {
 
     async deployCode (solidityCode: string, options: Parameters<HardhatProvider['deploySol']>[1] = {}) {
 
-        let className = /contract\s+(?<name>[\w]+)/.exec(solidityCode).groups.name;
+        let matches = Array.from(solidityCode.matchAll(/contract\s+(?<name>[\w]+)/g));
+        let className = matches[matches.length - 1].groups.name;
         let rnd = $number.randomInt(0, 10**10);
         let tmp = env.getTmpPath(`hardhat/contracts/${className}_${rnd}.sol`);
         let root = tmp.replace(/contracts\/[^/]+$/, '');

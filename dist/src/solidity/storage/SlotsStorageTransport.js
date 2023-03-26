@@ -6,6 +6,7 @@ const _abiUtils_1 = require("@dequanto/utils/$abiUtils");
 const _bigint_1 = require("@dequanto/utils/$bigint");
 const _contract_1 = require("@dequanto/utils/$contract");
 const _hex_1 = require("@dequanto/utils/$hex");
+const _is_1 = require("@dequanto/utils/$is");
 const _require_1 = require("@dequanto/utils/$require");
 class SlotsCursorTransport {
     constructor(cursor, transport) {
@@ -23,6 +24,12 @@ class SlotsCursorTransport {
         let offsetPosition = position + (this.cursor.position ?? 0);
         return this.transport.setStorageAt(BigInt(slot) + offsetSlot, offsetPosition, size, buffer);
     }
+    extractMappingKeys(ctx) {
+        return this.transport.extractMappingKeys(ctx);
+    }
+    mapToGlobalSlot(slot = 0) {
+        return BigInt(this.cursor.slot) + BigInt(slot);
+    }
 }
 exports.SlotsCursorTransport = SlotsCursorTransport;
 class SlotsStorageTransport {
@@ -33,7 +40,7 @@ class SlotsStorageTransport {
     }
     async getStorageAt(slot, position, size) {
         slot = _hex_1.$hex.toHex(slot);
-        let mem = await this.client.getStorageAt(this.address, slot, this.params?.blockNumber);
+        let mem = await this.getStorageAtInner(slot);
         if (size != null && size < 256) {
             mem = '0x' + _str_1.$str.sliceFromEnd(mem, position, size);
         }
@@ -55,11 +62,20 @@ class SlotsStorageTransport {
         buffer = _hex_1.$hex.padBytes(buffer, 32);
         await this.client.debug.setStorageAt(this.address, slot, buffer);
     }
+    extractMappingKeys(ctx) {
+        throw new Error(`SlotMappingReader doesn't support fetchAll method, as size could be infinite`);
+    }
+    mapToGlobalSlot(slot = 0) {
+        return BigInt(slot);
+    }
+    async getStorageAtInner(slot) {
+        return await this.client.getStorageAt(this.address, slot, this.params?.blockNumber);
+    }
 }
 exports.SlotsStorageTransport = SlotsStorageTransport;
 class SlotsStorageTransportForArray {
-    constructor(storage, slotNr, elementI = 0, slotsPerElement = 1) {
-        this.storage = storage;
+    constructor(transport, slotNr, elementI = 0, slotsPerElement = 1) {
+        this.transport = transport;
         this.slotNr = slotNr;
         this.elementI = elementI;
         this.slotsPerElement = slotsPerElement;
@@ -69,58 +85,67 @@ class SlotsStorageTransportForArray {
             throw new Error(`Array Slot reader supports only numbers for position`);
         }
         let location = this.mapToGlobalSlot(slot);
-        let memory = await this.storage.getStorageAt(location, position, size);
+        let memory = await this.transport.getStorageAt(location, position, size);
         return memory;
     }
     async setStorageAt(slot, position, size, buffer) {
         let location = this.mapToGlobalSlot(Number(slot));
-        let memory = await this.storage.setStorageAt(location, position, size, buffer);
+        let memory = await this.transport.setStorageAt(location, position, size, buffer);
         return memory;
     }
     mapToGlobalSlot(slot) {
-        let slotPositionNr = this.elementI * this.slotsPerElement + slot;
+        let slotPositionNr = BigInt(this.elementI) * BigInt(this.slotsPerElement) + BigInt(slot);
         let x = BigInt(_contract_1.$contract.keccak256(_abiUtils_1.$abiUtils.encodePacked({ value: _hex_1.$hex.toHex(this.slotNr), type: 'uint256' })));
         let uint = x + BigInt(slotPositionNr);
-        return _bigint_1.$bigint.toHex(uint);
+        return uint;
+    }
+    extractMappingKeys(ctx) {
+        return this.transport.extractMappingKeys(ctx);
     }
 }
 exports.SlotsStorageTransportForArray = SlotsStorageTransportForArray;
 class SlotsStorageTransportForMapping {
-    constructor(storage, slotNr, key, slotsPerElement = 1) {
-        this.storage = storage;
+    constructor(transport, slotNr, key, slotsPerElement = 1) {
+        this.transport = transport;
         this.slotNr = slotNr;
         this.key = key;
         this.slotsPerElement = slotsPerElement;
     }
     async getStorageAt(slot) {
-        if (typeof slot !== 'number') {
-            throw new Error(`Mapping Slot reader supports only numbers for position`);
+        let isValidType = typeof slot === 'number' || typeof slot === 'bigint' || _is_1.$is.hexString(slot);
+        if (isValidType === false) {
+            throw new Error(`Mapping Slot reader supports only numbers for position ${slot}`);
         }
         let location = this.mapToGlobalSlot(BigInt(slot));
-        let memory = await this.storage.getStorageAt(location, 0, 256);
+        let memory = await this.getUnderlyingTransport().getStorageAt(location, 0, 256);
         return memory;
     }
     async setStorageAt(slot, position, size, buffer) {
         let location = this.mapToGlobalSlot(BigInt(slot));
-        let memory = await this.storage.setStorageAt(location, position, size, buffer);
+        let memory = await this.transport.setStorageAt(location, position, size, buffer);
         return memory;
     }
-    mapToGlobalSlot(slotPositionNr = 0n) {
-        let key = this.key;
-        let slotMappingNr = this.slotNr;
-        if (typeof key === 'string' && /^\d+$/.test(key)) {
-            key = Number(key);
-        }
-        let packed = _abiUtils_1.$abiUtils.encodePacked({
-            value: _hex_1.$hex.padBytes(_hex_1.$hex.toHexBuffer(key), 32),
+    mapToGlobalSlot(slotPositionNr = 0) {
+        let packedRootHash = this.transport.mapToGlobalSlot();
+        let packedNext = _abiUtils_1.$abiUtils.encodePacked({
+            value: _hex_1.$hex.padBytes(_hex_1.$hex.toHexBuffer(this.key), 32),
             type: 'bytes32'
         }, {
-            value: slotMappingNr,
+            value: _bigint_1.$bigint.toHex(packedRootHash + BigInt(this.slotNr)),
             type: 'uint256'
         });
-        let x = BigInt(_contract_1.$contract.keccak256(packed));
-        let uint = x + BigInt(slotPositionNr);
-        return _bigint_1.$bigint.toHex(uint);
+        let packedNextHash = BigInt(_contract_1.$contract.keccak256(packedNext)) + BigInt(slotPositionNr);
+        return packedNextHash;
+    }
+    extractMappingKeys(ctx) {
+        return this.transport.extractMappingKeys(ctx);
+    }
+    getUnderlyingTransport() {
+        let cursor = this.transport;
+        while (cursor.transport != null) {
+            cursor = cursor.transport;
+        }
+        return cursor;
     }
 }
 exports.SlotsStorageTransportForMapping = SlotsStorageTransportForMapping;

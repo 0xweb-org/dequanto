@@ -74,7 +74,7 @@ var $bigint;
         if (val < Number.MAX_SAFE_INTEGER) {
             return Number(val) / Number(round);
         }
-        throw new Error(`Ether overflow: ${val}. Decimals: ${decimals}`);
+        throw new Error(`Ether overflow: ${val}. Amount: ${amount} Decimals: ${decimals}`);
     }
     $bigint_1.toEther = toEther;
     function toEtherSafe(amount, decimals = $bigint_1.ETHER_DECIMALS, round = 100000n) {

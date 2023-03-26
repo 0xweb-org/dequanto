@@ -82,7 +82,7 @@ var utils;
         if (hex.length % 2 !== 0) {
             throw new Error(`Not valid hex buffer. Char count not even: ${hex}`);
         }
-        if (/^[\da-f]+$/i.test(hex) === false) {
+        if (hex.length > 0 && /^[\da-f]+$/i.test(hex) === false) {
             throw new Error(`Not valid hex buffer. Invalid char in ${hex}`);
         }
         return hex;

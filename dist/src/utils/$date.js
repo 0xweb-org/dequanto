@@ -317,12 +317,12 @@ var $date;
         if (direction === -1) {
             str = str.substring(1);
         }
-        let rgx = /^([\d\.]+)(s|sec|seconds|m|mins?|h|hours?|d|days?|w|weeks?|months?|y|years?)$/;
+        let rgx = /^(?<value>[\d\.]+)?(ms|s|sec|seconds|m|mins?|h|hours?|d|days?|w|weeks?|months?|y|years?)$/;
         let match = rgx.exec(str);
         if (match == null) {
             throw new Error(`Invalid Humanize seconds. Pattern: ${rgx.toString()}. Got: ${str}`);
         }
-        let val = parseFloat(match[1]);
+        let val = match.groups.value ? parseFloat(match[1]) : 1;
         let unit = match[2];
         let MS = 1000;
         if (opts?.get === 's') {
@@ -330,6 +330,8 @@ var $date;
         }
         MS *= direction;
         switch (unit) {
+            case 'ms':
+                return val;
             case 's':
             case 'sec':
                 return val * MS;
@@ -539,7 +541,8 @@ var $date;
                 .replace('mm', mm)
                 .replace('#m', $m)
                 .replace('ss', ss)
-                .replace('#s', $s);
+                .replace('#s', $s)
+                .replace('ms', ms);
         }
         Formatter.format = format;
         ;
@@ -592,6 +595,9 @@ var $date;
         };
         const ss = function () {
             return pad(_date.getSeconds());
+        };
+        const ms = function () {
+            return pad(_date.getMilliseconds());
         };
         function pad(value) {
             return value > 9 ? value : '0' + value;

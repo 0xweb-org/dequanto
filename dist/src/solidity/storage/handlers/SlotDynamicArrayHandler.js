@@ -16,6 +16,9 @@ class SlotDynamicArrayHandler extends SlotDynamicArray_1.ASlotDynamicArray {
             return this.fetchAll();
         }
         let key = keys.shift();
+        if (key.key === 'length') {
+            return this.length();
+        }
         let reader = await this.getStorageInner(key);
         return reader.get(keys);
     }
