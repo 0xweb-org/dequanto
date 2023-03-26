@@ -65,10 +65,20 @@ export namespace SlotsParser {
             .toArrayAsync({ threads: 1 });
 
         // remove duplicates, take the first declaration. (sorting is last..first)
-        slotsDef = alot(slotsDef.reverse())
-            .distinctBy(x => x.name)
-            .toArray()
-            .reverse();
+        alot(slotsDef)
+            .groupBy(x => x.name)
+            .filter(x => x.values.length > 1)
+            .forEach(group => {
+                group.values.reverse().slice(1).forEach((slot, i) => {
+                    slot.name += ''.padStart(i + 1, '$');
+                });
+            })
+            .toArray();
+
+        // slotsDef = alot(slotsDef.reverse())
+        //     .distinctBy(x => x.name)
+        //     .toArray()
+        //     .reverse();
 
         slotsDef = applyPositions(slotsDef, offset);
 

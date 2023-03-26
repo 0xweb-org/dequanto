@@ -229,27 +229,28 @@ UTest({
                 }, 'ENJToken');
 
                 let items = slots.map(x => [x.slot, x.name, x.type]);
-                let names = slots.map(x => x.name);
+                let names = slots.map(x => [x.slot, x.name]);
                 deepEq_(names, [
-                    'owner',
-                    'newOwner',
-                    'standard',
-                    'name',
-                    'symbol',
-                    'decimals',
-                    'balanceOf',
-                    'allowance',
-                    'totalSupply',
-                    'crowdFundAddress',
-                    'advisorAddress',
-                    'incentivisationFundAddress',
-                    'enjinTeamAddress',
-                    'totalAllocatedToAdvisors',
-                    'totalAllocatedToTeam',
-                    'totalAllocated',
-                    'isReleasedToPublic',
-                    'teamTranchesReleased',
-                    'maxTeamTranches',
+                    [0, 'owner'],
+                    [1, 'newOwner'],
+                    [2, 'standard'],
+                    [3, 'name'],
+                    [4, 'symbol'],
+                    [5, 'decimals'],
+                    [6, 'totalSupply$'],
+                    [7, 'balanceOf'],
+                    [8, 'allowance'],
+                    [9, 'totalSupply'],
+                    [10, 'crowdFundAddress'],
+                    [11, 'advisorAddress'],
+                    [12, 'incentivisationFundAddress'],
+                    [13, 'enjinTeamAddress'],
+                    [14, 'totalAllocatedToAdvisors'],
+                    [15, 'totalAllocatedToTeam'],
+                    [16, 'totalAllocated'],
+                    [17, 'isReleasedToPublic'],
+                    [18, 'teamTranchesReleased'],
+                    [19, 'maxTeamTranches'],
                 ])
             },
             async 'parse presale' () {

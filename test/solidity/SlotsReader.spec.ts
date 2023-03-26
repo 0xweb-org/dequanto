@@ -1,3 +1,4 @@
+import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { SlotsParser } from '@dequanto/solidity/SlotsParser';
 import { SlotsStorage } from '@dequanto/solidity/SlotsStorage';
@@ -208,6 +209,21 @@ UTest({
 
         eq_(await storage.get(`deepUsers["${deployer.address}"]["0x1000000000000000000000000000000000000001"].foo`), 4);
         eq_(await storage.get(`deepUsers["${deployer.address}"]["0x1000000000000000000000000000000000000001"].bar`), 8);
+    },
+    async 'should read mapping value from storage' () {
+        const client = Web3ClientFactory.get('eth');
+        const slots = await SlotsParser.slots({
+            path: './test/fixtures/parser/v04/ENJToken.sol'
+        }, 'ENJToken');
+
+        const reader = SlotsStorage.createWithClient(client, '0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c', slots);
+
+        let someBalance = await reader.get('balanceOf["0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c"]');
+        gt_(someBalance, 0n);
+
+        let totalSupply = await reader.get('totalSupply');
+        gt_(totalSupply, 0n);
+
 
     }
 })
