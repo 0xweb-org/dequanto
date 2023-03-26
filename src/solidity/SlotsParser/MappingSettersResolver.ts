@@ -6,6 +6,7 @@ import {
     BaseASTNode,
     BinaryOperation,
     Block,
+    BooleanLiteral,
     ContractDefinition,
     EmitStatement,
     EventDefinition,
@@ -26,6 +27,8 @@ import { Ast } from './Ast';
 import { ISlotsParserOption, ISlotVarDefinition } from './models';
 import { SourceFile, TSourceFileContract } from './SourceFile';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { $is } from '@dequanto/utils/$is';
+import { $hex } from '@dequanto/utils/$hex';
 
 
 type TMappingAccessor = {
@@ -51,7 +54,7 @@ type TEventEmitStatement = {
     abi?: AbiItem
     name: string;
     args: {
-        node: Identifier | IndexAccess | MemberAccess | FunctionCall;
+        node: Identifier | IndexAccess | MemberAccess | FunctionCall | NumberLiteral | StringLiteral | BooleanLiteral | Expression;
         key: any;
         location: TVariableLocation;
     }[]
@@ -131,12 +134,16 @@ export namespace MappingSettersResolver {
                     }
 
                     let eventDeclaration = allEvents.find(ev => ev.name === event.name && ev.parameters.length === event.args.length);
+                    if (eventDeclaration == null && mutation.event.abi && $is.hexString(event.name) === false) {
+                        $logger.error(`Event ${ event.name } not found in events`)
+                    }
                     return <TMappingSetterEvent>{
                         event: mutation.event.abi ?? Ast.getAbi(eventDeclaration),
                         accessors: mutation.accessors,
                         accessorsIdxMapping: mutation.accessorsIdxMapping,
                     };
-                }).toArray();
+                })
+                .toArray();
             })
             .filter(x => x != null)
             .toArray();
@@ -427,8 +434,18 @@ namespace $node {
                                 location
                             };
                         }
-                        $logger.error(`Extract events: expected the Identifier for the Event argument: ${JSON.stringify(node, null, 2)}`);
-                        return null;
+                        if (Ast.isNumberLiteral(node) || Ast.isStringLiteral(node) || Ast.isBooleanLiteral(node)) {
+                            return {
+                                node: node,
+                                key: Ast.serialize(node),
+                                location: null
+                            };
+                        }
+                        return {
+                            node: node,
+                            key: Ast.serialize(node),
+                            location: null
+                        }
                     })
                     .filter(Boolean);
 

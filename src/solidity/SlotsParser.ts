@@ -96,14 +96,6 @@ export namespace SlotsParser {
             })
             .toArrayAsync();
 
-        // // remove duplicates, take the first declaration. (sorting is last..first)
-        // slotsDef = alot(slotsDef.reverse())
-        //     .distinctBy(x => x.name)
-        //     .toArray()
-        //     .reverse();
-
-        // slotsDef = applyPositions(slotsDef, offset);
-
         return slotsDef;
     }
 

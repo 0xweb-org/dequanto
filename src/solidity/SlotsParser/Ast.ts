@@ -7,6 +7,7 @@ import {
     astNodeTypes,
     BaseASTNode,
     BinaryOperation,
+    BooleanLiteral,
     ContractDefinition, DecimalNumber, ElementaryTypeName, EmitStatement, EnumDefinition,
     EventDefinition,
     Expression,
@@ -16,6 +17,7 @@ import {
     Identifier,
     ImportDirective, IndexAccess, MemberAccess, ModifierDefinition, NumberLiteral, SourceUnit,
     StateVariableDeclaration,
+    StringLiteral,
     StructDefinition, TypeName, UnaryOperation, VariableDeclaration, VariableDeclarationStatement
 } from '@solidity-parser/parser/dist/src/ast-types';
 import { $logger } from '@dequanto/utils/$logger';
@@ -211,6 +213,12 @@ export namespace Ast {
     }
     export function isNumberLiteral (node: BaseASTNode): node is NumberLiteral {
         return node?.type === 'NumberLiteral';
+    }
+    export function isStringLiteral (node: BaseASTNode): node is StringLiteral {
+        return node?.type === 'StringLiteral';
+    }
+    export function isBooleanLiteral (node: BaseASTNode): node is BooleanLiteral {
+        return node?.type === 'BooleanLiteral';
     }
 
     export function getFunctionName (node: FunctionCall) {

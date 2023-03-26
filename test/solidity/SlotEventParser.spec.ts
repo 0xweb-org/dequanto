@@ -297,6 +297,15 @@ UTest({
         eq_(event.event.name, 'Approval');
         deepEq_(event.accessorsIdxMapping, [0])
     },
+    async 'should parse old ENJToken contract' () {
+        let result = await MappingSettersResolver.getEventsForMappingMutations('balanceOf', { path: './test/fixtures/parser/v04/ENJToken.sol' });
+        eq_(result.events.length, 2);
+        eq_(result.events[0].event.name, 'Transfer');
+        deepEq_(result.events[0].accessorsIdxMapping, [ 0 ]);
+
+        eq_(result.events[1].event.name, 'Transfer');
+        deepEq_(result.events[1].accessorsIdxMapping, [ 1 ]);
+    },
     async 'should handle _transfer method, which has "from" and "to" mutations in one method' () {
         //SafeToken
         let { events, errors, methods } = await MappingSettersResolver.getEventsForMappingMutations('_balances', { path: './test/fixtures/parser/SAFE/SafeToken.sol' });
