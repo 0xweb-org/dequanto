@@ -8,6 +8,7 @@ import {
     Block,
     ContractDefinition,
     EmitStatement,
+    EventDefinition,
     Expression,
     FunctionCall,
     FunctionDefinition,
@@ -67,9 +68,6 @@ type TEventForMappingMutation = { error: Error } | {
 
 export namespace MappingSettersResolver {
 
-
-
-
     export async function getEventsForMappingMutations(mappingVarName: string, source: { path: string, code?: string }, contractName?: string, opts?: ISlotsParserOption): Promise<{
         errors: Error[]
         events: TMappingSetterEvent[]
@@ -111,7 +109,7 @@ export namespace MappingSettersResolver {
 
         let arr = alot(allMethods)
             .mapMany(method => {
-                let mutations = $astSetters.extractMappingMutations(mappingVarName, method, allMethods, allModifiers);
+                let mutations = $astSetters.extractMappingMutations(mappingVarName, method, allMethods, allModifiers, allEvents);
                 if (mutations == null || mutations.length == 0) {
                     // No mutation
                     return [];
@@ -158,7 +156,13 @@ export namespace MappingSettersResolver {
 
 namespace $astSetters {
 
-    export function extractMappingMutations(mappingVarName: string, method: FunctionDefinition, allMethods: FunctionDefinition[], allModifiers: ModifierDefinition[]): TEventForMappingMutation[] {
+    export function extractMappingMutations(
+        mappingVarName: string
+        , method: FunctionDefinition
+        , allMethods: FunctionDefinition[]
+        , allModifiers: ModifierDefinition[]
+        , allEvents: EventDefinition[]
+    ): TEventForMappingMutation[] {
 
         let body = method.body;
 
@@ -217,20 +221,12 @@ namespace $astSetters {
                 };
             });
 
-
-
-
-
-            let eventInfo = $node.findArgumentLogInFunction(method, null, setterIdentifiers.map(x => x.key));
+            let eventInfo = $node.findArgumentLogInFunction(method, null, setterIdentifiers.map(x => x.key), allEvents);
             if (eventInfo) {
-                // if (method.name === '_transfer') {
-                //     console.log(`MATCH`, setterIdentifiers.map(x => x.key), eventInfo.accessorsIdxMapping);
-                // }
                 return eventInfo;
             }
 
             // Event in method not found
-
             // Check modifiers
 
             let modifiers = method
@@ -243,7 +239,7 @@ namespace $astSetters {
             if (modifiers?.length > 0) {
                 let inModifiers = modifiers
                     .map(mod => {
-                        return $node.findArgumentLogInFunction(mod, method, setterIdentifiers.map(x => x.key));
+                        return $node.findArgumentLogInFunction(mod, method, setterIdentifiers.map(x => x.key), allEvents);
                     })
                     .filter(Boolean);
 
@@ -262,7 +258,7 @@ namespace $astSetters {
             if (methodCallInfos.length > 0) {
                 let eventInfos = methodCallInfos
                     .map(methodCallInfo => {
-                        let eventInfo = $node.findArgumentLogInFunction(methodCallInfo.method, null, methodCallInfo.argumentKeyMapping);
+                        let eventInfo = $node.findArgumentLogInFunction(methodCallInfo.method, null, methodCallInfo.argumentKeyMapping, allEvents);
                         if (eventInfo == null) {
                             return null;
                         }
@@ -300,7 +296,7 @@ namespace $astSetters {
                             let argumentKeyMapping = argumentsMapping.map(idx => {
                                 return Ast.serialize(methodCallInfo.ref.arguments[idx]);
                             });
-                            let eventInfo = $node.findArgumentLogInFunction(methodCallInfo.method, null, argumentKeyMapping);
+                            let eventInfo = $node.findArgumentLogInFunction(methodCallInfo.method, null, argumentKeyMapping, allEvents);
                             if (eventInfo == null) {
                                 return null;
                             }
@@ -393,11 +389,23 @@ namespace $node {
         return { scope: 'state' }
     }
 
-    export function findEventsInFunction(method: FunctionDefinition | ModifierDefinition, parent: FunctionDefinition): TEventEmitStatement[] {
+    export function findEventsInFunction(
+        method: FunctionDefinition | ModifierDefinition
+        , parent: FunctionDefinition
+        /** <0.5.0 was no emit statement, search for a method which equals to event declaration */
+        , allEvents: EventDefinition[]
+    ): TEventEmitStatement[] {
         let body = method.body;
         let events = Ast.findMany<EmitStatement>(body, node => {
-            return Ast.isEmitStatement(node);
+            return Ast.isEmitStatement(node) || (Ast.isFunctionCall(node) && allEvents.some(x => x.name === Ast.getFunctionName(node)));
+        }).map(match => {
+            // transform functionCall to eventCall in <0.5.0
+            if (Ast.isFunctionCall(match.node)) {
+                match.node = <EmitStatement> { type: 'EmitStatement', eventCall: match.node };
+            }
+            return match;
         });
+
         let eventInfos = events
             .map(event => {
                 if (Ast.isIdentifier(event.node.eventCall.expression) === false) {
@@ -570,12 +578,17 @@ namespace $node {
             .filter(Boolean);
     }
 
-    export function findArgumentLogInFunction(method: FunctionDefinition | ModifierDefinition, parent: FunctionDefinition, accessors: string[]): {
+    export function findArgumentLogInFunction(
+        method: FunctionDefinition | ModifierDefinition
+        , parent: FunctionDefinition
+        , accessors: string[]
+        , allEvents: EventDefinition[]
+    ): {
         event: TEventEmitStatement,
         accessors: string[],
         accessorsIdxMapping: number[]
     } {
-        let events = $node.findEventsInFunction(method, parent).filter(event => {
+        let events = $node.findEventsInFunction(method, parent, allEvents).filter(event => {
             return accessors.every(key => event.args.some(arg => arg.key === key));
         });
         if (events.length > 0) {

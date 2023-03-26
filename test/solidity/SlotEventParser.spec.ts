@@ -265,6 +265,23 @@ UTest({
         ]);
         deepEq_(eventInfo.accessorsIdxMapping, [1])
     },
+    async 'should get event from solidity prior 0.5.0' () {
+        let code = `
+            contract A {
+
+                mapping (address => uint) users;
+                event UpdatedCaller(address sender);
+
+                function tick() {
+                    users[msg.sender] = block.timestamp;
+                    UpdatedCaller(msg.sender);
+                }
+            }
+        `;
+        let result = await MappingSettersResolver.getEventsForMappingMutations('users', { path: '', code });
+        eq_(result.events.length, 1);
+        eq_(result.events[0].event.name, 'UpdatedCaller');
+    },
     async 'should parse PriceOracle contract' () {
 
         let result = await MappingSettersResolver.getEventsForMappingMutations('_assetPrices', { path: './test/fixtures/parser/PriceOracle.sol' });

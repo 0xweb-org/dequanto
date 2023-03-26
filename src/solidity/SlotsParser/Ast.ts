@@ -213,6 +213,14 @@ export namespace Ast {
         return node?.type === 'NumberLiteral';
     }
 
+    export function getFunctionName (node: FunctionCall) {
+        let expression = node.expression;
+        if (Ast.isIdentifier(expression)) {
+            return expression.name;
+        }
+        return null;
+    }
+
 
     function getUserDefinedTypeRaw(node: ContractDefinition | SourceUnit, name: string): StructDefinition | ContractDefinition | EnumDefinition {
         let arr = isContractDefinition(node)
