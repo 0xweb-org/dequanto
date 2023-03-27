@@ -1,7 +1,8 @@
 import di from 'a-di';
 import alot from 'alot';
-import { type AbiItem } from 'web3-utils';
-import { type Web3Client } from '@dequanto/clients/Web3Client';
+import type { PastLogsOptions } from 'web3-core';
+import type { AbiItem } from 'web3-utils';
+import type { Web3Client } from '@dequanto/clients/Web3Client';
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
 import { AbiDeserializer } from './utils/AbiDeserializer';
 import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
@@ -10,6 +11,11 @@ import { class_Dfr } from 'atma-utils';
 import { $is } from '@dequanto/utils/$is';
 import { $logger } from '@dequanto/utils/$logger';
 import { $abiParser } from '../utils/$abiParser';
+import { $block } from '@dequanto/utils/$block';
+import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { ContractCreationResolver } from './ContractCreationResolver';
+import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
+
 
 
 export interface IContractReader {
@@ -126,8 +132,61 @@ export class ContractReader implements IContractReader {
         return results as any;
     }
 
-    async getLogs () {
+    async getLogs (filters: PastLogsOptions) {
+        return this.client.getPastLogs(filters);
+    }
 
+    async getLogsFilter(address: TAddress, abi: AbiItem, options: {
+        /**
+         * "deployment": get the contracts deployment date to skip lots of blocks (in case we use pagination to fetch logs)
+         */
+        fromBlock?: number | Date | 'deployment'
+        toBlock?: number | Date
+        params?: { [key: string]: any } | any[]
+
+    }): Promise<PastLogsOptions> {
+        let filters: PastLogsOptions = {
+            address: address,
+        };
+
+        if (options.fromBlock != null) {
+            if (options.fromBlock === 'deployment') {
+                try {
+                    let explorer = BlockChainExplorerProvider.get(this.client.platform);
+                    let dateResolver = new ContractCreationResolver(this.client, explorer);
+                    let info = await dateResolver.getInfo(address);
+                    filters.fromBlock = info.block - 1;
+                } catch (error) {
+                    // Skip any explorer errors and look from block 0
+                }
+            } else {
+                filters.fromBlock = await $block.ensureNumber(options.fromBlock, this.client);
+            }
+        }
+        if (options.toBlock != null) {
+            filters.toBlock = await $block.ensureNumber(options.toBlock, this.client);
+        }
+
+        let topic = $abiUtils.getTopicSignature(abi);
+        let topics = [ topic ];
+        if (options.params != null) {
+            alot(abi.inputs)
+                .takeWhile(x => x.indexed)
+                .forEach((arg, i) => {
+                    let param = Array.isArray(options.params)
+                        ? options.params[i]
+                        : options.params?.[arg.name];
+                    if (param == null) {
+                        topics.push(undefined);
+                        return;
+                    }
+                    topics.push(param);
+                })
+                .toArray();
+        }
+
+        filters.topics = topics;
+        return filters;
     }
 
     static async read (client: Web3Client, address: TAddress, methodAbi: string){

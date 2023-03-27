@@ -20,7 +20,7 @@ UTest({
         await TestNode.start();
     },
 
-    async '!generate polygons WETH' () {
+    async 'generate polygons WETH' () {
 
         const gen = new Generator({
             name: 'WETH',
@@ -80,7 +80,7 @@ UTest({
         let source = await File.readAsync(genPath, { skipHooks: true });
         has_(source, 'onTransfer');
     },
-    async 'generate and check with deployed contract' () {
+    async '!generate and check with deployed contract' () {
 
         let provider = new HardhatProvider();
         let client = await provider.client('localhost');
@@ -110,8 +110,6 @@ UTest({
         let name = await foo.name();
         eq_(name, 'hello');
 
-        //await $promise.wait(2000);
-
         l`> Get name with Contract Reader`
         let reader = new ContractReader(client);
         let nameFromReader = await reader.readAsync(foo.address, 'name() returns (string)');
@@ -121,23 +119,23 @@ UTest({
         let nameFromReaderWithSig = await reader.readAsync(foo.address, '0x06fdde03() returns (string)');
         eq_(nameFromReaderWithSig, 'hello');
 
-        l`Subscribe to transactions stream`
+        l`> Subscribe to transactions stream`
         const transactionsListener = [];
         foo.onTransaction('*').subscribe((data) => {
             transactionsListener.push(data.calldata);
         });
 
-        l`Set new name`
+        l`> Set new name`
         let tx = await foo.setName(provider.deployer(), 'bar');
         let receipt = await tx.wait();
         eq_(receipt.status, true);
 
 
-        l`Check name was set`
+        l`> Check name was set`
         name = await foo.name();
         eq_(name, 'bar');
 
-        l`Check logs`
+        l`> Check logs`
         let logs = await foo.getPastLogsUpdated({});
         gte_(logs.length, 1);
 
@@ -145,6 +143,19 @@ UTest({
         eq_(log.transactionHash, tx.tx.hash);
         eq_(log.event, 'Updated');
         eq_(log.params.newName, 'bar');
+
+        l`> Emit logs again, and recheck fromBlock`;
+        let blockNr = await client.getBlockNumber();
+        tx = await foo.setName(provider.deployer(), 'qux');
+        receipt = await tx.wait();
+
+        eq_(blockNr + 1, receipt.blockNumber);
+        logs = await foo.getPastLogsUpdated({
+            fromBlock: blockNr + 1
+        });
+        eq_(logs.length, 1);
+        eq_(logs[0].params.newName, 'qux');
+
 
         l`Check overloads`
         let zero = await foo.someEcho();
@@ -161,7 +172,11 @@ UTest({
         });
 
         let methods = transactionsListener.map(x => x.method);
-        deepEq_(methods, ['setName']);
+        deepEq_(methods, [
+            // 2 set TX were emited here
+            'setName',
+            'setName',
+        ]);
 
     },
 })

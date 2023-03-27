@@ -210,7 +210,7 @@ UTest({
         eq_(await storage.get(`deepUsers["${deployer.address}"]["0x1000000000000000000000000000000000000001"].foo`), 4);
         eq_(await storage.get(`deepUsers["${deployer.address}"]["0x1000000000000000000000000000000000000001"].bar`), 8);
     },
-    async 'should read mapping value from storage' () {
+    async '!should read mapping value from storage' () {
         const client = Web3ClientFactory.get('eth');
         const slots = await SlotsParser.slots({
             path: './test/fixtures/parser/v04/ENJToken.sol'
@@ -225,5 +225,6 @@ UTest({
         gt_(totalSupply, 0n);
 
 
+        console.log('>', await client.getStorageAt('0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c', '0x002d328c26df98061841308a1f512546357a648ac1726e814dc9e9ea7a160cec'))
     }
 })
