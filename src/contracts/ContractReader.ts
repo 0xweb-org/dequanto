@@ -15,6 +15,8 @@ import { $block } from '@dequanto/utils/$block';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { ContractCreationResolver } from './ContractCreationResolver';
 import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
+import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
+import { $contract } from '@dequanto/utils/$contract';
 
 
 
@@ -130,6 +132,13 @@ export class ContractReader implements IContractReader {
 
         let results = await ContractReaderUtils.readAsyncBatch(this.client, inputs);
         return results as any;
+    }
+
+    async getLogsParsed (...args: Parameters<ContractReader['getLogsFilter']>): Promise<ITxLogItem[]> {
+        let filters = await this.getLogsFilter(...args);
+        let logs = await this.getLogs(filters);
+        let [ address, abi ] = args;
+        return logs.map(log => $contract.parseLogWithAbi(log, abi));
     }
 
     async getLogs (filters: PastLogsOptions) {

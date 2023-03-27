@@ -4,18 +4,15 @@ import type { AbiItem } from 'web3-utils';
 import type { PastLogsOptions } from 'web3-core';
 import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
 import { TAddress } from '@dequanto/models/TAddress';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $require } from '@dequanto/utils/$require';
-import { MappingSettersResolver, TMappingSetterEvent } from '../SlotsParser/MappingSettersResolver';
+import { MappingSettersResolver } from '../SlotsParser/MappingSettersResolver';
 import { SourceCodeProvider } from '../SourceCodeProvider';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { $logger } from '@dequanto/utils/$logger';
-import { $contract } from '@dequanto/utils/$contract';
-import { File } from 'atma-io';
-import { ContractCreationResolver } from '@dequanto/contracts/ContractCreationResolver';
+import { ContractReader } from '@dequanto/contracts/ContractReader';
 
 export class MappingKeysLoader {
 
@@ -89,32 +86,11 @@ export class MappingKeysLoader {
         return source;
     }
 
-    private async loadEvents(ev: AbiItem) {
-        const logs = await this.loadEventsByTopic($abiUtils.getTopicSignature(ev));
-        return logs.map(log => $contract.parseLogWithAbi(log, ev));
-    }
-
     @memd.deco.memoize({ perInstance: true })
-    private async loadEventsByTopic(topic0: string) {
-        // get the contracts deployment date to skip lots of blocks (in case we use pagination to fetch logs)
-        let fromBlock = 0;
-        try {
-            let dateResolver = new ContractCreationResolver(this.client, this.explorer);
-            let info = await dateResolver.getInfo(this.address);
-            fromBlock = info.block - 1;
-        } catch (error) {
-            // Skip any explorer errors and look from block 0
-        }
-
-        let filters = <PastLogsOptions>{
-            address: this.address,
-            fromBlock: fromBlock,
-            topics: [
-                topic0
-            ]
-        };
-
-        let logs = await this.client.getPastLogs(filters);
-        return logs;
+    private async loadEvents(ev: AbiItem) {
+        let reader = new ContractReader(this.client);
+        return reader.getLogsParsed(this.address, ev, {
+            fromBlock: 'deployment'
+        });
     }
 }
