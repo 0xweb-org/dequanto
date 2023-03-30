@@ -80,7 +80,7 @@ UTest({
         let source = await File.readAsync(genPath, { skipHooks: true });
         has_(source, 'onTransfer');
     },
-    async '!generate and check with deployed contract' () {
+    async 'generate and check with deployed contract' () {
 
         let provider = new HardhatProvider();
         let client = await provider.client('localhost');
@@ -110,6 +110,22 @@ UTest({
         let name = await foo.name();
         eq_(name, 'hello');
 
+        l`> Deploy second contract`;
+        let qux:any = await provider.deployClass(Foo.Foo, {
+            arguments: [ 'qux' ],
+            client
+        });
+
+        let nameBar = await qux.name();
+        eq_(nameBar, 'qux');
+        notEq_(foo.address, qux.address);
+
+        l`> Update qux contract and check later the event is not included in logs`
+        let quxTx = await qux.setName(provider.deployer(), 'Qux2');
+        let quxReceipt = await quxTx.wait();
+        eq_(quxReceipt.status, true);
+
+
         l`> Get name with Contract Reader`
         let reader = new ContractReader(client);
         let nameFromReader = await reader.readAsync(foo.address, 'name() returns (string)');
@@ -130,19 +146,35 @@ UTest({
         let receipt = await tx.wait();
         eq_(receipt.status, true);
 
-
         l`> Check name was set`
         name = await foo.name();
         eq_(name, 'bar');
 
-        l`> Check logs`
+        l`> Set new name via setName2`
+        let txSetName2 = await foo.setName2(provider.deployer(), 'bar2');
+        await txSetName2.wait();
+        l`> Check name was set`
+        name = await foo.name();
+        eq_(name, 'bar2');
+
+
+        l`> Check logs for FOO contract`
         let logs = await foo.getPastLogsUpdated({});
         gte_(logs.length, 1);
+        eq_(logs.find(log => log.params.newName == 'Qux2'), null);
 
         let log = logs[logs.length - 1];
         eq_(log.transactionHash, tx.tx.hash);
         eq_(log.event, 'Updated');
         eq_(log.params.newName, 'bar');
+
+        l`> Check logs by topic`
+        let parsed = await reader.getLogsParsed('event Updated(string newName)', {
+            fromBlock: quxReceipt.blockNumber,
+        });
+        let names = parsed.map(x => x.params.newName);
+        deepEq_(names, ['Qux2', 'bar']);
+
 
         l`> Emit logs again, and recheck fromBlock`;
         let blockNr = await client.getBlockNumber();
@@ -173,8 +205,9 @@ UTest({
 
         let methods = transactionsListener.map(x => x.method);
         deepEq_(methods, [
-            // 2 set TX were emited here
+            // 3 set TX were emited above
             'setName',
+            'setName2',
             'setName',
         ]);
 

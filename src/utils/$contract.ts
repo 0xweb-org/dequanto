@@ -4,6 +4,7 @@ import { Log, TransactionReceipt } from 'web3-core';
 import { $abiUtils } from './$abiUtils';
 import { InputDataUtils } from '@dequanto/contracts/utils/InputDataUtils';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
+import { $abiParser } from './$abiParser';
 
 export namespace $contract {
     export function keccak256 (str: string) {
@@ -46,7 +47,10 @@ export namespace $contract {
     //     };
     // }
 
-    export function parseLogWithAbi(log: Log, abiItem: AbiItem): ITxLogItem {
+    export function parseLogWithAbi(log: Log, abiItem: AbiItem | string): ITxLogItem {
+        if(typeof abiItem === 'string') {
+            abiItem = $abiParser.parseMethod(abiItem);
+        }
         let inputs = abiItem.inputs.slice();
         let args = log.topics.slice(1).map((bytes, i) => {
             let type = inputs.shift();

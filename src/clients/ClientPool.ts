@@ -36,6 +36,9 @@ export interface IPoolClientConfig {
 
     // requestCout/timeSpan: e.g. 100/1min
     rateLimit?: string
+
+    // the max block range to fetch per single request when getting logs
+    blockRangeLimit?: string | number
 }
 export interface IPoolWeb3Request {
     ws?: boolean
@@ -54,6 +57,9 @@ export interface IPoolWeb3Request {
 
     // Amount of batch requests to be performed, sothat we can choose the appropriate wClient and handle the rate limits correctly
     batchRequestCount?: number
+
+    // By fetching logs, specifies the desired block range to query
+    blockRangeCount?: number
 }
 
 export class ClientPool {
@@ -412,6 +418,10 @@ export class ClientPool {
             ? healthy
             : available;
 
+        if (opts?.blockRangeCount != null) {
+            let upperThreshold = alot(arr).max(x => x.blockRangeLimits.blocks) * .8;
+            arr = arr.filter(x => x.blockRangeLimits.blocks >= upperThreshold)
+        }
         return await this.getClientWithLowestWaitTime(arr);
     }
 
@@ -570,7 +580,7 @@ export class ClientPool {
     }
 }
 
-class WClient {
+export class WClient {
     lastStatus = 0;
     lastDate = new Date(2000).getTime();
 
@@ -586,6 +596,12 @@ class WClient {
     eth: Web3['eth']
     config: IPoolClientConfig
     rateLimitGuard: RateLimitGuard
+
+    /** For getLogs method, as some providers limit the range request or page result value */
+    blockRangeLimits: {
+        blocks?: number
+        results?: number
+    }
 
     healthy () {
         if (this.getRequestCount() === 0) {
@@ -613,6 +629,17 @@ class WClient {
         }
         this.rateLimitGuard.updateRateLimitInfo(info);
     }
+    public updateBlockRangeInfo (info: WClient['blockRangeLimits']) {
+        if (this.blockRangeLimits == null) {
+            this.blockRangeLimits = {};
+        }
+        if (info.blocks != null) {
+            this.blockRangeLimits.blocks = info.blocks;
+        }
+        if (info.results != null) {
+            this.blockRangeLimits.results = info.results;
+        }
+    }
 
     constructor (mix: IPoolClientConfig) {
         const hasUrl = 'url' in mix && typeof mix.url === 'string';
@@ -633,6 +660,7 @@ class WClient {
         }
         this.web3.eth.handleRevert = true;
         this.eth = this.web3.eth;
+        this.blockRangeLimits = { blocks: Infinity };
 
         if (mix.rateLimit) {
             let rates = RateLimitGuard.parseRateLimit(mix.rateLimit);
@@ -640,6 +668,9 @@ class WClient {
                 id: this.config?.url ?? 'web3',
                 rates: rates
             })
+        }
+        if (mix.blockRangeLimit) {
+
         }
     }
 

@@ -17,6 +17,7 @@ import { ContractCreationResolver } from './ContractCreationResolver';
 import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { $contract } from '@dequanto/utils/$contract';
+import { $require } from '@dequanto/utils/$require';
 
 
 
@@ -137,7 +138,7 @@ export class ContractReader implements IContractReader {
     async getLogsParsed (...args: Parameters<ContractReader['getLogsFilter']>): Promise<ITxLogItem[]> {
         let filters = await this.getLogsFilter(...args);
         let logs = await this.getLogs(filters);
-        let [ address, abi ] = args;
+        let [ abi ] = args;
         return logs.map(log => $contract.parseLogWithAbi(log, abi));
     }
 
@@ -145,7 +146,9 @@ export class ContractReader implements IContractReader {
         return this.client.getPastLogs(filters);
     }
 
-    async getLogsFilter(address: TAddress, abi: AbiItem, options: {
+    async getLogsFilter(abi: AbiItem | string, options: {
+        /** Can be UNDEFINED, then the logs will be searched globally */
+        address?: TAddress
         /**
          * "deployment": get the contracts deployment date to skip lots of blocks (in case we use pagination to fetch logs)
          */
@@ -154,16 +157,20 @@ export class ContractReader implements IContractReader {
         params?: { [key: string]: any } | any[]
 
     }): Promise<PastLogsOptions> {
+        if (typeof abi === 'string') {
+            abi = $abiParser.parseMethod(abi);
+        }
         let filters: PastLogsOptions = {
-            address: address,
+            address: options.address,
         };
 
         if (options.fromBlock != null) {
             if (options.fromBlock === 'deployment') {
+                $require.Address(options.address, `No contract address provided, but the "fromBlock" is "deployment"`)
                 try {
                     let explorer = BlockChainExplorerProvider.get(this.client.platform);
                     let dateResolver = new ContractCreationResolver(this.client, explorer);
-                    let info = await dateResolver.getInfo(address);
+                    let info = await dateResolver.getInfo(options.address);
                     filters.fromBlock = info.block - 1;
                 } catch (error) {
                     // Skip any explorer errors and look from block 0

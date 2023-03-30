@@ -216,7 +216,6 @@ export abstract class ContractBase {
     }
     protected async $getPastLogs(filters: PastLogsOptions) {
         return this.getContractReader().getLogs(filters);
-        //return this.client.getPastLogs(filters);
     }
     protected async $getPastLogsFilters(abi: AbiItem, options: {
         topic?: string
@@ -227,35 +226,12 @@ export abstract class ContractBase {
         }
     }): Promise<PastLogsOptions> {
         return this.getContractReader().getLogsFilter(
-            this.address,
             abi,
-            options
+            {
+                ...(options ?? {}),
+                address: this.address
+            }
         );
-
-        // let filters: PastLogsOptions = {};
-
-        // if (options.fromBlock != null) {
-        //     filters.fromBlock = await $block.ensureNumber(options.fromBlock, this.client);
-        // }
-        // if (options.toBlock != null) {
-        //     filters.toBlock = await $block.ensureNumber(options.toBlock, this.client);
-        // }
-
-        // let topics = [ options.topic ];
-        // alot(abi.inputs)
-        //     .takeWhile(x => x.indexed)
-        //     .forEach(arg => {
-        //         let param = options.params?.[arg.name];
-        //         if (param == null) {
-        //             topics.push(undefined);
-        //             return;
-        //         }
-        //         topics.push(param);
-        //     })
-        //     .toArray();
-
-        // filters.topics = topics;
-        // return filters;
     }
 
     private getContractReader () {

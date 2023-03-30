@@ -11,7 +11,7 @@ import type { BlockTransactionString, Syncing } from 'web3-eth';
 import type { IWeb3Client, IWeb3ClientOptions } from './interfaces/IWeb3Client';
 import type { BlockNumber, Log, LogsOptions, PastLogsOptions, TransactionConfig, Transaction, TransactionReceipt, WebsocketProvider } from 'web3-core';
 import type { Subscription } from 'web3-core-subscriptions';
-import { ClientPool, IPoolClientConfig, IPoolWeb3Request } from './ClientPool';
+import { ClientPool, IPoolClientConfig, IPoolWeb3Request, WClient } from './ClientPool';
 import { ClientPoolTrace } from './ClientPoolStats';
 import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
 import { $number } from '@dequanto/utils/$number';
@@ -509,12 +509,21 @@ namespace RangeWorker {
         range: { fromBlock: number, toBlock: number },
         knownLimits: { maxBlockRange?: number, maxResultCount?: number },
     ) {
+
+        let currentWClient: WClient;
         try {
-            let paged = await client.pool.call(web3 => web3.eth.getPastLogs({
-                ...options,
-                fromBlock: range.fromBlock,
-                toBlock: range.toBlock ?? undefined,
-            }));
+            let blockRange = range.toBlock - range.fromBlock;
+            let paged = await client.pool.call((web3, wClient) => {
+                currentWClient = wClient;
+
+                return web3.eth.getPastLogs({
+                    ...options,
+                    fromBlock: range.fromBlock,
+                    toBlock: range.toBlock ?? undefined,
+                });
+            }, {
+                blockRangeCount: blockRange
+            });
             return paged;
         } catch (error) {
             /**
@@ -551,10 +560,23 @@ namespace RangeWorker {
             if (maxRangeMatch && knownLimits.maxBlockRange == null) {
                 // handle unknown range, otherwise throw
                 let rangeLimit = Number(maxRangeMatch);
+                currentWClient.updateBlockRangeInfo({ blocks: rangeLimit });
                 return await fetchWithLimits(client, options, {
                     ...knownLimits,
                     maxBlockRange: rangeLimit
                 }, range);
+            }
+            if (/\brange\b/.test(error.message)) {
+                // Generic "block range is too wide"
+                let rangeLimit = Math.round((knownLimits.maxBlockRange ?? 100000) * .8);
+                if (rangeLimit > 100) {
+                    // otherwise too small range
+                    currentWClient.updateBlockRangeInfo({ blocks: rangeLimit });
+                    return await fetchWithLimits(client, options, {
+                        ...knownLimits,
+                        maxBlockRange: rangeLimit
+                    }, range);
+                }
             }
 
             throw error;
