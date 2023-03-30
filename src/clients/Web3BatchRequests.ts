@@ -1,15 +1,17 @@
 import alot from 'alot';
 import Web3 from 'web3';
+import type { AbiItem } from 'web3-utils';
 import { TAddress } from '@dequanto/models/TAddress';
 import { class_Dfr } from 'atma-utils';
 import { $web3Provider } from './utils/$web3Provider';
 import { l } from '@dequanto/utils/$logger';
+import { $web3Abi } from './utils/$web3Abi';
 
 export namespace Web3BatchRequests {
 
     export interface IContractRequest {
         address: TAddress;
-        abi: any;
+        abi: string | AbiItem | AbiItem[];
         method: string;
         arguments?: any[];
         options?: {
@@ -129,7 +131,8 @@ export namespace Web3BatchRequests {
     }
 
     function prepair(web3: Web3, request: IContractRequest) {
-        let { address, method, abi, options, blockNumber, arguments: params } = request;
+        let { address, method, abi: abiMix, options, blockNumber, arguments: params } = request;
+        let abi = $web3Abi.ensureFirstMethod(abiMix);
         let contract = new web3.eth.Contract(abi, address);
         let callArgs = [];
         if (options != null) {

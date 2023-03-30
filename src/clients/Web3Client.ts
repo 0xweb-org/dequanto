@@ -22,6 +22,7 @@ import { ClientEventsStream } from './ClientEventsStream';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { ClientDebugMethods } from './debug/ClientDebugMethods';
 import { Web3BatchRequests } from './Web3BatchRequests';
+import { $web3Abi } from './utils/$web3Abi';
 
 export abstract class Web3Client implements IWeb3Client {
 
@@ -133,10 +134,11 @@ export abstract class Web3Client implements IWeb3Client {
     }
 
     readContract (data: Web3BatchRequests.IContractRequest) {
-        let { address, method, abi, options, blockNumber, arguments: params } = data;
+        let { address, method, abi: abiMix, options, blockNumber, arguments: params } = data;
+        let abi = $web3Abi.ensureFirstMethod(abiMix);
         return this.pool.call(async web3 => {
 
-            let sig = abi[0].signature;
+            let sig = abi.signature;
 
             let contract = new web3.eth.Contract(abi, address);
             let callArgs = [];
@@ -149,7 +151,7 @@ export abstract class Web3Client implements IWeb3Client {
             }
             if (sig) {
                 // If signature was provided in ABI (ensure we reset it to ABI, as eth.Contract constructor recalculates method signatures)
-                abi[0].signature = sig;
+                abi.signature = sig;
             }
             let result = await contract.methods[method](...params).call(...callArgs);
             return result;
