@@ -192,9 +192,9 @@ export class GeneratorFromAbi {
             storageReaderClass = reader.code;
             storageReaderProperty = property;
             if (property) {
-                $logger.log(`Storage Reader generated`);
+                $logger.log(`green<StorageReader> was generated`);
             } else {
-                $logger.log(`Storage Reader NOT generated as the className not found`);
+                $logger.log(`red<StorageReader> was not generated: ${reader.error?.message}`);
             }
         } catch (error) {
             $logger.log(`Storage Reader is skipped due to the error: ${error.message}`);

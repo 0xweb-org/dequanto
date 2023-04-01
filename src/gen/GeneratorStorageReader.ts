@@ -2,13 +2,14 @@ import alot from 'alot'
 import { Web3Client } from '@dequanto/clients/Web3Client'
 import { TAddress } from '@dequanto/models/TAddress'
 import { TPlatform } from '@dequanto/models/TPlatform'
-import { ISlotVarDefinition, SlotsParser } from '@dequanto/solidity/SlotsParser'
+import { SlotsParser } from '@dequanto/solidity/SlotsParser'
 import { $require } from '@dequanto/utils/$require'
 import { File } from 'atma-io'
 import { Str } from './utils/Str'
 import { $abiType } from '@dequanto/utils/$abiType'
 import { $path } from '@dequanto/utils/$path'
 import { $gen } from './utils/$gen'
+import { ISlotVarDefinition } from '@dequanto/solidity/SlotsParser/models'
 
 export class GeneratorStorageReader {
 
@@ -21,7 +22,7 @@ export class GeneratorStorageReader {
             [file: string]: { content: string }
         },
         client?: Web3Client
-    }): Promise<{ code?: string, className?: string }> {
+    }): Promise<{ code?: string, className?: string, error?: Error }> {
 
 
         let { client, sources, contractName, address } = opts;
@@ -33,7 +34,9 @@ export class GeneratorStorageReader {
         }).toArray();
 
         if (files.length === 0) {
-            return {};
+            return {
+                error: new Error(`Not possible to generate the StorageReader class, without the source code`)
+            };
         }
 
         let file = null as (typeof files[0]);
