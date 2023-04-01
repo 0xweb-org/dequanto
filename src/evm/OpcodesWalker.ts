@@ -136,14 +136,21 @@ export class OpcodesWalker {
 }
 
 export namespace IsOpcode {
-    export function ofType (opcode: IOpcode, name: 'PUSH' | 'JUMP' | 'JUMPDEST' | 'RETURN') {
+    export function ofType (opcode: IOpcode, name: keyof typeof rgxes) {
         if (opcode == null) {
             return false;
         }
         if (typeof name === 'string') {
-            let rgx = new RegExp(name, 'i');
+            let rgx = rgxes[name];
             return rgx.test(opcode.name);
         }
         return false;
     }
+
+    const rgxes = {
+        'PUSH': /^PUSH\d*$/i,
+        'JUMP': /^JUMPI?$/i,
+        'JUMPDEST': /^JUMPDEST$/i,
+        'RETURN': /^RETURN$/i
+    };
 }
