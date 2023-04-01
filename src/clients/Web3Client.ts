@@ -119,18 +119,9 @@ export abstract class Web3Client implements IWeb3Client {
         callback?: (error: Error, transactionHash: string) => void
     ): Promise<Subscription<string>>;
     async subscribe (...args): Promise<Subscription<any>>{
-        let web3 = await this.getWeb3({ ws: true });
-
-        let provider = web3.eth.currentProvider as WebsocketProvider & { url };
-        if (provider.connected === false) {
-            provider.connect();
-            await $promise.waitForTrue(() => provider.connected, {
-                intervalMs: 200,
-                timeoutMessage: `Can not connect to ${provider.url}`,
-                timeoutMs: 20_000
-            });
-        }
-        return web3.eth.subscribe(...args as Parameters<Web3['eth']['subscribe']>);
+        let wClient = await this.pool.getWrappedWeb3({ ws: true });
+        await wClient.ensureConnected();
+        return wClient.web3.eth.subscribe(...args as Parameters<Web3['eth']['subscribe']>);
     }
 
     readContract (data: Web3BatchRequests.IContractRequest) {

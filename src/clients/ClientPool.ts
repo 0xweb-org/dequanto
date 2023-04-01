@@ -3,12 +3,12 @@ import memd from 'memd';
 import Web3 from 'web3';
 import { $date } from '@dequanto/utils/$date';
 import { $number } from '@dequanto/utils/$number';
-import { PromiEvent, type provider } from 'web3-core';
+
 import { PromiEventWrap } from './model/PromiEventWrap';
 import { IWeb3ClientStatus } from './interfaces/IWeb3ClientStatus';
 import { ClientStatus } from './model/ClientStatus';
 import { ClientPoolTrace, ClientPoolTraceError } from './ClientPoolStats';
-import { class_Dfr } from 'atma-utils';
+import { class_Dfr, obj_extendDefaults } from 'atma-utils';
 import { ClientErrorUtil } from './utils/ClientErrorUtil';
 import { IWeb3ClientOptions } from './interfaces/IWeb3Client';
 import { $logger, l } from '@dequanto/utils/$logger';
@@ -17,10 +17,14 @@ import { $array } from '@dequanto/utils/$array';
 import { RateLimitGuard } from './handlers/RateLimitGuard';
 import { Web3BatchRequests } from './Web3BatchRequests';
 
-declare let app;
+import type { PromiEvent, WebsocketProvider, provider } from 'web3-core';
+import type { HttpProviderOptions, WebsocketProviderOptions } from 'web3-core-helpers/types/index'
 
 export interface IPoolClientConfig {
     url?: string
+    options?: HttpProviderOptions | WebsocketProviderOptions
+
+    /** Will be a pefered node for submitting transactions */
     safe?: boolean
     distinct?: boolean
     web3?: Web3 | provider
@@ -66,15 +70,15 @@ export class ClientPool {
 
     private discoveredPartial = false;
     private discoveredFull = false;
-    private clients: WClient[] ;
+    private clients: WClient[];
     private ws: WClient;
 
-    constructor (config: IWeb3ClientOptions) {
+    constructor(config: IWeb3ClientOptions) {
 
         if (config.endpoints != null && config.endpoints.length > 0) {
             this.clients = config.endpoints.map(cfg => new WClient(cfg))
         } else if (config.web3 || config.provider) {
-            this.clients = [ new WClient({ web3: config.web3 ?? config.provider }) ];
+            this.clients = [new WClient({ web3: config.web3 ?? config.provider })];
         } else {
             console.dir(config, { depth: null });
             throw new Error(`Neither Node endpoints nor Web3 instance`)
@@ -85,10 +89,10 @@ export class ClientPool {
         }
     }
 
-    callSync <TResult> (fn: (web3: Web3) => TResult ): TResult {
+    callSync<TResult>(fn: (web3: Web3) => TResult): TResult {
 
         let arr = this.clients.filter(x => x.status === 'ok');
-        let wClient = arr[ $number.randomInt(0, arr.length) ];
+        let wClient = arr[$number.randomInt(0, arr.length)];
         let { status, result } = wClient.callSync(fn);
         if (status == ClientStatus.Ok) {
             return result;
@@ -96,7 +100,7 @@ export class ClientPool {
         throw result;
     }
 
-    async callBatched (args: {
+    async callBatched(args: {
         requests: (web3: Web3) => Promise<any[]>
         map?: (results: any[]) => any
     }, opts?: IPoolWeb3Request) {
@@ -108,7 +112,7 @@ export class ClientPool {
         }, opts);
     }
 
-    async call <TResult> (fn: (web3: Web3, wClient?: WClient) => Promise<TResult>, opts?: IPoolWeb3Request): Promise<TResult> {
+    async call<TResult>(fn: (web3: Web3, wClient?: WClient) => Promise<TResult>, opts?: IPoolWeb3Request): Promise<TResult> {
         // Client - Retries
         let used = new Map<WClient, number>();
         let errors = [];
@@ -164,14 +168,18 @@ export class ClientPool {
             // if not the CallError, process the while loop to check another NodeProvider
         }
     }
-    async getWeb3 (options?: IPoolWeb3Request) {
-        let wClient = await this.next(null, options, { manual: true });
-        if (wClient == null) {
-            throw new Error(`No client found in ${this.clients.length} Clients with options: ${ JSON.stringify(options) }` );
-        }
+    async getWeb3(options?: IPoolWeb3Request) {
+        let wClient = await this.getWrappedWeb3(options);
         return wClient?.web3;
     }
-    async getNodeURL (options?: IPoolWeb3Request) {
+    async getWrappedWeb3(options?: IPoolWeb3Request) {
+        let wClient = await this.next(null, options, { manual: true });
+        if (wClient == null) {
+            throw new Error(`No client found in ${this.clients.length} Clients with options: ${JSON.stringify(options)}`);
+        }
+        return wClient;
+    }
+    async getNodeURL(options?: IPoolWeb3Request) {
         let wClient = await this.next(null, options, { manual: true });
         if (wClient == null) {
             let stats = await this.getNodeStats();
@@ -181,11 +189,11 @@ export class ClientPool {
         }
         return wClient?.config.url;
     }
-    async releaseWeb3 () {
+    async releaseWeb3() {
 
     }
 
-    getOptionForFetchableRange (): number {
+    getOptionForFetchableRange(): number {
         const DEFAULT = null;
         let max = alot(this.clients).max(x => x.config?.fetchableBlockRange ?? 0);
         if (max === 0) {
@@ -194,10 +202,10 @@ export class ClientPool {
         return max;
     }
 
-    callPromiEvent <TResult extends PromiEvent<any>> (
+    callPromiEvent<TResult extends PromiEvent<any>>(
         fn: (web3: Web3) => TResult
         , opts?: { preferSafe?: boolean, parallel?: number, silent?: boolean, distinct?: boolean }
-        , used:  Map<WClient, number> = new  Map<WClient, number>()
+        , used: Map<WClient, number> = new Map<WClient, number>()
         , errors = []
         , root?: PromiEventWrap
     ): TResult {
@@ -279,7 +287,7 @@ export class ClientPool {
     //     return stream;
     // }
 
-    getNodeStats () {
+    getNodeStats() {
         return this
             .clients
             .filter(client => client.getRequestCount() > 0)
@@ -291,8 +299,8 @@ export class ClientPool {
             });
     }
 
-    async getNodeInfos (): Promise<IWeb3ClientStatus[]> {
-        async function peerCount (wClient) {
+    async getNodeInfos(): Promise<IWeb3ClientStatus[]> {
+        async function peerCount(wClient) {
             /** @TODO Public nodes smt. do not allow net_peerCount methods. Allow to switch this on/off on node-url-config level */
             try {
                 return await wClient.eth.net.getPeerCount();
@@ -305,7 +313,7 @@ export class ClientPool {
             let url = wClient.config.url;
             try {
                 let start = Date.now();
-                let [ syncing, blockNumber, peers, node ] = await Promise.all([
+                let [syncing, blockNumber, peers, node] = await Promise.all([
                     wClient.eth.isSyncing(),
                     wClient.eth.getBlockNumber(),
                     peerCount(wClient),
@@ -315,10 +323,10 @@ export class ClientPool {
 
                 let ping = Math.round((Date.now() - start) / 3);
                 let syncData = typeof syncing === 'boolean' ? null : syncing;
-                return <IWeb3ClientStatus>  {
+                return <IWeb3ClientStatus>{
                     url: url,
                     status: 'live',
-                    syncing: <any> syncData,
+                    syncing: <any>syncData,
                     blockNumber: blockNumber,
                     blockNumberBehind: 0,
                     peers: peers,
@@ -328,7 +336,7 @@ export class ClientPool {
                 };
 
             } catch (error) {
-                return <IWeb3ClientStatus> {
+                return <IWeb3ClientStatus>{
                     url,
                     status: 'error',
                     error: error,
@@ -346,7 +354,7 @@ export class ClientPool {
         return nodes;
     }
 
-    private async next (used?: Map<WClient, number>, opts?: IPoolWeb3Request, params?: { manual?: boolean }): Promise<WClient> {
+    private async next(used?: Map<WClient, number>, opts?: IPoolWeb3Request, params?: { manual?: boolean }): Promise<WClient> {
         let clients = this.clients;
         if (params?.manual !== true) {
             clients = clients.filter(x => x.config.manual !== true);
@@ -375,7 +383,7 @@ export class ClientPool {
         }
 
         // we check OK clients first
-        let okClients = clients.filter(x => x.status === 'ok' );
+        let okClients = clients.filter(x => x.status === 'ok');
         if (okClients.length === 0) {
             // then switch to at least not off
             let notOffClients = clients.filter(x => x.status !== 'off');
@@ -399,7 +407,7 @@ export class ClientPool {
             }
             return null;
         }
-        let healthy = available.filter(x =>  x.healthy());
+        let healthy = available.filter(x => x.healthy());
 
         if (opts?.preferSafe === true) {
             let safe = healthy.filter(x => x.config.safe === true);
@@ -426,7 +434,7 @@ export class ClientPool {
     }
 
 
-    private async getClientWithLowestWaitTime (clients: WClient[]): Promise<WClient> {
+    private async getClientWithLowestWaitTime(clients: WClient[]): Promise<WClient> {
         if (clients.length === 0) {
             return null;
         }
@@ -462,7 +470,7 @@ export class ClientPool {
      * - Complete Promise - when all clients are resolved
      */
     @memd.deco.memoize({ perInstance: true })
-    private discoverLive (): { ready: class_Dfr, completed: class_Dfr } {
+    private discoverLive(): { ready: class_Dfr, completed: class_Dfr } {
 
         this.clients.forEach(x => x.status = 'ping');
 
@@ -484,7 +492,7 @@ export class ClientPool {
         (async () => {
             let nodeInfosAsync = clients.map(async (wClient, idx) => {
                 try {
-                    let clientInfo = <TClientInfo> {
+                    let clientInfo = <TClientInfo>{
                         i: idx,
                         error: null,
                         status: null,
@@ -494,7 +502,7 @@ export class ClientPool {
                     onIntermediateSuccess(clientInfo);
                     return clientInfo;
                 } catch (error) {
-                    return <TClientInfo> {
+                    return <TClientInfo>{
                         i: idx,
                         error: error,
                         status: 'off',
@@ -537,7 +545,7 @@ export class ClientPool {
             }
         })();
 
-        function isOk (info: TClientInfo): WClient['status'] {
+        function isOk(info: TClientInfo): WClient['status'] {
             if (info.error) {
                 return 'off';
             }
@@ -546,7 +554,7 @@ export class ClientPool {
             }
             return 'ok';
         }
-        function onIntermediateSuccess (info: TClientInfo) {
+        function onIntermediateSuccess(info: TClientInfo) {
             const TOLERATE_BLOCK_COUNT = 5;
             const WAIT_POOL_OK = Math.min(3, clientInfos.length);
             const count = clientInfos.push(info);
@@ -603,7 +611,7 @@ export class WClient {
         results?: number
     }
 
-    healthy () {
+    healthy() {
         if (this.getRequestCount() === 0) {
             return true;
         }
@@ -620,7 +628,7 @@ export class WClient {
         return false;
     }
 
-    private updateRateLimitInfo (info: ReturnType<typeof RateLimitGuard['extractRateLimitFromError']>) {
+    private updateRateLimitInfo(info: ReturnType<typeof RateLimitGuard['extractRateLimitFromError']>) {
         if (this.rateLimitGuard == null) {
             this.rateLimitGuard = new RateLimitGuard({
                 id: this.config.url ?? 'web3',
@@ -629,7 +637,7 @@ export class WClient {
         }
         this.rateLimitGuard.updateRateLimitInfo(info);
     }
-    public updateBlockRangeInfo (info: WClient['blockRangeLimits']) {
+    public updateBlockRangeInfo(info: WClient['blockRangeLimits']) {
         if (this.blockRangeLimits == null) {
             this.blockRangeLimits = {};
         }
@@ -641,19 +649,34 @@ export class WClient {
         }
     }
 
-    constructor (mix: IPoolClientConfig) {
+    constructor(mix: IPoolClientConfig) {
         const hasUrl = 'url' in mix && typeof mix.url === 'string';
         const hasWeb3 = 'web3' in mix && typeof mix.web3 != null;
         if (hasUrl || hasWeb3) {
             this.config = mix;
-            if (mix.url) {
-                // web3 object
-                this.web3 = new Web3(mix.url);
+            if (typeof mix.url === 'string') {
+                let { url, options } = this.config;
+                if (url.startsWith('ws')) {
+                    obj_extendDefaults(options ?? {}, {
+                        clientConfig: {
+                            // default frame size is too small
+                            maxReceivedFrameSize:   50_000_000,
+                            maxReceivedMessageSize: 50_000_000,
+                        }
+                    });
+                    let provider = new Web3.providers.WebsocketProvider(url, options);
+                    this.web3 = new Web3(provider);
+                } else if (typeof url.startsWith('http')) {
+                    let provider = new Web3.providers.HttpProvider(url, options);
+                    this.web3 = new Web3(provider);
+                } else {
+                    this.web3 = new Web3(mix.url);
+                }
             } else if ((mix.web3 as any).eth != null) {
-                this.web3 = <Web3> mix.web3;
+                this.web3 = <Web3>mix.web3;
             } else {
                 // provider
-                this.web3 = new Web3(<provider> mix.web3);
+                this.web3 = new Web3(<provider>mix.web3);
             }
         } else {
             throw new Error(`Neither Node URL nor Web3 Instance in argument`);
@@ -674,7 +697,7 @@ export class WClient {
         }
     }
 
-    async send <TResult> (fn: (web3: Web3) => PromiEvent<TResult> ): Promise<{ status: ClientStatus, error?, result?: PromiEvent<TResult> }> {
+    async send<TResult>(fn: (web3: Web3) => PromiEvent<TResult>): Promise<{ status: ClientStatus, error?, result?: PromiEvent<TResult> }> {
         return new Promise((resolve, reject) => {
             let result = fn(this.web3);
 
@@ -685,7 +708,7 @@ export class WClient {
                     resolve({ status: ClientStatus.Ok, result })
                 },
                 error => {
-                    if (ClientErrorUtil.isConnectionFailed (error)) {
+                    if (ClientErrorUtil.isConnectionFailed(error)) {
                         this.lastStatus = ClientStatus.NetworkError;
                         this.requests.fail++;
                         resolve({ status: ClientStatus.NetworkError, error });
@@ -724,12 +747,22 @@ export class WClient {
         return output;
     }
 
-    async call <TResult extends PromiseLike<any>> (fn: (web3: Web3, wClient?: WClient) => TResult, options?: {
+    async call<TResult extends PromiseLike<any>>(fn: (web3: Web3, wClient?: WClient) => TResult, options?: {
         // For the rate limit guard, to make sure we wait enough time to proceed with batch request for example
         batchRequestCount?: number
     }): Promise<{ status: ClientStatus, error?, result?: Awaited<TResult>, time: number }> {
         let now = Date.now();
         await this.rateLimitGuard?.wait(options?.batchRequestCount ?? 1, now);
+
+        let connectionError = await this.ensureConnected();
+        if (connectionError) {
+            return {
+                status: ClientStatus.NetworkError,
+                result: null,
+                error: connectionError,
+                time: Date.now() - now
+            };
+        }
 
         return new Promise((resolve, reject) => {
             let start = Date.now();
@@ -745,14 +778,14 @@ export class WClient {
                 },
                 error => {
                     let time = Date.now() - start;
-                    let status =  ClientStatus.CallError;
+                    let status = ClientStatus.CallError;
 
                     if (RateLimitGuard.isRateLimited(error)) {
                         status = ClientStatus.RateLimited;
 
                         let rateLimitInfo = RateLimitGuard.extractRateLimitFromError(error);
                         this.updateRateLimitInfo(rateLimitInfo);
-                    } else if (ClientErrorUtil.isConnectionFailed (error)) {
+                    } else if (ClientErrorUtil.isConnectionFailed(error)) {
                         status = ClientStatus.NetworkError;
                     }
                     this.onComplete(status, time);
@@ -762,10 +795,10 @@ export class WClient {
         });
     }
 
-    callPromiEvent <TResult extends PromiEvent<any>> (fn: (web3: Web3) => TResult ): TResult {
+    callPromiEvent<TResult extends PromiEvent<any>>(fn: (web3: Web3) => TResult): TResult {
         let result = fn(this.web3);
         result.on('error', error => {
-            if (ClientErrorUtil.isConnectionFailed (error)) {
+            if (ClientErrorUtil.isConnectionFailed(error)) {
                 this.lastStatus = ClientStatus.NetworkError;
                 this.requests.fail++;
             }
@@ -776,10 +809,10 @@ export class WClient {
         })
         return result;
     }
-    callSubscription <TResult extends PromiEvent<any>> (fn: (web3: Web3) => TResult ): TResult {
+    callSubscription<TResult extends PromiEvent<any>>(fn: (web3: Web3) => TResult): TResult {
         let result = fn(this.web3);
         result.on('error', error => {
-            if (ClientErrorUtil.isConnectionFailed (error)) {
+            if (ClientErrorUtil.isConnectionFailed(error)) {
                 this.lastStatus = ClientStatus.NetworkError;
                 this.requests.fail++;
             }
@@ -792,7 +825,7 @@ export class WClient {
     }
 
 
-    callSync <TResult> (fn: (web3: Web3) => TResult ): { status: number, result?: TResult } {
+    callSync<TResult>(fn: (web3: Web3) => TResult): { status: number, result?: TResult } {
         try {
             let result = fn(this.web3);
             return { status: ClientStatus.Ok, result };
@@ -802,7 +835,7 @@ export class WClient {
         }
     }
 
-    onComplete (status: ClientStatus, timeMs: number) {
+    onComplete(status: ClientStatus, timeMs: number) {
         let callCount = this.getRequestCount();
         let ping = this.requests.ping;
 
@@ -818,14 +851,35 @@ export class WClient {
         this.requests.ping = (ping * callCount + timeMs) / (callCount + 1);
     }
 
-    getRequestCount () {
+    async ensureConnected (): Promise<Error> {
+        if (this.config.url?.startsWith('ws')) {
+            let web3 = this.web3;
+            let provider = web3.eth.currentProvider as WebsocketProvider & { url };
+            if (provider.connected === false) {
+                provider.connect();
+                try {
+                    await $promise.waitForTrue(() => provider.connected, {
+                        intervalMs: 200,
+                        timeoutMessage: `Couldn't connect to WS ${provider.url}`,
+                        timeoutMs: 20_000
+                    });
+                    return null;
+                } catch (error) {
+                    return error;
+                }
+            }
+        }
+        return null;
+    }
+
+    getRequestCount() {
         return this.requests.success + this.requests.fail;
     }
 
     /**
      * Checks the rate limit wait time, so that the POOL can select the wClient with shortest wait time
      **/
-    getRateLimitGuardTime () {
+    getRateLimitGuardTime() {
         return this.rateLimitGuard?.checkWaitTime() ?? 0;
     }
 
