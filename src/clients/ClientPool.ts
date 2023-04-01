@@ -657,13 +657,13 @@ export class WClient {
             if (typeof mix.url === 'string') {
                 let { url, options } = this.config;
                 if (url.startsWith('ws')) {
-                    obj_extendDefaults(options ?? {}, {
-                        clientConfig: {
-                            // default frame size is too small
-                            maxReceivedFrameSize:   50_000_000,
-                            maxReceivedMessageSize: 50_000_000,
-                        }
+                    options = obj_extendDefaults(options ?? {}, { clientConfig: {} });
+                    obj_extendDefaults((options as WebsocketProviderOptions).clientConfig, {
+                        // default frame size is too small
+                        maxReceivedFrameSize:   50_000_000,
+                        maxReceivedMessageSize: 50_000_000,
                     });
+
                     let provider = new Web3.providers.WebsocketProvider(url, options);
                     this.web3 = new Web3(provider);
                 } else if (typeof url.startsWith('http')) {
