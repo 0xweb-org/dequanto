@@ -132,7 +132,7 @@ export namespace Web3BatchRequests {
 
     function prepair(web3: Web3, request: IContractRequest) {
         let { address, method, abi: abiMix, options, blockNumber, arguments: params } = request;
-        let abi = $web3Abi.ensureFirstMethod(abiMix);
+        let abi = $web3Abi.ensureAbis(abiMix);
         let contract = new web3.eth.Contract(abi, address);
         let callArgs = [];
         if (options != null) {

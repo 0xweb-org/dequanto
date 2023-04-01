@@ -135,12 +135,12 @@ export abstract class Web3Client implements IWeb3Client {
 
     readContract (data: Web3BatchRequests.IContractRequest) {
         let { address, method, abi: abiMix, options, blockNumber, arguments: params } = data;
-        let abi = $web3Abi.ensureFirstMethod(abiMix);
+        let abis = $web3Abi.ensureAbis(abiMix);
         return this.pool.call(async web3 => {
 
-            let sig = abi.signature;
+            let sig = abis[0].signature;
 
-            let contract = new web3.eth.Contract(abi, address);
+            let contract = new web3.eth.Contract(abis, address);
             let callArgs = [];
             if (options != null) {
                 callArgs[0] = options;
@@ -151,7 +151,7 @@ export abstract class Web3Client implements IWeb3Client {
             }
             if (sig) {
                 // If signature was provided in ABI (ensure we reset it to ABI, as eth.Contract constructor recalculates method signatures)
-                abi.signature = sig;
+                abis[0].signature = sig;
             }
             let result = await contract.methods[method](...params).call(...callArgs);
             return result;

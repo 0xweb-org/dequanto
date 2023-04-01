@@ -2,24 +2,26 @@ import { $abiParser } from '@dequanto/utils/$abiParser';
 import type { AbiItem } from 'web3-utils';
 
 export namespace $web3Abi {
-    export function ensureFirstMethod(abi: string | AbiItem | AbiItem[]): AbiItem & { signature? } {
+    export function ensureAbis(abi: string | AbiItem | AbiItem[]): (AbiItem & { signature? })[] {
+        let arr: AbiItem[];
         if (typeof abi === 'string') {
-            abi = $abiParser.parseMethod(abi);
-        }
-        if (Array.isArray(abi)) {
-            abi = abi[0];
+            arr = [ $abiParser.parseMethod(abi) ];
+        } else  if (Array.isArray(abi)) {
+            arr = abi;
+        } else {
+            arr = [ abi ];
         }
 
-        if (abi.outputs == null || abi.outputs.length === 0) {
+        let first = abi[0];
+        if (first.outputs == null || first.outputs.length === 0) {
             // Normalize outputs, to read at least bytes if nothing set
-            abi.outputs = [
+            first.outputs = [
                 {
                     type: 'bytes32',
                     name: '',
                 }
             ];
         }
-
-        return abi;
+        return arr;
     }
 }
