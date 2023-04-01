@@ -200,6 +200,7 @@ export class GeneratorFromAbi {
             $logger.log(`Storage Reader is skipped due to the error: ${error.message}`);
         }
 
+        let className = $gen.toClassName(name);
         let code = template
             .replace(/\$Etherscan\$/g, EtherscanStr)
             .replace(/\$EthWeb3Client\$/g, EthWeb3ClientStr)
@@ -207,7 +208,7 @@ export class GeneratorFromAbi {
             .replace(/\$EvmScanOptions\$/g, EvmScanOptions)
 
             .replace(`/* IMPORTS */`, imports.join('\n'))
-            .replace(`$NAME$`, $gen.toClassName(name))
+            .replace(`$NAME$`, className)
             .replace(`$ADDRESS$`, opts.address ?? '')
             .replace(`/* METHODS */`, methods)
             .replace(`/* EVENTS */`, events)
@@ -238,7 +239,7 @@ export class GeneratorFromAbi {
             await File.writeAsync(path, abiJson);
         }
 
-        $logger.log(`ABI wrapper class created: ${path}`);
+        $logger.log(`bold<green<${className}>> ABI wrapper class created: bold<${path}>`);
 
         let sources = opts.sources;
         let sourceFiles = [];
