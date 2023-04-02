@@ -105,16 +105,14 @@ class MockedStorageTransport extends SlotsStorageTransport {
     }
 
     async extractMappingKeys (ctx: { slot: ISlotVarDefinition }): Promise<{ keys: (string | number | bigint)[][] }> {
-        if (!ctx.slot.name) {
-            console.log(ctx.slot, 'SLOT');
-        }
         let keys = await this.keysLoader.load(ctx.slot.name);
         return { keys };
     }
 }
 
 class BatchLoader {
-
+    private total: number = 0;
+    private loaded: number = 0;
     private queueArr = [] as string[];
     private queueHash = {} as { [slot: string]: class_Dfr };
     private isBusy = false;
@@ -126,6 +124,7 @@ class BatchLoader {
     getStorageAt(slot: string): Promise<string> {
 
         let dfr = new class_Dfr();
+        this.total++;
         this.queueArr.push(slot);
         this.queueHash[slot] = dfr;
         this.tick();
@@ -146,9 +145,14 @@ class BatchLoader {
         this.queueHash = {};
 
         try {
-            let tick = $perf.start()
+            let tick = $perf.start();
+            if (slots.length > 50) {
+                l`<SlotsDump.BatchLoader> Loading ${slots.length} slots`;
+            }
             let memory = await this.client.getStorageAtBatched(this.address, slots, this.params?.blockNumber);
-            l`<SlotsDump.BatchLoader> ${memory.length} slots loaded in ${ tick() }`;
+
+            this.loaded += slots.length;
+            l`<SlotsDump.BatchLoader> ${memory.length} slots loaded in ${ tick() }. ${this.loaded}/${this.total}`;
 
             for (let i = 0; i < memory.length; i++) {
                 let slot = slots[i];

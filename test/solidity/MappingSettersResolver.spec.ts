@@ -265,6 +265,41 @@ UTest({
         ]);
         deepEq_(eventInfo.accessorsIdxMapping, [1])
     },
+    async 'should get event with static dynamic argument' () {
+        let code = `
+            interface IERC20 {
+                event Transfer(address indexed from, address indexed to, uint256 value);
+            }
+            contract ERC20 is IERC20 {
+
+                mapping(address => uint256) private _balances;
+
+                function burn(address account, uint256 amount) internal virtual {
+                    _beforeTokenTransfer(account, address(0), amount);
+                    uint256 accountBalance = _balances[account];
+                    unchecked {
+                        _balances[account] = accountBalance - amount;
+                    }
+                    emit Transfer(account, address(0), amount);
+                }
+                function mint(address account, uint256 amount) internal virtual {
+                    unchecked {
+                        _balances[account] += amount;
+                    }
+                    emit Transfer(address(0), account, amount);
+                }
+
+                function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual {
+
+                }
+            }
+        `;
+        let result = await MappingSettersResolver.getEventsForMappingMutations('_balances', { path: '', code });
+        eq_(result.events.length, 2);
+        eq_(result.events[0].event.name, 'Transfer');
+        deepEq_(result.events[0].accessorsIdxMapping, [ 0 ]);
+        deepEq_(result.events[1].accessorsIdxMapping, [ 1 ]);
+    },
     async 'should get event from solidity prior 0.5.0' () {
         let code = `
             contract A {
@@ -288,6 +323,13 @@ UTest({
         let [ event ] = result.events;
         eq_(event.event.name, 'PricePosted');
         deepEq_(event.accessorsIdxMapping, [0])
+    },
+    async 'should parse ERC20 contract' () {
+
+        let result = await MappingSettersResolver.getEventsForMappingMutations('_balances', { path: './test/fixtures/parser/SomeERC20/SomeToken.sol' });
+        let [ event ] = result.events;
+        eq_(result.errors.length, 0);
+        eq_(event.event.name, 'Transfer');
     },
     async 'should parse DAI contract' () {
 

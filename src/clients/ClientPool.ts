@@ -109,7 +109,15 @@ export class ClientPool {
             let results = await wClient.callBatched(requests);
             let mapped = args?.map?.(results) ?? results;
             return mapped;
-        }, opts);
+        }, {
+            ...(opts ?? {}),
+
+            /**
+             * web3@1.6.0 has a bug with batch request via websockets, as the callback can stuck if a single response contains multiple IDs, as only the first one will be taken
+             * https://github.com/web3/web3.js/blob/9238e106294784b4a6a20af020765973f0437022/packages/web3-providers-ws/src/index.js#L128
+            */
+            ws: false
+        });
     }
 
     async call<TResult>(fn: (web3: Web3, wClient?: WClient) => Promise<TResult>, opts?: IPoolWeb3Request): Promise<TResult> {

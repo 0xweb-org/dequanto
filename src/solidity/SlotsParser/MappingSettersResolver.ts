@@ -28,7 +28,7 @@ import { ISlotsParserOption, ISlotVarDefinition } from './models';
 import { SourceFile, TSourceFileContract } from './SourceFile';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $is } from '@dequanto/utils/$is';
-import { $hex } from '@dequanto/utils/$hex';
+
 
 
 type TMappingAccessor = {
