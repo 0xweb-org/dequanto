@@ -739,11 +739,7 @@ export class WClient {
     }
 
     async callBatched<TResult = any>(requests: (Web3BatchRequests.IContractRequest | Web3BatchRequests.IRequestBuilder)[]): Promise<TResult[]> {
-        let spanLimit = Math.min(
-            this.rateLimitGuard?.getSpanLimit() ?? Infinity,
-            this.batchLimit ?? Infinity,
-            requests.length
-        );
+        let spanLimit = this.getSpanLimit(requests.length);
         let output = [] as TResult[];
         let errors = [];
         while (requests.length > 0) {
@@ -759,7 +755,7 @@ export class WClient {
                 continue;
             }
             if (status === ClientStatus.RateLimited) {
-                spanLimit = this.rateLimitGuard?.getSpanLimit() ?? requests.length;
+                spanLimit = this.getSpanLimit(requests.length);
             }
             errors.push(error);
             if (errors.length > 2) {
@@ -808,6 +804,9 @@ export class WClient {
 
                         let rateLimitInfo = RateLimitGuard.extractRateLimitFromError(error);
                         this.updateRateLimitInfo(rateLimitInfo);
+                    } else if (RateLimitGuard.isBatchLimit(error)) {
+                        status = ClientStatus.RateLimited;
+                        this.batchLimit = RateLimitGuard.extractBatchLimitFromError(error);
                     } else if (ClientErrorUtil.isConnectionFailed(error)) {
                         status = ClientStatus.NetworkError;
                     }
@@ -906,6 +905,13 @@ export class WClient {
         return this.rateLimitGuard?.checkWaitTime() ?? 0;
     }
 
+    private getSpanLimit (requestCount: number) {
+        return Math.min(
+            this.rateLimitGuard?.getSpanLimit() ?? Infinity,
+            this.batchLimit ?? Infinity,
+            requestCount
+        );
+    }
 }
 
 

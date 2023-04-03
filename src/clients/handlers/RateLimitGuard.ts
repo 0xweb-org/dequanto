@@ -27,6 +27,11 @@ let rateLimitRgx = {
         }
     }
 }
+let batchLimitRgx = {
+    extracts: [
+        /batch\s+limit\s+(?<batchLimit>\d+)/i,
+    ],
+}
 
 type TRateLimitError = Error & {
     data?: {
@@ -36,6 +41,19 @@ type TRateLimitError = Error & {
 };
 
 export class RateLimitGuard {
+
+    static isBatchLimit(error: Error) {
+        return batchLimitRgx.extracts.some(x => x.test(error.message));
+    }
+    static extractBatchLimitFromError (error: Error): number {
+        for (let rgx of batchLimitRgx.extracts) {
+            let val = rgx.exec(error.message)?.groups?.batchLimit;
+            if (val != null) {
+                return Number(val);
+            }
+        }
+        return null;
+    }
 
     static isRateLimited (error: TRateLimitError) {
         let message = error.message;

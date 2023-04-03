@@ -7,6 +7,7 @@ import { $web3Provider } from './utils/$web3Provider';
 import { $logger, l } from '@dequanto/utils/$logger';
 import { $web3Abi } from './utils/$web3Abi';
 import { $date } from '@dequanto/utils/$date';
+import { RateLimitGuard } from './handlers/RateLimitGuard';
 
 export namespace Web3BatchRequests {
 
@@ -48,7 +49,7 @@ export namespace Web3BatchRequests {
         constructor(private web3: Web3, private requests: (IContractRequest | IRequestBuilder)[]) {
         }
 
-        async execute(startFromIdx = 0): Promise<{ result?: TReturnItem; error?: Error; }[]> {
+        async execute(): Promise<{ result?: TReturnItem; error?: Error; }[]> {
             if (this.requests.length === 0) {
                 return this.promise.resolve(this.results);
             }
@@ -56,10 +57,6 @@ export namespace Web3BatchRequests {
             let web3 = this.web3;
             let batch = new web3.BatchRequest();
             let arr = this.requests.map((req, i) => {
-                if (i < startFromIdx) {
-                    // skip request
-                    return null;
-                }
 
                 const cb = (err, result) => {
                     this.onCompletedOne(i, err, result);
@@ -76,7 +73,7 @@ export namespace Web3BatchRequests {
                 }
             });
 
-            this.awaitables = this.requests.length - startFromIdx;
+            this.awaitables = this.requests.length;
 
             batch.execute();
             return this.promise;
@@ -95,6 +92,15 @@ export namespace Web3BatchRequests {
         private onCompleted() {
             let allErrored = this.results.every(x => x.error != null);
             if (allErrored) {
+                let error = this.results[0]?.error;
+                if (RateLimitGuard.isBatchLimit(error)) {
+                    let num = RateLimitGuard.extractBatchLimitFromError(error);
+                    if (num && num < this.requests.length) {
+                        // if got the batch limit lower than current batch, throw to make the wClient to reread the batch limit, and the pool to retry
+                        this.promise.reject(error);
+                        return;
+                    }
+                }
                 l`Web3BatchRequest failed for ${this.results.length} Batch with error "${ this.results[0]?.error?.message }". Fallback to single calls.`;
                 this.results = new Array(this.requests.length);
                 this.awaitables = this.requests.length;
