@@ -129,11 +129,13 @@ export namespace $date {
     }
 
     export function formatTimespan(ms: number) {
+        ms = Math.round(ms);
+
         let str = '';
-        let SECOND = 1000;
-        let MINUTE = 60 * SECOND;
-        let HOUR = 60 * MINUTE;
-        let DAY = 24 * HOUR;
+        const SECOND = 1000;
+        const MINUTE = 60 * SECOND;
+        const HOUR = 60 * MINUTE;
+        const DAY = 24 * HOUR;
 
         if (DAY < ms) {
             let days = Math.floor(ms / DAY);

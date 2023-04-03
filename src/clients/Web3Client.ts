@@ -17,7 +17,6 @@ import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
 import { $number } from '@dequanto/utils/$number';
 import { $txData } from '@dequanto/utils/$txData';
 import { $logger } from '@dequanto/utils/$logger';
-import { $promise } from '@dequanto/utils/$promise';
 import { ClientEventsStream } from './ClientEventsStream';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { ClientDebugMethods } from './debug/ClientDebugMethods';

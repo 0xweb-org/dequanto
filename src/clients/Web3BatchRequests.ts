@@ -120,7 +120,7 @@ export namespace Web3BatchRequests {
                         let avgTime = (Date.now() - started) / index;
                         let avgLeft = (this.requests.length - index) * avgTime;
                         let avgLeftFormatted = $date.formatTimespan(avgLeft);
-                        $logger.throttled(`Web3BatchRequest: single call completed ${i}/${this.requests.length}. Approx left: ${ avgLeftFormatted }`);
+                        $logger.throttled(`Web3BatchRequest: single call completed ${index}/${this.requests.length}. Approx left: ${ avgLeftFormatted }`);
                         return result;
                     })
                     .mapAsync(resp => ({ result: resp }))

@@ -41,8 +41,11 @@ export interface IPoolClientConfig {
     // requestCout/timeSpan: e.g. 100/1min
     rateLimit?: string
 
-    // the max block range to fetch per single request when getting logs
+    // the max block range to fetch per single request when getting Logs
     blockRangeLimit?: string | number
+
+    // maximum of requests to be batched, otherwise batches will be paginated
+    batchLimit?: number
 }
 export interface IPoolWeb3Request {
     ws?: boolean
@@ -619,6 +622,9 @@ export class WClient {
         results?: number
     }
 
+    // Max requests per single Web3 Batch request
+    batchLimit?: number
+
     healthy() {
         if (this.getRequestCount() === 0) {
             return true;
@@ -701,7 +707,12 @@ export class WClient {
             })
         }
         if (mix.blockRangeLimit) {
-
+            this.updateBlockRangeInfo({
+                blocks: $number.parse(mix.blockRangeLimit)
+            })
+        }
+        if (mix.batchLimit) {
+            this.batchLimit = $number.parse(mix.batchLimit);
         }
     }
 
@@ -728,7 +739,11 @@ export class WClient {
     }
 
     async callBatched<TResult = any>(requests: (Web3BatchRequests.IContractRequest | Web3BatchRequests.IRequestBuilder)[]): Promise<TResult[]> {
-        let spanLimit = this.rateLimitGuard?.getSpanLimit() ?? requests.length;
+        let spanLimit = Math.min(
+            this.rateLimitGuard?.getSpanLimit() ?? Infinity,
+            this.batchLimit ?? Infinity,
+            requests.length
+        );
         let output = [] as TResult[];
         let errors = [];
         while (requests.length > 0) {
