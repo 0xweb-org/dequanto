@@ -180,7 +180,7 @@ export class RateLimitGuard {
         }
 
         if (info.spanLimit && info.spanMs) {
-            l`Updating the rate limits for ${this.id} using: ${info.spanLimit} per ${info.spanMs}ms`;
+            l`Updating the yellow<rate limits> for ${this.id} using: bold<${info.spanLimit}> per bold<${info.spanMs}ms>`;
             let rate = this.rates.find(x => x.spanMs === info.spanMs);
             if (rate) {
                 rate.spanLimit = info.spanLimit;

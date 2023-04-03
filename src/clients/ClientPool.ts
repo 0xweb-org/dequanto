@@ -806,7 +806,11 @@ export class WClient {
                         this.updateRateLimitInfo(rateLimitInfo);
                     } else if (RateLimitGuard.isBatchLimit(error)) {
                         status = ClientStatus.RateLimited;
-                        this.batchLimit = RateLimitGuard.extractBatchLimitFromError(error);
+                        let limit = RateLimitGuard.extractBatchLimitFromError(error);
+                        if (limit !== this.batchLimit) {
+                            l`yellow<New BatchLimit> for "${ this.config.url }" bold<${limit}>`;
+                            this.batchLimit = limit;
+                        }
                     } else if (ClientErrorUtil.isConnectionFailed(error)) {
                         status = ClientStatus.NetworkError;
                     }
