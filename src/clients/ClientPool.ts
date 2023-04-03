@@ -739,11 +739,17 @@ export class WClient {
     }
 
     async callBatched<TResult = any>(requests: (Web3BatchRequests.IContractRequest | Web3BatchRequests.IRequestBuilder)[]): Promise<TResult[]> {
+        let total = requests.length;
         let spanLimit = this.getSpanLimit(requests.length);
         let output = [] as TResult[];
         let errors = [];
+        let pageIdx = 0;
         while (requests.length > 0) {
+            ++pageIdx;
             let page = requests.splice(0, spanLimit);
+            if (requests.length > 0 || pageIdx > 1) {
+                $logger.throttled(`Sending ${page.length} batched requests. Loaded ${output.length}/${total}`);
+            }
             let { status, error, result: pageResult } = await this.call(async (web3) => {
                 let batch = new Web3BatchRequests.BatchRequest(web3, page);
                 let results = await batch.execute();
