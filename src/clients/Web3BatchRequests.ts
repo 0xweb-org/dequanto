@@ -4,8 +4,9 @@ import type { AbiItem } from 'web3-utils';
 import { TAddress } from '@dequanto/models/TAddress';
 import { class_Dfr } from 'atma-utils';
 import { $web3Provider } from './utils/$web3Provider';
-import { l } from '@dequanto/utils/$logger';
+import { $logger, l } from '@dequanto/utils/$logger';
 import { $web3Abi } from './utils/$web3Abi';
+import { $date } from '@dequanto/utils/$date';
 
 export namespace Web3BatchRequests {
 
@@ -94,6 +95,7 @@ export namespace Web3BatchRequests {
         private onCompleted() {
             let allErrored = this.results.every(x => x.error != null);
             if (allErrored) {
+                l`Web3BatchRequest failed for ${this.results.length} Batch with error "${ this.results[0]?.error?.message }". Fallback to single calls.`;
                 this.results = new Array(this.requests.length);
                 this.awaitables = this.requests.length;
                 this.callByOne();
@@ -104,16 +106,21 @@ export namespace Web3BatchRequests {
         private async callByOne() {
 
             let index = -1;
+            let started = Date.now();
             try {
                 let results = await alot(this.requests)
-                    .mapAsync(async (req) => {
+                    .mapAsync(async (req, i) => {
                         let reqData = typeof req === 'function'
                             ? req()
                             : req;
 
-
                         let result = await $web3Provider.call(this.web3, reqData as any);
                         index++;
+
+                        let avgTime = (Date.now() - started) / index;
+                        let avgLeft = (this.requests.length - index) * avgTime;
+                        let avgLeftFormatted = $date.formatTimespan(avgLeft);
+                        $logger.throttled(`Web3BatchRequest: single call completed ${i}/${this.requests.length}. Approx left: ${ avgLeftFormatted }`);
                         return result;
                     })
                     .mapAsync(resp => ({ result: resp }))

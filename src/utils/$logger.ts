@@ -1,3 +1,4 @@
+import memd from 'memd';
 import { $color } from './$color';
 import { $date } from './$date';
 
@@ -18,6 +19,13 @@ export namespace $logger {
         console.error($date.format(new Date(), 'HH:mm:ss'), ...colored(args));
     }
 
+    /**
+     * Print log message not often than every 1 second
+     */
+    export function throttled (...args: any) {
+        Throttled.log(...args);
+    }
+
 
     function colored (args: (string | any)[]) {
         for (let i = 0; i < args.length; i++) {
@@ -28,6 +36,13 @@ export namespace $logger {
             args[i] = $color(args[i]);
         }
         return args;
+    }
+
+    class Throttled {
+        @memd.deco.throttle(1000)
+        static log(...args) {
+            $logger.log(...args);
+        }
     }
 }
 
