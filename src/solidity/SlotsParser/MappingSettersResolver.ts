@@ -174,9 +174,21 @@ namespace $astSetters {
         let body = method.body;
 
         // Find a variable setter in the method's body.
-        let matches = Ast.findMany<BinaryOperation | UnaryOperation>(body, node => {
-            if (Ast.isBinaryOperation(node) && (node.operator === '=' || node.operator === '-=' || node.operator === '+=') && Ast.isIndexAccess(node.left)) {
-                let fields = $node.getIndexAccessFields(node.left);
+        let matches = Ast.findMany<BinaryOperation | UnaryOperation | IndexAccess>(body, node => {
+            if (Ast.isBinaryOperation(node) && /^.?=$/.test(node.operator)) {
+
+                let indexRootAccess: IndexAccess;
+                if (Ast.isIndexAccess(node.left)) {
+                    indexRootAccess = node.left;
+                }
+                if (indexRootAccess == null && Ast.isMemberAccess(node.left)) {
+                    indexRootAccess = Ast.find<IndexAccess>(node.left, Ast.isIndexAccess)?.node;
+                }
+                if (indexRootAccess == null) {
+                    return false;
+                }
+
+                let fields = $node.getIndexAccessFields(indexRootAccess);
                 if (fields.length === 0) {
                     return false;
                 }
@@ -204,15 +216,20 @@ namespace $astSetters {
             return [];
         }
         let results = alot(matches).map(match => {
+
             // Mapping mutation found
             // Get the accessors breadcrumbs
-            let indexAccess = Ast.isBinaryOperation(match.node)
-                ? match.node.left as IndexAccess
-                : match.node.subExpression as IndexAccess;
+
+            let indexAccess = Ast.find<IndexAccess>([
+                (match.node as BinaryOperation).left,
+                (match.node as UnaryOperation).subExpression,
+                (match.node as IndexAccess)
+            ], Ast.isIndexAccess)?.node;
+
             let keys = $node.getIndexAccessFields(indexAccess);
             let setterIdentifiersRaw: (Identifier | MemberAccess)[] = keys
                 .slice(1)
-                .filter(node => Ast.isIdentifier(node) || Ast.isMemberAccess(node)) as any[];
+                .filter(node => Ast.isIdentifier(node) || Ast.isMemberAccess(node) || Ast.isIndexAccess(node)) as any[];
 
             if (setterIdentifiersRaw.length === 0) {
                 l`@TODO - just the dynamic fields are supported (by variable) in ${method.name}`

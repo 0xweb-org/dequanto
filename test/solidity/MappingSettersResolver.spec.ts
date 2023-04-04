@@ -24,12 +24,12 @@ UTest({
         let result = await MappingSettersResolver.getEventsForMappingMutations('foo', { path: '', code });
         let forFoo = result.events[0];
         eq_(forFoo.event.name, 'SetFoo');
-        deepEq_(forFoo.accessorsIdxMapping, [ 0 ])
+        deepEq_(forFoo.accessorsIdxMapping, [0])
 
         result = await MappingSettersResolver.getEventsForMappingMutations('bar', { path: '', code });
         let forBar = result.events[0];
         eq_(forBar.event.name, 'SetBar');
-        deepEq_(forBar.accessorsIdxMapping, [ 1 ])
+        deepEq_(forBar.accessorsIdxMapping, [1])
     },
     async 'should get event from a method call'() {
         let code = `
@@ -71,17 +71,17 @@ UTest({
         let result = await MappingSettersResolver.getEventsForMappingMutations('foo', { path: '', code });
         let forFoo = result.events[0];
         eq_(forFoo.event.name, 'SetFoo');
-        deepEq_(forFoo.accessorsIdxMapping, [ 0 ]);
+        deepEq_(forFoo.accessorsIdxMapping, [0]);
 
         result = await MappingSettersResolver.getEventsForMappingMutations('bar', { path: '', code });
         let forBar = result.events[0];
         eq_(forBar.event.name, 'SetBar');
-        deepEq_(forBar.accessorsIdxMapping, [ 0 ])
+        deepEq_(forBar.accessorsIdxMapping, [0])
 
         result = await MappingSettersResolver.getEventsForMappingMutations('qux', { path: '', code });
         let forQux = result.events[0];
         eq_(forQux.event.name, 'SetQux');
-        deepEq_(forQux.accessorsIdxMapping, [ 1 ])
+        deepEq_(forQux.accessorsIdxMapping, [1])
     },
     async 'should get for nested mapping'() {
         let code = `
@@ -98,7 +98,7 @@ UTest({
         let result = await MappingSettersResolver.getEventsForMappingMutations('allowances', { path: '', code });
         let forFoo = result.events[0];
         eq_(forFoo.event.name, 'SetAllowance');
-        deepEq_(forFoo.accessorsIdxMapping, [ 0, 1 ]);
+        deepEq_(forFoo.accessorsIdxMapping, [0, 1]);
     },
     async 'should get for outer method'() {
         let code = `
@@ -134,7 +134,7 @@ UTest({
         let result2 = await MappingSettersResolver.getEventsForMappingMutations('ids2', { path: '', code });
         let forIds2 = result2.events[0];
         eq_(forIds2.event.name, 'SetId2');
-        deepEq_(forIds2.accessorsIdxMapping, [ 1 ]);
+        deepEq_(forIds2.accessorsIdxMapping, [1]);
     },
     async 'should get single event when emitting multiple times'() {
         let code = `
@@ -156,7 +156,7 @@ UTest({
         let arr = result.events;
         eq_(arr.length, 1);
         eq_(arr[0].event.name, 'UpdateUser');
-        deepEq_(arr[0].accessorsIdxMapping, [ 0 ])
+        deepEq_(arr[0].accessorsIdxMapping, [0])
     },
     async 'should get multiple events for updates'() {
         let code = `
@@ -179,12 +179,12 @@ UTest({
         let arr = result.events;
         eq_(arr.length, 2);
         eq_(arr[0].event.name, 'ResetUser');
-        deepEq_(arr[0].accessorsIdxMapping, [ 0 ])
+        deepEq_(arr[0].accessorsIdxMapping, [0])
 
         eq_(arr[1].event.name, 'UpdateUser');
-        deepEq_(arr[1].accessorsIdxMapping, [ 0 ])
+        deepEq_(arr[1].accessorsIdxMapping, [0])
     },
-    async 'should get event from method modifier' () {
+    async 'should get event from method modifier'() {
         let code = `
             contract A {
 
@@ -204,9 +204,9 @@ UTest({
         let result = await MappingSettersResolver.getEventsForMappingMutations('users', { path: '', code });
         let fromModifier = result.events[0];
         eq_(fromModifier.event.name, 'UpdatedCaller');
-        deepEq_(fromModifier.accessorsIdxMapping, [ 0 ])
+        deepEq_(fromModifier.accessorsIdxMapping, [0])
     },
-    async 'should skip event if not same arguments' () {
+    async 'should skip event if not same arguments'() {
         let code = `
             contract A {
 
@@ -225,7 +225,7 @@ UTest({
         eq_(result.methods[0].method.name, 'tick');
 
     },
-    async 'should get event from assembly' () {
+    async 'should get event from assembly'() {
         let code = `
             contract A {
 
@@ -256,7 +256,7 @@ UTest({
             }
         `;
         let result = await MappingSettersResolver.getEventsForMappingMutations('users', { path: '', code });
-        let [ eventInfo ] = result.events;
+        let [eventInfo] = result.events;
         eq_(eventInfo.event.name, $contract.keccak256('tick(address)'));
         deepEq_(eventInfo.event.inputs, [
             { name: 'msg.sender' },
@@ -265,7 +265,7 @@ UTest({
         ]);
         deepEq_(eventInfo.accessorsIdxMapping, [1])
     },
-    async 'should get event with static dynamic argument' () {
+    async 'should get event with static dynamic argument'() {
         let code = `
             interface IERC20 {
                 event Transfer(address indexed from, address indexed to, uint256 value);
@@ -297,10 +297,10 @@ UTest({
         let result = await MappingSettersResolver.getEventsForMappingMutations('_balances', { path: '', code });
         eq_(result.events.length, 2);
         eq_(result.events[0].event.name, 'Transfer');
-        deepEq_(result.events[0].accessorsIdxMapping, [ 0 ]);
-        deepEq_(result.events[1].accessorsIdxMapping, [ 1 ]);
+        deepEq_(result.events[0].accessorsIdxMapping, [0]);
+        deepEq_(result.events[1].accessorsIdxMapping, [1]);
     },
-    async 'should get event from solidity prior 0.5.0' () {
+    async 'should get event from solidity prior 0.5.0'() {
         let code = `
             contract A {
 
@@ -317,38 +317,38 @@ UTest({
         eq_(result.events.length, 1);
         eq_(result.events[0].event.name, 'UpdatedCaller');
     },
-    async 'should parse PriceOracle contract' () {
+    async 'should parse PriceOracle contract'() {
 
         let result = await MappingSettersResolver.getEventsForMappingMutations('_assetPrices', { path: './test/fixtures/parser/PriceOracle.sol' });
-        let [ event ] = result.events;
+        let [event] = result.events;
         eq_(event.event.name, 'PricePosted');
         deepEq_(event.accessorsIdxMapping, [0])
     },
-    async 'should parse ERC20 contract' () {
+    async 'should parse ERC20 contract'() {
 
         let result = await MappingSettersResolver.getEventsForMappingMutations('_balances', { path: './test/fixtures/parser/SomeERC20/SomeToken.sol' });
-        let [ event ] = result.events;
+        let [event] = result.events;
         eq_(result.errors.length, 0);
         eq_(event.event.name, 'Transfer');
     },
-    async 'should parse DAI contract' () {
+    async 'should parse DAI contract'() {
 
         let result = await MappingSettersResolver.getEventsForMappingMutations('nonces', { path: './test/fixtures/parser/DAI.sol' });
         //-console.dir(result, { depth: null })
-        let [ event ] = result.events;
+        let [event] = result.events;
         eq_(event.event.name, 'Approval');
         deepEq_(event.accessorsIdxMapping, [0])
     },
-    async 'should parse old ENJToken contract' () {
+    async 'should parse old ENJToken contract'() {
         let result = await MappingSettersResolver.getEventsForMappingMutations('balanceOf', { path: './test/fixtures/parser/v04/ENJToken.sol' });
         eq_(result.events.length, 2);
         eq_(result.events[0].event.name, 'Transfer');
-        deepEq_(result.events[0].accessorsIdxMapping, [ 0 ]);
+        deepEq_(result.events[0].accessorsIdxMapping, [0]);
 
         eq_(result.events[1].event.name, 'Transfer');
-        deepEq_(result.events[1].accessorsIdxMapping, [ 1 ]);
+        deepEq_(result.events[1].accessorsIdxMapping, [1]);
     },
-    async 'should handle _transfer method, which has "from" and "to" mutations in one method' () {
+    async 'should handle _transfer method, which has "from" and "to" mutations in one method'() {
         //SafeToken
         let { events, errors, methods } = await MappingSettersResolver.getEventsForMappingMutations('_balances', { path: './test/fixtures/parser/SAFE/SafeToken.sol' });
 
@@ -356,7 +356,7 @@ UTest({
         eq_(methods[0], null);
         eq_(events.length, 2);
 
-        let [ ev1, ev2 ] = events;
+        let [ev1, ev2] = events;
 
         /**
          * There are 2 mutations in _transfer method, one, we modify "from" and "to" entries,
@@ -364,9 +364,34 @@ UTest({
          */
 
         eq_(ev1.event.name, 'Transfer');
-        deepEq_(ev1.accessorsIdxMapping, [ 0 ])
+        deepEq_(ev1.accessorsIdxMapping, [0])
 
         eq_(ev2.event.name, 'Transfer');
-        deepEq_(ev2.accessorsIdxMapping, [ 1 ])
-    }
+        deepEq_(ev2.accessorsIdxMapping, [1])
+    },
+    async 'should parse CToken fragment'() {
+
+        let code = `
+            contract A {
+                struct BorrowSnapshot {
+                    uint principal;
+                    uint interestIndex;
+                }
+
+                mapping(address => BorrowSnapshot) internal accountBorrows;
+                event Borrow(address sender, uint256 amount, uint256 accountBorrows, uint256 totalBorrows);
+
+                function borrowFresh(address payable borrower, uint borrowAmount) internal {
+                    accountBorrows[borrower].principal = 2;
+                    accountBorrows[borrower].interestIndex = 2;
+                    emit Borrow(borrower, borrowAmount, accountBorrowsNew, totalBorrowsNew);
+                }
+            }
+        `;
+        let result = await MappingSettersResolver.getEventsForMappingMutations('accountBorrows', { path: '', code });
+
+        eq_(result.events.length, 1);
+        eq_(result.events[0].event.name, 'Borrow');
+        deepEq_(result.events[0].accessorsIdxMapping, [0]);
+    },
 })

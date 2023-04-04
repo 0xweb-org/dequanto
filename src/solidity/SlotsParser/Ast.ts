@@ -99,9 +99,15 @@ export namespace Ast {
     }
 
     export function find <T extends BaseASTNode = BaseASTNode> (
-        node: BaseASTNode
+        node: BaseASTNode | BaseASTNode[]
         , matcher: (node: BaseASTNode) => boolean
     ): { node: T, stack: BaseASTNode[]} {
+        if (Array.isArray(node)) {
+            let result = alot(node)
+                .map(x => find(x, matcher))
+                .first(x => x != null);
+            return result as { node: T, stack: BaseASTNode[] };
+        }
         let result = findMany(node, matcher, { single: true });
         return result[0] as { node: T, stack: BaseASTNode[] }
     }
