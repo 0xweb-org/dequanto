@@ -19,6 +19,7 @@ import { Web3BatchRequests } from './Web3BatchRequests';
 
 import type { PromiEvent, WebsocketProvider, provider } from 'web3-core';
 import type { HttpProviderOptions, WebsocketProviderOptions } from 'web3-core-helpers/types/index'
+import { $require } from '@dequanto/utils/$require';
 
 export interface IPoolClientConfig {
     url?: string
@@ -916,11 +917,11 @@ export class WClient {
     }
 
     private getSpanLimit (requestCount: number) {
-        return Math.min(
-            this.rateLimitGuard?.getSpanLimit() ?? Infinity,
-            this.batchLimit ?? Infinity,
-            requestCount
-        );
+        let a = this.rateLimitGuard?.getSpanLimit() ?? Infinity;
+        let b = this.batchLimit ?? Infinity;
+        let min = Math.min(a, b, requestCount);
+        $require.gt(min, 0, `Span-limit must be > 0. ${a}/${b}/${requestCount}`);
+        return min;
     }
 }
 

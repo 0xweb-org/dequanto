@@ -22,6 +22,7 @@ import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { ClientDebugMethods } from './debug/ClientDebugMethods';
 import { Web3BatchRequests } from './Web3BatchRequests';
 import { $web3Abi } from './utils/$web3Abi';
+import { $require } from '@dequanto/utils/$require';
 
 export abstract class Web3Client implements IWeb3Client {
 
@@ -464,11 +465,18 @@ namespace RangeWorker {
         ranges: { fromBlock: number, toBlock: number }
     ) {
         let { fromBlock, toBlock } = ranges;
+
+        $require.Number(fromBlock, `FromBlock must be a number`);
+        $require.Number(toBlock, `ToBlock must be a number`);
+
         let { maxBlockRange } = limits;
         let range = toBlock - fromBlock;
         if (maxBlockRange == null || range <= maxBlockRange) {
             return fetch (client, options, ranges, limits);
         }
+
+        $require.Number(maxBlockRange, `MaxBlockRange must be a number`);
+        $require.gt(maxBlockRange, 0, `MaxBlockRange must be > 0`);
 
         let logs = [];
         let cursor = fromBlock;
