@@ -41,7 +41,6 @@ export class MappingKeysLoader {
 
     async load(mappingVarName: string) {
         let source = await this.loadSourceCode();
-        this.logger.log(`Source code for "${ source.main.contractName }" loaded to extract "${mappingVarName}"`);
         let { errors, events, methods } = await MappingSettersResolver.getEventsForMappingMutations(mappingVarName, {
             path: source.main.path,
             code: source.main.content
@@ -52,12 +51,15 @@ export class MappingKeysLoader {
             throw error;
         }
 
-        let eventMessage = `For the key "${mappingVarName}" found ${events.length} mutation Events (${events.map(x => x.event.name).join(',')})`;
-        let methodsMessage = methods.length
-            ? ` and ${ methods.length } mutation methods without Events (${methods.map(x => x.method.name).join(',')})`
-            : ''
-        this.logger.log(`${eventMessage} ${methodsMessage}`);
-
+        let eventCountStr = `${events.length > 0 ? 'green': 'red' }<${events.length}>`;
+        let eventNames = events.map(x => `gray<${x.event.name}>`).join(',');
+        this.logger.log(`For the mapping "bold<${mappingVarName}>" found:`);
+        this.logger.log(`    • ${eventCountStr} mutation Events (${eventNames})`)
+        if (methods.length > 0) {
+            let methodCountStr = `red<${ methods.length }>`;
+            let methodNames = methods.map(x => `red<${x.method.name}>`).join(',');
+            this.logger.log(`    • ${methodCountStr} mutation methods without Events (${methodNames})`)
+        }
 
         let keys = await alot(events)
             .mapManyAsync(async eventInfo => {
@@ -83,6 +85,7 @@ export class MappingKeysLoader {
             address: this.address,
             implementation: this.implementation,
         });
+        this.logger.log(`The source code for "bold<${ source.main.contractName }>" has been loaded`);
         return source;
     }
 
