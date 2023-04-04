@@ -117,7 +117,7 @@ export class GeneratorFromAbi {
                     `import { Bscscan } from '@dequanto/BlockchainExplorer/Bscscan'`,
                     `import { BscWeb3Client } from '@dequanto/clients/BscWeb3Client'`,
                 ];
-                explorerUrl = `https://bscscan.com/address/${opts.implementation}#code`;
+                explorerUrl = `https://bscscan.com/address/${opts.address}#code`;
                 break;
             case 'polygon':
                 EtherscanStr = 'Polyscan';
@@ -126,7 +126,7 @@ export class GeneratorFromAbi {
                     `import { Polyscan } from '@dequanto/BlockchainExplorer/Polyscan'`,
                     `import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client'`,
                 ];
-                explorerUrl = `https://polygonscan.com/address/${opts.implementation}#code`;
+                explorerUrl = `https://polygonscan.com/address/${opts.address}#code`;
                 break;
             case 'xdai':
                 EtherscanStr = 'XDaiscan';
@@ -135,7 +135,7 @@ export class GeneratorFromAbi {
                     `import { XDaiscan } from '@dequanto/chains/xdai/XDaiscan'`,
                     `import { XDaiWeb3Client } from '@dequanto/chains/xdai/XDaiWeb3Client'`,
                 ];
-                explorerUrl = `https://blockscout.com/xdai/mainnet/address/${opts.implementation}/contracts`;
+                explorerUrl = `https://blockscout.com/xdai/mainnet/address/${opts.address}/contracts`;
                 break;
             case 'eth':
                 EtherscanStr = 'Etherscan';
@@ -144,7 +144,7 @@ export class GeneratorFromAbi {
                     `import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'`,
                     `import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'`,
                 ];
-                explorerUrl = `https://etherscan.io/address/${opts.implementation}#code`;
+                explorerUrl = `https://etherscan.io/address/${opts.address}#code`;
                 break;
             case 'hardhat':
                 EtherscanStr = 'Etherscan';
@@ -170,7 +170,7 @@ export class GeneratorFromAbi {
                     explorerUrl = '';
                     let evmscan = $config.get(`blockchainExplorer.${opts.network}`)
                     if (evmscan?.www) {
-                        explorerUrl = `${evmscan.www}/address/${opts.implementation}#code`;
+                        explorerUrl = `${evmscan.www}/address/${opts.address}#code`;
                     }
                     break;
                 }
@@ -256,6 +256,9 @@ export class GeneratorFromAbi {
         return {
             main: path,
             sources: sourceFiles,
+            platform: opts.network,
+            address: opts.address,
+            implementation: opts.implementation
         };
     }
 }
