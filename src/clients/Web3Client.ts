@@ -23,6 +23,7 @@ import { ClientDebugMethods } from './debug/ClientDebugMethods';
 import { Web3BatchRequests } from './Web3BatchRequests';
 import { $web3Abi } from './utils/$web3Abi';
 import { $require } from '@dequanto/utils/$require';
+import { $is } from '@dequanto/utils/$is';
 
 export abstract class Web3Client implements IWeb3Client {
 
@@ -381,31 +382,10 @@ export abstract class Web3Client implements IWeb3Client {
     }
 
     async getPastLogs (options: PastLogsOptions): Promise<Log[]> {
-        const getBlock = async (block: BlockNumber | Date, $default: string | number) => {
-            if (block == null) {
-                return $default;
-            }
-            if (block instanceof Date) {
-                let resolver = di.resolve(BlockDateResolver, this);
-                return resolver.getBlockNumberFor(block);
-            }
-            return block;
-        };
-        const getBlockNumber = async (block: number | string) => {
-            if (typeof block === 'number') {
-                return block;
-            }
-            if (block == null || block === 'latest') {
-                return this.getBlockNumber();
-            }
-            if (block.startsWith('0x')) {
-                return Number(block);
-            }
-            throw new Error(`Invalid block number`);
-        };
 
-        options.fromBlock = await getBlock(options.fromBlock, 0);
-        options.toBlock = await getBlock(options.toBlock, 'latest');
+
+        options.fromBlock = await Blocks.getBlock(this, options.fromBlock, 0);
+        options.toBlock = await Blocks.getBlock(this, options.toBlock, 'latest');
         options.topics = options.topics?.map(topic => {
             if (typeof topic === 'string' && topic.startsWith('0x')) {
                 return '0x' + topic.substring(2).padStart(64, '0');
@@ -415,8 +395,8 @@ export abstract class Web3Client implements IWeb3Client {
 
         let MAX = this.pool.getOptionForFetchableRange();
         let [ fromBlock, toBlock ] = await Promise.all([
-            getBlockNumber(options.fromBlock as any),
-            getBlockNumber(options.toBlock as any),
+            Blocks.getBlockNumber(this, options.fromBlock as any),
+            Blocks.getBlockNumber(this, options.toBlock as any),
         ]);
         return await RangeWorker.fetchWithLimits(this, options, {
             maxBlockRange: MAX,
@@ -529,7 +509,22 @@ namespace RangeWorker {
             /**
              * query returned more than 10000 results
              */
-            $logger.log(`Range worker request: ${range.fromBlock}-${range.toBlock}. ${error.message.trim()}. Splitting range.`)
+            $logger.log(`Range worker request: ${range.fromBlock}-${range.toBlock}. ${error.message.trim()}. Splitting range.`);
+
+            if ($is.Number(options.fromBlock) === false || $is.Number(options.toBlock) === false) {
+                let [ fromBlock, toBlock ] = await Promise.all([
+                    Blocks.getBlock(client, options.fromBlock, 0),
+                    Blocks.getBlock(client, options.toBlock, 'latest'),
+                ]);
+                let [ fromBlockNr, toBlockNr ] = await Promise.all([
+                    Blocks.getBlockNumber(client, fromBlock),
+                    Blocks.getBlockNumber(client, toBlock),
+                ]);
+
+                options.fromBlock = fromBlockNr;
+                options.toBlock = toBlockNr;
+            }
+
             let matchCountLimit = /(?<count>\d+) results/.exec(error.message);
             if (matchCountLimit) {
                 let count = Number(matchCountLimit.groups.count);
@@ -582,4 +577,35 @@ namespace RangeWorker {
             throw error;
         }
     }
+}
+
+namespace Blocks {
+    export async function getBlock (client: Web3Client, block: BlockNumber | Date, $default: string | number): Promise<string | number> {
+        if (block == null) {
+            return $default;
+        }
+        if (block instanceof Date) {
+            let resolver = di.resolve(BlockDateResolver, client);
+            return resolver.getBlockNumberFor(block);
+        }
+        if (typeof block === 'number' || typeof block === 'string') {
+            return block;
+        }
+        if ('toNumber' in block) {
+            return block.toNumber();
+        }
+        return block;
+    };
+    export async function getBlockNumber (client: Web3Client, block: number | string) {
+        if (typeof block === 'number') {
+            return block;
+        }
+        if (block == null || block === 'latest') {
+            return client.getBlockNumber();
+        }
+        if (block.startsWith('0x')) {
+            return Number(block);
+        }
+        throw new Error(`Invalid block number`);
+    };
 }
