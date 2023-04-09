@@ -128,10 +128,16 @@ var IsOpcode;
             return false;
         }
         if (typeof name === 'string') {
-            let rgx = new RegExp(name, 'i');
+            let rgx = rgxes[name];
             return rgx.test(opcode.name);
         }
         return false;
     }
     IsOpcode.ofType = ofType;
+    const rgxes = {
+        'PUSH': /^PUSH\d*$/i,
+        'JUMP': /^JUMPI?$/i,
+        'JUMPDEST': /^JUMPDEST$/i,
+        'RETURN': /^RETURN$/i
+    };
 })(IsOpcode = exports.IsOpcode || (exports.IsOpcode = {}));

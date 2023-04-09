@@ -22,7 +22,9 @@ class GeneratorStorageReader {
             };
         }).toArray();
         if (files.length === 0) {
-            return {};
+            return {
+                error: new Error(`Not possible to generate the StorageReader class, without the source code`)
+            };
         }
         let file = null;
         if (files.length === 1) {

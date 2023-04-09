@@ -74,18 +74,19 @@ class SlotsStorageTransport {
 }
 exports.SlotsStorageTransport = SlotsStorageTransport;
 class SlotsStorageTransportForArray {
-    constructor(transport, slotNr, elementI = 0, slotsPerElement = 1) {
+    constructor(transport, slotNr, elementI = 0, slotsPerElement = 1, slot) {
         this.transport = transport;
         this.slotNr = slotNr;
         this.elementI = elementI;
         this.slotsPerElement = slotsPerElement;
+        this.slot = slot;
     }
     async getStorageAt(slot, position = 0, size = 256) {
         if (typeof slot !== 'number') {
-            throw new Error(`Array Slot reader supports only numbers for position`);
+            throw new Error(`Array Slot reader supports only numbers for position. Slot ${slot}`);
         }
         let location = this.mapToGlobalSlot(slot);
-        let memory = await this.transport.getStorageAt(location, position, size);
+        let memory = await this.getUnderlyingTransport().getStorageAt(location, position, size);
         return memory;
     }
     async setStorageAt(slot, position, size, buffer) {
@@ -93,14 +94,64 @@ class SlotsStorageTransportForArray {
         let memory = await this.transport.setStorageAt(location, position, size, buffer);
         return memory;
     }
-    mapToGlobalSlot(slot) {
-        let slotPositionNr = BigInt(this.elementI) * BigInt(this.slotsPerElement) + BigInt(slot);
-        let x = BigInt(_contract_1.$contract.keccak256(_abiUtils_1.$abiUtils.encodePacked({ value: _hex_1.$hex.toHex(this.slotNr), type: 'uint256' })));
-        let uint = x + BigInt(slotPositionNr);
-        return uint;
+    mapToGlobalSlot(slotPositionNr = 0) {
+        // console.log(
+        //     `mapToGlobalSlot`,
+        //     'slotPositionNr',
+        //     slotPositionNr,
+        //     'this.elementI',
+        //     this.elementI,
+        //     'this.slotsPerElement',
+        //     this.slotsPerElement,
+        //     'this.slotNr',
+        //     this.slotNr,
+        //     this.slot,
+        //     slotPositionNr
+        // ,);
+        // let f1 = BigInt($contract.keccak256($abiUtils.encodePacked({
+        //     value: 0,
+        //     type: 'uint256'
+        // }))) + 1n;
+        // let f1Hex = $bigint.toHex(f1);
+        // this.getUnderlyingTransport().getStorageAt(f1Hex, 0, 256).then(val => {
+        //     console.log(`f1`, f1Hex, val);
+        // });
+        // let f2 = BigInt($contract.keccak256($abiUtils.encodePacked({
+        //     value: $bigint.toHex(f1),
+        //     type: 'uint256'
+        // })));
+        // let f2Hex = $bigint.toHex(f2);
+        // this.getUnderlyingTransport().getStorageAt(f2Hex, 0, 256).then(val => {
+        //     console.log(`f2`, f2Hex, val);
+        // });
+        let packedRootHash = this.transport?.mapToGlobalSlot(this.slotNr) ?? 0n;
+        let packedNext = _abiUtils_1.$abiUtils.encodePacked({
+            value: _hex_1.$hex.padBytes(_hex_1.$hex.toHexBuffer(packedRootHash), 32),
+            type: 'bytes32'
+        });
+        // this.elementI = 0;
+        // slotPositionNr = 1;
+        let slot = BigInt(this.elementI) * BigInt(this.slotsPerElement) + BigInt(slotPositionNr);
+        let packedNextHash = BigInt(_contract_1.$contract.keccak256(packedNext)) + BigInt(slot);
+        //console.log(`packedNextHash`, $bigint.toHex(packedNextHash), 'elI', slotPositionNr, this.elementI, 'SLOT', slot);
+        return packedNextHash;
+        // let slot = BigInt(this.elementI) * BigInt(this.slotsPerElement) + BigInt(slotPositionNr);
+        // let x = BigInt($contract.keccak256($abiUtils.encodePacked(
+        //     { value: $hex.toHex(this.slotNr), type: 'uint256' },
+        // )));
+        // let uint = x + BigInt(slot);
+        // console.log('location', uint);
+        // return uint;
     }
     extractMappingKeys(ctx) {
         return this.transport.extractMappingKeys(ctx);
+    }
+    getUnderlyingTransport() {
+        let cursor = this.transport;
+        while (cursor.transport != null) {
+            cursor = cursor.transport;
+        }
+        return cursor;
     }
 }
 exports.SlotsStorageTransportForArray = SlotsStorageTransportForArray;
@@ -122,7 +173,7 @@ class SlotsStorageTransportForMapping {
     }
     async setStorageAt(slot, position, size, buffer) {
         let location = this.mapToGlobalSlot(BigInt(slot));
-        let memory = await this.transport.setStorageAt(location, position, size, buffer);
+        let memory = await this.getUnderlyingTransport().setStorageAt(location, position, size, buffer);
         return memory;
     }
     mapToGlobalSlot(slotPositionNr = 0) {

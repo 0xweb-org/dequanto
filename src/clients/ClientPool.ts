@@ -383,7 +383,8 @@ export class ClientPool {
         }
 
         if (opts?.ws === false) {
-            clients = clients.filter(x => x.config.url?.startsWith('http'));
+            // filter out all WS providers (important for batched requests, as web3js has issues submitting multiple batch requests and handle response IDs)
+            clients = clients.filter(x => x.config.url?.startsWith('http') ||  x.config.url == null);
         }
         if (opts?.node?.traceable === true) {
             clients = clients.filter(x => x.config.traceable === true);
@@ -672,15 +673,7 @@ export class WClient {
             if (typeof mix.url === 'string') {
                 let { url, options } = this.config;
                 if (url.startsWith('ws')) {
-                    options = obj_extendDefaults(options ?? {}, { clientConfig: {} });
-                    obj_extendDefaults((options as WebsocketProviderOptions).clientConfig, {
-                        // default frame size is too small
-                        maxReceivedFrameSize:   50_000_000,
-                        maxReceivedMessageSize: 50_000_000,
-                    });
-
-                    let provider = new Web3.providers.WebsocketProvider(url, options);
-                    this.web3 = new Web3(provider);
+                    this.createWebSocketClient();
                 } else if (typeof url.startsWith('http')) {
                     let provider = new Web3.providers.HttpProvider(url, options);
                     this.web3 = new Web3(provider);
@@ -715,6 +708,28 @@ export class WClient {
         if (mix.batchLimit) {
             this.batchLimit = $number.parse(mix.batchLimit);
         }
+    }
+
+    private websocket = {
+        code: WS_STATE.NOTSET
+    }
+
+    private createWebSocketClient () {
+        let { url, options } = this.config;
+
+        options = obj_extendDefaults(options ?? {}, { clientConfig: {} });
+        obj_extendDefaults((options as WebsocketProviderOptions).clientConfig, {
+            // default frame size is too small
+            maxReceivedFrameSize:   50_000_000,
+            maxReceivedMessageSize: 50_000_000,
+        });
+
+        let provider = new Web3.providers.WebsocketProvider(url, options);
+        let listener = provider as any;
+        listener.on('close', ev => this.websocket.code = ev.code);
+        listener.on('connect', _ => this.websocket.code = WS_STATE.CONNECTED);
+
+        this.web3 = new Web3(provider);
     }
 
     async send<TResult>(fn: (web3: Web3) => PromiEvent<TResult>): Promise<{ status: ClientStatus, error?, result?: PromiEvent<TResult> }> {
@@ -886,6 +901,11 @@ export class WClient {
 
     async ensureConnected (): Promise<Error> {
         if (this.config.url?.startsWith('ws')) {
+            if (this.websocket.code === WS_STATE.ECONNRESET) {
+                // recreate connection when ERRCONNRESET was thrown previously
+                this.createWebSocketClient();
+            }
+
             let web3 = this.web3;
             let provider = web3.eth.currentProvider as WebsocketProvider & { url };
             if (provider.connected === false) {
@@ -927,3 +947,8 @@ export class WClient {
 
 
 
+const WS_STATE = {
+    NOTSET: 0,
+    CONNECTED: 1,
+    ECONNRESET: 1006
+};

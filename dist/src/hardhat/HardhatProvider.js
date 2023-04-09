@@ -17,6 +17,7 @@ const atma_io_1 = require("atma-io");
 const ethers_1 = require("ethers");
 const _logger_1 = require("@dequanto/utils/$logger");
 const _number_1 = require("@dequanto/utils/$number");
+const _require_1 = require("@dequanto/utils/$require");
 class HardhatProvider {
     constructor() {
         /* lazy load */
@@ -129,10 +130,14 @@ class HardhatProvider {
         };
     }
     async deployCode(solidityCode, options = {}) {
-        let matches = Array.from(solidityCode.matchAll(/contract\s+(?<name>[\w]+)/g));
-        let className = matches[matches.length - 1].groups.name;
+        let contractName = options.contractName;
+        if (contractName == null) {
+            let matches = Array.from(solidityCode.matchAll(/contract\s+(?<name>[\w]+)/g));
+            contractName = matches[matches.length - 1].groups.name;
+        }
+        _require_1.$require.notNull(contractName, `Contract name not resolved from the code`);
         let rnd = _number_1.$number.randomInt(0, 10 ** 10);
-        let tmp = atma_io_1.env.getTmpPath(`hardhat/contracts/${className}_${rnd}.sol`);
+        let tmp = atma_io_1.env.getTmpPath(`hardhat/contracts/${contractName}_${rnd}.sol`);
         let root = tmp.replace(/contracts\/[^/]+$/, '');
         options.paths = {
             root

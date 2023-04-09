@@ -16,7 +16,7 @@
     "atma-utest": "^0.21.30",
     "evm": "^0.2.0",
     "hardhat": "^2.12.6",
-    "shellbee": "^0.5.16",
+    "shellbee": "^0.5.29",
     "ts-nameof": "^5.0.0"
   },
   "dependencies": {

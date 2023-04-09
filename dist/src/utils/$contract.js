@@ -7,6 +7,7 @@ exports.$contract = void 0;
 const web3_1 = __importDefault(require("web3"));
 const _abiUtils_1 = require("./$abiUtils");
 const InputDataUtils_1 = require("@dequanto/contracts/utils/InputDataUtils");
+const _abiParser_1 = require("./$abiParser");
 var $contract;
 (function ($contract) {
     function keccak256(str) {
@@ -50,6 +51,9 @@ var $contract;
     //     };
     // }
     function parseLogWithAbi(log, abiItem) {
+        if (typeof abiItem === 'string') {
+            abiItem = _abiParser_1.$abiParser.parseMethod(abiItem);
+        }
         let inputs = abiItem.inputs.slice();
         let args = log.topics.slice(1).map((bytes, i) => {
             let type = inputs.shift();

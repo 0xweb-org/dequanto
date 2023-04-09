@@ -13,6 +13,12 @@ const atma_utils_1 = require("atma-utils");
 const _is_1 = require("@dequanto/utils/$is");
 const _logger_1 = require("@dequanto/utils/$logger");
 const _abiParser_1 = require("../utils/$abiParser");
+const _block_1 = require("@dequanto/utils/$block");
+const _abiUtils_1 = require("@dequanto/utils/$abiUtils");
+const ContractCreationResolver_1 = require("./ContractCreationResolver");
+const BlockChainExplorerProvider_1 = require("@dequanto/BlockchainExplorer/BlockChainExplorerProvider");
+const _contract_1 = require("@dequanto/utils/$contract");
+const _require_1 = require("@dequanto/utils/$require");
 class ContractReader {
     constructor(client = a_di_1.default.resolve(EthWeb3Client_1.EthWeb3Client)) {
         this.client = client;
@@ -109,7 +115,61 @@ class ContractReader {
         let results = await ContractReaderUtils.readAsyncBatch(this.client, inputs);
         return results;
     }
-    async getLogs() {
+    async getLogsParsed(...args) {
+        let filters = await this.getLogsFilter(...args);
+        let logs = await this.getLogs(filters);
+        let [abi] = args;
+        return logs.map(log => _contract_1.$contract.parseLogWithAbi(log, abi));
+    }
+    async getLogs(filters) {
+        return this.client.getPastLogs(filters);
+    }
+    async getLogsFilter(abi, options) {
+        if (typeof abi === 'string') {
+            abi = _abiParser_1.$abiParser.parseMethod(abi);
+        }
+        let filters = {
+            address: options.address,
+        };
+        if (options.fromBlock != null) {
+            if (options.fromBlock === 'deployment') {
+                _require_1.$require.Address(options.address, `No contract address provided, but the "fromBlock" is "deployment"`);
+                try {
+                    let explorer = BlockChainExplorerProvider_1.BlockChainExplorerProvider.get(this.client.platform);
+                    let dateResolver = new ContractCreationResolver_1.ContractCreationResolver(this.client, explorer);
+                    let info = await dateResolver.getInfo(options.address);
+                    filters.fromBlock = info.block - 1;
+                }
+                catch (error) {
+                    // Skip any explorer errors and look from block 0
+                }
+            }
+            else {
+                filters.fromBlock = await _block_1.$block.ensureNumber(options.fromBlock, this.client);
+            }
+        }
+        if (options.toBlock != null) {
+            filters.toBlock = await _block_1.$block.ensureNumber(options.toBlock, this.client);
+        }
+        let topic = _abiUtils_1.$abiUtils.getTopicSignature(abi);
+        let topics = [topic];
+        if (options.params != null) {
+            (0, alot_1.default)(abi.inputs)
+                .takeWhile(x => x.indexed)
+                .forEach((arg, i) => {
+                let param = Array.isArray(options.params)
+                    ? options.params[i]
+                    : options.params?.[arg.name];
+                if (param == null) {
+                    topics.push(undefined);
+                    return;
+                }
+                topics.push(param);
+            })
+                .toArray();
+        }
+        filters.topics = topics;
+        return filters;
     }
     static async read(client, address, methodAbi) {
         let reader = new ContractReader(client);

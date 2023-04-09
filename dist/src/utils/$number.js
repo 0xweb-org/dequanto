@@ -65,6 +65,9 @@ var $number;
             mix = mix.substring(0, mix.length - 1);
         }
         let value = parseFloat(mix.replace(/,+/g, '.'));
+        if (isNaN(value)) {
+            throw new Error(`Invalid number to parse: ${mix}`);
+        }
         if (factor != null) {
             value *= factor;
         }
@@ -96,12 +99,6 @@ var $number;
             return mix;
         }
         if (typeof mix === 'string') {
-            switch (mix.toLowerCase()) {
-                case 'einweg':
-                    return 0.25;
-                case 'mehrweg':
-                    return 0.15;
-            }
             let num = parseFloat(mix.replace(/,+/g, '.'));
             if (Number.isFinite(num) === false) {
                 return default_;

@@ -92,7 +92,7 @@ class GeneratorFromAbi {
                     `import { Bscscan } from '@dequanto/BlockchainExplorer/Bscscan'`,
                     `import { BscWeb3Client } from '@dequanto/clients/BscWeb3Client'`,
                 ];
-                explorerUrl = `https://bscscan.com/address/${opts.implementation}#code`;
+                explorerUrl = `https://bscscan.com/address/${opts.address}#code`;
                 break;
             case 'polygon':
                 EtherscanStr = 'Polyscan';
@@ -101,7 +101,7 @@ class GeneratorFromAbi {
                     `import { Polyscan } from '@dequanto/BlockchainExplorer/Polyscan'`,
                     `import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client'`,
                 ];
-                explorerUrl = `https://polygonscan.com/address/${opts.implementation}#code`;
+                explorerUrl = `https://polygonscan.com/address/${opts.address}#code`;
                 break;
             case 'xdai':
                 EtherscanStr = 'XDaiscan';
@@ -110,7 +110,7 @@ class GeneratorFromAbi {
                     `import { XDaiscan } from '@dequanto/chains/xdai/XDaiscan'`,
                     `import { XDaiWeb3Client } from '@dequanto/chains/xdai/XDaiWeb3Client'`,
                 ];
-                explorerUrl = `https://blockscout.com/xdai/mainnet/address/${opts.implementation}/contracts`;
+                explorerUrl = `https://blockscout.com/xdai/mainnet/address/${opts.address}/contracts`;
                 break;
             case 'eth':
                 EtherscanStr = 'Etherscan';
@@ -119,7 +119,7 @@ class GeneratorFromAbi {
                     `import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'`,
                     `import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'`,
                 ];
-                explorerUrl = `https://etherscan.io/address/${opts.implementation}#code`;
+                explorerUrl = `https://etherscan.io/address/${opts.address}#code`;
                 break;
             case 'hardhat':
                 EtherscanStr = 'Etherscan';
@@ -144,7 +144,7 @@ class GeneratorFromAbi {
                     explorerUrl = '';
                     let evmscan = _config_1.$config.get(`blockchainExplorer.${opts.network}`);
                     if (evmscan?.www) {
-                        explorerUrl = `${evmscan.www}/address/${opts.implementation}#code`;
+                        explorerUrl = `${evmscan.www}/address/${opts.address}#code`;
                     }
                     break;
                 }
@@ -162,22 +162,23 @@ class GeneratorFromAbi {
             storageReaderClass = reader.code;
             storageReaderProperty = property;
             if (property) {
-                _logger_1.$logger.log(`Storage Reader generated`);
+                _logger_1.$logger.log(`green<StorageReader> was generated`);
             }
             else {
-                _logger_1.$logger.log(`Storage Reader NOT generated as the className not found`);
+                _logger_1.$logger.log(`red<StorageReader> was not generated: ${reader.error?.message}`);
             }
         }
         catch (error) {
             _logger_1.$logger.log(`Storage Reader is skipped due to the error: ${error.message}`);
         }
+        let className = _gen_1.$gen.toClassName(name);
         let code = template
             .replace(/\$Etherscan\$/g, EtherscanStr)
             .replace(/\$EthWeb3Client\$/g, EthWeb3ClientStr)
             .replace(/\$Web3ClientOptions\$/g, Web3ClientOptions)
             .replace(/\$EvmScanOptions\$/g, EvmScanOptions)
             .replace(`/* IMPORTS */`, imports.join('\n'))
-            .replace(`$NAME$`, _gen_1.$gen.toClassName(name))
+            .replace(`$NAME$`, className)
             .replace(`$ADDRESS$`, opts.address ?? '')
             .replace(`/* METHODS */`, methods)
             .replace(`/* EVENTS */`, events)
@@ -200,7 +201,7 @@ class GeneratorFromAbi {
             let path = atma_utils_1.class_Uri.combine(opts.output, directory, `${filename}.json`);
             await atma_io_1.File.writeAsync(path, abiJson);
         }
-        _logger_1.$logger.log(`ABI wrapper class created: ${path}`);
+        _logger_1.$logger.log(`bold<green<${className}>> ABI wrapper class created: bold<${path}>`);
         let sources = opts.sources;
         let sourceFiles = [];
         if (sources) {
@@ -215,6 +216,9 @@ class GeneratorFromAbi {
         return {
             main: path,
             sources: sourceFiles,
+            platform: opts.network,
+            address: opts.address,
+            implementation: opts.implementation
         };
     }
 }

@@ -13,15 +13,12 @@ exports.MappingKeysLoader = void 0;
 const alot_1 = __importDefault(require("alot"));
 const memd_1 = __importDefault(require("memd"));
 const BlockChainExplorerProvider_1 = require("@dequanto/BlockchainExplorer/BlockChainExplorerProvider");
-const _abiUtils_1 = require("@dequanto/utils/$abiUtils");
 const _require_1 = require("@dequanto/utils/$require");
 const MappingSettersResolver_1 = require("../SlotsParser/MappingSettersResolver");
 const SourceCodeProvider_1 = require("../SourceCodeProvider");
 const Web3ClientFactory_1 = require("@dequanto/clients/Web3ClientFactory");
 const _logger_1 = require("@dequanto/utils/$logger");
-const _contract_1 = require("@dequanto/utils/$contract");
-const atma_io_1 = require("atma-io");
-const ContractCreationResolver_1 = require("@dequanto/contracts/ContractCreationResolver");
+const ContractReader_1 = require("@dequanto/contracts/ContractReader");
 class MappingKeysLoader {
     constructor(params) {
         this.params = params;
@@ -35,7 +32,6 @@ class MappingKeysLoader {
     }
     async load(mappingVarName) {
         let source = await this.loadSourceCode();
-        this.logger.log(`Source code for "${source.main.contractName}" loaded to extract "${mappingVarName}"`);
         let { errors, events, methods } = await MappingSettersResolver_1.MappingSettersResolver.getEventsForMappingMutations(mappingVarName, {
             path: source.main.path,
             code: source.main.content
@@ -44,11 +40,15 @@ class MappingKeysLoader {
         if (error != null) {
             throw error;
         }
-        let eventMessage = `For the key "${mappingVarName}" found ${events.length} mutation Events (${events.map(x => x.event.name).join(',')})`;
-        let methodsMessage = methods.length
-            ? ` and ${methods.length} mutation methods without Events (${methods.map(x => x.method.name).join(',')})`
-            : '';
-        this.logger.log(`${eventMessage} ${methodsMessage}`);
+        let eventCountStr = `${events.length > 0 ? 'green' : 'red'}<${events.length}>`;
+        let eventNames = events.map(x => `gray<${x.event.name}>`).join(',');
+        this.logger.log(`For the mapping "bold<${mappingVarName}>" found:`);
+        this.logger.log(`    • ${eventCountStr} mutation Events (${eventNames})`);
+        if (methods.length > 0) {
+            let methodCountStr = `red<${methods.length}>`;
+            let methodNames = methods.map(x => `red<${x.method.name}>`).join(',');
+            this.logger.log(`    • ${methodCountStr} mutation methods without Events (${methodNames})`);
+        }
         let keys = await (0, alot_1.default)(events)
             .mapManyAsync(async (eventInfo) => {
             const logs = await this.loadEvents(eventInfo.event);
@@ -69,33 +69,15 @@ class MappingKeysLoader {
             address: this.address,
             implementation: this.implementation,
         });
+        this.logger.log(`The source code for "bold<${source.main.contractName}>" has been loaded`);
         return source;
     }
     async loadEvents(ev) {
-        const logs = await this.loadEventsByTopic(_abiUtils_1.$abiUtils.getTopicSignature(ev));
-        return logs.map(log => _contract_1.$contract.parseLogWithAbi(log, ev));
-    }
-    async loadEventsByTopic(topic0) {
-        // get the contracts deployment date to skip lots of blocks (in case we use pagination to fetch logs)
-        let fromBlock = 0;
-        try {
-            let dateResolver = new ContractCreationResolver_1.ContractCreationResolver(this.client, this.explorer);
-            let info = await dateResolver.getInfo(this.address);
-            fromBlock = info.block - 1;
-        }
-        catch (error) {
-            // Skip any explorer errors and look from block 0
-        }
-        let filters = {
+        let reader = new ContractReader_1.ContractReader(this.client);
+        return reader.getLogsParsed(ev, {
             address: this.address,
-            fromBlock: fromBlock,
-            topics: [
-                topic0
-            ]
-        };
-        let logs = await this.client.getPastLogs(filters);
-        await atma_io_1.File.writeAsync(`./del/events_${topic0}.json`, logs);
-        return logs;
+            fromBlock: 'deployment'
+        });
     }
 }
 __decorate([
@@ -103,5 +85,5 @@ __decorate([
 ], MappingKeysLoader.prototype, "loadSourceCode", null);
 __decorate([
     memd_1.default.deco.memoize({ perInstance: true })
-], MappingKeysLoader.prototype, "loadEventsByTopic", null);
+], MappingKeysLoader.prototype, "loadEvents", null);
 exports.MappingKeysLoader = MappingKeysLoader;

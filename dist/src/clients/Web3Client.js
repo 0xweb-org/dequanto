@@ -19,11 +19,13 @@ const BlockDateResolver_1 = require("@dequanto/blocks/BlockDateResolver");
 const _number_1 = require("@dequanto/utils/$number");
 const _txData_1 = require("@dequanto/utils/$txData");
 const _logger_1 = require("@dequanto/utils/$logger");
-const _promise_1 = require("@dequanto/utils/$promise");
 const ClientEventsStream_1 = require("./ClientEventsStream");
 const _abiUtils_1 = require("@dequanto/utils/$abiUtils");
 const ClientDebugMethods_1 = require("./debug/ClientDebugMethods");
 const Web3BatchRequests_1 = require("./Web3BatchRequests");
+const _web3Abi_1 = require("./utils/$web3Abi");
+const _require_1 = require("@dequanto/utils/$require");
+const _is_1 = require("@dequanto/utils/$is");
 class Web3Client {
     constructor(mix) {
         this.TIMEOUT = 3 * 60 * 1000;
@@ -82,23 +84,16 @@ class Web3Client {
         return await this.pool.getNodeURL(options);
     }
     async subscribe(...args) {
-        let web3 = await this.getWeb3({ ws: true });
-        let provider = web3.eth.currentProvider;
-        if (provider.connected === false) {
-            provider.connect();
-            await _promise_1.$promise.waitForTrue(() => provider.connected, {
-                intervalMs: 200,
-                timeoutMessage: `Can not connect to ${provider.url}`,
-                timeoutMs: 20000
-            });
-        }
-        return web3.eth.subscribe(...args);
+        let wClient = await this.pool.getWrappedWeb3({ ws: true });
+        await wClient.ensureConnected();
+        return wClient.web3.eth.subscribe(...args);
     }
     readContract(data) {
-        let { address, method, abi, options, blockNumber, arguments: params } = data;
+        let { address, method, abi: abiMix, options, blockNumber, arguments: params } = data;
+        let abis = _web3Abi_1.$web3Abi.ensureAbis(abiMix);
         return this.pool.call(async (web3) => {
-            let sig = abi[0].signature;
-            let contract = new web3.eth.Contract(abi, address);
+            let sig = abis[0].signature;
+            let contract = new web3.eth.Contract(abis, address);
             let callArgs = [];
             if (options != null) {
                 callArgs[0] = options;
@@ -109,7 +104,7 @@ class Web3Client {
             }
             if (sig) {
                 // If signature was provided in ABI (ensure we reset it to ABI, as eth.Contract constructor recalculates method signatures)
-                abi[0].signature = sig;
+                abis[0].signature = sig;
             }
             let result = await contract.methods[method](...params).call(...callArgs);
             return result;
@@ -336,30 +331,8 @@ class Web3Client {
         });
     }
     async getPastLogs(options) {
-        const getBlock = async (block, $default) => {
-            if (block == null) {
-                return $default;
-            }
-            if (block instanceof Date) {
-                let resolver = a_di_1.default.resolve(BlockDateResolver_1.BlockDateResolver, this);
-                return resolver.getBlockNumberFor(block);
-            }
-            return block;
-        };
-        const getBlockNumber = async (block) => {
-            if (typeof block === 'number') {
-                return block;
-            }
-            if (block == null || block === 'latest') {
-                return this.getBlockNumber();
-            }
-            if (block.startsWith('0x')) {
-                return Number(block);
-            }
-            throw new Error(`Invalid block number`);
-        };
-        options.fromBlock = await getBlock(options.fromBlock, 0);
-        options.toBlock = await getBlock(options.toBlock, 'latest');
+        options.fromBlock = await Blocks.getBlock(this, options.fromBlock, 0);
+        options.toBlock = await Blocks.getBlock(this, options.toBlock, 'latest');
         options.topics = options.topics?.map(topic => {
             if (typeof topic === 'string' && topic.startsWith('0x')) {
                 return '0x' + topic.substring(2).padStart(64, '0');
@@ -368,8 +341,8 @@ class Web3Client {
         });
         let MAX = this.pool.getOptionForFetchableRange();
         let [fromBlock, toBlock] = await Promise.all([
-            getBlockNumber(options.fromBlock),
-            getBlockNumber(options.toBlock),
+            Blocks.getBlockNumber(this, options.fromBlock),
+            Blocks.getBlockNumber(this, options.toBlock),
         ]);
         return await RangeWorker.fetchWithLimits(this, options, {
             maxBlockRange: MAX,
@@ -412,11 +385,15 @@ var RangeWorker;
 (function (RangeWorker) {
     async function fetchWithLimits(client, options, limits, ranges) {
         let { fromBlock, toBlock } = ranges;
+        _require_1.$require.Number(fromBlock, `FromBlock must be a number`);
+        _require_1.$require.Number(toBlock, `ToBlock must be a number`);
         let { maxBlockRange } = limits;
         let range = toBlock - fromBlock;
         if (maxBlockRange == null || range <= maxBlockRange) {
             return fetch(client, options, ranges, limits);
         }
+        _require_1.$require.Number(maxBlockRange, `MaxBlockRange must be a number`);
+        _require_1.$require.gt(maxBlockRange, 0, `MaxBlockRange must be > 0`);
         let logs = [];
         let cursor = fromBlock;
         let pages = Math.ceil(range / maxBlockRange);
@@ -442,12 +419,19 @@ var RangeWorker;
     RangeWorker.fetchWithLimits = fetchWithLimits;
     ;
     async function fetch(client, options, range, knownLimits) {
+        let currentWClient;
         try {
-            let paged = await client.pool.call(web3 => web3.eth.getPastLogs({
-                ...options,
-                fromBlock: range.fromBlock,
-                toBlock: range.toBlock ?? undefined,
-            }));
+            let blockRange = range.toBlock - range.fromBlock;
+            let paged = await client.pool.call((web3, wClient) => {
+                currentWClient = wClient;
+                return web3.eth.getPastLogs({
+                    ...options,
+                    fromBlock: range.fromBlock,
+                    toBlock: range.toBlock ?? undefined,
+                });
+            }, {
+                blockRangeCount: blockRange
+            });
             return paged;
         }
         catch (error) {
@@ -455,6 +439,18 @@ var RangeWorker;
              * query returned more than 10000 results
              */
             _logger_1.$logger.log(`Range worker request: ${range.fromBlock}-${range.toBlock}. ${error.message.trim()}. Splitting range.`);
+            if (_is_1.$is.Number(options.fromBlock) === false || _is_1.$is.Number(options.toBlock) === false) {
+                let [fromBlock, toBlock] = await Promise.all([
+                    Blocks.getBlock(client, options.fromBlock, 0),
+                    Blocks.getBlock(client, options.toBlock, 'latest'),
+                ]);
+                let [fromBlockNr, toBlockNr] = await Promise.all([
+                    Blocks.getBlockNumber(client, fromBlock),
+                    Blocks.getBlockNumber(client, toBlock),
+                ]);
+                options.fromBlock = fromBlockNr;
+                options.toBlock = toBlockNr;
+            }
             let matchCountLimit = /(?<count>\d+) results/.exec(error.message);
             if (matchCountLimit) {
                 let count = Number(matchCountLimit.groups.count);
@@ -481,12 +477,60 @@ var RangeWorker;
             if (maxRangeMatch && knownLimits.maxBlockRange == null) {
                 // handle unknown range, otherwise throw
                 let rangeLimit = Number(maxRangeMatch);
+                currentWClient.updateBlockRangeInfo({ blocks: rangeLimit });
                 return await fetchWithLimits(client, options, {
                     ...knownLimits,
                     maxBlockRange: rangeLimit
                 }, range);
             }
+            if (/\brange\b/.test(error.message)) {
+                // Generic "block range is too wide"
+                let rangeLimit = Math.round((knownLimits.maxBlockRange ?? 100000) * .8);
+                if (rangeLimit > 100) {
+                    // otherwise too small range
+                    currentWClient.updateBlockRangeInfo({ blocks: rangeLimit });
+                    return await fetchWithLimits(client, options, {
+                        ...knownLimits,
+                        maxBlockRange: rangeLimit
+                    }, range);
+                }
+            }
             throw error;
         }
     }
 })(RangeWorker || (RangeWorker = {}));
+var Blocks;
+(function (Blocks) {
+    async function getBlock(client, block, $default) {
+        if (block == null) {
+            return $default;
+        }
+        if (block instanceof Date) {
+            let resolver = a_di_1.default.resolve(BlockDateResolver_1.BlockDateResolver, client);
+            return resolver.getBlockNumberFor(block);
+        }
+        if (typeof block === 'number' || typeof block === 'string') {
+            return block;
+        }
+        if ('toNumber' in block) {
+            return block.toNumber();
+        }
+        return block;
+    }
+    Blocks.getBlock = getBlock;
+    ;
+    async function getBlockNumber(client, block) {
+        if (typeof block === 'number') {
+            return block;
+        }
+        if (block == null || block === 'latest') {
+            return client.getBlockNumber();
+        }
+        if (block.startsWith('0x')) {
+            return Number(block);
+        }
+        throw new Error(`Invalid block number`);
+    }
+    Blocks.getBlockNumber = getBlockNumber;
+    ;
+})(Blocks || (Blocks = {}));

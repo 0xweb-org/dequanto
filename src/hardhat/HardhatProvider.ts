@@ -10,6 +10,7 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { ethers } from 'ethers';
 import { $logger } from '@dequanto/utils/$logger';
 import { $number } from '@dequanto/utils/$number';
+import { $require } from '@dequanto/utils/$require';
 
 
 export class HardhatProvider {
@@ -35,7 +36,7 @@ export class HardhatProvider {
                     { url: 'http://127.0.0.1:8545' },
                     // Use `manual`, will be used for subscriptions only, otherwise BatchRequests will fail, as not implemented yet
                     // https://github.com/NomicFoundation/hardhat/issues/1324
-                    { url: 'ws://127.0.0.1:8545', manual: true },
+                     { url: 'ws://127.0.0.1:8545', manual: true },
                 ]
             });
         }
@@ -84,7 +85,8 @@ export class HardhatProvider {
         paths?: {
             root?: string
             artifacts?: string
-        }
+        },
+        contractName?: string
     }): Promise<{ contract: Ethers.Contract, abi, bytecode }> {
 
         const client = options?.client ?? this.client();
@@ -163,10 +165,14 @@ export class HardhatProvider {
 
     async deployCode (solidityCode: string, options: Parameters<HardhatProvider['deploySol']>[1] = {}) {
 
-        let matches = Array.from(solidityCode.matchAll(/contract\s+(?<name>[\w]+)/g));
-        let className = matches[matches.length - 1].groups.name;
+        let contractName = options.contractName;
+        if (contractName == null) {
+            let matches = Array.from(solidityCode.matchAll(/contract\s+(?<name>[\w]+)/g));
+            contractName = matches[matches.length - 1].groups.name;
+        }
+        $require.notNull(contractName, `Contract name not resolved from the code`);
         let rnd = $number.randomInt(0, 10**10);
-        let tmp = env.getTmpPath(`hardhat/contracts/${className}_${rnd}.sol`);
+        let tmp = env.getTmpPath(`hardhat/contracts/${contractName}_${rnd}.sol`);
         let root = tmp.replace(/contracts\/[^/]+$/, '');
 
         options.paths = {

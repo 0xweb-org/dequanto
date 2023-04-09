@@ -38,11 +38,28 @@ let rateLimitRgx = {
         }
     }
 };
+let batchLimitRgx = {
+    extracts: [
+        /batch\s+limit\s+(?<batchLimit>\d+)/i,
+    ],
+};
 class RateLimitGuard {
     constructor(opts) {
         this.awaited = { count: 0, total: 0 };
         this.id = opts.id;
         this.rates = opts.rates;
+    }
+    static isBatchLimit(error) {
+        return batchLimitRgx.extracts.some(x => x.test(error.message));
+    }
+    static extractBatchLimitFromError(error) {
+        for (let rgx of batchLimitRgx.extracts) {
+            let val = rgx.exec(error.message)?.groups?.batchLimit;
+            if (val != null) {
+                return Number(val);
+            }
+        }
+        return null;
     }
     static isRateLimited(error) {
         let message = error.message;
@@ -140,7 +157,7 @@ class RateLimitGuard {
             this.backoff = info.backoff;
         }
         if (info.spanLimit && info.spanMs) {
-            (0, _logger_1.l) `Updating the rate limits for ${this.id} using: ${info.spanLimit} per ${info.spanMs}ms`;
+            (0, _logger_1.l) `Updating the yellow<rate limits> for ${this.id} using: bold<${info.spanLimit}> per bold<${info.spanMs}ms>`;
             let rate = this.rates.find(x => x.spanMs === info.spanMs);
             if (rate) {
                 rate.spanLimit = info.spanLimit;

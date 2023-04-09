@@ -8,6 +8,9 @@ const alot_1 = __importDefault(require("alot"));
 const atma_utils_1 = require("atma-utils");
 const _web3Provider_1 = require("./utils/$web3Provider");
 const _logger_1 = require("@dequanto/utils/$logger");
+const _web3Abi_1 = require("./utils/$web3Abi");
+const _date_1 = require("@dequanto/utils/$date");
+const RateLimitGuard_1 = require("./handlers/RateLimitGuard");
 var Web3BatchRequests;
 (function (Web3BatchRequests) {
     function contractRequest(web3, request, onComplete) {
@@ -29,17 +32,13 @@ var Web3BatchRequests;
             this.results = new Array(this.requests.length);
             this.cursor = -1;
         }
-        async execute(startFromIdx = 0) {
+        async execute() {
             if (this.requests.length === 0) {
                 return this.promise.resolve(this.results);
             }
             let web3 = this.web3;
             let batch = new web3.BatchRequest();
             let arr = this.requests.map((req, i) => {
-                if (i < startFromIdx) {
-                    // skip request
-                    return null;
-                }
                 const cb = (err, result) => {
                     this.onCompletedOne(i, err, result);
                 };
@@ -53,7 +52,7 @@ var Web3BatchRequests;
                     batch.add(req);
                 }
             });
-            this.awaitables = this.requests.length - startFromIdx;
+            this.awaitables = this.requests.length;
             batch.execute();
             return this.promise;
         }
@@ -69,6 +68,16 @@ var Web3BatchRequests;
         onCompleted() {
             let allErrored = this.results.every(x => x.error != null);
             if (allErrored) {
+                let error = this.results[0]?.error;
+                if (RateLimitGuard_1.RateLimitGuard.isBatchLimit(error)) {
+                    let num = RateLimitGuard_1.RateLimitGuard.extractBatchLimitFromError(error);
+                    if (num && num < this.requests.length) {
+                        // if got the batch limit lower than current batch, throw to make the wClient to reread the batch limit, and the pool to retry
+                        this.promise.reject(error);
+                        return;
+                    }
+                }
+                (0, _logger_1.l) `Web3BatchRequest failed for ${this.results.length} Batch with error "${this.results[0]?.error?.message}". Fallback to single calls.`;
                 this.results = new Array(this.requests.length);
                 this.awaitables = this.requests.length;
                 this.callByOne();
@@ -78,14 +87,19 @@ var Web3BatchRequests;
         }
         async callByOne() {
             let index = -1;
+            let started = Date.now();
             try {
                 let results = await (0, alot_1.default)(this.requests)
-                    .mapAsync(async (req) => {
+                    .mapAsync(async (req, i) => {
                     let reqData = typeof req === 'function'
                         ? req()
                         : req;
                     let result = await _web3Provider_1.$web3Provider.call(this.web3, reqData);
                     index++;
+                    let avgTime = (Date.now() - started) / index;
+                    let avgLeft = (this.requests.length - index) * avgTime;
+                    let avgLeftFormatted = _date_1.$date.formatTimespan(avgLeft);
+                    _logger_1.$logger.throttled(`Web3BatchRequest: single call completed ${index}/${this.requests.length}. Approx left: ${avgLeftFormatted}`);
                     return result;
                 })
                     .mapAsync(resp => ({ result: resp }))
@@ -102,7 +116,8 @@ var Web3BatchRequests;
     }
     Web3BatchRequests.BatchRequest = BatchRequest;
     function prepair(web3, request) {
-        let { address, method, abi, options, blockNumber, arguments: params } = request;
+        let { address, method, abi: abiMix, options, blockNumber, arguments: params } = request;
+        let abi = _web3Abi_1.$web3Abi.ensureAbis(abiMix);
         let contract = new web3.eth.Contract(abi, address);
         let callArgs = [];
         if (options != null) {

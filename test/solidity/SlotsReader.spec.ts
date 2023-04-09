@@ -2,6 +2,7 @@ import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { SlotsParser } from '@dequanto/solidity/SlotsParser';
 import { SlotsStorage } from '@dequanto/solidity/SlotsStorage';
+import { SlotsStorageTransportForArray } from '@dequanto/solidity/storage/SlotsStorageTransport';
 import { $buffer } from '@dequanto/utils/$buffer';
 import { $hex } from '@dequanto/utils/$hex';
 import { l } from '@dequanto/utils/$logger';
@@ -164,6 +165,121 @@ UTest({
                 storage.get('nums[1]'),
             ]);
             deepEq_(nums, [4n, 5n]);
+        },
+        async 'should read dynamic arrays'() {
+            let code = `
+                contract FooContract {
+                    struct User {
+                        address foo;
+                        bool isActive;
+                        uint256 amount;
+                    }
+                    User[] users;
+
+                    constructor () {
+                        users.push(User(
+                            address(0x1000000000000000000000000000000000000001),
+                            true,
+                            5
+                        ));
+                        users.push(User(
+                            address(0x2000000000000000000000000000000000000002),
+                            true,
+                            4
+                        ));
+                    }
+                }
+            `;
+
+            let provider = new HardhatProvider();
+            let client = await provider.client();
+
+            let { contract, abi } = await provider.deployCode(code, { client });
+
+
+            l`Read with SLOTS Readers`
+            let slots = await SlotsParser.slots({ path: '', code });
+
+            deepEq_(slots[0], { slot: 0, size: Infinity, position: 0, type: '(address foo, bool isActive, uint256 amount)[]', name: 'users' });
+
+            let storage = SlotsStorage.createWithClient(client, contract.address, slots);
+
+            let address = await storage.get('users[0].foo')
+            eq_(address, '0x1000000000000000000000000000000000000001');
+
+            let isActive = await storage.get('users[0].isActive')
+            eq_(isActive, true);
+
+            let amount = await storage.get('users[0].amount');
+            eq_(amount, 5n);
+
+            address = await storage.get('users[1].foo')
+            eq_(address, '0x2000000000000000000000000000000000000002');
+
+            isActive = await storage.get('users[1].isActive')
+            eq_(isActive, true);
+
+            amount = await storage.get('users[1].amount');
+            eq_(amount, 4n);
+        },
+        async 'should read dynamic array in dynamic array'() {
+            let code = `
+                contract FooContract {
+                    struct User {
+                        address foo;
+                        uint256[] balances;
+                    }
+                    User[] users;
+
+
+                    constructor () {
+                        uint256[] memory mem1 = new uint256[](3);
+                        mem1[0] = 5;
+                        mem1[1] = 6;
+                        mem1[2] = 7;
+                        users.push(
+                            User(address(0x1000000000000000000000000000000000000001), mem1)
+                        );
+
+                        uint256[] memory mem2 = new uint256[](2);
+                        mem2[0] = 100;
+                        mem2[1] = 101;
+                        users.push(
+                            User(address(0x2000000000000000000000000000000000000002), mem2)
+                        );
+                    }
+
+                    function getBalance (uint i, uint j) external view returns (uint256) {
+                        return users[i].balances[j];
+                    }
+                    function getLength (uint i) external view returns (uint256) {
+                        return users[i].balances.length;
+                    }
+                }
+            `;
+
+            let provider = new HardhatProvider();
+            let client = await provider.client();
+
+            let { contract, abi } = await provider.deployCode(code, { client });
+
+
+            l`Read with SLOTS Readers`
+            let slots = await SlotsParser.slots({ path: '', code });
+            let storage = SlotsStorage.createWithClient(client, contract.address, slots);
+
+            console.log('getBalance', (await contract.getBalance(0, 1)).toString());
+            console.log('getLength', (await contract.getLength(0)).toString());
+
+            eq_(Number(await storage.get('users[0].balances[0]')), 5);
+            eq_(Number(await storage.get('users[0].balances[1]')), 6);
+            eq_(Number(await storage.get('users[0].balances[2]')), 7);
+
+            eq_(Number(await storage.get('users[1].balances[0]')), 100);
+            eq_(Number(await storage.get('users[1].balances[1]')), 101);
+
+            //console.log(await storage.get('users[0].balances[0]'));
+
         }
     },
     async 'should read mapping value'() {
@@ -210,7 +326,7 @@ UTest({
         eq_(await storage.get(`deepUsers["${deployer.address}"]["0x1000000000000000000000000000000000000001"].foo`), 4);
         eq_(await storage.get(`deepUsers["${deployer.address}"]["0x1000000000000000000000000000000000000001"].bar`), 8);
     },
-    async '!should read mapping value from storage' () {
+    async 'should read mapping value from storage' () {
         const client = Web3ClientFactory.get('eth');
         const slots = await SlotsParser.slots({
             path: './test/fixtures/parser/v04/ENJToken.sol'
@@ -225,6 +341,17 @@ UTest({
         gt_(totalSupply, 0n);
 
 
-        console.log('>', await client.getStorageAt('0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c', '0x002d328c26df98061841308a1f512546357a648ac1726e814dc9e9ea7a160cec'))
+        let raw = await client.getStorageAt('0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c', '0x002d328c26df98061841308a1f512546357a648ac1726e814dc9e9ea7a160cec');
+        eq_(raw, '0x0000000000000000000000000000000000000000000000024b18673804bbcc00');
+
+    },
+    async 'generat positions' () {
+        return UTest({
+            async 'generate array location' () {
+                let x = new SlotsStorageTransportForArray(null, 0);
+                let location = x.mapToGlobalSlot(14);
+                eq_(location, 18569430475105882587588266137607568536673111973893317399460219858819262702961n);
+            }
+        })
     }
 })

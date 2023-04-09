@@ -42,7 +42,9 @@ class SlotDynamicArrayHandler extends SlotDynamicArray_1.ASlotDynamicArray {
         }
         let baseType = _abiType_1.$abiType.array.getBaseType(this.slot.type);
         let baseSlots = await SlotsParser_1.SlotsParser.slotsFromAbi(baseType);
-        let transport = new SlotsStorageTransport_1.SlotsStorageTransportForArray(this.transport, this.slot.slot, key.key, baseSlots.length);
+        // take the last slot index as that one will give us the TOTAL SLOTs per element
+        let slotsPerElement = baseSlots[baseSlots.length - 1].slot + 1;
+        let transport = new SlotsStorageTransport_1.SlotsStorageTransportForArray(this.transport, this.slot.slot, key.key, slotsPerElement, this.slot);
         let storage = new SlotsStorage_1.SlotsStorage(transport, baseSlots);
         return storage;
     }

@@ -11,7 +11,7 @@ UTest({
         timeout: $date.parseTimespan('5min'),
     },
 
-    async '!generate polygons WETH' () {
+    async 'generate polygons WETH' () {
         const path = './test/fixtures/scan/WETH.sol';
         const gen = new GeneratorStorageReader();
         const result = await gen.generate({

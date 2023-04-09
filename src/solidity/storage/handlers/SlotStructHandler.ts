@@ -1,10 +1,11 @@
 import alot from 'alot';
 import { IAccessorItem } from '../Accessor';
 import { SlotsStorage } from '@dequanto/solidity/SlotsStorage';
-import { ISlotVarDefinition, SlotsParser } from '@dequanto/solidity/SlotsParser';
+import { SlotsParser } from '@dequanto/solidity/SlotsParser';
 import { SlotsCursorTransport } from '../SlotsStorageTransport';
 import { ASlotsStorageHandler } from '../SlotsStorageHandler';
 import { $types } from '@dequanto/solidity/utils/$types';
+import { ISlotVarDefinition } from '@dequanto/solidity/SlotsParser/models';
 
 export class SlotStructHandler extends ASlotsStorageHandler {
 

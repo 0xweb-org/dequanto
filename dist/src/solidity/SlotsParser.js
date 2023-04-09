@@ -53,10 +53,19 @@ var SlotsParser;
         })
             .toArrayAsync({ threads: 1 });
         // remove duplicates, take the first declaration. (sorting is last..first)
-        slotsDef = (0, alot_1.default)(slotsDef.reverse())
-            .distinctBy(x => x.name)
-            .toArray()
-            .reverse();
+        (0, alot_1.default)(slotsDef)
+            .groupBy(x => x.name)
+            .filter(x => x.values.length > 1)
+            .forEach(group => {
+            group.values.reverse().slice(1).forEach((slot, i) => {
+                slot.name += ''.padStart(i + 1, '$');
+            });
+        })
+            .toArray();
+        // slotsDef = alot(slotsDef.reverse())
+        //     .distinctBy(x => x.name)
+        //     .toArray()
+        //     .reverse();
         slotsDef = applyPositions(slotsDef, offset);
         return slotsDef;
     }
@@ -78,12 +87,6 @@ var SlotsParser;
             throw new Error(`Unknown var ${v.name} ${v.typeName.type}`);
         })
             .toArrayAsync();
-        // // remove duplicates, take the first declaration. (sorting is last..first)
-        // slotsDef = alot(slotsDef.reverse())
-        //     .distinctBy(x => x.name)
-        //     .toArray()
-        //     .reverse();
-        // slotsDef = applyPositions(slotsDef, offset);
         return slotsDef;
     }
     function applyPositions(slotsDef, offset) {

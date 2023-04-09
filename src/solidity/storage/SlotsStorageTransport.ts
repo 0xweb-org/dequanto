@@ -112,16 +112,16 @@ export class SlotsStorageTransportForArray implements ISlotsStorageTransport {
 
 
 
-    constructor (public transport: ISlotsStorageTransport, private slotNr: number | bigint, private elementI: number = 0, private slotsPerElement: number = 1) {
+    constructor (public transport: ISlotsStorageTransport, private slotNr: number | bigint, private elementI: number = 0, private slotsPerElement: number = 1, private slot?: ISlotVarDefinition) {
 
     }
 
     async getStorageAt (slot: string | number | bigint, position = 0, size = 256) {
         if (typeof slot !== 'number') {
-            throw new Error(`Array Slot reader supports only numbers for position`);
+            throw new Error(`Array Slot reader supports only numbers for position. Slot ${slot}`);
         }
         let location = this.mapToGlobalSlot(slot);
-        let memory = await this.transport.getStorageAt(location, position, size);
+        let memory = await this.getUnderlyingTransport().getStorageAt(location, position, size);
         return memory;
     }
 
@@ -131,19 +131,30 @@ export class SlotsStorageTransportForArray implements ISlotsStorageTransport {
         return memory;
     }
 
-    mapToGlobalSlot (slot: number) {
-        let slotPositionNr = BigInt(this.elementI) * BigInt(this.slotsPerElement) + BigInt(slot);
-        let x = BigInt($contract.keccak256($abiUtils.encodePacked(
-            { value: $hex.toHex(this.slotNr), type: 'uint256' },
-        )));
-        let uint = x + BigInt(slotPositionNr);
-        return uint;
+    mapToGlobalSlot (slotPositionNr: number | bigint = 0) {
+
+        let packedRootHash = this.transport?.mapToGlobalSlot(this.slotNr) ?? 0n;
+        let packedNext = $abiUtils.encodePacked({
+            value: $hex.padBytes($hex.toHexBuffer(packedRootHash), 32),
+            type: 'bytes32'
+        });
+
+        let slot = BigInt(this.elementI) * BigInt(this.slotsPerElement) + BigInt(slotPositionNr);
+        let packedNextHash = BigInt($contract.keccak256(packedNext)) + BigInt(slot);
+
+        return packedNextHash;
     }
 
     extractMappingKeys (ctx): Promise<{ keys: (string | number | bigint)[][] }> {
         return this.transport.extractMappingKeys(ctx)
     }
-
+    private getUnderlyingTransport () {
+        let cursor = this.transport;
+        while (cursor.transport != null) {
+            cursor = cursor.transport;
+        }
+        return cursor;
+    }
 }
 
 export class SlotsStorageTransportForMapping implements ISlotsStorageTransport {
@@ -163,7 +174,7 @@ export class SlotsStorageTransportForMapping implements ISlotsStorageTransport {
 
     async setStorageAt(slot: string | number | bigint, position: number, size: number, buffer: string | number | bigint | boolean): Promise<void> {
         let location = this.mapToGlobalSlot(BigInt(slot));
-        let memory = await this.transport.setStorageAt(location, position, size, buffer);
+        let memory = await this.getUnderlyingTransport().setStorageAt(location, position, size, buffer);
         return memory;
     }
 

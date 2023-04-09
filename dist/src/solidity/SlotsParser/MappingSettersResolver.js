@@ -9,6 +9,7 @@ const alot_1 = __importDefault(require("alot"));
 const Ast_1 = require("./Ast");
 const SourceFile_1 = require("./SourceFile");
 const _abiUtils_1 = require("@dequanto/utils/$abiUtils");
+const _is_1 = require("@dequanto/utils/$is");
 var MappingSettersResolver;
 (function (MappingSettersResolver) {
     async function getEventsForMappingMutations(mappingVarName, source, contractName, opts) {
@@ -35,7 +36,7 @@ var MappingSettersResolver;
         let allModifiers = Ast_1.Ast.getModifierDefinitions(contract, $base?.map(x => x.contract));
         let arr = (0, alot_1.default)(allMethods)
             .mapMany(method => {
-            let mutations = $astSetters.extractMappingMutations(mappingVarName, method, allMethods, allModifiers);
+            let mutations = $astSetters.extractMappingMutations(mappingVarName, method, allMethods, allModifiers, allEvents);
             if (mutations == null || mutations.length == 0) {
                 // No mutation
                 return [];
@@ -54,12 +55,16 @@ var MappingSettersResolver;
                     return { error: new Error(`No event found for ${mappingVarName} mutation in method ${method.name}`) };
                 }
                 let eventDeclaration = allEvents.find(ev => ev.name === event.name && ev.parameters.length === event.args.length);
+                if (eventDeclaration == null && mutation.event.abi && _is_1.$is.hexString(event.name) === false) {
+                    _logger_1.$logger.error(`Event ${event.name} not found in events`);
+                }
                 return {
                     event: mutation.event.abi ?? Ast_1.Ast.getAbi(eventDeclaration),
                     accessors: mutation.accessors,
                     accessorsIdxMapping: mutation.accessorsIdxMapping,
                 };
-            }).toArray();
+            })
+                .toArray();
         })
             .filter(x => x != null)
             .toArray();
@@ -75,12 +80,22 @@ var MappingSettersResolver;
 })(MappingSettersResolver = exports.MappingSettersResolver || (exports.MappingSettersResolver = {}));
 var $astSetters;
 (function ($astSetters) {
-    function extractMappingMutations(mappingVarName, method, allMethods, allModifiers) {
+    function extractMappingMutations(mappingVarName, method, allMethods, allModifiers, allEvents) {
         let body = method.body;
         // Find a variable setter in the method's body.
         let matches = Ast_1.Ast.findMany(body, node => {
-            if (Ast_1.Ast.isBinaryOperation(node) && (node.operator === '=' || node.operator === '-=' || node.operator === '+=') && Ast_1.Ast.isIndexAccess(node.left)) {
-                let fields = $node.getIndexAccessFields(node.left);
+            if (Ast_1.Ast.isBinaryOperation(node) && /^.?=$/.test(node.operator)) {
+                let indexRootAccess;
+                if (Ast_1.Ast.isIndexAccess(node.left)) {
+                    indexRootAccess = node.left;
+                }
+                if (indexRootAccess == null && Ast_1.Ast.isMemberAccess(node.left)) {
+                    indexRootAccess = Ast_1.Ast.find(node.left, Ast_1.Ast.isIndexAccess)?.node;
+                }
+                if (indexRootAccess == null) {
+                    return false;
+                }
+                let fields = $node.getIndexAccessFields(indexRootAccess);
                 if (fields.length === 0) {
                     return false;
                 }
@@ -108,13 +123,15 @@ var $astSetters;
         let results = (0, alot_1.default)(matches).map(match => {
             // Mapping mutation found
             // Get the accessors breadcrumbs
-            let indexAccess = Ast_1.Ast.isBinaryOperation(match.node)
-                ? match.node.left
-                : match.node.subExpression;
+            let indexAccess = Ast_1.Ast.find([
+                match.node.left,
+                match.node.subExpression,
+                match.node
+            ], Ast_1.Ast.isIndexAccess)?.node;
             let keys = $node.getIndexAccessFields(indexAccess);
             let setterIdentifiersRaw = keys
                 .slice(1)
-                .filter(node => Ast_1.Ast.isIdentifier(node) || Ast_1.Ast.isMemberAccess(node));
+                .filter(node => Ast_1.Ast.isIdentifier(node) || Ast_1.Ast.isMemberAccess(node) || Ast_1.Ast.isIndexAccess(node));
             if (setterIdentifiersRaw.length === 0) {
                 (0, _logger_1.l) `@TODO - just the dynamic fields are supported (by variable) in ${method.name}`;
                 return {
@@ -128,11 +145,8 @@ var $astSetters;
                     location: $node.getVariableLocation(node, method)
                 };
             });
-            let eventInfo = $node.findArgumentLogInFunction(method, null, setterIdentifiers.map(x => x.key));
+            let eventInfo = $node.findArgumentLogInFunction(method, null, setterIdentifiers.map(x => x.key), allEvents);
             if (eventInfo) {
-                // if (method.name === '_transfer') {
-                //     console.log(`MATCH`, setterIdentifiers.map(x => x.key), eventInfo.accessorsIdxMapping);
-                // }
                 return eventInfo;
             }
             // Event in method not found
@@ -146,7 +160,7 @@ var $astSetters;
             if (modifiers?.length > 0) {
                 let inModifiers = modifiers
                     .map(mod => {
-                    return $node.findArgumentLogInFunction(mod, method, setterIdentifiers.map(x => x.key));
+                    return $node.findArgumentLogInFunction(mod, method, setterIdentifiers.map(x => x.key), allEvents);
                 })
                     .filter(Boolean);
                 if (inModifiers.length > 0) {
@@ -163,7 +177,7 @@ var $astSetters;
             if (methodCallInfos.length > 0) {
                 let eventInfos = methodCallInfos
                     .map(methodCallInfo => {
-                    let eventInfo = $node.findArgumentLogInFunction(methodCallInfo.method, null, methodCallInfo.argumentKeyMapping);
+                    let eventInfo = $node.findArgumentLogInFunction(methodCallInfo.method, null, methodCallInfo.argumentKeyMapping, allEvents);
                     if (eventInfo == null) {
                         return null;
                     }
@@ -197,7 +211,7 @@ var $astSetters;
                         let argumentKeyMapping = argumentsMapping.map(idx => {
                             return Ast_1.Ast.serialize(methodCallInfo.ref.arguments[idx]);
                         });
-                        let eventInfo = $node.findArgumentLogInFunction(methodCallInfo.method, null, argumentKeyMapping);
+                        let eventInfo = $node.findArgumentLogInFunction(methodCallInfo.method, null, argumentKeyMapping, allEvents);
                         if (eventInfo == null) {
                             return null;
                         }
@@ -288,10 +302,18 @@ var $node;
         return { scope: 'state' };
     }
     $node.getVariableLocation = getVariableLocation;
-    function findEventsInFunction(method, parent) {
+    function findEventsInFunction(method, parent
+    /** <0.5.0 was no emit statement, search for a method which equals to event declaration */
+    , allEvents) {
         let body = method.body;
         let events = Ast_1.Ast.findMany(body, node => {
-            return Ast_1.Ast.isEmitStatement(node);
+            return Ast_1.Ast.isEmitStatement(node) || (Ast_1.Ast.isFunctionCall(node) && allEvents.some(x => x.name === Ast_1.Ast.getFunctionName(node)));
+        }).map(match => {
+            // transform functionCall to eventCall in <0.5.0
+            if (Ast_1.Ast.isFunctionCall(match.node)) {
+                match.node = { type: 'EmitStatement', eventCall: match.node };
+            }
+            return match;
         });
         let eventInfos = events
             .map(event => {
@@ -314,8 +336,18 @@ var $node;
                         location
                     };
                 }
-                _logger_1.$logger.error(`Extract events: expected the Identifier for the Event argument: ${JSON.stringify(node, null, 2)}`);
-                return null;
+                if (Ast_1.Ast.isNumberLiteral(node) || Ast_1.Ast.isStringLiteral(node) || Ast_1.Ast.isBooleanLiteral(node)) {
+                    return {
+                        node: node,
+                        key: Ast_1.Ast.serialize(node),
+                        location: null
+                    };
+                }
+                return {
+                    node: node,
+                    key: Ast_1.Ast.serialize(node),
+                    location: null
+                };
             })
                 .filter(Boolean);
             return {
@@ -457,8 +489,8 @@ var $node;
             .filter(Boolean);
     }
     $node.findMethodReferences = findMethodReferences;
-    function findArgumentLogInFunction(method, parent, accessors) {
-        let events = $node.findEventsInFunction(method, parent).filter(event => {
+    function findArgumentLogInFunction(method, parent, accessors, allEvents) {
+        let events = $node.findEventsInFunction(method, parent, allEvents).filter(event => {
             return accessors.every(key => event.args.some(arg => arg.key === key));
         });
         if (events.length > 0) {

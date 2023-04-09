@@ -197,7 +197,7 @@ UTest({
         eq_(echoed, 2);
 
 
-        await $promise.waitForTrue(() => transactionsListener.length > 0, {
+        await $promise.waitForTrue(() => transactionsListener.length > 2, {
             timeoutMessage: `Transactions were not captured`,
             timeoutMs: 4000,
             intervalMs: 100,

@@ -11,7 +11,6 @@ const _types_1 = require("../../utils/$types");
 const SlotsStorageTransport_1 = require("../SlotsStorageTransport");
 const SlotsStorageHandler_1 = require("../SlotsStorageHandler");
 const alot_1 = __importDefault(require("alot"));
-const atma_io_1 = require("atma-io");
 class SlotMappingHandler extends SlotsStorageHandler_1.ASlotsStorageHandler {
     static supports(slot) {
         return _types_1.$types.isMapping(slot.type);
@@ -44,7 +43,6 @@ class SlotMappingHandler extends SlotsStorageHandler_1.ASlotsStorageHandler {
         })
             // Load all keys at once. The underlying layer can handle the batching
             .toArrayAsync({ threads: mapping.keys.length });
-        await atma_io_1.File.writeAsync(`./del/keys${this.slot.name}.json`, entries);
         return (0, alot_1.default)(entries).toDictionary(x => x.key, x => x.value);
     }
     async getStorageInner(accessor) {

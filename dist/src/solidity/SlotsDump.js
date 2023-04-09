@@ -87,9 +87,6 @@ class MockedStorageTransport extends SlotsStorageTransport_1.SlotsStorageTranspo
         throw new Error('Method not implemented.');
     }
     async extractMappingKeys(ctx) {
-        if (!ctx.slot.name) {
-            console.log(ctx.slot, 'SLOT');
-        }
         let keys = await this.keysLoader.load(ctx.slot.name);
         return { keys };
     }
@@ -99,12 +96,15 @@ class BatchLoader {
         this.address = address;
         this.client = client;
         this.params = params;
+        this.total = 0;
+        this.loaded = 0;
         this.queueArr = [];
         this.queueHash = {};
         this.isBusy = false;
     }
     getStorageAt(slot) {
         let dfr = new atma_utils_1.class_Dfr();
+        this.total++;
         this.queueArr.push(slot);
         this.queueHash[slot] = dfr;
         this.tick();
@@ -121,8 +121,12 @@ class BatchLoader {
         this.queueHash = {};
         try {
             let tick = _perf_1.$perf.start();
+            if (slots.length > 50) {
+                (0, _logger_1.l) `<SlotsDump.BatchLoader> Loading ${slots.length} slots`;
+            }
             let memory = await this.client.getStorageAtBatched(this.address, slots, this.params?.blockNumber);
-            (0, _logger_1.l) `<SlotsDump.BatchLoader> ${memory.length} slots loaded in ${tick()}`;
+            this.loaded += slots.length;
+            (0, _logger_1.l) `<SlotsDump.BatchLoader> ${memory.length} slots loaded in ${tick()}. ${this.loaded}/${this.total}`;
             for (let i = 0; i < memory.length; i++) {
                 let slot = slots[i];
                 let data = memory[i];

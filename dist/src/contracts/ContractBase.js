@@ -12,11 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContractBase = void 0;
 const a_di_1 = __importDefault(require("a-di"));
 const memd_1 = __importDefault(require("memd"));
-const alot_1 = __importDefault(require("alot"));
 const ethers_1 = require("ethers");
 const _contract_1 = require("@dequanto/utils/$contract");
 const _class_1 = require("@dequanto/utils/$class");
-const _block_1 = require("@dequanto/utils/$block");
 const _abiParser_1 = require("@dequanto/utils/$abiParser");
 const ContractReader_1 = require("./ContractReader");
 const ContractWriter_1 = require("./ContractWriter");
@@ -186,30 +184,13 @@ class ContractBase {
         return parsed;
     }
     async $getPastLogs(filters) {
-        return this.client.getPastLogs(filters);
+        return this.getContractReader().getLogs(filters);
     }
     async $getPastLogsFilters(abi, options) {
-        let filters = {};
-        if (options.fromBlock != null) {
-            filters.fromBlock = await _block_1.$block.ensureNumber(options.fromBlock, this.client);
-        }
-        if (options.toBlock != null) {
-            filters.toBlock = await _block_1.$block.ensureNumber(options.toBlock, this.client);
-        }
-        let topics = [options.topic];
-        (0, alot_1.default)(abi.inputs)
-            .takeWhile(x => x.indexed)
-            .forEach(arg => {
-            let param = options.params?.[arg.name];
-            if (param == null) {
-                topics.push(undefined);
-                return;
-            }
-            topics.push(param);
-        })
-            .toArray();
-        filters.topics = topics;
-        return filters;
+        return this.getContractReader().getLogsFilter(abi, {
+            ...(options ?? {}),
+            address: this.address
+        });
     }
     getContractReader() {
         let reader = this.getContractReaderInner();

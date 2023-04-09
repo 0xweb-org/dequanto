@@ -113,6 +113,12 @@ var Ast;
     }
     Ast.getUserDefinedType = getUserDefinedType;
     function find(node, matcher) {
+        if (Array.isArray(node)) {
+            let result = (0, alot_1.default)(node)
+                .map(x => find(x, matcher))
+                .first(x => x != null);
+            return result;
+        }
         let result = findMany(node, matcher, { single: true });
         return result[0];
     }
@@ -241,6 +247,22 @@ var Ast;
         return node?.type === 'NumberLiteral';
     }
     Ast.isNumberLiteral = isNumberLiteral;
+    function isStringLiteral(node) {
+        return node?.type === 'StringLiteral';
+    }
+    Ast.isStringLiteral = isStringLiteral;
+    function isBooleanLiteral(node) {
+        return node?.type === 'BooleanLiteral';
+    }
+    Ast.isBooleanLiteral = isBooleanLiteral;
+    function getFunctionName(node) {
+        let expression = node.expression;
+        if (Ast.isIdentifier(expression)) {
+            return expression.name;
+        }
+        return null;
+    }
+    Ast.getFunctionName = getFunctionName;
     function getUserDefinedTypeRaw(node, name) {
         let arr = isContractDefinition(node)
             ? node.subNodes

@@ -9,7 +9,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ClientPool = void 0;
+exports.WClient = exports.ClientPool = void 0;
 const alot_1 = __importDefault(require("alot"));
 const memd_1 = __importDefault(require("memd"));
 const web3_1 = __importDefault(require("web3"));
@@ -25,6 +25,7 @@ const _promise_1 = require("@dequanto/utils/$promise");
 const _array_1 = require("@dequanto/utils/$array");
 const RateLimitGuard_1 = require("./handlers/RateLimitGuard");
 const Web3BatchRequests_1 = require("./Web3BatchRequests");
+const _require_1 = require("@dequanto/utils/$require");
 class ClientPool {
     constructor(config) {
         this.discoveredPartial = false;
@@ -59,7 +60,14 @@ class ClientPool {
             let results = await wClient.callBatched(requests);
             let mapped = args?.map?.(results) ?? results;
             return mapped;
-        }, opts);
+        }, {
+            ...(opts ?? {}),
+            /**
+             * web3@1.6.0 has a bug with batch request via websockets, as the callback can stuck if a single response contains multiple IDs, as only the first one will be taken
+             * https://github.com/web3/web3.js/blob/9238e106294784b4a6a20af020765973f0437022/packages/web3-providers-ws/src/index.js#L128
+            */
+            ws: false
+        });
     }
     async call(fn, opts) {
         // Client - Retries
@@ -110,11 +118,15 @@ class ClientPool {
         }
     }
     async getWeb3(options) {
+        let wClient = await this.getWrappedWeb3(options);
+        return wClient?.web3;
+    }
+    async getWrappedWeb3(options) {
         let wClient = await this.next(null, options, { manual: true });
         if (wClient == null) {
             throw new Error(`No client found in ${this.clients.length} Clients with options: ${JSON.stringify(options)}`);
         }
-        return wClient?.web3;
+        return wClient;
     }
     async getNodeURL(options) {
         let wClient = await this.next(null, options, { manual: true });
@@ -270,7 +282,8 @@ class ClientPool {
             return this.ws;
         }
         if (opts?.ws === false) {
-            clients = clients.filter(x => x.config.url?.startsWith('http'));
+            // filter out all WS providers (important for batched requests, as web3js has issues submitting multiple batch requests and handle response IDs)
+            clients = clients.filter(x => x.config.url?.startsWith('http') || x.config.url == null);
         }
         if (opts?.node?.traceable === true) {
             clients = clients.filter(x => x.config.traceable === true);
@@ -318,6 +331,10 @@ class ClientPool {
         let arr = healthy.length > 0
             ? healthy
             : available;
+        if (opts?.blockRangeCount != null) {
+            let upperThreshold = (0, alot_1.default)(arr).max(x => x.blockRangeLimits.blocks) * .8;
+            arr = arr.filter(x => x.blockRangeLimits.blocks >= upperThreshold);
+        }
         return await this.getClientWithLowestWaitTime(arr);
     }
     async getClientWithLowestWaitTime(clients) {
@@ -466,9 +483,25 @@ class WClient {
         const hasWeb3 = 'web3' in mix && typeof mix.web3 != null;
         if (hasUrl || hasWeb3) {
             this.config = mix;
-            if (mix.url) {
-                // web3 object
-                this.web3 = new web3_1.default(mix.url);
+            if (typeof mix.url === 'string') {
+                let { url, options } = this.config;
+                if (url.startsWith('ws')) {
+                    options = (0, atma_utils_1.obj_extendDefaults)(options ?? {}, { clientConfig: {} });
+                    (0, atma_utils_1.obj_extendDefaults)(options.clientConfig, {
+                        // default frame size is too small
+                        maxReceivedFrameSize: 50000000,
+                        maxReceivedMessageSize: 50000000,
+                    });
+                    let provider = new web3_1.default.providers.WebsocketProvider(url, options);
+                    this.web3 = new web3_1.default(provider);
+                }
+                else if (typeof url.startsWith('http')) {
+                    let provider = new web3_1.default.providers.HttpProvider(url, options);
+                    this.web3 = new web3_1.default(provider);
+                }
+                else {
+                    this.web3 = new web3_1.default(mix.url);
+                }
             }
             else if (mix.web3.eth != null) {
                 this.web3 = mix.web3;
@@ -483,12 +516,21 @@ class WClient {
         }
         this.web3.eth.handleRevert = true;
         this.eth = this.web3.eth;
+        this.blockRangeLimits = { blocks: Infinity };
         if (mix.rateLimit) {
             let rates = RateLimitGuard_1.RateLimitGuard.parseRateLimit(mix.rateLimit);
             this.rateLimitGuard = new RateLimitGuard_1.RateLimitGuard({
                 id: this.config?.url ?? 'web3',
                 rates: rates
             });
+        }
+        if (mix.blockRangeLimit) {
+            this.updateBlockRangeInfo({
+                blocks: _number_1.$number.parse(mix.blockRangeLimit)
+            });
+        }
+        if (mix.batchLimit) {
+            this.batchLimit = _number_1.$number.parse(mix.batchLimit);
         }
     }
     healthy() {
@@ -516,6 +558,17 @@ class WClient {
         }
         this.rateLimitGuard.updateRateLimitInfo(info);
     }
+    updateBlockRangeInfo(info) {
+        if (this.blockRangeLimits == null) {
+            this.blockRangeLimits = {};
+        }
+        if (info.blocks != null) {
+            this.blockRangeLimits.blocks = info.blocks;
+        }
+        if (info.results != null) {
+            this.blockRangeLimits.results = info.results;
+        }
+    }
     async send(fn) {
         return new Promise((resolve, reject) => {
             let result = fn(this.web3);
@@ -534,11 +587,17 @@ class WClient {
         });
     }
     async callBatched(requests) {
-        let spanLimit = this.rateLimitGuard?.getSpanLimit() ?? requests.length;
+        let total = requests.length;
+        let spanLimit = this.getSpanLimit(requests.length);
         let output = [];
         let errors = [];
+        let pageIdx = 0;
         while (requests.length > 0) {
+            ++pageIdx;
             let page = requests.splice(0, spanLimit);
+            if (requests.length > 0 || pageIdx > 1) {
+                _logger_1.$logger.throttled(`Sending ${page.length} batched requests. Loaded ${output.length}/${total}`);
+            }
             let { status, error, result: pageResult } = await this.call(async (web3) => {
                 let batch = new Web3BatchRequests_1.Web3BatchRequests.BatchRequest(web3, page);
                 let results = await batch.execute();
@@ -550,7 +609,7 @@ class WClient {
                 continue;
             }
             if (status === ClientStatus_1.ClientStatus.RateLimited) {
-                spanLimit = this.rateLimitGuard?.getSpanLimit() ?? requests.length;
+                spanLimit = this.getSpanLimit(requests.length);
             }
             errors.push(error);
             if (errors.length > 2) {
@@ -563,6 +622,15 @@ class WClient {
     async call(fn, options) {
         let now = Date.now();
         await this.rateLimitGuard?.wait(options?.batchRequestCount ?? 1, now);
+        let connectionError = await this.ensureConnected();
+        if (connectionError) {
+            return {
+                status: ClientStatus_1.ClientStatus.NetworkError,
+                result: null,
+                error: connectionError,
+                time: Date.now() - now
+            };
+        }
         return new Promise((resolve, reject) => {
             let start = Date.now();
             let result = fn(this.web3, this);
@@ -579,6 +647,14 @@ class WClient {
                     status = ClientStatus_1.ClientStatus.RateLimited;
                     let rateLimitInfo = RateLimitGuard_1.RateLimitGuard.extractRateLimitFromError(error);
                     this.updateRateLimitInfo(rateLimitInfo);
+                }
+                else if (RateLimitGuard_1.RateLimitGuard.isBatchLimit(error)) {
+                    status = ClientStatus_1.ClientStatus.RateLimited;
+                    let limit = RateLimitGuard_1.RateLimitGuard.extractBatchLimitFromError(error);
+                    if (limit !== this.batchLimit) {
+                        (0, _logger_1.l) `yellow<New BatchLimit> for "${this.config.url}" bold<${limit}>`;
+                        this.batchLimit = limit;
+                    }
                 }
                 else if (ClientErrorUtil_1.ClientErrorUtil.isConnectionFailed(error)) {
                     status = ClientStatus_1.ClientStatus.NetworkError;
@@ -639,6 +715,27 @@ class WClient {
         }
         this.requests.ping = (ping * callCount + timeMs) / (callCount + 1);
     }
+    async ensureConnected() {
+        if (this.config.url?.startsWith('ws')) {
+            let web3 = this.web3;
+            let provider = web3.eth.currentProvider;
+            if (provider.connected === false) {
+                provider.connect();
+                try {
+                    await _promise_1.$promise.waitForTrue(() => provider.connected, {
+                        intervalMs: 200,
+                        timeoutMessage: `Couldn't connect to WS ${provider.url}`,
+                        timeoutMs: 20000
+                    });
+                    return null;
+                }
+                catch (error) {
+                    return error;
+                }
+            }
+        }
+        return null;
+    }
     getRequestCount() {
         return this.requests.success + this.requests.fail;
     }
@@ -648,4 +745,12 @@ class WClient {
     getRateLimitGuardTime() {
         return this.rateLimitGuard?.checkWaitTime() ?? 0;
     }
+    getSpanLimit(requestCount) {
+        let a = this.rateLimitGuard?.getSpanLimit() ?? Infinity;
+        let b = this.batchLimit ?? Infinity;
+        let min = Math.min(a, b, requestCount);
+        _require_1.$require.gt(min, 0, `Span-limit must be > 0. ${a}/${b}/${requestCount}`);
+        return min;
+    }
 }
+exports.WClient = WClient;
