@@ -133,16 +133,14 @@ export class SlotsStorageTransportForArray implements ISlotsStorageTransport {
 
     mapToGlobalSlot (slotPositionNr: number | bigint = 0) {
 
-        let packedRootHash = this.transport?.mapToGlobalSlot(this.slotNr) ?? 0n;
-        let packedNext = $abiUtils.encodePacked({
-            value: $hex.padBytes($hex.toHexBuffer(packedRootHash), 32),
+        let packedRoot = this.transport?.mapToGlobalSlot(this.slotNr) ?? 0n;
+        let packedNextHash = $abiUtils.encodePacked({
+            value: $hex.padBytes($hex.toHexBuffer(packedRoot), 32),
             type: 'bytes32'
         });
-
-        let slot = BigInt(this.elementI) * BigInt(this.slotsPerElement) + BigInt(slotPositionNr);
-        let packedNextHash = BigInt($contract.keccak256(packedNext)) + BigInt(slot);
-
-        return packedNextHash;
+        let slotRel = BigInt(this.elementI) * BigInt(this.slotsPerElement) + BigInt(slotPositionNr);
+        let slotGlobal = BigInt($contract.keccak256(packedNextHash)) + BigInt(slotRel);
+        return slotGlobal;
     }
 
     extractMappingKeys (ctx): Promise<{ keys: (string | number | bigint)[][] }> {

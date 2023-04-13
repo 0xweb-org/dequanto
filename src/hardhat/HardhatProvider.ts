@@ -2,6 +2,7 @@ import memd from 'memd';
 import type Ethers from 'ethers'
 import type { ContractBase } from '@dequanto/contracts/ContractBase';
 import type { Constructor } from 'atma-utils/mixin';
+import type { AbiItem } from 'web3-utils';
 import { ChainAccount } from "@dequanto/models/TAccount";
 import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client';
 import { class_Uri } from 'atma-utils';
@@ -11,6 +12,9 @@ import { ethers } from 'ethers';
 import { $logger } from '@dequanto/utils/$logger';
 import { $number } from '@dequanto/utils/$number';
 import { $require } from '@dequanto/utils/$require';
+import alot from 'alot';
+import { IGeneratorSources } from '@dequanto/gen/Generator';
+
 
 
 export class HardhatProvider {
@@ -87,11 +91,40 @@ export class HardhatProvider {
             artifacts?: string
         },
         contractName?: string
-    }): Promise<{ contract: Ethers.Contract, abi, bytecode }> {
+    }): Promise<{
+        contract: Ethers.Contract
+        abi: AbiItem[]
+        bytecode: string
+        source: IGeneratorSources
+    }> {
 
         const client = options?.client ?? this.client();
         const args = options?.arguments ?? [];
         const signer = options?.deployer ?? this.deployer();
+        const { abi, bytecode, source } = await this.compileSol(solContractPath, options);
+        const Factory: Ethers.ContractFactory = await this.getFactory([abi, bytecode], client, signer);
+        const contract = await Factory.deploy(...args);
+        const receipt = await contract.deployed();
+        return {
+            contract,
+            abi,
+            bytecode,
+            source
+        };
+    }
+
+    async compileSol (solContractPath: string, options?: {
+        paths?: {
+            root?: string
+            artifacts?: string
+        },
+        contractName?: string
+    }): Promise<{
+        abi: AbiItem[],
+        bytecode: string,
+        source: IGeneratorSources
+    }> {
+
 
         const dir = solContractPath.replace(/[^\/]+$/, '');
         const filename = /(?<filename>[^\/]+)\.\w+$/.exec(solContractPath)?.groups.filename;
@@ -152,19 +185,54 @@ export class HardhatProvider {
         }
 
         let { abi, bytecode } = await File.readAsync<{ abi, bytecode }> (output);
-        let Factory: Ethers.ContractFactory = await this.getFactory([abi, bytecode], client, signer);
+        let files = await Directory.readFilesAsync(dir, '*.sol');
 
-        const contract = await Factory.deploy(...args);
-        const receipt = await contract.deployed();
+
+        let fileMap = await alot(files)
+        .mapAsync(async file => {
+            return {
+                key: file.uri.toString(),
+                content: await file.readAsync<string>()
+            };
+        })
+        .toDictionaryAsync(x => x.key, x => ({ content: x.content }));
+
         return {
-            contract,
             abi,
-            bytecode
+            bytecode,
+            source: {
+                contractName: options?.contractName,
+                files: fileMap
+            }
         };
     }
 
     async deployCode (solidityCode: string, options: Parameters<HardhatProvider['deploySol']>[1] = {}) {
 
+        let { tmpFile,  tmpDir, options: optionsNormalized } = await this.createTmpFile(solidityCode, options);
+
+        try {
+            return await this.deploySol(tmpFile, optionsNormalized);
+        } finally {
+            try {
+                await Directory.removeAsync(tmpDir);
+            } catch (_) { }
+        }
+    }
+
+    async compileCode (solidityCode: string, options: Parameters<HardhatProvider['deploySol']>[1] = {}) {
+        let { tmpFile,  tmpDir, options: optionsNormalized } = await this.createTmpFile(solidityCode, options);
+
+        try {
+            return await this.compileSol(tmpFile, optionsNormalized);
+        } finally {
+            try {
+                await Directory.removeAsync(tmpDir);
+            } catch (_) { }
+        }
+    }
+
+    private async createTmpFile(solidityCode: string, options: Parameters<HardhatProvider['deploySol']>[1] = {}) {
         let contractName = options.contractName;
         if (contractName == null) {
             let matches = Array.from(solidityCode.matchAll(/contract\s+(?<name>[\w]+)/g));
@@ -179,14 +247,8 @@ export class HardhatProvider {
             root
         };
         await File.writeAsync(tmp, solidityCode);
-        try {
-            return await this.deploySol(tmp, options);
-        } finally {
-            //await Directory.removeAsync(root);
-        }
-
+        return { tmpFile: tmp, tmpDir: root, options }
     }
-
     private getEthersProvider (client: Web3Client) {
         if (client.options.web3 != null) {
             let ethers: typeof Ethers & { provider /* hardhat */ } = this.hh.ethers;

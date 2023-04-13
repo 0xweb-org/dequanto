@@ -10,7 +10,10 @@ export namespace $address {
         return arr.find(x => eq(getter(x), address));
     }
 
-    export function isValid (address: TAddress) {
+    export function isValid (address: any): address is TAddress {
+        if (typeof address !== 'string') {
+            return false;
+        }
         let rgx = /0x[\dA-F]{40,}/i;
         return rgx.test(address);
     }

@@ -353,5 +353,36 @@ UTest({
                 eq_(location, 18569430475105882587588266137607568536673111973893317399460219858819262702961n);
             }
         })
+    },
+    'should read basic types': {
+        async 'should read bytes' () {
+
+            let code = `
+                contract Counter {
+                    bytes2 staticBytes = 0x1122;
+                    bytes  dynamicBytes;
+                    constructor () {
+                        dynamicBytes = new bytes(2);
+                        dynamicBytes[0] = 0x33;
+                        dynamicBytes[1] = 0x44;
+                    }
+                }
+            `;
+
+            let provider = new HardhatProvider();
+            let client = await provider.client();
+
+            let { contract, abi } = await provider.deployCode(code, { client });
+
+            l`Read with SLOTS Readers`
+            let slots = await SlotsParser.slots({ path: '', code });
+            let storage = SlotsStorage.createWithClient(client, contract.address, slots);
+
+            let staticBytes = await storage.get('staticBytes');
+            eq_(staticBytes, '0x1122');
+
+            let dynamicBytes = await storage.get('dynamicBytes');
+            eq_(dynamicBytes,'0x3344');
+
     }
 })

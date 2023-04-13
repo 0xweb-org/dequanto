@@ -11,10 +11,12 @@ import { class_Uri, obj_setProperty } from 'atma-utils';
 import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { $path } from '@dequanto/utils/$path';
+import { $is } from '@dequanto/utils/$is';
 import { $logger, l } from '@dequanto/utils/$logger';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { EVM } from '@dequanto/evm/EVM';
+import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 
 export interface IGenerateOptions {
     platform: TPlatform
@@ -22,8 +24,9 @@ export interface IGenerateOptions {
     defaultAddress?: TAddress
 
     source: {
-        abi?: TAddress
+        abi?: TAddress | AbiItem[]
         code?: string
+        path?: string
     }
 
     output?: string
@@ -46,6 +49,7 @@ const KEYS = {
     'defaultAddress': 1,
     'source.abi': 1,
     'source.code': 1,
+    'source.path': 1,
     'output': 1,
     'implementation': 1
 };
@@ -131,15 +135,33 @@ export class Generator {
     }
 
     async generate () {
-        let { name, platform: network, output, implementation: implSource } = this.options;
+        let {
+            name,
+            platform: network,
+            output,
+            implementation: implSource,
+            source
+        } = this.options;
 
-        let { abiJson, implementation } = await this.getAbi({ implementation: implSource });
-        let sources = await this.getSources(implementation, name);
+        let abi: AbiItem[];
+        let implementation: TAddress;
+        let sources: IGeneratorSources;
+        if (source.code == null && source.path == null) {
+            // Load from blockexplorer by address (follows also proxy)
+            let result = await this.getAbi({ implementation: implSource });
+            abi = result.abiJson;
+            implementation = result.implementation;
+            sources = await this.getSources(implementation, name);
+        } else {
+            // Compile localhost
+            let result = await this.getContractData();
+            abi = result.abi;
+            sources = result.source;
+        }
+
         let generator = di.resolve(GeneratorFromAbi);
-
         let address = this.options.defaultAddress;
-
-        return await generator.generate(abiJson, {
+        return await generator.generate(abi, {
             network: network,
             name: name,
             contractName: sources?.contractName,
@@ -156,6 +178,10 @@ export class Generator {
         let abi = this.options.source.abi;
         $require.notNull(abi, `Abi not provided to get the Abi Json from`);
 
+        if (Array.isArray(abi)) {
+            return { abiJson: abi, implementation: opts.implementation };
+        }
+
         let abiJson: AbiItem[]
         let implementation: TAddress;
         if (abi.startsWith('0x')) {
@@ -164,15 +190,7 @@ export class Generator {
             implementation = impl;
         } else {
             let path = abi;
-            let location = this.options.location;
-            if (location && $path.isAbsolute(path) === false) {
-                // if path not relative, check the file at ClassFile location
-                let relPath = class_Uri.combine(location, path);
-                if (await File.existsAsync(relPath)) {
-                    path = relPath;
-                }
-            }
-            let json = await File.readAsync <any> (path);
+            let json = await this.readFile(path)
             abiJson = Array.isArray(json) ? json : json.abi;
         }
 
@@ -197,9 +215,44 @@ export class Generator {
         }
         return meta.SourceCode;
     }
+    private async getContractData (): Promise<{
+        abi,
+        bytecode,
+        source: {
+            contractName: string,
+            files: {
+                [path: string]: { content: string }
+            }
+        }
+    }> {
+        let { code, path } = this.options.source ?? {};
+        if (code == null || path == null) {
+            return null;
+        }
+
+        let provider = new HardhatProvider();
+        let result = path != null
+            ? await provider.compileSol(path)
+            : await provider.compileCode(code);
+
+        return result;
+    }
+
+    private async readFile<T = any> (path: string) {
+        let location = this.options.location;
+        if (location && $path.isAbsolute(path) === false) {
+            // if path not relative, check the file at ClassFile location
+            let relPath = class_Uri.combine(location, path);
+            if (await File.existsAsync(relPath)) {
+                path = relPath;
+            }
+        }
+        let content = await File.readAsync <T> (path);
+        return content;
+    }
 
     private async getAbiByAddress (opts: { implementation: string }) {
-        let address = $address.expectValid(this.options.source?.abi, 'contract address is not valid');
+        let address = $require.Address(this.options.source?.abi as any, 'contract address is not valid');
         let explorer = $require.notNull(this.explorer, `Explorer not resolved for network: ${this.options.platform}`);
 
         try {
@@ -225,5 +278,12 @@ export class Generator {
 
             return { abi };
         }
+    }
+}
+
+export interface IGeneratorSources {
+    contractName: string,
+    files: {
+        [path: string]: { content: string }
     }
 }

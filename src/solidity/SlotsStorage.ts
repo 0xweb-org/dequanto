@@ -15,6 +15,7 @@ import { SlotStructHandler } from './storage/handlers/SlotStructHandler';
 import { ISlotVarDefinition } from './SlotsParser/models';
 import { $abiType } from '@dequanto/utils/$abiType';
 import { $types } from './utils/$types';
+import { SlotBytesHandler } from './storage/handlers/SlotBytesHandler';
 
 export class SlotsStorage {
 
@@ -163,6 +164,9 @@ export class SlotsStorage {
         }
         if (SlotMappingHandler.supports(slot)) {
             return SlotMappingHandler;
+        }
+        if (SlotBytesHandler.supports(slot)) {
+            return SlotBytesHandler;
         }
         if (SlotStringHandler.supports(slot)) {
             return SlotStringHandler;
