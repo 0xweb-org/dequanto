@@ -226,8 +226,8 @@ export class Generator {
         }
     }> {
         let { code, path } = this.options.source ?? {};
-        if (code == null || path == null) {
-            return null;
+        if (code == null && path == null) {
+            throw new Error(`getContractData was called without "code" and "path"`);
         }
 
         let provider = new HardhatProvider();
