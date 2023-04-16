@@ -3,7 +3,7 @@ import { SlotsParser } from '@dequanto/solidity/SlotsParser';
 import { l } from '@dequanto/utils/$logger';
 
 UTest({
-    async 'should extract slots from contract' () {
+    async 'should extract slots from contract'() {
 
         const input = `
             contract Test {
@@ -86,7 +86,7 @@ UTest({
             type: 'bytes16'
         });
     },
-    async 'should extract slots from abi' () {
+    async 'should extract slots from abi'() {
 
         const input = `
             (uint256 foo, uint256[3] bar)
@@ -109,7 +109,7 @@ UTest({
             type: 'uint256[3]'
         });
     },
-    async 'should extract slots from inherited contracts' () {
+    async 'should extract slots from inherited contracts'() {
         const input = `
             contract Foo {
                 uint a;
@@ -144,8 +144,8 @@ UTest({
             type: 'uint256'
         });
     },
-    async 'should parse weth.sol' () {
-        let slots = await SlotsParser.slots({ path: './test/fixtures/scan/WETH.sol'}, 'MaticWETH');
+    async 'should parse weth.sol'() {
+        let slots = await SlotsParser.slots({ path: './test/fixtures/scan/WETH.sol' }, 'MaticWETH');
 
         let names = slots.map(x => x.name);
         let types = slots.map(x => x.type);
@@ -185,8 +185,8 @@ UTest({
         eq_(names[10], 'nonces');
         eq_(types[10], 'mapping(address => uint256)');
     },
-    async 'should parse multi inheritance' () {
-         const input = `
+    async 'should parse multi inheritance'() {
+        const input = `
             contract FooHolder {
                 uint foo = 3;
             }
@@ -220,10 +220,10 @@ UTest({
         let totalSupply = await client.getStorageAt(contract.address, 2);
         eq_(Number(totalSupply), 4)
     },
-    async 'should parse sol versions lower then 0.5.0' () {
+    async 'should parse sol versions lower then 0.5.0'() {
 
         return new UTest({
-            async 'parse enjtoken' () {
+            async 'parse enjtoken'() {
                 const slots = await SlotsParser.slots({
                     path: './test/fixtures/parser/v04/ENJToken.sol'
                 }, 'ENJToken');
@@ -253,7 +253,7 @@ UTest({
                     [19, 'maxTeamTranches'],
                 ])
             },
-            async 'parse presale' () {
+            async 'parse presale'() {
                 const slots = await SlotsParser.slots({
                     path: './test/fixtures/parser/v04/MultiSigWallet.sol'
                 }, 'MultiSigWallet');
@@ -272,8 +272,8 @@ UTest({
 
         })
 
-   },
-    async 'should parse AavePriceOracle.sol' () {
+    },
+    async 'should parse AavePriceOracle.sol'() {
         let slots = await SlotsParser.slots({ path: './test/fixtures/parser/PriceOracle.sol' }, 'PriceOracle');
 
         eq_(slots.length, 13);
@@ -286,5 +286,48 @@ UTest({
             size: Infinity,
             type: 'mapping(address => (uint256 mantissa))'
         });
+    },
+    async 'should handle state variable overrides'() {
+        let slots = await SlotsParser.slots({ path: './test/fixtures/contracts/AlphaKlimaSimple.sol' }, 'AlphaKlimaSimple');
+
+        let provider = new HardhatProvider();
+        let client = provider.client('hardhat');
+        let { contract } = await provider.deploySol('./test/fixtures/contracts/AlphaKlimaSimple.sol', { client });
+
+        // console.log(0, await client.getStorageAt(contract.address, 0));
+        // console.log(1, await client.getStorageAt(contract.address, 1));
+        // console.log(2, await client.getStorageAt(contract.address, 2));
+        // console.log(3, await client.getStorageAt(contract.address, 3));
+        // console.log(4, await client.getStorageAt(contract.address, 4));
+        // console.log(5, await client.getStorageAt(contract.address, 5));
+        // console.log(6, await client.getStorageAt(contract.address, 6));
+        // console.log(7, await client.getStorageAt(contract.address, 7));
+        // console.log(8, await client.getStorageAt(contract.address, 8));
+        // console.log(9, await client.getStorageAt(contract.address, 9));
+        // console.log(10, await client.getStorageAt(contract.address, 10));
+        // console.log(11, await client.getStorageAt(contract.address, 11));
+        // console.log(slots.map(x => [x.name, x.slot]));
+
+        expectSlot(0, '_initialized');
+        expectSlot(0, '_initializing');
+        expectSlot(2, '_balances');
+        expectSlot(3, '_allowances');
+        expectSlot(4, '_totalSupply');
+        expectSlot(5, '_name');
+        expectSlot(6, '_symbol');
+        expectSlot(10, '_owner');
+        expectSlot(11, '__gap');
+
+        function expectSlot (nr: number, name: string) {
+            let slot = slots.find(x => x.name === name);
+            eq_(slot.slot, nr);
+        }
+    },
+    async 'should parse AlphaKlima.sol'() {
+        // https://etherscan.io/bytecode-decompiler?a=0x434f7c87a678955c3c5bddeb4a9bfb0190df0c30
+        let slots = await SlotsParser.slots({ path: './test/fixtures/parser/AlphaKlima.sol' }, 'AlphaKlimaUpgradeable');
+
+        let ownerSlot = slots.find(x => x.name === '_owner');
+        eq_(ownerSlot.slot, 201);
     },
 })

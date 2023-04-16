@@ -106,7 +106,7 @@ export class SourceFile {
 
             chain.unshift(...arr);
         }
-        return chain;
+        return alot(chain).distinctBy(x => x.contract.name).toArray();
     }
 
     async getContract(name?: string): Promise<ContractDefinition> {
