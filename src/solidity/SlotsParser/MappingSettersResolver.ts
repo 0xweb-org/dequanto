@@ -229,7 +229,7 @@ namespace $astSetters {
             let keys = $node.getIndexAccessFields(indexAccess);
             let setterIdentifiersRaw: (Identifier | MemberAccess)[] = keys
                 .slice(1)
-                .filter(node => Ast.isIdentifier(node) || Ast.isMemberAccess(node) || Ast.isIndexAccess(node)) as any[];
+                .filter(node => Ast.isIdentifier(node) || Ast.isMemberAccess(node) || Ast.isIndexAccess(node) || Ast.isFunctionCall(node)) as any[];
 
             if (setterIdentifiersRaw.length === 0) {
                 l`@TODO - just the dynamic fields are supported (by variable) in ${method.name}`

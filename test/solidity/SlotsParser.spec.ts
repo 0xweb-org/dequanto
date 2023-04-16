@@ -1,6 +1,7 @@
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { SlotsParser } from '@dequanto/solidity/SlotsParser';
 import { l } from '@dequanto/utils/$logger';
+import { $require } from '@dequanto/utils/$require';
 
 UTest({
     async 'should extract slots from contract'() {
@@ -325,9 +326,41 @@ UTest({
     },
     async 'should parse AlphaKlima.sol'() {
         // https://etherscan.io/bytecode-decompiler?a=0x434f7c87a678955c3c5bddeb4a9bfb0190df0c30
-        let slots = await SlotsParser.slots({ path: './test/fixtures/parser/AlphaKlima.sol' }, 'AlphaKlimaUpgradeable');
+        let slots = await SlotsParser.slots({ path: './test/fixtures/parser/AlphaKlima.sol' });
 
         let ownerSlot = slots.find(x => x.name === '_owner');
         eq_(ownerSlot.slot, 201);
+    },
+    async 'should parse USDC.sol'() {
+        let slots = await SlotsParser.slots({ path: './test/fixtures/parser/USDC.sol' });
+
+        expectSlot(0, '_owner');
+        expectSlot(1, 'pauser');
+        expectSlot(1, 'paused');
+        expectSlot(2, 'blacklister');
+        expectSlot(3, 'blacklisted');
+        expectSlot(4, 'name');
+
+        expectSlot(5, 'symbol');
+        expectSlot(6, 'decimals');
+        expectSlot(7, 'currency');
+        expectSlot(8, 'masterMinter');
+        expectSlot(8, 'initialized');
+        expectSlot(9, 'balances');
+        expectSlot(10, 'allowed');
+        expectSlot(11, 'totalSupply_');
+        expectSlot(12, 'minters');
+        expectSlot(13, 'minterAllowed');
+        expectSlot(14, '_rescuer');
+        expectSlot(15, 'DOMAIN_SEPARATOR');
+        expectSlot(16, '_authorizationStates');
+        expectSlot(17, '_permitNonces');
+        expectSlot(18, '_initializedVersion');
+
+        function expectSlot (nr: number, name: string) {
+            let slot = slots.find(x => x.name === name);
+            $require.notNull(slot, nr + ': ' + name);
+            eq_(slot.slot, nr);
+        }
     },
 })

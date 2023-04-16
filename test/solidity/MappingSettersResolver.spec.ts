@@ -394,4 +394,23 @@ UTest({
         eq_(result.events[0].event.name, 'Borrow');
         deepEq_(result.events[0].accessorsIdxMapping, [0]);
     },
+    async 'should parse key'() {
+
+        let code = `
+            contract A {
+
+                mapping(address => bool) internal blacklisted;
+
+                function initializeV2(address lostAndFound) external {
+
+                    blacklisted[address(this)] = true;
+                }
+            }
+        `;
+        let result = await MappingSettersResolver.getEventsForMappingMutations('blacklisted', { path: '', code });
+
+        eq_(result.methods.length, 1);
+        eq_(result.methods[0].method.name, 'initializeV2');
+        eq_(result.methods[0].accessors[0], 'address(this)');
+    },
 })
