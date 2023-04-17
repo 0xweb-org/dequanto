@@ -8,10 +8,33 @@ import { TPlatform } from './models/TPlatform';
 import { NameService } from './ns/NameService';
 import { $address } from './utils/$address';
 import { $is } from './utils/$is';
+import { Config } from './Config';
+import { $require } from './utils/$require';
+import appcfg from 'appcfg';
 
 export class ChainAccountsService {
-    private store = di.resolve(Store);
-    private config = ChainAccountProvider;
+    private store: IChainAccountsStore;
+
+    private provider = ChainAccountProvider;
+
+    constructor (params?: {
+        store?: 'local' | 'config' | IChainAccountsStore
+        config?: appcfg
+    }) {
+        if (params?.config) {
+            this.store = new ConfigChainAccountsStore(params?.config);
+        } else {
+            let store = params?.store ?? 'local';
+            if (store === 'local') {
+                this.store = di.resolve(FileChainAccountsStore);
+            } else if (store === 'config') {
+                this.store = di.resolve(ConfigChainAccountsStore);
+            } else {
+                this.store = store;
+            }
+        }
+        $require.notNull(this.store, `Chain accounts store is invalid ${ JSON.stringify(params)}`);
+    }
 
     async get (mix: string | TAddress, platform?: TPlatform): Promise<IAccount> {
         if ($is.hexString(mix) && mix.length >= 64) {
@@ -30,18 +53,18 @@ export class ChainAccountsService {
                 }
             }
         }
-        let acc = this.config.tryGet(mix, platform);
+        let acc = this.provider.tryGet(mix, platform);
         return acc ?? this.store.get(mix);
     }
     async getAll (): Promise<ChainAccount[]> {
         return this.store.getAll();
     }
-    async generate (opts: { name: string, platform: TPlatform }) {
+    async generate (opts: { name: string, platform?: TPlatform }) {
         let current = await this.get(opts.name, opts.platform);
         if (current) {
             return current;
         }
-        let account = this.config.generate(opts);
+        let account = this.provider.generate(opts);
         await this.store.save(account);
         return account;
     }
@@ -52,7 +75,7 @@ export class ChainAccountsService {
             if (current) {
                 return current;
             }
-            let account = this.config.generate({ name, platform });
+            let account = this.provider.generate({ name, platform });
             newAccounts.push(account)
             return account;
         }).toArrayAsync();
@@ -65,7 +88,15 @@ export class ChainAccountsService {
 }
 
 
-class Store {
+export interface IChainAccountsStore {
+    get (name: string): Promise<ChainAccount>
+    get (address: TAddress): Promise<ChainAccount>
+    getAll (): Promise<ChainAccount[]>
+    save (account: ChainAccount): Promise<void>
+    saveMany (accounts: ChainAccount[]): Promise<void>
+}
+
+class FileChainAccountsStore implements IChainAccountsStore {
     private fs = new JsonArrayStore <ChainAccount> ({
         path: './db/accounts/accounts.json',
         key: x => (x.key ?? x.address),
@@ -90,4 +121,47 @@ class Store {
     async saveMany (accounts: ChainAccount[]) {
         await this.fs.upsertMany(accounts);
     }
+}
+
+class ConfigChainAccountsStore implements IChainAccountsStore {
+
+    constructor (private config?: appcfg) {
+
+    }
+
+    async get(name: string): Promise<ChainAccount>;
+    async get(address: string): Promise<ChainAccount>;
+    async get(mix: string | TAddress): Promise<ChainAccount> {
+
+        let accounts = await this.getAll();
+
+        if ($address.isValid(mix)) {
+            return accounts.find(x => $address.eq(mix, x.address));
+        }
+        return accounts.find(x => x.name === mix);
+    }
+    async getAll(): Promise<ChainAccount[]> {
+        let config: any = this.config ?? await Config.fetch();
+        let accounts = config.accounts ?? [];
+        return accounts;
+    }
+    async save(account: ChainAccount): Promise<void> {
+        let accounts = await this.getAll();
+        let current = await this.get(account.name ?? account.address);
+        if (current != null) {
+            return;
+        }
+        // Not found
+        accounts.push(account);
+        await this.saveMany(accounts);
+    }
+
+    async saveMany(accounts: ChainAccount[]): Promise<void> {
+        let config = this.config ?? await Config.fetch();
+        let sources = $require.notNull(config?.$sources?.array, `Invalid config library. Fetched "config.$sources.array" is undefined`)
+        let accountsConfig = sources.find(x =>x.data.name === 'accounts');
+
+        await accountsConfig.write({ accounts }, false);
+    }
+
 }
