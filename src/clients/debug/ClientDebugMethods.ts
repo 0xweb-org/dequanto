@@ -1,8 +1,8 @@
-import alot from 'alot'
-import { TAddress } from '@dequanto/models/TAddress'
-import { TBufferLike } from '@dequanto/models/TBufferLike'
 import type { IWeb3ClientOptions } from '../interfaces/IWeb3Client';
 import type { Web3Client } from '../Web3Client';
+import { TAddress } from '@dequanto/models/TAddress'
+import { TBufferLike } from '@dequanto/models/TBufferLike'
+import { $bigint } from '@dequanto/utils/$bigint';
 
 
 export class ClientDebugMethods {
@@ -47,14 +47,17 @@ export class ClientDebugMethods {
         return this.call('setCode', ...arguments);
     }
 
-    setBalance (address: TAddress, amount: bigint) {
-        return this.call('setBalance', ...arguments);
+    setBalance (address: TAddress, amount: bigint | string) {
+        if (typeof amount === 'bigint') {
+            amount = $bigint.toHex(amount);
+        }
+        return this.call('setBalance', address, amount);
     }
 
     private call(method: keyof typeof this.methods, ...args: any[]) {
         let meta = this.methods[method];
         if (meta?.call == null) {
-            throw new Error(`RPC method for ${method} is not configurated in ${this.client.platform}`);
+            throw new Error(`RPC method for ${method} is not configured in ${this.client.platform}`);
         }
         return this.client.pool.call(web3 => {
             let eth = web3.eth as (typeof web3.eth & { [key in typeof method]: Function });
