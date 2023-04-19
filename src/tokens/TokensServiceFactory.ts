@@ -7,6 +7,7 @@ import { TokensServiceXDai } from './TokensServiceXDai';
 import { TokensServiceArbitrum } from '@dequanto/chains/arbitrum/TokensServiceArbitrum';
 import { TokensService } from './TokensService';
 import { config } from '@dequanto/Config';
+import { TokenDataProvider } from './TokenDataProvider';
 
 export namespace TokensServiceFactory {
 
@@ -23,7 +24,8 @@ export namespace TokensServiceFactory {
             case 'arbitrum':
                 return di.resolve(TokensServiceArbitrum);
             case 'hardhat':
-                return di.resolve(TokensService, platform);
+                let ethProvider = new TokenDataProvider('eth');
+                return new TokensService(platform, null, ethProvider);
             default: {
                 let cfg = config.web3[platform];
                 if (cfg != null) {

@@ -14,9 +14,9 @@ import { TokenDataProvider } from './TokenDataProvider';
 export class TokensService {
 
 
-    provider = new TokenDataProvider(this.platform, this.explorer);
+    provider = new TokenDataProvider(this.platform, this.explorer, null, this.forked);
 
-    constructor(private platform: TPlatform, private explorer?: IBlockChainExplorer) {
+    constructor(private platform: TPlatform, private explorer?: IBlockChainExplorer, private forked?: TokenDataProvider) {
 
     }
 

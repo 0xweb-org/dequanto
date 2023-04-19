@@ -37,7 +37,7 @@ export class TokenDataProvider {
     ] as ITokenProvider[];
 
 
-    constructor(private platform: TPlatform, private explorer?: IBlockChainExplorer, private client?: Web3Client) {
+    constructor(private platform: TPlatform, private explorer?: IBlockChainExplorer, private client?: Web3Client, private forked?: TokenDataProvider) {
 
     }
 
@@ -55,6 +55,9 @@ export class TokenDataProvider {
             ? await this.getTokenByAddress(mix, chainLookup)
             : await this.getTokenBySymbol(mix, chainLookup);
 
+        if (token == null && this.forked != null) {
+            token = await this.forked.getToken(mix, chainLookup);
+        }
         return token
     }
 
@@ -64,6 +67,9 @@ export class TokenDataProvider {
             ? await this.getTokenByAddress(mix, false)
             : await this.getTokenBySymbol(mix, false);
 
+        if (token == null && this.forked != null) {
+            token = await this.forked.getKnownToken(mix);
+        }
         if (token == null) {
             throw new Error(`Token ${mix} not found for "${ this.platform }"`);
         }

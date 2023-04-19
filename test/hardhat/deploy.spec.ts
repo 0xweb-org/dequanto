@@ -209,5 +209,25 @@ UTest({
 
         let val = await contract.names( $address.ZERO );
         eq_(val, 'ZERO');
+    },
+    async 'should return memory strings' () {
+        let provider = new HardhatProvider();
+        let code = `
+            import "hardhat/console.sol";
+
+            contract Fruits {
+                mapping (uint256 =>string) public example;
+                constructor () {
+                    example[1] = "peach";
+                }
+                function foo () view external returns (string memory) {
+                    string memory fruit = example[1];
+                    return fruit;
+                }
+            }
+        `;
+        let { contract } = await provider.deployCode(code);
+        let val = await contract.foo();
+        eq_(val, 'peach');
     }
 });
