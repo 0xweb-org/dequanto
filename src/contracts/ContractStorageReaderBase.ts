@@ -6,10 +6,7 @@ import { SlotsStorage } from '@dequanto/solidity/SlotsStorage';
 
 export class ContractStorageReaderBase {
 
-
-
     public $storage: SlotsStorage;
-
 
     constructor (
         public address: TAddress,
@@ -19,6 +16,12 @@ export class ContractStorageReaderBase {
 
     }
 
+    public $get (...args: Parameters<SlotsStorage['get']>) {
+        return this.$storage.get(...args);
+    }
+    public $set (...args: Parameters<SlotsStorage['set']>) {
+        return this.$storage.set(...args);
+    }
 
     protected $createHandler(slots: ISlotVarDefinition[]) {
         this.$storage = SlotsStorage.createWithClient(this.client, this.address, slots);

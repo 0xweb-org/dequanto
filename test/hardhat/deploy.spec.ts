@@ -229,5 +229,32 @@ UTest({
         let { contract } = await provider.deployCode(code);
         let val = await contract.foo();
         eq_(val, 'peach');
+    },
+    async '!should initialize sub contract' () {
+        let provider = new HardhatProvider();
+        let code = `
+            import "hardhat/console.sol";
+
+            contract A {
+
+            }
+            contract B {
+                constructor (address addr) {
+                    A a = A(addr);
+                    console.log(address(a);
+                }
+            }
+            contract Test {
+                constructor () {
+                    A a = new A();
+                    B b = new B(address(a));
+                }
+            }
+        `;
+        let { contract } = await provider.deployCode(code, {
+            contractName: 'Test'
+        });
+        // let val = await contract.foo();
+        // eq_(val, 'peach');
     }
 });

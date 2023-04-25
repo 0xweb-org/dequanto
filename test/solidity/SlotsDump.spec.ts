@@ -1,8 +1,14 @@
 import { BlockChainExplorerStorage } from '@dequanto/BlockchainExplorer/BlockChainExplorerStorage';
 import { Config } from '@dequanto/Config';
+import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractFactory } from '@dequanto/contracts/ContractFactory';
+import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { SlotsDump } from '@dequanto/solidity/SlotsDump';
+import { SlotsParser } from '@dequanto/solidity/SlotsParser';
+import { SlotsStorage } from '@dequanto/solidity/SlotsStorage';
 import { MappingKeysLoader } from '@dequanto/solidity/storage/MappingKeysLoader';
+import { l } from '@dequanto/utils/$logger';
 import { File } from 'atma-io';
 
 const provider = new HardhatProvider();
@@ -28,6 +34,14 @@ UTest({
 
         let deployer = provider.deployer();
         let { contract, abi } = await provider.deployCode(code, { client });
+        let explorer = new BlockChainExplorerStorage({
+            contracts: {
+                [ contract.address ]: {
+                    abi,
+                    source: code
+                }
+            }
+        });
 
         await contract.addUser();
 
@@ -35,14 +49,7 @@ UTest({
         let dump = new SlotsDump({
             address: contract.address,
             client,
-            explorer: new BlockChainExplorerStorage({
-                contracts: {
-                    [ contract.address ]: {
-                        abi,
-                        source: code
-                    }
-                }
-            })
+            explorer,
         });
         let { json, memory } = await dump.getStorage();
         eq_(json.countA, 3);
@@ -58,6 +65,23 @@ UTest({
             '0xa3c1274aadd82e4d12c8004c33fb244ca686dad4fcc8957fc5668588c11d9502',
             '0x0000000000000000000000000000000000000000000000000000000000000001'
         ]);
+
+        l`> Dump partial`
+        let dumpPartial = new SlotsDump({
+            address: contract.address,
+            client,
+            explorer,
+            fields: ['countA']
+        });
+        let resultPartial = await dumpPartial.getStorage();
+        eq_(resultPartial.json.countA, 3);
+        eq_(resultPartial.json.users, null);
+        eq_(resultPartial.memory.length, 1);
+
+        l`> Read single field`
+        let slots = await SlotsParser.slots({ path: '', code })
+        let storageBase = SlotsStorage.createWithClient(client, contract.address, slots)
+        eq_(await storageBase.get('countA'), 3);
     },
     async '//should read mapping keys' () {
         // SAFE

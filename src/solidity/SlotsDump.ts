@@ -48,6 +48,7 @@ export class SlotsDump {
         explorer?: IBlockChainExplorer
         sourceCodeProvider?: SourceCodeProvider
         logger?: typeof $logger
+        fields?: string[]
     }) {
         $require.Address(this?.address);
     }
@@ -74,7 +75,13 @@ export class SlotsDump {
         let transport = new MockedStorageTransport(this.keysLoader, this.client, this.address);
 
         let reader = new SlotsStorage(transport, slots);
-        let json = await reader.fetchAll();
+        let json = Array.isArray(this.params.fields)
+            ? await alot(this.params.fields)
+                .mapAsync(async field => {
+                    return { key: field, value: await reader.get(field) }
+                })
+                .toDictionaryAsync(x => x.key, x => x.value)
+            : await reader.fetchAll();
         let memory = alot(transport.memory).sortBy(slot => BigInt(slot[0])).toArray();
         return {
             json,
