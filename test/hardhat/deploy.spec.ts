@@ -1,3 +1,4 @@
+import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { $address } from '@dequanto/utils/$address';
@@ -230,8 +231,9 @@ UTest({
         let val = await contract.foo();
         eq_(val, 'peach');
     },
-    async '!should initialize sub contract' () {
+    async 'should initialize sub contract' () {
         let provider = new HardhatProvider();
+        let client = provider.client();
         let code = `
             import "hardhat/console.sol";
 
@@ -239,22 +241,42 @@ UTest({
 
             }
             contract B {
+                A a;
                 constructor (address addr) {
-                    A a = A(addr);
-                    console.log(address(a);
+                    a = A(addr);
+                    console.log(address(a));
+                }
+                function getA() view external returns (address) {
+                    return address(a);
                 }
             }
             contract Test {
+                A a;
+                B b;
                 constructor () {
-                    A a = new A();
-                    B b = new B(address(a));
+                    a = new A();
+                    b = new B(address(a));
+                }
+                function getA() view external returns (address) {
+                    return address(a);
+                }
+                function getB () view external returns (address) {
+                    return address(b);
                 }
             }
         `;
         let { contract } = await provider.deployCode(code, {
-            contractName: 'Test'
+            contractName: 'Test',
+            client,
         });
-        // let val = await contract.foo();
-        // eq_(val, 'peach');
+        let a = await contract.getA();
+        let b = await contract.getB();
+
+        eq_($address.isValid(a), true, `${a} not a valid address`);
+        eq_($address.isValid(b), true, `${b} not a valid address`);
+
+        let reader = new ContractReader(client);
+        let aInner = await reader.readAsync(b, 'getA():address');
+        eq_(aInner, a);
     }
 });
