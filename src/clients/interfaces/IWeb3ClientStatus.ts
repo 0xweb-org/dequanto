@@ -1,13 +1,9 @@
 export interface IWeb3ClientStatus {
     i: number
     url: string
-
     status: 'error' | 'sync' | 'live' | 'offline'
-
     blockNumber: number
-
     blockNumberBehind: number
-
     syncing: {
         currentBlock: number
         highestBlock: number
@@ -18,10 +14,8 @@ export interface IWeb3ClientStatus {
             block_number: string | number
         }[]
     }
-
     peers: number
-
-    error?: Error
-
     pingMs: number
+    node: string
+    error?: Error
 }
