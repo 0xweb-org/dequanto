@@ -312,7 +312,7 @@ export class ClientPool {
     }
 
     async getNodeInfos(): Promise<IWeb3ClientStatus[]> {
-        async function peerCount(wClient) {
+        async function getPeerCount(wClient: WClient) {
             /** @TODO Public nodes smt. do not allow net_peerCount methods. Allow to switch this on/off on node-url-config level */
             try {
                 return await wClient.eth.net.getPeerCount();
@@ -320,27 +320,38 @@ export class ClientPool {
                 return `ERROR: ${error.message}`;
             }
         }
+        async function getSyncInfo(wClient: WClient): Promise<IWeb3ClientStatus['syncing']> {
+            let syncing = await wClient.eth.isSyncing();
+            if (syncing == null || typeof syncing === 'boolean') {
+                return null;
+            }
+            return syncing as any;
+        }
         let nodes = await alot(this.clients).mapAsync(async (wClient, idx) => {
 
             let url = wClient.config.url;
             try {
                 let start = Date.now();
                 let [syncing, blockNumber, peers, node] = await Promise.all([
-                    wClient.eth.isSyncing(),
+                    getSyncInfo(wClient),
                     wClient.eth.getBlockNumber(),
-                    peerCount(wClient),
+                    getPeerCount(wClient),
                     wClient.eth.getNodeInfo(),
-
                 ]);
 
-                let ping = Math.round((Date.now() - start) / 3);
-                let syncData = typeof syncing === 'boolean' ? null : syncing;
+                let ping = Math.round((Date.now() - start) / 4);
+                let blockNumberBehind = 0;
+                if (syncing?.currentBlock && syncing.currentBlock < blockNumber) {
+                    blockNumberBehind = blockNumber - syncing.currentBlock;
+                    blockNumber = syncing.currentBlock;
+                }
+
                 return <IWeb3ClientStatus>{
                     url: url,
-                    status: 'live',
-                    syncing: <any>syncData,
+                    status: syncing ? 'sync' : 'live',
+                    syncing: syncing,
                     blockNumber: blockNumber,
-                    blockNumberBehind: 0,
+                    blockNumberBehind: blockNumberBehind,
                     peers: peers,
                     pingMs: ping,
                     node: node,
@@ -384,7 +395,7 @@ export class ClientPool {
 
         if (opts?.ws === false) {
             // filter out all WS providers (important for batched requests, as web3js has issues submitting multiple batch requests and handle response IDs)
-            clients = clients.filter(x => x.config.url?.startsWith('http') ||  x.config.url == null);
+            clients = clients.filter(x => x.config.url?.startsWith('http') || x.config.url == null);
         }
         if (opts?.node?.traceable === true) {
             clients = clients.filter(x => x.config.traceable === true);
@@ -714,13 +725,13 @@ export class WClient {
         code: WS_STATE.NOTSET
     }
 
-    private createWebSocketClient () {
+    private createWebSocketClient() {
         let { url, options } = this.config;
 
         options = obj_extendDefaults(options ?? {}, { clientConfig: {} });
         obj_extendDefaults((options as WebsocketProviderOptions).clientConfig, {
             // default frame size is too small
-            maxReceivedFrameSize:   50_000_000,
+            maxReceivedFrameSize: 50_000_000,
             maxReceivedMessageSize: 50_000_000,
         });
 
@@ -830,7 +841,7 @@ export class WClient {
                         status = ClientStatus.RateLimited;
                         let limit = RateLimitGuard.extractBatchLimitFromError(error);
                         if (limit !== this.batchLimit) {
-                            l`yellow<New BatchLimit> for "${ this.config.url }" bold<${limit}>`;
+                            l`yellow<New BatchLimit> for "${this.config.url}" bold<${limit}>`;
                             this.batchLimit = limit;
                         }
                     } else if (ClientErrorUtil.isConnectionFailed(error)) {
@@ -899,7 +910,7 @@ export class WClient {
         this.requests.ping = (ping * callCount + timeMs) / (callCount + 1);
     }
 
-    async ensureConnected (): Promise<Error> {
+    async ensureConnected(): Promise<Error> {
         if (this.config.url?.startsWith('ws')) {
             if (this.websocket.code === WS_STATE.ECONNRESET) {
                 // recreate connection when ERRCONNRESET was thrown previously
@@ -936,7 +947,7 @@ export class WClient {
         return this.rateLimitGuard?.checkWaitTime() ?? 0;
     }
 
-    private getSpanLimit (requestCount: number) {
+    private getSpanLimit(requestCount: number) {
         let a = this.rateLimitGuard?.getSpanLimit() ?? Infinity;
         let b = this.batchLimit ?? Infinity;
         let min = Math.min(a, b, requestCount);

@@ -2,7 +2,7 @@ export interface IWeb3ClientStatus {
     i: number
     url: string
 
-    status: 'error' | 'live' | 'offline'
+    status: 'error' | 'sync' | 'live' | 'offline'
 
     blockNumber: number
 
@@ -13,6 +13,10 @@ export interface IWeb3ClientStatus {
         highestBlock: number
         knownStates: number
         startingBlock: number
+        stages?: {
+            stage_name: string
+            block_number: string | number
+        }[]
     }
 
     peers: number
