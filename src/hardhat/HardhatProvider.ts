@@ -179,7 +179,7 @@ export class HardhatProvider {
                     jsonFile = getJsonFile(jsons, filenameRndSuffix);
                 }
                 if (jsonFile == null) {
-                    let contractName = options.contractName;
+                    let contractName = options?.contractName;
                     if (contractName == null) {
                         let source = await File.readAsync<string>(solContractPath);
                         let rgx = /contract \s*(?<contractName>[\w_]+)/ig;
