@@ -13,6 +13,8 @@ import { OpcodesWalker } from './OpcodesWalker';
 import { $logger } from '@dequanto/utils/$logger';
 import IOpcode from './interfaces/IOpcode';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { $bytecode } from './utils/$bytecode';
+import { $buffer } from '@dequanto/utils/$buffer';
 
 
 /**
@@ -72,10 +74,7 @@ export class EVM {
             this.code = code;
         } else {
             // remove the constructor code, leave the runtime bytecode only;
-            let initCode = code.indexOf('6080604052', 4);
-            if (initCode > -1) {
-                code = code.substring(initCode);
-            }
+            code = $bytecode.trimConstructorCode(code);
             this.code = Buffer.from(code.replace('0x', ''), 'hex');
         }
     }

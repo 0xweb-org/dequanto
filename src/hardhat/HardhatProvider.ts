@@ -128,6 +128,7 @@ export class HardhatProvider {
 
         const dir = solContractPath.replace(/[^\/]+$/, '');
         const filename = /(?<filename>[^\/]+)\.\w+$/.exec(solContractPath)?.groups.filename;
+        // Filename could contain have random number, extract main-name
         const filenameRndSuffix = filename.replace(/_\d+$/, '');
 
         let root = options?.paths?.root;
@@ -173,15 +174,32 @@ export class HardhatProvider {
             if (jsons.length === 1) {
                 output = jsons[0].uri.toString();
             } else {
-                let jsonFile = jsons.find(file => {
-                    return file.uri.file === `${filename}.json` || file.uri.file === `${filenameRndSuffix}.json`;
-                });
+                let jsonFile = getJsonFile(jsons, filename);
+                if (jsonFile == null) {
+                    jsonFile = getJsonFile(jsons, filenameRndSuffix);
+                }
+                if (jsonFile == null) {
+                    let contractName = options.contractName;
+                    if (contractName == null) {
+                        let source = await File.readAsync<string>(solContractPath);
+                        let rgx = /contract \s*(?<contractName>[\w_]+)/ig;
+                        let matches = Array.from(source.matchAll(rgx));
+                        contractName = matches[matches.length - 1]?.groups?.contractName;
+                    }
+                    jsonFile = getJsonFile(jsons, contractName);
+                }
+
                 if (jsonFile == null) {
                     $logger.log(`Files: ${ files.map(file => file.uri.file ).join(', ')}`);
                     throw new Error(`Compiled JSON data not found for "${filename}" in "${outputDir}/"`);
                 }
                 output = jsonFile.uri.toString();
             }
+        }
+        function getJsonFile (files: InstanceType<typeof File>[], filename: string) {
+            return files.find(file => {
+                return file.uri.file === `${filename}.json`;
+            });
         }
 
         let { abi, bytecode } = await File.readAsync<{ abi, bytecode }> (output);

@@ -37,6 +37,18 @@ export interface IWeb3ClientOptions {
         setBalance?: {
             call: 'hardhat_setBalance' | string,
             params: 2 | number
+        },
+        impersonateAccount?: {
+            call: 'hardhat_impersonateAccount' | string,
+            params: 1 | number
+        },
+        stopImpersonatingAccount?: {
+            call: 'hardhat_stopImpersonatingAccount' | string,
+            params: 1 | number,
+        },
+        reset?: {
+            call: 'hardhat_reset' | string,
+            params: 1 | number
         }
     }
 }

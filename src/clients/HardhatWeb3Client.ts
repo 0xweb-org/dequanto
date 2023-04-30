@@ -6,6 +6,7 @@ import { ClientEndpoints } from './utils/ClientEndpoints';
 
 
 // https://hardhat.org/hardhat-network/reference/
+// https://hardhat.org/hardhat-network/docs/reference#hardhat_reset
 
 export class HardhatWeb3Client extends Web3Client {
 
@@ -31,6 +32,18 @@ export class HardhatWeb3Client extends Web3Client {
                 setBalance: {
                     call: 'hardhat_setBalance',
                     params: 2
+                },
+                impersonateAccount: {
+                    call: 'hardhat_impersonateAccount',
+                    params: 1
+                },
+                stopImpersonatingAccount: {
+                    call: 'hardhat_stopImpersonatingAccount',
+                    params: 1,
+                },
+                reset: {
+                    call: 'hardhat_reset',
+                    params: 1
                 }
             }
         });
