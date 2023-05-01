@@ -147,7 +147,7 @@ export class Generator {
         let implementation: TAddress;
         let sources: IGeneratorSources;
         if (source.code == null && source.path == null) {
-            // Load from blockexplorer by address (follows also proxy)
+            // Load from block-explorer by address (follows also proxy)
             let result = await this.getAbi({ implementation: implSource });
             abi = result.abiJson;
             implementation = result.implementation;

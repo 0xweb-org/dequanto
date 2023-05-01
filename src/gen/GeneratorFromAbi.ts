@@ -258,7 +258,8 @@ export class GeneratorFromAbi {
             sources: sourceFiles,
             platform: opts.network,
             address: opts.address,
-            implementation: opts.implementation
+            implementation: opts.implementation,
+            contractName: opts.contractName
         };
     }
 }

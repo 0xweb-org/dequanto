@@ -185,6 +185,7 @@ export class HardhatProvider {
                         let rgx = /contract \s*(?<contractName>[\w_]+)/ig;
                         let matches = Array.from(source.matchAll(rgx));
                         contractName = matches[matches.length - 1]?.groups?.contractName;
+                        options.contractName = contractName;
                     }
                     jsonFile = getJsonFile(jsons, contractName);
                 }
