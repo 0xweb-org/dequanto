@@ -120,8 +120,9 @@ export class HardhatProvider {
         },
         contractName?: string
     }): Promise<{
-        abi: AbiItem[],
-        bytecode: string,
+        abi: AbiItem[]
+        bytecode: string
+        output: string
         source: IGeneratorSources
     }> {
 
@@ -219,6 +220,7 @@ export class HardhatProvider {
         return {
             abi,
             bytecode,
+            output,
             source: {
                 contractName: options?.contractName,
                 files: fileMap
