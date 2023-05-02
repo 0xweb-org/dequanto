@@ -21,6 +21,9 @@ export namespace $path {
     export function hasExt (path: string) {
         return /\.\w+($|\?)/.test(path);
     }
+    export function normalize (path: string) {
+        return path.replace(/\\/g, '/').replace(/\/.\//g, '/');
+    }
 
     function getRoot () {
         let base = $config.get('settings.base');

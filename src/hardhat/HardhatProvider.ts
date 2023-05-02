@@ -14,6 +14,7 @@ import { $number } from '@dequanto/utils/$number';
 import { $require } from '@dequanto/utils/$require';
 import alot from 'alot';
 import { IGeneratorSources } from '@dequanto/gen/Generator';
+import { $path } from '@dequanto/utils/$path';
 
 
 
@@ -126,6 +127,7 @@ export class HardhatProvider {
         source: IGeneratorSources
     }> {
 
+        solContractPath = $path.normalize(solContractPath);
 
         const dir = solContractPath.replace(/[^\/]+$/, '');
         const filename = /(?<filename>[^\/]+)\.\w+$/.exec(solContractPath)?.groups.filename;
@@ -149,16 +151,18 @@ export class HardhatProvider {
         await this.hh.run('compile', hhOptions);
 
         if (root == null) {
-            root = 'file://' + process.cwd();
+            root = 'file://' + $path.normalize(process.cwd());
         }
         if (artifacts == null && root != null) {
             artifacts = class_Uri.combine(root, 'artifacts/');
         }
 
-        if (root != null && solContractPath.toLowerCase().includes(root.toLowerCase())) {
+        if (solContractPath.toLowerCase().includes(root.toLowerCase())) {
             let i = solContractPath.toLowerCase().indexOf(root.toLowerCase());
             solContractPath = solContractPath.substring(i + root.length);
         }
+
+
 
         let outputDir = class_Uri.combine(artifacts, solContractPath);
         let output = class_Uri.combine(outputDir, `${filename}.json`);
