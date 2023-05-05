@@ -5,11 +5,11 @@ import { $address } from '@dequanto/utils/$address';
 
 
 UTest({
-    async 'should deploy solidity contract' () {
+    async 'should deploy solidity contract'() {
         let provider = new HardhatProvider();
 
         let { contract, abi } = await provider.deploySol('/test/fixtures/contracts/Foo.sol', {
-            arguments: [ 'Lorem' ]
+            arguments: ['Lorem']
         });
 
         let name = await contract.getName();
@@ -22,7 +22,7 @@ UTest({
         name = await contract.getName();
         eq_(name, 'Ipsum');
     },
-    async 'should deploy solidity contract from code' () {
+    async 'should deploy solidity contract from code'() {
         let provider = new HardhatProvider();
 
         let { contract, abi } = await provider.deployCode(`
@@ -36,13 +36,13 @@ UTest({
                 }
             }
         `, {
-            arguments: [  ]
+            arguments: []
         });
 
         let name = await contract.foo();
         eq_(name, 1);
     },
-    async 'should delegate call' () {
+    async 'should delegate call'() {
         let provider = new HardhatProvider();
 
         let { contract: libraryContract } = await provider.deployCode(`
@@ -81,13 +81,13 @@ UTest({
                 }
             }
         `, {
-            arguments: [ libraryContract.address  ]
+            arguments: [libraryContract.address]
         });
 
         let name = await mainContract.foo();
         eq_(name, 2);
     },
-    async 'should delegate call via fallback' () {
+    async 'should delegate call via fallback'() {
         let provider = new HardhatProvider();
 
         let { contract: libraryContract } = await provider.deployCode(`
@@ -134,7 +134,7 @@ UTest({
                 }
             }
         `, {
-            arguments: [ libraryContract.address  ]
+            arguments: [libraryContract.address]
         });
 
         let name = await mainContract.foo();
@@ -148,7 +148,7 @@ UTest({
         name = await mainContract.foo();
         eq_(name, 5);
     },
-    async 'should deploy by name' () {
+    async 'should deploy by name'() {
         let provider = new HardhatProvider();
         let code = `
             contract A {
@@ -184,7 +184,7 @@ UTest({
         let bVal = await contractB.b();
         eq_(bVal, 2);
     },
-    async 'should handle complex arguments' () {
+    async 'should handle complex arguments'() {
         let provider = new HardhatProvider();
         let code = `
             contract Foo {
@@ -205,13 +205,13 @@ UTest({
 
         let { contract } = await provider.deployCode(code);
 
-        let tx = await contract.whitelistBatch([ $address.ZERO ], ['ZERO']);
+        let tx = await contract.whitelistBatch([$address.ZERO], ['ZERO']);
         await tx.wait();
 
-        let val = await contract.names( $address.ZERO );
+        let val = await contract.names($address.ZERO);
         eq_(val, 'ZERO');
     },
-    async 'should return memory strings' () {
+    async 'should return memory strings'() {
         let provider = new HardhatProvider();
         let code = `
             import "hardhat/console.sol";
@@ -231,7 +231,7 @@ UTest({
         let val = await contract.foo();
         eq_(val, 'peach');
     },
-    async 'should initialize sub contract' () {
+    async 'should initialize sub contract'() {
         let provider = new HardhatProvider();
         let client = provider.client();
         let code = `
@@ -278,5 +278,65 @@ UTest({
         let reader = new ContractReader(client);
         let aInner = await reader.readAsync(b, 'getA():address');
         eq_(aInner, a);
+    },
+    async 'should support abstract class'() {
+        let provider = new HardhatProvider();
+        let client = provider.client();
+        return UTest({
+            async 'with interfaces'() {
+                let code = `
+                        abstract contract B1 {
+                            function foo () view external returns (uint256) {
+                                return this.someAbstract();
+                            }
+                            function someAbstract() public view virtual returns (uint256);
+                        }
+                        contract B2 {
+                            function someAbstract() public view virtual returns (uint256) {
+                                return 5;
+                            }
+                        }
+                        contract A is B1, B2 {
+                            function someAbstract() override(B1, B2) public view virtual returns (uint256) {
+                                return super.someAbstract();
+                            }
+                        }
+                    `;
+                let { contract } = await provider.deployCode(code, {
+                    contractName: 'A',
+                    client,
+                });
+                let a = await contract.foo();
+                eq_(a.toNumber(), 5);
+            },
+            async 'with top level shallowing'() {
+                let code = `
+                    interface IContractB {
+                        function someAbstract() external view returns (uint256);
+                    }
+
+                    abstract contract B1 is IContractB {
+                        function foo () view external returns (uint256) {
+                            return this.someAbstract();
+                        }
+
+                    }
+                    contract B2 is IContractB {
+                        function someAbstract() override external pure returns (uint256) {
+                            return 7;
+                        }
+                    }
+                    contract A is B1, B2 {
+
+                    }
+                `;
+                let { contract } = await provider.deployCode(code, {
+                    contractName: 'A',
+                    client,
+                });
+                let a = await contract.foo();
+                eq_(a.toNumber(), 7);
+            }
+        })
     }
 });

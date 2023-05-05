@@ -22,7 +22,12 @@ export namespace $path {
         return /\.\w+($|\?)/.test(path);
     }
     export function normalize (path: string) {
-        return path.replace(/\\/g, '/').replace(/\/.\//g, '/');
+        return path
+            // Replace all / duplicates, but not near the protocol
+            .replace(/(?<![:/])\/{2,}/g, '/')
+            // Replace "foo/./bar" with single slash: "foo/bar"
+            .replace(/\/\.\//g, '/')
+            ;
     }
 
     function getRoot () {
