@@ -1,4 +1,5 @@
 import memd from 'memd';
+import alot from 'alot';
 import type Ethers from 'ethers'
 import type { ContractBase } from '@dequanto/contracts/ContractBase';
 import type { Constructor } from 'atma-utils/mixin';
@@ -12,7 +13,6 @@ import { ethers } from 'ethers';
 import { $logger } from '@dequanto/utils/$logger';
 import { $number } from '@dequanto/utils/$number';
 import { $require } from '@dequanto/utils/$require';
-import alot from 'alot';
 import { IGeneratorSources } from '@dequanto/gen/Generator';
 import { $path } from '@dequanto/utils/$path';
 
@@ -161,8 +161,6 @@ export class HardhatProvider {
             let i = solContractPath.toLowerCase().indexOf(root.toLowerCase());
             solContractPath = solContractPath.substring(i + root.length);
         }
-
-
 
         let outputDir = class_Uri.combine(artifacts, solContractPath);
         let output = class_Uri.combine(outputDir, `${filename}.json`);

@@ -16,20 +16,9 @@ export class TestNode {
     static HOST = HOST
 
     @memd.deco.memoize()
-    static async client () {
-        //> in-memory
-        const web3 = (hre as any).web3;
-
-
-        // clean default configuration
-        $config.set('web3.hardhat.endpoints', []);
-
-        const client = new HardhatWeb3Client({ web3, chainId: 1337 });
-        return client;
-
-        //> localhost
-        // await TestNode.start();
-        // return HardhatWeb3Client.url(HOST, { chainId: 1337 });
+    static async client (network: 'hardhat' | 'localhost' = 'hardhat') {
+        let provider = new HardhatProvider();
+        return provider.client(network);
     }
 
     @memd.deco.memoize()
