@@ -24,6 +24,7 @@ import { Web3BatchRequests } from './Web3BatchRequests';
 import { $web3Abi } from './utils/$web3Abi';
 import { $require } from '@dequanto/utils/$require';
 import { $is } from '@dequanto/utils/$is';
+import { $hex } from '@dequanto/utils/$hex';
 
 export abstract class Web3Client implements IWeb3Client {
 
@@ -383,9 +384,18 @@ export abstract class Web3Client implements IWeb3Client {
 
     async getPastLogs (options: PastLogsOptions): Promise<Log[]> {
 
-
         options.fromBlock = await Blocks.getBlock(this, options.fromBlock, 0);
         options.toBlock = await Blocks.getBlock(this, options.toBlock, 'latest');
+
+        // ensure numbers, bigints, bools are in HEX
+        options.topics = options.topics.map(mix => {
+            if (mix != null && Array.isArray(mix) === false) {
+                return $hex.toHex(mix as any)
+            }
+            return mix;
+        });
+
+        // ensure all topics are in 32-byte
         options.topics = options.topics?.map(topic => {
             if (typeof topic === 'string' && topic.startsWith('0x')) {
                 return '0x' + topic.substring(2).padStart(64, '0');
@@ -451,6 +461,7 @@ namespace RangeWorker {
 
         let { maxBlockRange } = limits;
         let range = toBlock - fromBlock;
+
         if (maxBlockRange == null || range <= maxBlockRange) {
             return fetch (client, options, ranges, limits);
         }
@@ -495,7 +506,6 @@ namespace RangeWorker {
             let blockRange = range.toBlock - range.fromBlock;
             let paged = await client.pool.call((web3, wClient) => {
                 currentWClient = wClient;
-
                 return web3.eth.getPastLogs({
                     ...options,
                     fromBlock: range.fromBlock,

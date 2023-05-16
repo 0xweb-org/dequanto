@@ -29,4 +29,16 @@ contract Foo {
     function someEcho (uint8 val) public pure returns (uint8) {
         return val;
     }
+
+
+    event IndexedNormal (uint256 indexed valueA, uint256 valueB);
+    event IndexedWithOffset (uint256 valueA, uint256 indexed valueB);
+
+    function shouldEmitIndexedNormal (uint256 valueA, uint256 valueB) public {
+        emit IndexedNormal(valueA, valueB);
+    }
+
+    function shouldEmitIndexedWithOffset (uint256 valueA, uint256 valueB) public {
+        emit IndexedWithOffset(valueA, valueB);
+    }
 }

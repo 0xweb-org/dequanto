@@ -35,23 +35,24 @@ export namespace $contract {
             })
         return logs;
     }
-    // export function formatLogForAbi (log: ITxLogItem) {
-    //     let params = log.arguments.reduce((aggr, arg) => {
-    //         aggr[arg.name] = arg.value;
-    //         return aggr;
-    //     }, {});
-    //     return {
-    //         contract: log.contract,
-    //         arguments: log.arguments,
-    //         ...params
-    //     };
-    // }
 
     export function parseLogWithAbi(log: Log, abiItem: AbiItem | string): ITxLogItem {
         if(typeof abiItem === 'string') {
             abiItem = $abiParser.parseMethod(abiItem);
         }
         let inputs = abiItem.inputs.slice();
+
+        // Move indexed inputs forward
+        inputs.sort((a, b) => {
+            if (a.indexed === b.indexed) {
+                return 0;
+            }
+            if (b.indexed === true && a.indexed !== true) {
+                return 1;
+            }
+            return -1;
+        });
+
         let args = log.topics.slice(1).map((bytes, i) => {
             let type = inputs.shift();
             let val = InputDataUtils.decode([ type ], bytes);

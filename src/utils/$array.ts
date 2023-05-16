@@ -54,4 +54,17 @@ export namespace $array {
     export function shuffle <T> (arr: T[]): T[]  {
         return arr.sort(() => Math.random() - 0.5);
     }
+
+    export function trimEnd <T> (arr: T[]): T[] {
+        let i = arr.length;
+        while (--i > -1) {
+            if (arr[i] != null) {
+                break;
+            }
+        }
+        if (i < arr.length - 1) {
+            arr = arr.splice(i + 1);
+        }
+        return arr;
+    }
 }

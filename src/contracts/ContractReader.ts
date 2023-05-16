@@ -18,6 +18,7 @@ import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockCh
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { $contract } from '@dequanto/utils/$contract';
 import { $require } from '@dequanto/utils/$require';
+import { $array } from '@dequanto/utils/$array';
 
 
 
@@ -187,7 +188,7 @@ export class ContractReader implements IContractReader {
         let topics = [ topic ];
         if (options.params != null) {
             alot(abi.inputs)
-                .takeWhile(x => x.indexed)
+                .filter(x => x.indexed)
                 .forEach((arg, i) => {
                     let param = Array.isArray(options.params)
                         ? options.params[i]
@@ -199,6 +200,8 @@ export class ContractReader implements IContractReader {
                     topics.push(param);
                 })
                 .toArray();
+
+            topics = $array.trimEnd(topics);
         }
 
         filters.topics = topics;

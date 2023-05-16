@@ -63,6 +63,11 @@ export interface ITxWriterOptions {
      * @param errCount - num of errors already handled
      */
     onErrorRebuild? (tx: TxWriter, error: Error & { receipt?: TransactionReceipt }, errCount: number): Promise<TxDataBuilder>
+
+    /**
+     * Do not log Transaction states (start, receipt, etc)
+     */
+    silent?: boolean
 }
 
 export class TxWriter extends class_EventEmitter<ITxWriterEvents> {

@@ -24,6 +24,8 @@ export interface IContractWriter {
 
 export class ContractWriter implements IContractWriter {
 
+    static SILENT = false;
+
     protected builderConfig?: ITxConfig;
     protected writerConfig?: ITxWriterOptions;
 
@@ -41,7 +43,7 @@ export class ContractWriter implements IContractWriter {
 
     /**
     * We split Tx sending in two awaitable steps
-    * 1. This method prepairs(gas, nonce, etc) - and sends the Tx
+    * 1. This method prepares(gas, nonce, etc) - and sends the Tx
     * 2. With returned writer you can subscribe to events and/or wait for Tx to be mined
     * @param account
     * @param interfaceAbi
@@ -60,6 +62,7 @@ export class ContractWriter implements IContractWriter {
     ): Promise<TxWriter> {
 
         $require.notNull(account, 'Account parameter is undefined.');
+        $require.True(typeof account === 'object' || typeof account === 'string', `ContractWriter expect Account as the first parameter, got: ${ account }`)
 
         let value = typeof account !== 'string'
             ? account.value
@@ -111,16 +114,20 @@ export class ContractWriter implements IContractWriter {
             ]);
         }
 
+        let writerConfig = configs?.writerConfig ?? this.writerConfig;
         let writer = TxWriter.write(
             this.client,
             txBuilder,
             account,
-            configs?.writerConfig ?? this.writerConfig
+            writerConfig
         );
 
-        writer.on('log', message => {
-            $logger.log(`TxContract ${abi.name}; ${message}`);
-        });
+        let silentTxWriter = writerConfig?.silent ?? ContractWriter.SILENT;
+        if (silentTxWriter === false) {
+            writer.on('log', message => {
+                $logger.log(`TxContract ${abi.name}; ${message}`);
+            });
+        }
         return writer;
     }
 }
