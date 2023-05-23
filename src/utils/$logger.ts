@@ -1,33 +1,153 @@
 import memd from 'memd';
 import { $color } from './$color';
 import { $date } from './$date';
+import alot from 'alot';
 
-export namespace $logger {
-    export function log (...args: any) {
+
+export enum ELogLevel {
+    INFO = 0,
+    WARN = 1,
+    ERROR = 2,
+    RESULT = 3,
+}
+
+interface ILoggerOptions {
+    time?: boolean
+    color?: boolean
+    level?: ELogLevel
+}
+class Logger {
+    private stdcalls = [];
+
+    constructor(private options?: ILoggerOptions) {
+        this.options ??= {};
+        this.options.level ??= ELogLevel.INFO;
+        this.options.color ??= true;
+        this.options.time ??= true;
+    }
+
+    config (options: ILoggerOptions) {
+        for (let key in options) {
+            this.options[key] = options[key];
+        }
+    }
+
+    log(...args: any) {
+        if (this.options?.level > ELogLevel.INFO) {
+            return;
+        }
         if (args.length === 1 && typeof args[0] !== 'string') {
             console.dir(args[0], { depth: null });
             return;
         }
-
-        console.log($date.format(new Date(), 'HH:mm:ss'), ...colored(args));
+        this.print(this.format(...args), { method: 'log' });
     }
 
-    export function warn (...args: any) {
-        console.warn($date.format(new Date(), 'HH:mm:ss'), ...colored(args));
+    toast(str: string) {
+        if (this.options?.level > ELogLevel.INFO) {
+            return;
+        }
+        let row = this.colored([ str ]);
+        this.print(row, { method: 'log', isToast: true });
     }
-    export function error (...args: any) {
-        console.error($date.format(new Date(), 'HH:mm:ss'), ...colored(args));
+
+    warn(...args: any) {
+        if (this.options?.level > ELogLevel.WARN) {
+            return;
+        }
+        this.print(this.format(...args), { method: 'warn' });
+    }
+    error(...args: any) {
+        this.print(this.format(...args), { method: 'error' });
+    }
+
+    result (...args: any) {
+        let row = this.colored(args);
+        this.print(row, { method: 'log' });
+    }
+
+    table(arr: (string | number)[][]) {
+
+        arr = arr.filter(x => x != null && x.length > 0);
+
+        let lengths = arr[0].map((_, i) => {
+            let size = alot(arr).max(x => {
+                if (x.length === 1) {
+                    // If a row has only one column do not calculate column sizes and it will take the whole space
+                    return 0;
+                }
+
+                let str = String(x[i]);
+                let lines = str.split('\n');
+                let max = alot(lines).max(x => x.length);
+                const LIMIT_COLUMNG_LENGTH = 100;
+                return Math.min(max, LIMIT_COLUMNG_LENGTH);
+            });
+            return size;
+        });
+
+        let lines = arr.map(row => {
+
+            let multiLines = row.map(x => String(x).split('\n'));
+            let multiLinesCount = alot(multiLines).max(x => x.length);
+            return alot
+                .fromRange(0, multiLinesCount)
+                .map(y => {
+
+                    return row.map((_, i) => {
+                        let x = multiLines[i][y];
+                        let size = lengths[i];
+                        let str = String(x ?? '').padEnd(size, ' ');
+                        if (i % 2 === 1) {
+                            str = `bold<${str}>`;
+                        }
+                        return str;
+                    })
+                    .join(' ');
+                })
+                .toArray()
+                .join('\n')
+        });
+
+        let row = this.colored([ lines.join('\n') ])
+        this.print(row, { method: 'log' });
     }
 
     /**
      * Print log message not often than every 1 second
      */
-    export function throttled (...args: any) {
-        Throttled.log(...args);
+    @memd.deco.throttle(1000)
+    throttled(...args: any) {
+        this.log(...args);
     }
 
+    private print(row: (string | any)[], params: { method: 'log' | 'warn' | 'error', isToast?: boolean }) {
+        if (this.stdcalls[0]?.isToast) {
+            // Last print is the toast, clear it
+            StdToast.clean();
+        }
 
-    function colored (args: (string | any)[]) {
+        console[params.method](...row);
+
+        this.stdcalls.unshift(params);
+        if (this.stdcalls.length > 100) {
+            this.stdcalls.splice(50);
+        }
+
+    }
+
+    private format(...args: any): (string | any)[] {
+        let row = this.colored(args);
+        if (this.options?.time) {
+            row.unshift($date.format(new Date(), 'HH:mm:ss'));
+        }
+        return row;
+    }
+
+    private colored(args: (string | any)[]) {
+        if (this.options?.color === false) {
+            return args;
+        }
         for (let i = 0; i < args.length; i++) {
             let x = args[i];
             if (typeof x !== 'string') {
@@ -37,16 +157,11 @@ export namespace $logger {
         }
         return args;
     }
-
-    class Throttled {
-        @memd.deco.throttle(1000)
-        static log(...args) {
-            $logger.log(...args);
-        }
-    }
 }
 
-export function l (strings: TemplateStringsArray, ...values: any[]) {
+export let $logger = new Logger();
+
+export function l(strings: TemplateStringsArray, ...values: any[]) {
     let args = [];
     for (let i = 0; i < strings.length; i++) {
         args.push(strings[i]);
@@ -80,4 +195,22 @@ export function l (strings: TemplateStringsArray, ...values: any[]) {
     }
 
     $logger.log(...args);
+}
+
+class StdToast {
+
+    static clean() {
+        let rl = StdToast.getRl();
+        rl.clearLine(process.stdout, 0);
+        rl.cursorTo(process.stdout, 0, null);
+
+        rl.moveCursor(process.stdout, 0, -1);
+        rl.clearLine(process.stdout, 0);
+    }
+
+    @memd.deco.memoize()
+    static getRl() {
+        /** lazy */
+        return require('readline')
+    }
 }
