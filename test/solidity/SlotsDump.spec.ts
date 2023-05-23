@@ -43,7 +43,7 @@ UTest({
             }
         });
 
-        await contract.addUser();
+        await contract.addUser(deployer);
 
 
         let dump = new SlotsDump({

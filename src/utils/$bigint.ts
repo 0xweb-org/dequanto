@@ -135,7 +135,6 @@ export namespace $bigint {
     export function pow (basis: bigint | number, exponent: number | bigint): bigint {
         let $base = typeof basis === 'number' ? BigInt(Math.round(basis)) : basis;
         let $exp = typeof exponent === 'number' ? BigInt(exponent) : exponent;
-
         return $base ** $exp;
     }
 

@@ -15,6 +15,7 @@ import { $number } from '@dequanto/utils/$number';
 import { $require } from '@dequanto/utils/$require';
 import { IGeneratorSources } from '@dequanto/gen/Generator';
 import { $path } from '@dequanto/utils/$path';
+import { ContractFactory, IContractWrapped } from '@dequanto/contracts/ContractFactory';
 
 
 
@@ -83,7 +84,7 @@ export class HardhatProvider {
         return new Ctor(contract.address, client);
     }
 
-    async deploySol (solContractPath: string, options?: {
+    async deploySol <TReturn extends ContractBase = IContractWrapped > (solContractPath: string, options?: {
         client?: Web3Client
         arguments?: any[],
         deployer?:  Ethers.Signer | ChainAccount,
@@ -93,7 +94,7 @@ export class HardhatProvider {
         },
         contractName?: string
     }): Promise<{
-        contract: Ethers.Contract
+        contract: TReturn //Ethers.Contract
         abi: AbiItem[]
         bytecode: string
         source: IGeneratorSources
@@ -104,10 +105,12 @@ export class HardhatProvider {
         const signer = options?.deployer ?? this.deployer();
         const { abi, bytecode, source } = await this.compileSol(solContractPath, options);
         const Factory: Ethers.ContractFactory = await this.getFactory([abi, bytecode], client, signer);
-        const contract = await Factory.deploy(...args);
-        const receipt = await contract.deployed();
+        const contractEthers = await Factory.deploy(...args);
+        const receipt = await contractEthers.deployed();
+        const contract = await ContractFactory.fromAbi<TReturn>(contractEthers.address, abi, client, null);
+
         return {
-            contract,
+            contract: contract,
             abi,
             bytecode,
             source
@@ -230,12 +233,12 @@ export class HardhatProvider {
         };
     }
 
-    async deployCode (solidityCode: string, options: Parameters<HardhatProvider['deploySol']>[1] = {}) {
+    async deployCode <TReturn extends ContractBase = IContractWrapped>  (solidityCode: string, options: Parameters<HardhatProvider['deploySol']>[1] = {}) {
 
         let { tmpFile,  tmpDir, options: optionsNormalized } = await this.createTmpFile(solidityCode, options);
 
         try {
-            return await this.deploySol(tmpFile, optionsNormalized);
+            return await this.deploySol <TReturn> (tmpFile, optionsNormalized);
         } finally {
             try {
                 await Directory.removeAsync(tmpDir);

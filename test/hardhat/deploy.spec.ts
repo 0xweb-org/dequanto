@@ -2,6 +2,7 @@ import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { $address } from '@dequanto/utils/$address';
+import { $bigint } from '@dequanto/utils/$bigint';
 
 
 UTest({
@@ -11,6 +12,7 @@ UTest({
         let { contract, abi } = await provider.deploySol('/test/fixtures/contracts/Foo.sol', {
             arguments: ['Lorem']
         });
+
 
         let name = await contract.getName();
         eq_(name, 'Lorem');
@@ -338,5 +340,54 @@ UTest({
                 eq_(a.toNumber(), 7);
             }
         })
+    },
+    async '!checks array setters'() {
+        let provider = new HardhatProvider();
+        let client = provider.client();
+        let code = `
+            contract ArraySetterTest {
+                uint256[] array;
+                uint256[] arrayUnchecked;
+
+                function appendUnchecked (uint256 amount) public {
+                    uint length = arrayUnchecked.length;
+                    uint lengthNew = length + amount;
+                    uint slot;
+                    assembly {
+                        sstore(arrayUnchecked.slot, lengthNew)
+                        mstore(0, arrayUnchecked.slot)
+                        slot := keccak256(0, 0x20)
+                    }
+                    for (uint i = length; i < lengthNew; i++) {
+                        assembly {
+                            sstore(add(slot,i), i)
+                        }
+                    }
+                }
+                function append (uint256 amount) public {
+                    uint length = array.length;
+                    uint lengthNew = length + amount;
+                    uint slot;
+                    for (uint i = length; i < lengthNew; i++) {
+                        array.push(i);
+                    }
+                }
+            }
+        `;
+        let { contract } = await provider.deployCode(code, {
+            client,
+        });
+        let tx = await contract.appendUnchecked(provider.deployer(), 120);
+        let receipt = await tx.wait();
+        let gasUnchecked = receipt.gasUsed;
+
+        tx = await contract.append(provider.deployer(), 120);
+        receipt = await tx.wait();
+        let gasChecked = receipt.gasUsed;
+
+        let ratio = gasUnchecked /gasChecked;
+        gt_(ratio, 0.9);
+        lt_(ratio, 1);
+        // Gas usage in unchecked array is less than in checked array, but not significant.
     }
 });
