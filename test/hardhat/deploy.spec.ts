@@ -3,6 +3,7 @@ import { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { $address } from '@dequanto/utils/$address';
 import { $bigint } from '@dequanto/utils/$bigint';
+import { $buffer } from '@dequanto/utils/$buffer';
 
 
 UTest({
@@ -341,7 +342,7 @@ UTest({
             }
         })
     },
-    async '!checks array setters'() {
+    async 'checks array setters'() {
         let provider = new HardhatProvider();
         let client = provider.client();
         let code = `

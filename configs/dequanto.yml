@@ -83,6 +83,11 @@ web3:
       #- url: 'https://rpc-mainnet.maticvigil.com/v1/d41908ce4587e7646e975270498ce8da070112a2'
       #- url: 'wss://rpc-mainnet.maticvigil.com/ws/v1/d41908ce4587e7646e975270498ce8da070112a2'
 
+  polygon:mumbai:
+    chainId: 80001
+    endpoints:
+      - url: 'https://rpc-mumbai.maticvigil.com'
+
   # from https://docs.binance.org/smart-chain/developer/rpc.html
   bsc:
     endpoints:
