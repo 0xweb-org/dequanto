@@ -25,6 +25,8 @@ export namespace $path {
         return path
             // Replace all / duplicates, but not near the protocol
             .replace(/(?<![:/])\/{2,}/g, '/')
+            // Use forward slashes
+            .replace(/\\/g, '/')
             // Replace "foo/./bar" with single slash: "foo/bar"
             .replace(/\/\.\//g, '/')
             ;

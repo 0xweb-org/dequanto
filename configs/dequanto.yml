@@ -18,6 +18,11 @@ blockchainExplorer:
     key: 'AQHXXI3KIU5FC8Y1WXX8A346PENKUX7BCE'
     host: 'https://api.polygonscan.com'
     www: 'https://polygonscan.com'
+  polygon:mumbai:
+    key: 'AQHXXI3KIU5FC8Y1WXX8A346PENKUX7BCE'
+    host: 'https://api-testnet.polygonscan.com'
+    www: 'https://mumbai.polygonscan.com'
+
   xdai:
     key: ''
     host: 'https://blockscout.com/xdai/mainnet'

@@ -390,5 +390,39 @@ UTest({
         gt_(ratio, 0.9);
         lt_(ratio, 1);
         // Gas usage in unchecked array is less than in checked array, but not significant.
+    },
+
+    async 'checks try catch'() {
+        let provider = new HardhatProvider();
+        let client = provider.client();
+        let code = `
+            import "hardhat/console.sol";
+
+            contract Foo {
+                function foo () public pure returns (uint256) {
+                    require(false, "ALWAYS_THROW");
+                    return 0;
+                }
+            }
+            contract TryCatchTest {
+                Foo foo;
+                constructor () {
+                    foo = new Foo();
+                }
+                function execute () public view returns (string memory) {
+                    try foo.foo() returns (uint256) {
+                        return "OK";
+                    } catch (bytes memory error) {
+                        console.logBytes(error);
+                        return  "FAIL";
+                    }
+                }
+            }
+        `;
+        let { contract } = await provider.deployCode(code, {
+            client,
+        });
+        let r = await contract.execute();
+        eq_(r, "FAIL");
     }
 });
