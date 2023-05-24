@@ -5,10 +5,6 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { ContractBase } from './ContractBase';
 
 
-export class ContractWrapped extends ContractBase {
-    abi?: any;
-}
-
 export interface IContractWrapped extends ContractBase {
     abi?: any
     [method: string]: any
@@ -31,7 +27,9 @@ export namespace ContractFactory {
 
 
 class ClassBuilder<T extends ContractBase> {
-    private Ctor = class extends ContractWrapped {};
+    private Ctor = class extends ContractBase {
+        abi?
+    };
 
     constructor (private abi: AbiItem[]) {
 
