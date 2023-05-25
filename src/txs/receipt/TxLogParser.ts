@@ -1,4 +1,5 @@
 import alot from 'alot';
+import type { AbiItem } from 'web3-utils';
 import { $contract } from '@dequanto/utils/$contract';
 import { TransactionReceipt } from 'web3-core';
 import { TxTopicProvider } from './TxTopicProvider';
@@ -17,7 +18,10 @@ export class TxLogParser {
      *  Sparse arrays will contain NULLs for unparsed log items.
      *  Per default dense arrays - only with known logs - are returned
      */
-    async parse (receipt: TransactionReceipt, opts?: { sparse?: boolean, platform?: TPlatform }) {
+    async parse (receipt: TransactionReceipt, opts?: { sparse?: boolean, platform?: TPlatform, abi?: AbiItem | AbiItem[] }) {
+        if (opts?.abi != null) {
+            this.topics.register(opts.abi);
+        }
         let logs = await alot(receipt.logs).mapAsync(async log => {
             let topic = await this.topics.get(log.topics[0]);
             if (topic == null) {

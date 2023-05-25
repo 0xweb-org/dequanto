@@ -65,6 +65,19 @@ export namespace $abiUtils {
         return { ok: true };
     }
 
+    export function isDynamicType(type: string) {
+        if (type === 'string' || type === 'bytes') {
+            return true;
+        }
+        if (/\[\]$/.test(type)) {
+            return true;
+        }
+        if (type.includes('mapping')) {
+            return true;
+        }
+        return false;
+    }
+
     function abiEquals (a: AbiItem, b: AbiItem) {
         if (a.name !== b.name) {
             return false;
@@ -84,6 +97,7 @@ export namespace $abiUtils {
         }
         return true;
     }
+
 
     function serializeMethodSignatureArgumentType (input: AbiItem['inputs'][0]) {
         if (input.type === 'tuple') {

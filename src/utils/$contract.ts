@@ -55,6 +55,13 @@ export namespace $contract {
 
         let args = log.topics.slice(1).map((bytes, i) => {
             let type = inputs.shift();
+            if (type.indexed && $abiUtils.isDynamicType(type.type)) {
+                // Dynamic types are stored as keccak256 hashes
+                return {
+                    name: type.name,
+                    value: bytes
+                };
+            }
             let val = InputDataUtils.decode([ type ], bytes);
 
             return {
