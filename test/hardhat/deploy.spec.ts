@@ -2,25 +2,23 @@ import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { $address } from '@dequanto/utils/$address';
-import { $bigint } from '@dequanto/utils/$bigint';
-import { $buffer } from '@dequanto/utils/$buffer';
-
 
 UTest({
     async 'should deploy solidity contract'() {
         let provider = new HardhatProvider();
+        let client = provider.client();
 
         let { contract, abi } = await provider.deploySol('/test/fixtures/contracts/Foo.sol', {
-            arguments: ['Lorem']
+            arguments: ['Lorem'],
+            client
         });
-
 
         let name = await contract.getName();
         eq_(name, 'Lorem');
 
-        let tx = await contract.setName('Ipsum');
-        let receipt = await tx.wait();
-        eq_(receipt.transactionHash, tx.hash);
+        let writer = await contract.setName(provider.deployer(), 'Ipsum');
+        let receipt = await writer.wait();
+        eq_(receipt.transactionHash, writer.tx.hash);
 
         name = await contract.getName();
         eq_(name, 'Ipsum');
@@ -208,7 +206,7 @@ UTest({
 
         let { contract } = await provider.deployCode(code);
 
-        let tx = await contract.whitelistBatch([$address.ZERO], ['ZERO']);
+        let tx = await contract.whitelistBatch(provider.deployer(), [$address.ZERO], ['ZERO']);
         await tx.wait();
 
         let val = await contract.names($address.ZERO);
@@ -310,7 +308,7 @@ UTest({
                     client,
                 });
                 let a = await contract.foo();
-                eq_(a.toNumber(), 5);
+                eq_(a, 5n);
             },
             async 'with top level shallowing'() {
                 let code = `
@@ -338,7 +336,7 @@ UTest({
                     client,
                 });
                 let a = await contract.foo();
-                eq_(a.toNumber(), 7);
+                eq_(a, 7n);
             }
         })
     },
