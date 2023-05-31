@@ -4,10 +4,10 @@ import { TResultAsync } from '@dequanto/models/TResult';
 import { $config } from '@dequanto/utils/$config';
 import { $date } from '@dequanto/utils/$date';
 import { IOracle, IOracleResult, ISwapOptions } from '../IOracle';
-import { CoingeckoTokenProvider } from './CoingeckoTokenProvider';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { $block } from '@dequanto/utils/$block';
 import { $require } from '@dequanto/utils/$require';
+import { TPCoingecko } from '@dequanto/tokens/TokenProviders/TPCoingecko';
 
 export class CoingeckoOracle  implements IOracle {
 
@@ -21,8 +21,8 @@ export class CoingeckoOracle  implements IOracle {
 
         opts ??= {};
 
-        let coingeckoProvider = new CoingeckoTokenProvider();
-        let coingeckoToken = await coingeckoProvider.getCoingeckoToken(token);
+        let coingeckoProvider = new TPCoingecko();
+        let coingeckoToken = await coingeckoProvider.find(token);
         if (coingeckoToken == null) {
             return { error: new Error(`NOT_FOUND: Token ${token.symbol} not found`) }
         }

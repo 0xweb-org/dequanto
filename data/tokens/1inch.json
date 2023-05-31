@@ -323,18 +323,6 @@
     ]
   },
   {
-    "symbol": "VIB",
-    "name": "Viberate",
-    "logo": "https://tokens.1inch.io/0x2c974b2d0ba1716e644c1fc59982a89ddd2ff724.png",
-    "platforms": [
-      {
-        "address": "0x2c974b2d0ba1716e644c1fc59982a89ddd2ff724",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "DEC",
     "name": "Decentr",
     "logo": "https://tokens.1inch.io/0x30f271c9e86d2b7d00a6376cd96a1cfbd5f0b9b3.png",
@@ -363,18 +351,6 @@
     "platforms": [
       {
         "address": "0x340d2bde5eb28c1eed91b2f790723e3b160613b7",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "PERX",
-    "name": "PeerEx Network",
-    "logo": "https://tokens.1inch.io/0x3c6ff50c9ec362efa359317009428d52115fe643.png",
-    "platforms": [
-      {
-        "address": "0x3c6ff50c9ec362efa359317009428d52115fe643",
         "decimals": 18,
         "platform": "eth"
       }
@@ -511,9 +487,9 @@
         "platform": "eth"
       },
       {
-        "address": "0xdab529f40e671a1d4bf91361c21bf9f0c9712ab7",
+        "address": "0xe9e7cea3dedca5984780bafc599bd69add087d56",
         "decimals": 18,
-        "platform": "polygon"
+        "platform": "bsc"
       },
       {
         "address": "0x9c9e5fd8bbc25984b178fdce6117defa39d2db39",
@@ -1375,18 +1351,6 @@
     ]
   },
   {
-    "symbol": "XNK",
-    "name": "Ink Protocol",
-    "logo": "https://tokens.1inch.io/0xbc86727e770de68b1060c91f6bb6945c73e10388.png",
-    "platforms": [
-      {
-        "address": "0xbc86727e770de68b1060c91f6bb6945c73e10388",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "eMTRG",
     "name": "Meter Governance mapped by Meter.io",
     "logo": "https://tokens.1inch.io/0xbd2949f67dcdc549c6ebe98696449fa79d988a9f.png",
@@ -1970,20 +1934,8 @@
     ]
   },
   {
-    "symbol": "TGBP",
-    "name": "TrueGBP",
-    "logo": "https://tokens.1inch.io/0x00000000441378008ea67f4284a57932b1c000a5.png",
-    "platforms": [
-      {
-        "address": "0x00000000441378008ea67f4284a57932b1c000a5",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "ETH",
-    "name": "Ethereum",
+    "name": "Ether",
     "logo": "https://tokens.1inch.io/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png",
     "platforms": [
       {
@@ -2454,18 +2406,6 @@
     ]
   },
   {
-    "symbol": "renBCH",
-    "name": "renBCH",
-    "logo": "https://tokens.1inch.io/0x459086f2376525bdceba5bdda135e4e9d3fef5bf.png",
-    "platforms": [
-      {
-        "address": "0x459086f2376525bdceba5bdda135e4e9d3fef5bf",
-        "decimals": 8,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "HBTC",
     "name": "Huobi BTC",
     "logo": "https://tokens.1inch.io/0x0316eb71485b0ab14103307bf65a021042c6d380.png",
@@ -2753,18 +2693,6 @@
     "platforms": [
       {
         "address": "0x8a9c67fee641579deba04928c4bc45f66e26343a",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "YFV",
-    "name": "YFValue",
-    "logo": "https://tokens.1inch.io/0x45f24baeef268bb6d63aee5129015d69702bcdfa.png",
-    "platforms": [
-      {
-        "address": "0x45f24baeef268bb6d63aee5129015d69702bcdfa",
         "decimals": 18,
         "platform": "eth"
       }
@@ -3696,18 +3624,6 @@
     ]
   },
   {
-    "symbol": "TIME",
-    "name": "ChronoTech Token",
-    "logo": "https://tokens.1inch.io/0x485d17a6f1b8780392d53d64751824253011a260.png",
-    "platforms": [
-      {
-        "address": "0x485d17a6f1b8780392d53d64751824253011a260",
-        "decimals": 8,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "aYFIv1",
     "name": "Aave Interest bearing YFI",
     "logo": "https://tokens.1inch.io/0x12e51e77daaa58aa0e9247db7510ea4b46f9bead.png",
@@ -4456,18 +4372,6 @@
     ]
   },
   {
-    "symbol": "DSD",
-    "name": "Dynamic Set Dollar",
-    "logo": "https://tokens.1inch.io/0xbd2f0cd039e0bfcf88901c98c0bfac5ab27566e3.png",
-    "platforms": [
-      {
-        "address": "0xbd2f0cd039e0bfcf88901c98c0bfac5ab27566e3",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "FOX",
     "name": "FOX",
     "logo": "https://tokens.1inch.io/0xc770eefad204b5180df6a14ee197d99d808ee52d.png",
@@ -4690,18 +4594,6 @@
     ]
   },
   {
-    "symbol": "RBC",
-    "name": "Rubic",
-    "logo": "https://tokens.1inch.io/0xa4eed63db85311e22df4473f87ccfc3dadcfa3e3.png",
-    "platforms": [
-      {
-        "address": "0xa4eed63db85311e22df4473f87ccfc3dadcfa3e3",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "SDT",
     "name": "Stake DAO Token",
     "logo": "https://tokens.1inch.io/0x73968b9a57c6e53d41345fd57a6e6ae27d6cdb2f.png",
@@ -4715,18 +4607,6 @@
         "address": "0x361a5a4993493ce00f61c32d4ecca5512b82ce90",
         "decimals": 18,
         "platform": "polygon"
-      }
-    ]
-  },
-  {
-    "symbol": "VGX",
-    "name": "Voyager Token",
-    "logo": "https://tokens.1inch.io/0x3c4b6e6e1ea3d4863700d7f76b36b7f3d3f13e3d.png",
-    "platforms": [
-      {
-        "address": "0x3c4b6e6e1ea3d4863700d7f76b36b7f3d3f13e3d",
-        "decimals": 8,
-        "platform": "eth"
       }
     ]
   },
@@ -5408,18 +5288,6 @@
     ]
   },
   {
-    "symbol": "L2",
-    "name": "Leverj Gluon",
-    "logo": "https://tokens.1inch.io/0xbbff34e47e559ef680067a6b1c980639eeb64d24.png",
-    "platforms": [
-      {
-        "address": "0xbbff34e47e559ef680067a6b1c980639eeb64d24",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "ONX",
     "name": "OnX.finance",
     "logo": "https://tokens.1inch.io/0xe0ad1806fd3e7edf6ff52fdb822432e847411033.png",
@@ -5574,18 +5442,6 @@
     ]
   },
   {
-    "symbol": "MAPS",
-    "name": "Maps.me Token",
-    "logo": "https://tokens.1inch.io/0x2b915b505c017abb1547aa5ab355fbe69865cc6d.png",
-    "platforms": [
-      {
-        "address": "0x2b915b505c017abb1547aa5ab355fbe69865cc6d",
-        "decimals": 6,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "GUM",
     "name": "GourmetGalaxy",
     "logo": "https://tokens.1inch.io/0x4f5fa8f2d12e5eb780f6082dd656c565c48e0f24.png",
@@ -5652,18 +5508,6 @@
         "address": "0x47c1c7b9d7941a7265d123dcfb100d8fb5348213",
         "decimals": 18,
         "platform": "bsc"
-      }
-    ]
-  },
-  {
-    "symbol": "BUND",
-    "name": "Bundles",
-    "logo": "https://tokens.1inch.io/0x8d3e855f3f55109d473735ab76f753218400fe96.png",
-    "platforms": [
-      {
-        "address": "0x8d3e855f3f55109d473735ab76f753218400fe96",
-        "decimals": 18,
-        "platform": "eth"
       }
     ]
   },
@@ -5769,18 +5613,6 @@
     ]
   },
   {
-    "symbol": "LUNA",
-    "name": "Wrapped LUNA Token",
-    "logo": "https://tokens.1inch.io/0xd2877702675e6ceb975b4a1dff9fb7baf4c91ea9.png",
-    "platforms": [
-      {
-        "address": "0xd2877702675e6ceb975b4a1dff9fb7baf4c91ea9",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "SYNC",
     "name": "SYNC",
     "logo": "https://tokens.1inch.io/0xb6ff96b8a8d214544ca0dbc9b33f7ad6503efd32.png",
@@ -5866,6 +5698,11 @@
         "address": "0xebd9d99a3982d547c5bb4db7e3b1f9f14b67eb83",
         "decimals": 18,
         "platform": "eth"
+      },
+      {
+        "address": "0x2dff88a56767223a5529ea5960da7a3f5f766406",
+        "decimals": 18,
+        "platform": "bsc"
       }
     ]
   },
@@ -6008,18 +5845,6 @@
     "platforms": [
       {
         "address": "0x196c81385bc536467433014042788eb707703934",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "PYLON",
-    "name": "PYLON",
-    "logo": "https://tokens.1inch.io/0xd7b7d3c0bda57723fb54ab95fd8f9ea033af37f2.png",
-    "platforms": [
-      {
-        "address": "0xd7b7d3c0bda57723fb54ab95fd8f9ea033af37f2",
         "decimals": 18,
         "platform": "eth"
       }
@@ -6284,16 +6109,9 @@
         "address": "0xabe580e7ee158da464b51ee1a83ac0289622e6be",
         "decimals": 18,
         "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "SEEN",
-    "name": "seen.haus",
-    "logo": "https://tokens.1inch.io/0xca3fe04c7ee111f0bbb02c328c699226acf9fd33.png",
-    "platforms": [
+      },
       {
-        "address": "0xca3fe04c7ee111f0bbb02c328c699226acf9fd33",
+        "address": "0x76bc677d444f1e9d57daf5187ee2b7dc852745ae",
         "decimals": 18,
         "platform": "eth"
       }
@@ -6677,18 +6495,6 @@
     ]
   },
   {
-    "symbol": "wDGLD",
-    "name": "wrapped-DGLD",
-    "logo": "https://tokens.1inch.io/0x123151402076fc819b7564510989e475c9cd93ca.png",
-    "platforms": [
-      {
-        "address": "0x123151402076fc819b7564510989e475c9cd93ca",
-        "decimals": 8,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "LPOOL",
     "name": "Launchpool token",
     "logo": "https://tokens.1inch.io/0x6149c26cd2f7b5ccdb32029af817123f6e37df5b.png",
@@ -6863,18 +6669,6 @@
     "platforms": [
       {
         "address": "0x0cdf9acd87e940837ff21bb40c9fd55f68bba059",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "DEGEN",
-    "name": "DEGEN Index",
-    "logo": "https://tokens.1inch.io/0x126c121f99e1e211df2e5f8de2d96fa36647c855.png",
-    "platforms": [
-      {
-        "address": "0x126c121f99e1e211df2e5f8de2d96fa36647c855",
         "decimals": 18,
         "platform": "eth"
       }
@@ -7084,18 +6878,6 @@
     "platforms": [
       {
         "address": "0x4c6ec08cf3fc987c6c4beb03184d335a2dfc4042",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "RULER",
-    "name": "Ruler Protocol",
-    "logo": "https://tokens.1inch.io/0x2aeccb42482cc64e087b6d2e5da39f5a7a7001f8.png",
-    "platforms": [
-      {
-        "address": "0x2aeccb42482cc64e087b6d2e5da39f5a7a7001f8",
         "decimals": 18,
         "platform": "eth"
       }
@@ -7731,23 +7513,6 @@
     ]
   },
   {
-    "symbol": "UBXT",
-    "name": "UpBots",
-    "logo": "https://tokens.1inch.io/0x8564653879a18c560e7c0ea0e084c516c62f5653.png",
-    "platforms": [
-      {
-        "address": "0x8564653879a18c560e7c0ea0e084c516c62f5653",
-        "decimals": 18,
-        "platform": "eth"
-      },
-      {
-        "address": "0xbbeb90cfb6fafa1f69aa130b7341089abeef5811",
-        "decimals": 18,
-        "platform": "bsc"
-      }
-    ]
-  },
-  {
     "symbol": "GLQ",
     "name": "GraphLinq",
     "logo": "https://tokens.1inch.io/0x9f9c8ec3534c3ce16f928381372bfbfbfb9f4d24.png",
@@ -7869,18 +7634,6 @@
         "address": "0xf508fcd89b8bd15579dc79a6827cb4686a3592c8",
         "decimals": 8,
         "platform": "bsc"
-      }
-    ]
-  },
-  {
-    "symbol": "AMLT",
-    "name": "AMLT",
-    "logo": "https://tokens.1inch.io/0xca0e7269600d353f70b14ad118a49575455c0f2f.png",
-    "platforms": [
-      {
-        "address": "0xca0e7269600d353f70b14ad118a49575455c0f2f",
-        "decimals": 18,
-        "platform": "eth"
       }
     ]
   },
@@ -9204,18 +8957,6 @@
     ]
   },
   {
-    "symbol": "BCP",
-    "name": "BitcashPay",
-    "logo": "https://tokens.1inch.io/0xe047705117eb07e712c3d684f5b18e74577e83ac.png",
-    "platforms": [
-      {
-        "address": "0xe047705117eb07e712c3d684f5b18e74577e83ac",
-        "decimals": 8,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "eMax",
     "name": "EthereumMax",
     "logo": "https://tokens.1inch.io/0x15874d65e649880c2614e7a480cb7c9a55787ff6.png",
@@ -9317,11 +9058,6 @@
       {
         "address": "0xa9536b9c75a9e0fae3b56a96ac8edf76abc91978",
         "decimals": 18,
-        "platform": "eth"
-      },
-      {
-        "address": "0x8fc8f8269ebca376d046ce292dc7eac40c8d358a",
-        "decimals": 8,
         "platform": "eth"
       },
       {
@@ -9451,42 +9187,6 @@
     "platforms": [
       {
         "address": "0xc53342fd7575f572b0ff4569e31941a5b821ac76",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "iETHV",
-    "name": "Inverse ETH Volatility Index",
-    "logo": "https://tokens.1inch.io/0x3a707d56d538e85b783e8ce12b346e7fb6511f90.png",
-    "platforms": [
-      {
-        "address": "0x3a707d56d538e85b783e8ce12b346e7fb6511f90",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "BTCV",
-    "name": "BTC Volatility Index",
-    "logo": "https://tokens.1inch.io/0x51b0bcbeff204b39ce792d1e16767fe6f7631970.png",
-    "platforms": [
-      {
-        "address": "0x51b0bcbeff204b39ce792d1e16767fe6f7631970",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "iBTCV",
-    "name": "Inverse BTC Volatility Index",
-    "logo": "https://tokens.1inch.io/0x2590f1fd14ef8bb0a46c7a889c4cbc146510f9c3.png",
-    "platforms": [
-      {
-        "address": "0x2590f1fd14ef8bb0a46c7a889c4cbc146510f9c3",
         "decimals": 18,
         "platform": "eth"
       }
@@ -9637,18 +9337,6 @@
     ]
   },
   {
-    "symbol": "PEEPS",
-    "name": "The People’s Coin",
-    "logo": "https://tokens.1inch.io/0xe1030b48b2033314979143766d7dc1f40ef8ce11.png",
-    "platforms": [
-      {
-        "address": "0xe1030b48b2033314979143766d7dc1f40ef8ce11",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "GDAO",
     "name": "Governor",
     "logo": "https://tokens.1inch.io/0x515d7e9d75e2b76db60f8a051cd890eba23286bc.png",
@@ -9750,18 +9438,6 @@
     ]
   },
   {
-    "symbol": "SLAB",
-    "name": "SLINK LABS",
-    "logo": "https://tokens.1inch.io/0xeb494890465f49c2b94457d9b61811392e5b1fea.png",
-    "platforms": [
-      {
-        "address": "0xeb494890465f49c2b94457d9b61811392e5b1fea",
-        "decimals": 9,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "BID",
     "name": "Bidao",
     "logo": "https://tokens.1inch.io/0x25e1474170c4c0aa64fa98123bdc8db49d7802fa.png",
@@ -9853,18 +9529,6 @@
       {
         "address": "0xa64dfe8d86963151e6496bee513e366f6e42ed79",
         "decimals": 9,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "RNBW",
-    "name": "Rainbow Token",
-    "logo": "https://tokens.1inch.io/0xe94b97b6b43639e238c851a7e693f50033efd75c.png",
-    "platforms": [
-      {
-        "address": "0xe94b97b6b43639e238c851a7e693f50033efd75c",
-        "decimals": 18,
         "platform": "eth"
       }
     ]
@@ -10007,18 +9671,6 @@
       {
         "address": "0x5e74c9036fb86bd7ecdcb084a0673efc32ea31cb",
         "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "REDPANDA",
-    "name": "Red Panda",
-    "logo": "https://tokens.1inch.io/0x514cdb9cd8a2fb2bdcf7a3b8ddd098caf466e548.png",
-    "platforms": [
-      {
-        "address": "0x514cdb9cd8a2fb2bdcf7a3b8ddd098caf466e548",
-        "decimals": 9,
         "platform": "eth"
       }
     ]
@@ -10243,7 +9895,7 @@
     ]
   },
   {
-    "symbol": "rETH",
+    "symbol": "rETH_2",
     "name": "Rocket Pool ETH",
     "logo": "https://tokens.1inch.io/0xae78736cd615f374d3085123a210448e74fc6393.png",
     "platforms": [
@@ -10320,23 +9972,6 @@
     ]
   },
   {
-    "symbol": "CMERGE",
-    "name": "Coin Merge",
-    "logo": "https://tokens.1inch.io/0xc48b4814faed1ccc885dd6fde62a6474aecbb19a.png",
-    "platforms": [
-      {
-        "address": "0xc48b4814faed1ccc885dd6fde62a6474aecbb19a",
-        "decimals": 9,
-        "platform": "eth"
-      },
-      {
-        "address": "0x8d3e3a57c5f140b5f9feb0d43d37a347ee01c851",
-        "decimals": 9,
-        "platform": "bsc"
-      }
-    ]
-  },
-  {
     "symbol": "RBX",
     "name": "RBX",
     "logo": "https://tokens.1inch.io/0x8254e26e453eb5abd29b3c37ac9e8da32e5d3299.png",
@@ -10397,18 +10032,6 @@
       {
         "address": "0xa36fdbbae3c9d55a1d67ee5821d53b50b63a1ab9",
         "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "KTO",
-    "name": "Kounotori",
-    "logo": "https://tokens.1inch.io/0x616ef40d55c0d2c506f4d6873bda8090b79bf8fc.png",
-    "platforms": [
-      {
-        "address": "0x616ef40d55c0d2c506f4d6873bda8090b79bf8fc",
-        "decimals": 9,
         "platform": "eth"
       }
     ]
@@ -10499,23 +10122,6 @@
         "address": "0x47110d43175f7f2c2425e7d15792acc5817eb44f",
         "decimals": 18,
         "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "ACCEL",
-    "name": "ACCEL",
-    "logo": "https://tokens.1inch.io/0x7475c42f8bf2c19f4eaf12feaababa859fdc8914_1.png",
-    "platforms": [
-      {
-        "address": "0x7475c42f8bf2c19f4eaf12feaababa859fdc8914",
-        "decimals": 18,
-        "platform": "eth"
-      },
-      {
-        "address": "0x2cace984dab08bd192a7fd044276060cb955dd9c",
-        "decimals": 18,
-        "platform": "bsc"
       }
     ]
   },
@@ -10835,18 +10441,6 @@
       {
         "address": "0x509a38b7a1cc0dcd83aa9d06214663d9ec7c7f4a",
         "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "XDB",
-    "name": "digitalbits",
-    "logo": "https://tokens.1inch.io/0xb9eefc4b0d472a44be93970254df4f4016569d27.png",
-    "platforms": [
-      {
-        "address": "0xb9eefc4b0d472a44be93970254df4f4016569d27",
-        "decimals": 7,
         "platform": "eth"
       }
     ]
@@ -11397,18 +10991,6 @@
     ]
   },
   {
-    "symbol": "LUFFY",
-    "name": "LUFFY",
-    "logo": "https://tokens.1inch.io/0x7121d00b4fa18f13da6c2e30d19c04844e6afdc8.png",
-    "platforms": [
-      {
-        "address": "0x7121d00b4fa18f13da6c2e30d19c04844e6afdc8",
-        "decimals": 9,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "SHEESHA",
     "name": "Sheesha Finance",
     "logo": "https://tokens.1inch.io/0x232fb065d9d24c34708eedbf03724f2e95abe768.png",
@@ -11461,18 +11043,6 @@
     "platforms": [
       {
         "address": "0x632806bf5c8f062932dd121244c9fbe7becb8b48",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "SOON",
-    "name": "RealT SOON Token",
-    "logo": "https://tokens.1inch.io/0xaa2c0cf54cb418eb24e7e09053b82c875c68bb88.png",
-    "platforms": [
-      {
-        "address": "0xaa2c0cf54cb418eb24e7e09053b82c875c68bb88",
         "decimals": 18,
         "platform": "eth"
       }
@@ -11656,18 +11226,6 @@
     ]
   },
   {
-    "symbol": "PONY",
-    "name": "PONY Index",
-    "logo": "https://tokens.1inch.io/0x0d97fee619d955509e54b046c9992b6e9f5b0630.png",
-    "platforms": [
-      {
-        "address": "0x0d97fee619d955509e54b046c9992b6e9f5b0630",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "POP",
     "name": "Popcorn",
     "logo": "https://tokens.1inch.io/0xd0cd466b34a24fcb2f87676278af2005ca8a78c4.png",
@@ -11693,28 +11251,6 @@
         "address": "0x2af1df3ab0ab157e1e2ad8f88a7d04fbea0c7dc6",
         "decimals": 18,
         "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "DATA",
-    "name": "DATA Economy Index",
-    "logo": "https://tokens.1inch.io/0x33d63ba1e57e54779f7ddaeaa7109349344cf5f1.png",
-    "platforms": [
-      {
-        "address": "0x33d63ba1e57e54779f7ddaeaa7109349344cf5f1",
-        "decimals": 18,
-        "platform": "eth"
-      },
-      {
-        "address": "0x0864c156b3c5f69824564dec60c629ae6401bf2a",
-        "decimals": 18,
-        "platform": "bsc"
-      },
-      {
-        "address": "0x3a9a81d576d83ff21f26f325066054540720fc34",
-        "decimals": 18,
-        "platform": "polygon"
       }
     ]
   },
@@ -11924,18 +11460,6 @@
     ]
   },
   {
-    "symbol": "AMPLIFI",
-    "name": "Amplifi",
-    "logo": "https://tokens.1inch.io/0xd23367155b55d67492dfdc0fc7f8bb1df7114fd9.png",
-    "platforms": [
-      {
-        "address": "0xd23367155b55d67492dfdc0fc7f8bb1df7114fd9",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "BOB",
     "name": "BOB",
     "logo": "https://tokens.1inch.io/0xb0b195aefa3650a6908f15cdac7d92f8a5791b0b.png",
@@ -12013,36 +11537,12 @@
     ]
   },
   {
-    "symbol": "SAFE",
-    "name": "Safe Token",
-    "logo": "https://tokens.1inch.io/0x5afe3855358e112b5647b952709e6165e1c1eeee.png",
-    "platforms": [
-      {
-        "address": "0x5afe3855358e112b5647b952709e6165e1c1eeee",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "JASMY",
     "name": "JasmyCoin",
     "logo": "https://tokens.1inch.io/0x7420b4b9a0110cdc71fb720908340c03f9bc03ec.png",
     "platforms": [
       {
         "address": "0x7420b4b9a0110cdc71fb720908340c03f9bc03ec",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "KALE",
-    "name": "Kale Currency",
-    "logo": "https://tokens.1inch.io/0x508626d9a29d13eba26f843a2bd7bf7b00a45be5.png",
-    "platforms": [
-      {
-        "address": "0x508626d9a29d13eba26f843a2bd7bf7b00a45be5",
         "decimals": 18,
         "platform": "eth"
       }
@@ -12189,18 +11689,6 @@
     ]
   },
   {
-    "symbol": "PROM",
-    "name": "Token Prometeus Network",
-    "logo": "https://tokens.1inch.io/0xfc82bb4ba86045af6f327323a46e80412b91b27d.png",
-    "platforms": [
-      {
-        "address": "0xfc82bb4ba86045af6f327323a46e80412b91b27d",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "NTVRK",
     "name": "NETVRK",
     "logo": "https://tokens.1inch.io/0xfc0d6cf33e38bce7ca7d89c0e292274031b7157a.png",
@@ -12308,18 +11796,6 @@
     "platforms": [
       {
         "address": "0x1ea48b9965bb5086f3b468e50ed93888a661fc17",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "DCHF",
-    "name": "Defi Franc",
-    "logo": "https://tokens.1inch.io/0x045da4bfe02b320f4403674b3b7d121737727a36.png",
-    "platforms": [
-      {
-        "address": "0x045da4bfe02b320f4403674b3b7d121737727a36",
         "decimals": 18,
         "platform": "eth"
       }
@@ -12937,18 +12413,6 @@
     ]
   },
   {
-    "symbol": "ARPA",
-    "name": "ARPA Token",
-    "logo": "https://tokens.1inch.io/0xba50933c268f567bdc86e1ac131be072c6b0b71a.png",
-    "platforms": [
-      {
-        "address": "0xba50933c268f567bdc86e1ac131be072c6b0b71a",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "bLUSD",
     "name": "bLUSD",
     "logo": "https://tokens.1inch.io/0xb9d7dddca9a4ac480991865efef82e01273f79c3.png",
@@ -13103,7 +12567,7 @@
   {
     "symbol": "REALTOKEN-9336-PATTON-ST-DETROIT-MI",
     "name": "RealToken 9336 Patton Street Detroit MI",
-    "logo": "https://tokens.1inch.io/0xed42cedcadbfbcaa3e6f411b09567c2c0b5ad28f.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xed42cedcadbfbcaa3e6f411b09567c2c0b5ad28f",
@@ -13118,26 +12582,9 @@
     ]
   },
   {
-    "symbol": "REALTOKEN-20200-LESURE-ST-DETROIT-MI",
-    "name": "RealToken 20200 Lesure Street Detroit MI",
-    "logo": "https://tokens.1inch.io/0x395c47a421c254ae42253764a7f56e0ee0cddac5.png",
-    "platforms": [
-      {
-        "address": "0x395c47a421c254ae42253764a7f56e0ee0cddac5",
-        "decimals": 18,
-        "platform": "eth"
-      },
-      {
-        "address": "0xeedc2f5f4d1226759b1acf9efa23a99661de6663",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
     "symbol": "REALTOKEN-5942-AUDUBON-RD-DETROIT-MI",
     "name": "RealToken 5942 Audubon Road Detroit MI",
-    "logo": "https://tokens.1inch.io/0x43688910273f199b8ae2ca018c13918fb3d37b58.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x43688910273f199b8ae2ca018c13918fb3d37b58",
@@ -13154,7 +12601,7 @@
   {
     "symbol": "REALTOKEN-16200-FULLERTON-AVE-DETROIT-MI",
     "name": "RealToken 16200 Fullerton Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0x22c8ecf727c23422f47093b562ec53c139805301.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x22c8ecf727c23422f47093b562ec53c139805301",
@@ -13171,7 +12618,7 @@
   {
     "symbol": "REALTOKEN-10024-10028-APPOLINE-ST-DETROIT-MI",
     "name": "RealToken 10024-10028 Appoline Street Detroit MI",
-    "logo": "https://tokens.1inch.io/0x5807ca447851c98569c567963b25b1c83d41bebc.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x5807ca447851c98569c567963b25b1c83d41bebc",
@@ -13183,7 +12630,7 @@
   {
     "symbol": "REALTOKEN-8342-SCHAEFER-HWY-DETROIT-MI",
     "name": "RealToken 8342 Schaefer Hwy Detroit MI",
-    "logo": "https://tokens.1inch.io/0x6fd016ccc4611f7bab1dd3267334cb0216ef47f9.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x6fd016ccc4611f7bab1dd3267334cb0216ef47f9",
@@ -13200,7 +12647,7 @@
   {
     "symbol": "REALTOKEN-18276-APPOLINE-ST-DETROIT-MI",
     "name": "RealToken 18276 Appoline Street Detroit MI",
-    "logo": "https://tokens.1inch.io/0xfc89f1b932079b462ef9c8757de5a28e387b847b.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xfc89f1b932079b462ef9c8757de5a28e387b847b",
@@ -13217,7 +12664,7 @@
   {
     "symbol": "REALTOKEN-25097-ANDOVER-DR-DEARBORN-MI",
     "name": "RealToken 25097 Andover Drive Detroit MI",
-    "logo": "https://tokens.1inch.io/0x74d2cb65b1158300c3e6bea149d68509c7b2425d.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x74d2cb65b1158300c3e6bea149d68509c7b2425d",
@@ -13234,7 +12681,7 @@
   {
     "symbol": "REALTOKEN-15634-LIBERAL-ST-DETROIT-MI",
     "name": "RealToken 15634 Liberal Street Detroit MI",
-    "logo": "https://tokens.1inch.io/0xbecaea7aa3629d4b7ddccf3a973bef09ff34d4b6.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xbecaea7aa3629d4b7ddccf3a973bef09ff34d4b6",
@@ -13251,7 +12698,7 @@
   {
     "symbol": "REALTOKEN-18900-MANSFIELD-ST-DETROIT-MI",
     "name": "RealToken 18900 Mansfield Street Detroit MI",
-    "logo": "https://tokens.1inch.io/0x22cabb38295eaeccfede4e99af508052e3b74ca0.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x22cabb38295eaeccfede4e99af508052e3b74ca0",
@@ -13268,7 +12715,7 @@
   {
     "symbol": "REALTOKEN-272-NE-42ND-CT-DEERFIELDBEACH-FL",
     "name": "RealToken 272 NE 42nd CT Deerfield Beach FL",
-    "logo": "https://tokens.1inch.io/0xe9eace1313913888c364d8504ffc3b8d991c67c6.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xe9eace1313913888c364d8504ffc3b8d991c67c6",
@@ -13280,7 +12727,7 @@
   {
     "symbol": "REALTOKEN-15048-FREELAND-ST-DETROIT-MI",
     "name": "RealToken 15048 Freeland Street Detroit MI",
-    "logo": "https://tokens.1inch.io/0x67f2014293d641468161bbb0e6bd088fc0b8c381.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x67f2014293d641468161bbb0e6bd088fc0b8c381",
@@ -13297,7 +12744,7 @@
   {
     "symbol": "REALTOKEN-S-18433-FAUST-AVE-DETROIT-MI",
     "name": "RealToken S 18433 Faust ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0xbff3a3d79d0f9165cfcc1b369ee41f3c5c9ae398.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xbff3a3d79d0f9165cfcc1b369ee41f3c5c9ae398",
@@ -13314,7 +12761,7 @@
   {
     "symbol": "REALTOKEN-S-9165-KENSINGTON-AVE-DETROIT-MI ",
     "name": "RealToken S 9165 Kensington Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0xc1af55156b64da1d484fb13b1afdb1da8efa7733.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xc1af55156b64da1d484fb13b1afdb1da8efa7733",
@@ -13326,7 +12773,7 @@
   {
     "symbol": "REALTOKEN-D-10048-GRAYTON-ST-DETROIT-MI",
     "name": "RealToken D 10048 Grayton St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x67bc218f5ea919ff9003b28c1702d468312af302.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x67bc218f5ea919ff9003b28c1702d468312af302",
@@ -13338,7 +12785,7 @@
   {
     "symbol": "REALTOKEN-S-10084-GRAYTON-ST-DETROIT-MI ",
     "name": "RealToken S 10084 Grayton St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xac1682ad8893ed96e7ec3379f3a212dc50f06d23.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xac1682ad8893ed96e7ec3379f3a212dc50f06d23",
@@ -13350,7 +12797,7 @@
   {
     "symbol": "REALTOKEN-S-9166-DEVONSHIRE-RD-DETROIT-MI ",
     "name": "RealToken S 9166 Devonshire Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0xfd510a3c53666035900ceb4d4743bd869d98d57a.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xfd510a3c53666035900ceb4d4743bd869d98d57a",
@@ -13362,7 +12809,7 @@
   {
     "symbol": "REALTOKEN-S-10612-SOMERSET-AVE-DETROIT-MI",
     "name": "RealToken S 10612 Somerset Ave Detroit-MI",
-    "logo": "https://tokens.1inch.io/0xd4203d4f0f2c3ae21ce93f04ab00517262f65aa9.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xd4203d4f0f2c3ae21ce93f04ab00517262f65aa9",
@@ -13379,7 +12826,7 @@
   {
     "symbol": "REALTOKEN-S-9309-COURVILLE-ST-DETROIT-MI",
     "name": "RealToken 9309 Courville St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xa9e8a9d9729e766a72763253f2afd1b1cf9053a0.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xa9e8a9d9729e766a72763253f2afd1b1cf9053a0",
@@ -13396,7 +12843,7 @@
   {
     "symbol": "REALTOKEN-S-10616-McKINNEY-ST-DETROIT-MI",
     "name": "RealToken S 10616 McKinney Street Detroit MI",
-    "logo": "https://tokens.1inch.io/0x53993d04758ee89bbe190e15a81c411688543aba.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x53993d04758ee89bbe190e15a81c411688543aba",
@@ -13413,7 +12860,7 @@
   {
     "symbol": "REALTOKEN-S-9169-BOLEYN-ST-DETROIT-MI",
     "name": "RealToken S 9169 Boleyn Street Detroit MI",
-    "logo": "https://tokens.1inch.io/0x273a160eb5df613c8c99869f5ae4941f65bf94cb.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x273a160eb5df613c8c99869f5ae4941f65bf94cb",
@@ -13430,7 +12877,7 @@
   {
     "symbol": "REALTOKEN-S-3432-HARDING-ST-DETROIT-MI",
     "name": "RealToken S 3432 Harding Street Detroit MI",
-    "logo": "https://tokens.1inch.io/0xec2d495f20adf65cd26e9e250c8cd5d863609afd.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xec2d495f20adf65cd26e9e250c8cd5d863609afd",
@@ -13447,7 +12894,7 @@
   {
     "symbol": "REALTOKEN-S-12334-LANSDOWNE-ST-DETROIT-MI",
     "name": "RealToken S 12334 Lansdowne St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x033b186321fa88603e3ecc98821fb0932b2c0760.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x033b186321fa88603e3ecc98821fb0932b2c0760",
@@ -13464,7 +12911,7 @@
   {
     "symbol": "REALTOKEN-S-10974-WORDEN-ST-DETROIT-MI",
     "name": "RealToken S 10974 Worden St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x87645f94f6ea37f9f2f56d4521315e9c1ed89aa4.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x87645f94f6ea37f9f2f56d4521315e9c1ed89aa4",
@@ -13481,7 +12928,7 @@
   {
     "symbol": "REALTOKEN-S-13991-WARWICK-ST-DETROIT-MI",
     "name": "RealToken S 13991 Warwick st Detroit MI",
-    "logo": "https://tokens.1inch.io/0x4475ad655d6fa73db81cc52a5cf4585faa34a1dd.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x4475ad655d6fa73db81cc52a5cf4585faa34a1dd",
@@ -13498,7 +12945,7 @@
   {
     "symbol": "REALTOKEN-S-6923-GREEVIEW-AVE-DETROIT-MI",
     "name": "RealToken S 6923 Greenview ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0x2830209f6573f10c481d946ba18b446429f30360.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x2830209f6573f10c481d946ba18b446429f30360",
@@ -13515,7 +12962,7 @@
   {
     "symbol": "REALTOKEN-S-1000-FLORIDA-AVE-AKRON-OH",
     "name": "RealToken S 1000 Florida ave Akron OH",
-    "logo": "https://tokens.1inch.io/0xdbb13d3f745a64995ca76069f2cebf9a2d7b18c0.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xdbb13d3f745a64995ca76069f2cebf9a2d7b18c0",
@@ -13532,7 +12979,7 @@
   {
     "symbol": "REALTOKEN-S-4340-EAST-71-CLEVELAND-OH",
     "name": "RealToken S 4340 East-71 Cleveland OH",
-    "logo": "https://tokens.1inch.io/0xee9a08fc54bf53353398f946db4cb2447276f850.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xee9a08fc54bf53353398f946db4cb2447276f850",
@@ -13549,7 +12996,7 @@
   {
     "symbol": "REALTOKEN-S-9133-DEVONSHIRE-RD-DETROIT-MI",
     "name": "RealToken S 9133 Devonshire st Detroit MI",
-    "logo": "https://tokens.1inch.io/0xec069eaa5c83763f288106506fecbd5dbe74d047.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xec069eaa5c83763f288106506fecbd5dbe74d047",
@@ -13566,7 +13013,7 @@
   {
     "symbol": " REALTOKEN-S-10604-SOMERSET-AVE-DETROIT-MI",
     "name": "RealToken S 10604 Somerset Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0xc4cb613947890ea300fedc509ac19f8efa0cdd14.png",
+    "logo": "https://tokens.1inch.io/00xe5f7ef61443fc36ae040650aa585b0395aef77c8png",
     "platforms": [
       {
         "address": "0xc4cb613947890ea300fedc509ac19f8efa0cdd14",
@@ -13578,7 +13025,7 @@
   {
     "symbol": "REALTOKEN-S-587-JEFFERSON-AVE-ROCHESTER-NY",
     "name": "RealToken S 581-587 Jefferson Ave Rochester NY",
-    "logo": "https://tokens.1inch.io/0x8a41b6b6177f35bfa6d677447d3fe0d5a0cec45e.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x8a41b6b6177f35bfa6d677447d3fe0d5a0cec45e",
@@ -13595,7 +13042,7 @@
   {
     "symbol": "REALTOKEN-S-15778-MANOR-ST-DETROIT-MI",
     "name": "RealToken S 15778 Manor st Detroit MI",
-    "logo": "https://tokens.1inch.io/0x1105c20ac6f4de989faf05d17ab3f950963b75ad.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x1105c20ac6f4de989faf05d17ab3f950963b75ad",
@@ -13612,7 +13059,7 @@
   {
     "symbol": "REALTOKEN-S-15784-MONTEVISTA-ST-DETROIT-MI",
     "name": "RealToken S 15784 Monte vista st Detroit MI",
-    "logo": "https://tokens.1inch.io/0x438f9de51f51692a4b83696413062a040cc5cbd5.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x438f9de51f51692a4b83696413062a040cc5cbd5",
@@ -13629,7 +13076,7 @@
   {
     "symbol": "REALTOKEN-S-13114-GLENFIELD-AVE-DETROIT-MI",
     "name": "RealToken S 13114 Glenfield Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0x434e3a92c43a98ff508ab44e023ea7638952ad21.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x434e3a92c43a98ff508ab44e023ea7638952ad21",
@@ -13646,7 +13093,7 @@
   {
     "symbol": "REALTOKEN-S-13116-KILBOURNE-AVE-DETROIT-MI",
     "name": "RealToken S 13116 Kilbourne Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0xba0d050bbb662c190bf99c61708b42ff9d8750e0.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xba0d050bbb662c190bf99c61708b42ff9d8750e0",
@@ -13663,7 +13110,7 @@
   {
     "symbol": "REALTOKEN-S-19317-GABLE-ST-DETROIT-MI",
     "name": "RealToken S 19317 Gable st Detroit MI",
-    "logo": "https://tokens.1inch.io/0x419f97e6dcfbf89a70ea898b7f44472f75bf6137.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x419f97e6dcfbf89a70ea898b7f44472f75bf6137",
@@ -13675,7 +13122,7 @@
   {
     "symbol": "REALTOKEN-S-15777-ARDMORE-ST-DETROIT-MI",
     "name": "RealToken S 15777 Ardmore st Detroit MI",
-    "logo": "https://tokens.1inch.io/0xfe17c3c0b6f38cf3bd8ba872bee7a18ab16b43fb.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xfe17c3c0b6f38cf3bd8ba872bee7a18ab16b43fb",
@@ -13687,7 +13134,7 @@
   {
     "symbol": "REALTOKEN-S-14319-ROSEMARY-ST-DETROIT-MI",
     "name": "RealToken S 14319 Rosemary st Detroit MI",
-    "logo": "https://tokens.1inch.io/0x41599149f1b52035392402f9e311b1edb0c9f699.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x41599149f1b52035392402f9e311b1edb0c9f699",
@@ -13699,7 +13146,7 @@
   {
     "symbol": "REALTOKEN-S-14078-CARLISLE-ST-DETROIT-MI",
     "name": "RealToken S 14078 Carlisle st Detroit MI",
-    "logo": "https://tokens.1inch.io/0x315699f1ba88383cff2f2f30fcad187adb2e4d72.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x315699f1ba88383cff2f2f30fcad187adb2e4d72",
@@ -13711,7 +13158,7 @@
   {
     "symbol": "REALTOKEN-S-13895-SARATOGA-ST-DETROIT-MI",
     "name": "RealToken S 13895 Saratoga st Detroit MI",
-    "logo": "https://tokens.1inch.io/0x6f442da588232dc57bf0096e8de48d6961d5cc83.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x6f442da588232dc57bf0096e8de48d6961d5cc83",
@@ -13723,7 +13170,7 @@
   {
     "symbol": "REALTOKEN-S-4380-BEACONSFIELD-ST-DETROIT-MI",
     "name": "RealToken S 4380 Beaconsfield st Detroit MI",
-    "logo": "https://tokens.1inch.io/0x96700ffae33c651bc329c3f3fbfe56e1f291f117.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x96700ffae33c651bc329c3f3fbfe56e1f291f117",
@@ -13735,7 +13182,7 @@
   {
     "symbol": "REALTOKEN-S-17813-BRADFORD-ST-DETROIT-MI",
     "name": "RealToken S 17813 Bradford st Detroit MI",
-    "logo": "https://tokens.1inch.io/0x499a6c19f5537dd6005e2b5c6e1263103f558ba4.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x499a6c19f5537dd6005e2b5c6e1263103f558ba4",
@@ -13747,7 +13194,7 @@
   {
     "symbol": "REALTOKEN-S-15796-HARTWELL-ST-DETROIT-MI",
     "name": "RealToken S 15796 Hartwell st Detroit MI",
-    "logo": "https://tokens.1inch.io/0xb3d3c1bbcef737204aadb4fa6d90e974bc262197.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xb3d3c1bbcef737204aadb4fa6d90e974bc262197",
@@ -13759,7 +13206,7 @@
   {
     "symbol": "REALTOKEN-S-9717-EVERTS-ST-DETROIT-MI",
     "name": "RealToken S 9717 Everts St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x73bde888664df8ddfd156b52e6999eeabab57c94.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x73bde888664df8ddfd156b52e6999eeabab57c94",
@@ -13771,7 +13218,7 @@
   {
     "symbol": "REALTOKEN-S-19201-WESTPHALIA-ST-DETROIT-MI",
     "name": "RealToken S 19201 Westphalia St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x830b0e9a5ecf36d0a886d21e1c20043cd2d16515.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x830b0e9a5ecf36d0a886d21e1c20043cd2d16515",
@@ -13783,7 +13230,7 @@
   {
     "symbol": "REALTOKEN-S-19163-MITCHELL-ST-DETROIT-MI",
     "name": "RealToken S 19163 Mitchell St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x4cc53ee5ef306a95d407321d4b4acc30814c04ee.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x4cc53ee5ef306a95d407321d4b4acc30814c04ee",
@@ -13795,7 +13242,7 @@
   {
     "symbol": "REALTOKEN-S-4061-GRAND-ST-DETROIT-MI",
     "name": "RealToken S 4061 Grand St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xd9e89bfebae447b42c1fa85c590716ec8820f737.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xd9e89bfebae447b42c1fa85c590716ec8820f737",
@@ -13807,7 +13254,7 @@
   {
     "symbol": "REALTOKEN-S-4680-BUCKINGHAM-AVE-DETROIT-MI",
     "name": "RealToken S 4680 Buckingham Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0xefe82d6baf0db71f92889eb9d00721bd49121316.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xefe82d6baf0db71f92889eb9d00721bd49121316",
@@ -13819,7 +13266,7 @@
   {
     "symbol": "REALTOKEN-S-19311-KEYSTONE-ST-DETROIT-MI",
     "name": "RealToken S 19311 Keystone St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x8a9f904b4ead6a97f3ab304d0d2196f5c602c807.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x8a9f904b4ead6a97f3ab304d0d2196f5c602c807",
@@ -13831,7 +13278,7 @@
   {
     "symbol": "REALTOKEN-S-15039-WARD-AVE-DETROIT-MI",
     "name": "RealToken S 15039 Ward Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0x7e95b310724334ff74537dc08bfd3377d25e65ce.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x7e95b310724334ff74537dc08bfd3377d25e65ce",
@@ -13843,7 +13290,7 @@
   {
     "symbol": "REALTOKEN-S-18481-WESTPHALIA-ST-DETROIT-MI",
     "name": "RealToken S 18481 Westphalia St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x75f06b482adbfb04b877d8ee683e2fcdf18ad153.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x75f06b482adbfb04b877d8ee683e2fcdf18ad153",
@@ -13855,7 +13302,7 @@
   {
     "symbol": "REALTOKEN-S-19596-GOULBURN-ST-DETROIT-MI",
     "name": "RealToken S 19596 Goulburn St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x3150f0ebc0efee280b5348b9c8c271ad44eb8b13.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x3150f0ebc0efee280b5348b9c8c271ad44eb8b13",
@@ -13867,7 +13314,7 @@
   {
     "symbol": "REALTOKEN-S-1244-S.AVERS -ST-CHICAGO-IL",
     "name": "RealToken S 1244 S. Avers Chicago IL",
-    "logo": "https://tokens.1inch.io/0x94fa7f8cb8453ad57cd133363b3012044647078c.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x94fa7f8cb8453ad57cd133363b3012044647078c",
@@ -13879,7 +13326,7 @@
   {
     "symbol": "REALTOKEN-S-15770-PREST-ST-DETROIT-MI",
     "name": "RealToken S 15770 Prest St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x175cbd54d38f58b530785e01471a2ec0d4596eb5.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x175cbd54d38f58b530785e01471a2ec0d4596eb5",
@@ -13891,7 +13338,7 @@
   {
     "symbol": "REALTOKEN-272-NE42nd-COURT-DEERFIELDBEACH-FL",
     "name": "RealToken S 272 N.E. 42nd Court Deerfield Beach FL",
-    "logo": "https://tokens.1inch.io/0xce111a198eb04f388aceb78c40ced6daf1b0514a.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xce111a198eb04f388aceb78c40ced6daf1b0514a",
@@ -13903,7 +13350,7 @@
   {
     "symbol": "REALTOKEN-S-19314-GABLE-ST-DETROIT-MI",
     "name": "RealToken S 19317 Gable St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x34ed9e71449529e034d0326cfbb3b5ccdca00cbc.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x34ed9e71449529e034d0326cfbb3b5ccdca00cbc",
@@ -13915,7 +13362,7 @@
   {
     "symbol": "REALTOKEN-10024-28-APPOLINE-ST-DETROIT-MI",
     "name": "RealToken S 10024-28 Appoline St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xb5d30c28f87acf675ed5b9f343e5fff39ec9942c.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xb5d30c28f87acf675ed5b9f343e5fff39ec9942c",
@@ -13927,7 +13374,7 @@
   {
     "symbol": "REALTOKEN-S-18466-FIELDING-ST-DETROIT-MI",
     "name": "RealToken S 18466 Fielding St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x9a99f283e1f6c3b7f24901995624ef7b78e94471.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x9a99f283e1f6c3b7f24901995624ef7b78e94471",
@@ -13939,7 +13386,7 @@
   {
     "symbol": "REALTOKEN-S-15095-HARTWELL-ST-DETROIT-MI",
     "name": "RealToken S 15095 Hartwell St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x9fef44fc4c571010bccd5b63e1cdc807d3b347bf.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x9fef44fc4c571010bccd5b63e1cdc807d3b347bf",
@@ -13951,7 +13398,7 @@
   {
     "symbol": "REALTOKEN-S-18273-MONTEVISTA-ST-DETROIT-MI",
     "name": "RealToken S 18273 Monte Vista St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x9856c5ca15a4ac9c65aac090c38a9f39eb3b5eec.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x9856c5ca15a4ac9c65aac090c38a9f39eb3b5eec",
@@ -13963,7 +13410,7 @@
   {
     "symbol": "REALTOKEN-S-10604-SOMERSET-AVE-DETROIT-MI",
     "name": "RealToken S 10604 Somerset Ave MI",
-    "logo": "https://tokens.1inch.io/0x8626b38267e4fc0d8c92e0bb86f97acab3f6aa05.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x8626b38267e4fc0d8c92e0bb86f97acab3f6aa05",
@@ -13975,7 +13422,7 @@
   {
     "symbol": "REALTOKEN-S-9165-KENSINGTON-AVE-DETROIT-MI",
     "name": "RealToken S 9165 Kensington St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x3c56d5e887d8fa7ae1ba65bf7eccc25ec09eaf18.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x3c56d5e887d8fa7ae1ba65bf7eccc25ec09eaf18",
@@ -13987,7 +13434,7 @@
   {
     "symbol": "REALTOKEN-S-9166-DEVONSHIRE-RD-DETROIT-MI",
     "name": "RealToken S 9166 Devonshire Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0xa69d7d4ddf397f3d1e7ebaf108555d1107b3b117.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xa69d7d4ddf397f3d1e7ebaf108555d1107b3b117",
@@ -13999,7 +13446,7 @@
   {
     "symbol": "REALTOKEN-S-10084-GRAYTON-DETROIT-MI",
     "name": "RealToken S 10084 Grayton St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x92161385c9de8798ad5fb01c0be99ffcbc84dfd8.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x92161385c9de8798ad5fb01c0be99ffcbc84dfd8",
@@ -14009,9 +13456,21 @@
     ]
   },
   {
+    "symbol": "REALTOKEN-20200-LESURE-ST-DETROIT-MI",
+    "name": "RealToken S 20200 Lesure St Detroit MI",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
+    "platforms": [
+      {
+        "address": "0xeedc2f5f4d1226759b1acf9efa23a99661de6663",
+        "decimals": 18,
+        "platform": "eth"
+      }
+    ]
+  },
+  {
     "symbol": "REALTOKEN-S-19020-ROSEMONT-AVE-DETROIT-MI",
     "name": "RealToken S 19020 Rosemont Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0x280e9ed3b20c580a2f4219657bb9332d80bc01f1.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x280e9ed3b20c580a2f4219657bb9332d80bc01f1",
@@ -14023,7 +13482,7 @@
   {
     "symbol": "REALTOKEN-S-19136-TRACEY-ST-DETROIT-MI",
     "name": "RealToken S 19136 Tracey St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x33722ea778df197f1b7b1cf0b124d7a962181d65.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x33722ea778df197f1b7b1cf0b124d7a962181d65",
@@ -14035,7 +13494,7 @@
   {
     "symbol": "REALTOKEN-S-9465-BEACONSFIELD-ST-DETROIT-MI",
     "name": "RealToken S 9465 Beaconsfield St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x750fa12ae51d1515c893c1aaabe2c135937a2c8b.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x750fa12ae51d1515c893c1aaabe2c135937a2c8b",
@@ -14047,7 +13506,7 @@
   {
     "symbol": "REALTOKEN-S-1115-S.TROY-ST-CHICAGO-IL",
     "name": "RealToken S 1115 S. Troy St Chicago IL",
-    "logo": "https://tokens.1inch.io/0xd2f69dcd1e26f51fbbce48f61426c724e65acf91.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xd2f69dcd1e26f51fbbce48f61426c724e65acf91",
@@ -14059,7 +13518,7 @@
   {
     "symbol": "REALTOKEN-S-19218-HOUGHTON-ST-DETROIT-MI",
     "name": "RealToken S 19218 Houghton St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xc731eca970979cd2da2a1094a808f49894070d35.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xc731eca970979cd2da2a1094a808f49894070d35",
@@ -14071,7 +13530,7 @@
   {
     "symbol": "REALTOKEN-S-10617-HATHAWAY-AVE-CLEVELAND-OH",
     "name": "RealToken S 10617 Hathaway Ave Cleveland OH",
-    "logo": "https://tokens.1inch.io/0x06d0e5aee443093ac5635b709c8a01342e59df19.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x06d0e5aee443093ac5635b709c8a01342e59df19",
@@ -14083,7 +13542,7 @@
   {
     "symbol": "REALTOKEN-S-15373-PARKSIDE-ST-DETROIT-MI",
     "name": "RealToken S 15373 Parkside St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x4d0da4e75d40bd7d9c4f7a292bf883bcdf38c45d.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x4d0da4e75d40bd7d9c4f7a292bf883bcdf38c45d",
@@ -14095,7 +13554,7 @@
   {
     "symbol": "REALTOKEN-S-14231-STRATHMOOR-ST-DETROIT-MI",
     "name": "RealToken S 14231 Strathmoor St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x9528a7402c0fe85b817aa6e106eafa03a02924c4.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x9528a7402c0fe85b817aa6e106eafa03a02924c4",
@@ -14107,7 +13566,7 @@
   {
     "symbol": "REALTOKEN-S-15350-GREYDALE-ST-DETROIT-MI",
     "name": "RealToken S 15350 Greydale St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xda47bd33e8f5d17bb81b8752784bfb46c1c44b2a.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xda47bd33e8f5d17bb81b8752784bfb46c1c44b2a",
@@ -14119,7 +13578,7 @@
   {
     "symbol": "REALTOKEN-S-12866-LAUDER-ST-DETROIT-MI",
     "name": "RealToken S 12866 Lauder St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xb5dd2b6e0a0422e069e1d2cc3ed16533488a05e3.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xb5dd2b6e0a0422e069e1d2cc3ed16533488a05e3",
@@ -14131,7 +13590,7 @@
   {
     "symbol": "REALTOKEN-S-8181-BLISS-ST-DETROIT-MI",
     "name": "RealToken S 8181 Bliss St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x92d31e19f88597f368825ba16410f263a844527a.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x92d31e19f88597f368825ba16410f263a844527a",
@@ -14143,7 +13602,7 @@
   {
     "symbol": "REALTOKEN-S-19333-MOENART-ST-DETROIT-MI",
     "name": "RealToken S 19333 Moenart St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x24293ab20159cfc0f3d7c8727cd827fba63d4f64.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x24293ab20159cfc0f3d7c8727cd827fba63d4f64",
@@ -14155,7 +13614,7 @@
   {
     "symbol": "REALTOKEN-S-11201-COLLEGE-ST-DETROIT-MI",
     "name": "RealToken S 11201 College St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x5e2a09064b2dca8c44aad8a5b69a69bb1854fe72.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x5e2a09064b2dca8c44aad8a5b69a69bb1854fe72",
@@ -14167,7 +13626,7 @@
   {
     "symbol": "REALTOKEN-S-15860-HARTWELL-ST-DETROIT-MI",
     "name": "RealToken S 15860 Hartwell St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xa9f30c907321718e655b74463ca665b690b78894.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xa9f30c907321718e655b74463ca665b690b78894",
@@ -14179,7 +13638,7 @@
   {
     "symbol": "REALTOKEN-S-11078-WAYBURN-ST-DETROIT-MI",
     "name": "RealToken S 11078 Wayburn St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xb8403b7730368942a5bfe5aac04a31b44015b1cc.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xb8403b7730368942a5bfe5aac04a31b44015b1cc",
@@ -14191,7 +13650,7 @@
   {
     "symbol": "REALTOKEN-S-14825-WILFRIED-ST-DETROIT-MI",
     "name": "RealToken S 14825 Wilfried St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x43fed9f9bf7deedcb314b432a8e38219dd62ce9e.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x43fed9f9bf7deedcb314b432a8e38219dd62ce9e",
@@ -14203,7 +13662,7 @@
   {
     "symbol": "REALTOKEN-S-14882-TROESTER-ST-DETROIT-MI",
     "name": "RealToken S 14882 Troester St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x31aa5fa895fd186fde12347a6fcaf540875b6434.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x31aa5fa895fd186fde12347a6fcaf540875b6434",
@@ -14215,7 +13674,7 @@
   {
     "symbol": "REALTOKEN-S-17809-CHAREST-ST-DETROIT-MI",
     "name": "RealToken S 17809 Charest St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xba07997f594a52df179620284b52b50a4e66227d.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xba07997f594a52df179620284b52b50a4e66227d",
@@ -14227,7 +13686,7 @@
   {
     "symbol": "REALTOKEN-S-18776-SUNDERLAND-RD-DETROIT-MI",
     "name": "RealToken S 18776 Sunderland Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0x2c6f00a020b613c9419bb6c1ac220036dbe9e622.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x2c6f00a020b613c9419bb6c1ac220036dbe9e622",
@@ -14239,7 +13698,7 @@
   {
     "symbol": "REALTOKEN-S-14229-WILSHIRE-DR-DETROIT-MI",
     "name": "RealToken S 14229 Wilshire St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xb09850e2b93aa3aaa1476bf0c007cfc960e2de79.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xb09850e2b93aa3aaa1476bf0c007cfc960e2de79",
@@ -14251,7 +13710,7 @@
   {
     "symbol": "REALTOKEN-S-5601-S.WOOD-ST-CHICAGO-IL",
     "name": "RealToken S 5601 S Wood St Chicago IL",
-    "logo": "https://tokens.1inch.io/0xa137d82197ea4cdfd5f008a91ba816b8324f59e1.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xa137d82197ea4cdfd5f008a91ba816b8324f59e1",
@@ -14263,7 +13722,7 @@
   {
     "symbol": "REALTOKEN-S-9481-WAYBURN-ST-DETROIT-MI",
     "name": "RealToken S 9481 Wayburn St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x1e001730a23c7ebaff35bc8bc90da5a9b20804a4.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x1e001730a23c7ebaff35bc8bc90da5a9b20804a4",
@@ -14275,7 +13734,7 @@
   {
     "symbol": "REALTOKEN-S-11300-ROXBURY-ST-DETROIT-MI",
     "name": "RealToken S 11300 Roxbury St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x9b5b4886033b4abc5eb0552fff7c15a67c3c47c7.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x9b5b4886033b4abc5eb0552fff7c15a67c3c47c7",
@@ -14287,7 +13746,7 @@
   {
     "symbol": "REALTOKEN-S-10629-MCKINNEY-ST-DETROIT-MI",
     "name": "RealToken S 10629 McKinney St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xd5d1adf54fbf73a00b197ddcfdad7cc27d93002f.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xd5d1adf54fbf73a00b197ddcfdad7cc27d93002f",
@@ -14299,7 +13758,7 @@
   {
     "symbol": "REALTOKEN-S-9920-BISHOP-ST-DETROIT-MI",
     "name": "RealToken S 9920 Bishop St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xa2b2ae397492c7ed8a4c1e751ac72d2b59947e6b.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xa2b2ae397492c7ed8a4c1e751ac72d2b59947e6b",
@@ -14311,7 +13770,7 @@
   {
     "symbol": "REALTOKEN-S-10639-STRATMAN-ST-DETROIT-MI",
     "name": "RealToken S 10639 Stratman St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x4a99cc509f7facf58d7b67e99236db5e0921ef81.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x4a99cc509f7facf58d7b67e99236db5e0921ef81",
@@ -14323,7 +13782,7 @@
   {
     "symbol": "REALTOKEN-S-13045-WADE-ST-DETROIT-MI",
     "name": "RealToken S 13045 Wade St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x5600e25b4f24c63afa655c3bd96e3c178b654fa1.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x5600e25b4f24c63afa655c3bd96e3c178b654fa1",
@@ -14335,7 +13794,7 @@
   {
     "symbol": "REALTOKEN-S-14494-CHELSEA-AVE-DETROIT-MI",
     "name": "RealToken S 14494 Chelsea Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0x2adc1cfa726a45264a328d9d2e2c692ceac97458.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x2adc1cfa726a45264a328d9d2e2c692ceac97458",
@@ -14347,7 +13806,7 @@
   {
     "symbol": "REALTOKEN-S-18983-ALCOY-AVE-DETROIT-MI",
     "name": "RealToken S 18983 Alcoy Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0xad91999f534f4075b00ba4231c018e57bdebb342.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xad91999f534f4075b00ba4231c018e57bdebb342",
@@ -14359,7 +13818,7 @@
   {
     "symbol": "REALTOKEN-S-19200-STRASBURG-ST-DETROIT-MI",
     "name": "RealToken S 19200 Strasburg St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x211618fa0934910666f2c2731101f5a3ac013fd8.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x211618fa0934910666f2c2731101f5a3ac013fd8",
@@ -14371,7 +13830,7 @@
   {
     "symbol": "REALTOKEN-S-11653-NOTTINGHAM-RD-DETROIT-MI",
     "name": "RealToken S 11653 Nottingham Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0x31820af2d43c08bd82bd94b08974062482bd98d3.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x31820af2d43c08bd82bd94b08974062482bd98d3",
@@ -14383,7 +13842,7 @@
   {
     "symbol": "REALTOKEN-S-15753-HARTWELL-ST-DETROIT-MI",
     "name": "RealToken S 15753 Hartwell St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x8d1090df790ffafdaccda03015c05df3b4cc9c21.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x8d1090df790ffafdaccda03015c05df3b4cc9c21",
@@ -14395,7 +13854,7 @@
   {
     "symbol": "REALTOKEN-S-17500-EVERGREEN-RD-DETROIT-MI",
     "name": "RealToken S 17500 Evergreen Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0x1fdb4015fd5e031c5641752c1e03b973ad5ea168.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x1fdb4015fd5e031c5641752c1e03b973ad5ea168",
@@ -14407,7 +13866,7 @@
   {
     "symbol": "REALTOKEN-S-10700-WHITTIER-AVE-DETROIT-MI",
     "name": "RealToken S 10700 Whittier Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0xe82cbb7c29d00a4296ee505d12a473c26cd9c423.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xe82cbb7c29d00a4296ee505d12a473c26cd9c423",
@@ -14419,7 +13878,7 @@
   {
     "symbol": "REALTOKEN-S-14918-JOY-RD-DETROIT-MI",
     "name": "RealToken S 14918 Joy Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0x63a1849b47ef5913ccc5adb0e2708b11a4ba6972.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x63a1849b47ef5913ccc5adb0e2708b11a4ba6972",
@@ -14431,7 +13890,7 @@
   {
     "symbol": "REALTOKEN-S-402-S.KOSTNER-AVE-CHICAGO-IL",
     "name": "RealToken S 402 S Kostner Ave Chicago IL",
-    "logo": "https://tokens.1inch.io/0xe255caf8893382465368b8e1cd4ef8436acf0ade.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xe255caf8893382465368b8e1cd4ef8436acf0ade",
@@ -14443,7 +13902,7 @@
   {
     "symbol": "REALTOKEN-S-1542-S.RIDGEWAY-AVE-CHICAGO-IL",
     "name": "RealToken S 1542 S Ridgeway Ave Chicago IL",
-    "logo": "https://tokens.1inch.io/0x69d1b42b20f3ded07bec322253d0140b04cbb6f5.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x69d1b42b20f3ded07bec322253d0140b04cbb6f5",
@@ -14455,7 +13914,7 @@
   {
     "symbol": "REALTOKEN-S-11078-LONGVIEW-ST-DETROIT-MI",
     "name": "RealToken S 11078 Longview St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xd5fc0c4c4c5ff316e1e91494d963ff1d52ba25ff.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xd5fc0c4c4c5ff316e1e91494d963ff1d52ba25ff",
@@ -14467,7 +13926,7 @@
   {
     "symbol": "REALTOKEN-S-19996-JOANN-AVE-DETROIT-MI",
     "name": "RealToken S 19996 Joann Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0x311fc485f1fea0c8cc9b5c783e79f4313ddfa720.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x311fc485f1fea0c8cc9b5c783e79f4313ddfa720",
@@ -14479,7 +13938,7 @@
   {
     "symbol": "REALTOKEN-S-13606-WINTHROP-ST-DETROIT-MI",
     "name": "RealToken S 13606 Winthrop St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x804f6baa10615c85e4b4a5bc4efe516d9f7a4365.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x804f6baa10615c85e4b4a5bc4efe516d9f7a4365",
@@ -14491,7 +13950,7 @@
   {
     "symbol": "REALTOKEN-S-12409-WHITEHILL-ST-DETROIT-MI",
     "name": "RealToken S 12409 Whitehill St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x969d42ad7008e6651e1fd52742153f8743225d98.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x969d42ad7008e6651e1fd52742153f8743225d98",
@@ -14503,7 +13962,7 @@
   {
     "symbol": "REALTOKEN-S-4852-4854-W.CORTEZ-ST-CHICAGO-IL",
     "name": "RealToken S 4852-4854 W Cortez St Chicago IL",
-    "logo": "https://tokens.1inch.io/0xe7b6de709ffc3bd237c2f2c800e1002f97a760f3.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xe7b6de709ffc3bd237c2f2c800e1002f97a760f3",
@@ -14515,7 +13974,7 @@
   {
     "symbol": "REALTOKEN-S-12405-SANTA-ROSA-DR-DETROIT-MI",
     "name": "RealToken S 12405 Santa Rosa Dr Detroit MI",
-    "logo": "https://tokens.1inch.io/0x9d918ee39a356be8ef99734599c7e70160db4db6.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x9d918ee39a356be8ef99734599c7e70160db4db6",
@@ -14527,7 +13986,7 @@
   {
     "symbol": "REALTOKEN-S-11957-OLGA-ST-DETROIT-MI",
     "name": "RealToken S 11957 Olga St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xdd833d0eef6d5d7cec781b03c19f3b425f3039df.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xdd833d0eef6d5d7cec781b03c19f3b425f3039df",
@@ -14539,7 +13998,7 @@
   {
     "symbol": "REALTOKEN-S-1815-S.AVERS-AVE-CHICAGO-IL",
     "name": "RealToken S 1815 S.Avers Ave Chicago IL",
-    "logo": "https://tokens.1inch.io/0x8fcb39a25e639c8fbd28e8a018227d6570e02352.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x8fcb39a25e639c8fbd28e8a018227d6570e02352",
@@ -14551,7 +14010,7 @@
   {
     "symbol": "REALTOKEN-S-1617-S.AVERS-AVE-CHICAGO-IL",
     "name": "RealToken S 1617 S.Avers Ave Chicago IL",
-    "logo": "https://tokens.1inch.io/0xf4657ab08681214bcb1893aa8e9c7613459250ec.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xf4657ab08681214bcb1893aa8e9c7613459250ec",
@@ -14563,7 +14022,7 @@
   {
     "symbol": "REALTOKEN-S-14066-SANTA-ROSA-DR-DETROIT-MI",
     "name": "RealToken S 14066 Santa Rosa Dr Detroit MI",
-    "logo": "https://tokens.1inch.io/0xe887dc4fcb5240c0c080aeab8870421d3ebd0b28.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xe887dc4fcb5240c0c080aeab8870421d3ebd0b28",
@@ -14575,7 +14034,7 @@
   {
     "symbol": "REALTOKEN-S-13370-WILSHIRE-DR-DETROIT-MI",
     "name": "RealToken S 13370 Wilshire Dr Detroit MI",
-    "logo": "https://tokens.1inch.io/0x5b690b010944bdfa8b26116967fe3fb3c38cfaac.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x5b690b010944bdfa8b26116967fe3fb3c38cfaac",
@@ -14587,7 +14046,7 @@
   {
     "symbol": "REALTOKEN-S-738-742-E.87TH-PL-CHICAGO-IL",
     "name": "RealToken S 738-742 E 87th Pl Chicago IL",
-    "logo": "https://tokens.1inch.io/0x38de2858be53d603b1104f16aa67cf180002465d.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x38de2858be53d603b1104f16aa67cf180002465d",
@@ -14599,7 +14058,7 @@
   {
     "symbol": "REALTOKEN-S-15203-PARK-GROVE-ST-DETROIT-MI",
     "name": "RealToken S 15203 Park Grove St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x78a9013b53d2d255935bbc43112d0dd3f475f3d3.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x78a9013b53d2d255935bbc43112d0dd3f475f3d3",
@@ -14611,7 +14070,7 @@
   {
     "symbol": "REALTOKEN-S-10021-GRAYTON-ST-DETROIT-MI",
     "name": "RealToken S 10021 Grayton St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x0954682ff1b512d3927d06c591942f50917e16a0.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x0954682ff1b512d3927d06c591942f50917e16a0",
@@ -14623,7 +14082,7 @@
   {
     "symbol": "REALTOKEN-S-893-895-W.PHILADELPHIA-ST-DETROIT-MI",
     "name": "RealToken S 893-895 W Philadelphia St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xcb061ae1f9b618c44ac10a47a672bf438da01fd8.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xcb061ae1f9b618c44ac10a47a672bf438da01fd8",
@@ -14635,7 +14094,7 @@
   {
     "symbol": "REALTOKEN-S-2318-2324-W.MARQUETTE-RD-CHICAGO-IL",
     "name": "RealToken S 2318-2324 W Marquette Rd Chicago IL",
-    "logo": "https://tokens.1inch.io/0xf5aeab9d9c707b56311066e5172239686ab88110.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xf5aeab9d9c707b56311066e5172239686ab88110",
@@ -14647,7 +14106,7 @@
   {
     "symbol": "REALTOKEN-S-11217-GREENWICH-AVE-CLEVELAND-OH",
     "name": "RealToken S 11217 Greenwich Ave Cleveland OH",
-    "logo": "https://tokens.1inch.io/0x9b091105b9a9eb118f4e0da06a090d6d95463357.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x9b091105b9a9eb118f4e0da06a090d6d95463357",
@@ -14659,7 +14118,7 @@
   {
     "symbol": "REALTOKEN-S-10003-PINEHURST-ST-DETROIT-MI",
     "name": "RealToken S 10003 Pinehurst St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x4471962eeffec57a33fa4e0793efeec07684dffb.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x4471962eeffec57a33fa4e0793efeec07684dffb",
@@ -14671,7 +14130,7 @@
   {
     "symbol": "REALTOKEN-S-19191-BRADFORD-AVE-DETROIT-MI",
     "name": "RealToken S 19191 Bradford Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0x584967356bad1499c10a8695522983f2fb7d88f3.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x584967356bad1499c10a8695522983f2fb7d88f3",
@@ -14683,7 +14142,7 @@
   {
     "symbol": "REALTOKEN-S-1521-1523-S.DRAKE-AVE-CHICAGO-IL",
     "name": "RealToken S 1521-1523 S.Drake Ave Chicago IL",
-    "logo": "https://tokens.1inch.io/0x8c1c77c549a3f233fa8f8dea133ff5415d9bae11.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x8c1c77c549a3f233fa8f8dea133ff5415d9bae11",
@@ -14695,7 +14154,7 @@
   {
     "symbol": "REALTOKEN-S-5278-5280-DREXEL-ST-DETROIT-MI",
     "name": "RealToken S 5278-5280 Drexel St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xcdf955df8a7ae1264f3b4f8ee5fa68507e8528aa.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xcdf955df8a7ae1264f3b4f8ee5fa68507e8528aa",
@@ -14707,7 +14166,7 @@
   {
     "symbol": "REALTOKEN-S-5772-5774-CHALMERS-ST-DETROIT-MI",
     "name": "RealToken S 5772-5774 Chalmers St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x394d59797495848934acf61e680c1739a2cd8cfd.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x394d59797495848934acf61e680c1739a2cd8cfd",
@@ -14719,7 +14178,7 @@
   {
     "symbol": "REALTOKEN-S-7430-NETT-ST-DETROIT-MI",
     "name": "RealToken S 7430 Nett St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x950bc24510274163aabf83339424e7b49bf6a0c0.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x950bc24510274163aabf83339424e7b49bf6a0c0",
@@ -14731,7 +14190,7 @@
   {
     "symbol": "REALTOKEN-S-7109-7111-PILGRIM-ST-DETROIT-MI",
     "name": "RealToken S 7109-7111 Pilgrim St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x26ccc79ceeec918e01bbd5c04a64767919f9ec1a.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x26ccc79ceeec918e01bbd5c04a64767919f9ec1a",
@@ -14743,7 +14202,7 @@
   {
     "symbol": "REALTOKEN-S-15864-EASTBURN-ST-DETROIT-MI",
     "name": "RealToken S 15864 Eastburn St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xca4e38439d5d86554431e15eced03b8bcf2abddd.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xca4e38439d5d86554431e15eced03b8bcf2abddd",
@@ -14755,7 +14214,7 @@
   {
     "symbol": "REALTOKEN-S-12410-HAMBURG-ST-DETROIT-MI",
     "name": "RealToken S 12410 Hamburg St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x6bd094e39d0b839689e2f900bfdd180b10df62d7.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x6bd094e39d0b839689e2f900bfdd180b10df62d7",
@@ -14767,7 +14226,7 @@
   {
     "symbol": "REALTOKEN-S-15379-PATTON-ST-DETROIT-MI",
     "name": "RealToken S 15379 Patton St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x81cea1a7c83d5caed483dd4da59bfe98f24ef687.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x81cea1a7c83d5caed483dd4da59bfe98f24ef687",
@@ -14779,7 +14238,7 @@
   {
     "symbol": "REALTOKEN-S-14884-WARD-AVE-DETROIT-MI",
     "name": "RealToken S 14884 Ward Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0x328249efca026ae8596e9afe913c5f8775ef60ae.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x328249efca026ae8596e9afe913c5f8775ef60ae",
@@ -14791,7 +14250,7 @@
   {
     "symbol": "REALTOKEN-S-116-MONTEREY-ST-HIGHLAND-PARK-MI",
     "name": "RealToken S 116 Monterey St Highland Park MI",
-    "logo": "https://tokens.1inch.io/0x46b00b4bf04c2c94ae67576004a3a247b9400ade.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x46b00b4bf04c2c94ae67576004a3a247b9400ade",
@@ -14803,7 +14262,7 @@
   {
     "symbol": "REALTOKEN-S-14839-WISCONSIN-ST-DETROIT-MI",
     "name": "RealToken S 14839 Wisconsin St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x10c2c7a5342988818eb6726fae369299d8fb6328.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x10c2c7a5342988818eb6726fae369299d8fb6328",
@@ -14815,7 +14274,7 @@
   {
     "symbol": "REALTOKEN-S-14215-HAMPSHIRE-ST-DETROIT-MI",
     "name": "RealToken S 14215 Hampshire St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x0c12f2b2c3ad5150d344b6d3abb901b4795d72d9.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x0c12f2b2c3ad5150d344b6d3abb901b4795d72d9",
@@ -14827,7 +14286,7 @@
   {
     "symbol": "REALTOKEN-S-15841-CORAM-ST-DETROIT-MI",
     "name": "RealToken S 15841 Coram St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x8c3761c5d489ee5a5c30f874b5220c769a7c5a16.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x8c3761c5d489ee5a5c30f874b5220c769a7c5a16",
@@ -14839,7 +14298,7 @@
   {
     "symbol": "REALTOKEN-S-11758-CHRISTY-ST-DETROIT-MI",
     "name": "RealToken S 11758 Christy St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xd3f7130940c7746298d9778f79e7bba4c552f176.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xd3f7130940c7746298d9778f79e7bba4c552f176",
@@ -14851,7 +14310,7 @@
   {
     "symbol": "REALTOKEN-S-15208-BRINGARD-DR-DETROIT-MI",
     "name": "RealToken S 15208 Bringard Dr Detroit MI",
-    "logo": "https://tokens.1inch.io/0xef2b6234e376c3b152c5febe47e1ca3c73cdaa9f.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xef2b6234e376c3b152c5febe47e1ca3c73cdaa9f",
@@ -14863,7 +14322,7 @@
   {
     "symbol": "REALTOKEN-S-882-884-PINGREE-ST-DETROIT-MI",
     "name": "RealToken S 882-884 Pingree St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xa5c16ae5fd75f4f079f3e33f0124899bacf567f9.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xa5c16ae5fd75f4f079f3e33f0124899bacf567f9",
@@ -14875,7 +14334,7 @@
   {
     "symbol": "REALTOKEN-S-19154-SHERWOOD-ST-DETROIT-MI",
     "name": "RealToken S 19154 Sherwood St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x1d5da20522b1b94e3b7d983c954075da429bbae1.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x1d5da20522b1b94e3b7d983c954075da429bbae1",
@@ -14887,7 +14346,7 @@
   {
     "symbol": "REALTOKEN-S-14432-WILSHIRE-DR-DETROIT-MI",
     "name": "RealToken S 14432 Wilshire Dr Detroit MI",
-    "logo": "https://tokens.1inch.io/0x23bb1314b73aaaa888800b177ad5d9719a51195b.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x23bb1314b73aaaa888800b177ad5d9719a51195b",
@@ -14899,7 +14358,7 @@
   {
     "symbol": "REALTOKEN-S-20418-ANDOVER-ST-DETROIT-MI",
     "name": "RealToken S 20418 Andover St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xc363ea8a468b3970ef93140d5d4ad9d124178f6e.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xc363ea8a468b3970ef93140d5d4ad9d124178f6e",
@@ -14911,7 +14370,7 @@
   {
     "symbol": "REALTOKEN-S-18949-FENMORE-ST-DETROIT-MI",
     "name": "RealToken S 18949 Fenmore St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x7389ef988fae6b3bcf520000c535e1e2d94c5427.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x7389ef988fae6b3bcf520000c535e1e2d94c5427",
@@ -14923,7 +14382,7 @@
   {
     "symbol": "REALTOKEN-S-14263-OHIO-ST-DETROIT-MI",
     "name": "RealToken S 14263 Ohio St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xd1095b31f41d3bdbb66a52b94a737b2d7ac17635.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xd1095b31f41d3bdbb66a52b94a737b2d7ac17635",
@@ -14935,7 +14394,7 @@
   {
     "symbol": "REALTOKEN-S-12747-12749-NASHVILLE-ST-DETROIT-MI",
     "name": "RealToken S 12747-12749 Nashville St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xa8ab830bfd0d91bc017cdec98a2a198b9938ea8d.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xa8ab830bfd0d91bc017cdec98a2a198b9938ea8d",
@@ -14947,7 +14406,7 @@
   {
     "symbol": "REALTOKEN-S-2550-GREENWAY-ST-TOLEDO-OH",
     "name": "RealToken S 2550 Greenway St Toledo OH",
-    "logo": "https://tokens.1inch.io/0xafd76591d02462cce1aa5b6c6430854aa9a17e56.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xafd76591d02462cce1aa5b6c6430854aa9a17e56",
@@ -14959,7 +14418,7 @@
   {
     "symbol": "REALTOKEN-S-8531-INTERVALE-ST-DETROIT-MI",
     "name": "RealToken S 8531 Inervale St Detroit MI ",
-    "logo": "https://tokens.1inch.io/0x690602eb0bf5607e3586f1d3e4c4601ef6e4a89f.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x690602eb0bf5607e3586f1d3e4c4601ef6e4a89f",
@@ -14971,7 +14430,7 @@
   {
     "symbol": "REALTOKEN-S-20552-WALTHAM-ST-DETROIT-MI",
     "name": "RealToken S 20552 Waltham St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x185e39d860cf86fbecf4a7c341bd1545ea3a41b9.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x185e39d860cf86fbecf4a7c341bd1545ea3a41b9",
@@ -14983,7 +14442,7 @@
   {
     "symbol": "REALTOKEN-S-17616-BELAND-ST-DETROIT-MI",
     "name": "RealToken S 17616 Beland St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x24a2558d0b0b2247a64eab7cf09d7244cb4c9597.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x24a2558d0b0b2247a64eab7cf09d7244cb4c9597",
@@ -14995,7 +14454,7 @@
   {
     "symbol": "REALTOKEN-S-2950-2952-MONTEREY-ST-DETROIT-MI",
     "name": "RealToken S 2950-2952 Monterey St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xcd7dc5e034b631331bc0cfc4ea71d2dc7b53c338.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xcd7dc5e034b631331bc0cfc4ea71d2dc7b53c338",
@@ -15007,7 +14466,7 @@
   {
     "symbol": "REALTOKEN-S-8366-SCHAEFER-HWY-DETROIT-MI",
     "name": "RealToken S 8366 Schaefer Hwy Detroit MI",
-    "logo": "https://tokens.1inch.io/0x2360fca74ed948ff4f962e369080a64a40a1300d.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x2360fca74ed948ff4f962e369080a64a40a1300d",
@@ -15019,7 +14478,7 @@
   {
     "symbol": "REALTOKEN-S-13041-HAYES-ST-DETROIT-MI",
     "name": "RealToken S 13041 Hayes St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xc7785a2575606d444cefbc8a22591600ae5aa9b4.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xc7785a2575606d444cefbc8a22591600ae5aa9b4",
@@ -15031,7 +14490,7 @@
   {
     "symbol": "REALTOKEN-S-128-E.WEBER-ST-TOLEDO-OH",
     "name": "RealToken S 128 E Weber St Toledo OH",
-    "logo": "https://tokens.1inch.io/0x5162d60b699a44b9f09b5fbfd8e6343cde9d7b22.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x5162d60b699a44b9f09b5fbfd8e6343cde9d7b22",
@@ -15043,7 +14502,7 @@
   {
     "symbol": "REALTOKEN-S-601-MILTON-ST-TOLEDO-OH",
     "name": "RealToken S 601 Milton St Toledo OH",
-    "logo": "https://tokens.1inch.io/0x2b683f8cc61de593f089bdddc01431c0d7ca2ee2.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x2b683f8cc61de593f089bdddc01431c0d7ca2ee2",
@@ -15055,7 +14514,7 @@
   {
     "symbol": "REALTOKEN-S-1204-E-MANHATTAN-BLVD-TOLEDO-OH",
     "name": "RealToken S 1204 E Manhattan Blvd Toledo OH",
-    "logo": "https://tokens.1inch.io/0x83b16b1dcaaeb59caa13b96da260d8b15671822a.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x83b16b1dcaaeb59caa13b96da260d8b15671822a",
@@ -15067,7 +14526,7 @@
   {
     "symbol": "REALTOKEN-S-1612-DENVER-AVE-TOLEDO-OH",
     "name": "RealToken S 1612 Denver Ave Toledo OH",
-    "logo": "https://tokens.1inch.io/0xde9122799c313d5cc5c4385984156ad068cde331.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xde9122799c313d5cc5c4385984156ad068cde331",
@@ -15079,7 +14538,7 @@
   {
     "symbol": "REALTOKEN-S-19962-WALTHAM-ST-DETROIT-MI",
     "name": "RealToken S 19962 Waltham St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x9d19b4d771ef67ea1da64699a388133b44eb434c.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x9d19b4d771ef67ea1da64699a388133b44eb434c",
@@ -15091,7 +14550,7 @@
   {
     "symbol": "REALTOKEN-S-338-WILLARD-ST-TOLEDO-OH",
     "name": "RealToken S 338 Willard St Toledo OH",
-    "logo": "https://tokens.1inch.io/0x4505f5bff6bada5a20b1a008c6db3cd9545027a4.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x4505f5bff6bada5a20b1a008c6db3cd9545027a4",
@@ -15103,7 +14562,7 @@
   {
     "symbol": "REALTOKEN-S-20039-BLOOM-ST-DETROIT-MI",
     "name": "RealToken S 20039 Bloom St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x79e18a519d60c2ef7e18aac08d60ba0d4eee2511.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x79e18a519d60c2ef7e18aac08d60ba0d4eee2511",
@@ -15115,7 +14574,7 @@
   {
     "symbol": "REALTOKEN-S-9171-WHITTIER-AVE-DETROIT-MI",
     "name": "RealToken S 9171 Whittier Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0x18e55343ecfc135e21916fcdb9788accb5b53caf.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x18e55343ecfc135e21916fcdb9788accb5b53caf",
@@ -15127,7 +14586,7 @@
   {
     "symbol": "REALTOKEN-S-8060-DREAMSICLE-DR-KISSIMMEE-FL",
     "name": "RealToken S 8060 Dreamsicle Dr Kissimmee FL",
-    "logo": "https://tokens.1inch.io/0xb2960e73b260812e4326723c7136e7b1988a036a.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xb2960e73b260812e4326723c7136e7b1988a036a",
@@ -15139,7 +14598,7 @@
   {
     "symbol": "REALTOKEN-S-19144-RIOPELLE-ST-HIGHLAND-PARK-MI",
     "name": "RealToken S 19144 Riopelle St Highland Park MI",
-    "logo": "https://tokens.1inch.io/0xe23a5fc3502976de653cb64e5c27dc01d700db36.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xe23a5fc3502976de653cb64e5c27dc01d700db36",
@@ -15151,7 +14610,7 @@
   {
     "symbol": "REALTOKEN-S-18668-SAINT-LOUIS-ST-DETROIT-MI",
     "name": "RealToken S 18668 Saint Louis St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x945d833927380e25f402350667c6cd2d2615e7c2.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x945d833927380e25f402350667c6cd2d2615e7c2",
@@ -15163,7 +14622,7 @@
   {
     "symbol": "REALTOKEN-S-12779-STRATHMOOR-ST-DETROIT-MI",
     "name": "RealToken S 12779 Strathmoor St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x96510c0bafc5b3305d2b468063f7b3f8e8389802.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x96510c0bafc5b3305d2b468063f7b3f8e8389802",
@@ -15175,7 +14634,7 @@
   {
     "symbol": "REALTOKEN-S-5846-CRANE-ST-DETROIT-MI",
     "name": "RealToken S 5846 Crane St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x062f0732a7daca652c3bd7d8ad51c3a920b25962.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x062f0732a7daca652c3bd7d8ad51c3a920b25962",
@@ -15187,7 +14646,7 @@
   {
     "symbol": "REALTOKEN-S-2661-2663-CORTLAND-ST-DETROIT-MI",
     "name": "RealToken S 2661-2663 Cortland St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x5e29f1b62c15658e76671e199a7f16afddc9ad76.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x5e29f1b62c15658e76671e199a7f16afddc9ad76",
@@ -15199,7 +14658,7 @@
   {
     "symbol": "REALTOKEN-S-20160-CONANT-ST-DETROIT-MI",
     "name": "RealToken S 20160 Conant St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x529ff4d9b07acd6366d0c3eb077ebaa2b06e71c4.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x529ff4d9b07acd6366d0c3eb077ebaa2b06e71c4",
@@ -15211,7 +14670,7 @@
   {
     "symbol": "REALTOKEN-S-12730-WADE-ST-DETROIT-MI",
     "name": "RealToken S 12730 Wade St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x3d2129d9ceed93992cea3ee7d8e44754faedc922.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x3d2129d9ceed93992cea3ee7d8e44754faedc922",
@@ -15223,7 +14682,7 @@
   {
     "symbol": "REALTOKEN-S-5517-5519-ELMHURST-ST-DETROIT-MI",
     "name": "RealToken S 5517-5519 Elmhurst St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x6133a54e3895f478ee6aae582d7dbc7bbb086b7d.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x6133a54e3895f478ee6aae582d7dbc7bbb086b7d",
@@ -15235,7 +14694,7 @@
   {
     "symbol": "REALTOKEN-S-8017-8019-S-PAULINA-ST-CHICAGO-IL",
     "name": "RealToken S 8017-8019 S Paulina St Chicago IL",
-    "logo": "https://tokens.1inch.io/0x8c60eccab34ffce7b54e985fc8b7ba280b45701d.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x8c60eccab34ffce7b54e985fc8b7ba280b45701d",
@@ -15247,7 +14706,7 @@
   {
     "symbol": "REALTOKEN-S-2626-2638-WREFORD-ST-DETROIT-MI",
     "name": "RealToken S 2626-2638 Wreford St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xb890b3cc0f2874b15b0dbf6377d39c106ca29fbf.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xb890b3cc0f2874b15b0dbf6377d39c106ca29fbf",
@@ -15259,7 +14718,7 @@
   {
     "symbol": "REALTOKEN-S-4000-TAYLOR-ST-DETROIT-MI",
     "name": "RealToken S 4000 Taylor St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x934e4bed6f85295581697002fadd816b07c03406.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x934e4bed6f85295581697002fadd816b07c03406",
@@ -15271,7 +14730,7 @@
   {
     "symbol": "REALTOKEN-S-9135-YORKSHIRE-RD-DETROIT-MI",
     "name": "RealToken S 9135 Yorkshire Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0x744ca59499be33f6a112eed3acca533954da1050.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x744ca59499be33f6a112eed3acca533954da1050",
@@ -15283,7 +14742,7 @@
   {
     "symbol": "REALTOKEN-S-7337-S-YALE-AVE-CHICAGO-IL",
     "name": "RealToken S 7337 S Yale Ave Chicago IL",
-    "logo": "https://tokens.1inch.io/0x20170890ef210e402578f97d6b179784c45f3a1b.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x20170890ef210e402578f97d6b179784c45f3a1b",
@@ -15295,7 +14754,7 @@
   {
     "symbol": "REALTOKEN-S-11750-MORANG-AVE-DETROIT-MI",
     "name": "RealToken S 11750 Morang Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0xccca5323052435aa4b0ec94c1d0255f17e4f495c.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xccca5323052435aa4b0ec94c1d0255f17e4f495c",
@@ -15307,7 +14766,7 @@
   {
     "symbol": "REALTOKEN-S-15440-15444-ST-CLAIR-AVE-CLEVELAND-OH",
     "name": "RealToken S 15440-15444 St Clair Ave Cleveland OH",
-    "logo": "https://tokens.1inch.io/0x306044777e68ec5c323889468baacba6d2705994.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x306044777e68ec5c323889468baacba6d2705994",
@@ -15319,7 +14778,7 @@
   {
     "symbol": "REALTOKEN-S-13245-MONICA-ST-DETROIT-MI",
     "name": "RealToken S 13245 Monica St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x052ad78e3aa0b0f2d3912fd3b50a9a289cf2f7aa.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x052ad78e3aa0b0f2d3912fd3b50a9a289cf2f7aa",
@@ -15331,7 +14790,7 @@
   {
     "symbol": "REALTOKEN-S-1907-OTTAWA-DR-TOLEDO-OH",
     "name": "RealToken S 1907 Ottawa Dr Toledo OH",
-    "logo": "https://tokens.1inch.io/0xa5fd99f142ebf4343974137a3200e5197bf0c81b.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xa5fd99f142ebf4343974137a3200e5197bf0c81b",
@@ -15343,7 +14802,7 @@
   {
     "symbol": "REALTOKEN-S-425-STEWARD-AVE-JACKSON-MI",
     "name": "RealToken S 425 Steward Ave Jackson MI",
-    "logo": "https://tokens.1inch.io/0x8a25f83819fda66ff0fc6567c8327a5f154c2ec6.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x8a25f83819fda66ff0fc6567c8327a5f154c2ec6",
@@ -15355,7 +14814,7 @@
   {
     "symbol": "REALTOKEN-S-10518-WOODLAND-AVE-CLEVELAND-OH",
     "name": "RealToken S 10518 Woodland Ave Cleveland OH",
-    "logo": "https://tokens.1inch.io/0xbdc1f8ccd117fe4e34f6c78f5293cd126b0c0474.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xbdc1f8ccd117fe4e34f6c78f5293cd126b0c0474",
@@ -15367,7 +14826,7 @@
   {
     "symbol": "REALTOKEN-S-3323-WAVERLY-ST-DETROIT-MI",
     "name": "RealToken S 3323 Waverly St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x009bab289f104699ae87e576294d18ed505faa61.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x009bab289f104699ae87e576294d18ed505faa61",
@@ -15379,7 +14838,7 @@
   {
     "symbol": "REALTOKEN-S-8065-LOST-SHAKER-LN-KISSIMMEE-FL",
     "name": "RealToken S 8065 Lost Shaker Ln Kissimmee FL",
-    "logo": "https://tokens.1inch.io/0xe447e8ec034c9100c1ff9bc401b5cd2fe15c9dcc.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xe447e8ec034c9100c1ff9bc401b5cd2fe15c9dcc",
@@ -15391,7 +14850,7 @@
   {
     "symbol": "REALTOKEN-S-19268-EUREKA-ST-DETROIT-MI",
     "name": "RealToken S 19268 Eureka St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x062c208073c9b439d1973262cfe0ddd88f38afa8.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x062c208073c9b439d1973262cfe0ddd88f38afa8",
@@ -15403,7 +14862,7 @@
   {
     "symbol": "REALTOKEN-S-1389-BIRD-AVE-BIRMINGHAM-MI",
     "name": "RealToken S 1389 Bird Ave Birmingham MI",
-    "logo": "https://tokens.1inch.io/0x2fb7eeeece8498af2bf5b00ea29ca03005c35956.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x2fb7eeeece8498af2bf5b00ea29ca03005c35956",
@@ -15415,7 +14874,7 @@
   {
     "symbol": "REALTOKEN-S-3747-SCOVEL-PL-DETROIT-MI",
     "name": "RealToken S 3747 Scovel Pl Detroit MI",
-    "logo": "https://tokens.1inch.io/0xcfe61eff2cde5c5885ba3a649ab092f56bd2830f.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xcfe61eff2cde5c5885ba3a649ab092f56bd2830f",
@@ -15427,7 +14886,7 @@
   {
     "symbol": "REALTOKEN-S-16767-GREENFIELD-RD-DETROIT-MI",
     "name": "RealToken S 16767 Greenfield Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0xa6004ca1fab428152f27135355f21d6bcdf355bd.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xa6004ca1fab428152f27135355f21d6bcdf355bd",
@@ -15439,7 +14898,7 @@
   {
     "symbol": "REALTOKEN-S-9151-WHITTIER-AVE-DETROIT-MI",
     "name": "RealToken S 9151 Whittier Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0x964ee9e5d9d8abfc768f8d860cc6c33e75d37112.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x964ee9e5d9d8abfc768f8d860cc6c33e75d37112",
@@ -15451,7 +14910,7 @@
   {
     "symbol": "REALTOKEN-S-10435-10445-CADIEUX-RD-DETROIT-MI",
     "name": "RealToken S 10435-10445 Cadieux Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0x0d5d0b74c690170a82bf52e5d16388fc4fa29082.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x0d5d0b74c690170a82bf52e5d16388fc4fa29082",
@@ -15463,7 +14922,7 @@
   {
     "symbol": "REALTOKEN-S-212-N-PARK-AVE-JACKSON-MI",
     "name": "RealToken S 212 N Park Ave Jackson MI",
-    "logo": "https://tokens.1inch.io/0xa1bbc683d5f401c3969469c77a3aa1dd3a0ee016.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xa1bbc683d5f401c3969469c77a3aa1dd3a0ee016",
@@ -15475,7 +14934,7 @@
   {
     "symbol": "REALTOKEN-S-10030-CADIEUX-RD-DETROIT-MI",
     "name": "RealToken S 10030 Cadieux Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0xdf7a80778a8be812e654291ffab21d61e9c21323.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xdf7a80778a8be812e654291ffab21d61e9c21323",
@@ -15487,7 +14946,7 @@
   {
     "symbol": "REALTOKEN-S-3344-E-140TH-ST-CLEVELAND-OH",
     "name": "RealToken S 3344 E 140th St Cleveland OH",
-    "logo": "https://tokens.1inch.io/0x2e1a7d86e4591ebe5662ce6b5e3601f19a626c22.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x2e1a7d86e4591ebe5662ce6b5e3601f19a626c22",
@@ -15499,7 +14958,7 @@
   {
     "symbol": "REALTOKEN-S-16851-16881-GREENFIELD-RD-DETROIT-MI",
     "name": "RealToken S 16851-16881 Greenfield Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0x960e61f5c4107d71bd8936b010416738c250f91c.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x960e61f5c4107d71bd8936b010416738c250f91c",
@@ -15511,7 +14970,7 @@
   {
     "symbol": "REALTOKEN-S-1354-W-64TH-ST-CHICAGO-IL",
     "name": "RealToken S 1354 W 64th St Chicago IL",
-    "logo": "https://tokens.1inch.io/0x1707a9bad232d728afded75faced38ec90eaa41e.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x1707a9bad232d728afded75faced38ec90eaa41e",
@@ -15523,7 +14982,7 @@
   {
     "symbol": "REALTOKEN-S-10411-10421-CADIEUX-RD-DETROIT-MI",
     "name": "RealToken S 10411-10421 Cadieux Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0x07da3cdae2396aa826387a48deba5868d7deb7bc.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x07da3cdae2396aa826387a48deba5868d7deb7bc",
@@ -15535,7 +14994,7 @@
   {
     "symbol": "REALTOKEN-S-16007-NELACREST-RD-EAST-CLEVELAND-OH",
     "name": "RealToken S 16007 Nelacrest Rd East Cleveland OH",
-    "logo": "https://tokens.1inch.io/0xf13d215776dac65c9c1e80d8f3daf6d91cc062d5.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xf13d215776dac65c9c1e80d8f3daf6d91cc062d5",
@@ -15547,7 +15006,7 @@
   {
     "symbol": "REALTOKEN-S-4342-4344-CORTLAND-ST-DETROIT-MI",
     "name": "RealToken S 4342-4344 Cortland St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xee2dacc1e9264cbcb19c46863373fbff4ba7a9bd.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xee2dacc1e9264cbcb19c46863373fbff4ba7a9bd",
@@ -15559,7 +15018,7 @@
   {
     "symbol": "REALTOKEN-S-19750-MARX-ST-HIGHLAND-PARK-MI",
     "name": "RealToken S 19750 Marx St Highland Park MI",
-    "logo": "https://tokens.1inch.io/0x5d0436f003aef56990194f79a242bc185843aea5.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x5d0436f003aef56990194f79a242bc185843aea5",
@@ -15571,7 +15030,7 @@
   {
     "symbol": "REALTOKEN-S-13835-LA-SALLE-BLVD-DETROIT-MI",
     "name": "RealToken S 13835 La Salle Blvd Detroit MI",
-    "logo": "https://tokens.1inch.io/0x5d9eb5fc910176b08efa5f8d13812b85fdf3394b.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x5d9eb5fc910176b08efa5f8d13812b85fdf3394b",
@@ -15583,7 +15042,7 @@
   {
     "symbol": "REALTOKEN-S-19751-MARX-ST-HIGHLAND-PARK-MI",
     "name": "RealToken S 19751 Marx St Highland Park MI",
-    "logo": "https://tokens.1inch.io/0xac0d5dbfed881b3ffaebc7152bc2bc23464fe0cc.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xac0d5dbfed881b3ffaebc7152bc2bc23464fe0cc",
@@ -15595,7 +15054,7 @@
   {
     "symbol": "REALTOKEN-S-1610-E-STATE-FAIR-AVE-DETROIT-MI",
     "name": "RealToken S 1610 E State Fair Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0xd88e8873e90f734c9d3e3519e9e87345478c1df2.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xd88e8873e90f734c9d3e3519e9e87345478c1df2",
@@ -15607,7 +15066,7 @@
   {
     "symbol": "REALTOKEN-S-1630-E-STATE-FAIR-AVE-DETROIT-MI",
     "name": "RealToken S 1630 E State Fair Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0xe919df5f4eff1e6e6c6fe7c82471a5e6ce3437f1.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xe919df5f4eff1e6e6c6fe7c82471a5e6ce3437f1",
@@ -15619,7 +15078,7 @@
   {
     "symbol": "REALTOKEN-S-2703-2705-W-GRAND-ST-DETROIT-MI",
     "name": "RealToken S 2703-2705 W Grand St Detroit MI ",
-    "logo": "https://tokens.1inch.io/0x994c698175e5dbe405a46df94fbd54999a3676c2.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x994c698175e5dbe405a46df94fbd54999a3676c2",
@@ -15631,7 +15090,7 @@
   {
     "symbol": "REALTOKEN-S-9415-9417-RAVENSWOOD-ST-DETROIT-MI",
     "name": "RealToken S 9415-9417 Ravenswood St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x65d81bf81a65b177012b323f14970071c5099226.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x65d81bf81a65b177012b323f14970071c5099226",
@@ -15643,7 +15102,7 @@
   {
     "symbol": "REALTOKEN-S-7519-7521-WYKES-ST-DETROIT-MI",
     "name": "RealToken S 7519-7521 Wykes St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xc8ed28ce508811216030b96e2dc70883abad5408.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xc8ed28ce508811216030b96e2dc70883abad5408",
@@ -15655,7 +15114,7 @@
   {
     "symbol": "REALTOKEN-S-18980-FENTON-ST-DETROIT-MI",
     "name": "RealToken S 18980 Fenton St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x3839ab8550a64940964e0ecb02ed301005a96ffc.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x3839ab8550a64940964e0ecb02ed301005a96ffc",
@@ -15667,7 +15126,7 @@
   {
     "symbol": "REALTOKEN-S-1900-FENTON-ST-DETROIT-MI",
     "name": "RealToken S 19000 Fenton St Detroit M",
-    "logo": "https://tokens.1inch.io/0xf7412e264fa85ae5e79ac3a4b64ce4669e32b98f.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xf7412e264fa85ae5e79ac3a4b64ce4669e32b98f",
@@ -15679,7 +15138,7 @@
   {
     "symbol": "REALTOKEN-S-19041-LENORE-AVE-DETROIT-MI",
     "name": "RealToken S 19041 Lenore Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0xafa816f7fff6f252e5cdbd40b80d9ef77b7e289b.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xafa816f7fff6f252e5cdbd40b80d9ef77b7e289b",
@@ -15691,7 +15150,7 @@
   {
     "symbol": "REALTOKEN-S-3310-3312-STURTEVANT-ST-DETROIT-MI",
     "name": "RealToken S 3310-3312 Sturtevant St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x2089b1b815a2fd0187a48a1c66c511da828a8128.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x2089b1b815a2fd0187a48a1c66c511da828a8128",
@@ -15703,7 +15162,7 @@
   {
     "symbol": "REALTOKEN-S-10040-CADIEUX-RD-DETROIT-MI",
     "name": "RealToken S 10040 Cadieux Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0xf793d1ba72e2914525205ca592dec2142e700cb4.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xf793d1ba72e2914525205ca592dec2142e700cb4",
@@ -15715,7 +15174,7 @@
   {
     "symbol": "REALTOKEN-S-9795-9797-CHENLOT-ST-DETROIT-MI",
     "name": "RealToken S 9795-9797 Chenlot St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xef0c14c5d7da4d0447c28da7a9c8145d0a5a6f61.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xef0c14c5d7da4d0447c28da7a9c8145d0a5a6f61",
@@ -15727,7 +15186,7 @@
   {
     "symbol": "REALTOKEN-S-324-PIPER-BLVD-DETROIT-MI",
     "name": "RealToken S 324 Piper Blvd Detroit MI",
-    "logo": "https://tokens.1inch.io/0x03cbe3dda83908ad48643d6a1b5b13d11acaf845.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x03cbe3dda83908ad48643d6a1b5b13d11acaf845",
@@ -15739,7 +15198,7 @@
   {
     "symbol": "REALTOKEN-S-2911-STURTEVANT-ST-DETROIT-MI",
     "name": "RealToken S 2911 Sturtevant St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x7a684f6d9a34175d642eedb31fa545604d8d3acf.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x7a684f6d9a34175d642eedb31fa545604d8d3acf",
@@ -15751,7 +15210,7 @@
   {
     "symbol": "REALTOKEN-S-16085-E-SEVEN-MILE-DETROIT-MI",
     "name": "RealToken S 16085 E Seven Mile Detroit MI",
-    "logo": "https://tokens.1inch.io/0xe2fbdeadc82c71c1b8bff9ca4f9e7666224a362c.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xe2fbdeadc82c71c1b8bff9ca4f9e7666224a362c",
@@ -15763,7 +15222,7 @@
   {
     "symbol": "REALTOKEN-S-14409-LINNHURST-ST-DETROIT-MI",
     "name": "RealToken S 14409 Linnhurst St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x5b571d103e670848ce8cde37f93821c9c93c7c43.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x5b571d103e670848ce8cde37f93821c9c93c7c43",
@@ -15775,7 +15234,7 @@
   {
     "symbol": "REALTOKEN-S-10147-SOMERSET-AVE-DETROIT-MI",
     "name": "RealToken S 10147 Somerset Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0x4b293baa4703c5e7d480498bf3ccd8dc3d1297cd.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x4b293baa4703c5e7d480498bf3ccd8dc3d1297cd",
@@ -15787,7 +15246,7 @@
   {
     "symbol": "REALTOKEN-S-16520-ILENE-ST-DETROIT-MI",
     "name": "RealToken S 16520 Ilene St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x3113bb5e8bf9dc44ecdb111e5c4ab0818015a2e1.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x3113bb5e8bf9dc44ecdb111e5c4ab0818015a2e1",
@@ -15799,7 +15258,7 @@
   {
     "symbol": "REALTOKEN-S-20257-MONICA-ST-DETROIT-MI",
     "name": "RealToken S 20257 Monica St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x6f5258feb5862b661829315841b0718d6e56ca2c.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x6f5258feb5862b661829315841b0718d6e56ca2c",
@@ -15811,7 +15270,7 @@
   {
     "symbol": "REALTOKEN-S-11898-LAING-ST-DETROIT-MI",
     "name": "RealToken S 11898 Laing St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xc1c1031e4a44b98707203480029e6576cb3267e3.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xc1c1031e4a44b98707203480029e6576cb3267e3",
@@ -15823,7 +15282,7 @@
   {
     "symbol": "REALTOKEN-S-616-E-131ST-ST-CLEVELAND-OH",
     "name": "RealToken S 616 E 131st St Cleveland OH",
-    "logo": "https://tokens.1inch.io/0x19a6a39b746c4647a01a3bf80751155969ddb15a.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x19a6a39b746c4647a01a3bf80751155969ddb15a",
@@ -15835,7 +15294,7 @@
   {
     "symbol": "REALTOKEN-S-10163-DUPREY-ST-DETROIT-MI",
     "name": "RealToken S 10163 Duprey St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x4b9c173c81ea2b6804b99ac91846c62bdb74fe72.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x4b9c173c81ea2b6804b99ac91846c62bdb74fe72",
@@ -15847,7 +15306,7 @@
   {
     "symbol": "REALTOKEN-S-3510-EWALD-CIR-DETROIT-MI",
     "name": "RealToken S 3510 Ewald Cir Detroit MI",
-    "logo": "https://tokens.1inch.io/0x7909090541d646a262a3062639298772a2c79daa.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x7909090541d646a262a3062639298772a2c79daa",
@@ -15859,7 +15318,7 @@
   {
     "symbol": "REALTOKEN-S-11965-LAKEPOINTE-ST-DETROIT-MI",
     "name": "RealToken S 11965 Lakepointe St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x304bee450c2d116696d8b442981e7a300dfdf1cb.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x304bee450c2d116696d8b442981e7a300dfdf1cb",
@@ -15871,7 +15330,7 @@
   {
     "symbol": "REALTOKEN-S-10645-STRATMAN-ST-DETROIT-MI",
     "name": "RealToken S 10645 Stratman St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x64d69276cc78adbb6d5fea95d3e6370b4844dc76.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x64d69276cc78adbb6d5fea95d3e6370b4844dc76",
@@ -15883,7 +15342,7 @@
   {
     "symbol": "REALTOKEN-S-618-E-79TH-ST-CHICAGO-IL",
     "name": "RealToken S 618 E 79th St Chicago IL",
-    "logo": "https://tokens.1inch.io/0xdaf6b273691372e4eb2fe353624f8f4f768c2099.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xdaf6b273691372e4eb2fe353624f8f4f768c2099",
@@ -15895,7 +15354,7 @@
   {
     "symbol": "REALTOKEN-S-9200-HARVARD-RD-DETROIT-MI",
     "name": "RealToken S 9200 Harvard Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0x53cebce6bd24f8e14da85ba0627a92336bd4f515.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x53cebce6bd24f8e14da85ba0627a92336bd4f515",
@@ -15907,7 +15366,7 @@
   {
     "symbol": "REALTOKEN-S-19391-GRANDVIEW-ST-DETROIT-MI",
     "name": "RealToken S 19391 Grandview St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xb80173756781960761aa59c9eeebe191f049f4c8.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xb80173756781960761aa59c9eeebe191f049f4c8",
@@ -15919,7 +15378,7 @@
   {
     "symbol": "REALTOKEN-S-17204-BRADFORD-AVE-DETROIT-MI",
     "name": "RealToken S 17204 Bradford Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0x0fd357ea71ad533c6b8a62520321ed286ed9a0c2.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x0fd357ea71ad533c6b8a62520321ed286ed9a0c2",
@@ -15931,7 +15390,7 @@
   {
     "symbol": "REALTOKEN-S-10703-MCKINNEY-ST-DETROIT-MI",
     "name": "RealToken S 10703 McKinney St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xa984e4c759bea433bef9239736d5f9a9af0e7389.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xa984e4c759bea433bef9239736d5f9a9af0e7389",
@@ -15943,7 +15402,7 @@
   {
     "symbol": "REALTOKEN-S-11117-WORDEN-ST-DETROIT-MI",
     "name": "RealToken S 11117 Worden St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xf549b95362e6062999bdfe6c61e75e4547b8116d.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xf549b95362e6062999bdfe6c61e75e4547b8116d",
@@ -15955,7 +15414,7 @@
   {
     "symbol": "REALTOKEN-S-22233-LYNDON-ST-DETROIT-MI",
     "name": "RealToken S 22233 Lyndon St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x034ecb6dc0608b73765f2965771a003d940ee8b2.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x034ecb6dc0608b73765f2965771a003d940ee8b2",
@@ -15967,7 +15426,7 @@
   {
     "symbol": "REALTOKEN-S-11217-BEACONSFIELD-ST-DETROIT-MI",
     "name": "RealToken S 11217 Beaconsfield St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xcaf963cd253cf81664ecbcad71d043c47edf77fb.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xcaf963cd253cf81664ecbcad71d043c47edf77fb",
@@ -15979,7 +15438,7 @@
   {
     "symbol": "REALTOKEN-S-9624-ABINGTON-AVE-DETROIT-MI",
     "name": "RealToken S 9624 Abington Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0xf98be7ddab511622b5de91039c48f1f2e37d0bc1.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xf98be7ddab511622b5de91039c48f1f2e37d0bc1",
@@ -15991,7 +15450,7 @@
   {
     "symbol": "REALTOKEN-S-11310-ABINGTON-AVE-DETROIT-MI",
     "name": "RealToken S 11310 Abington Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0x9abff92ddd896f3f7664ec232bb0a5db027d6724.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x9abff92ddd896f3f7664ec232bb0a5db027d6724",
@@ -16003,7 +15462,7 @@
   {
     "symbol": "REALTOKEN-S-14117-MANNING-ST-DETROIT-MI",
     "name": "RealToken S 14117 Manning St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x7dfeee178fc1f929a88ad69e4e8d493600dd26d0.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x7dfeee178fc1f929a88ad69e4e8d493600dd26d0",
@@ -16015,7 +15474,7 @@
   {
     "symbol": "REALTOKEN-S-9585-ABINGTON-AVE-DETROIT-MI",
     "name": "RealToken S 9585 Abington Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0x219c820c2d25d8937601d8713235b556c4a37f62.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x219c820c2d25d8937601d8713235b556c4a37f62",
@@ -16027,7 +15486,7 @@
   {
     "symbol": "REALTOKEN-S-14439-LONGVIEW-ST-DETROIT-MI",
     "name": "RealToken S 14439 Longview St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xbb32de53a057f29280ad889a92fe99d69d470ef0.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xbb32de53a057f29280ad889a92fe99d69d470ef0",
@@ -16039,7 +15498,7 @@
   {
     "symbol": "REALTOKEN-S-1418-W-MARQUETTE-RD-CHICAGO-IL",
     "name": "RealToken S 1418 W Marquette Rd Chicago IL",
-    "logo": "https://tokens.1inch.io/0xfc5073816fe9671859ef1e6936efd23bb7814274.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xfc5073816fe9671859ef1e6936efd23bb7814274",
@@ -16051,7 +15510,7 @@
   {
     "symbol": "REALTOKEN-S-14329-STRATHMOOR-ST-DETROIT-MI",
     "name": "RealToken S 14329 Strathmoor St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xe5b46b4c5c7f974e55ded0b0099c02774f0023c1.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xe5b46b4c5c7f974e55ded0b0099c02774f0023c1",
@@ -16063,7 +15522,7 @@
   {
     "symbol": "REALTOKEN-S-19535-FAIRPORT-ST-DETROIT-MI",
     "name": "RealToken S 19535 Fairport St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x3b22445411b429f665d12f7a55dd16dfac22c6ae.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x3b22445411b429f665d12f7a55dd16dfac22c6ae",
@@ -16075,7 +15534,7 @@
   {
     "symbol": "REALTOKEN-S-8056-E-HOLLYWOOD-ST-DETROIT-MI",
     "name": "RealToken S 8056 E Hollywood St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x7ad92301442b73bed8d9696d704ac24a0fef3b69.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x7ad92301442b73bed8d9696d704ac24a0fef3b69",
@@ -16087,7 +15546,7 @@
   {
     "symbol": "REALTOKEN-S-15240-EDMORE-DR-DETROIT-MI",
     "name": "RealToken S 15240 Edmore Dr Detroit MI",
-    "logo": "https://tokens.1inch.io/0x2f3640655d076b45d1fa10da0f6d880329c9d553.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x2f3640655d076b45d1fa10da0f6d880329c9d553",
@@ -16099,7 +15558,7 @@
   {
     "symbol": "REALTOKEN-S-14622-HUBBELL-AVE-DETROIT-MI",
     "name": "RealToken S 14622 Hubbell Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0xdcfe90e59b574839e028ec28e78018b84b6fcdab.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xdcfe90e59b574839e028ec28e78018b84b6fcdab",
@@ -16111,7 +15570,7 @@
   {
     "symbol": "REALTOKEN-S-8003-S-INGLESIDE-AVE-CHICAGO-IL",
     "name": "RealToken S 8003 S Ingleside Ave Chicago IL",
-    "logo": "https://tokens.1inch.io/0x27c30545dc2ba4b3bfdcb9f807a0214f4b06f034.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x27c30545dc2ba4b3bfdcb9f807a0214f4b06f034",
@@ -16123,7 +15582,7 @@
   {
     "symbol": "REALTOKEN-S-10099-GREENSBORO-ST-DETROIT-MI",
     "name": "RealToken S 10099 Greensboro St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x9ea9b45a500dd4346163ce7483dea2294ae88d1d.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x9ea9b45a500dd4346163ce7483dea2294ae88d1d",
@@ -16135,7 +15594,7 @@
   {
     "symbol": "REALTOKEN-S-15894-TACOMA-ST-DETROIT-MI",
     "name": "RealToken S 15894 Tacoma St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x7facb63afb928ac5a4650acc6eab701d7a8becb5.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x7facb63afb928ac5a4650acc6eab701d7a8becb5",
@@ -16147,7 +15606,7 @@
   {
     "symbol": "REALTOKEN-S-5760-LAKEPOINTE-ST-DETROIT-MI",
     "name": "RealToken S 5760 Lakepointe St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x43ab521302ff36039be6b425ddaea5ec30a0f8b5.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x43ab521302ff36039be6b425ddaea5ec30a0f8b5",
@@ -16159,7 +15618,7 @@
   {
     "symbol": "REALTOKEN-S-16810-BRINGARD-DR-DETROIT-MI",
     "name": "RealToken S 16810 Bringard Dr Detroit MI",
-    "logo": "https://tokens.1inch.io/0xa14d2507a2b96adc13cb19642802fd4eaf9a8a32.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xa14d2507a2b96adc13cb19642802fd4eaf9a8a32",
@@ -16171,7 +15630,7 @@
   {
     "symbol": "REALTOKEN-S-14511-HOUSTON-WHITTIER-ST-DETROIT-MI",
     "name": "RealToken S 14511 Houston-Whittier St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xa3bb6ea63c0fbf259e16ffe0586d84b2c83d7229.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xa3bb6ea63c0fbf259e16ffe0586d84b2c83d7229",
@@ -16183,7 +15642,7 @@
   {
     "symbol": "REALTOKEN-S-19530-HICKORY-ST-DETROIT-MI",
     "name": "RealToken S 19530 Hickory St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x10cde9d1e1a2d3b703f037a6788e04bc139cdf6f.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x10cde9d1e1a2d3b703f037a6788e04bc139cdf6f",
@@ -16195,7 +15654,7 @@
   {
     "symbol": "REALTOKEN-S-19539-HICKORY-ST-DETROIT-MI",
     "name": "RealToken S 19539 Hickory St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xea91a67a23943984bc8017e20c9fd2e40fd38c3d.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xea91a67a23943984bc8017e20c9fd2e40fd38c3d",
@@ -16207,7 +15666,7 @@
   {
     "symbol": "REALTOKEN-S-9201-LONGACRE-ST-DETROIT-MI",
     "name": "RealToken S 9201 Longacre St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x1106d8755ffafb1f1820b3668e354336d9085a12.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x1106d8755ffafb1f1820b3668e354336d9085a12",
@@ -16219,7 +15678,7 @@
   {
     "symbol": "REALTOKEN-S-13430-TACOMA-ST-DETROIT-MI",
     "name": "RealToken S 13430 Tacoma St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x7085c30b97f1af202f8dfec174f1e07d8f8f887d.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x7085c30b97f1af202f8dfec174f1e07d8f8f887d",
@@ -16231,7 +15690,7 @@
   {
     "symbol": "REALTOKEN-S-13445-TACOMA-ST-DETROIT-MI",
     "name": "RealToken S 13445 Tacoma St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x4c0c0fe9ca9ad4bc748eb8f596ddcfd8707a5cd4.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x4c0c0fe9ca9ad4bc748eb8f596ddcfd8707a5cd4",
@@ -16243,7 +15702,7 @@
   {
     "symbol": "REALTOKEN-S-13628-TACOMA-ST-DETROIT-MI",
     "name": "RealToken S 13628 Tacoma St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xe1c4610477da28f6852ced5666aa6f3ccbd73b02.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xe1c4610477da28f6852ced5666aa6f3ccbd73b02",
@@ -16255,7 +15714,7 @@
   {
     "symbol": "REALTOKEN-S-19400-HICKORY-ST-DETROIT-MI",
     "name": "RealToken S 19400 Hickory St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xbf1a3181167e4979fd121ef247d9af4fc884cc46.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xbf1a3181167e4979fd121ef247d9af4fc884cc46",
@@ -16267,7 +15726,7 @@
   {
     "symbol": "REALTOKEN-S-18515-18517-KELLY-RD-DETROIT-MI",
     "name": "RealToken S 18515-18517 Kelly Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0x940b60023484d593b8391521704abb063b5cccf0.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x940b60023484d593b8391521704abb063b5cccf0",
@@ -16279,7 +15738,7 @@
   {
     "symbol": "REALTOKEN-S-18527-18529-KELLY-RD-DETROIT-MI",
     "name": "RealToken S 18527-18529 Kelly Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0xd84d9c58a93e3d4b0acc5ab5a5aa5e2fa6b7ab75.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xd84d9c58a93e3d4b0acc5ab5a5aa5e2fa6b7ab75",
@@ -16291,7 +15750,7 @@
   {
     "symbol": "REALTOKEN-S-18608-18612-MOROSS-RD-DETROIT-MI",
     "name": "RealToken S 18608-18612 Moross Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0xa48ddf8d4f9b03c63d6340b5e0d2af293ab516ea.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xa48ddf8d4f9b03c63d6340b5e0d2af293ab516ea",
@@ -16303,7 +15762,7 @@
   {
     "symbol": "REALTOKEN-S-15611-E-SEVEN-MILE-RD-DETROIT-MI",
     "name": "RealToken S 15611 E Seven Mile Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0x2f4974a3be7355cf8915ab34099f35ed44293128.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x2f4974a3be7355cf8915ab34099f35ed44293128",
@@ -16315,7 +15774,7 @@
   {
     "symbol": "REALTOKEN-S-10610-BALFOUR-RD-DETROIT-MI",
     "name": "RealToken S 10610 Balfour Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0x2e1db155a7b812f3fcb0dbc8ed3164b4705213b4.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x2e1db155a7b812f3fcb0dbc8ed3164b4705213b4",
@@ -16327,7 +15786,7 @@
   {
     "symbol": "REALTOKEN-S-8809-BECKMAN-AVE-CLEVELAND-OH",
     "name": "RealToken S 8809 Beckman Ave Cleveland OH",
-    "logo": "https://tokens.1inch.io/0x2a7c9f7719367006e9bd20d0555025efb86d7d5d.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x2a7c9f7719367006e9bd20d0555025efb86d7d5d",
@@ -16339,7 +15798,7 @@
   {
     "symbol": "REALTOKEN-S-12318-IMPERIAL-AVE-CLEVELAND-OH",
     "name": "RealToken S 12318 Imperial Ave Cleveland OH",
-    "logo": "https://tokens.1inch.io/0x06cc12368fa6a3d4dc0872c60331156a21cdcc9c.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x06cc12368fa6a3d4dc0872c60331156a21cdcc9c",
@@ -16351,7 +15810,7 @@
   {
     "symbol": "REALTOKEN-S-22512-W-MCNICHOLS-RD-DETROIT-MI",
     "name": "RealToken S 22512 W McNichols Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0x06246100ba403608b98adfb006d82a7484f5d9ff.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x06246100ba403608b98adfb006d82a7484f5d9ff",
@@ -16363,7 +15822,7 @@
   {
     "symbol": "REALTOKEN-S-8744-HOMER-ST-DETROIT-MI",
     "name": "RealToken S 8744 Homer St Detroit MI",
-    "logo": "https://tokens.1inch.io/0x3c5654362fa005393ad9c793fe0fa74f0cd95bbb.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x3c5654362fa005393ad9c793fe0fa74f0cd95bbb",
@@ -16375,7 +15834,7 @@
   {
     "symbol": "REALTOKEN-S-13523-GLENSIDE-RD-CLEVELAND-OH",
     "name": "RealToken S 13523 Glenside Rd Cleveland OH",
-    "logo": "https://tokens.1inch.io/0x377d14927bbc274771daa9ffab0722935dafaffa.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x377d14927bbc274771daa9ffab0722935dafaffa",
@@ -16387,7 +15846,7 @@
   {
     "symbol": "REALTOKEN-S-14881-GREENFIELD-RD-DETROIT-MI",
     "name": "RealToken S 14881 Greenfield Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0xf3c4c10ab96f9b6d7719de63f4219f69078df976.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xf3c4c10ab96f9b6d7719de63f4219f69078df976",
@@ -16399,7 +15858,7 @@
   {
     "symbol": "REALTOKEN-S-11830-CAMDEN-AVE-DETROIT-MI",
     "name": "RealToken S 11830 Camden Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0xa12a334f563c1a9fef29cf11fac7e148fd54463b.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xa12a334f563c1a9fef29cf11fac7e148fd54463b",
@@ -16411,7 +15870,7 @@
   {
     "symbol": "REALTOKEN-S-14745-PLYMOUTH-RD-DETROIT-MI",
     "name": "RealToken S 14745 Plymouth Rd Detroit MI",
-    "logo": "https://tokens.1inch.io/0x9642a2379bc359c8b10ead2e06c4a4156bbb3f57.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x9642a2379bc359c8b10ead2e06c4a4156bbb3f57",
@@ -16423,7 +15882,7 @@
   {
     "symbol": "REALTOKEN-S-11701-MORANG-AVE-DETROIT-MI",
     "name": "RealToken S 11701 Morang Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0xedcddc374c78bb8596352a28faf1eba9874aa2e1.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xedcddc374c78bb8596352a28faf1eba9874aa2e1",
@@ -16435,7 +15894,7 @@
   {
     "symbol": "REALTOKEN-S-11845-CAMDEN-AVE-DETROIT-MI",
     "name": "RealToken S 11845 Camden Ave Detroit MI",
-    "logo": "https://tokens.1inch.io/0x4e2976a2fbaae5877a1272e57343460c25d9d408.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x4e2976a2fbaae5877a1272e57343460c25d9d408",
@@ -16447,7 +15906,7 @@
   {
     "symbol": "REALTOKEN-S-3588-OAKMAN-BLVD-DETROIT-MI",
     "name": "RealToken S 3588 Oakman Blvd Detroit MI",
-    "logo": "https://tokens.1inch.io/0x87b2fb660f790b936e42093036e0b519f0b50b24.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0x87b2fb660f790b936e42093036e0b519f0b50b24",
@@ -16459,7 +15918,7 @@
   {
     "symbol": "REALTOKEN-S-10862-MARNE-ST-DETROIT-MI",
     "name": "RealToken S 10862 Marne St Detroit MI",
-    "logo": "https://tokens.1inch.io/0xd79e63912dbeb409ea350138503a9eb29d73728f.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xd79e63912dbeb409ea350138503a9eb29d73728f",
@@ -16471,7 +15930,7 @@
   {
     "symbol": "REALTOKEN-S-10717-10719-BRYANT-AVE-CLEVELAND-OH",
     "name": "RealToken S 10717-10719 Bryant Ave Cleveland OH",
-    "logo": "https://tokens.1inch.io/0xbabc257b4958556bda696e7705cf535f400d8b09.png",
+    "logo": "https://tokens.1inch.io/0xe5f7ef61443fc36ae040650aa585b0395aef77c8.png",
     "platforms": [
       {
         "address": "0xbabc257b4958556bda696e7705cf535f400d8b09",
@@ -16748,24 +16207,24 @@
     ]
   },
   {
+    "symbol": "DFI_2",
+    "name": "DeFiChain Token",
+    "logo": "https://tokens.1inch.io/0x8fc8f8269ebca376d046ce292dc7eac40c8d358a.png",
+    "platforms": [
+      {
+        "address": "0x8fc8f8269ebca376d046ce292dc7eac40c8d358a",
+        "decimals": 8,
+        "platform": "eth"
+      }
+    ]
+  },
+  {
     "symbol": "BLOCKS",
     "name": "BLOCKS",
     "logo": "https://tokens.1inch.io/0x8a6d4c8735371ebaf8874fbd518b56edd66024eb.png",
     "platforms": [
       {
         "address": "0x8a6d4c8735371ebaf8874fbd518b56edd66024eb",
-        "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "DXP",
-    "name": "Dexpools Token",
-    "logo": "https://tokens.1inch.io/0x88aa4a6c5050b9a1b2aa7e34d0582025ca6ab745.png",
-    "platforms": [
-      {
-        "address": "0x88aa4a6c5050b9a1b2aa7e34d0582025ca6ab745",
         "decimals": 18,
         "platform": "eth"
       }
@@ -16848,18 +16307,6 @@
     "platforms": [
       {
         "address": "0x83249c6794bca5a77eb8c0af9f1a86e055459cea",
-        "decimals": 9,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "Ly",
-    "name": "Lilly Finance",
-    "logo": "https://tokens.1inch.io/0x8686525d6627a25c68de82c228448f43c97999f2.png",
-    "platforms": [
-      {
-        "address": "0x8686525d6627a25c68de82c228448f43c97999f2",
         "decimals": 9,
         "platform": "eth"
       }
@@ -17021,11 +16468,6 @@
         "address": "0x71ab77b7dbb4fa7e017bc15090b2163221420282",
         "decimals": 18,
         "platform": "eth"
-      },
-      {
-        "address": "0x5f4bde007dc06b867f86ebfe4802e34a1ffeed63",
-        "decimals": 18,
-        "platform": "bsc"
       }
     ]
   },
@@ -17073,18 +16515,6 @@
       {
         "address": "0x4236f8aaf2b1f3a28420eb15b8e0ddf63201a95e",
         "decimals": 18,
-        "platform": "eth"
-      }
-    ]
-  },
-  {
-    "symbol": "BC",
-    "name": "Bitcoin",
-    "logo": "https://tokens.1inch.io/0xe03b2642a5111ad0efc0cbce766498c2dd562ae9.png",
-    "platforms": [
-      {
-        "address": "0xe03b2642a5111ad0efc0cbce766498c2dd562ae9",
-        "decimals": 9,
         "platform": "eth"
       }
     ]
@@ -17601,6 +17031,160 @@
     ]
   },
   {
+    "symbol": "STBT",
+    "name": "Short-term Treasury Bill Token",
+    "logo": "https://tokens.1inch.io/0x530824da86689c9c17cdc2871ff29b058345b44a.png",
+    "platforms": [
+      {
+        "address": "0x530824da86689c9c17cdc2871ff29b058345b44a",
+        "decimals": 18,
+        "platform": "eth"
+      }
+    ]
+  },
+  {
+    "symbol": "vAMM-SOLID/WETH",
+    "name": "VolatileV2 AMM - SOLID/WETH",
+    "logo": "https://tokens.1inch.io/0x642431623ae5d73c19fc931aaea0d4677303880c.png",
+    "platforms": [
+      {
+        "address": "0x642431623ae5d73c19fc931aaea0d4677303880c",
+        "decimals": 18,
+        "platform": "eth"
+      }
+    ]
+  },
+  {
+    "symbol": "gtcETH",
+    "name": "Gitcoin Staked ETH Index (gtcETH)",
+    "logo": "https://tokens.1inch.io/0x36c833eed0d376f75d1ff9dfdee260191336065e.png",
+    "platforms": [
+      {
+        "address": "0x36c833eed0d376f75d1ff9dfdee260191336065e",
+        "decimals": 18,
+        "platform": "eth"
+      }
+    ]
+  },
+  {
+    "symbol": "LIT",
+    "name": "Liquidity Incentive Token",
+    "logo": "https://tokens.1inch.io/0xfd0205066521550d7d7ab19da8f72bb004b4c341.png",
+    "platforms": [
+      {
+        "address": "0xfd0205066521550d7d7ab19da8f72bb004b4c341",
+        "decimals": 18,
+        "platform": "eth"
+      },
+      {
+        "address": "0xb59490ab09a0f526cc7305822ac65f2ab12f9723",
+        "decimals": 18,
+        "platform": "bsc"
+      }
+    ]
+  },
+  {
+    "symbol": "WILD",
+    "name": "Wilder",
+    "logo": "https://tokens.1inch.io/0x2a3bff78b79a009976eea096a51a948a3dc00e34.png",
+    "platforms": [
+      {
+        "address": "0x2a3bff78b79a009976eea096a51a948a3dc00e34",
+        "decimals": 18,
+        "platform": "eth"
+      }
+    ]
+  },
+  {
+    "symbol": "PUNK",
+    "name": "CryptoPunks",
+    "logo": "https://tokens.1inch.io/0x269616d549d7e8eaa82dfb17028d0b212d11232a.png",
+    "platforms": [
+      {
+        "address": "0x269616d549d7e8eaa82dfb17028d0b212d11232a",
+        "decimals": 18,
+        "platform": "eth"
+      }
+    ]
+  },
+  {
+    "symbol": "YGG",
+    "name": "Yield Guild Games Token",
+    "logo": "https://tokens.1inch.io/0x25f8087ead173b73d6e8b84329989a8eea16cf73.png",
+    "platforms": [
+      {
+        "address": "0x25f8087ead173b73d6e8b84329989a8eea16cf73",
+        "decimals": 18,
+        "platform": "eth"
+      }
+    ]
+  },
+  {
+    "symbol": "wALV",
+    "name": "Alvey Chain",
+    "logo": "https://tokens.1inch.io/0x256d1fce1b1221e8398f65f9b36033ce50b2d497.png",
+    "platforms": [
+      {
+        "address": "0x256d1fce1b1221e8398f65f9b36033ce50b2d497",
+        "decimals": 18,
+        "platform": "eth"
+      },
+      {
+        "address": "0x256d1fce1b1221e8398f65f9b36033ce50b2d497",
+        "decimals": 18,
+        "platform": "bsc"
+      }
+    ]
+  },
+  {
+    "symbol": "FLEX",
+    "name": "FLEX Coin",
+    "logo": "https://tokens.1inch.io/0xfcf8eda095e37a41e002e266daad7efc1579bc0a.png",
+    "platforms": [
+      {
+        "address": "0xfcf8eda095e37a41e002e266daad7efc1579bc0a",
+        "decimals": 18,
+        "platform": "eth"
+      }
+    ]
+  },
+  {
+    "symbol": "PEEP$",
+    "name": "The Peoples Coin",
+    "logo": "https://tokens.1inch.io/0x5919dea604631016c15c805e3d948a0384879892.png",
+    "platforms": [
+      {
+        "address": "0x5919dea604631016c15c805e3d948a0384879892",
+        "decimals": 9,
+        "platform": "eth"
+      }
+    ]
+  },
+  {
+    "symbol": "rETH",
+    "name": "StaFi",
+    "logo": "https://tokens.1inch.io/0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593.png",
+    "platforms": [
+      {
+        "address": "0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593",
+        "decimals": 18,
+        "platform": "eth"
+      }
+    ]
+  },
+  {
+    "symbol": "PEPE",
+    "name": "Pepe",
+    "logo": "https://tokens.1inch.io/0x6982508145454ce325ddbe47a25d4ec3d2311933.png",
+    "platforms": [
+      {
+        "address": "0x6982508145454ce325ddbe47a25d4ec3d2311933",
+        "decimals": 18,
+        "platform": "eth"
+      }
+    ]
+  },
+  {
     "symbol": "BNB",
     "name": "BNB",
     "logo": "https://tokens.1inch.io/0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c_1.png",
@@ -17643,18 +17227,6 @@
     "platforms": [
       {
         "address": "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82",
-        "decimals": 18,
-        "platform": "bsc"
-      }
-    ]
-  },
-  {
-    "symbol": "BUSD_2",
-    "name": "BUSD Token",
-    "logo": "https://tokens.1inch.io/0x4fabb145d64652a948d72533023f6e7a623c7c53.png",
-    "platforms": [
-      {
-        "address": "0xe9e7cea3dedca5984780bafc599bd69add087d56",
         "decimals": 18,
         "platform": "bsc"
       }
@@ -17925,18 +17497,6 @@
     ]
   },
   {
-    "symbol": "LIT",
-    "name": "Litentry",
-    "logo": "https://tokens.1inch.io/0xb59490ab09a0f526cc7305822ac65f2ab12f9723.png",
-    "platforms": [
-      {
-        "address": "0xb59490ab09a0f526cc7305822ac65f2ab12f9723",
-        "decimals": 18,
-        "platform": "bsc"
-      }
-    ]
-  },
-  {
     "symbol": "BCH",
     "name": "Bitcoin Cash Token",
     "logo": "https://tokens.1inch.io/0x8ff795a6f4d97e7887c79bea79aba5cc76444adf.png",
@@ -18033,7 +17593,7 @@
     ]
   },
   {
-    "symbol": "vBUSD",
+    "symbol": "vBUSD_2",
     "name": "Venus BUSD",
     "logo": "https://tokens.1inch.io/0x95c78222b3d6e262426483d42cfa53685a67ab9d.png",
     "platforms": [
@@ -20326,6 +19886,18 @@
     ]
   },
   {
+    "symbol": "CMERGE",
+    "name": "Coin Merge",
+    "logo": "https://tokens.1inch.io/0x8d3e3a57c5f140b5f9feb0d43d37a347ee01c851.png",
+    "platforms": [
+      {
+        "address": "0x8d3e3a57c5f140b5f9feb0d43d37a347ee01c851",
+        "decimals": 9,
+        "platform": "bsc"
+      }
+    ]
+  },
+  {
     "symbol": "PURSE",
     "name": "PURSE TOKEN",
     "logo": "https://tokens.1inch.io/0x29a63f4b209c29b4dc47f06ffa896f32667dad2c.png",
@@ -20495,6 +20067,18 @@
         "address": "0x1ddcaa4ed761428ae348befc6718bcb12e63bfaa",
         "decimals": 6,
         "platform": "polygon"
+      }
+    ]
+  },
+  {
+    "symbol": "ACCEL",
+    "name": "ACCEL",
+    "logo": "https://tokens.1inch.io/0x2cace984dab08bd192a7fd044276060cb955dd9c.png",
+    "platforms": [
+      {
+        "address": "0x2cace984dab08bd192a7fd044276060cb955dd9c",
+        "decimals": 18,
+        "platform": "bsc"
       }
     ]
   },
@@ -20722,6 +20306,23 @@
       },
       {
         "address": "0x2b9e7ccdf0f4e5b24757c1e1a80e311e34cb10c7",
+        "decimals": 18,
+        "platform": "polygon"
+      }
+    ]
+  },
+  {
+    "symbol": "DATA",
+    "name": "Streamr",
+    "logo": "https://tokens.1inch.io/0x0864c156b3c5f69824564dec60c629ae6401bf2a.png",
+    "platforms": [
+      {
+        "address": "0x0864c156b3c5f69824564dec60c629ae6401bf2a",
+        "decimals": 18,
+        "platform": "bsc"
+      },
+      {
+        "address": "0x3a9a81d576d83ff21f26f325066054540720fc34",
         "decimals": 18,
         "platform": "polygon"
       }
@@ -21720,6 +21321,54 @@
     ]
   },
   {
+    "symbol": "stkBNB",
+    "name": "Staked BNB",
+    "logo": "https://tokens.1inch.io/0xc2e9d07f66a89c44062459a47a0d2dc038e4fb16.png",
+    "platforms": [
+      {
+        "address": "0xc2e9d07f66a89c44062459a47a0d2dc038e4fb16",
+        "decimals": 18,
+        "platform": "bsc"
+      }
+    ]
+  },
+  {
+    "symbol": "DPS",
+    "name": "DEEPSPACE",
+    "logo": "https://tokens.1inch.io/0xf275e1ac303a4c9d987a2c48b8e555a77fec3f1c.png",
+    "platforms": [
+      {
+        "address": "0xf275e1ac303a4c9d987a2c48b8e555a77fec3f1c",
+        "decimals": 9,
+        "platform": "bsc"
+      }
+    ]
+  },
+  {
+    "symbol": "LGO",
+    "name": "Level Governance Token",
+    "logo": "https://tokens.1inch.io/0xbe2b6c5e31f292009f495ddbda88e28391c9815e.png",
+    "platforms": [
+      {
+        "address": "0xbe2b6c5e31f292009f495ddbda88e28391c9815e",
+        "decimals": 18,
+        "platform": "bsc"
+      }
+    ]
+  },
+  {
+    "symbol": "RDNT",
+    "name": "Radiant",
+    "logo": "https://tokens.1inch.io/0xf7de7e8a6bd59ed41a4b5fe50278b3b7f31384df.png",
+    "platforms": [
+      {
+        "address": "0xf7de7e8a6bd59ed41a4b5fe50278b3b7f31384df",
+        "decimals": 18,
+        "platform": "bsc"
+      }
+    ]
+  },
+  {
     "symbol": "MUST",
     "name": "Must",
     "logo": "https://tokens.1inch.io/0x9c78ee466d6cb57a4d01fd887d2b5dfb2d46288f.png",
@@ -21734,7 +21383,7 @@
   {
     "symbol": "WMATIC",
     "name": "Wrapped Matic",
-    "logo": "https://tokens.1inch.io/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0.png",
+    "logo": "https://tokens.1inch.io/0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270.png",
     "platforms": [
       {
         "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
@@ -23238,6 +22887,42 @@
     "platforms": [
       {
         "address": "0x255707b70bf90aa112006e1b07b9aea6de021424",
+        "decimals": 18,
+        "platform": "polygon"
+      }
+    ]
+  },
+  {
+    "symbol": "ankrMATIC",
+    "name": "Ankr Staked MATIC",
+    "logo": "https://tokens.1inch.io/0x0e9b89007eee9c958c0eda24ef70723c2c93dd58.png",
+    "platforms": [
+      {
+        "address": "0x0e9b89007eee9c958c0eda24ef70723c2c93dd58",
+        "decimals": 18,
+        "platform": "polygon"
+      }
+    ]
+  },
+  {
+    "symbol": "DAVOS",
+    "name": "Davos",
+    "logo": "https://tokens.1inch.io/0xec38621e72d86775a89c7422746de1f52bba5320.png",
+    "platforms": [
+      {
+        "address": "0xec38621e72d86775a89c7422746de1f52bba5320",
+        "decimals": 18,
+        "platform": "polygon"
+      }
+    ]
+  },
+  {
+    "symbol": "MVX",
+    "name": "Metavault Trade",
+    "logo": "https://tokens.1inch.io/0x2760e46d9bb43dafcbecaad1f64b93207f9f0ed7.png",
+    "platforms": [
+      {
+        "address": "0x2760e46d9bb43dafcbecaad1f64b93207f9f0ed7",
         "decimals": 18,
         "platform": "polygon"
       }

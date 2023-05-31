@@ -3,6 +3,7 @@ import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
 import { ITokenBase } from '@dequanto/models/IToken';
 import { $config } from '@dequanto/utils/$config';
 import { $path } from '@dequanto/utils/$path';
+import { $is } from '@dequanto/utils/$is';
 
 
 // https://www.coingecko.com/en/api/documentation
@@ -25,12 +26,18 @@ export class CoingeckoTokenProvider {
 
     async redownload(): Promise<TDetails[]> {
         let list = await this.downloadList();
+
+        list.forEach(entry => {
+            entry.platforms = entry.platforms?.filter(p => $is.Address(p.address)) ?? []
+        });
+        //list = list.filter(x => x.platforms.length > 0);
+
         await this.store.saveAll(list);
         return list;
     }
 
     private async downloadList () {
-        let resp = await axios.get<{id, symbol, name}[]>(`${this.root}/coins/list`);
+        let resp = await axios.get<{id, symbol, name, platforms: { platform, decimals, address }[] }[]>(`${this.root}/coins/list`);
         return resp.data;
     }
 }

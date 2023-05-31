@@ -10,18 +10,73 @@ import { ITokenGlob } from '@dequanto/models/ITokenGlob';
 import { ATokenProvider } from './ATokenProvider';
 import { l } from '@dequanto/utils/$logger';
 import { $promise } from '@dequanto/utils/$promise';
+import { ITokenBase } from '@dequanto/models/IToken';
+import { $address } from '@dequanto/utils/$address';
+import { $require } from '@dequanto/utils/$require';
+
+// https://www.coingecko.com/en/api/documentation
+
+interface ITokenBaseCoingecko extends ITokenBase {
+    id: string
+}
+interface ITokenGlobCoingecko extends ITokenGlob {
+    id: string
+}
 
 export class TPCoingecko extends ATokenProvider  implements ITokenProvider {
 
-    store = new JsonArrayStore<ITokenGlob> ({
+    store = new JsonArrayStore<ITokenGlobCoingecko> ({
         path: $path.resolve('/data/tokens/coingecko.json'),
         key: x => x.symbol,
         format: true,
     });
 
 
-    getTokens(): Promise<ITokenGlob[]> {
+    getTokens(): Promise<ITokenGlobCoingecko[]> {
         return this.store.getAll();
+    }
+
+    async find (token: ITokenBase): Promise<ITokenBaseCoingecko> {
+        let tokens = await this.getTokens();
+        let platform = token.platform;
+        let symbol = token.symbol;
+        let address = token.address;
+        $require.notNull(symbol || address, `Address or symbol is required ${symbol}/${address}`);
+
+        let  matched = alot(tokens)
+            .mapMany(token => {
+                return token.platforms.map(platform => {
+                    return { token, platform };
+                })
+            })
+            .toArray();
+
+        if (address != null) {
+            matched = matched.filter(x => $address.eq(address, x.platform?.address));
+        }
+        if (symbol != null) {
+            matched = matched.filter(x => symbol.toLowerCase() === x.token.symbol?.toLowerCase());
+        }
+        if (platform != null) {
+            let found = matched.find(x => x.platform?.platform === platform);
+            return <ITokenBaseCoingecko> {
+                ...found.token,
+                ...found.platform,
+            };
+        }
+        let order = [ 'eth', 'polygon', 'bsc' ];
+        let found = alot(order)
+            .map(platform => {
+                return matched.find(x => x.platform?.platform === platform);
+            })
+            .first(x => x!= null)
+            ;
+
+        let x = found ?? matched[0];
+        return <ITokenBaseCoingecko> {
+            ...x.token,
+            ...x.platform,
+        };
     }
 
     async redownloadTokens(): Promise<ITokenGlob[]> {
@@ -36,7 +91,8 @@ export class TPCoingecko extends ATokenProvider  implements ITokenProvider {
                 l`Fetched ${i}/${list.length} token details`;
             }
             let info = await this.downloadTokenInfoOrCache(token.id);
-            return <ITokenGlob>{
+            return <ITokenGlobCoingecko>{
+                id: token.id,
                 name: token.name,
                 symbol: token.symbol,
                 platforms: alot

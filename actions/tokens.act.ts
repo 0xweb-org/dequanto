@@ -1,33 +1,26 @@
 import di from 'a-di'
-import alot from 'alot';
-import axios from 'axios'
-import { TokensService } from '@dequanto/tokens/TokensService';
-import { UAction } from 'atma-utest';
-import { TPCoingecko } from '@dequanto/tokens/TokenProviders/TPCoingecko';
 import { l } from '@dequanto/utils/$logger';
-import { ChainlinkFeedProvider } from '@dequanto/tokens/TokenOracles/chainlink/ChainLinkFeedProvider';
-import { CoingeckoTokenProvider } from '@dequanto/tokens/TokenOracles/coingecko/CoingeckoTokenProvider';
+import { UAction } from 'atma-utest';
 import { Config } from '@dequanto/Config';
+import { TokensService } from '@dequanto/tokens/TokensService';
+import { TPCoingecko } from '@dequanto/tokens/TokenProviders/TPCoingecko';
+import { ChainlinkFeedProvider } from '@dequanto/tokens/TokenOracles/chainlink/ChainlinkFeedProvider';
+
 
 UAction.create({
     async $before () {
         await Config.fetch();
     },
-    async 'redownload tokens' () {
+    async 'redownload-tokens' () {
         let provider = di.resolve(TokensService);
 
         let r = await provider.redownload();
         console.log(`Downloaded`, r.length, `[0]`, r[0]);
     },
-    async 'redownload chainlink' () {
+    async 'redownload-chainlink' () {
         let provider = di.resolve(ChainlinkFeedProvider);
         let r = await provider.redownload();
         l`Chainlink Feeds fetchs: ${r.length}`;
-    },
-    async '!redownload coingecko' () {
-        let provider = di.resolve(CoingeckoTokenProvider);
-        let r = await provider.redownload();
-        l`Coingecko tokens fetchs: ${r.length}`;
     },
 
     '//fetch single providers': {

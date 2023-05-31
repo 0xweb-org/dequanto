@@ -73,7 +73,7 @@ export class Config {
         if (inCwd) {
             prfx = './'
         }
-        let cfg = await AppConfig.fetch([
+        let cfg = await AppConfig.fetch<Config>([
             {
                 path: `${prfx}${dequantoConfigs}dequanto.yml`,
                 optional: true,
