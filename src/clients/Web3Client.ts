@@ -136,7 +136,8 @@ export abstract class Web3Client implements IWeb3Client {
             let contract = new web3.eth.Contract(abis, address);
             let callArgs = [];
             if (options != null) {
-                callArgs[0] = options;
+                // Clone options, as seems web3js mutates options, which collides with parallel requests
+                callArgs[0] = { ...options };
             }
             if (blockNumber != null) {
                 callArgs[0] = null;

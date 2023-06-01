@@ -251,7 +251,7 @@ export abstract class ContractBase {
 
     @memd.deco.memoize({ perInstance: true })
     private getContractReaderInner () {
-        let reader = di.resolve(ContractReader, this.client);
+        let reader = new ContractReader(this.client);
         return reader;
     }
 
@@ -261,13 +261,13 @@ export abstract class ContractBase {
             let logParser = di.resolve(TxTopicInMemoryProvider);
             logParser.register(this.abi);
         }
-        let writer = di.resolve(ContractWriter, this.address, this.client);
+        let writer = new ContractWriter(this.address, this.client);
         return writer;
     }
 
     @memd.deco.memoize({ perInstance: true })
     private getContractStream () {
-        let stream = di.resolve(ContractStream, this.address, this.abi, this.client);
+        let stream = new ContractStream(this.address, this.abi, this.client);
         return stream;
     }
 }
