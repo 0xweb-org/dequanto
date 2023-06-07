@@ -14,6 +14,7 @@ import { GeneratorStorageReader } from './GeneratorStorageReader';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { Str } from './utils/Str';
 import { $gen } from './utils/$gen';
+import { $str } from '@dequanto/solidity/utils/$str';
 
 export class GeneratorFromAbi {
 
@@ -29,6 +30,7 @@ export class GeneratorFromAbi {
         output: string
         implementation: TAddress
         saveAbi?: boolean
+        saveSources?: boolean
         sources?: {
             [file: string]: { content: string }
         },
@@ -208,7 +210,8 @@ export class GeneratorFromAbi {
             .replace(/\$EvmScanOptions\$/g, EvmScanOptions)
 
             .replace(`/* IMPORTS */`, imports.join('\n'))
-            .replace(`$NAME$`, className)
+            .replace(`/* ERRORS */`, Gen.serializeErrors(className, abiJson))
+            .replace(/\$NAME\$/g, className)
             .replace(`$ADDRESS$`, opts.address ?? '')
             .replace(`/* METHODS */`, methods)
             .replace(`/* EVENTS */`, events)
@@ -221,6 +224,9 @@ export class GeneratorFromAbi {
 
             .replace(`/* STORAGE_READER_PROPERTY */`, storageReaderProperty)
             .replace(`/* STORAGE_READER_CLASS */`, storageReaderClass || '')
+            .replace(`/* TX_CALLER_METHODS */`, Gen.serializeTxCallerMethods(className, abiJson))
+            .replace(`/* TX_DATA_METHODS */`, Gen.serializeTxDataMethods(className, abiJson))
+
             .replace(`/* $METHOD_INTERFACES$ */`, methodInterfacesArr.map(x => x.code).join('\n\n') + '\n\n' + methodInterfacesAll.code + '\n\n')
             ;
 
@@ -243,7 +249,7 @@ export class GeneratorFromAbi {
 
         let sources = opts.sources;
         let sourceFiles = [];
-        if (sources) {
+        if (sources && opts.saveSources !== false) {
             sourceFiles = await alot.fromObject(sources).mapAsync(async entry => {
                 let sourceFilename = /\/?([^/]+$)/.exec(entry.key)[1];
                 let path = class_Uri.combine(opts.output, directory, filename, sourceFilename);
@@ -555,29 +561,71 @@ namespace Gen {
     }
 
 
-    // const AbiTsTypes = {
-    //     'uint8': 'number',
-    //     'uint4': 'number',
-    //     'uint': 'number',
 
-    //     'bool': 'boolean',
+    export function serializeErrors(className: string, abiJson: AbiItem[]): string {
+        let errors = abiJson.filter(x => (x as any).type === 'error');
+        if (errors.length === 0) {
+            return '';
+        }
+        let lines = [
+            `export namespace ${className}Errors {`
+        ];
+        errors.forEach(error => {
+            lines.push(`    export interface ${error.name} {`);
+            lines.push(`        type: '${error.name}'`);
+            lines.push(`        params: {`);
+            error.inputs.forEach(input => {
+                lines.push(`            ${input.name}: ${ $abiType.getTsType( input.type, input ) }`);
+            });
+            lines.push(`        }`);
+            lines.push(`    }`);
+        });
 
-    //     'bytes': 'Buffer',
-    //     'bytes4': 'Buffer',
-    //     'bytes32': 'Buffer',
-    //     'bytes64': 'Buffer',
-    //     'bytes128': 'Buffer',
-    //     'bytes256': 'Buffer',
+        lines.push(`    export type Error = ${ errors.map(x => x.name).join(' | ') }`);
+        lines.push(`}`);
 
-    //     'address': 'TAddress',
-    //     'string': 'string',
-    // };
-    // const AbiTsTypesRgx = [
-    //     {
-    //         rgx: /uint\d+/,
-    //         type: 'bigint',
-    //     }
-    // ];
+        return lines.join('\n');
+    }
+
+    export function serializeTxCallerMethods (className: string, abiJson: AbiItem[]): string {
+        let methods = abiJson.filter(x => x.type === 'function');
+        let writeMethods = methods.filter(abi => isReader(abi) === false);
+        let lines = [];
+        writeMethods.forEach(method => {
+            lines.push(serializeMethodTs(method));
+        });
+
+        return lines.join('\n');
+
+
+        function serializeMethodTs (abi: AbiItem) {
+            let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
+            if (callInputArguments) {
+                callInputArguments = `, ${callInputArguments}`;
+            }
+            return  `    ${abi.name} (sender: TSender, ${fnInputArguments}): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>`;
+        }
+    }
+
+    export function serializeTxDataMethods (className: string, abiJson: AbiItem[]): string {
+        let methods = abiJson.filter(x => x.type === 'function');
+        let writeMethods = methods.filter(abi => isReader(abi) === false);
+        let lines = [];
+        writeMethods.forEach(method => {
+            lines.push(serializeInterfaceMethodTs(method));
+        });
+
+        return lines.join('\n');
+
+
+        function serializeInterfaceMethodTs (abi: AbiItem) {
+            let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
+            if (callInputArguments) {
+                callInputArguments = `, ${callInputArguments}`;
+            }
+            return `    ${abi.name} (sender: TSender, ${fnInputArguments}): Promise<TransactionConfig>`;
+        }
+    }
 }
 
 

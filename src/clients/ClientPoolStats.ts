@@ -28,7 +28,8 @@ export class ClientPoolTraceError extends Error {
         return {
             name: $error.name,
             stack: $error.stack,
-            message:  traceLog + '\n' + $error.message
+            message:  (traceLog + '\n' + $error.message).trim(),
+            data: ($error as any).data,
         };
     }
 }

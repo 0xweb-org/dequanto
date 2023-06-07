@@ -30,13 +30,13 @@ export namespace Web3BatchRequests {
     }
 
     export function contractRequest(web3: Web3, request: IContractRequest, onComplete: Function) {
-        let { contract, method, params, callArgs } = prepair(web3, request);
+        let { contract, method, params, callArgs } = prepare(web3, request);
         return contract.methods[method](...params).call.request(...callArgs, onComplete);
     }
 
 
     export function call(web3: Web3, request: IContractRequest) {
-        let { contract, method, params, callArgs } = prepair(web3, request);
+        let { contract, method, params, callArgs } = prepare(web3, request);
         return contract.methods[method](...params).call(...callArgs);
     }
 
@@ -143,7 +143,7 @@ export namespace Web3BatchRequests {
         }
     }
 
-    function prepair(web3: Web3, request: IContractRequest) {
+    function prepare(web3: Web3, request: IContractRequest) {
         let { address, method, abi: abiMix, options, blockNumber, arguments: params } = request;
         let abi = $web3Abi.ensureAbis(abiMix);
         let contract = new web3.eth.Contract(abi, address);

@@ -7,20 +7,24 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
-import { type AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
-import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
+import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
+import type { AbiItem } from 'web3-utils';
+import type { BlockTransactionString } from 'web3-eth';
 
 
 /* IMPORTS */
+
+/* ERRORS */
+
 export class $NAME$ extends ContractBase {
     constructor(
         public address: TAddress = '$ADDRESS$',
@@ -31,6 +35,14 @@ export class $NAME$ extends ContractBase {
     }
 
 /* METHODS */
+
+    $call () {
+        return super.$call() as I$NAME$TxCaller;;
+    }
+
+    $data (): I$NAME$TxData {
+        return super.$data() as I$NAME$TxData;
+    }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: Transaction
@@ -67,4 +79,15 @@ type TSender = TAccount & {
 /* $METHOD_INTERFACES$ */
 
 /* STORAGE_READER_CLASS */
+
+
+interface I$NAME$TxCaller {
+/* TX_CALLER_METHODS */
+}
+
+
+interface I$NAME$TxData {
+/* TX_DATA_METHODS */
+}
+
 

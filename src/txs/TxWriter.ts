@@ -28,6 +28,8 @@ import { GnosisSafeHandler } from '@dequanto/safe/GnosisSafeHandler';
 import { ISafeServiceTransport } from '@dequanto/safe/transport/ISafeServiceTransport';
 import { SigFileTransport } from './sig-transports/SigFileTransport';
 import { $require } from '@dequanto/utils/$require';
+import { $abiParser } from '@dequanto/utils/$abiParser';
+import { $contract } from '@dequanto/utils/$contract';
 
 interface ITxWriterEvents {
     transactionHash (hash: string)
@@ -140,6 +142,11 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         }
         return this;
     }
+    public async call() {
+        let tx = await this.builder.getTxData(this.client);
+        let result = await this.client.call(tx);
+        return result;
+    }
 
     protected write (options?: ITxWriterOptions) {
         if (this.builder?.config?.send !== 'manual') {
@@ -148,7 +155,6 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     }
 
     private async sendTxInner () {
-
         if (this.options?.txOutput != null) {
             // handle none blockchain
             await this.saveTxAndExit()
@@ -200,7 +206,6 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
                 signedTxBuffer = await $sign.serializeTx(tx, this.options.signature);
             }
         }
-
 
         let tx = <TxWriter['tx']> {
             timestamp: Date.now(),
@@ -293,7 +298,12 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
                     throw error;
                 }
 
-            }, async (err: Error & { receipt?: TransactionReceipt }) => {
+            }, async (err: Error & { receipt?: TransactionReceipt, data }) => {
+
+                if (err.data != null && this.builder.abi != null) {
+                    err.data = $contract.decodeCustomError(err.data, this.builder.abi);
+                }
+
                 this.logger.log(`Tx errored ${err.message}`);
 
                 this.clearTimer(tx);

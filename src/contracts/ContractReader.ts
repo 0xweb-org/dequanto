@@ -113,7 +113,7 @@ export class ContractReader implements IContractReader {
 
         let requests = await alot(values as any[])
             .mapAsync(async x => await x)
-            .toArrayAsync() as ContractReaderUtils.DefferedRequest[];
+            .toArrayAsync() as ContractReaderUtils.DeferredRequest[];
 
         // all inputs should be deferred requests
         let invalid = requests.find(x => $is.Address(x.request?.address) === false);
@@ -217,10 +217,10 @@ export class ContractReader implements IContractReader {
 export namespace ContractReaderUtils {
 
 
-    export class DefferedRequest<T = any> {
+    export class DeferredRequest<T = any> {
 
         public promise: class_Dfr<T> & {
-            request: DefferedRequest
+            request: DeferredRequest
         }
 
         constructor (

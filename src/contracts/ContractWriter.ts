@@ -56,6 +56,7 @@ export class ContractWriter implements IContractWriter {
         interfaceAbi: string | AbiItem,
         params: any[],
         configs?: {
+            abi?: AbiItem[]
             builderConfig?: ITxConfig
             writerConfig?: ITxWriterOptions
         }
@@ -70,14 +71,6 @@ export class ContractWriter implements IContractWriter {
 
         let isSafe = $account.isSafe(account);
         let sender = $account.getSender(account);
-        // if (sender.key == null) {
-        //     let addressOrName = sender.address ?? sender.name;
-        //     let service = di.resolve(ChainAccountsService);
-        //     let fromStorage = await service.get(addressOrName, this.client.platform);
-        //     if (fromStorage) {
-        //         account = fromStorage;
-        //     }
-        // }
 
         let txBuilder = new TxDataBuilder(this.client, sender, {
             to: this.address
@@ -95,6 +88,8 @@ export class ContractWriter implements IContractWriter {
         txBuilder.setConfig(builderConfig);
         txBuilder.setValue(value);
         txBuilder.setInputDataWithABI(abi, ...params);
+        txBuilder.abi = configs?.abi;
+
 
         if (isSafe !== true) {
             await Promise.all([

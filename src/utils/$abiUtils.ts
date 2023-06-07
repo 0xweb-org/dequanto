@@ -1,18 +1,31 @@
-import { type AbiItem } from 'web3-utils';
 import Web3 from 'web3';
 import { utils }  from 'ethers';
 import { $contract } from './$contract';
 import { $abiParser } from './$abiParser';
-import { $hex } from './$hex';
 import { $is } from './$is';
+import type { AbiItem } from 'web3-utils';
+import type { ParamType } from 'ethers/lib/utils';
 
 export namespace $abiUtils {
 
-    export function encodePacked (...args: any[]) {
-        return Web3.utils.encodePacked(...args);
+    export function encodePacked (types: string[], values: any[])
+    export function encodePacked (...val: Parameters<Web3['utils']['encodePacked']>)
+    export function encodePacked (...mix) {
+
+        let val: any[];
+        if (arguments.length === 2 && Array.isArray(mix[0]) && typeof mix[0][0] === 'string') {
+            let [ types, values ] = mix;
+            val = types.map((type, i) => {
+                return { type, value: values[i] };
+            })
+        } else {
+            val = mix;
+        }
+
+        return Web3.utils.encodePacked(...val);
     }
 
-    export function encode (types: any[], values: any[]) {
+    export function encode (types: ReadonlyArray<string | ParamType>, values: ReadonlyArray<any>) {
         let coder = new utils.AbiCoder();
         return coder.encode(types, values)
     }

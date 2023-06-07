@@ -79,8 +79,8 @@ export namespace InputDataUtils {
         return iface.encodeFunctionData(methodName, params);
     }
 
-    export function encodeWithTypes (client: Web3Client, types: any[], paramaters: any[]): string {
-        return client.encodeParameters(types, paramaters);
+    export function encodeWithTypes (client: Web3Client, types: any[], parameters: any[]): string {
+        return client.encodeParameters(types, parameters);
     }
 
     export function normalizeArgs (args: any[]) {

@@ -11,7 +11,6 @@ import { class_Uri, obj_setProperty } from 'atma-utils';
 import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { $path } from '@dequanto/utils/$path';
-import { $is } from '@dequanto/utils/$is';
 import { $logger, l } from '@dequanto/utils/$logger';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
@@ -42,6 +41,9 @@ export interface IGenerateOptions {
 
     /** ABI will be save alongside with TS classes */
     saveAbi?: boolean
+
+    /** Sources will not be saved if FALSE */
+    saveSources?: boolean
 }
 const KEYS = {
     'platform': 1,
@@ -170,6 +172,7 @@ export class Generator {
             implementation: implementation,
             sources: sources?.files,
             saveAbi: this.options.saveAbi,
+            saveSources: this.options.saveSources,
             client: this.client,
         });
     }

@@ -5,8 +5,13 @@ import { $abiUtils } from './$abiUtils';
 import { InputDataUtils } from '@dequanto/contracts/utils/InputDataUtils';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { $abiParser } from './$abiParser';
+import alot from 'alot';
+import { $hex } from './$hex';
+import { TAddress } from '@dequanto/models/TAddress';
 
 export namespace $contract {
+
+
     export function keccak256 (str: string) {
         return Web3.utils.keccak256(str);
     }
@@ -34,6 +39,60 @@ export namespace $contract {
                 return parseLogWithAbi(log, abiItem);
             })
         return logs;
+    }
+
+    export function parseInputData (inputHex: string, abis: AbiItem[]) {
+        let str = inputHex.substring(2);
+        if (str === '') {
+            return null;
+        }
+        let methodHex = `0x${str.substring(0, 8)}`;
+        let bytesHex = `0x${str.substring(8)}`;
+
+        let abi = abis.find(abi => {
+            let sig = $abiUtils.getMethodSignature(abi);
+            return sig === methodHex;
+        });
+        if (abi == null) {
+            return null;
+        }
+        let params: any = InputDataUtils.decodeParamsWithABI(abi, bytesHex);
+        let asObject = abi.inputs.every(x => x.name != null);
+        if (asObject) {
+            params = alot(abi.inputs).map((x, i) => {
+                return { key: x.name, value: params[i] }
+            }).toDictionary(x => x.key, x => x.value);
+        }
+        return {
+            method: abi.name,
+            params
+        };
+    }
+
+    export function decodeCustomError (errorDataHex: string | any, abi: AbiItem[]) {
+        if (errorDataHex == null || typeof errorDataHex !== 'string') {
+            return errorDataHex;
+        }
+        if (errorDataHex.startsWith('0x')) {
+            let arr = abi?.length === 0 ? store.getFlattened() : abi;
+            let errors = [
+                ...(arr.filter(x => (x as any).type === 'error')),
+                $abiParser.parseMethod(`Error(string)`),
+                $abiParser.parseMethod(`Panic(uint256)`),
+            ];
+            let parsed = $contract.parseInputData(errorDataHex, errors);
+            if (parsed) {
+                return {
+                    type: parsed.method,
+                    params: parsed.params,
+                }
+            }
+        }
+
+        return {
+            type: 'Unknown',
+            params: errorDataHex
+        };
     }
 
     export function parseLogWithAbi(log: Log, abiItem: AbiItem | string): ITxLogItem {
@@ -93,5 +152,19 @@ export namespace $contract {
             arguments: args,
             params: params,
         };
+    }
+
+
+    export namespace store {
+        const knownContracts = [] as {
+            abi: AbiItem[]
+        }[];
+
+        export function getFlattened () {
+            return alot(knownContracts).mapMany(x => x.abi).toArray();
+        }
+        export function register (contract: { abi: AbiItem[] }) {
+            knownContracts.push(contract)
+        }
     }
 }

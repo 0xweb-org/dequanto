@@ -13,6 +13,7 @@ import { $number } from '@dequanto/utils/$number';
 
 export class TxDataBuilder {
     protected static nonce: number = -1
+    public abi: AbiItem[] = null;
 
     constructor(
         public client: Web3Client,

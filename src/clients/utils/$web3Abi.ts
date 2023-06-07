@@ -2,6 +2,8 @@ import { $abiParser } from '@dequanto/utils/$abiParser';
 import type { AbiItem } from 'web3-utils';
 
 export namespace $web3Abi {
+
+    /** Normalize user input by normalizing to the array of AbiItems */
     export function ensureAbis(abi: string | AbiItem | AbiItem[]): (AbiItem & { signature? })[] {
         let arr: AbiItem[];
         if (typeof abi === 'string') {

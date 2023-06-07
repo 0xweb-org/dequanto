@@ -3,7 +3,7 @@ import memd from 'memd';
 import alot from 'alot';
 import type { Web3Client } from '@dequanto/clients/Web3Client';
 import type { ITxWriterOptions, TxWriter } from '@dequanto/txs/TxWriter';
-import type { Log, PastLogsOptions, Transaction, TransactionReceipt } from 'web3-core';
+import type { Log, PastLogsOptions, Transaction, TransactionConfig, TransactionReceipt } from 'web3-core';
 import type { BufferLike } from 'ethereumjs-util';
 import type { TAccount } from "@dequanto/models/TAccount";
 import type { AbiItem } from 'web3-utils';
@@ -75,6 +75,57 @@ export abstract class ContractBase {
         return $contract;
     }
 
+    @memd.deco.memoize({ perInstance: true })
+    public $call () {
+        let abi = this.abi;
+        let writer = this.getContractWriter();
+
+        let methods = this.abi.filter(abi => abi.type === 'function' && $abiUtil.isReader(abi) === false);
+        let fns = alot(methods).map(method => {
+            return {
+                name: method.name,
+                async fn (sender: TAccount,...args: any[]) {
+                    return ContractBaseHelper.$call(
+                        writer,
+                        method,
+                        abi,
+                        sender,
+                        ...args
+                    );
+                }
+            }
+        }).toDictionary(x => x.name, x => x.fn);
+
+        let $contract = $class.curry(this, {
+            ...fns
+        });
+        return $contract as any;
+    }
+
+    @memd.deco.memoize({ perInstance: true })
+    public $data () {
+        let $top = this;
+        let methods = this.abi.filter(abi => abi.type === 'function' && $abiUtil.isReader(abi) === false);
+        let fns = alot(methods).map(method => {
+            return {
+                name: method.name,
+                async fn (sender: TAccount,...args: any[]) {
+
+                    let writer: TxWriter = await $top
+                        .$config({ send: 'manual' })
+                        [method.name](sender, ...args);
+
+                    return writer.builder.data as any as TransactionConfig;
+                }
+            }
+        }).toDictionary(x => x.name, x => x.fn);
+
+        let $contract = $class.curry(this, {
+            ...fns
+        });
+        return $contract as any;
+    }
+
     public forBlock (mix: number | undefined | Date): this {
         if (mix == null) {
             return this;
@@ -101,7 +152,7 @@ export abstract class ContractBase {
 
     protected $read (abi: string | AbiItem, ...params) {
         if (this.builderConfig?.send === 'manual') {
-            let req = new ContractReaderUtils.DefferedRequest({
+            let req = new ContractReaderUtils.DeferredRequest({
                 address: this.address,
                 abi,
                 params,
@@ -173,23 +224,14 @@ export abstract class ContractBase {
     protected async $write (abi: string | AbiItem, account: TAccount & {  value?: number | string | bigint }, ...params): Promise<TxWriter> {
         let writer = await this.getContractWriter();
         return writer.writeAsync(account, abi, params, {
+            abi: this.abi,
             builderConfig: this.builderConfig,
             writerConfig: this.writerConfig,
         });
     }
 
     protected $getAbiItem (type: 'event' | 'function' | 'string', name: string, argsCount?: number) {
-        let arr = this.abi.filter(x => x.type === type && x.name === name);
-        if (arr.length === 0) {
-            throw new Error(`AbiItem ${name} not found`);
-        }
-        if (arr.length === 1) {
-            return arr[0];
-        }
-        if (argsCount == null) {
-            throw new Error(`Found multiple AbiItems for ${name}. Args count not specified to pick one`);
-        }
-        return arr.find(x => (x.inputs?.length ?? 0) === argsCount)
+        return ContractBaseHelper.$getAbiItem(this.abi, type, name, argsCount);
     }
 
     protected $getAbiItemOverload (abis: string[], args: any[]) {
@@ -256,7 +298,7 @@ export abstract class ContractBase {
     }
 
     @memd.deco.memoize({ perInstance: true })
-    private async getContractWriter () {
+    protected getContractWriter () {
         if (this.abi != null) {
             let logParser = di.resolve(TxTopicInMemoryProvider);
             logParser.register(this.abi);
@@ -272,8 +314,46 @@ export abstract class ContractBase {
     }
 }
 
-namespace BlockWalker {
+export namespace ContractBaseHelper {
+    export function $getAbiItem (abi: AbiItem[], type: 'event' | 'function' | 'string', name: string, argsCount?: number) {
+        let arr = abi.filter(x => x.type === type && x.name === name);
+        if (arr.length === 0) {
+            throw new Error(`AbiItem ${name} not found`);
+        }
+        if (arr.length === 1) {
+            return arr[0];
+        }
+        if (argsCount == null) {
+            throw new Error(`Found multiple AbiItems for ${name}. Args count not specified to pick one`);
+        }
+        return arr.find(x => (x.inputs?.length ?? 0) === argsCount)
+    }
 
+    export async function $call (writer: ContractWriter, abi: string | AbiItem, abiArr: AbiItem[], account: TAccount & {  value?: number | string | bigint }, ...params): Promise<{ error?, result? }> {
+        let tx = await writer.writeAsync(account, abi, params, {
+            builderConfig: {
+                send: 'manual',
+                ...(this.builderConfig ?? {})
+            },
+            writerConfig: this.writerConfig,
+        });
+        try {
+            let result = await tx.call();
+            return {
+                result
+            };
+        } catch (error) {
+            if (error.data) {
+                error.data = $contract.decodeCustomError(error.data, abiArr);
+            }
+            return {
+                error
+            }
+        }
+    }
+}
+
+namespace BlockWalker {
     export interface IBlockWalkerOptions {
         name?: string,
         persistance?: boolean,
@@ -308,6 +388,11 @@ namespace BlockWalker {
         indexer.start();
         return indexer;
     }
+}
 
 
+namespace $abiUtil {
+    export function isReader (abi: AbiItem) {
+        return ['view', 'pure', null].includes(abi.stateMutability);
+    }
 }

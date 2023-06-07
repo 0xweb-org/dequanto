@@ -9,7 +9,7 @@ import type { TPlatform } from '@dequanto/models/TPlatform';
 import type { TransactionRequest } from '@ethersproject/abstract-provider';
 import type { BlockTransactionString, Syncing } from 'web3-eth';
 import type { IWeb3Client, IWeb3ClientOptions } from './interfaces/IWeb3Client';
-import type { BlockNumber, Log, LogsOptions, PastLogsOptions, TransactionConfig, Transaction, TransactionReceipt, WebsocketProvider } from 'web3-core';
+import type { BlockNumber, Log, LogsOptions, PastLogsOptions, TransactionConfig, Transaction, TransactionReceipt, WebsocketProvider, HttpProvider } from 'web3-core';
 import type { Subscription } from 'web3-core-subscriptions';
 import { ClientPool, IPoolClientConfig, IPoolWeb3Request, WClient } from './ClientPool';
 import { ClientPoolTrace } from './ClientPoolStats';
@@ -25,6 +25,8 @@ import { $web3Abi } from './utils/$web3Abi';
 import { $require } from '@dequanto/utils/$require';
 import { $is } from '@dequanto/utils/$is';
 import { $hex } from '@dequanto/utils/$hex';
+import { $promise } from '@dequanto/utils/$promise';
+import { $bigint } from '@dequanto/utils/$bigint';
 
 export abstract class Web3Client implements IWeb3Client {
 
@@ -326,7 +328,7 @@ export abstract class Web3Client implements IWeb3Client {
             });
         });
     }
-    getGasEstimation (from: TAddress, tx: TransactionRequest) {
+    getGasEstimation (from: TAddress, tx: TransactionRequest | TransactionConfig) {
         return this.pool.call(async web3 => {
             let txData = {
                 from: from,
@@ -364,6 +366,7 @@ export abstract class Web3Client implements IWeb3Client {
             return web3.eth.sendSignedTransaction(signedTxBuffer);
         }, { preferSafe: true, distinct: true });
     }
+
     sendTransaction(data: TransactionConfig) {
         return this.pool.callPromiEvent(web3 => {
             return web3.eth.sendTransaction(data);
@@ -373,6 +376,29 @@ export abstract class Web3Client implements IWeb3Client {
     getBlockNumber () {
         return this.pool.call(web3 => {
             return web3.eth.getBlockNumber();
+        });
+    }
+
+    call (tx: TransactionConfig): Promise<any> {
+        for (let key in tx) {
+            let val = tx[key];
+            switch (typeof val) {
+                case 'number':
+                    tx[key] = $number.toHex(val);
+                    break;
+                case 'bigint':
+                    tx[key] = $bigint.toHex(val);
+                    break;
+            }
+        }
+        return this.pool.call(web3 => {
+            let provider = web3.currentProvider as HttpProvider;
+            return $promise.fromCallbackCtx(provider, provider.send, {
+                jsonrpc: '2.0',
+                method: 'eth_call',
+                params: [ tx, 'latest' ],
+                id: Date.now()
+            });
         });
     }
 

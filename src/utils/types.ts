@@ -5,7 +5,7 @@ type NoneMethodKeys<T> = {
 
 export type InterfaceOf<T> = Omit<T, Exclude<keyof T, NoneMethodKeys<T>>>;
 
-export type ValuesOf<T extends any[]>= T[number];
+export type ValuesOf<T extends any[]> = T[number];
 
 export type DeepPartial<T> = {
     [P in keyof T]?:
@@ -27,3 +27,9 @@ export type IntersectionTypeWithArrays<T1, T2, arrayKeys extends (keyof T1 & key
 );
 
 export type ThenArg<T> = T extends PromiseLike<infer U> ? U : T
+
+export type ParametersFromSecond<T extends (x, ...args: any) => any> = T extends (x, ...args: infer P) => any ? P : never;
+
+
+export type TCallback<TResult = any> = (error: Error, result?: TResult) => void
+export type TFnWithCallback<TArgs extends any[], TResult> = (...args: [...TArgs, TCallback<TResult>]) => void

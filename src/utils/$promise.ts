@@ -1,5 +1,6 @@
 import { TError } from '@dequanto/models/TError';
 import { class_EventEmitter } from 'atma-utils';
+import { TFnWithCallback } from './types';
 
 export namespace $promise {
     export function wait (ms) {
@@ -22,6 +23,31 @@ export namespace $promise {
             };
             eventEmitter.on(event, cb);
         });
+    }
+
+
+    export function fromCallback <TResult, TArgs extends any[]> (fn: TFnWithCallback<TArgs, TResult>, ...args: TArgs): Promise<TResult> {
+        return new Promise((resolve, reject) => {
+            fn(...args, (error, result) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+                resolve(result);
+            });
+        })
+    }
+
+    export function fromCallbackCtx <TResult, TArgs extends any[]> (ctx: any, fn: TFnWithCallback<TArgs, TResult>, ...args: TArgs): Promise<TResult> {
+        return new Promise((resolve, reject) => {
+            fn.call(ctx, ...args, (error, result) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+                resolve(result);
+            });
+        })
     }
 
     export async function catched<T, TErr extends Error = TError > (fn: () => Promise<T>): Promise<{ result?: T, error?: TError}>

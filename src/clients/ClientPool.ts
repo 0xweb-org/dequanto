@@ -20,6 +20,7 @@ import { Web3BatchRequests } from './Web3BatchRequests';
 import type { PromiEvent, WebsocketProvider, provider } from 'web3-core';
 import type { HttpProviderOptions, WebsocketProviderOptions } from 'web3-core-helpers/types/index'
 import { $require } from '@dequanto/utils/$require';
+import { $contract } from '@dequanto/utils/$contract';
 
 export interface IPoolClientConfig {
     url?: string
@@ -147,6 +148,9 @@ export class ClientPool {
             let wClientUsage = used.get(wClient);
             let { status, result, error, time } = await wClient.call(fn, opts);
 
+            if (error != null && error.data != null) {
+                error.data = $contract.decodeCustomError(error.data, []);
+            }
             opts
                 ?.trace
                 ?.onComplete({ status, error, time, url: wClient.config.url })
