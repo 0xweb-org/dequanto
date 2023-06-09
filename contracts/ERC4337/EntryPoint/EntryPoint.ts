@@ -415,7 +415,8 @@ export class EntryPoint extends ContractBase {
             topic,
             ...options
         });
-        let logs= await this.$getPastLogs(filters);
+        console.log(filters, 'filters')
+        let logs = await this.$getPastLogs(filters);
         return logs.map(log => this.$extractLog(log, abi)) as any;
     }
 
@@ -463,7 +464,7 @@ type TSender = TAccount & {
     };
     type TLogAccountDeployedParameters = [ userOpHash: TBufferLike, _sender: TAddress, factory: TAddress, paymaster: TAddress ];
     type TLogBeforeExecution = {
-        
+
     };
     type TLogBeforeExecutionParameters = [  ];
     type TLogDeposited = {
@@ -510,7 +511,7 @@ interface IEvents {
   UserOperationEvent: TLogUserOperationEventParameters
   UserOperationRevertReason: TLogUserOperationRevertReasonParameters
   Withdrawn: TLogWithdrawnParameters
-  '*': any[] 
+  '*': any[]
 }
 
 
@@ -636,7 +637,7 @@ interface IMethods {
   unlockStake: IMethodUnlockStake
   withdrawStake: IMethodWithdrawStake
   withdrawTo: IMethodWithdrawTo
-  '*': { method: string, arguments: any[] } 
+  '*': { method: string, arguments: any[] }
 }
 
 

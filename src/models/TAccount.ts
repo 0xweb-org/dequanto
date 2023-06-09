@@ -3,7 +3,7 @@ import { TPlatform } from './TPlatform';
 
 
 export interface IAccount {
-    type?: 'eoa' | 'safe'
+    type?: 'eoa' | 'safe' | 'erc4337'
     name?: string
     address?: TAddress
     platform?: TPlatform
@@ -27,4 +27,11 @@ export interface SafeAccount extends IAccount {
     operator: ChainAccount
 }
 
-export type TAccount = string | ChainAccount | SafeAccount;
+export interface Erc4337Account extends IAccount {
+    type: 'erc4337'
+    provider?: 'erc4337',
+
+    operator: ChainAccount
+}
+
+export type TAccount = string | ChainAccount | SafeAccount | Erc4337Account;

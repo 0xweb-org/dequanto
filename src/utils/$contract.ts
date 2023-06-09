@@ -69,12 +69,19 @@ export namespace $contract {
         };
     }
 
-    export function decodeCustomError (errorDataHex: string | any, abi: AbiItem[]) {
-        if (errorDataHex == null || typeof errorDataHex !== 'string') {
-            return errorDataHex;
+    export function decodeCustomError (errorDataHex: string | { type, params } | any, abiArr: AbiItem[]) {
+        if (errorDataHex == null) {
+            return null;
+        }
+        if (typeof errorDataHex !== 'string') {
+            let isUnknown = errorDataHex.type === 'Unknown' && typeof errorDataHex.params === 'string';
+            if (isUnknown === false) {
+                return errorDataHex;
+            }
+            errorDataHex = errorDataHex.params;
         }
         if (errorDataHex.startsWith('0x')) {
-            let arr = abi?.length === 0 ? store.getFlattened() : abi;
+            let arr = abiArr?.length === 0 ? store.getFlattened() : abiArr;
             let errors = [
                 ...(arr.filter(x => (x as any).type === 'error')),
                 $abiParser.parseMethod(`Error(string)`),

@@ -1,41 +1,23 @@
-import { File } from 'atma-io';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { GnosisSafeFactory } from '@dequanto/safe/GnosisSafeFactory';
-import { GnosisSafe } from '@dequanto-contracts/gnosis/GnosisSafe';
-import { GnosisSafeHandler } from '@dequanto/safe/GnosisSafeHandler';
-import { InMemoryServiceTransport } from '@dequanto/safe/transport/InMemoryServiceTransport';
-import { ContractWriter } from '@dequanto/contracts/ContractWriter';
-import { SafeAccount } from '@dequanto/models/TAccount';
-import { FileServiceTransport } from '@dequanto/safe/transport/FileServiceTransport';
-import { $signRaw } from '@dequanto/utils/$signRaw';
-import { $bigint } from '@dequanto/utils/$bigint';
-import { $promise } from '@dequanto/utils/$promise';
-import { $address } from '@dequanto/utils/$address';
-import { $buffer } from '@dequanto/utils/$buffer';
 import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
 import { EntryPoint } from '@dequanto-contracts/ERC4337/EntryPoint/EntryPoint';
-import { TxWriter } from '@dequanto/txs/TxWriter';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { TransactionConfig } from 'web3-core';
 import { $sign } from '@dequanto/utils/$sign';
 import { $contract } from '@dequanto/utils/$contract';
 import { Erc4337Service } from '@dequanto/erc4337/Erc4337Service';
 import { SimpleAccount } from '@dequanto-contracts/ERC4337/SimpleAccount/SimpleAccount';
 import { SimpleAccountFactory } from '@dequanto-contracts/ERC4337/SimpleAccountFactory/SimpleAccountFactory';
+import { UserOperation } from '@dequanto/erc4337/models/UserOperation';
+import { l } from '@dequanto/utils/$logger';
+import { Erc4337TxWriter } from '@dequanto/erc4337/Erc4337TxWriter';
 
 
 UTest({
-    $config: {
-        timeout: 1_000_000,
-    },
-
-
-    async 'create in-memory safe and manually receive tokens' () {
+    async 'erc4337 contracts'() {
         let provider = new HardhatProvider();
         let client = provider.client();
         let erc4337Contracts = await AccountAbstractionTestableFactory.prepare();
-        let { demoCounterContract } = await TestableFactory.prepare();
-        let ownerFoo = await ChainAccountProvider.generate();
+        let { demoLoggerContract: demoCounterContract } = await TestableFactory.prepare();
+
         let erc4337Service = new Erc4337Service(client, {
             addresses: {
                 entryPoint: erc4337Contracts.entryPointContract.address,
@@ -43,65 +25,119 @@ UTest({
                 accountImplementation: erc4337Contracts.accountContract.address,
             }
         });
-
-        await client.debug.setBalance(ownerFoo.address, 10n**18n);
-
-        let entryPoint = new EntryPoint(erc4337Contracts.entryPointContract.address, client);
-
-        $contract.store.register(entryPoint);
-
-        let { initCode, initCodeGas } = await erc4337Service.prepareAccountCreation(ownerFoo.address);
-
-        let senderAddress = await erc4337Service.getAccountAddress(ownerFoo.address, initCode)
+        let callCounter = 0;
+        let ownerFoo = await ChainAccountProvider.generate();
+        await client.debug.setBalance(ownerFoo.address, 10n ** 18n);
 
 
-        //1. Target contract method
-        let { callData: demoCallData, callGas: demoCallGas } = await erc4337Service.prepareCallData(demoCounterContract, 'logMe', { address: ownerFoo.address });
+        return UTest({
+            async 'create and test with demo contract'() {
+                l`1. Prepare ERC4337 contract account via Account Factory`;
+                let { initCode, initCodeGas } = await erc4337Service.prepareAccountCreation(ownerFoo.address);
+                let senderAddress = await erc4337Service.getAccountAddress(ownerFoo.address, initCode)
+                has_(senderAddress, /0x.+/)
 
-        // 2. Account contract execution method
-        let { callData: accountCallData } = await erc4337Service.prepareAccountCallData(
-            demoCounterContract.address,
-            0n,
-            demoCallData.data
-        );
+                l`2. Prepare Target (Demo) contract transaction data`;
+                let { callData: demoCallData, callGas: demoCallGas } = await erc4337Service.prepareCallData(demoCounterContract, 'logMe', { address: senderAddress });
 
-        type UserOp = Parameters<EntryPoint['handleOps']>[1][0];
-        let nonce = await entryPoint.getNonce(ownerFoo.address, 0n);
-        let op: UserOp = {
-            sender: senderAddress,
-            initCode: initCode,
-            callData: accountCallData.data,
+                l`3. Prepare contract account execution method`;
+                let { callData: accountCallData } = await erc4337Service.prepareAccountCallData(
+                    demoCounterContract.address,
+                    0n,
+                    demoCallData.data
+                );
 
-            callGasLimit: BigInt(demoCallGas),
-            verificationGasLimit: 150000n + BigInt(initCodeGas),
-            preVerificationGas: 21000n,
-            maxFeePerGas: 0n,
-            maxPriorityFeePerGas: 0n,
-            nonce:  nonce,
-            signature: '0x',
-            paymasterAndData: '0x',
-        };
+                l`4. Get nonce`
+                let nonce = await erc4337Service.getNonce(ownerFoo.address, 0n);
 
-        let opHash = await entryPoint.getUserOpHash(op);
+                let op = await erc4337Service.getSignedUserOp( <Partial<UserOperation>> {
+                    sender: senderAddress,
+                    initCode: initCode,
+                    callData: accountCallData.data,
+                    callGasLimit: BigInt(demoCallGas),
+                    verificationGasLimit: 150000n + BigInt(initCodeGas),
+                    nonce: nonce
+                }, ownerFoo);
+
+                let receipt = await erc4337Service.submitUserOpViaEntryPoint(ownerFoo, op);
+                callCounter++;
 
 
-        let sigForValidation = await $sign.signEIPHashed(client, opHash as string, ownerFoo);
-        op.signature = sigForValidation.signature;
+                eq_(receipt.status, true);
+                let callCount = await demoCounterContract.calls(senderAddress);
+                eq_(callCount, callCounter);
+            },
+            async 'should submit via factory' () {
+                let writer = new Erc4337TxWriter(client, {
+                    addresses: {
+                        entryPoint: erc4337Contracts.entryPointContract.address,
+                        accountFactory: erc4337Contracts.accountFactoryContract.address,
+                        accountImplementation: erc4337Contracts.accountContract.address,
+                    }
+                });
 
-        let tx = await entryPoint.handleOps(ownerFoo, [op], ownerFoo.address);
-        let receipt = await tx.wait();
+                let erc4337Account = await writer.getAccount(ownerFoo);
+                let tx = await demoCounterContract.$data().logMe({ address: erc4337Account.address });
+                let receipt = await writer.submitUserOpViaEntryPoint({
+                    tx,
+                    owner: ownerFoo,
+                    submitter: ownerFoo,
+                });
+                callCounter++;
 
-        eq_(receipt.status, true);
+                let callCount = await demoCounterContract.calls(erc4337Account.address);
+                eq_(callCount, callCounter);
+            },
+            async '!should submit with another contract' () {
+                let writer = new Erc4337TxWriter(client, {
+                    addresses: {
+                        entryPoint: erc4337Contracts.entryPointContract.address,
+                        accountFactory: erc4337Contracts.accountFactoryContract.address,
+                        accountImplementation: erc4337Contracts.accountContract.address,
+                    }
+                });
+                let submitter = await ChainAccountProvider.generate();
+                client.debug.setBalance(submitter.address, 10n**18n);
 
-        let callCount = await demoCounterContract.calls(senderAddress)
-        eq_(callCount, 1n);
+                let erc4337Account = await writer.getAccount(ownerFoo);
+
+                client.debug.setBalance(erc4337Account.address, 10n**18n);
+
+
+                let tx = await demoCounterContract.$data().logMe({ address: erc4337Account.address });
+
+                let callCountBefore = await demoCounterContract.calls(erc4337Account.address);
+                let { op, opHash, receipt } = await writer.submitUserOpViaEntryPoint({
+                    tx,
+                    owner: ownerFoo,
+                    submitter: submitter,
+                });
+                callCounter++;
+
+                let callCount = await demoCounterContract.calls(erc4337Account.address);
+                eq_(callCount, callCounter);
+
+                // Should spend some fees
+                let erc4337AccountBalance = await client.getBalance(erc4337Account.address);
+                lt_(erc4337AccountBalance, 10n**18n);
+
+
+                let entryPoint = new EntryPoint(erc4337Contracts.entryPointContract.address, client);
+                let userOperationEvents = await entryPoint.getPastLogsUserOperationEvent({
+                    params: { userOpHash: opHash }
+                });
+                eq_(userOperationEvents.length, 1);
+                eq_(userOperationEvents[0].params.userOpHash, opHash);
+            }
+        });
+
     },
 
 })
 
 class AccountAbstractionTestableFactory {
 
-    static async prepare () {
+    static async prepare() {
         const provider = new HardhatProvider();
 
         const { contract: entryPointContract, abi: proxyFactoryAbi } = await provider.deploySol('/test/fixtures/erc4337/core/EntryPoint.sol', {
@@ -124,10 +160,10 @@ class AccountAbstractionTestableFactory {
 
 
 namespace TestableFactory {
-    export async function prepare () {
+    export async function prepare() {
         const provider = new HardhatProvider();
         const code = `
-        contract DemoCallCounter {
+        contract DemoCallLogger {
             mapping (address => uint256) public calls;
 
             function logMe () external {
@@ -135,10 +171,10 @@ namespace TestableFactory {
             }
         }
         `;
-        const { contract: demoCounterContract } = await provider.deployCode(code)
+        const { contract: demoLoggerContract } = await provider.deployCode(code)
 
         return {
-            demoCounterContract
+            demoLoggerContract
         };
     }
 }

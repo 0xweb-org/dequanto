@@ -77,18 +77,18 @@ export abstract class ContractBase {
 
     @memd.deco.memoize({ perInstance: true })
     public $call () {
-        let abi = this.abi;
+        let abiArr = this.abi;
         let writer = this.getContractWriter();
 
         let methods = this.abi.filter(abi => abi.type === 'function' && $abiUtil.isReader(abi) === false);
-        let fns = alot(methods).map(method => {
+        let fns = alot(methods).map(abiMethod => {
             return {
-                name: method.name,
+                name: abiMethod.name,
                 async fn (sender: TAccount,...args: any[]) {
                     return ContractBaseHelper.$call(
                         writer,
-                        method,
-                        abi,
+                        abiMethod,
+                        abiArr,
                         sender,
                         ...args
                     );

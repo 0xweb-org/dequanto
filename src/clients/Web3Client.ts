@@ -410,6 +410,7 @@ export abstract class Web3Client implements IWeb3Client {
     }
 
     async getPastLogs (options: PastLogsOptions): Promise<Log[]> {
+        console.log('getPastLogs', options);
 
         options.fromBlock = await Blocks.getBlock(this, options.fromBlock, 0);
         options.toBlock = await Blocks.getBlock(this, options.toBlock, 'latest');

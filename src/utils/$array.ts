@@ -63,7 +63,7 @@ export namespace $array {
             }
         }
         if (i < arr.length - 1) {
-            arr = arr.splice(i + 1);
+            arr = arr.splice(0, i + 1);
         }
         return arr;
     }

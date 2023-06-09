@@ -7,8 +7,13 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $address } from '@dequanto/utils/$address';
 import type { TransactionConfig } from 'web3-core';
+import { UserOperation, UserOperationDefaults } from './models/UserOperation';
+import { ChainAccount } from '@dequanto/models/TAccount';
+import { $sign } from '@dequanto/utils/$sign';
+import { obj_extendDefaults } from 'atma-utils';
 
 export class Erc4337Service {
+
 
     private accountFactoryContract = new SimpleAccountFactory(this.info.addresses.accountFactory, this.client);
     private accountContract = new SimpleAccount(this.info.addresses.accountImplementation, this.client);
@@ -35,6 +40,11 @@ export class Erc4337Service {
             initCode,
             initCodeGas
         };
+    }
+
+    async existsAccount (erc4337Account: TAddress) {
+        let code = await this.client.getCode(erc4337Account);
+        return code != null && code.length > 5;
     }
 
     async getAccountAddress (owner: TAddress, initCode: string) {
@@ -65,6 +75,34 @@ export class Erc4337Service {
             callData,
             callGas
         };
+    }
+
+    async getNonce(address: TAddress, salt: bigint = 0n) {
+        return this.entryPointContract.getNonce(address, salt);
+    }
+    async getUserOpHash (op: UserOperation): Promise<string> {
+        return await this.entryPointContract.getUserOpHash(op) as string;
+    }
+    async getSignedUserOp (op: Partial<UserOperation>, owner: ChainAccount): Promise<{ op: UserOperation, opHash: string }> {
+
+        let userOp: UserOperation = obj_extendDefaults(op, UserOperationDefaults);
+
+        let opHash = await this.getUserOpHash(userOp);
+        let sig = await $sign.signEIPHashed(this.client, opHash as string, owner);
+        return {
+            opHash,
+            op: {
+                ...userOp,
+                signature: sig.signature
+            }
+        }
+    }
+
+
+    async submitUserOpViaEntryPoint (sender: ChainAccount, op: UserOperation | UserOperation[]) {
+        let tx = await this.entryPointContract.handleOps(sender, Array.isArray(op) ? op : [op], sender.address);
+        let receipt = await tx.wait();
+        return receipt;
     }
 }
 
