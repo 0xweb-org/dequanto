@@ -54,8 +54,13 @@ export class Erc4337TxWriter {
             callData
         );
 
-        let gasPrice = await this.client.getGasPrice();
-        let nonce = await service.getNonce(senderAddress, 0n);
+        let [ gasPrice, erc4337AccountBalance, nonce] = await Promise.all([
+            this.client.getGasPrice(),
+            this.client.getBalance(senderAddress),
+            service.getNonce(senderAddress, 0n)
+        ]);
+        let maxFeePerGas = erc4337AccountBalance === 0n ? 0n : gasPrice.price;
+
         let { op, opHash } = await service.getSignedUserOp(<Partial<UserOperation>>{
             sender: senderAddress,
             initCode: initCode,
@@ -64,7 +69,8 @@ export class Erc4337TxWriter {
             verificationGasLimit: 150000n + BigInt(initCodeGas),
             nonce: nonce,
 
-            maxFeePerGas: gasPrice.price
+            maxFeePerGas: maxFeePerGas,
+            maxPriorityFeePerGas: 10n**9n,
         }, owner);
 
         let receipt = await service.submitUserOpViaEntryPoint(submitter, op);

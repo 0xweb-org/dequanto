@@ -415,7 +415,6 @@ export class EntryPoint extends ContractBase {
             topic,
             ...options
         });
-        console.log(filters, 'filters')
         let logs = await this.$getPastLogs(filters);
         return logs.map(log => this.$extractLog(log, abi)) as any;
     }

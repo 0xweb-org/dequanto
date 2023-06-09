@@ -78,7 +78,8 @@ export class Erc4337Service {
     }
 
     async getNonce(address: TAddress, salt: bigint = 0n) {
-        return this.entryPointContract.getNonce(address, salt);
+        let nonce = await this.entryPointContract.getNonce(address, salt);
+        return nonce;
     }
     async getUserOpHash (op: UserOperation): Promise<string> {
         return await this.entryPointContract.getUserOpHash(op) as string;

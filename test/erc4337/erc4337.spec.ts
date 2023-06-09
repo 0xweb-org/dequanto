@@ -50,7 +50,7 @@ UTest({
                 l`4. Get nonce`
                 let nonce = await erc4337Service.getNonce(ownerFoo.address, 0n);
 
-                let op = await erc4337Service.getSignedUserOp( <Partial<UserOperation>> {
+                let { op } = await erc4337Service.getSignedUserOp( <Partial<UserOperation>> {
                     sender: senderAddress,
                     initCode: initCode,
                     callData: accountCallData.data,
@@ -77,6 +77,7 @@ UTest({
                 });
 
                 let erc4337Account = await writer.getAccount(ownerFoo);
+
                 let tx = await demoCounterContract.$data().logMe({ address: erc4337Account.address });
                 let receipt = await writer.submitUserOpViaEntryPoint({
                     tx,
@@ -88,7 +89,7 @@ UTest({
                 let callCount = await demoCounterContract.calls(erc4337Account.address);
                 eq_(callCount, callCounter);
             },
-            async '!should submit with another contract' () {
+            async 'should submit with another contract' () {
                 let writer = new Erc4337TxWriter(client, {
                     addresses: {
                         entryPoint: erc4337Contracts.entryPointContract.address,

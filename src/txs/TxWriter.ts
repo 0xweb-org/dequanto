@@ -30,6 +30,7 @@ import { SigFileTransport } from './sig-transports/SigFileTransport';
 import { $require } from '@dequanto/utils/$require';
 import { $abiParser } from '@dequanto/utils/$abiParser';
 import { $contract } from '@dequanto/utils/$contract';
+import { $error } from '@dequanto/utils/$error';
 
 interface ITxWriterEvents {
     transactionHash (hash: string)
@@ -299,10 +300,11 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
                 }
 
             }, async (err: Error & { receipt?: TransactionReceipt, data }) => {
-
                 if (err.data != null && this.builder.abi != null) {
                     err.data = $contract.decodeCustomError(err.data, this.builder.abi);
+                    $error.normalizeEvmCustomError(err);
                 }
+
 
                 this.logger.log(`Tx errored ${err.message}`);
 
