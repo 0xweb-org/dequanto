@@ -18,7 +18,6 @@ import "./SenderCreator.sol";
 import "./Helpers.sol";
 import "./NonceManager.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "hardhat/console.sol";
 
 contract EntryPoint is IEntryPoint, StakeManager, NonceManager, ReentrancyGuard {
 
@@ -108,7 +107,7 @@ contract EntryPoint is IEntryPoint, StakeManager, NonceManager, ReentrancyGuard 
         for (uint256 i = 0; i < opslen; i++) {
             collected += _executeUserOp(i, ops[i], opInfos[i]);
         }
-        console.log("compensate %s", collected);
+
         _compensate(beneficiary, collected);
     } //unchecked
     }
@@ -256,7 +255,6 @@ contract EntryPoint is IEntryPoint, StakeManager, NonceManager, ReentrancyGuard 
 
     unchecked {
         uint256 actualGas = preGas - gasleft() + opInfo.preOpGas;
-        console.log("actualGas %s", actualGas);
         //note: opIndex is ignored (relevant only if mode==postOpReverted, which is only possible outside of innerHandleOp)
         return _handlePostOp(0, mode, opInfo, context, actualGas);
     }
@@ -585,7 +583,6 @@ contract EntryPoint is IEntryPoint, StakeManager, NonceManager, ReentrancyGuard 
         }
         actualGas += preGas - gasleft();
         actualGasCost = actualGas * gasPrice;
-        console.log("actual gas cost %s, actual gas %s; pregas %s", actualGasCost, actualGas, preGas);
         if (opInfo.prefund < actualGasCost) {
             revert FailedOp(opIndex, "AA51 prefund below actualGasCost");
         }

@@ -16,6 +16,7 @@ import { $require } from '@dequanto/utils/$require';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import alot from 'alot';
 import { ContractAbiProvider } from '@dequanto/contracts/ContractAbiProvider';
+import { $erc4337 } from './utils/$erc4337';
 
 export class Erc4337Service {
 
@@ -137,7 +138,8 @@ export class Erc4337Service {
         return nonce;
     }
     async getUserOpHash(op: UserOperation): Promise<string> {
-        return await this.entryPointContract.getUserOpHash(op) as string;
+        let hash = await this.entryPointContract.getUserOpHash(op) as string;
+        return hash;
     }
     async getSignedUserOp(op: Partial<UserOperation>, owner: ChainAccount): Promise<{ op: UserOperation, opHash: string }> {
 
@@ -164,10 +166,15 @@ export class Erc4337Service {
         let event = userOperationEvents[0];
 
         let tx = await this.client.getTransaction(event.transactionHash);
-        let txParsed = await this.decodeUserOperations(tx.input, options);
+        let allUserOperations = await this.decodeUserOperations(tx.input, options);
+
+        let userOperationParsed = alot(allUserOperations).find(op => {
+            let hash = $erc4337.hash(op.userOperation, this.entryPointContract.address, this.client.chainId);
+            return hash === event.params.userOpHash;
+        });
         return {
             transaction: tx,
-            userOperations: txParsed,
+            ...userOperationParsed
         };
     }
 

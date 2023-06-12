@@ -10,6 +10,8 @@ import { Erc4337TxWriter } from '@dequanto/erc4337/Erc4337TxWriter';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $address } from '@dequanto/utils/$address';
 import { $abiParser } from '@dequanto/utils/$abiParser';
+import { $erc4337 } from '@dequanto/erc4337/utils/$erc4337';
+import { $contract } from '@dequanto/utils/$contract';
 
 const provider = new HardhatProvider();
 const client = provider.client();
@@ -21,7 +23,7 @@ UTest({
         let sig = $abiUtils.getMethodSignature(abi);
         eq_(sig, '0x1fad948c');
     },
-    async 'parse handleOps method' () {
+    async 'parse handleOps method'() {
         let tx = {
             data: `0x1fad948c0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000e109be7b84e9bee53d9c043578ace493a9ea04c000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000020000000000000000000000000b6f84e00149de01a2690e88a64f76438db3341110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016000000000000000000000000000000000000000000000000000000000000001e0000000000000000000000000000000000000000000000000000000000000a9d500000000000000000000000000000000000000000000000000000000000647f60000000000000000000000000000000000000000000000000000000000005208000000000000000000000000000000000000000000000000000000005c8d76b9000000000000000000000000000000000000000000000000000000003b9aca0000000000000000000000000000000000000000000000000000000000000002c000000000000000000000000000000000000000000000000000000000000002e00000000000000000000000000000000000000000000000000000000000000058e7f1725e7734ce288f8367e1bb143e90bb3f05125fbfb9cf000000000000000000000000e51dbcf3a958f4b2fd1ea0cfbcd64ee5ab0ab5300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a4b61d27f6000000000000000000000000cf7ed3acca5a467e9e704c703e8d87f634fb0fc9000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000004d0854455000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000041f769d7020ec7eda54e9df74ef24fa48c4ad2c7cfe81ca088b29582adf8eb7f542cfdff5cc271ec5b33f5a05b8548aaca1cc8c9707a673167c07eea5c7d00bff31c00000000000000000000000000000000000000000000000000000000000000`
         };
@@ -48,12 +50,33 @@ UTest({
         eq_(info[0].contractCall.method, 'logMe');
     },
 
+    async 'hash user operation'() {
+        const op = <UserOperation>{
+            sender: '0x03c2764cc30672dFBf3888457a9003bD0e8D6713',
+            initCode: '0x9a9f2ccfde556a7e9ff0848998aa4a0cfd8863ae5fbfb9cf00000000000000000000000047cd2f859aaeea1bc5eaab577b10c56d613af65d0000000000000000000000000000000000000000000000000000000000000000',
+            callData: '0xb61d27f60000000000000000000000003aa5ebb10dc797cac828524e59a333d0a371443c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000004d085445500000000000000000000000000000000000000000000000000000000',
+            callGasLimit: 43477n,
+            verificationGasLimit: 411638n,
+            nonce: 0n,
+            preVerificationGas: 21000n,
+            maxFeePerGas: 0n,
+            maxPriorityFeePerGas: 0n,
+            paymasterAndData: '0x',
+            signature: '0x'
+        };
+
+        const entryPointAddress = '0xc6e7df5e7b4f2a278906862b61205850344d4e7d';
+        const chainId = 1337;
+        const hash = $erc4337.hash(op, entryPointAddress, chainId);
+        eq_(hash, '0x4f7ea78cc1154bd3d168bd8e8166f7ceb1dfc8dbdc75e3ee94e07737c564e7d4');
+    },
+
     async '!erc4337 contracts'() {
 
         let erc4337Contracts = await AccountAbstractionTestableFactory.prepare();
         let { demoLoggerContract: demoCounterContract } = await TestableFactory.prepare();
 
-        let erc4337Service = new Erc4337Service(client, explorer,{
+        let erc4337Service = new Erc4337Service(client, explorer, {
             addresses: {
                 entryPoint: erc4337Contracts.entryPointContract.address,
                 accountFactory: erc4337Contracts.accountFactoryContract.address,
@@ -85,7 +108,7 @@ UTest({
                 l`4. Get nonce`
                 let nonce = await erc4337Service.getNonce(ownerFoo.address, 0n);
 
-                let { op } = await erc4337Service.getSignedUserOp( <Partial<UserOperation>> {
+                let { op } = await erc4337Service.getSignedUserOp(<Partial<UserOperation>>{
                     sender: senderAddress,
                     initCode: initCode,
                     callData: accountCallData.data,
@@ -102,7 +125,7 @@ UTest({
                 let callCount = await demoCounterContract.calls(senderAddress);
                 eq_(callCount, callCounter);
             },
-            async 'should submit via factory' () {
+            async 'should submit via factory'() {
                 let writer = new Erc4337TxWriter(client, explorer, {
                     addresses: {
                         entryPoint: erc4337Contracts.entryPointContract.address,
@@ -124,7 +147,7 @@ UTest({
                 let callCount = await demoCounterContract.calls(erc4337Account.address);
                 eq_(callCount, callCounter);
             },
-            async 'should submit with another contract' () {
+            async 'should submit with another contract'() {
                 let writer = new Erc4337TxWriter(client, explorer, {
                     addresses: {
                         entryPoint: erc4337Contracts.entryPointContract.address,
@@ -133,11 +156,11 @@ UTest({
                     }
                 });
                 let submitter = await ChainAccountProvider.generate();
-                client.debug.setBalance(submitter.address, 10n**18n);
+                client.debug.setBalance(submitter.address, 10n ** 18n);
 
                 let erc4337Account = await writer.getAccount(ownerFoo);
 
-                client.debug.setBalance(erc4337Account.address, 10n**18n);
+                client.debug.setBalance(erc4337Account.address, 10n ** 18n);
 
 
                 let tx = await demoCounterContract.$data().logMe({ address: erc4337Account.address });
@@ -154,7 +177,7 @@ UTest({
 
                 // Should spend some fees
                 let erc4337AccountBalance = await client.getBalance(erc4337Account.address);
-                lt_(erc4337AccountBalance, 10n**18n);
+                lt_(erc4337AccountBalance, 10n ** 18n);
 
 
                 let entryPoint = new EntryPoint(erc4337Contracts.entryPointContract.address, client);
@@ -164,9 +187,10 @@ UTest({
                 eq_(userOperationEvents.length, 1);
                 eq_(userOperationEvents[0].params.userOpHash, opHash);
 
-                let info = await writer.service.getUserOperation(opHash, { decodeContractCall: true});
+                let info = await writer.service.getUserOperation(opHash, { decodeContractCall: true });
 
-                eq_(info.userOperations[0].contractCall.method, 'logMe');
+                eq_(info.transaction.hash, receipt.transactionHash);
+                eq_(info.contractCall.method, 'logMe');
             }
         });
 

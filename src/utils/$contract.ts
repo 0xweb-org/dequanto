@@ -1,19 +1,24 @@
+import alot from 'alot';
 import Web3 from 'web3';
-import { type AbiItem } from 'web3-utils';
 import { Log, TransactionReceipt } from 'web3-core';
 import { $abiUtils } from './$abiUtils';
 import { InputDataUtils } from '@dequanto/contracts/utils/InputDataUtils';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { $abiParser } from './$abiParser';
-import alot from 'alot';
-import { $hex } from './$hex';
-import { TAddress } from '@dequanto/models/TAddress';
+import { TBufferLike } from '@dequanto/models/TBufferLike';
+import type { AbiItem } from 'web3-utils';
 
 export namespace $contract {
 
 
-    export function keccak256 (str: string) {
-        return Web3.utils.keccak256(str);
+    export function keccak256 (str: string | TBufferLike) {
+        if (str == null || str === '0x') {
+            return `0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470`;
+        }
+        return Web3.utils.keccak256(str as string);
+    }
+    export function soliditySha3 (str: string) {
+        return Web3.utils.soliditySha3Raw(str);
     }
 
     export function normalizeArgs (args: any[]) {

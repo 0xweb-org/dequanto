@@ -9,23 +9,50 @@ import type { ParamType } from 'ethers/lib/utils';
 export namespace $abiUtils {
 
     export function encodePacked (types: string[], values: any[])
+    export function encodePacked (typeValues: [string, any][])
     export function encodePacked (...val: Parameters<Web3['utils']['encodePacked']>)
     export function encodePacked (...mix) {
 
         let val: any[];
+        if (arguments.length === 1) {
+            let arr = arguments[0];
+            let isTypeValueNestedArray = Array.isArray(mix)
+                && mix.length > 0
+                && Array.isArray(mix[0])
+                && mix[0].length === 2
+                && typeof mix[0][0] === 'string';
+
+            if (isTypeValueNestedArray) {
+                val = arr.map(([type, value]) => {
+                    return { type, value };
+                });
+            }
+        }
+
         if (arguments.length === 2 && Array.isArray(mix[0]) && typeof mix[0][0] === 'string') {
             let [ types, values ] = mix;
             val = types.map((type, i) => {
                 return { type, value: values[i] };
-            })
-        } else {
+            });
+        }
+        if (val == null) {
             val = mix;
         }
 
         return Web3.utils.encodePacked(...val);
     }
 
-    export function encode (types: ReadonlyArray<string | ParamType>, values: ReadonlyArray<any>) {
+    export function encode (typeValues: [string, any][])
+    export function encode (types: ReadonlyArray<string | ParamType>, values: ReadonlyArray<any>)
+    export function encode (mix: [string, any][] | ReadonlyArray<string | ParamType>, values?: ReadonlyArray<any>) {
+        let types: ReadonlyArray<string | ParamType>;
+        if (Array.isArray(mix) && mix[0].length === 2 && typeof mix[0][0] === 'string') {
+            types = mix.map(x => x[0]);
+            values = mix.map(x => x[1]);
+        } else {
+            types = mix as any;
+        }
+
         let coder = new utils.AbiCoder();
         return coder.encode(types, values)
     }
