@@ -90,7 +90,6 @@ export class ContractWriter implements IContractWriter {
         txBuilder.setInputDataWithABI(abi, ...params);
         txBuilder.abi = configs?.abi;
 
-
         if (isSafe !== true) {
             await Promise.all([
                 txBuilder.setGas({

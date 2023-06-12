@@ -11,6 +11,11 @@ import { UserOperation, UserOperationDefaults } from './models/UserOperation';
 import { ChainAccount } from '@dequanto/models/TAccount';
 import { $sign } from '@dequanto/utils/$sign';
 import { obj_extendDefaults } from 'atma-utils';
+import { $contract } from '@dequanto/utils/$contract';
+import { $require } from '@dequanto/utils/$require';
+import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import alot from 'alot';
+import { ContractAbiProvider } from '@dequanto/contracts/ContractAbiProvider';
 
 export class Erc4337Service {
 
@@ -19,7 +24,7 @@ export class Erc4337Service {
     private accountContract = new SimpleAccount(this.info.addresses.accountImplementation, this.client);
     private entryPointContract = new EntryPoint(this.info.addresses.entryPoint, this.client);
 
-    constructor (public client: Web3Client, public info: {
+    constructor(public client: Web3Client, public explorer: IBlockChainExplorer, public info: {
         addresses: {
             entryPoint: TAddress
             accountFactory: TAddress
@@ -29,11 +34,61 @@ export class Erc4337Service {
 
     }
 
-    async prepareAccountCreation (owner: TAddress, salt = 0n) {
+    async decodeUserOperations(dataHex: string, options?: { decodeContractCall: boolean }) {
+        let abi = this.entryPointContract.abi;
+        let entryPointCall = $contract.decodeMethodCall(dataHex, abi);
+        $require.notNull(entryPointCall, `Entry Point input can not be parsed`);
+        $require.True(entryPointCall.method === 'handleOps', `${entryPointCall.method} is not handleOps`);
+
+        let userOps = entryPointCall.arguments[0] as UserOperation[];
+        let contractCalls = [];
+        let contractCallsParsed = [];
+        if (options?.decodeContractCall) {
+            contractCalls = userOps.map(userOp => {
+                let callData = userOp.callData as string;
+
+                let accountCall = $contract.decodeMethodCall(callData, this.accountContract.abi);
+                $require.notNull(accountCall, `Account input can not be parsed`);
+                $require.True(accountCall.method === 'execute', `${entryPointCall.method} is not execute`);
+
+                let [address, value, data] = accountCall.arguments;
+                return {
+                    address,
+                    value,
+                    data
+                };
+            });
+
+            let resolver = new ContractAbiProvider(this.client, this.explorer);
+            contractCallsParsed = await alot(contractCalls).mapAsync(async (call, i) => {
+                let result = await resolver.getAbi(call.address);
+                if (result?.abiJson == null) {
+                    return null;
+                }
+                let abi = result.abiJson;
+                let innerCall = $contract.decodeMethodCall(call.data, abi);
+
+                return {
+                    ...innerCall,
+                    value: call.value
+                };
+            }).toArrayAsync();
+        }
+
+        return userOps.map((userOp, i) => {
+            return {
+                userOperation: userOp,
+                contractCallRaw: contractCalls[i],
+                contractCall: contractCallsParsed[i]
+            };
+        });
+    }
+
+    async prepareAccountCreation(owner: TAddress, salt = 0n) {
         let { accountFactoryContract, entryPointContract } = this;
 
         let createAccountTx = await accountFactoryContract.$data().createAccount({ address: owner }, owner, salt);
-        let initCode = $abiUtils.encodePacked(['address', 'bytes'], [ accountFactoryContract.address, createAccountTx.data ]);
+        let initCode = $abiUtils.encodePacked(['address', 'bytes'], [accountFactoryContract.address, createAccountTx.data]);
         let initCodeGas = await this.client.getGasEstimation(entryPointContract.address, createAccountTx);
 
         return {
@@ -42,20 +97,20 @@ export class Erc4337Service {
         };
     }
 
-    async existsAccount (erc4337Account: TAddress) {
+    async existsAccount(erc4337Account: TAddress) {
         let code = await this.client.getCode(erc4337Account);
         return code != null && code.length > 5;
     }
 
-    async getAccountAddress (owner: TAddress, initCode: string) {
+    async getAccountAddress(owner: TAddress, initCode: string) {
         let { error, result } = await this.entryPointContract.$call().getSenderAddress({ address: owner }, initCode);
         let senderAddress = error.data.params.sender;
         return senderAddress;
     }
 
-    async prepareAccountCallData (targetAddress: TAddress, targetValue: bigint, targetCallData: string) {
+    async prepareAccountCallData(targetAddress: TAddress, targetValue: bigint, targetCallData: string) {
         let accountCallData: TransactionConfig = await this.accountContract.$data().execute(
-            { address: $address.ZERO},
+            { address: $address.ZERO },
             targetAddress,
             targetValue,
             targetCallData
@@ -64,11 +119,11 @@ export class Erc4337Service {
         return { callData: accountCallData }
     }
 
-    async prepareCallData <
+    async prepareCallData<
         TContract extends ContractBase,
         TMethod extends keyof Methods<TContract>,
 
-    > (contract: TContract, method: TMethod, sender: { address: TAddress }, ...args: MethodArguments<TContract[TMethod]>) {
+    >(contract: TContract, method: TMethod, sender: { address: TAddress }, ...args: MethodArguments<TContract[TMethod]>) {
         let callData: TransactionConfig = await contract.$data()[method](sender, ...args);
         let callGas = await this.client.getGasEstimation(sender.address, callData);
         return {
@@ -81,10 +136,10 @@ export class Erc4337Service {
         let nonce = await this.entryPointContract.getNonce(address, salt);
         return nonce;
     }
-    async getUserOpHash (op: UserOperation): Promise<string> {
+    async getUserOpHash(op: UserOperation): Promise<string> {
         return await this.entryPointContract.getUserOpHash(op) as string;
     }
-    async getSignedUserOp (op: Partial<UserOperation>, owner: ChainAccount): Promise<{ op: UserOperation, opHash: string }> {
+    async getSignedUserOp(op: Partial<UserOperation>, owner: ChainAccount): Promise<{ op: UserOperation, opHash: string }> {
 
         let userOp: UserOperation = obj_extendDefaults(op, UserOperationDefaults);
 
@@ -99,8 +154,24 @@ export class Erc4337Service {
         }
     }
 
+    async getUserOperation(opHash: string, options?: { decodeContractCall: boolean }) {
+        let userOperationEvents = await this.entryPointContract.getPastLogsUserOperationEvent({
+            params: { userOpHash: opHash }
+        });
+        if (userOperationEvents.length === 0) {
+            return null;
+        }
+        let event = userOperationEvents[0];
 
-    async submitUserOpViaEntryPoint (sender: ChainAccount, op: UserOperation | UserOperation[]) {
+        let tx = await this.client.getTransaction(event.transactionHash);
+        let txParsed = await this.decodeUserOperations(tx.input, options);
+        return {
+            transaction: tx,
+            userOperations: txParsed,
+        };
+    }
+
+    async submitUserOpViaEntryPoint(sender: ChainAccount, op: UserOperation | UserOperation[]) {
         let tx = await this.entryPointContract.handleOps(sender, Array.isArray(op) ? op : [op], sender.address);
         let receipt = await tx.wait();
         return receipt;
@@ -110,4 +181,4 @@ export class Erc4337Service {
 type Methods<T> = {
     [P in keyof T as T[P] extends (...args: any) => any ? P : never]: T[P]
 }
-type MethodArguments<T> = T extends (x, ...args: infer U ) => infer _ ? U : never[];
+type MethodArguments<T> = T extends (x, ...args: infer U) => infer _ ? U : never[];

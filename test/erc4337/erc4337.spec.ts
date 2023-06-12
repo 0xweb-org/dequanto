@@ -1,24 +1,59 @@
+import { l } from '@dequanto/utils/$logger';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
 import { EntryPoint } from '@dequanto-contracts/ERC4337/EntryPoint/EntryPoint';
-import { $sign } from '@dequanto/utils/$sign';
-import { $contract } from '@dequanto/utils/$contract';
 import { Erc4337Service } from '@dequanto/erc4337/Erc4337Service';
 import { SimpleAccount } from '@dequanto-contracts/ERC4337/SimpleAccount/SimpleAccount';
 import { SimpleAccountFactory } from '@dequanto-contracts/ERC4337/SimpleAccountFactory/SimpleAccountFactory';
 import { UserOperation } from '@dequanto/erc4337/models/UserOperation';
-import { l } from '@dequanto/utils/$logger';
 import { Erc4337TxWriter } from '@dequanto/erc4337/Erc4337TxWriter';
+import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { $address } from '@dequanto/utils/$address';
+import { $abiParser } from '@dequanto/utils/$abiParser';
 
+const provider = new HardhatProvider();
+const client = provider.client();
+const explorer = provider.explorer();
 
 UTest({
-    async 'erc4337 contracts'() {
-        let provider = new HardhatProvider();
-        let client = provider.client();
+    async 'check handleOps method sig'() {
+        let abi = new EntryPoint().abi.find(x => x.name === 'handleOps');
+        let sig = $abiUtils.getMethodSignature(abi);
+        eq_(sig, '0x1fad948c');
+    },
+    async 'parse handleOps method' () {
+        let tx = {
+            data: `0x1fad948c0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000e109be7b84e9bee53d9c043578ace493a9ea04c000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000020000000000000000000000000b6f84e00149de01a2690e88a64f76438db3341110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016000000000000000000000000000000000000000000000000000000000000001e0000000000000000000000000000000000000000000000000000000000000a9d500000000000000000000000000000000000000000000000000000000000647f60000000000000000000000000000000000000000000000000000000000005208000000000000000000000000000000000000000000000000000000005c8d76b9000000000000000000000000000000000000000000000000000000003b9aca0000000000000000000000000000000000000000000000000000000000000002c000000000000000000000000000000000000000000000000000000000000002e00000000000000000000000000000000000000000000000000000000000000058e7f1725e7734ce288f8367e1bb143e90bb3f05125fbfb9cf000000000000000000000000e51dbcf3a958f4b2fd1ea0cfbcd64ee5ab0ab5300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a4b61d27f6000000000000000000000000cf7ed3acca5a467e9e704c703e8d87f634fb0fc9000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000004d0854455000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000041f769d7020ec7eda54e9df74ef24fa48c4ad2c7cfe81ca088b29582adf8eb7f542cfdff5cc271ec5b33f5a05b8548aaca1cc8c9707a673167c07eea5c7d00bff31c00000000000000000000000000000000000000000000000000000000000000`
+        };
+
+        explorer.localDb.push({
+            name: 'DemoCallLogger',
+            address: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9',
+            abi: [
+                $abiParser.parseMethod(`logMe()`)
+            ]
+        });
+
+        let service = new Erc4337Service(client, explorer, {
+            addresses: {
+                entryPoint: $address.ZERO,
+                accountFactory: $address.ZERO,
+                accountImplementation: $address.ZERO
+            }
+        });
+
+
+        let info = await service.decodeUserOperations(tx.data, { decodeContractCall: true });
+        eq_(info.length, 1);
+        eq_(info[0].contractCall.method, 'logMe');
+    },
+
+    async '!erc4337 contracts'() {
+
         let erc4337Contracts = await AccountAbstractionTestableFactory.prepare();
         let { demoLoggerContract: demoCounterContract } = await TestableFactory.prepare();
 
-        let erc4337Service = new Erc4337Service(client, {
+        let erc4337Service = new Erc4337Service(client, explorer,{
             addresses: {
                 entryPoint: erc4337Contracts.entryPointContract.address,
                 accountFactory: erc4337Contracts.accountFactoryContract.address,
@@ -68,7 +103,7 @@ UTest({
                 eq_(callCount, callCounter);
             },
             async 'should submit via factory' () {
-                let writer = new Erc4337TxWriter(client, {
+                let writer = new Erc4337TxWriter(client, explorer, {
                     addresses: {
                         entryPoint: erc4337Contracts.entryPointContract.address,
                         accountFactory: erc4337Contracts.accountFactoryContract.address,
@@ -90,7 +125,7 @@ UTest({
                 eq_(callCount, callCounter);
             },
             async 'should submit with another contract' () {
-                let writer = new Erc4337TxWriter(client, {
+                let writer = new Erc4337TxWriter(client, explorer, {
                     addresses: {
                         entryPoint: erc4337Contracts.entryPointContract.address,
                         accountFactory: erc4337Contracts.accountFactoryContract.address,
@@ -107,7 +142,6 @@ UTest({
 
                 let tx = await demoCounterContract.$data().logMe({ address: erc4337Account.address });
 
-                let callCountBefore = await demoCounterContract.calls(erc4337Account.address);
                 let { op, opHash, receipt } = await writer.submitUserOpViaEntryPoint({
                     tx,
                     owner: ownerFoo,
@@ -129,6 +163,10 @@ UTest({
                 });
                 eq_(userOperationEvents.length, 1);
                 eq_(userOperationEvents[0].params.userOpHash, opHash);
+
+                let info = await writer.service.getUserOperation(opHash, { decodeContractCall: true});
+
+                eq_(info.userOperations[0].contractCall.method, 'logMe');
             }
         });
 

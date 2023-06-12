@@ -27,6 +27,15 @@ export namespace $contract {
             return val;
         })
     }
+    function normalizeValue (val: any) {
+        if (val == null || typeof val !== 'object') {
+            return val;
+        }
+        if (val?._isBigNumber) {
+            return BigInt(val.toString());
+        }
+        return val;
+    }
 
     export function extractLogsForAbi (tx: TransactionReceipt, abiItem: AbiItem): ITxLogItem[] {
         let topicHash = $abiUtils.getMethodHash(abiItem);
@@ -57,6 +66,7 @@ export namespace $contract {
             return null;
         }
         let params: any = InputDataUtils.decodeParamsWithABI(abi, bytesHex);
+
         let asObject = abi.inputs.every(x => x.name != null);
         if (asObject) {
             params = alot(abi.inputs).map((x, i) => {
@@ -68,6 +78,57 @@ export namespace $contract {
             params
         };
     }
+
+    export function decodeMethodCall (inputHex: string, abis: AbiItem[]) {
+        let str = inputHex.substring(2);
+        if (str === '') {
+            return null;
+        }
+        let methodHex = `0x${str.substring(0, 8)}`;
+        let bytesHex = `0x${str.substring(8)}`;
+
+        let abi = abis.find(abi => {
+            let sig = $abiUtils.getMethodSignature(abi);
+            return sig === methodHex;
+        });
+        if (abi == null) {
+            return null;
+        }
+        let params: any = InputDataUtils.decodeParamsWithABI(abi, bytesHex);
+        let args = params.map(param => {
+            return arrayToObject(param);
+        })
+
+        return {
+            method: abi.name,
+            arguments: args as any[]
+        };
+    }
+    function arrayToObject (mix) {
+        if (mix == null || typeof mix !== 'object' || Array.isArray(mix) === false) {
+            return normalizeValue(mix);
+        }
+        let obj = {};
+        let keyCount = 0;
+        let proto = Array.prototype;
+        for (let key in mix) {
+            if (key in proto || /^\d+$/.test(key)) {
+                continue;
+            }
+            let val = mix[key];
+            obj[key] = typeof val === 'object'? arrayToObject(val) : normalizeValue(val);
+            keyCount++;
+        }
+        if (keyCount === 0) {
+            if (Array.isArray(mix)) {
+                return mix.map(arrayToObject);
+            }
+            return mix;
+        }
+        return obj;
+    }
+
+
 
     export function decodeCustomError (errorDataHex: string | { type, params } | any, abiArr: AbiItem[]) {
         if (errorDataHex == null) {

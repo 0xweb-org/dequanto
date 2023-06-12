@@ -51,14 +51,15 @@ export abstract class ContractBase {
         return reader.getStorageAt(this.address, position);
     }
     public parseInputData (buffer: string | BufferLike, value?: string) {
-        const inter = new utils.Interface(this.abi as any);
-        const decodedInput = inter.parseTransaction({
+        const iface = new utils.Interface(this.abi as any);
+        const decodedInput = iface.parseTransaction({
             data: buffer as string,
             value: value,
         });
         return {
             name: decodedInput.name,
-            args: $contract.normalizeArgs(Array.from(decodedInput.args))
+            args: $contract.normalizeArgs(Array.from(decodedInput.args)),
+            params: $contract.parseInputData(buffer as string, this.abi)?.params
         };
     }
     public async $executeBatch <T extends readonly unknown[] | []>(values: T): Promise<{ -readonly [P in keyof T]: Awaited<T[P]> }> {

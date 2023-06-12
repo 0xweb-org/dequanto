@@ -5,11 +5,12 @@ import { ChainAccount, Erc4337Account } from '@dequanto/models/TAccount';
 import { Erc4337Service } from './Erc4337Service';
 import { $require } from '@dequanto/utils/$require';
 import { UserOperation } from './models/UserOperation';
+import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 
 export class Erc4337TxWriter {
-    private service = new Erc4337Service(this.client, this.info);
+    public service = new Erc4337Service(this.client, this.explorer, this.info);
 
-    constructor(public client: Web3Client, public info: IErc4337Info) {
+    constructor(public client: Web3Client, public explorer: IBlockChainExplorer, public info: IErc4337Info) {
 
     }
 

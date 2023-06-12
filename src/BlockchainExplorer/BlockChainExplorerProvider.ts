@@ -8,9 +8,10 @@ import { XDaiscan } from '@dequanto/chains/xdai/XDaiscan';
 import { $config } from '@dequanto/utils/$config';
 import { BlockChainExplorerFactory } from './BlockChainExplorerFactory';
 import { Evmscan } from './Evmscan';
+import { IBlockChainExplorer } from './IBlockChainExplorer';
 
 export namespace BlockChainExplorerProvider {
-    export function get (platform: TPlatform) {
+    export function get (platform: TPlatform): IBlockChainExplorer {
         switch (platform) {
             case 'bsc':
                 return di.resolve(Bscscan);
@@ -23,7 +24,7 @@ export namespace BlockChainExplorerProvider {
             case 'xdai':
                 return di.resolve(XDaiscan);
             case 'hardhat':
-                return null;
+                return Evmscan({ platform });
             default:
                 let cfg = $config.get(`blockchainExplorer.${platform}`);
                 if (cfg != null) {

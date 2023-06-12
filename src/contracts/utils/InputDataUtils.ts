@@ -1,7 +1,8 @@
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { utils } from 'ethers';
-import { type AbiItem } from 'web3-utils';
 import { $abiParser } from '../../utils/$abiParser';
+import { utils } from 'ethers';
+import type { AbiItem } from 'web3-utils';
+import type { ParamType } from 'ethers/lib/utils';
 
 export namespace InputDataUtils {
     export function split (inputData: string): { method: string, args: string[] } {
@@ -38,7 +39,8 @@ export namespace InputDataUtils {
         let inputs = abi.inputs;
         let types = inputs.map(x => x.type);
         let args = utils.defaultAbiCoder.decode(
-            types,
+            //types,
+            inputs as ParamType[],
             bytes
         );
         let arr = Array.from(args);
@@ -76,7 +78,8 @@ export namespace InputDataUtils {
         if (methodName == null) {
             throw new Error(`Invalid method in ${IFunctionABI}. Expects "function foo(...)"`)
         }
-        return iface.encodeFunctionData(methodName, params);
+        let result = iface.encodeFunctionData(methodName, params);
+        return result;
     }
 
     export function encodeWithTypes (client: Web3Client, types: any[], parameters: any[]): string {
@@ -92,4 +95,5 @@ export namespace InputDataUtils {
             return val;
         })
     }
+
 }

@@ -3,7 +3,7 @@ import { utils }  from 'ethers';
 import { $contract } from './$contract';
 import { $abiParser } from './$abiParser';
 import { $is } from './$is';
-import type { AbiItem } from 'web3-utils';
+import type { AbiItem, AbiInput } from 'web3-utils';
 import type { ParamType } from 'ethers/lib/utils';
 
 export namespace $abiUtils {
@@ -114,9 +114,16 @@ export namespace $abiUtils {
 
     function serializeMethodSignatureArgumentType (input: AbiItem['inputs'][0]) {
         if (input.type === 'tuple') {
-            let types = input.components.map(x => serializeMethodSignatureArgumentType(x));
-            return `(${types.join(',')})`;
+            return serializeComponents(input.components);
+        }
+        if (input.type === 'tuple[]') {
+            return serializeComponents(input.components) + '[]';
         }
         return input.type;
+    }
+
+    function serializeComponents (components: AbiInput[]) {
+        let types = components.map(x => serializeMethodSignatureArgumentType(x));
+        return `(${types.join(',')})`;
     }
 }

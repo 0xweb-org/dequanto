@@ -16,6 +16,7 @@ import { $require } from '@dequanto/utils/$require';
 import { IGeneratorSources } from '@dequanto/gen/Generator';
 import { $path } from '@dequanto/utils/$path';
 import { ContractFactory, IContractWrapped } from '@dequanto/contracts/ContractFactory';
+import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
 
 
 
@@ -49,6 +50,16 @@ export class HardhatProvider {
         const web3 = this.hh.web3;
         const client = new HardhatWeb3Client({ web3 });
         return client;
+    }
+
+    @memd.deco.memoize()
+    explorer (network: 'hardhat' | 'localhost' = 'hardhat') {
+        let client = this.client(network);
+        let Ctor = BlockChainExplorerProvider.create({
+            platform: 'hardhat',
+            getWeb3Client: () => client,
+        });
+        return new Ctor();
     }
 
     @memd.deco.memoize()
@@ -109,6 +120,8 @@ export class HardhatProvider {
         const receipt = await contractEthers.deployed();
         const contract = await ContractFactory.fromAbi<TReturn>(contractEthers.address, abi, client, null);
 
+        const explorer = this.explorer();
+        explorer.localDb.push({ name: '', abi: abi, address: contractEthers.address });
         return {
             contract: contract,
             abi,

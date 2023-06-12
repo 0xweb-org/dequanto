@@ -7,5 +7,14 @@
         "**/.hg": true,
         "**/dist": true,
         "**/.DS_Store": true
-    }
+    },
+    "cSpell.words": [
+        "Arbiscan",
+        "arbitrum",
+        "Bscscan",
+        "Daiscan",
+        "Evmscan",
+        "Polyscan",
+        "xdai"
+    ]
 }

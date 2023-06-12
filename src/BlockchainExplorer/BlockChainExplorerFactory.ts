@@ -3,7 +3,6 @@ import memd from 'memd';
 import axios from 'axios'
 import { IBlockChainExplorer, IBlockChainTransferEvent } from './IBlockChainExplorer';
 import { Transaction } from 'web3-core';
-import { type AbiItem } from 'web3-utils';
 import { IContractDetails } from '@dequanto/models/IContractDetails';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -14,6 +13,8 @@ import { $address } from '@dequanto/utils/$address';
 import { $require } from '@dequanto/utils/$require';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { $config } from '@dequanto/utils/$config';
+import { Constructor } from 'atma-utils';
+import type { AbiItem } from 'web3-utils';
 
 export interface IBlockChainExplorerParams {
 
@@ -34,7 +35,7 @@ export namespace BlockChainExplorerFactory {
         sort?: 'asc' | 'desc'
     }
 
-    export function create (opts: IBlockChainExplorerParams) {
+    export function create (opts: IBlockChainExplorerParams): Constructor<IBlockChainExplorer> {
 
         const client = new Client();
 
@@ -65,7 +66,7 @@ export namespace BlockChainExplorerFactory {
             async getContractMeta (q: string): Promise<IContractDetails> {
 
                 q = q.toLowerCase();
-                let info = this.localDb.find(x => x.address.toLowerCase() === q || x.name?.toLowerCase() === q);
+                let info = this.localDb.find(x => $address.eq(x.address, q) || x.name?.toLowerCase() === q);
                 return info;
             }
 
@@ -95,7 +96,11 @@ export namespace BlockChainExplorerFactory {
                 if (info?.proxy) {
                     address = info.proxy;
                 }
+                if (info?.abi) {
+                    return { abi: info.abi, implementation: address }
+                }
 
+                $require.notEmpty(this.config.host, `Host is not configured`);
                 let url = `${this.config.host}/api?module=contract&action=getabi&address=${address}&apikey=${this.config.key}`;
                 let abi: string;
 

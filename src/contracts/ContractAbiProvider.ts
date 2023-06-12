@@ -58,7 +58,7 @@ export class ContractAbiProvider {
             let hasProxy = $address.eq(address, implementation) === false;
             $logger.log(`Proxy detected: ${hasProxy ? 'YES' : 'NO' }`, hasProxy ? implementation : '');
 
-            let abiJson = JSON.parse(abi) as AbiItem[];
+            let abiJson: AbiItem[] = typeof abi === 'string' ? JSON.parse(abi) : abi;
             return { abi: abiJson, implementation };
         } catch (error) {
             $logger.error(error);
