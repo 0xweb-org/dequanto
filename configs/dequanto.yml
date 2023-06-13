@@ -187,3 +187,15 @@ oracles:
   coingecko:
     root: https://api.coingecko.com/api/v3
     key:
+
+
+# https://4337.blocknative.com
+erc4337:
+    - name: default
+      entryPoint: '0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789'
+      accountFactory: '0x09c58cf6be8e25560d479bd52b4417d15bca2845'
+      platforms:
+        - eth
+        - eth:goerli
+        - polygon
+        - polygon:mumbai

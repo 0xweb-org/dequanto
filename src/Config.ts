@@ -7,6 +7,7 @@ import { $cli } from './utils/$cli';
 import { obj_extend } from 'atma-utils';
 import { Directory } from 'atma-io';
 import { ITokenGlob } from './models/ITokenGlob';
+import { TAddress } from './models/TAddress';
 
 export interface IProviderEndpoint {
     url: string
@@ -49,6 +50,12 @@ export class Config {
     contracts?: {
         [platform in TPlatform]: IContractDetails[]
     }
+    erc4337?: {
+        name: string
+        entryPoint: TAddress
+        accountFactory: TAddress
+        platforms: TPlatform[]
+    }[]
 
     @memd.deco.memoize()
     static async fetch (parameters?: { pin?, 'config-accounts'?, 'config-global'? } ) {

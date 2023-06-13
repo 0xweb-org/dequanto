@@ -1,3 +1,4 @@
+import alot from 'alot';
 import { EntryPoint } from '@dequanto-contracts/ERC4337/EntryPoint/EntryPoint';
 import { SimpleAccount } from '@dequanto-contracts/ERC4337/SimpleAccount/SimpleAccount';
 import { SimpleAccountFactory } from '@dequanto-contracts/ERC4337/SimpleAccountFactory/SimpleAccountFactory';
@@ -6,7 +7,6 @@ import { ContractBase } from '@dequanto/contracts/ContractBase';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $address } from '@dequanto/utils/$address';
-import type { TransactionConfig } from 'web3-core';
 import { UserOperation, UserOperationDefaults } from './models/UserOperation';
 import { ChainAccount } from '@dequanto/models/TAccount';
 import { $sign } from '@dequanto/utils/$sign';
@@ -14,22 +14,21 @@ import { obj_extendDefaults } from 'atma-utils';
 import { $contract } from '@dequanto/utils/$contract';
 import { $require } from '@dequanto/utils/$require';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
-import alot from 'alot';
 import { ContractAbiProvider } from '@dequanto/contracts/ContractAbiProvider';
 import { $erc4337 } from './utils/$erc4337';
+import type { TransactionConfig } from 'web3-core';
 
 export class Erc4337Service {
 
 
     private accountFactoryContract = new SimpleAccountFactory(this.info.addresses.accountFactory, this.client);
-    private accountContract = new SimpleAccount(this.info.addresses.accountImplementation, this.client);
+    private accountContract = new SimpleAccount($address.ZERO, this.client);
     private entryPointContract = new EntryPoint(this.info.addresses.entryPoint, this.client);
 
     constructor(public client: Web3Client, public explorer: IBlockChainExplorer, public info: {
         addresses: {
             entryPoint: TAddress
             accountFactory: TAddress
-            accountImplementation: TAddress
         }
     }) {
 
