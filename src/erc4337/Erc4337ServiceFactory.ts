@@ -28,8 +28,8 @@ export class Erc4337ServiceFactory {
 
         return new Erc4337Service(client, explorer, {
             addresses: {
-                entryPoint: provider.entryPoint,
-                accountFactory: provider.accountFactory
+                entryPoint: provider.contracts.entryPoint,
+                accountFactory: provider.contracts.accountFactory
             }
         });
     }

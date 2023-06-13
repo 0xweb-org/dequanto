@@ -12,6 +12,7 @@ import { $address } from '@dequanto/utils/$address';
 import { $abiParser } from '@dequanto/utils/$abiParser';
 import { $erc4337 } from '@dequanto/erc4337/utils/$erc4337';
 import { $contract } from '@dequanto/utils/$contract';
+import memd from 'memd';
 
 const provider = new HardhatProvider();
 const client = provider.client();
@@ -39,8 +40,7 @@ UTest({
         let service = new Erc4337Service(client, explorer, {
             addresses: {
                 entryPoint: $address.ZERO,
-                accountFactory: $address.ZERO,
-                accountImplementation: $address.ZERO
+                accountFactory: $address.ZERO
             }
         });
 
@@ -71,7 +71,33 @@ UTest({
         eq_(hash, '0x4f7ea78cc1154bd3d168bd8e8166f7ceb1dfc8dbdc75e3ee94e07737c564e7d4');
     },
 
-    async '!erc4337 contracts'() {
+    async '!erc4337 simple create' () {
+        let erc4337Contracts = await AccountAbstractionTestableFactory.prepare();
+        let owner = ChainAccountProvider.generate();
+        let submitter = ChainAccountProvider.generate();
+        await client.debug.setBalance(submitter.address, 10n**18n);
+
+        let writer = new Erc4337TxWriter(client, explorer, {
+            addresses: {
+                entryPoint: erc4337Contracts.entryPointContract.address,
+                accountFactory: erc4337Contracts.accountFactoryContract.address,
+            }
+        });
+        let result = await writer.createAccount({ owner, submitter });
+        eq_(result.receipt.status, true);
+        eq_($address.isValid(result.op.sender), true);
+
+        let code = await client.getCode(result.op.sender);
+        gt_(code.length, 10);
+
+        let txInfo = await client.getTransaction(result.receipt.transactionHash);
+        let userOperations = await writer.service.decodeUserOperations(txInfo.input, { decodeContractCall: true });
+        eq_(userOperations.length, 1);
+        eq_(userOperations[0].contractCall.method, '');
+
+        console.log(userOperations[0]);
+    },
+    async 'erc4337 contracts'() {
 
         let erc4337Contracts = await AccountAbstractionTestableFactory.prepare();
         let { demoLoggerContract: demoCounterContract } = await TestableFactory.prepare();
@@ -80,7 +106,6 @@ UTest({
             addresses: {
                 entryPoint: erc4337Contracts.entryPointContract.address,
                 accountFactory: erc4337Contracts.accountFactoryContract.address,
-                accountImplementation: erc4337Contracts.accountContract.address,
             }
         });
         let callCounter = 0;
@@ -89,7 +114,7 @@ UTest({
 
 
         return UTest({
-            async 'create and test with demo contract'() {
+            async 'low level create and test with demo contract'() {
                 l`1. Prepare ERC4337 contract account via Account Factory`;
                 let { initCode, initCodeGas } = await erc4337Service.prepareAccountCreation(ownerFoo.address);
                 let senderAddress = await erc4337Service.getAccountAddress(ownerFoo.address, initCode)
@@ -130,7 +155,6 @@ UTest({
                     addresses: {
                         entryPoint: erc4337Contracts.entryPointContract.address,
                         accountFactory: erc4337Contracts.accountFactoryContract.address,
-                        accountImplementation: erc4337Contracts.accountContract.address,
                     }
                 });
 
@@ -152,7 +176,6 @@ UTest({
                     addresses: {
                         entryPoint: erc4337Contracts.entryPointContract.address,
                         accountFactory: erc4337Contracts.accountFactoryContract.address,
-                        accountImplementation: erc4337Contracts.accountContract.address,
                     }
                 });
                 let submitter = await ChainAccountProvider.generate();
@@ -200,9 +223,9 @@ UTest({
 
 class AccountAbstractionTestableFactory {
 
+    @memd.deco.memoize()
     static async prepare() {
         const provider = new HardhatProvider();
-
         const { contract: entryPointContract, abi: proxyFactoryAbi } = await provider.deploySol('/test/fixtures/erc4337/core/EntryPoint.sol', {
             arguments: [],
         });

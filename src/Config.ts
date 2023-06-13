@@ -52,8 +52,10 @@ export class Config {
     }
     erc4337?: {
         name: string
-        entryPoint: TAddress
-        accountFactory: TAddress
+        contracts: {
+            entryPoint: TAddress
+            accountFactory: TAddress
+        }
         platforms: TPlatform[]
     }[]
 

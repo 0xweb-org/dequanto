@@ -69,4 +69,8 @@ export namespace $hex {
         }
         return `0x${mix}`;
     }
+
+    export function isEmpty (hex: string) {
+        return hex == null || hex.length === 0 || hex === '0x';
+    }
 }

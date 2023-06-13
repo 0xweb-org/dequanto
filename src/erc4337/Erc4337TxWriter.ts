@@ -26,6 +26,24 @@ export class Erc4337TxWriter {
         };
     }
 
+    async createAccount (params: {
+        owner: ChainAccount,
+        submitter?: ChainAccount,
+    }) {
+        let service = this.service;
+        let { initCode, initCodeGas } = await service.prepareAccountCreation(params.owner.address);
+        let senderAddress = await service.getAccountAddress(params.owner.address, initCode);
+        let tx = <TransactionConfig> {
+            to: senderAddress,
+            value: 0,
+            data: '0x'
+        };
+        return await this.submitUserOpViaEntryPoint({
+            tx,
+            ...params
+        })
+    }
+
     async submitUserOpViaEntryPoint(params: {
         tx: TransactionConfig,
         owner: ChainAccount,

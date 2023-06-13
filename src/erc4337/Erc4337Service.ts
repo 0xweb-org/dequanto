@@ -17,6 +17,8 @@ import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExp
 import { ContractAbiProvider } from '@dequanto/contracts/ContractAbiProvider';
 import { $erc4337 } from './utils/$erc4337';
 import type { TransactionConfig } from 'web3-core';
+import { $buffer } from '@dequanto/utils/$buffer';
+import { $hex } from '@dequanto/utils/$hex';
 
 export class Erc4337Service {
 
@@ -61,6 +63,14 @@ export class Erc4337Service {
 
             let resolver = new ContractAbiProvider(this.client, this.explorer);
             contractCallsParsed = await alot(contractCalls).mapAsync(async (call, i) => {
+                if ($hex.isEmpty(call.data)) {
+                    return {
+                        address: call.address,
+                        value: call.value,
+                        method: '',
+                        arguments: []
+                    };
+                }
                 let result = await resolver.getAbi(call.address);
                 if (result?.abiJson == null) {
                     return null;
@@ -69,8 +79,10 @@ export class Erc4337Service {
                 let innerCall = $contract.decodeMethodCall(call.data, abi);
 
                 return {
-                    ...innerCall,
-                    value: call.value
+                    method: innerCall.method,
+                    arguments: innerCall.arguments,
+                    value: call.value,
+                    address: call.address,
                 };
             }).toArrayAsync();
         }
