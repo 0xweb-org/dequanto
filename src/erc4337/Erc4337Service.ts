@@ -1,7 +1,6 @@
 import alot from 'alot';
-import { EntryPoint } from '@dequanto-contracts/ERC4337/EntryPoint/EntryPoint';
-import { SimpleAccount } from '@dequanto-contracts/ERC4337/SimpleAccount/SimpleAccount';
-import { SimpleAccountFactory } from '@dequanto-contracts/ERC4337/SimpleAccountFactory/SimpleAccountFactory';
+import type { TransactionConfig } from 'web3-core';
+
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -16,16 +15,17 @@ import { $require } from '@dequanto/utils/$require';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { ContractAbiProvider } from '@dequanto/contracts/ContractAbiProvider';
 import { $erc4337 } from './utils/$erc4337';
-import type { TransactionConfig } from 'web3-core';
-import { $buffer } from '@dequanto/utils/$buffer';
 import { $hex } from '@dequanto/utils/$hex';
+import { ContractFactory } from '@dequanto/contracts/ContractFactory';
+import { Erc4337Abi } from './models/Erc4337Abi';
+
 
 export class Erc4337Service {
 
 
-    private accountFactoryContract = new SimpleAccountFactory(this.info.addresses.accountFactory, this.client);
-    private accountContract = new SimpleAccount($address.ZERO, this.client);
-    private entryPointContract = new EntryPoint(this.info.addresses.entryPoint, this.client);
+    private accountFactoryContract = ContractFactory.fromAbi(this.info.addresses.accountFactory, Erc4337Abi.AccountFactory, this.client, this.explorer);
+    private accountContract = ContractFactory.fromAbi($address.ZERO, Erc4337Abi.Account, this.client, this.explorer);
+    private entryPointContract = ContractFactory.fromAbi(this.info.addresses.entryPoint, Erc4337Abi.EntryPoint, this.client, this.explorer);
 
     constructor(public client: Web3Client, public explorer: IBlockChainExplorer, public info: {
         addresses: {
@@ -111,7 +111,7 @@ export class Erc4337Service {
 
     async existsAccount(erc4337Account: TAddress) {
         let code = await this.client.getCode(erc4337Account);
-        return code != null && code.length > 5;
+        return $hex.isEmpty(code) === false;
     }
 
     async getAccountAddress(owner: TAddress, initCode: string) {
@@ -168,7 +168,7 @@ export class Erc4337Service {
     }
 
     async getUserOperation(opHash: string, options?: { decodeContractCall: boolean }) {
-        let userOperationEvents = await this.entryPointContract.getPastLogsUserOperationEvent({
+        let userOperationEvents = await this.entryPointContract.$getPastLogsParsed('UserOperationEvent', {
             params: { userOpHash: opHash }
         });
         if (userOperationEvents.length === 0) {
@@ -190,9 +190,10 @@ export class Erc4337Service {
     }
 
     async submitUserOpViaEntryPoint(sender: ChainAccount, op: UserOperation | UserOperation[]) {
-        let tx = await this.entryPointContract.handleOps(sender, Array.isArray(op) ? op : [op], sender.address);
-        let receipt = await tx.wait();
-        return receipt;
+        $require.Address(sender?.address);
+
+        let txWriter = await this.entryPointContract.handleOps(sender, Array.isArray(op) ? op : [op], sender.address);
+        return txWriter;
     }
 }
 

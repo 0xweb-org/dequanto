@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-01-31 13:27
+ *  AUTO-Generated Class: 2023-06-15 23:19
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -7,21 +7,25 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
-import { type AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
-import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
+import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
+import type { AbiItem } from 'web3-utils';
+import type { BlockTransactionString } from 'web3-eth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
+
+
+
 export class MinimalForwarder extends ContractBase {
     constructor(
         public address: TAddress = '',
@@ -38,12 +42,20 @@ export class MinimalForwarder extends ContractBase {
 
     // 0x2d0335ab
     async getNonce (from: TAddress): Promise<bigint> {
-        return this.$read('function getNonce(address) returns uint256', from);
+        return this.$read(this.$getAbiItem('function', 'getNonce'), from);
     }
 
     // 0xbf5d3bdb
     async verify (req: { from: TAddress, to: TAddress, value: bigint, gas: bigint, nonce: bigint, data: TBufferLike }, signature: TBufferLike): Promise<boolean> {
-        return this.$read('function verify(tuple, bytes) returns bool', req, signature);
+        return this.$read(this.$getAbiItem('function', 'verify'), req, signature);
+    }
+
+    $call () {
+        return super.$call() as IMinimalForwarderTxCaller;;
+    }
+
+    $data (): IMinimalForwarderTxData {
+        return super.$data() as IMinimalForwarderTxData;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -108,5 +120,16 @@ interface IMethods {
 
 
 
+
+
+
+interface IMinimalForwarderTxCaller {
+    execute (sender: TSender, req: { from: TAddress, to: TAddress, value: bigint, gas: bigint, nonce: bigint, data: TBufferLike }, signature: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+}
+
+
+interface IMinimalForwarderTxData {
+    execute (sender: TSender, req: { from: TAddress, to: TAddress, value: bigint, gas: bigint, nonce: bigint, data: TBufferLike }, signature: TBufferLike): Promise<TransactionConfig>
+}
 
 

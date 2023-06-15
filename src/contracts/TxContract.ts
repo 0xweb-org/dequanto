@@ -17,13 +17,13 @@ export class TxContract {
 
     }
 
-    async parseTrasaction (tx: Transaction): Promise<TransactionDescription> {
+    async parseTransaction (tx: Transaction): Promise<TransactionDescription> {
         const abi = await this.provider.getAbi(tx.to);
 
-        return this.parseTrasactionWithAbi(tx, abi);
+        return this.parseTransactionWithAbi(tx, abi);
     }
 
-    async parseTrasactionWithAbi (tx: Transaction, abi): Promise<TransactionDescription> {
+    async parseTransactionWithAbi (tx: Transaction, abi): Promise<TransactionDescription> {
         const inter = new utils.Interface(abi);
         const decodedInput = inter.parseTransaction({
             data: tx.input,
@@ -32,9 +32,9 @@ export class TxContract {
         return decodedInput;
     }
 
-    async parseTrasactions (arr: Transaction[]): Promise<ITransactionDetails[]> {
+    async parseTransactions (arr: Transaction[]): Promise<ITransactionDetails[]> {
         let mapped = await alot(arr).mapAsync(async tx => {
-            let details = await this.parseTrasaction(tx);
+            let details = await this.parseTransaction(tx);
             return {
                 ...tx,
                 details: details as any

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-01-31 13:27
+ *  AUTO-Generated Class: 2023-06-15 23:19
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -7,21 +7,25 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
-import { type AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
-import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
+import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
+import type { AbiItem } from 'web3-utils';
+import type { BlockTransactionString } from 'web3-eth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
+
+
+
 export class IERC721 extends ContractBase {
     constructor(
         public address: TAddress = '',
@@ -38,22 +42,22 @@ export class IERC721 extends ContractBase {
 
     // 0x70a08231
     async balanceOf (owner: TAddress): Promise<bigint> {
-        return this.$read('function balanceOf(address) returns uint256', owner);
+        return this.$read(this.$getAbiItem('function', 'balanceOf'), owner);
     }
 
     // 0x081812fc
     async getApproved (tokenId: bigint): Promise<TAddress> {
-        return this.$read('function getApproved(uint256) returns address', tokenId);
+        return this.$read(this.$getAbiItem('function', 'getApproved'), tokenId);
     }
 
     // 0xe985e9c5
     async isApprovedForAll (owner: TAddress, operator: TAddress): Promise<boolean> {
-        return this.$read('function isApprovedForAll(address, address) returns bool', owner, operator);
+        return this.$read(this.$getAbiItem('function', 'isApprovedForAll'), owner, operator);
     }
 
     // 0x6352211e
     async ownerOf (tokenId: bigint): Promise<TAddress> {
-        return this.$read('function ownerOf(uint256) returns address', tokenId);
+        return this.$read(this.$getAbiItem('function', 'ownerOf'), tokenId);
     }
 
     // 0x42842e0e
@@ -72,12 +76,20 @@ export class IERC721 extends ContractBase {
 
     // 0x01ffc9a7
     async supportsInterface (interfaceId: TBufferLike): Promise<boolean> {
-        return this.$read('function supportsInterface(bytes4) returns bool', interfaceId);
+        return this.$read(this.$getAbiItem('function', 'supportsInterface'), interfaceId);
     }
 
     // 0x23b872dd
     async transferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'transferFrom'), sender, from, to, tokenId);
+    }
+
+    $call () {
+        return super.$call() as IIERC721TxCaller;;
+    }
+
+    $data (): IIERC721TxData {
+        return super.$data() as IIERC721TxData;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -127,14 +139,7 @@ export class IERC721 extends ContractBase {
         toBlock?: number | Date
         params?: { owner?: TAddress,approved?: TAddress,tokenId?: bigint }
     }): Promise<ITxLogItem<TLogApproval>[]> {
-        let topic = '0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925';
-        let abi = this.$getAbiItem('event', 'Approval');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('Approval', options) as any;
     }
 
     async getPastLogsApprovalForAll (options?: {
@@ -142,14 +147,7 @@ export class IERC721 extends ContractBase {
         toBlock?: number | Date
         params?: { owner?: TAddress,operator?: TAddress }
     }): Promise<ITxLogItem<TLogApprovalForAll>[]> {
-        let topic = '0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31';
-        let abi = this.$getAbiItem('event', 'ApprovalForAll');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('ApprovalForAll', options) as any;
     }
 
     async getPastLogsTransfer (options?: {
@@ -157,14 +155,7 @@ export class IERC721 extends ContractBase {
         toBlock?: number | Date
         params?: { from?: TAddress,to?: TAddress,tokenId?: bigint }
     }): Promise<ITxLogItem<TLogTransfer>[]> {
-        let topic = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
-        let abi = this.$getAbiItem('event', 'Transfer');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('Transfer', options) as any;
     }
 
     abi: AbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"balance","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"operator","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"owner","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"_approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"}]
@@ -258,5 +249,24 @@ interface IMethods {
 
 
 
+
+
+
+interface IIERC721TxCaller {
+    approve (sender: TSender, to: TAddress, tokenId: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setApprovalForAll (sender: TSender, operator: TAddress, _approved: boolean): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    transferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+}
+
+
+interface IIERC721TxData {
+    approve (sender: TSender, to: TAddress, tokenId: bigint): Promise<TransactionConfig>
+    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint): Promise<TransactionConfig>
+    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint, data: TBufferLike): Promise<TransactionConfig>
+    setApprovalForAll (sender: TSender, operator: TAddress, _approved: boolean): Promise<TransactionConfig>
+    transferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint): Promise<TransactionConfig>
+}
 
 

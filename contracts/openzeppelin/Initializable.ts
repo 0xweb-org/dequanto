@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-01-31 13:27
+ *  AUTO-Generated Class: 2023-06-15 23:19
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -7,21 +7,25 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
-import { type AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
-import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
+import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
+import type { AbiItem } from 'web3-utils';
+import type { BlockTransactionString } from 'web3-eth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
+
+
+
 export class Initializable extends ContractBase {
     constructor(
         public address: TAddress = '',
@@ -32,6 +36,14 @@ export class Initializable extends ContractBase {
     }
 
 
+
+    $call () {
+        return super.$call() as IInitializableTxCaller;;
+    }
+
+    $data (): IInitializableTxData {
+        return super.$data() as IInitializableTxData;
+    }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: Transaction
@@ -62,14 +74,7 @@ export class Initializable extends ContractBase {
         toBlock?: number | Date
         params?: {  }
     }): Promise<ITxLogItem<TLogInitialized>[]> {
-        let topic = '0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498';
-        let abi = this.$getAbiItem('event', 'Initialized');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('Initialized', options) as any;
     }
 
     abi: AbiItem[] = [{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint8","name":"version","type":"uint8"}],"name":"Initialized","type":"event"}]
@@ -101,5 +106,16 @@ interface IMethods {
 
 
 
+
+
+
+interface IInitializableTxCaller {
+
+}
+
+
+interface IInitializableTxData {
+
+}
 
 

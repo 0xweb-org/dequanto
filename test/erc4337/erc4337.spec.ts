@@ -13,6 +13,10 @@ import { $abiParser } from '@dequanto/utils/$abiParser';
 import { $erc4337 } from '@dequanto/erc4337/utils/$erc4337';
 import { $contract } from '@dequanto/utils/$contract';
 import memd from 'memd';
+import { Erc4337Account } from '@dequanto/models/TAccount';
+import { $is } from '@dequanto/utils/$is';
+import { Config } from '@dequanto/Config';
+import { $config } from '@dequanto/utils/$config';
 
 const provider = new HardhatProvider();
 const client = provider.client();
@@ -71,7 +75,7 @@ UTest({
         eq_(hash, '0x4f7ea78cc1154bd3d168bd8e8166f7ceb1dfc8dbdc75e3ee94e07737c564e7d4');
     },
 
-    async '!erc4337 simple create' () {
+    async 'erc4337 simple create' () {
         let erc4337Contracts = await AccountAbstractionTestableFactory.prepare();
         let owner = ChainAccountProvider.generate();
         let submitter = ChainAccountProvider.generate();
@@ -83,19 +87,18 @@ UTest({
                 accountFactory: erc4337Contracts.accountFactoryContract.address,
             }
         });
-        let result = await writer.createAccount({ owner, submitter });
-        eq_(result.receipt.status, true);
-        eq_($address.isValid(result.op.sender), true);
+        let { op, writer: opWriter } = await writer.createAccount({ owner, submitter });
+        let receipt = await opWriter.wait();
+        eq_(receipt.status, true);
+        eq_($address.isValid(op.sender), true);
 
-        let code = await client.getCode(result.op.sender);
+        let code = await client.getCode(op.sender);
         gt_(code.length, 10);
 
-        let txInfo = await client.getTransaction(result.receipt.transactionHash);
+        let txInfo = await client.getTransaction(receipt.transactionHash);
         let userOperations = await writer.service.decodeUserOperations(txInfo.input, { decodeContractCall: true });
         eq_(userOperations.length, 1);
         eq_(userOperations[0].contractCall.method, '');
-
-        console.log(userOperations[0]);
     },
     async 'erc4337 contracts'() {
 
@@ -142,7 +145,8 @@ UTest({
                     nonce: nonce
                 }, ownerFoo);
 
-                let receipt = await erc4337Service.submitUserOpViaEntryPoint(ownerFoo, op);
+                let opWriter = await erc4337Service.submitUserOpViaEntryPoint(ownerFoo, op);
+                let receipt = await opWriter.wait();
                 callCounter++;
 
 
@@ -161,11 +165,12 @@ UTest({
                 let erc4337Account = await writer.getAccount(ownerFoo);
 
                 let tx = await demoCounterContract.$data().logMe({ address: erc4337Account.address });
-                let receipt = await writer.submitUserOpViaEntryPoint({
+                let { writer: opWriter } = await writer.submitUserOpViaEntryPoint({
                     tx,
                     owner: ownerFoo,
                     submitter: ownerFoo,
                 });
+                await opWriter.wait();
                 callCounter++;
 
                 let callCount = await demoCounterContract.calls(erc4337Account.address);
@@ -188,11 +193,13 @@ UTest({
 
                 let tx = await demoCounterContract.$data().logMe({ address: erc4337Account.address });
 
-                let { op, opHash, receipt } = await writer.submitUserOpViaEntryPoint({
+                let { op, opHash, writer: opWriter } = await writer.submitUserOpViaEntryPoint({
                     tx,
                     owner: ownerFoo,
                     submitter: submitter,
                 });
+                let receipt = await opWriter.wait();
+
                 callCounter++;
 
                 let callCount = await demoCounterContract.calls(erc4337Account.address);
@@ -214,9 +221,45 @@ UTest({
 
                 eq_(info.transaction.hash, receipt.transactionHash);
                 eq_(info.contractCall.method, 'logMe');
-            }
-        });
+            },
+            async 'should submit via tx writer'() {
 
+                let erc4337 = new Erc4337TxWriter(client, explorer, {
+                    addresses: {
+                        entryPoint: erc4337Contracts.entryPointContract.address,
+                        accountFactory: erc4337Contracts.accountFactoryContract.address,
+                    }
+                });
+
+                `> Extend config with deployed 4337 contract`;
+                let providers = $config.get('erc4337') as Config['erc4337'];
+                providers.length = 0;
+                providers.push({
+                    name: 'default',
+                    platforms: [ 'hardhat' ],
+                    contracts: {
+                        entryPoint: erc4337Contracts.entryPointContract.address,
+                        accountFactory: erc4337Contracts.accountFactoryContract.address,
+                    }
+                });
+
+                let { op } = await erc4337.createAccount({
+                    owner: ownerFoo,
+                });
+                eq_($is.Address(op.sender), true, `${ op.sender } not an address`);
+
+                let tx = await demoCounterContract.logMe(<Erc4337Account> {
+                    address: op.sender,
+                    type: 'erc4337',
+                    operator: ownerFoo,
+                });
+                await tx.wait();
+                callCounter++;
+
+                let callCount = await demoCounterContract.calls(op.sender);
+                eq_(callCount, callCounter);
+            },
+        });
     },
 
 })

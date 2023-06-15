@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-01-31 13:27
+ *  AUTO-Generated Class: 2023-06-15 23:19
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -7,21 +7,25 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
-import { type AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
-import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
+import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
+import type { AbiItem } from 'web3-utils';
+import type { BlockTransactionString } from 'web3-eth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
+
+
+
 export class IVotes extends ContractBase {
     constructor(
         public address: TAddress = '',
@@ -43,22 +47,30 @@ export class IVotes extends ContractBase {
 
     // 0x587cde1e
     async delegates (account: TAddress): Promise<TAddress> {
-        return this.$read('function delegates(address) returns address', account);
+        return this.$read(this.$getAbiItem('function', 'delegates'), account);
     }
 
     // 0x8e539e8c
     async getPastTotalSupply (blockNumber: bigint): Promise<bigint> {
-        return this.$read('function getPastTotalSupply(uint256) returns uint256', blockNumber);
+        return this.$read(this.$getAbiItem('function', 'getPastTotalSupply'), blockNumber);
     }
 
     // 0x3a46b1a8
     async getPastVotes (account: TAddress, blockNumber: bigint): Promise<bigint> {
-        return this.$read('function getPastVotes(address, uint256) returns uint256', account, blockNumber);
+        return this.$read(this.$getAbiItem('function', 'getPastVotes'), account, blockNumber);
     }
 
     // 0x9ab24eb0
     async getVotes (account: TAddress): Promise<bigint> {
-        return this.$read('function getVotes(address) returns uint256', account);
+        return this.$read(this.$getAbiItem('function', 'getVotes'), account);
+    }
+
+    $call () {
+        return super.$call() as IIVotesTxCaller;;
+    }
+
+    $data (): IIVotesTxData {
+        return super.$data() as IIVotesTxData;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -99,14 +111,7 @@ export class IVotes extends ContractBase {
         toBlock?: number | Date
         params?: { delegator?: TAddress,fromDelegate?: TAddress,toDelegate?: TAddress }
     }): Promise<ITxLogItem<TLogDelegateChanged>[]> {
-        let topic = '0x3134e8a2e6d97e929a7e54011ea5485d7d196dd5f0ba4d4ef95803e8e3fc257f';
-        let abi = this.$getAbiItem('event', 'DelegateChanged');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('DelegateChanged', options) as any;
     }
 
     async getPastLogsDelegateVotesChanged (options?: {
@@ -114,14 +119,7 @@ export class IVotes extends ContractBase {
         toBlock?: number | Date
         params?: { delegate?: TAddress }
     }): Promise<ITxLogItem<TLogDelegateVotesChanged>[]> {
-        let topic = '0xdec2bacdd2f05b59de34da9b523dff8be42e5e38e818c82fdb0bae774387a724';
-        let abi = this.$getAbiItem('event', 'DelegateVotesChanged');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('DelegateVotesChanged', options) as any;
     }
 
     abi: AbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"delegator","type":"address"},{"indexed":true,"internalType":"address","name":"fromDelegate","type":"address"},{"indexed":true,"internalType":"address","name":"toDelegate","type":"address"}],"name":"DelegateChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"delegate","type":"address"},{"indexed":false,"internalType":"uint256","name":"previousBalance","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"newBalance","type":"uint256"}],"name":"DelegateVotesChanged","type":"event"},{"inputs":[{"internalType":"address","name":"delegatee","type":"address"}],"name":"delegate","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"delegatee","type":"address"},{"internalType":"uint256","name":"nonce","type":"uint256"},{"internalType":"uint256","name":"expiry","type":"uint256"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"delegateBySig","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"delegates","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"blockNumber","type":"uint256"}],"name":"getPastTotalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"blockNumber","type":"uint256"}],"name":"getPastVotes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"getVotes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]
@@ -192,5 +190,18 @@ interface IMethods {
 
 
 
+
+
+
+interface IIVotesTxCaller {
+    delegate (sender: TSender, delegatee: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    delegateBySig (sender: TSender, delegatee: TAddress, nonce: bigint, expiry: bigint, v: number, r: TBufferLike, s: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+}
+
+
+interface IIVotesTxData {
+    delegate (sender: TSender, delegatee: TAddress): Promise<TransactionConfig>
+    delegateBySig (sender: TSender, delegatee: TAddress, nonce: bigint, expiry: bigint, v: number, r: TBufferLike, s: TBufferLike): Promise<TransactionConfig>
+}
 
 

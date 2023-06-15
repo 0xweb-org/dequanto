@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-01-31 13:27
+ *  AUTO-Generated Class: 2023-06-15 23:19
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -7,21 +7,25 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
-import { type AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
-import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
+import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
+import type { AbiItem } from 'web3-utils';
+import type { BlockTransactionString } from 'web3-eth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
+
+
+
 export class ERC777 extends ContractBase {
     constructor(
         public address: TAddress = '',
@@ -33,7 +37,7 @@ export class ERC777 extends ContractBase {
 
     // 0xdd62ed3e
     async allowance (holder: TAddress, spender: TAddress): Promise<bigint> {
-        return this.$read('function allowance(address, address) returns uint256', holder, spender);
+        return this.$read(this.$getAbiItem('function', 'allowance'), holder, spender);
     }
 
     // 0x095ea7b3
@@ -48,7 +52,7 @@ export class ERC777 extends ContractBase {
 
     // 0x70a08231
     async balanceOf (tokenHolder: TAddress): Promise<bigint> {
-        return this.$read('function balanceOf(address) returns uint256', tokenHolder);
+        return this.$read(this.$getAbiItem('function', 'balanceOf'), tokenHolder);
     }
 
     // 0xfe9d9303
@@ -58,27 +62,27 @@ export class ERC777 extends ContractBase {
 
     // 0x313ce567
     async decimals (): Promise<number> {
-        return this.$read('function decimals() returns uint8');
+        return this.$read(this.$getAbiItem('function', 'decimals'));
     }
 
     // 0x06e48538
     async defaultOperators (): Promise<TAddress[]> {
-        return this.$read('function defaultOperators() returns address[]');
+        return this.$read(this.$getAbiItem('function', 'defaultOperators'));
     }
 
     // 0x556f0dc7
     async granularity (): Promise<bigint> {
-        return this.$read('function granularity() returns uint256');
+        return this.$read(this.$getAbiItem('function', 'granularity'));
     }
 
     // 0xd95b6371
     async isOperatorFor (operator: TAddress, tokenHolder: TAddress): Promise<boolean> {
-        return this.$read('function isOperatorFor(address, address) returns bool', operator, tokenHolder);
+        return this.$read(this.$getAbiItem('function', 'isOperatorFor'), operator, tokenHolder);
     }
 
     // 0x06fdde03
     async name (): Promise<string> {
-        return this.$read('function name() returns string');
+        return this.$read(this.$getAbiItem('function', 'name'));
     }
 
     // 0xfc673c4f
@@ -103,12 +107,12 @@ export class ERC777 extends ContractBase {
 
     // 0x95d89b41
     async symbol (): Promise<string> {
-        return this.$read('function symbol() returns string');
+        return this.$read(this.$getAbiItem('function', 'symbol'));
     }
 
     // 0x18160ddd
     async totalSupply (): Promise<bigint> {
-        return this.$read('function totalSupply() returns uint256');
+        return this.$read(this.$getAbiItem('function', 'totalSupply'));
     }
 
     // 0xa9059cbb
@@ -119,6 +123,14 @@ export class ERC777 extends ContractBase {
     // 0x23b872dd
     async transferFrom (sender: TSender, holder: TAddress, recipient: TAddress, amount: bigint): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'transferFrom'), sender, holder, recipient, amount);
+    }
+
+    $call () {
+        return super.$call() as IERC777TxCaller;;
+    }
+
+    $data (): IERC777TxData {
+        return super.$data() as IERC777TxData;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -204,14 +216,7 @@ export class ERC777 extends ContractBase {
         toBlock?: number | Date
         params?: { owner?: TAddress,spender?: TAddress }
     }): Promise<ITxLogItem<TLogApproval>[]> {
-        let topic = '0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925';
-        let abi = this.$getAbiItem('event', 'Approval');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('Approval', options) as any;
     }
 
     async getPastLogsAuthorizedOperator (options?: {
@@ -219,14 +224,7 @@ export class ERC777 extends ContractBase {
         toBlock?: number | Date
         params?: { operator?: TAddress,tokenHolder?: TAddress }
     }): Promise<ITxLogItem<TLogAuthorizedOperator>[]> {
-        let topic = '0xf4caeb2d6ca8932a215a353d0703c326ec2d81fc68170f320eb2ab49e9df61f9';
-        let abi = this.$getAbiItem('event', 'AuthorizedOperator');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('AuthorizedOperator', options) as any;
     }
 
     async getPastLogsBurned (options?: {
@@ -234,14 +232,7 @@ export class ERC777 extends ContractBase {
         toBlock?: number | Date
         params?: { operator?: TAddress,from?: TAddress }
     }): Promise<ITxLogItem<TLogBurned>[]> {
-        let topic = '0xa78a9be3a7b862d26933ad85fb11d80ef66b8f972d7cbba06621d583943a4098';
-        let abi = this.$getAbiItem('event', 'Burned');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('Burned', options) as any;
     }
 
     async getPastLogsMinted (options?: {
@@ -249,14 +240,7 @@ export class ERC777 extends ContractBase {
         toBlock?: number | Date
         params?: { operator?: TAddress,to?: TAddress }
     }): Promise<ITxLogItem<TLogMinted>[]> {
-        let topic = '0x2fe5be0146f74c5bce36c0b80911af6c7d86ff27e89d5cfa61fc681327954e5d';
-        let abi = this.$getAbiItem('event', 'Minted');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('Minted', options) as any;
     }
 
     async getPastLogsRevokedOperator (options?: {
@@ -264,14 +248,7 @@ export class ERC777 extends ContractBase {
         toBlock?: number | Date
         params?: { operator?: TAddress,tokenHolder?: TAddress }
     }): Promise<ITxLogItem<TLogRevokedOperator>[]> {
-        let topic = '0x50546e66e5f44d728365dc3908c63bc5cfeeab470722c1677e3073a6ac294aa1';
-        let abi = this.$getAbiItem('event', 'RevokedOperator');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('RevokedOperator', options) as any;
     }
 
     async getPastLogsSent (options?: {
@@ -279,14 +256,7 @@ export class ERC777 extends ContractBase {
         toBlock?: number | Date
         params?: { operator?: TAddress,from?: TAddress,to?: TAddress }
     }): Promise<ITxLogItem<TLogSent>[]> {
-        let topic = '0x06b541ddaa720db2b10a4d0cdac39b8d360425fc073085fac19bc82614677987';
-        let abi = this.$getAbiItem('event', 'Sent');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('Sent', options) as any;
     }
 
     async getPastLogsTransfer (options?: {
@@ -294,14 +264,7 @@ export class ERC777 extends ContractBase {
         toBlock?: number | Date
         params?: { from?: TAddress,to?: TAddress }
     }): Promise<ITxLogItem<TLogTransfer>[]> {
-        let topic = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
-        let abi = this.$getAbiItem('event', 'Transfer');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('Transfer', options) as any;
     }
 
     abi: AbiItem[] = [{"inputs":[{"internalType":"string","name":"name_","type":"string"},{"internalType":"string","name":"symbol_","type":"string"},{"internalType":"address[]","name":"defaultOperators_","type":"address[]"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":true,"internalType":"address","name":"tokenHolder","type":"address"}],"name":"AuthorizedOperator","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"},{"indexed":false,"internalType":"bytes","name":"operatorData","type":"bytes"}],"name":"Burned","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"},{"indexed":false,"internalType":"bytes","name":"operatorData","type":"bytes"}],"name":"Minted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":true,"internalType":"address","name":"tokenHolder","type":"address"}],"name":"RevokedOperator","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"},{"indexed":false,"internalType":"bytes","name":"operatorData","type":"bytes"}],"name":"Sent","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"holder","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"}],"name":"authorizeOperator","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"tokenHolder","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"defaultOperators","outputs":[{"internalType":"address[]","name":"","type":"address[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"granularity","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"address","name":"tokenHolder","type":"address"}],"name":"isOperatorFor","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"},{"internalType":"bytes","name":"operatorData","type":"bytes"}],"name":"operatorBurn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"},{"internalType":"bytes","name":"operatorData","type":"bytes"}],"name":"operatorSend","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"}],"name":"revokeOperator","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"send","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"holder","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"}]
@@ -469,5 +432,32 @@ interface IMethods {
 
 
 
+
+
+
+interface IERC777TxCaller {
+    approve (sender: TSender, spender: TAddress, value: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    authorizeOperator (sender: TSender, operator: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    burn (sender: TSender, amount: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    operatorBurn (sender: TSender, account: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    operatorSend (sender: TSender, _sender: TAddress, recipient: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    revokeOperator (sender: TSender, operator: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    send (sender: TSender, recipient: TAddress, amount: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    transfer (sender: TSender, recipient: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    transferFrom (sender: TSender, holder: TAddress, recipient: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+}
+
+
+interface IERC777TxData {
+    approve (sender: TSender, spender: TAddress, value: bigint): Promise<TransactionConfig>
+    authorizeOperator (sender: TSender, operator: TAddress): Promise<TransactionConfig>
+    burn (sender: TSender, amount: bigint, data: TBufferLike): Promise<TransactionConfig>
+    operatorBurn (sender: TSender, account: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike): Promise<TransactionConfig>
+    operatorSend (sender: TSender, _sender: TAddress, recipient: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike): Promise<TransactionConfig>
+    revokeOperator (sender: TSender, operator: TAddress): Promise<TransactionConfig>
+    send (sender: TSender, recipient: TAddress, amount: bigint, data: TBufferLike): Promise<TransactionConfig>
+    transfer (sender: TSender, recipient: TAddress, amount: bigint): Promise<TransactionConfig>
+    transferFrom (sender: TSender, holder: TAddress, recipient: TAddress, amount: bigint): Promise<TransactionConfig>
+}
 
 

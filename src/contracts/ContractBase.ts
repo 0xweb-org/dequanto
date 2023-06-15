@@ -14,7 +14,6 @@ import type { BlockTransactionString } from 'web3-eth';
 import { utils } from 'ethers'
 import { $contract } from '@dequanto/utils/$contract';
 import { $class } from '@dequanto/utils/$class';
-import { $block } from '@dequanto/utils/$block';
 import { $abiParser } from '@dequanto/utils/$abiParser';
 import { ContractReader, ContractReaderUtils } from './ContractReader';
 import { ContractWriter } from './ContractWriter';
@@ -260,7 +259,23 @@ export abstract class ContractBase {
     protected async $getPastLogs(filters: PastLogsOptions) {
         return this.getContractReader().getLogs(filters);
     }
-    protected async $getPastLogsFilters(abi: AbiItem, options: {
+    public async $getPastLogsParsed (mix: string | AbiItem, options?: {
+        fromBlock?: number | Date
+        toBlock?: number | Date
+        params?: {
+            [key: string]: any
+        }
+    }) {
+        let abi = typeof mix === 'string'
+            ? this.$getAbiItem('event', mix)
+            : mix;
+        let filters = await this.$getPastLogsFilters(abi, {
+            ...options
+        });
+        let logs = await this.$getPastLogs(filters);
+        return logs.map(log => this.$extractLog(log, abi)) as any;
+    }
+    protected async $getPastLogsFilters(mix: string | AbiItem, options: {
         topic?: string
         fromBlock?: number | Date
         toBlock?: number | Date
@@ -268,6 +283,9 @@ export abstract class ContractBase {
             [key: string]: any
         }
     }): Promise<PastLogsOptions> {
+        let abi = typeof mix === 'string'
+            ? this.$getAbiItem('event', mix)
+            : mix;
         return this.getContractReader().getLogsFilter(
             abi,
             {

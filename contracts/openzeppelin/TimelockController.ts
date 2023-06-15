@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-01-31 13:27
+ *  AUTO-Generated Class: 2023-06-15 23:19
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -7,21 +7,25 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
-import { type AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
-import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
+import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
+import type { AbiItem } from 'web3-utils';
+import type { BlockTransactionString } from 'web3-eth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
+
+
+
 export class TimelockController extends ContractBase {
     constructor(
         public address: TAddress = '',
@@ -33,27 +37,27 @@ export class TimelockController extends ContractBase {
 
     // 0xb08e51c0
     async CANCELLER_ROLE (): Promise<TBufferLike> {
-        return this.$read('function CANCELLER_ROLE() returns bytes32');
+        return this.$read(this.$getAbiItem('function', 'CANCELLER_ROLE'));
     }
 
     // 0xa217fddf
     async DEFAULT_ADMIN_ROLE (): Promise<TBufferLike> {
-        return this.$read('function DEFAULT_ADMIN_ROLE() returns bytes32');
+        return this.$read(this.$getAbiItem('function', 'DEFAULT_ADMIN_ROLE'));
     }
 
     // 0x07bd0265
     async EXECUTOR_ROLE (): Promise<TBufferLike> {
-        return this.$read('function EXECUTOR_ROLE() returns bytes32');
+        return this.$read(this.$getAbiItem('function', 'EXECUTOR_ROLE'));
     }
 
     // 0x8f61f4f5
     async PROPOSER_ROLE (): Promise<TBufferLike> {
-        return this.$read('function PROPOSER_ROLE() returns bytes32');
+        return this.$read(this.$getAbiItem('function', 'PROPOSER_ROLE'));
     }
 
     // 0x0d3cf6fc
     async TIMELOCK_ADMIN_ROLE (): Promise<TBufferLike> {
-        return this.$read('function TIMELOCK_ADMIN_ROLE() returns bytes32');
+        return this.$read(this.$getAbiItem('function', 'TIMELOCK_ADMIN_ROLE'));
     }
 
     // 0xc4d252f5
@@ -73,17 +77,17 @@ export class TimelockController extends ContractBase {
 
     // 0xf27a0c92
     async getMinDelay (): Promise<bigint> {
-        return this.$read('function getMinDelay() returns uint256');
+        return this.$read(this.$getAbiItem('function', 'getMinDelay'));
     }
 
     // 0x248a9ca3
     async getRoleAdmin (role: TBufferLike): Promise<TBufferLike> {
-        return this.$read('function getRoleAdmin(bytes32) returns bytes32', role);
+        return this.$read(this.$getAbiItem('function', 'getRoleAdmin'), role);
     }
 
     // 0xd45c4435
     async getTimestamp (id: TBufferLike): Promise<bigint> {
-        return this.$read('function getTimestamp(bytes32) returns uint256', id);
+        return this.$read(this.$getAbiItem('function', 'getTimestamp'), id);
     }
 
     // 0x2f2ff15d
@@ -93,37 +97,37 @@ export class TimelockController extends ContractBase {
 
     // 0x91d14854
     async hasRole (role: TBufferLike, account: TAddress): Promise<boolean> {
-        return this.$read('function hasRole(bytes32, address) returns bool', role, account);
+        return this.$read(this.$getAbiItem('function', 'hasRole'), role, account);
     }
 
     // 0x8065657f
     async hashOperation (target: TAddress, value: bigint, data: TBufferLike, predecessor: TBufferLike, salt: TBufferLike): Promise<TBufferLike> {
-        return this.$read('function hashOperation(address, uint256, bytes, bytes32, bytes32) returns bytes32', target, value, data, predecessor, salt);
+        return this.$read(this.$getAbiItem('function', 'hashOperation'), target, value, data, predecessor, salt);
     }
 
     // 0xb1c5f427
     async hashOperationBatch (targets: TAddress[], values: bigint[], payloads: TBufferLike[], predecessor: TBufferLike, salt: TBufferLike): Promise<TBufferLike> {
-        return this.$read('function hashOperationBatch(address[], uint256[], bytes[], bytes32, bytes32) returns bytes32', targets, values, payloads, predecessor, salt);
+        return this.$read(this.$getAbiItem('function', 'hashOperationBatch'), targets, values, payloads, predecessor, salt);
     }
 
     // 0x31d50750
     async isOperation (id: TBufferLike): Promise<boolean> {
-        return this.$read('function isOperation(bytes32) returns bool', id);
+        return this.$read(this.$getAbiItem('function', 'isOperation'), id);
     }
 
     // 0x2ab0f529
     async isOperationDone (id: TBufferLike): Promise<boolean> {
-        return this.$read('function isOperationDone(bytes32) returns bool', id);
+        return this.$read(this.$getAbiItem('function', 'isOperationDone'), id);
     }
 
     // 0x584b153e
     async isOperationPending (id: TBufferLike): Promise<boolean> {
-        return this.$read('function isOperationPending(bytes32) returns bool', id);
+        return this.$read(this.$getAbiItem('function', 'isOperationPending'), id);
     }
 
     // 0x13bc9f20
     async isOperationReady (id: TBufferLike): Promise<boolean> {
-        return this.$read('function isOperationReady(bytes32) returns bool', id);
+        return this.$read(this.$getAbiItem('function', 'isOperationReady'), id);
     }
 
     // 0xbc197c81
@@ -163,12 +167,20 @@ export class TimelockController extends ContractBase {
 
     // 0x01ffc9a7
     async supportsInterface (interfaceId: TBufferLike): Promise<boolean> {
-        return this.$read('function supportsInterface(bytes4) returns bool', interfaceId);
+        return this.$read(this.$getAbiItem('function', 'supportsInterface'), interfaceId);
     }
 
     // 0x64d62353
     async updateDelay (sender: TSender, newDelay: bigint): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'updateDelay'), sender, newDelay);
+    }
+
+    $call () {
+        return super.$call() as ITimelockControllerTxCaller;;
+    }
+
+    $data (): ITimelockControllerTxData {
+        return super.$data() as ITimelockControllerTxData;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -254,14 +266,7 @@ export class TimelockController extends ContractBase {
         toBlock?: number | Date
         params?: { id?: TBufferLike,index?: bigint }
     }): Promise<ITxLogItem<TLogCallExecuted>[]> {
-        let topic = '0xc2617efa69bab66782fa219543714338489c4e9e178271560a91b82c3f612b58';
-        let abi = this.$getAbiItem('event', 'CallExecuted');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('CallExecuted', options) as any;
     }
 
     async getPastLogsCallScheduled (options?: {
@@ -269,14 +274,7 @@ export class TimelockController extends ContractBase {
         toBlock?: number | Date
         params?: { id?: TBufferLike,index?: bigint }
     }): Promise<ITxLogItem<TLogCallScheduled>[]> {
-        let topic = '0x4cf4410cc57040e44862ef0f45f3dd5a5e02db8eb8add648d4b0e236f1d07dca';
-        let abi = this.$getAbiItem('event', 'CallScheduled');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('CallScheduled', options) as any;
     }
 
     async getPastLogsCancelled (options?: {
@@ -284,14 +282,7 @@ export class TimelockController extends ContractBase {
         toBlock?: number | Date
         params?: { id?: TBufferLike }
     }): Promise<ITxLogItem<TLogCancelled>[]> {
-        let topic = '0xbaa1eb22f2a492ba1a5fea61b8df4d27c6c8b5f3971e63bb58fa14ff72eedb70';
-        let abi = this.$getAbiItem('event', 'Cancelled');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('Cancelled', options) as any;
     }
 
     async getPastLogsMinDelayChange (options?: {
@@ -299,14 +290,7 @@ export class TimelockController extends ContractBase {
         toBlock?: number | Date
         params?: {  }
     }): Promise<ITxLogItem<TLogMinDelayChange>[]> {
-        let topic = '0x11c24f4ead16507c69ac467fbd5e4eed5fb5c699626d2cc6d66421df253886d5';
-        let abi = this.$getAbiItem('event', 'MinDelayChange');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('MinDelayChange', options) as any;
     }
 
     async getPastLogsRoleAdminChanged (options?: {
@@ -314,14 +298,7 @@ export class TimelockController extends ContractBase {
         toBlock?: number | Date
         params?: { role?: TBufferLike,previousAdminRole?: TBufferLike,newAdminRole?: TBufferLike }
     }): Promise<ITxLogItem<TLogRoleAdminChanged>[]> {
-        let topic = '0xbd79b86ffe0ab8e8776151514217cd7cacd52c909f66475c3af44e129f0b00ff';
-        let abi = this.$getAbiItem('event', 'RoleAdminChanged');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('RoleAdminChanged', options) as any;
     }
 
     async getPastLogsRoleGranted (options?: {
@@ -329,14 +306,7 @@ export class TimelockController extends ContractBase {
         toBlock?: number | Date
         params?: { role?: TBufferLike,account?: TAddress,sender?: TAddress }
     }): Promise<ITxLogItem<TLogRoleGranted>[]> {
-        let topic = '0x2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d';
-        let abi = this.$getAbiItem('event', 'RoleGranted');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('RoleGranted', options) as any;
     }
 
     async getPastLogsRoleRevoked (options?: {
@@ -344,14 +314,7 @@ export class TimelockController extends ContractBase {
         toBlock?: number | Date
         params?: { role?: TBufferLike,account?: TAddress,sender?: TAddress }
     }): Promise<ITxLogItem<TLogRoleRevoked>[]> {
-        let topic = '0xf6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b';
-        let abi = this.$getAbiItem('event', 'RoleRevoked');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('RoleRevoked', options) as any;
     }
 
     abi: AbiItem[] = [{"inputs":[{"internalType":"uint256","name":"minDelay","type":"uint256"},{"internalType":"address[]","name":"proposers","type":"address[]"},{"internalType":"address[]","name":"executors","type":"address[]"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"id","type":"bytes32"},{"indexed":true,"internalType":"uint256","name":"index","type":"uint256"},{"indexed":false,"internalType":"address","name":"target","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"}],"name":"CallExecuted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"id","type":"bytes32"},{"indexed":true,"internalType":"uint256","name":"index","type":"uint256"},{"indexed":false,"internalType":"address","name":"target","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"},{"indexed":false,"internalType":"bytes32","name":"predecessor","type":"bytes32"},{"indexed":false,"internalType":"uint256","name":"delay","type":"uint256"}],"name":"CallScheduled","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"id","type":"bytes32"}],"name":"Cancelled","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"oldDuration","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"newDuration","type":"uint256"}],"name":"MinDelayChange","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"previousAdminRole","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"newAdminRole","type":"bytes32"}],"name":"RoleAdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleGranted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleRevoked","type":"event"},{"inputs":[],"name":"CANCELLER_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"DEFAULT_ADMIN_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"EXECUTOR_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"PROPOSER_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"TIMELOCK_ADMIN_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"id","type":"bytes32"}],"name":"cancel","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"target","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"bytes","name":"payload","type":"bytes"},{"internalType":"bytes32","name":"predecessor","type":"bytes32"},{"internalType":"bytes32","name":"salt","type":"bytes32"}],"name":"execute","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address[]","name":"targets","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"},{"internalType":"bytes[]","name":"payloads","type":"bytes[]"},{"internalType":"bytes32","name":"predecessor","type":"bytes32"},{"internalType":"bytes32","name":"salt","type":"bytes32"}],"name":"executeBatch","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"getMinDelay","outputs":[{"internalType":"uint256","name":"duration","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleAdmin","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"id","type":"bytes32"}],"name":"getTimestamp","outputs":[{"internalType":"uint256","name":"timestamp","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"grantRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"hasRole","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"target","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"},{"internalType":"bytes32","name":"predecessor","type":"bytes32"},{"internalType":"bytes32","name":"salt","type":"bytes32"}],"name":"hashOperation","outputs":[{"internalType":"bytes32","name":"hash","type":"bytes32"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address[]","name":"targets","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"},{"internalType":"bytes[]","name":"payloads","type":"bytes[]"},{"internalType":"bytes32","name":"predecessor","type":"bytes32"},{"internalType":"bytes32","name":"salt","type":"bytes32"}],"name":"hashOperationBatch","outputs":[{"internalType":"bytes32","name":"hash","type":"bytes32"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"bytes32","name":"id","type":"bytes32"}],"name":"isOperation","outputs":[{"internalType":"bool","name":"registered","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"id","type":"bytes32"}],"name":"isOperationDone","outputs":[{"internalType":"bool","name":"done","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"id","type":"bytes32"}],"name":"isOperationPending","outputs":[{"internalType":"bool","name":"pending","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"id","type":"bytes32"}],"name":"isOperationReady","outputs":[{"internalType":"bool","name":"ready","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256[]","name":"","type":"uint256[]"},{"internalType":"uint256[]","name":"","type":"uint256[]"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC1155BatchReceived","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC1155Received","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC721Received","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"renounceRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"revokeRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"target","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"},{"internalType":"bytes32","name":"predecessor","type":"bytes32"},{"internalType":"bytes32","name":"salt","type":"bytes32"},{"internalType":"uint256","name":"delay","type":"uint256"}],"name":"schedule","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"targets","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"},{"internalType":"bytes[]","name":"payloads","type":"bytes[]"},{"internalType":"bytes32","name":"predecessor","type":"bytes32"},{"internalType":"bytes32","name":"salt","type":"bytes32"},{"internalType":"uint256","name":"delay","type":"uint256"}],"name":"scheduleBatch","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"newDelay","type":"uint256"}],"name":"updateDelay","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}]
@@ -579,5 +542,38 @@ interface IMethods {
 
 
 
+
+
+
+interface ITimelockControllerTxCaller {
+    cancel (sender: TSender, id: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    execute (sender: TSender, target: TAddress, value: bigint, payload: TBufferLike, predecessor: TBufferLike, salt: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    executeBatch (sender: TSender, targets: TAddress[], values: bigint[], payloads: TBufferLike[], predecessor: TBufferLike, salt: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    grantRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    onERC1155BatchReceived (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    onERC1155Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    renounceRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    revokeRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    schedule (sender: TSender, target: TAddress, value: bigint, data: TBufferLike, predecessor: TBufferLike, salt: TBufferLike, delay: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    scheduleBatch (sender: TSender, targets: TAddress[], values: bigint[], payloads: TBufferLike[], predecessor: TBufferLike, salt: TBufferLike, delay: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    updateDelay (sender: TSender, newDelay: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+}
+
+
+interface ITimelockControllerTxData {
+    cancel (sender: TSender, id: TBufferLike): Promise<TransactionConfig>
+    execute (sender: TSender, target: TAddress, value: bigint, payload: TBufferLike, predecessor: TBufferLike, salt: TBufferLike): Promise<TransactionConfig>
+    executeBatch (sender: TSender, targets: TAddress[], values: bigint[], payloads: TBufferLike[], predecessor: TBufferLike, salt: TBufferLike): Promise<TransactionConfig>
+    grantRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TransactionConfig>
+    onERC1155BatchReceived (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TBufferLike): Promise<TransactionConfig>
+    onERC1155Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TBufferLike): Promise<TransactionConfig>
+    onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TBufferLike): Promise<TransactionConfig>
+    renounceRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TransactionConfig>
+    revokeRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TransactionConfig>
+    schedule (sender: TSender, target: TAddress, value: bigint, data: TBufferLike, predecessor: TBufferLike, salt: TBufferLike, delay: bigint): Promise<TransactionConfig>
+    scheduleBatch (sender: TSender, targets: TAddress[], values: bigint[], payloads: TBufferLike[], predecessor: TBufferLike, salt: TBufferLike, delay: bigint): Promise<TransactionConfig>
+    updateDelay (sender: TSender, newDelay: bigint): Promise<TransactionConfig>
+}
 
 

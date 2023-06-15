@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-01-31 13:27
+ *  AUTO-Generated Class: 2023-06-15 23:19
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -7,21 +7,25 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
-import { type AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
-import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
+import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
+import type { AbiItem } from 'web3-utils';
+import type { BlockTransactionString } from 'web3-eth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
+
+
+
 export class Escrow extends ContractBase {
     constructor(
         public address: TAddress = '',
@@ -38,12 +42,12 @@ export class Escrow extends ContractBase {
 
     // 0xe3a9db1a
     async depositsOf (payee: TAddress): Promise<bigint> {
-        return this.$read('function depositsOf(address) returns uint256', payee);
+        return this.$read(this.$getAbiItem('function', 'depositsOf'), payee);
     }
 
     // 0x8da5cb5b
     async owner (): Promise<TAddress> {
-        return this.$read('function owner() returns address');
+        return this.$read(this.$getAbiItem('function', 'owner'));
     }
 
     // 0x715018a6
@@ -59,6 +63,14 @@ export class Escrow extends ContractBase {
     // 0x51cff8d9
     async withdraw (sender: TSender, payee: TAddress): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'withdraw'), sender, payee);
+    }
+
+    $call () {
+        return super.$call() as IEscrowTxCaller;;
+    }
+
+    $data (): IEscrowTxData {
+        return super.$data() as IEscrowTxData;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -108,14 +120,7 @@ export class Escrow extends ContractBase {
         toBlock?: number | Date
         params?: { payee?: TAddress }
     }): Promise<ITxLogItem<TLogDeposited>[]> {
-        let topic = '0x2da466a7b24304f47e87fa2e1e5a81b9831ce54fec19055ce277ca2f39ba42c4';
-        let abi = this.$getAbiItem('event', 'Deposited');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('Deposited', options) as any;
     }
 
     async getPastLogsOwnershipTransferred (options?: {
@@ -123,14 +128,7 @@ export class Escrow extends ContractBase {
         toBlock?: number | Date
         params?: { previousOwner?: TAddress,newOwner?: TAddress }
     }): Promise<ITxLogItem<TLogOwnershipTransferred>[]> {
-        let topic = '0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0';
-        let abi = this.$getAbiItem('event', 'OwnershipTransferred');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('OwnershipTransferred', options) as any;
     }
 
     async getPastLogsWithdrawn (options?: {
@@ -138,14 +136,7 @@ export class Escrow extends ContractBase {
         toBlock?: number | Date
         params?: { payee?: TAddress }
     }): Promise<ITxLogItem<TLogWithdrawn>[]> {
-        let topic = '0x7084f5476618d8e60b11ef0d7d3f06914655adb8793e28ff7f018d4c76d505d5';
-        let abi = this.$getAbiItem('event', 'Withdrawn');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('Withdrawn', options) as any;
     }
 
     abi: AbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"payee","type":"address"},{"indexed":false,"internalType":"uint256","name":"weiAmount","type":"uint256"}],"name":"Deposited","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"payee","type":"address"},{"indexed":false,"internalType":"uint256","name":"weiAmount","type":"uint256"}],"name":"Withdrawn","type":"event"},{"inputs":[{"internalType":"address","name":"payee","type":"address"}],"name":"deposit","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"payee","type":"address"}],"name":"depositsOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address payable","name":"payee","type":"address"}],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"}]
@@ -221,5 +212,22 @@ interface IMethods {
 
 
 
+
+
+
+interface IEscrowTxCaller {
+    deposit (sender: TSender, payee: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    renounceOwnership (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    transferOwnership (sender: TSender, newOwner: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    withdraw (sender: TSender, payee: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+}
+
+
+interface IEscrowTxData {
+    deposit (sender: TSender, payee: TAddress): Promise<TransactionConfig>
+    renounceOwnership (sender: TSender, ): Promise<TransactionConfig>
+    transferOwnership (sender: TSender, newOwner: TAddress): Promise<TransactionConfig>
+    withdraw (sender: TSender, payee: TAddress): Promise<TransactionConfig>
+}
 
 

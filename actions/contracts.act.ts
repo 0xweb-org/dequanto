@@ -48,7 +48,7 @@ UAction.create({
             })
             .toArrayAsync();
     },
-    async '!account-abstraction'() {
+    async 'account-abstraction'() {
         const ENTRY_POINT = '0x5ff137d4b0fdcd49dca30c7cf57e578a026d2789';
 
         async function generate(name: string, source: ConstructorParameters<typeof Generator>[0]['source']) {
@@ -57,7 +57,7 @@ UAction.create({
                 name: name,
                 source: source,
                 platform: 'eth',
-                output: `./contracts/ERC4337/`,
+                output: `./contracts/Erc4337/`,
                 saveSources: false
             });
             await generator.generate();

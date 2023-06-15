@@ -29,7 +29,7 @@ export interface SafeAccount extends IAccount {
 
 export interface Erc4337Account extends IAccount {
     type: 'erc4337'
-    provider?: 'erc4337',
+    provider?: 'default' | string,
 
     operator: ChainAccount
 }

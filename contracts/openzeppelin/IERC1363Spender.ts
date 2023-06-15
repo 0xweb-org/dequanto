@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-01-31 13:27
+ *  AUTO-Generated Class: 2023-06-15 23:19
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -7,21 +7,25 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
-import { type AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
-import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
+import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
+import type { AbiItem } from 'web3-utils';
+import type { BlockTransactionString } from 'web3-eth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
+
+
+
 export class IERC1363Spender extends ContractBase {
     constructor(
         public address: TAddress = '',
@@ -34,6 +38,14 @@ export class IERC1363Spender extends ContractBase {
     // 0x7b04a2d0
     async onApprovalReceived (sender: TSender, owner: TAddress, value: bigint, data: TBufferLike): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'onApprovalReceived'), sender, owner, value, data);
+    }
+
+    $call () {
+        return super.$call() as IIERC1363SpenderTxCaller;;
+    }
+
+    $data (): IIERC1363SpenderTxData {
+        return super.$data() as IIERC1363SpenderTxData;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -86,5 +98,16 @@ interface IMethods {
 
 
 
+
+
+
+interface IIERC1363SpenderTxCaller {
+    onApprovalReceived (sender: TSender, owner: TAddress, value: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+}
+
+
+interface IIERC1363SpenderTxData {
+    onApprovalReceived (sender: TSender, owner: TAddress, value: bigint, data: TBufferLike): Promise<TransactionConfig>
+}
 
 

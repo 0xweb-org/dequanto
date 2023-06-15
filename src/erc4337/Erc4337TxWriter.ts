@@ -1,11 +1,13 @@
+import type { TransactionConfig } from 'web3-core';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IErc4337Info } from './models/IErc4337Info';
-import type { TransactionConfig } from 'web3-core';
 import { ChainAccount, Erc4337Account } from '@dequanto/models/TAccount';
 import { Erc4337Service } from './Erc4337Service';
 import { $require } from '@dequanto/utils/$require';
 import { UserOperation } from './models/UserOperation';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { TAddress } from '@dequanto/models/TAddress';
+import { $is } from '@dequanto/utils/$is';
 
 export class Erc4337TxWriter {
     public service = new Erc4337Service(this.client, this.explorer, this.info);
@@ -21,7 +23,7 @@ export class Erc4337TxWriter {
         return <Erc4337Account> {
             address: senderAddress,
             type: 'erc4337',
-            provider: 'erc4337',
+            provider: 'default',
             operator: owner
         };
     }
@@ -29,36 +31,65 @@ export class Erc4337TxWriter {
     async createAccount (params: {
         owner: ChainAccount,
         submitter?: ChainAccount,
+        salt?: bigint
     }) {
         let service = this.service;
-        let { initCode, initCodeGas } = await service.prepareAccountCreation(params.owner.address);
+        let { initCode, initCodeGas } = await service.prepareAccountCreation(params.owner.address, params.salt ?? 0n);
         let senderAddress = await service.getAccountAddress(params.owner.address, initCode);
         let tx = <TransactionConfig> {
             to: senderAddress,
             value: 0,
             data: '0x'
         };
-        return await this.submitUserOpViaEntryPoint({
+        let result = await this.submitUserOpViaEntryPoint({
             tx,
             ...params
-        })
+        });
+        await result.writer.wait();
+        return result;
     }
 
-    async submitUserOpViaEntryPoint(params: {
+    async prepareUserOp (params: {
+        erc4337Account?: {
+            address?: TAddress
+            salt?: bigint
+        }
         tx: TransactionConfig,
-        owner: ChainAccount,
-        submitter?: ChainAccount,
+        owner: ChainAccount
     }) {
-        let { tx, owner, submitter } = params
+        let { tx, owner } = params
         let service = this.service;
 
         // 1. Prepare ERC4337 contract account via Account Factory
-        let { initCode, initCodeGas } = await service.prepareAccountCreation(owner.address);
-        let senderAddress = await service.getAccountAddress(owner.address, initCode);
-        let senderExists = await service.existsAccount(senderAddress);
-        if (senderExists) {
-            initCode = '0x';
-            initCodeGas = 0;
+        let senderAddress: TAddress;
+        let initCode = '0x';
+        let initCodeGas = 0;
+
+        if ($is.Address(params.erc4337Account?.address)) {
+            senderAddress = params.erc4337Account.address;
+
+            let senderExists = await service.existsAccount(senderAddress);
+            if (senderExists === false) {
+                let salt = params.erc4337Account?.salt ?? 0n;
+                let ownerAddr = owner.address;
+                let result = await service.prepareAccountCreation(ownerAddr, salt);
+                initCode = result.initCode;
+                initCodeGas = result.initCodeGas;
+
+                let address = await service.getAccountAddress(owner.address, initCode);
+                $require.eq(senderAddress.toLowerCase(), address.toLowerCase(), `Sender address does not match. Wrong owner (${ ownerAddr }) or salt(${ salt })? `);
+            }
+        } else {
+            let result = await service.prepareAccountCreation(owner.address, params.erc4337Account?.salt ?? 0n);
+            initCode = result.initCode;
+            initCodeGas = result.initCodeGas;
+            senderAddress = await service.getAccountAddress(owner.address, initCode);
+
+            let senderExists = await service.existsAccount(senderAddress);
+            if (senderExists) {
+                initCode = '0x';
+                initCodeGas = 0;
+            }
         }
 
         // 2. Prepare Target (Demo) contract transaction data
@@ -92,7 +123,23 @@ export class Erc4337TxWriter {
             maxPriorityFeePerGas: 10n**9n,
         }, owner);
 
-        let receipt = await service.submitUserOpViaEntryPoint(submitter, op);
-        return { op, opHash, receipt };
+        return { op, opHash }
+    }
+
+    async submitUserOpViaEntryPoint(params: {
+        erc4337Account?: {
+            address?: TAddress
+            salt?: bigint
+        },
+        tx: TransactionConfig,
+        owner: ChainAccount,
+        submitter?: ChainAccount,
+    }) {
+        let { submitter, owner } = params
+        let service = this.service;
+
+        let { op, opHash } = await this.prepareUserOp(params)
+        let writer = await service.submitUserOpViaEntryPoint(submitter ?? owner, op);
+        return { op, opHash, writer };
     }
 }

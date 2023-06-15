@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-01-31 13:27
+ *  AUTO-Generated Class: 2023-06-15 23:19
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -7,21 +7,25 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
-import { type AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
-import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
+import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
+import type { AbiItem } from 'web3-utils';
+import type { BlockTransactionString } from 'web3-eth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
+
+
+
 export class IAccessControlEnumerable extends ContractBase {
     constructor(
         public address: TAddress = '',
@@ -33,17 +37,17 @@ export class IAccessControlEnumerable extends ContractBase {
 
     // 0x248a9ca3
     async getRoleAdmin (role: TBufferLike): Promise<TBufferLike> {
-        return this.$read('function getRoleAdmin(bytes32) returns bytes32', role);
+        return this.$read(this.$getAbiItem('function', 'getRoleAdmin'), role);
     }
 
     // 0x9010d07c
     async getRoleMember (role: TBufferLike, index: bigint): Promise<TAddress> {
-        return this.$read('function getRoleMember(bytes32, uint256) returns address', role, index);
+        return this.$read(this.$getAbiItem('function', 'getRoleMember'), role, index);
     }
 
     // 0xca15c873
     async getRoleMemberCount (role: TBufferLike): Promise<bigint> {
-        return this.$read('function getRoleMemberCount(bytes32) returns uint256', role);
+        return this.$read(this.$getAbiItem('function', 'getRoleMemberCount'), role);
     }
 
     // 0x2f2ff15d
@@ -53,7 +57,7 @@ export class IAccessControlEnumerable extends ContractBase {
 
     // 0x91d14854
     async hasRole (role: TBufferLike, account: TAddress): Promise<boolean> {
-        return this.$read('function hasRole(bytes32, address) returns bool', role, account);
+        return this.$read(this.$getAbiItem('function', 'hasRole'), role, account);
     }
 
     // 0x36568abe
@@ -64,6 +68,14 @@ export class IAccessControlEnumerable extends ContractBase {
     // 0xd547741f
     async revokeRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'revokeRole'), sender, role, account);
+    }
+
+    $call () {
+        return super.$call() as IIAccessControlEnumerableTxCaller;;
+    }
+
+    $data (): IIAccessControlEnumerableTxData {
+        return super.$data() as IIAccessControlEnumerableTxData;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -113,14 +125,7 @@ export class IAccessControlEnumerable extends ContractBase {
         toBlock?: number | Date
         params?: { role?: TBufferLike,previousAdminRole?: TBufferLike,newAdminRole?: TBufferLike }
     }): Promise<ITxLogItem<TLogRoleAdminChanged>[]> {
-        let topic = '0xbd79b86ffe0ab8e8776151514217cd7cacd52c909f66475c3af44e129f0b00ff';
-        let abi = this.$getAbiItem('event', 'RoleAdminChanged');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('RoleAdminChanged', options) as any;
     }
 
     async getPastLogsRoleGranted (options?: {
@@ -128,14 +133,7 @@ export class IAccessControlEnumerable extends ContractBase {
         toBlock?: number | Date
         params?: { role?: TBufferLike,account?: TAddress,sender?: TAddress }
     }): Promise<ITxLogItem<TLogRoleGranted>[]> {
-        let topic = '0x2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d';
-        let abi = this.$getAbiItem('event', 'RoleGranted');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('RoleGranted', options) as any;
     }
 
     async getPastLogsRoleRevoked (options?: {
@@ -143,14 +141,7 @@ export class IAccessControlEnumerable extends ContractBase {
         toBlock?: number | Date
         params?: { role?: TBufferLike,account?: TAddress,sender?: TAddress }
     }): Promise<ITxLogItem<TLogRoleRevoked>[]> {
-        let topic = '0xf6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b';
-        let abi = this.$getAbiItem('event', 'RoleRevoked');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('RoleRevoked', options) as any;
     }
 
     abi: AbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"previousAdminRole","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"newAdminRole","type":"bytes32"}],"name":"RoleAdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleGranted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleRevoked","type":"event"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleAdmin","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getRoleMember","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleMemberCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"grantRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"hasRole","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"renounceRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"revokeRole","outputs":[],"stateMutability":"nonpayable","type":"function"}]
@@ -232,5 +223,20 @@ interface IMethods {
 
 
 
+
+
+
+interface IIAccessControlEnumerableTxCaller {
+    grantRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    renounceRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    revokeRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+}
+
+
+interface IIAccessControlEnumerableTxData {
+    grantRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TransactionConfig>
+    renounceRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TransactionConfig>
+    revokeRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TransactionConfig>
+}
 
 

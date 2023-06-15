@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-01-31 13:27
+ *  AUTO-Generated Class: 2023-06-15 23:19
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -7,21 +7,25 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
-import { type AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
-import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
+import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
+import type { AbiItem } from 'web3-utils';
+import type { BlockTransactionString } from 'web3-eth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
+
+
+
 export class RefundEscrow extends ContractBase {
     constructor(
         public address: TAddress = '',
@@ -33,7 +37,7 @@ export class RefundEscrow extends ContractBase {
 
     // 0x38af3eed
     async beneficiary (): Promise<TAddress> {
-        return this.$read('function beneficiary() returns address');
+        return this.$read(this.$getAbiItem('function', 'beneficiary'));
     }
 
     // 0x9af6549a
@@ -53,7 +57,7 @@ export class RefundEscrow extends ContractBase {
 
     // 0xe3a9db1a
     async depositsOf (payee: TAddress): Promise<bigint> {
-        return this.$read('function depositsOf(address) returns uint256', payee);
+        return this.$read(this.$getAbiItem('function', 'depositsOf'), payee);
     }
 
     // 0x8c52dc41
@@ -63,7 +67,7 @@ export class RefundEscrow extends ContractBase {
 
     // 0x8da5cb5b
     async owner (): Promise<TAddress> {
-        return this.$read('function owner() returns address');
+        return this.$read(this.$getAbiItem('function', 'owner'));
     }
 
     // 0x715018a6
@@ -73,7 +77,7 @@ export class RefundEscrow extends ContractBase {
 
     // 0xc19d93fb
     async state (): Promise<number> {
-        return this.$read('function state() returns uint8');
+        return this.$read(this.$getAbiItem('function', 'state'));
     }
 
     // 0xf2fde38b
@@ -88,7 +92,15 @@ export class RefundEscrow extends ContractBase {
 
     // 0x685ca194
     async withdrawalAllowed (input0: TAddress): Promise<boolean> {
-        return this.$read('function withdrawalAllowed(address) returns bool', input0);
+        return this.$read(this.$getAbiItem('function', 'withdrawalAllowed'), input0);
+    }
+
+    $call () {
+        return super.$call() as IRefundEscrowTxCaller;;
+    }
+
+    $data (): IRefundEscrowTxData {
+        return super.$data() as IRefundEscrowTxData;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -156,14 +168,7 @@ export class RefundEscrow extends ContractBase {
         toBlock?: number | Date
         params?: { payee?: TAddress }
     }): Promise<ITxLogItem<TLogDeposited>[]> {
-        let topic = '0x2da466a7b24304f47e87fa2e1e5a81b9831ce54fec19055ce277ca2f39ba42c4';
-        let abi = this.$getAbiItem('event', 'Deposited');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('Deposited', options) as any;
     }
 
     async getPastLogsOwnershipTransferred (options?: {
@@ -171,14 +176,7 @@ export class RefundEscrow extends ContractBase {
         toBlock?: number | Date
         params?: { previousOwner?: TAddress,newOwner?: TAddress }
     }): Promise<ITxLogItem<TLogOwnershipTransferred>[]> {
-        let topic = '0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0';
-        let abi = this.$getAbiItem('event', 'OwnershipTransferred');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('OwnershipTransferred', options) as any;
     }
 
     async getPastLogsRefundsClosed (options?: {
@@ -186,14 +184,7 @@ export class RefundEscrow extends ContractBase {
         toBlock?: number | Date
         params?: {  }
     }): Promise<ITxLogItem<TLogRefundsClosed>[]> {
-        let topic = '0x088672c3a6e342f7cd94a65ba63b79df24a8973927b4d05d803c44bbf787d12f';
-        let abi = this.$getAbiItem('event', 'RefundsClosed');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('RefundsClosed', options) as any;
     }
 
     async getPastLogsRefundsEnabled (options?: {
@@ -201,14 +192,7 @@ export class RefundEscrow extends ContractBase {
         toBlock?: number | Date
         params?: {  }
     }): Promise<ITxLogItem<TLogRefundsEnabled>[]> {
-        let topic = '0x599d8e5a83cffb867d051598c4d70e805d59802d8081c1c7d6dffc5b6aca2b89';
-        let abi = this.$getAbiItem('event', 'RefundsEnabled');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('RefundsEnabled', options) as any;
     }
 
     async getPastLogsWithdrawn (options?: {
@@ -216,14 +200,7 @@ export class RefundEscrow extends ContractBase {
         toBlock?: number | Date
         params?: { payee?: TAddress }
     }): Promise<ITxLogItem<TLogWithdrawn>[]> {
-        let topic = '0x7084f5476618d8e60b11ef0d7d3f06914655adb8793e28ff7f018d4c76d505d5';
-        let abi = this.$getAbiItem('event', 'Withdrawn');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('Withdrawn', options) as any;
     }
 
     abi: AbiItem[] = [{"inputs":[{"internalType":"address payable","name":"beneficiary_","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"payee","type":"address"},{"indexed":false,"internalType":"uint256","name":"weiAmount","type":"uint256"}],"name":"Deposited","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[],"name":"RefundsClosed","type":"event"},{"anonymous":false,"inputs":[],"name":"RefundsEnabled","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"payee","type":"address"},{"indexed":false,"internalType":"uint256","name":"weiAmount","type":"uint256"}],"name":"Withdrawn","type":"event"},{"inputs":[],"name":"beneficiary","outputs":[{"internalType":"address payable","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"beneficiaryWithdraw","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"close","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"refundee","type":"address"}],"name":"deposit","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"payee","type":"address"}],"name":"depositsOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"enableRefunds","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"state","outputs":[{"internalType":"enum RefundEscrow.State","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address payable","name":"payee","type":"address"}],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"withdrawalAllowed","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"}]
@@ -345,5 +322,28 @@ interface IMethods {
 
 
 
+
+
+
+interface IRefundEscrowTxCaller {
+    beneficiaryWithdraw (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    close (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    deposit (sender: TSender, refundee: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    enableRefunds (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    renounceOwnership (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    transferOwnership (sender: TSender, newOwner: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    withdraw (sender: TSender, payee: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+}
+
+
+interface IRefundEscrowTxData {
+    beneficiaryWithdraw (sender: TSender, ): Promise<TransactionConfig>
+    close (sender: TSender, ): Promise<TransactionConfig>
+    deposit (sender: TSender, refundee: TAddress): Promise<TransactionConfig>
+    enableRefunds (sender: TSender, ): Promise<TransactionConfig>
+    renounceOwnership (sender: TSender, ): Promise<TransactionConfig>
+    transferOwnership (sender: TSender, newOwner: TAddress): Promise<TransactionConfig>
+    withdraw (sender: TSender, payee: TAddress): Promise<TransactionConfig>
+}
 
 

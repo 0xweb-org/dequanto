@@ -1,12 +1,11 @@
+import alot from 'alot';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { $bigint } from '@dequanto/utils/$bigint';
-import { $date } from '@dequanto/utils/$date';
-import alot from 'alot';
-import memd from 'memd';
-import { TxWriter } from '../TxWriter';
 import { GasWatcherLogger } from './GasWatcherLogger';
 import { GasWatcherStore, IGasWatcherStore } from './GasWatcherStore';
 import { GasWatcherTx, IGasWatcherCondition } from './GasWatcherTx';
+import { IAccount } from '@dequanto/models/TAccount';
+import type { TxWriter } from '../TxWriter';
 
 
 export class GasWatcherService {
@@ -75,8 +74,8 @@ export class GasWatcherService {
             if (currentTo !== pendingTo) {
                 return false;
             }
-            let currentFrom = writer.account.address;
-            let pendingFrom = pending.txWriter.account.address;
+            let currentFrom = (writer.account as IAccount).address;
+            let pendingFrom = (pending.txWriter.account as IAccount).address;
             if (currentFrom !== pendingFrom) {
                 return false;
             }

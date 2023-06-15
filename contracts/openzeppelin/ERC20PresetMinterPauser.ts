@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-01-31 13:27
+ *  AUTO-Generated Class: 2023-06-15 23:19
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -7,21 +7,25 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
-import { type AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
-import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
+import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
+import type { AbiItem } from 'web3-utils';
+import type { BlockTransactionString } from 'web3-eth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
+
+
+
 export class ERC20PresetMinterPauser extends ContractBase {
     constructor(
         public address: TAddress = '',
@@ -33,22 +37,22 @@ export class ERC20PresetMinterPauser extends ContractBase {
 
     // 0xa217fddf
     async DEFAULT_ADMIN_ROLE (): Promise<TBufferLike> {
-        return this.$read('function DEFAULT_ADMIN_ROLE() returns bytes32');
+        return this.$read(this.$getAbiItem('function', 'DEFAULT_ADMIN_ROLE'));
     }
 
     // 0xd5391393
     async MINTER_ROLE (): Promise<TBufferLike> {
-        return this.$read('function MINTER_ROLE() returns bytes32');
+        return this.$read(this.$getAbiItem('function', 'MINTER_ROLE'));
     }
 
     // 0xe63ab1e9
     async PAUSER_ROLE (): Promise<TBufferLike> {
-        return this.$read('function PAUSER_ROLE() returns bytes32');
+        return this.$read(this.$getAbiItem('function', 'PAUSER_ROLE'));
     }
 
     // 0xdd62ed3e
     async allowance (owner: TAddress, spender: TAddress): Promise<bigint> {
-        return this.$read('function allowance(address, address) returns uint256', owner, spender);
+        return this.$read(this.$getAbiItem('function', 'allowance'), owner, spender);
     }
 
     // 0x095ea7b3
@@ -58,7 +62,7 @@ export class ERC20PresetMinterPauser extends ContractBase {
 
     // 0x70a08231
     async balanceOf (account: TAddress): Promise<bigint> {
-        return this.$read('function balanceOf(address) returns uint256', account);
+        return this.$read(this.$getAbiItem('function', 'balanceOf'), account);
     }
 
     // 0x42966c68
@@ -73,7 +77,7 @@ export class ERC20PresetMinterPauser extends ContractBase {
 
     // 0x313ce567
     async decimals (): Promise<number> {
-        return this.$read('function decimals() returns uint8');
+        return this.$read(this.$getAbiItem('function', 'decimals'));
     }
 
     // 0xa457c2d7
@@ -83,17 +87,17 @@ export class ERC20PresetMinterPauser extends ContractBase {
 
     // 0x248a9ca3
     async getRoleAdmin (role: TBufferLike): Promise<TBufferLike> {
-        return this.$read('function getRoleAdmin(bytes32) returns bytes32', role);
+        return this.$read(this.$getAbiItem('function', 'getRoleAdmin'), role);
     }
 
     // 0x9010d07c
     async getRoleMember (role: TBufferLike, index: bigint): Promise<TAddress> {
-        return this.$read('function getRoleMember(bytes32, uint256) returns address', role, index);
+        return this.$read(this.$getAbiItem('function', 'getRoleMember'), role, index);
     }
 
     // 0xca15c873
     async getRoleMemberCount (role: TBufferLike): Promise<bigint> {
-        return this.$read('function getRoleMemberCount(bytes32) returns uint256', role);
+        return this.$read(this.$getAbiItem('function', 'getRoleMemberCount'), role);
     }
 
     // 0x2f2ff15d
@@ -103,7 +107,7 @@ export class ERC20PresetMinterPauser extends ContractBase {
 
     // 0x91d14854
     async hasRole (role: TBufferLike, account: TAddress): Promise<boolean> {
-        return this.$read('function hasRole(bytes32, address) returns bool', role, account);
+        return this.$read(this.$getAbiItem('function', 'hasRole'), role, account);
     }
 
     // 0x39509351
@@ -118,7 +122,7 @@ export class ERC20PresetMinterPauser extends ContractBase {
 
     // 0x06fdde03
     async name (): Promise<string> {
-        return this.$read('function name() returns string');
+        return this.$read(this.$getAbiItem('function', 'name'));
     }
 
     // 0x8456cb59
@@ -128,7 +132,7 @@ export class ERC20PresetMinterPauser extends ContractBase {
 
     // 0x5c975abb
     async paused (): Promise<boolean> {
-        return this.$read('function paused() returns bool');
+        return this.$read(this.$getAbiItem('function', 'paused'));
     }
 
     // 0x36568abe
@@ -143,17 +147,17 @@ export class ERC20PresetMinterPauser extends ContractBase {
 
     // 0x01ffc9a7
     async supportsInterface (interfaceId: TBufferLike): Promise<boolean> {
-        return this.$read('function supportsInterface(bytes4) returns bool', interfaceId);
+        return this.$read(this.$getAbiItem('function', 'supportsInterface'), interfaceId);
     }
 
     // 0x95d89b41
     async symbol (): Promise<string> {
-        return this.$read('function symbol() returns string');
+        return this.$read(this.$getAbiItem('function', 'symbol'));
     }
 
     // 0x18160ddd
     async totalSupply (): Promise<bigint> {
-        return this.$read('function totalSupply() returns uint256');
+        return this.$read(this.$getAbiItem('function', 'totalSupply'));
     }
 
     // 0xa9059cbb
@@ -169,6 +173,14 @@ export class ERC20PresetMinterPauser extends ContractBase {
     // 0x3f4ba83a
     async unpause (sender: TSender, ): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'unpause'), sender);
+    }
+
+    $call () {
+        return super.$call() as IERC20PresetMinterPauserTxCaller;;
+    }
+
+    $data (): IERC20PresetMinterPauserTxData {
+        return super.$data() as IERC20PresetMinterPauserTxData;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -254,14 +266,7 @@ export class ERC20PresetMinterPauser extends ContractBase {
         toBlock?: number | Date
         params?: { owner?: TAddress,spender?: TAddress }
     }): Promise<ITxLogItem<TLogApproval>[]> {
-        let topic = '0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925';
-        let abi = this.$getAbiItem('event', 'Approval');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('Approval', options) as any;
     }
 
     async getPastLogsPaused (options?: {
@@ -269,14 +274,7 @@ export class ERC20PresetMinterPauser extends ContractBase {
         toBlock?: number | Date
         params?: {  }
     }): Promise<ITxLogItem<TLogPaused>[]> {
-        let topic = '0x62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a258';
-        let abi = this.$getAbiItem('event', 'Paused');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('Paused', options) as any;
     }
 
     async getPastLogsRoleAdminChanged (options?: {
@@ -284,14 +282,7 @@ export class ERC20PresetMinterPauser extends ContractBase {
         toBlock?: number | Date
         params?: { role?: TBufferLike,previousAdminRole?: TBufferLike,newAdminRole?: TBufferLike }
     }): Promise<ITxLogItem<TLogRoleAdminChanged>[]> {
-        let topic = '0xbd79b86ffe0ab8e8776151514217cd7cacd52c909f66475c3af44e129f0b00ff';
-        let abi = this.$getAbiItem('event', 'RoleAdminChanged');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('RoleAdminChanged', options) as any;
     }
 
     async getPastLogsRoleGranted (options?: {
@@ -299,14 +290,7 @@ export class ERC20PresetMinterPauser extends ContractBase {
         toBlock?: number | Date
         params?: { role?: TBufferLike,account?: TAddress,sender?: TAddress }
     }): Promise<ITxLogItem<TLogRoleGranted>[]> {
-        let topic = '0x2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d';
-        let abi = this.$getAbiItem('event', 'RoleGranted');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('RoleGranted', options) as any;
     }
 
     async getPastLogsRoleRevoked (options?: {
@@ -314,14 +298,7 @@ export class ERC20PresetMinterPauser extends ContractBase {
         toBlock?: number | Date
         params?: { role?: TBufferLike,account?: TAddress,sender?: TAddress }
     }): Promise<ITxLogItem<TLogRoleRevoked>[]> {
-        let topic = '0xf6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b';
-        let abi = this.$getAbiItem('event', 'RoleRevoked');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('RoleRevoked', options) as any;
     }
 
     async getPastLogsTransfer (options?: {
@@ -329,14 +306,7 @@ export class ERC20PresetMinterPauser extends ContractBase {
         toBlock?: number | Date
         params?: { from?: TAddress,to?: TAddress }
     }): Promise<ITxLogItem<TLogTransfer>[]> {
-        let topic = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
-        let abi = this.$getAbiItem('event', 'Transfer');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('Transfer', options) as any;
     }
 
     async getPastLogsUnpaused (options?: {
@@ -344,14 +314,7 @@ export class ERC20PresetMinterPauser extends ContractBase {
         toBlock?: number | Date
         params?: {  }
     }): Promise<ITxLogItem<TLogUnpaused>[]> {
-        let topic = '0x5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa';
-        let abi = this.$getAbiItem('event', 'Unpaused');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('Unpaused', options) as any;
     }
 
     abi: AbiItem[] = [{"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"account","type":"address"}],"name":"Paused","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"previousAdminRole","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"newAdminRole","type":"bytes32"}],"name":"RoleAdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleGranted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleRevoked","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"account","type":"address"}],"name":"Unpaused","type":"event"},{"inputs":[],"name":"DEFAULT_ADMIN_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MINTER_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"PAUSER_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"burnFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleAdmin","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getRoleMember","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleMemberCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"grantRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"hasRole","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"mint","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"pause","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"paused","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"renounceRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"revokeRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"unpause","outputs":[],"stateMutability":"nonpayable","type":"function"}]
@@ -579,5 +542,40 @@ interface IMethods {
 
 
 
+
+
+
+interface IERC20PresetMinterPauserTxCaller {
+    approve (sender: TSender, spender: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    burn (sender: TSender, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    burnFrom (sender: TSender, account: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    decreaseAllowance (sender: TSender, spender: TAddress, subtractedValue: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    grantRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    increaseAllowance (sender: TSender, spender: TAddress, addedValue: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    mint (sender: TSender, to: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    pause (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    renounceRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    revokeRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    transfer (sender: TSender, to: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    transferFrom (sender: TSender, from: TAddress, to: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    unpause (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+}
+
+
+interface IERC20PresetMinterPauserTxData {
+    approve (sender: TSender, spender: TAddress, amount: bigint): Promise<TransactionConfig>
+    burn (sender: TSender, amount: bigint): Promise<TransactionConfig>
+    burnFrom (sender: TSender, account: TAddress, amount: bigint): Promise<TransactionConfig>
+    decreaseAllowance (sender: TSender, spender: TAddress, subtractedValue: bigint): Promise<TransactionConfig>
+    grantRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TransactionConfig>
+    increaseAllowance (sender: TSender, spender: TAddress, addedValue: bigint): Promise<TransactionConfig>
+    mint (sender: TSender, to: TAddress, amount: bigint): Promise<TransactionConfig>
+    pause (sender: TSender, ): Promise<TransactionConfig>
+    renounceRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TransactionConfig>
+    revokeRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TransactionConfig>
+    transfer (sender: TSender, to: TAddress, amount: bigint): Promise<TransactionConfig>
+    transferFrom (sender: TSender, from: TAddress, to: TAddress, amount: bigint): Promise<TransactionConfig>
+    unpause (sender: TSender, ): Promise<TransactionConfig>
+}
 
 

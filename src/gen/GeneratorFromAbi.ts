@@ -365,14 +365,7 @@ namespace Gen {
                 toBlock?: number | Date
                 params?: { ${indexedParams} }
             }): Promise<ITxLogItem<TLog${abi.name}>[]> {
-                let topic = '${$abiUtils.getTopicSignature(abi)}';
-                let abi = this.$getAbiItem('event', '${abi.name}');
-                let filters = await this.$getPastLogsFilters(abi, {
-                    topic,
-                    ...options
-                });
-                let logs= await this.$getPastLogs(filters);
-                return logs.map(log => this.$extractLog(log, abi)) as any;
+                return await this.$getPastLogsParsed('${abi.name}', options) as any;
             }
         `;
     }

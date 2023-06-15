@@ -19,7 +19,7 @@ export namespace ContractFactory {
         return fromAbi(contractAddr, abiJson, client, explorer);
     }
 
-    export async function fromAbi<TReturn extends ContractBase = IContractWrapped> (contractAddr: TAddress, abi: AbiItem[], client: Web3Client, explorer: IBlockChainExplorer) {
+    export function fromAbi<TReturn extends ContractBase = IContractWrapped> (contractAddr: TAddress, abi: AbiItem[], client: Web3Client, explorer: IBlockChainExplorer) {
         let builder = new ClassBuilder <TReturn> (abi);
         return builder.create(contractAddr, client, explorer) as TReturn;
     }

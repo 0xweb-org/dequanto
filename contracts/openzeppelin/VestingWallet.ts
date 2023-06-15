@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-01-31 13:27
+ *  AUTO-Generated Class: 2023-06-15 23:19
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -7,21 +7,25 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
-import { type AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
-import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
+import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
+import type { AbiItem } from 'web3-utils';
+import type { BlockTransactionString } from 'web3-eth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
+
+
+
 export class VestingWallet extends ContractBase {
     constructor(
         public address: TAddress = '',
@@ -33,12 +37,12 @@ export class VestingWallet extends ContractBase {
 
     // 0x38af3eed
     async beneficiary (): Promise<TAddress> {
-        return this.$read('function beneficiary() returns address');
+        return this.$read(this.$getAbiItem('function', 'beneficiary'));
     }
 
     // 0x0fb5a6b4
     async duration (): Promise<bigint> {
-        return this.$read('function duration() returns uint256');
+        return this.$read(this.$getAbiItem('function', 'duration'));
     }
 
     // 0x19165587
@@ -61,7 +65,7 @@ export class VestingWallet extends ContractBase {
 
     // 0xbe9a6555
     async start (): Promise<bigint> {
-        return this.$read('function start() returns uint256');
+        return this.$read(this.$getAbiItem('function', 'start'));
     }
 
     // 0x0a17b06b
@@ -71,6 +75,14 @@ export class VestingWallet extends ContractBase {
     async vestedAmount (...args): Promise<bigint> {
         let abi = this.$getAbiItemOverload([ 'function vestedAmount(uint64) returns uint256', 'function vestedAmount(address, uint64) returns uint256' ], args);
         return this.$read(abi, ...args);
+    }
+
+    $call () {
+        return super.$call() as IVestingWalletTxCaller;;
+    }
+
+    $data (): IVestingWalletTxData {
+        return super.$data() as IVestingWalletTxData;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -111,14 +123,7 @@ export class VestingWallet extends ContractBase {
         toBlock?: number | Date
         params?: { token?: TAddress }
     }): Promise<ITxLogItem<TLogERC20Released>[]> {
-        let topic = '0xc0e523490dd523c33b1878c9eb14ff46991e3f5b2cd33710918618f2a39cba1b';
-        let abi = this.$getAbiItem('event', 'ERC20Released');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('ERC20Released', options) as any;
     }
 
     async getPastLogsEtherReleased (options?: {
@@ -126,14 +131,7 @@ export class VestingWallet extends ContractBase {
         toBlock?: number | Date
         params?: {  }
     }): Promise<ITxLogItem<TLogEtherReleased>[]> {
-        let topic = '0xda9d4e5f101b8b9b1c5b76d0c5a9f7923571acfc02376aa076b75a8c080c956b';
-        let abi = this.$getAbiItem('event', 'EtherReleased');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('EtherReleased', options) as any;
     }
 
     abi: AbiItem[] = [{"inputs":[{"internalType":"address","name":"beneficiaryAddress","type":"address"},{"internalType":"uint64","name":"startTimestamp","type":"uint64"},{"internalType":"uint64","name":"durationSeconds","type":"uint64"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"token","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"ERC20Released","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"EtherReleased","type":"event"},{"inputs":[],"name":"beneficiary","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"duration","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"}],"name":"release","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"release","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"released","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"}],"name":"released","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"start","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint64","name":"timestamp","type":"uint64"}],"name":"vestedAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint64","name":"timestamp","type":"uint64"}],"name":"vestedAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"stateMutability":"payable","type":"receive"}]
@@ -204,5 +202,18 @@ interface IMethods {
 
 
 
+
+
+
+interface IVestingWalletTxCaller {
+    release (sender: TSender, token: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    release (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+}
+
+
+interface IVestingWalletTxData {
+    release (sender: TSender, token: TAddress): Promise<TransactionConfig>
+    release (sender: TSender, ): Promise<TransactionConfig>
+}
 
 

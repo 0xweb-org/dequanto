@@ -2,31 +2,31 @@ import di from 'a-di';
 import memd from 'memd';
 import alot from 'alot';
 
+import Safe from '@gnosis.pm/safe-core-sdk'
+import { SafeTransaction, SafeTransactionData } from '@gnosis.pm/safe-core-sdk-types'
+import { ProposeTransactionProps, SafeMultisigTransactionEstimate, SignatureResponse } from '@gnosis.pm/safe-service-client'
 import { ChainAccount } from "@dequanto/models/TAccount";
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
-import Safe from '@gnosis.pm/safe-core-sdk'
-import { SafeTransaction, SafeTransactionData } from '@gnosis.pm/safe-core-sdk-types'
-import { ProposeTransactionProps, SafeMultisigTransactionEstimate, SignatureResponse } from '@gnosis.pm/safe-service-client'
 
 import { TxWriter } from '@dequanto/txs/TxWriter';
-import { $address } from '@dequanto/utils/$address';
-import { $signRaw } from '@dequanto/utils/$signRaw';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';
-import { $fn } from '@dequanto/utils/$fn';
-import { $gnosis } from './$gnosis';
 import { GnosisServiceTransport } from './transport/GnosisServiceTransport';
 import { ISafeServiceTransport } from './transport/ISafeServiceTransport';
+import { $address } from '@dequanto/utils/$address';
+import { $signRaw } from '@dequanto/utils/$signRaw';
 import { $logger } from '@dequanto/utils/$logger';
 import { $bigint } from '@dequanto/utils/$bigint';
+import { $contract } from '@dequanto/utils/$contract';
+import { $promise } from '@dequanto/utils/$promise';
+import { $gnosis } from './$gnosis';
+
 import { utils } from 'ethers'
 
-import { type AbiItem } from 'web3-utils';
-import { $contract } from '@dequanto/utils/$contract';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-import { $promise } from '@dequanto/utils/$promise';
 
+import type { AbiItem } from 'web3-utils';
 
 export class GnosisSafeHandler {
 
@@ -365,7 +365,7 @@ const SafeAbi = {
             }
         ]
     },
-    getTransactionHash: {
+    getTransactionHash: <AbiItem> {
         "type": "function",
         "stateMutability": "view",
         "outputs": [

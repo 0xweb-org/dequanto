@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-01-31 13:27
+ *  AUTO-Generated Class: 2023-06-15 23:19
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -7,21 +7,25 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
-import { type AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
-import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
+import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
+import type { AbiItem } from 'web3-utils';
+import type { BlockTransactionString } from 'web3-eth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
+
+
+
 export class IInbox extends ContractBase {
     constructor(
         public address: TAddress = '',
@@ -33,7 +37,7 @@ export class IInbox extends ContractBase {
 
     // 0xe78cea92
     async bridge (): Promise<TAddress> {
-        return this.$read('function bridge() returns address');
+        return this.$read(this.$getAbiItem('function', 'bridge'));
     }
 
     // 0x679b6ded
@@ -96,6 +100,14 @@ export class IInbox extends ContractBase {
         return this.$write(this.$getAbiItem('function', 'unpauseCreateRetryables'), sender);
     }
 
+    $call () {
+        return super.$call() as IIInboxTxCaller;;
+    }
+
+    $data (): IIInboxTxData {
+        return super.$data() as IIInboxTxData;
+    }
+
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: Transaction
         block: BlockTransactionString
@@ -134,14 +146,7 @@ export class IInbox extends ContractBase {
         toBlock?: number | Date
         params?: { messageNum?: bigint }
     }): Promise<ITxLogItem<TLogInboxMessageDelivered>[]> {
-        let topic = '0xff64905f73a67fb594e0f940a8075a860db489ad991e032f48c81123eb52d60b';
-        let abi = this.$getAbiItem('event', 'InboxMessageDelivered');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('InboxMessageDelivered', options) as any;
     }
 
     async getPastLogsInboxMessageDeliveredFromOrigin (options?: {
@@ -149,14 +154,7 @@ export class IInbox extends ContractBase {
         toBlock?: number | Date
         params?: { messageNum?: bigint }
     }): Promise<ITxLogItem<TLogInboxMessageDeliveredFromOrigin>[]> {
-        let topic = '0xab532385be8f1005a4b6ba8fa20a2245facb346134ac739fe9a5198dc1580b9c';
-        let abi = this.$getAbiItem('event', 'InboxMessageDeliveredFromOrigin');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('InboxMessageDeliveredFromOrigin', options) as any;
     }
 
     abi: AbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"messageNum","type":"uint256"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"}],"name":"InboxMessageDelivered","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"messageNum","type":"uint256"}],"name":"InboxMessageDeliveredFromOrigin","type":"event"},{"inputs":[],"name":"bridge","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"destAddr","type":"address"},{"internalType":"uint256","name":"arbTxCallValue","type":"uint256"},{"internalType":"uint256","name":"maxSubmissionCost","type":"uint256"},{"internalType":"address","name":"submissionRefundAddress","type":"address"},{"internalType":"address","name":"valueRefundAddress","type":"address"},{"internalType":"uint256","name":"maxGas","type":"uint256"},{"internalType":"uint256","name":"gasPriceBid","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"createRetryableTicket","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"destAddr","type":"address"},{"internalType":"uint256","name":"arbTxCallValue","type":"uint256"},{"internalType":"uint256","name":"maxSubmissionCost","type":"uint256"},{"internalType":"address","name":"submissionRefundAddress","type":"address"},{"internalType":"address","name":"valueRefundAddress","type":"address"},{"internalType":"uint256","name":"maxGas","type":"uint256"},{"internalType":"uint256","name":"gasPriceBid","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"createRetryableTicketNoRefundAliasRewrite","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"maxSubmissionCost","type":"uint256"}],"name":"depositEth","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"pauseCreateRetryables","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"maxGas","type":"uint256"},{"internalType":"uint256","name":"gasPriceBid","type":"uint256"},{"internalType":"address","name":"destAddr","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"sendContractTransaction","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"maxGas","type":"uint256"},{"internalType":"uint256","name":"gasPriceBid","type":"uint256"},{"internalType":"address","name":"destAddr","type":"address"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"sendL1FundedContractTransaction","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"maxGas","type":"uint256"},{"internalType":"uint256","name":"gasPriceBid","type":"uint256"},{"internalType":"uint256","name":"nonce","type":"uint256"},{"internalType":"address","name":"destAddr","type":"address"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"sendL1FundedUnsignedTransaction","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"bytes","name":"messageData","type":"bytes"}],"name":"sendL2Message","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"maxGas","type":"uint256"},{"internalType":"uint256","name":"gasPriceBid","type":"uint256"},{"internalType":"uint256","name":"nonce","type":"uint256"},{"internalType":"address","name":"destAddr","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"sendUnsignedTransaction","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"startRewriteAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"stopRewriteAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"unpauseCreateRetryables","outputs":[],"stateMutability":"nonpayable","type":"function"}]
@@ -269,5 +267,38 @@ interface IMethods {
 
 
 
+
+
+
+interface IIInboxTxCaller {
+    createRetryableTicket (sender: TSender, destAddr: TAddress, arbTxCallValue: bigint, maxSubmissionCost: bigint, submissionRefundAddress: TAddress, valueRefundAddress: TAddress, maxGas: bigint, gasPriceBid: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    createRetryableTicketNoRefundAliasRewrite (sender: TSender, destAddr: TAddress, arbTxCallValue: bigint, maxSubmissionCost: bigint, submissionRefundAddress: TAddress, valueRefundAddress: TAddress, maxGas: bigint, gasPriceBid: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    depositEth (sender: TSender, maxSubmissionCost: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    pauseCreateRetryables (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    sendContractTransaction (sender: TSender, maxGas: bigint, gasPriceBid: bigint, destAddr: TAddress, amount: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    sendL1FundedContractTransaction (sender: TSender, maxGas: bigint, gasPriceBid: bigint, destAddr: TAddress, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    sendL1FundedUnsignedTransaction (sender: TSender, maxGas: bigint, gasPriceBid: bigint, nonce: bigint, destAddr: TAddress, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    sendL2Message (sender: TSender, messageData: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    sendUnsignedTransaction (sender: TSender, maxGas: bigint, gasPriceBid: bigint, nonce: bigint, destAddr: TAddress, amount: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    startRewriteAddress (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    stopRewriteAddress (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    unpauseCreateRetryables (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+}
+
+
+interface IIInboxTxData {
+    createRetryableTicket (sender: TSender, destAddr: TAddress, arbTxCallValue: bigint, maxSubmissionCost: bigint, submissionRefundAddress: TAddress, valueRefundAddress: TAddress, maxGas: bigint, gasPriceBid: bigint, data: TBufferLike): Promise<TransactionConfig>
+    createRetryableTicketNoRefundAliasRewrite (sender: TSender, destAddr: TAddress, arbTxCallValue: bigint, maxSubmissionCost: bigint, submissionRefundAddress: TAddress, valueRefundAddress: TAddress, maxGas: bigint, gasPriceBid: bigint, data: TBufferLike): Promise<TransactionConfig>
+    depositEth (sender: TSender, maxSubmissionCost: bigint): Promise<TransactionConfig>
+    pauseCreateRetryables (sender: TSender, ): Promise<TransactionConfig>
+    sendContractTransaction (sender: TSender, maxGas: bigint, gasPriceBid: bigint, destAddr: TAddress, amount: bigint, data: TBufferLike): Promise<TransactionConfig>
+    sendL1FundedContractTransaction (sender: TSender, maxGas: bigint, gasPriceBid: bigint, destAddr: TAddress, data: TBufferLike): Promise<TransactionConfig>
+    sendL1FundedUnsignedTransaction (sender: TSender, maxGas: bigint, gasPriceBid: bigint, nonce: bigint, destAddr: TAddress, data: TBufferLike): Promise<TransactionConfig>
+    sendL2Message (sender: TSender, messageData: TBufferLike): Promise<TransactionConfig>
+    sendUnsignedTransaction (sender: TSender, maxGas: bigint, gasPriceBid: bigint, nonce: bigint, destAddr: TAddress, amount: bigint, data: TBufferLike): Promise<TransactionConfig>
+    startRewriteAddress (sender: TSender, ): Promise<TransactionConfig>
+    stopRewriteAddress (sender: TSender, ): Promise<TransactionConfig>
+    unpauseCreateRetryables (sender: TSender, ): Promise<TransactionConfig>
+}
 
 

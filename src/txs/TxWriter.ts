@@ -13,10 +13,14 @@ import { $logger } from '@dequanto/utils/$logger';
 import { $promise } from '@dequanto/utils/$promise';
 import { $account } from '@dequanto/utils/$account';
 import { $gas } from '@dequanto/utils/$gas';
+import { $require } from '@dequanto/utils/$require';
+import { $contract } from '@dequanto/utils/$contract';
+import { $error } from '@dequanto/utils/$error';
+
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TxDataBuilder } from './TxDataBuilder';
 import { TxLogger } from './TxLogger';
-import { ChainAccount, IAccount, SafeAccount, TAccount } from "@dequanto/models/TAccount";
+import { ChainAccount, Erc4337Account, IAccount, SafeAccount, TAccount } from "@dequanto/models/TAccount";
 import { TAddress } from '@dequanto/models/TAddress';
 import { ChainAccountsService } from '@dequanto/ChainAccountsService';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
@@ -24,13 +28,10 @@ import { TPlatform } from '@dequanto/models/TPlatform';
 import { ClientErrorUtil } from '@dequanto/clients/utils/ClientErrorUtil';
 import { ITxLogItem } from './receipt/ITxLogItem';
 import { TxLogParser } from './receipt/TxLogParser';
-import { GnosisSafeHandler } from '@dequanto/safe/GnosisSafeHandler';
+
 import { ISafeServiceTransport } from '@dequanto/safe/transport/ISafeServiceTransport';
 import { SigFileTransport } from './sig-transports/SigFileTransport';
-import { $require } from '@dequanto/utils/$require';
-import { $abiParser } from '@dequanto/utils/$abiParser';
-import { $contract } from '@dequanto/utils/$contract';
-import { $error } from '@dequanto/utils/$error';
+import { TxWriterAccountAgents } from './agents/TxWriterAccountAgents';
 
 interface ITxWriterEvents {
     transactionHash (hash: string)
@@ -74,8 +75,6 @@ export interface ITxWriterOptions {
 }
 
 export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
-
-    private isSafe = $account.isSafe(this.account);
 
     onSent = new class_Dfr<string>();
     onCompleted = new class_Dfr<TransactionReceipt>();
@@ -162,20 +161,14 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
             return;
         }
 
-        if (this.isSafe) {
-            let safeAccount = this.account as SafeAccount;
+        let agent = TxWriterAccountAgents.get(this.account);
+        if (agent != null) {
             let sender = await this.getSender();
-            let safe = new GnosisSafeHandler({
-                safeAddress: safeAccount.address ?? safeAccount.safeAddress,
-                owner: sender,
-                client: this.client,
-                transport: this.options?.safeTransport
-            });
-            let innerWriter = await safe.execute(this);
-
+            let innerWriter = await agent.process(sender, this.account, this);
             this.pipeInnerWriter(innerWriter);
             return;
         }
+
 
         let time = Date.now();
         let sender: ChainAccount = await this.getSender();
@@ -207,7 +200,6 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
                 signedTxBuffer = await $sign.serializeTx(tx, this.options.signature);
             }
         }
-
         let tx = <TxWriter['tx']> {
             timestamp: Date.now(),
             confirmations: 0,
@@ -338,7 +330,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
                     if (options.retries == null) {
                         options.retries = 1;
                         options.retryDelay = 5000;
-                        // If insufficient funds this is can be due to the blockchain hasn't confirmed some incomming transactions
+                        // If insufficient funds this is can be due to the blockchain hasn't confirmed some incoming transactions
                     }
                 }
                 if (ClientErrorUtil.IsNonceTooLow(err)) {
@@ -435,10 +427,10 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         return setTimeout(() => {
             if (this.txs.length > 3) {
                 let hashes = this.txs.map(x => x.hash).join(', ')
-                this.onCompleted.reject(new Error(`${this.txs.length} retries timeouted, with hashes: ${ hashes }`))
+                this.onCompleted.reject(new Error(`${this.txs.length} retries timed out, with hashes: ${ hashes }`))
                 return;
             }
-            tx.error = new Error(`Timeouted ${ms}ms`);
+            tx.error = new Error(`Timed out ${ms}ms`);
             this.resubmit()
         }, ms);
     }
@@ -487,7 +479,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         if (typeof account !== 'string') {
             account = <ChainAccount | SafeAccount> JSON.parse(JSON.stringify(account));
             // Clean any KEY to prevent leaking. When resubmitted if one is required should be taken from the storage
-            if ($account.isSafe(account)) {
+            if ('operator' in account) {
                 delete account.operator?.key;
             } else {
                 delete account.key;
@@ -510,7 +502,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         await this.builder.save(path, additionalProperties);
         this.onSent.resolve(path);
         this.onSaved.resolve(path);
-        this.onCompleted.reject(new Error(`Transaction is not submited to the blockchain. It has been saved to "${path}". Subscribe to the "onSaved" promise instead`))
+        this.onCompleted.reject(new Error(`Transaction is not submitted to the blockchain. It has been saved to "${path}". Subscribe to the "onSaved" promise instead`))
     }
 
     static async fromJSON (json: TTxWriterJson, client?: Web3Client, account?: TAccount): Promise<TxWriter> {

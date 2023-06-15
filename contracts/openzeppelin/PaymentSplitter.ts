@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-01-31 13:27
+ *  AUTO-Generated Class: 2023-06-15 23:19
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -7,21 +7,25 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
-import { type AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
-import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
+import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
+import type { AbiItem } from 'web3-utils';
+import type { BlockTransactionString } from 'web3-eth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
+
+
+
 export class PaymentSplitter extends ContractBase {
     constructor(
         public address: TAddress = '',
@@ -33,7 +37,7 @@ export class PaymentSplitter extends ContractBase {
 
     // 0x8b83209b
     async payee (index: bigint): Promise<TAddress> {
-        return this.$read('function payee(uint256) returns address', index);
+        return this.$read(this.$getAbiItem('function', 'payee'), index);
     }
 
     // 0xa3f8eace
@@ -65,7 +69,7 @@ export class PaymentSplitter extends ContractBase {
 
     // 0xce7c2ac2
     async shares (account: TAddress): Promise<bigint> {
-        return this.$read('function shares(address) returns uint256', account);
+        return this.$read(this.$getAbiItem('function', 'shares'), account);
     }
 
     // 0xd79779b2
@@ -79,7 +83,15 @@ export class PaymentSplitter extends ContractBase {
 
     // 0x3a98ef39
     async totalShares (): Promise<bigint> {
-        return this.$read('function totalShares() returns uint256');
+        return this.$read(this.$getAbiItem('function', 'totalShares'));
+    }
+
+    $call () {
+        return super.$call() as IPaymentSplitterTxCaller;;
+    }
+
+    $data (): IPaymentSplitterTxData {
+        return super.$data() as IPaymentSplitterTxData;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -138,14 +150,7 @@ export class PaymentSplitter extends ContractBase {
         toBlock?: number | Date
         params?: { token?: TAddress }
     }): Promise<ITxLogItem<TLogERC20PaymentReleased>[]> {
-        let topic = '0x3be5b7a71e84ed12875d241991c70855ac5817d847039e17a9d895c1ceb0f18a';
-        let abi = this.$getAbiItem('event', 'ERC20PaymentReleased');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('ERC20PaymentReleased', options) as any;
     }
 
     async getPastLogsPayeeAdded (options?: {
@@ -153,14 +158,7 @@ export class PaymentSplitter extends ContractBase {
         toBlock?: number | Date
         params?: {  }
     }): Promise<ITxLogItem<TLogPayeeAdded>[]> {
-        let topic = '0x40c340f65e17194d14ddddb073d3c9f888e3cb52b5aae0c6c7706b4fbc905fac';
-        let abi = this.$getAbiItem('event', 'PayeeAdded');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('PayeeAdded', options) as any;
     }
 
     async getPastLogsPaymentReceived (options?: {
@@ -168,14 +166,7 @@ export class PaymentSplitter extends ContractBase {
         toBlock?: number | Date
         params?: {  }
     }): Promise<ITxLogItem<TLogPaymentReceived>[]> {
-        let topic = '0x6ef95f06320e7a25a04a175ca677b7052bdd97131872c2192525a629f51be770';
-        let abi = this.$getAbiItem('event', 'PaymentReceived');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('PaymentReceived', options) as any;
     }
 
     async getPastLogsPaymentReleased (options?: {
@@ -183,14 +174,7 @@ export class PaymentSplitter extends ContractBase {
         toBlock?: number | Date
         params?: {  }
     }): Promise<ITxLogItem<TLogPaymentReleased>[]> {
-        let topic = '0xdf20fd1e76bc69d672e4814fafb2c449bba3a5369d8359adf9e05e6fde87b056';
-        let abi = this.$getAbiItem('event', 'PaymentReleased');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('PaymentReleased', options) as any;
     }
 
     abi: AbiItem[] = [{"inputs":[{"internalType":"address[]","name":"payees","type":"address[]"},{"internalType":"uint256[]","name":"shares_","type":"uint256[]"}],"stateMutability":"payable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"contract IERC20","name":"token","type":"address"},{"indexed":false,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"ERC20PaymentReleased","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"account","type":"address"},{"indexed":false,"internalType":"uint256","name":"shares","type":"uint256"}],"name":"PayeeAdded","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"from","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"PaymentReceived","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"PaymentReleased","type":"event"},{"inputs":[{"internalType":"uint256","name":"index","type":"uint256"}],"name":"payee","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"releasable","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"contract IERC20","name":"token","type":"address"},{"internalType":"address","name":"account","type":"address"}],"name":"releasable","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address payable","name":"account","type":"address"}],"name":"release","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"contract IERC20","name":"token","type":"address"},{"internalType":"address","name":"account","type":"address"}],"name":"release","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"contract IERC20","name":"token","type":"address"},{"internalType":"address","name":"account","type":"address"}],"name":"released","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"released","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"shares","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"contract IERC20","name":"token","type":"address"}],"name":"totalReleased","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalReleased","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalShares","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"stateMutability":"payable","type":"receive"}]
@@ -277,5 +261,18 @@ interface IMethods {
 
 
 
+
+
+
+interface IPaymentSplitterTxCaller {
+    release (sender: TSender, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    release (sender: TSender, token: TAddress, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+}
+
+
+interface IPaymentSplitterTxData {
+    release (sender: TSender, account: TAddress): Promise<TransactionConfig>
+    release (sender: TSender, token: TAddress, account: TAddress): Promise<TransactionConfig>
+}
 
 

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-01-31 13:27
+ *  AUTO-Generated Class: 2023-06-15 23:19
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -7,21 +7,25 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
-import { type AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
-import { TransactionReceipt, Transaction, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
+import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
+import type { AbiItem } from 'web3-utils';
+import type { BlockTransactionString } from 'web3-eth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
+
+
+
 export class IERC1820Registry extends ContractBase {
     constructor(
         public address: TAddress = '',
@@ -33,27 +37,27 @@ export class IERC1820Registry extends ContractBase {
 
     // 0xaabbb8ca
     async getInterfaceImplementer (account: TAddress, _interfaceHash: TBufferLike): Promise<TAddress> {
-        return this.$read('function getInterfaceImplementer(address, bytes32) returns address', account, _interfaceHash);
+        return this.$read(this.$getAbiItem('function', 'getInterfaceImplementer'), account, _interfaceHash);
     }
 
     // 0x3d584063
     async getManager (account: TAddress): Promise<TAddress> {
-        return this.$read('function getManager(address) returns address', account);
+        return this.$read(this.$getAbiItem('function', 'getManager'), account);
     }
 
     // 0xf712f3e8
     async implementsERC165Interface (account: TAddress, interfaceId: TBufferLike): Promise<boolean> {
-        return this.$read('function implementsERC165Interface(address, bytes4) returns bool', account, interfaceId);
+        return this.$read(this.$getAbiItem('function', 'implementsERC165Interface'), account, interfaceId);
     }
 
     // 0xb7056765
     async implementsERC165InterfaceNoCache (account: TAddress, interfaceId: TBufferLike): Promise<boolean> {
-        return this.$read('function implementsERC165InterfaceNoCache(address, bytes4) returns bool', account, interfaceId);
+        return this.$read(this.$getAbiItem('function', 'implementsERC165InterfaceNoCache'), account, interfaceId);
     }
 
     // 0x65ba36c1
     async interfaceHash (interfaceName: string): Promise<TBufferLike> {
-        return this.$read('function interfaceHash(string) returns bytes32', interfaceName);
+        return this.$read(this.$getAbiItem('function', 'interfaceHash'), interfaceName);
     }
 
     // 0x29965a1d
@@ -69,6 +73,14 @@ export class IERC1820Registry extends ContractBase {
     // 0xa41e7d51
     async updateERC165Cache (sender: TSender, account: TAddress, interfaceId: TBufferLike): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'updateERC165Cache'), sender, account, interfaceId);
+    }
+
+    $call () {
+        return super.$call() as IIERC1820RegistryTxCaller;;
+    }
+
+    $data (): IIERC1820RegistryTxData {
+        return super.$data() as IIERC1820RegistryTxData;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -109,14 +121,7 @@ export class IERC1820Registry extends ContractBase {
         toBlock?: number | Date
         params?: { account?: TAddress,interfaceHash?: TBufferLike,implementer?: TAddress }
     }): Promise<ITxLogItem<TLogInterfaceImplementerSet>[]> {
-        let topic = '0x93baa6efbd2244243bfee6ce4cfdd1d04fc4c0e9a786abd3a41313bd352db153';
-        let abi = this.$getAbiItem('event', 'InterfaceImplementerSet');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('InterfaceImplementerSet', options) as any;
     }
 
     async getPastLogsManagerChanged (options?: {
@@ -124,14 +129,7 @@ export class IERC1820Registry extends ContractBase {
         toBlock?: number | Date
         params?: { account?: TAddress,newManager?: TAddress }
     }): Promise<ITxLogItem<TLogManagerChanged>[]> {
-        let topic = '0x605c2dbf762e5f7d60a546d42e7205dcb1b011ebc62a61736a57c9089d3a4350';
-        let abi = this.$getAbiItem('event', 'ManagerChanged');
-        let filters = await this.$getPastLogsFilters(abi, {
-            topic,
-            ...options
-        });
-        let logs= await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return await this.$getPastLogsParsed('ManagerChanged', options) as any;
     }
 
     abi: AbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"bytes32","name":"interfaceHash","type":"bytes32"},{"indexed":true,"internalType":"address","name":"implementer","type":"address"}],"name":"InterfaceImplementerSet","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"newManager","type":"address"}],"name":"ManagerChanged","type":"event"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"bytes32","name":"_interfaceHash","type":"bytes32"}],"name":"getInterfaceImplementer","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"getManager","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"implementsERC165Interface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"implementsERC165InterfaceNoCache","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"interfaceName","type":"string"}],"name":"interfaceHash","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"bytes32","name":"_interfaceHash","type":"bytes32"},{"internalType":"address","name":"implementer","type":"address"}],"name":"setInterfaceImplementer","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"address","name":"newManager","type":"address"}],"name":"setManager","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"updateERC165Cache","outputs":[],"stateMutability":"nonpayable","type":"function"}]
@@ -214,5 +212,20 @@ interface IMethods {
 
 
 
+
+
+
+interface IIERC1820RegistryTxCaller {
+    setInterfaceImplementer (sender: TSender, account: TAddress, _interfaceHash: TBufferLike, implementer: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setManager (sender: TSender, account: TAddress, newManager: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    updateERC165Cache (sender: TSender, account: TAddress, interfaceId: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+}
+
+
+interface IIERC1820RegistryTxData {
+    setInterfaceImplementer (sender: TSender, account: TAddress, _interfaceHash: TBufferLike, implementer: TAddress): Promise<TransactionConfig>
+    setManager (sender: TSender, account: TAddress, newManager: TAddress): Promise<TransactionConfig>
+    updateERC165Cache (sender: TSender, account: TAddress, interfaceId: TBufferLike): Promise<TransactionConfig>
+}
 
 
