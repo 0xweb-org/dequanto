@@ -48,7 +48,12 @@ export class SlotsDump {
         explorer?: IBlockChainExplorer
         sourceCodeProvider?: SourceCodeProvider
         logger?: typeof $logger
-        fields?: string[]
+        fields?: string[],
+        sources?: {
+            files?: {
+                [file: string]: { content: string }
+            },
+        }
     }) {
         $require.Address(this?.address);
     }
@@ -62,7 +67,8 @@ export class SlotsDump {
 
         let sources = await this.sourceCodeProvider.getSourceCode({
             address: this.address,
-            implementation: this.implementation
+            implementation: this.implementation,
+            sources: this.params.sources?.files
         });
 
         let slots = await SlotsParser.slots({
