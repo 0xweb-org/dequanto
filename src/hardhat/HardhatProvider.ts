@@ -17,6 +17,7 @@ import { IGeneratorSources } from '@dequanto/gen/Generator';
 import { $path } from '@dequanto/utils/$path';
 import { ContractFactory, IContractWrapped } from '@dequanto/contracts/ContractFactory';
 import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
+import { IWeb3EndpointOptions } from '@dequanto/clients/interfaces/IWeb3EndpointOptions';
 
 
 
@@ -36,19 +37,23 @@ export class HardhatProvider {
 
 
     @memd.deco.memoize()
-    client(network: 'hardhat' | 'localhost' = 'hardhat') {
-        if (network == 'localhost') {
-            return new HardhatWeb3Client({
-                endpoints: [
+    client(network: 'hardhat' | 'localhost' = 'hardhat', opts: IWeb3EndpointOptions = null) {
+        opts ??= {};
+
+        if (opts.web3 == null && opts.endpoints == null) {
+            if (network == 'localhost') {
+                opts.endpoints = [
                     { url: 'http://127.0.0.1:8545' },
                     // Use `manual`, will be used for subscriptions only, otherwise BatchRequests will fail, as not implemented yet
                     // https://github.com/NomicFoundation/hardhat/issues/1324
-                     { url: 'ws://127.0.0.1:8545', manual: true },
-                ]
-            });
+                        { url: 'ws://127.0.0.1:8545', manual: true },
+                ];
+            } else {
+                opts.web3 = this.hh.web3;
+            }
         }
-        const web3 = this.hh.web3;
-        const client = new HardhatWeb3Client({ web3 });
+
+        const client = new HardhatWeb3Client(opts);
         return client;
     }
 

@@ -8,7 +8,6 @@ import { ArbWeb3Client } from '@dequanto/chains/arbitrum/ArbWeb3Client';
 import { XDaiWeb3Client } from '@dequanto/chains/xdai/XDaiWeb3Client';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { config } from '@dequanto/Config';
-import { $require } from '@dequanto/utils/$require';
 import { EvmWeb3Client } from './EvmWeb3Client';
 
 export namespace Web3ClientFactory {
@@ -32,7 +31,7 @@ export namespace Web3ClientFactory {
             case 'xdai':
                 return di.resolve(XDaiWeb3Client, opts);
             case 'hardhat':
-                return di.resolve(HardhatProvider).client('localhost');
+                return di.resolve(HardhatProvider).client('localhost', opts);
             default:
                 let cfg = config.web3[platform];
                 if (cfg != null) {
