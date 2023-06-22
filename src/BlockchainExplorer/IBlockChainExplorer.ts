@@ -30,6 +30,8 @@ export interface IBlockChainExplorer extends IAbiProvider {
 
     getErc20Transfers(address: TAddress, fromBlockNumber?: number): Promise<IBlockChainTransferEvent[]>
     getErc20TransfersAll(address: TAddress, fromBlockNumber?: number): Promise<IBlockChainTransferEvent[]>
+
+    registerAbi (abis: {name, address, abi}[])
 }
 
 export interface IBlockChainTransferEvent {

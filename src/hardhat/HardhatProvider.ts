@@ -62,7 +62,9 @@ export class HardhatProvider {
         let client = this.client(network);
         let Ctor = BlockChainExplorerProvider.create({
             platform: 'hardhat',
-            getWeb3Client: () => client,
+            getWeb3: () => client,
+            ABI_CACHE: '',
+
         });
         return new Ctor();
     }

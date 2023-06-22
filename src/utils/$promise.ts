@@ -50,9 +50,9 @@ export namespace $promise {
         })
     }
 
-    export async function catched<T, TErr extends Error = TError > (fn: () => Promise<T>): Promise<{ result?: T, error?: TError}>
-    export async function catched<T, TErr extends Error = TError & { code?: string | number } > (promise: Promise<T>): Promise<{ result?: T, error?: TError}>
-    export async function catched<T, TErr extends Error = TError & { code?: string | number } > (mix: Promise<T> | (() => Promise<T>)): Promise<{ result?: T, error?: TError}> {
+    export async function caught<T, TErr extends Error = TError > (fn: () => Promise<T>): Promise<{ result?: T, error?: TError}>
+    export async function caught<T, TErr extends Error = TError & { code?: string | number } > (promise: Promise<T>): Promise<{ result?: T, error?: TError}>
+    export async function caught<T, TErr extends Error = TError & { code?: string | number } > (mix: Promise<T> | (() => Promise<T>)): Promise<{ result?: T, error?: TError}> {
         try {
             let promise = typeof mix === 'function' ? mix() : mix;
             let result = await promise;

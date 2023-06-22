@@ -15,6 +15,7 @@ import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { $config } from '@dequanto/utils/$config';
 import { Constructor } from 'atma-utils';
 import type { AbiItem } from 'web3-utils';
+import { $str } from '@dequanto/solidity/utils/$str';
 
 export interface IBlockChainExplorerParams {
 
@@ -47,18 +48,20 @@ export namespace BlockChainExplorerFactory {
             config = opts.getConfig(this.platform)
 
             constructor (public platform?: TPlatform) {
-                this.getContractAbi = memd.fn.memoize(this.getContractAbi, {
-                    trackRef: true,
-                    persistance: new memd.FsTransport({
-                        path: opts.ABI_CACHE
-                    })
-                });
-                this.getContractSource = memd.fn.memoize(this.getContractSource, {
-                    trackRef: true,
-                    persistance: new memd.FsTransport({
-                        path: opts.ABI_CACHE.replace('.json', '-source.json')
-                    })
-                });
+                if ($str.isNullOrWhiteSpace(opts.ABI_CACHE) === false) {
+                    this.getContractAbi = memd.fn.memoize(this.getContractAbi, {
+                        trackRef: true,
+                        persistance: new memd.FsTransport({
+                            path: opts.ABI_CACHE
+                        })
+                    });
+                    this.getContractSource = memd.fn.memoize(this.getContractSource, {
+                        trackRef: true,
+                        persistance: new memd.FsTransport({
+                            path: opts.ABI_CACHE.replace('.json', '-source.json')
+                        })
+                    });
+                }
             }
 
             async getContractMeta (name: string)
@@ -330,6 +333,17 @@ export namespace BlockChainExplorerFactory {
                     fromBlockNumber = Number(arr[arr.length - 1].blockNumber);
                 }
                 return alot(out).distinctBy(x => x.hash).toArray();
+            }
+
+            async registerAbi (abis: {name, address, abi}[]) {
+                abis.forEach(x => {
+                    let fromDb = this.localDb.find(current => $address.eq(current.address, x.address));
+                    if (fromDb != null) {
+                        fromDb.abi = x.abi;
+                        return;
+                    }
+                    this.localDb.push(x);
+                })
             }
         }
     }

@@ -64,7 +64,7 @@ class BlockchainExplorerDateResolver {
     }
 
     async get (address: TAddress) {
-        let { result: info, error } = await $promise.catched(this.explorer.getContractCreation(address));
+        let { result: info, error } = await $promise.caught(this.explorer.getContractCreation(address));
         if (error) {
             if (/empty/i.test(error.message)) {
                 let code = await this.client.getCode(address);

@@ -1,4 +1,5 @@
 import { $buffer } from './$buffer';
+import { $require } from './$require';
 export namespace $hex {
 
     /**
@@ -21,6 +22,19 @@ export namespace $hex {
      */
     export function trimBytes(hex: string) {
         return hex.replace(/^0x(0{2})+/, '').replace(/(0{2})+$/, '');
+    }
+
+    export function getBytes (hex: string, offset: number, length: number) {
+        let start = hex.startsWith('0x') ? 2 : 0;
+        let offsetChars = offset * 2;
+        let lengthChars = length * 2;
+        return `0x` + hex.substring(start + offsetChars, start + offsetChars + lengthChars);
+    }
+    export function getBytesLength (hex: string) {
+        let pfx = hex.startsWith('0x') ? 2 : 0;
+        let chars = hex.length - pfx;
+        $require.True(chars % 2 === 0, `Expect buffer to have even length, got ${chars}`);
+        return chars / 2;
     }
 
     export function getNumber (hex: string, byteIndex: number, bytesCount: number = 1): number {
@@ -59,6 +73,23 @@ export namespace $hex {
         }
         return value;
     }
+
+    export function convert (hex: string, abiType: 'uint256' | 'address' | 'bool' | 'string' | string) {
+        if (abiType === 'bool') {
+            return Boolean(Number(hex));
+        }
+        let bigintMatch = /int(?<size>\d+)?$/.exec(abiType);
+        if (bigintMatch) {
+            let size = Number(bigintMatch.groups.size ?? 256);
+            if (size < 16) {
+                return Number(hex);
+            }
+            return BigInt(hex);
+        }
+
+        return hex;
+    }
+
 
     /**
      * Adds `0x` to the start if not present

@@ -17,7 +17,7 @@ export class ContractAbiProvider {
 
     }
 
-    async getAbi(abi: TAddress | string, opts: { implementation?: string, location?: string } = null) {
+    async getAbi(abi: TAddress | string, opts: { implementation?: string, location?: string, optional?: boolean } = null) {
 
         $require.notNull(abi, `Abi not provided to get the Abi Json from`);
 
@@ -41,7 +41,7 @@ export class ContractAbiProvider {
             abiJson = Array.isArray(json) ? json : json.abi;
         }
 
-        $require.notNull(abiJson, `Abi not resolved from ${abi}`);
+        opts?.optional !== true && $require.notNull(abiJson, `Abi not resolved from ${abi}`);
         return { abiJson, implementation };
     }
 

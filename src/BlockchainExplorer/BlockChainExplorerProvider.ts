@@ -6,7 +6,7 @@ import { Etherscan } from './Etherscan';
 import { Polyscan } from './Polyscan';
 import { XDaiscan } from '@dequanto/chains/xdai/XDaiscan';
 import { $config } from '@dequanto/utils/$config';
-import { BlockChainExplorerFactory } from './BlockChainExplorerFactory';
+import { BlockChainExplorerFactory, IBlockChainExplorerParams } from './BlockChainExplorerFactory';
 import { Evmscan } from './Evmscan';
 import { IBlockChainExplorer } from './IBlockChainExplorer';
 
@@ -34,7 +34,7 @@ export namespace BlockChainExplorerProvider {
         }
     }
 
-    export function create(options) {
+    export function create(options: IBlockChainExplorerParams) {
         return BlockChainExplorerFactory.create(options);
     }
 }

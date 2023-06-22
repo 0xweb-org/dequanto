@@ -253,7 +253,8 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
             //         }
             //     }
             // })
-            .on('error', error => {
+            .on('error', (error: Error & {data?, transactionHash?}) => {
+
                 this.onSent.reject(error);
                 this.onCompleted.reject(error);
 
@@ -291,17 +292,17 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
                     throw error;
                 }
 
-            }, async (err: Error & { receipt?: TransactionReceipt, data }) => {
+            }, async (err: Error & { receipt?: TransactionReceipt, data, transactionHash? }) => {
                 if (err.data != null && this.builder.abi != null) {
                     err.data = $contract.decodeCustomError(err.data, this.builder.abi);
                     $error.normalizeEvmCustomError(err);
                 }
 
-
                 this.logger.log(`Tx errored ${err.message}`);
 
                 this.clearTimer(tx);
                 tx.error = err;
+                tx.hash = err.transactionHash ?? tx.receipt?.transactionHash ?? tx.hash;
 
                 const options = this.options ?? {};
 
@@ -361,6 +362,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
                     this.resubmit({ increaseGas: false });
                     return;
                 }
+
                 this.onCompleted.reject(err);
             });
     }

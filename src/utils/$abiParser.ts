@@ -1,4 +1,6 @@
 import type { AbiItem, AbiInput, AbiOutput } from 'web3-utils';
+import { $require } from './$require';
+import { $str } from '@dequanto/solidity/utils/$str';
 
 interface IParameter {
     name?: string
@@ -36,27 +38,33 @@ export namespace $abiParser {
 
     const methodRgx = /^((?<type>function|event)\s+)?(?<methodName>\w+)\s*\((?<params>[^)]+)?\)\s*((:|returns)(?<return>.+))?$/;
 
+    const rgxMethodName = /^((?<type>function|event)\s+)?(?<methodName>\w+)/;
+    const rgxMethodReturn = /((:|returns)(?<return>.+))?$/;
+    const rgxArguments = /^\(.?\)$/;
     /**
      *  foo(uint256):address
      *  function foo(uint256): (address account, uint256 value)
      *  function foo(uint256) returns (address)
      */
     export function parseMethod (methodAbi: string): AbiItem {
-        let outputs: IParameter[];
+        let matchMethodName = rgxMethodName.exec(methodAbi);
+        $require.notNull(matchMethodName, `Method name in abi ${methodAbi} is not valid. Expect like 'foo(uint256):address`);
+
+        let matchReturn = rgxMethodReturn.exec(methodAbi);
+
+        let fnName = matchMethodName.groups.methodName;
+        let fnParams = $str.removeRgxMatches(methodAbi, matchMethodName, matchReturn).trim();
+        $require.notNull(rgxArguments.test(fnParams), `Method arguments in abi ${methodAbi} is not valid. Expect like 'foo(uint256):address`);
+
+        // Remove trailing '()'
+        fnParams = fnParams.substring(1, fnParams.length - 1);
 
 
-        let match = methodRgx.exec(methodAbi);
-        if (match == null) {
-            throw new Error(`Invalid method abi ${methodAbi}. Expect like 'foo(uint256):address'`);
-        }
+        let outputs = parseArguments(matchReturn.groups.return?.trim() ?? '');
 
-        let fnName = match.groups.methodName;
-        let $return = match.groups.return?.trim() ?? '';
-
-        outputs = parseArguments($return);
-
-        let inputs = Parse.parametersLine(match.groups.params ?? '')
+        let inputs = Parse.parametersLine(fnParams)
         let isSig = /^0x[A-F\d]{8}$/i.test(fnName);
+
         return <AbiItem> {
             constant: false,
             payable: false,
@@ -66,7 +74,7 @@ export namespace $abiParser {
             signature: isSig ? fnName : void 0,
             inputs: inputs,
             outputs: outputs,
-            type: match.groups.type ?? 'function',
+            type: matchMethodName.groups.type ?? 'function',
         };
     }
 
@@ -164,14 +172,23 @@ export namespace $abiParser {
 namespace Parse {
     // uint256 foo, uint bar, address qux
     export function parametersLine (paramsStr: string) {
-        return splitByDelimiter(paramsStr, ',')
-            .map(param => {
+        let arr = splitByDelimiter(paramsStr, ',')
+        return arr.map(param => {
+                // `(uint256 foo, uint256 bar)` -> single params
+                // `(uint256 foo, uint256 bar) param` -> tuple
                 let params = $abiParser.parseArguments(param);
+                if (param.startsWith('(') && param.endsWith(')')) {
+                    return {
+                        name: null,
+                        type: 'tuple',
+                        components: params
+                    } as any as AbiInput;
+                };
                 return params[0];
             });
     }
 
-    export function splitByDelimiter (line: string, delimiter: string) {
+    export function splitByDelimiter (line: string, delimiter: string): string[]{
         let parts = [];
         let start = 0;
         for (let i = 0; i < line.length; i++) {

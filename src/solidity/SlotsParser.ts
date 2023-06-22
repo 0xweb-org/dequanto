@@ -34,7 +34,6 @@ export namespace SlotsParser {
                         type: await util.serialize(),
                     };
                 }
-
                 throw new Error(`Unknown var ${input.name} ${input.type}`);
             })
             .toArrayAsync();
@@ -189,7 +188,7 @@ namespace TypeUtil {
 
         }
         async sizeOf () {
-            return Types.sizeOf(this.type.name)
+            return $types.sizeOf(this.type.name)
         }
         async serialize () {
             return this.type.name;
@@ -227,11 +226,11 @@ namespace TypeUtil {
         async sizeOf () {
             let definition = await this.getDefinition();
             if (definition.type === 'ContractDefinition') {
-                return Types.sizeOf('address');
+                return $types.sizeOf('address');
             }
             if (definition.type === 'EnumDefinition') {
                 let count = Math.ceil(definition.members.length / 256);
-                return Types.sizeOf(`uint${ 8 * count }`)
+                return $types.sizeOf(`uint${ 8 * count }`)
             }
             let ctx = {
                 ...this.ctx,
@@ -353,7 +352,7 @@ namespace TypeAbiUtil {
 
         }
         async sizeOf () {
-            return Types.sizeOf(this.type.type)
+            return $types.sizeOf(this.type.type)
         }
         async serialize () {
             return this.type.type;
@@ -426,44 +425,6 @@ namespace TypeAbiUtil {
             return this.input.type;
         }
 
-    }
-}
-
-namespace Types {
-    export function sizeOf(type: string) {
-        if (type === 'address') {
-            // 20bytes
-            return 20 * 8;
-        }
-        if (type === 'bool') {
-            return 1 * 8;
-        }
-        if (type === 'string') {
-            return Infinity;
-        }
-        let intMatch = /^u?int(?<size>\d+)?$/.exec(type);
-        if (intMatch) {
-            return Number(intMatch.groups.size ?? 256);
-        }
-        if (type === 'byte') {
-            type = 'bytes1';
-        }
-        let bytesMatch = /^bytes(?<size>\d+)$/.exec(type);
-        if (bytesMatch) {
-            return Number(bytesMatch.groups.size) * 8;
-        }
-        if ($types.isFixedArray(type)) {
-            let baseType = $abiType.array.getBaseType(type);
-            let baseTypeSize = sizeOf(baseType);
-            let length = $abiType.array.getLength(type);
-            return baseTypeSize * length;
-        }
-        if ($types.isStruct(type)) {
-            let inputs = $abiParser.parseArguments(type);
-            let size = alot(inputs).sum(input => sizeOf(input.type));
-            return size;
-        }
-        return Infinity;
     }
 }
 

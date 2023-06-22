@@ -21,6 +21,7 @@ import {
     StructDefinition, TypeName, UnaryOperation, VariableDeclaration, VariableDeclarationStatement
 } from '@solidity-parser/parser/dist/src/ast-types';
 import { $logger } from '@dequanto/utils/$logger';
+import { $abiUtils } from '@dequanto/utils/$abiUtils';
 
 export namespace Ast {
     export function parse(code: string, opts?: { path: string; }): { ast: SourceUnit, version: string } {
@@ -279,10 +280,7 @@ export namespace Ast {
             return `${name}(${ args.join(', ') })`;
         }
         if (Ast.isElementaryTypeName(node)) {
-            let typeName = node.name;
-            if (typeName === 'uint') {
-                return 'uint256';
-            }
+            let typeName = $abiUtils.fromAliasIfAny(node.name);
             return typeName;
         }
         if (Ast.isAssemblyCall(node)) {

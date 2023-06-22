@@ -20,7 +20,7 @@ UTest({
         let address = '0xa478c2975ab1ea89e8196811f51a7b7ade33eb00';
         let resolver = ContractCreationResolver.get('eth');
 
-        let { error } = await $promise.catched(resolver.getInfo(address))
+        let { error } = await $promise.caught(resolver.getInfo(address))
         has_(error?.message, 'not a contract')
     }
 })

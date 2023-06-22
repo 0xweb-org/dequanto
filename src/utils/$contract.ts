@@ -7,6 +7,7 @@ import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { $abiParser } from './$abiParser';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import type { AbiItem } from 'web3-utils';
+import { $require } from './$require';
 
 export namespace $contract {
 
@@ -84,7 +85,7 @@ export namespace $contract {
         };
     }
 
-    export function decodeMethodCall (inputHex: string, abis: AbiItem[]) {
+    export function decodeMethodCall <TArguments = any[]> (inputHex: string, abis: AbiItem[]) {
         let str = inputHex.substring(2);
         if (str === '') {
             return null;
@@ -102,12 +103,27 @@ export namespace $contract {
         let params: any = InputDataUtils.decodeParamsWithABI(abi, bytesHex);
         let args = params.map(param => {
             return arrayToObject(param);
-        })
-
+        });
         return {
             method: abi.name,
-            arguments: args as any[]
+            arguments: args as TArguments
         };
+    }
+    export function decodeMethodCallAsObject (inputHex: string, abis: AbiItem[]) {
+        let call = decodeMethodCall(inputHex, abis);
+        if (call == null) {
+            return null;
+        }
+
+        let abi = abis.find(x => x.name === call.method);
+        $require.notNull(abi, `Abi not found for ${call.method}`);
+
+        let obj = {};
+        abi.inputs.forEach((input, i) => {
+            obj[input.name] = call.arguments[i];
+        });
+        return obj as any;
+
     }
     function arrayToObject (mix) {
         if (mix == null || typeof mix !== 'object' || Array.isArray(mix) === false) {
