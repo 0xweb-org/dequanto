@@ -24,7 +24,7 @@ export namespace $hex {
         return hex.replace(/^0x(0{2})+/, '').replace(/(0{2})+$/, '');
     }
     export function trimLeadingZerosFromNumber(hex: string) {
-        hex = hex.replace(/^0x0+/, '');
+        hex = hex.replace(/^0x0*/, '');
         return hex === ''? '0x0' : `0x${hex}`;
     }
 
