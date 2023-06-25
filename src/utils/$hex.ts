@@ -23,6 +23,10 @@ export namespace $hex {
     export function trimBytes(hex: string) {
         return hex.replace(/^0x(0{2})+/, '').replace(/(0{2})+$/, '');
     }
+    export function trimLeadingZerosFromNumber(hex: string) {
+        hex = hex.replace(/^0x0+/, '');
+        return hex === ''? '0x0' : `0x${hex}`;
+    }
 
     export function getBytes (hex: string, offset: number, length: number) {
         let start = hex.startsWith('0x') ? 2 : 0;

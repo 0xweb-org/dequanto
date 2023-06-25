@@ -343,7 +343,7 @@ export namespace BlockChainExplorerFactory {
                         return;
                     }
                     this.localDb.push(x);
-                })
+                });
             }
         }
     }

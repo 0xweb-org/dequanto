@@ -59,27 +59,37 @@ export class SlotsDump {
     }
 
     async getStorage () {
-        let slots = await this.getSlots();
+        let slots = await this.getSlotsValues();
         return slots;
     }
 
-    private async getSlots (): Promise<{ json: any, memory: [string, string][] }> {
+    async restoreStorageFromJSON (json: Record<string, any>) {
+        let slots = await this.getSlotsDefinition();
+        let storage = SlotsStorage.createWithClient(this.client, this.address, slots);
+        let entries = alot.fromObject(json).toArray();
+        if (this.params.fields != null) {
+            entries = entries.filter(entry => this.params.fields.includes(entry.key));
+        }
+        await alot(entries)
+            .forEachAsync(async (entry) => {
+                await storage.set(entry.key, entry.value);
+            })
+            .toArrayAsync({ threads: 2 });
+    }
 
-        let sources = await this.sourceCodeProvider.getSourceCode({
-            address: this.address,
-            implementation: this.implementation,
-            sources: this.params.sources?.files
-        });
+    async restoreStorageFromTable (csv: [string, string][]) {
+        await alot(csv)
+            .forEachAsync(async (entry: [string, string]) => {
+                let [ location, buffer ] = entry;
+                await this.client.debug.setStorageAt(this.address, location, buffer);
+            })
+            .toArrayAsync({ threads: 10 });
+    }
 
-        let slots = await SlotsParser.slots({
-            path: sources.main.path,
-            code: sources.main.content
-        }, sources.main.contractName, {
-            files: sources.files
-        });
+    private async getSlotsValues (): Promise<{ json: any, memory: [string, string][] }> {
 
+        let slots = await this.getSlotsDefinition();
         let transport = new MockedStorageTransport(this.keysLoader, this.client, this.address);
-
         let reader = new SlotsStorage(transport, slots);
         let json = Array.isArray(this.params.fields)
             ? await alot(this.params.fields)
@@ -93,6 +103,23 @@ export class SlotsDump {
             json,
             memory: memory,
         };
+    }
+
+    private async getSlotsDefinition (): Promise<ISlotVarDefinition[]> {
+
+        let sources = await this.sourceCodeProvider.getSourceCode({
+            address: this.address,
+            implementation: this.implementation,
+            sources: this.params.sources?.files
+        });
+
+        let slots = await SlotsParser.slots({
+            path: sources.main.path,
+            code: sources.main.content
+        }, sources.main.contractName, {
+            files: sources.files
+        });
+        return slots;
     }
 }
 

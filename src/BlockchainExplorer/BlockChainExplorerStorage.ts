@@ -5,6 +5,7 @@ import { Transaction } from 'web3-core';
 
 
 import { IBlockChainExplorer, IBlockChainTransferEvent } from './IBlockChainExplorer';
+import { $address } from '@dequanto/utils/$address';
 
 export class BlockChainExplorerStorage implements IBlockChainExplorer {
     localDb: IContractDetails[];
@@ -46,6 +47,16 @@ export class BlockChainExplorerStorage implements IBlockChainExplorer {
                 source: source
             }
         }
+    }
+    registerAbi(abis: { name: any; address: any; abi: any; }[]) {
+        abis.forEach(x => {
+            let fromDb = this.localDb.find(current => $address.eq(current.address, x.address));
+            if (fromDb != null) {
+                fromDb.abi = x.abi;
+                return;
+            }
+            this.localDb.push(x);
+        });
     }
 
     getContractMeta(q: string): Promise<IContractDetails> {

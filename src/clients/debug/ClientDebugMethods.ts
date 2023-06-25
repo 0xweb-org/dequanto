@@ -4,6 +4,7 @@ import type { Web3Client } from '../Web3Client';
 import { TAddress } from '@dequanto/models/TAddress'
 import { TBufferLike } from '@dequanto/models/TBufferLike'
 import { $bigint } from '@dequanto/utils/$bigint';
+import { $hex } from '@dequanto/utils/$hex';
 
 
 export class ClientDebugMethods {
@@ -40,8 +41,11 @@ export class ClientDebugMethods {
         });
     }
 
-    setStorageAt (address: TAddress, location: string | number | bigint, buffer: TBufferLike) {
-        return this.call('setStorageAt', ...arguments);
+    setStorageAt (address: TAddress, location: string | number | bigint, buffer: string) {
+        buffer = $hex.padBytes(buffer, 32);
+        location = $hex.toHex(location);
+        location = $hex.trimLeadingZerosFromNumber(location);
+        return this.call('setStorageAt', address, location, buffer);
     }
 
     setCode (address: TAddress, buffer: string) {
