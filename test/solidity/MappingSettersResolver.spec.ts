@@ -211,9 +211,14 @@ UTest({
             contract A {
 
                 mapping (address => uint) users;
+                mapping (address => address[]) signers;
                 event UpdatedCaller();
+                struct User {
+                    address user;
+                    uint value;
+                }
 
-                function tick() {
+                function tick(address[] signers, User foo) {
                     users[msg.sender] = block.timestamp;
                     emit UpdatedCaller();
                 }

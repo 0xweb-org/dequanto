@@ -1,7 +1,8 @@
 import alot from 'alot';
 import * as parser from '@solidity-parser/parser';
-import { type AbiItem } from 'web3-utils';
+import type { AbiItem, AbiType, AbiInput } from 'web3-utils';
 import {
+    ArrayTypeName,
     AssemblyBlock,
     AssemblyCall,
     astNodeTypes,
@@ -18,7 +19,12 @@ import {
     ImportDirective, IndexAccess, MemberAccess, ModifierDefinition, NumberLiteral, SourceUnit,
     StateVariableDeclaration,
     StringLiteral,
-    StructDefinition, TypeName, UnaryOperation, VariableDeclaration, VariableDeclarationStatement
+    StructDefinition,
+    TypeName,
+    UnaryOperation,
+    UserDefinedTypeName,
+    VariableDeclaration,
+    VariableDeclarationStatement
 } from '@solidity-parser/parser/dist/src/ast-types';
 import { $logger } from '@dequanto/utils/$logger';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
@@ -212,6 +218,12 @@ export namespace Ast {
     export function isElementaryTypeName (node: BaseASTNode): node is ElementaryTypeName {
         return node?.type === 'ElementaryTypeName';
     }
+    export function isArrayTypeName (node: BaseASTNode): node is ArrayTypeName {
+        return node?.type === 'ArrayTypeName';
+    }
+    export function isUserDefinedTypeName (node: BaseASTNode): node is UserDefinedTypeName {
+        return node?.type === 'UserDefinedTypeName';
+    }
     export function isDecimalNumber (node: BaseASTNode): node is DecimalNumber {
         return node?.type === 'DecimalNumber';
     }
@@ -226,6 +238,9 @@ export namespace Ast {
     }
     export function isBooleanLiteral (node: BaseASTNode): node is BooleanLiteral {
         return node?.type === 'BooleanLiteral';
+    }
+    export function isStructDefinition (node: BaseASTNode): node is StructDefinition {
+        return node?.type === 'StructDefinition';
     }
 
     export function getFunctionName (node: FunctionCall) {
@@ -301,7 +316,41 @@ export namespace Ast {
         throw new Error(`Unknown node ${JSON.stringify(node)}`)
     }
 
-    export function getAbi (node: EventDefinition | FunctionDefinition): AbiItem {
+    export function serializeTypeName (name: string, typeName: TypeName | VariableDeclaration, source: ContractDefinition | SourceUnit): AbiInput {
+        if (isVariableDeclaration(typeName)) {
+            return serializeTypeName(typeName.name, typeName.typeName, source);
+        }
+        if (isElementaryTypeName(typeName)) {
+            return {
+                name: name,
+                type: typeName.name
+            }
+        }
+        if (isArrayTypeName(typeName)) {
+            let baseTypeName = typeName.baseTypeName;
+            if (isElementaryTypeName(baseTypeName)) {
+                return {
+                    name: name,
+                    type: `${baseTypeName.name}[]`
+                }
+            }
+        }
+        if (isUserDefinedTypeName(typeName)) {
+            let struct = Ast.getUserDefinedType(source, typeName.namePath);
+            if (struct != null && isStructDefinition(struct)) {
+                return {
+                    name: name,
+                    type: 'tuple',
+                    components: struct.members.map(member => {
+                        return serializeTypeName(member.name, member.typeName, source)
+                    })
+                };
+            }
+        }
+        throw new Error(`@TODO implement complex type to abi serializer: ${name} = ${ JSON.stringify(typeName) }`);
+    }
+
+    export function getAbi (node: EventDefinition | FunctionDefinition, source: ContractDefinition | SourceUnit): AbiItem {
         if (Ast.isEventDefinition(node)) {
             return {
                 type: 'event',
@@ -319,13 +368,7 @@ export namespace Ast {
                 type: 'function',
                 name: node.name ?? (node.isConstructor ? 'constructor' : null),
                 inputs: node.parameters.map(param => {
-                    if (isElementaryTypeName(param.typeName)) {
-                        return {
-                            name: param.name,
-                            type: param.typeName.name
-                        }
-                    }
-                    throw new Error(`@TODO implement complex type to abi serializer: ${ JSON.stringify(param) }`);
+                    return serializeTypeName(param.name, param.typeName, source);
                 })
             }
         }

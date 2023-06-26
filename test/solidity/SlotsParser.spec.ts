@@ -89,26 +89,44 @@ UTest({
     },
     async 'should extract slots from abi'() {
 
-        const input = `
-            (uint256 foo, uint256[3] bar)
-        `;
+        return UTest({
+            async 'simple struct' () {
+                const input = `
+                    (uint256 foo, uint256[3] bar)
+                `;
 
-        const slots = await SlotsParser.slotsFromAbi(input);
+                const slots = await SlotsParser.slotsFromAbi(input);
 
-        has_(slots[0], {
-            slot: 0,
-            position: 0,
-            name: 'foo',
-            size: 256,
-            type: 'uint256'
+                has_(slots[0], {
+                    slot: 0,
+                    position: 0,
+                    name: 'foo',
+                    size: 256,
+                    type: 'uint256'
+                });
+                has_(slots[1], {
+                    slot: 1,
+                    position: 0,
+                    name: 'bar',
+                    size: 256 * 3,
+                    type: 'uint256[3]'
+                });
+            },
+            async 'should parse array' () {
+                const input = `
+                    (address[] foo)
+                `;
+                const slots = await SlotsParser.slotsFromAbi(input);
+                has_(slots[0], {
+                    slot: 0,
+                    position: 0,
+                    name: 'foo',
+                    size: Infinity,
+                    type: 'address[]'
+                });
+            }
         });
-        has_(slots[1], {
-            slot: 1,
-            position: 0,
-            name: 'bar',
-            size: 256 * 3,
-            type: 'uint256[3]'
-        });
+
     },
     async 'should extract slots from inherited contracts'() {
         const input = `

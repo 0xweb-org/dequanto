@@ -18,6 +18,7 @@ import {
     MemberAccess,
     ModifierDefinition,
     NumberLiteral,
+    SourceUnit,
     StringLiteral,
     UnaryOperation,
     VariableDeclaration
@@ -103,7 +104,7 @@ export namespace MappingSettersResolver {
     async function extractSettersSingle(mappingVarName: string, contract: ContractDefinition, $base: TSourceFileContract[]): Promise<{
         errors: Error[],
         events: TMappingSetterEvent[]
-        methods?: TMappingSetterMethod[]
+        methods?: TMappingSetterMethod[],
     }> {
 
         let allEvents = Ast.getEventDefinitions(contract, $base?.map(x => x.contract));
@@ -112,7 +113,7 @@ export namespace MappingSettersResolver {
 
         let arr = alot(allMethods)
             .mapMany(method => {
-                let mutations = $astSetters.extractMappingMutations(mappingVarName, method, allMethods, allModifiers, allEvents);
+                let mutations = $astSetters.extractMappingMutations(mappingVarName, method, allMethods, allModifiers, allEvents, contract);
                 if (mutations == null || mutations.length == 0) {
                     // No mutation
                     return [];
@@ -138,7 +139,7 @@ export namespace MappingSettersResolver {
                         $logger.error(`Event ${ event.name } not found in events`)
                     }
                     return <TMappingSetterEvent>{
-                        event: mutation.event.abi ?? Ast.getAbi(eventDeclaration),
+                        event: mutation.event.abi ?? Ast.getAbi(eventDeclaration, contract),
                         accessors: mutation.accessors,
                         accessorsIdxMapping: mutation.accessorsIdxMapping,
                     };
@@ -169,6 +170,7 @@ namespace $astSetters {
         , allMethods: FunctionDefinition[]
         , allModifiers: ModifierDefinition[]
         , allEvents: EventDefinition[]
+        , source: ContractDefinition | SourceUnit
     ): TEventForMappingMutation[] {
 
         let body = method.body;
@@ -245,7 +247,7 @@ namespace $astSetters {
                 };
             });
 
-            let eventInfo = $node.findArgumentLogInFunction(method, null, setterIdentifiers.map(x => x.key), allEvents);
+            let eventInfo = $node.findArgumentLogInFunction(method, null, setterIdentifiers.map(x => x.key), allEvents, source);
             if (eventInfo) {
                 return eventInfo;
             }
@@ -263,7 +265,7 @@ namespace $astSetters {
             if (modifiers?.length > 0) {
                 let inModifiers = modifiers
                     .map(mod => {
-                        return $node.findArgumentLogInFunction(mod, method, setterIdentifiers.map(x => x.key), allEvents);
+                        return $node.findArgumentLogInFunction(mod, method, setterIdentifiers.map(x => x.key), allEvents, source);
                     })
                     .filter(Boolean);
 
@@ -282,7 +284,7 @@ namespace $astSetters {
             if (methodCallInfos.length > 0) {
                 let eventInfos = methodCallInfos
                     .map(methodCallInfo => {
-                        let eventInfo = $node.findArgumentLogInFunction(methodCallInfo.method, null, methodCallInfo.argumentKeyMapping, allEvents);
+                        let eventInfo = $node.findArgumentLogInFunction(methodCallInfo.method, null, methodCallInfo.argumentKeyMapping, allEvents, source);
                         if (eventInfo == null) {
                             return null;
                         }
@@ -320,7 +322,7 @@ namespace $astSetters {
                             let argumentKeyMapping = argumentsMapping.map(idx => {
                                 return Ast.serialize(methodCallInfo.ref.arguments[idx]);
                             });
-                            let eventInfo = $node.findArgumentLogInFunction(methodCallInfo.method, null, argumentKeyMapping, allEvents);
+                            let eventInfo = $node.findArgumentLogInFunction(methodCallInfo.method, null, argumentKeyMapping, allEvents, source);
                             if (eventInfo == null) {
                                 return null;
                             }
@@ -344,7 +346,7 @@ namespace $astSetters {
             }
 
             return {
-                method: Ast.getAbi(method),
+                method: Ast.getAbi(method, source),
                 accessors: setterIdentifiers.map(x => x.key)
             }
         }).toArray();
@@ -418,6 +420,7 @@ namespace $node {
         , parent: FunctionDefinition
         /** <0.5.0 was no emit statement, search for a method which equals to event declaration */
         , allEvents: EventDefinition[]
+        , source: ContractDefinition | SourceUnit
     ): TEventEmitStatement[] {
         let body = method.body;
         let events = Ast.findMany<EmitStatement>(body, node => {
@@ -490,7 +493,7 @@ namespace $node {
 
 
                 if (topic === 'shl(224, shr(224, calldataload(0)))') {
-                    let abi = Ast.getAbi($method);
+                    let abi = Ast.getAbi($method, source);
                     let signature = $abiUtils.getTopicSignature(abi);
                     return signature;
                 }
@@ -617,12 +620,13 @@ namespace $node {
         , parent: FunctionDefinition
         , accessors: string[]
         , allEvents: EventDefinition[]
+        , source: ContractDefinition | SourceUnit
     ): {
         event: TEventEmitStatement,
         accessors: string[],
         accessorsIdxMapping: number[]
     } {
-        let events = $node.findEventsInFunction(method, parent, allEvents).filter(event => {
+        let events = $node.findEventsInFunction(method, parent, allEvents, source).filter(event => {
             return accessors.every(key => event.args.some(arg => arg.key === key));
         });
         if (events.length > 0) {
