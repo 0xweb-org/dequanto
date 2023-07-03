@@ -21,6 +21,8 @@ export interface IBlocksTxIndexerOptions {
     loadReceipts?: boolean
 
     client?: Web3Client
+
+    logProgress?: boolean
 }
 export type TBlockListener = (
     client: Web3Client,
@@ -39,11 +41,12 @@ export class BlocksTxIndexer {
             ws: true
         });
         this.walker = new BlocksWalker({
-            name: `${opts?.name ?? 'indexer'}_${this.platform}`,
+            name: `${opts?.name ?? `indexer_${ Date.now() }`}_${this.platform}`,
             client: this.client,
             loadTransactions: opts?.loadTransactions ?? true,
             loadReceipts: opts?.loadReceipts ?? false,
             persistance: opts?.persistance ?? true,
+            logProgress: opts?.logProgress?? true,
 
             visitor: async (block, data) => {
                 return this.indexTransactions(block, data)

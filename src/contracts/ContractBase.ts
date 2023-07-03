@@ -167,7 +167,7 @@ export abstract class ContractBase {
         return reader.readAsync(this.address, abi, ...params);
     }
 
-    protected $onLog (event: string, cb?) {
+    public $onLog (event: string, cb?) {
         let stream = this.getContractStream();
         let events = stream.on(event);
         if (cb) {
@@ -176,9 +176,10 @@ export abstract class ContractBase {
         return events;
     }
 
-    protected $onTransaction (options?: BlockWalker.IBlockWalkerOptions): SubjectStream<{ tx: Transaction, block: BlockTransactionString, calldata: { method, arguments: any[] } }> {
+    public $onTransaction (options?: BlockWalker.IBlockWalkerOptions): SubjectStream<{ tx: Transaction, block: BlockTransactionString, calldata: { method, arguments: any[] } }> {
 
         options ??= {};
+        options.logProgress ??= false;
 
         type TSubject =  { tx: Transaction, block: BlockTransactionString, calldata: { method, arguments: any[] } };
         let stream = new SubjectStream<TSubject>();
@@ -376,6 +377,7 @@ namespace BlockWalker {
     export interface IBlockWalkerOptions {
         name?: string,
         persistance?: boolean,
+        logProgress?: boolean
         //mempool?: boolean,
         fromBlock?: number
         filter?: {
@@ -400,6 +402,7 @@ namespace BlockWalker {
             persistance: options.persistance,
             loadTransactions: true,
             client: client,
+            logProgress: options.logProgress,
         });
 
         indexers[key] = indexer;

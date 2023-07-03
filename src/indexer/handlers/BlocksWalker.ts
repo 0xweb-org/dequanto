@@ -28,6 +28,7 @@ interface IBlockIndexer {
 
     loadTransactions?: boolean
     loadReceipts?: boolean
+    logProgress?: boolean | string
 }
 
 export class BlocksWalker {
@@ -85,7 +86,9 @@ export class BlocksWalker {
         $require.Number(this.ranges.to, 'To should be a number');
 
         this.walker.process();
-        $logger.log(`BlocksWalker starting. Processing: ${this.ranges.from}-${ to ?? 'latest' }. Completed: ${this.ranges.totalAdded()}; ToDo: ${this.ranges.totalLeft()}`);
+        if (this.params.logProgress !== false) {
+            $logger.log(`BlocksWalker starting. Processing: ${this.ranges.from}-${ to ?? 'latest' }. Completed: ${this.ranges.totalAdded()}; ToDo: ${this.ranges.totalLeft()}`);
+        }
     }
 
 
@@ -210,6 +213,10 @@ export class BlocksWalker {
 
     @memd.deco.throttle(1000 * 5)
     private async log () {
+        if (this.params.logProgress === false) {
+            return;
+        }
+
         let error = this.walker.pluckLastErrorMessage();
         let row = [
             new Date().toISOString(),
@@ -221,6 +228,7 @@ export class BlocksWalker {
             this.walker.status.errors,
             error,
         ];
+
         this.everlog.writeRow(row);
         $logger.log(row.join());
     }

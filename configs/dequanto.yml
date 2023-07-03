@@ -71,7 +71,13 @@ blockchainExplorer:
 web3:
   eth:
     endpoints:
+      # public rpc (ankr, linkpool)
       - url: 'https://eth.public-rpc.com'
+      - url: 'https://main-light.eth.linkpool.io'
+        rateLimit: 2000/5m
+      - url: 'wss://main-light.eth.linkpool.io/ws'
+        rateLimit: 2000/5m
+      # custom infura
       - url: 'https://mainnet.infura.io/v3/a83f91c556054576a4c608ad4312720b'
         rateLimit: 100/1s;5000/1m
       - url: 'wss://mainnet.infura.io/ws/v3/a83f91c556054576a4c608ad4312720b'

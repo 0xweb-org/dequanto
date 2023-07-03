@@ -1,7 +1,6 @@
 import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { TxWriter } from '@dequanto/txs/TxWriter';
 import { $address } from '@dequanto/utils/$address';
 
 UTest({

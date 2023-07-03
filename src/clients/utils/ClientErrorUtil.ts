@@ -1,3 +1,4 @@
+import { $require } from '@dequanto/utils/$require';
 
 
 export namespace ClientErrorUtil {
@@ -5,7 +6,9 @@ export namespace ClientErrorUtil {
         if (error.code === 1006 || error.reason === 'connection failed') {
             return true;
         }
-        let str = error.message;
+        let str = error.message ?? error.stack;
+        $require.notNull(str, `Message is undefined for ${ JSON.stringify(error) }`);
+
         if (str.includes('CONNECTION ERROR') || str.includes('Invalid JSON RPC response') || str.includes('getaddrinfo ENOTFOUND') ) {
             return true;
         }
