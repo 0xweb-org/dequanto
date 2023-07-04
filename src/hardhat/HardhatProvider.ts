@@ -18,6 +18,8 @@ import { $path } from '@dequanto/utils/$path';
 import { ContractFactory, IContractWrapped } from '@dequanto/contracts/ContractFactory';
 import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
 import { IWeb3EndpointOptions } from '@dequanto/clients/interfaces/IWeb3EndpointOptions';
+import { TPlatform } from '@dequanto/models/TPlatform';
+import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 
 
 
@@ -46,7 +48,7 @@ export class HardhatProvider {
                     { url: 'http://127.0.0.1:8545' },
                     // Use `manual`, will be used for subscriptions only, otherwise BatchRequests will fail, as not implemented yet
                     // https://github.com/NomicFoundation/hardhat/issues/1324
-                        { url: 'ws://127.0.0.1:8545', manual: true },
+                    { url: 'ws://127.0.0.1:8545', manual: true },
                 ];
             } else {
                 opts.web3 = this.hh.web3;
@@ -54,6 +56,25 @@ export class HardhatProvider {
         }
 
         const client = new HardhatWeb3Client(opts);
+        return client;
+    }
+
+    async forked (params: { platform?: TPlatform, url?: string, block?: number | 'latest' } = {}) {
+        const client = this.client('hardhat');
+        let { url, block } = params;
+        if (url == null) {
+            let platform = params.platform;
+            $require.notNull(platform, `Platform is required to resolve the RPC url for`);
+            let platformClient = await Web3ClientFactory.get(platform);
+            url = await platformClient.getNodeURL();
+            block = await platformClient.getBlockNumber();
+        }
+        await client.debug.reset({
+            forking: {
+                jsonRpcUrl: url,
+                blockNumber: block,
+            }
+        });
         return client;
     }
 

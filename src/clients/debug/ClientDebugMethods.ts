@@ -60,6 +60,17 @@ export class ClientDebugMethods {
         return this.call('setBalance', address, amount);
     }
 
+    reset (params?: { forking?: { jsonRpcUrl?, blockNumber? }}) {
+        return this.call('reset', params);
+    }
+
+    impersonateAccount (address: TAddress) {
+        return this.call('impersonateAccount', address);
+    }
+    stopImpersonatingAccount () {
+        return this.call('stopImpersonatingAccount');
+    }
+
     private call(method: keyof typeof this.methods, ...args: any[]) {
         let meta = this.methods[method];
         if (meta?.call == null) {

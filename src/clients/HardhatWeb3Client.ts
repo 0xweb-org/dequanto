@@ -39,7 +39,7 @@ export class HardhatWeb3Client extends Web3Client {
                 },
                 stopImpersonatingAccount: {
                     call: 'hardhat_stopImpersonatingAccount',
-                    params: 1,
+                    params: 0,
                 },
                 reset: {
                     call: 'hardhat_reset',
