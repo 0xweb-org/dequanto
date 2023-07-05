@@ -227,7 +227,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
                 if (tx.hash === hash) {
                     return;
                 }
-                if (tx.hash && tx.timeout) {
+                if (tx.hash != null && tx.timeout != null) {
                     // network has reaccepted the tx, restart previous timeout
                     this.clearTimer(tx);
                     tx.timeout = this.startTimer(tx);

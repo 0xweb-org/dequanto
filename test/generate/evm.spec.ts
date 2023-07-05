@@ -1,4 +1,4 @@
-import { EVM } from '@dequanto/evm/evm';
+import { EVM } from '@dequanto/evm/EVM';
 import alot from 'alot';
 
 UTest({

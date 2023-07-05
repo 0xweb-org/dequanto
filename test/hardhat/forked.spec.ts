@@ -1,16 +1,18 @@
 import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
 import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
+import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-
-const provider = new HardhatProvider();
+import { Transaction  } from '@ethereumjs/tx';
 
 UTest({
     $config: {
         timeout: 60_000
     },
     async 'should fork mainnet' () {
+        const provider = new HardhatProvider();
         const client = await provider.forked({ platform: 'eth' });
+        const clientEth = await Web3ClientFactory.get('eth');
         const owner = ChainAccountProvider.generate();
         return UTest({
             async 'read data from forked network' () {
@@ -40,6 +42,8 @@ UTest({
 
                 let balance = await erc20.balanceOf(owner.address);
                 eq_(balance, 100n);
+
+                await client.debug.stopImpersonatingAccount(ownerImpersonated);
             }
         })
     },

@@ -67,8 +67,8 @@ export class ClientDebugMethods {
     impersonateAccount (address: TAddress) {
         return this.call('impersonateAccount', address);
     }
-    stopImpersonatingAccount () {
-        return this.call('stopImpersonatingAccount');
+    stopImpersonatingAccount (address: TAddress) {
+        return this.call('stopImpersonatingAccount', address);
     }
 
     private call(method: keyof typeof this.methods, ...args: any[]) {
