@@ -3,11 +3,12 @@ import { type BytesLike } from 'ethers';
 
 interface ICrypto {
     randomBytes(size: number): BytesLike;
+    createECDH (curve: string)
 }
 
 
 
-class WebCrypto implements ICrypto {
+export class WebCrypto implements ICrypto {
     crypto = crypto;
 
     randomBytes(size: number) {
@@ -15,14 +16,21 @@ class WebCrypto implements ICrypto {
         let rnd = this.crypto.getRandomValues(array);
         return rnd;
     }
+    createECDH(curve: string) {
+        /** use this.crypto.subtle.importKey */
+        throw new Error("Method not implemented.");
+    }
 }
 
-class WebCryptoPolyfill implements ICrypto {
+export class WebCryptoPolyfill implements ICrypto {
     crypto = require('crypto');
 
     randomBytes(size: number) {
         const bytes = this.crypto.randomBytes(size);
         return bytes;
+    }
+    createECDH(curve: string) {
+        return this.crypto.createECDH(curve);
     }
 }
 

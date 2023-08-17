@@ -45,5 +45,19 @@ UTest({
         );
 
         eq_(isValid, true);
+    },
+    async 'should sign json' () {
+        let signer = ChainAccountProvider.generate();
+        let json = {
+            data: { name: 'Foo' },
+            sig: ''
+        };
+
+        let message1 = $contract.keccak256(JSON.stringify(json.data));
+        json.sig = await $signRaw.signEC(message1, signer.key).signature;
+
+        let message2 = $contract.keccak256(JSON.stringify(json.data));
+        let recovered = await $signRaw.ecrecover(message2, json.sig);
+        eq_(recovered, signer.address);
     }
 });

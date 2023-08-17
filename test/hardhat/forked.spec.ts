@@ -3,7 +3,6 @@ import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { Transaction  } from '@ethereumjs/tx';
 
 UTest({
     $config: {

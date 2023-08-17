@@ -2,11 +2,12 @@ import memd from 'memd';
 import { TAddress } from './models/TAddress'
 import { TPlatform } from './models/TPlatform'
 import { $config } from './utils/$config'
-import { Wallet } from 'ethers';
+import { BytesLike, Wallet } from 'ethers';
 import { $address } from './utils/$address';
-import { $crypto } from './utils/$crypto';
+import { $crypto, WebCryptoPolyfill } from './utils/$crypto';
 import { $buffer } from './utils/$buffer';
 import { ChainAccount, IAccount, SafeAccount } from './models/TAccount';
+import { $contract } from './utils/$contract';
 
 
 export namespace ChainAccountProvider {
@@ -41,6 +42,21 @@ export namespace ChainAccountProvider {
         const wallet = new Wallet(bytes);
         return wallet.address;
     }
+    export function getAddressFromKeyNative (key: string | BytesLike) {
+        // use NodeJS crypto module
+        const crypto = new WebCryptoPolyfill()
+        const wallet = crypto.createECDH('secp256k1');
+
+        wallet.setPrivateKey(
+            typeof key ==='string'
+            ? $buffer.fromHex(key)
+            : key
+        );
+        //slices the 04 prefix
+        const pubKeyBuffer = wallet.getPublicKey().slice(1);
+        const address = $contract.keccak256(pubKeyBuffer).slice(-40);
+        return '0x' + address;
+    }
     export function getAccountFromMnemonic(mnemonic: string, index = 0) {
         const wallet = Wallet.fromMnemonic(mnemonic, `m/44'/60'/0'/${index}`);
         return {
@@ -54,7 +70,16 @@ export namespace ChainAccountProvider {
         return {
             ...(opts ?? {}),
             address: wallet.address,
-            key: wallet.privateKey,
+            key: wallet.privateKey
+        };
+    }
+    export function generateNative (opts?: { name?: string, platform?: TPlatform }): ChainAccount {
+        const bytes = $crypto.randomBytes(32);
+        const address = getAddressFromKeyNative(bytes);
+        return {
+            ...(opts ?? {}),
+            address: address,
+            key: $buffer.toHex(bytes as any)
         };
     }
 

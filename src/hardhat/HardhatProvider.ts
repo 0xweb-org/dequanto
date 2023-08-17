@@ -158,6 +158,44 @@ export class HardhatProvider {
         };
     }
 
+    async deployBytecode <TReturn extends ContractBase = IContractWrapped > (hex: string, options?: {
+        client?: Web3Client
+        arguments?: any[],
+        deployer?:  Ethers.Signer | ChainAccount,
+        paths?: {
+            root?: string
+            artifacts?: string
+        },
+        contractName?: string
+        abi?: AbiItem[]
+    }): Promise<{
+        contract: TReturn //Ethers.Contract
+        abi: AbiItem[]
+        bytecode: string,
+        receipt: Ethers.ContractReceipt
+    }> {
+
+        const client = options?.client ?? this.client();
+        const args = options?.arguments ?? [];
+        const signer = options?.deployer ?? this.deployer();
+        const { abi } = options ?? {};
+        const bytecode = hex;
+        const Factory: Ethers.ContractFactory = await this.getFactory([abi ?? [], bytecode], client, signer);
+        const contractEthers = await Factory.deploy(...args);
+        const receipt = await contractEthers.deployed();
+        const contract = await ContractFactory.fromAbi<TReturn>(contractEthers.address, abi, client, null);
+
+        let receiptFinal = await receipt.deployTransaction.wait();
+        const explorer = this.explorer();
+        explorer.localDb.push({ name: '', abi: abi, address: contractEthers.address });
+        return {
+            contract: contract,
+            abi,
+            bytecode,
+            receipt: receiptFinal,
+        };
+    }
+
     async compileSol (solContractPath: string, options?: {
         paths?: {
             root?: string
