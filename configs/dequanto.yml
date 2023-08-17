@@ -67,6 +67,10 @@ blockchainExplorer:
     key: ''
     host: 'https://andromeda-explorer.metis.io/api'
     www: 'https://andromeda-explorer.metis.io'
+  base:
+    key: 'GS1M3QWY41Z36RTV56MV3N1BRKCJ9GWI3C'
+    host: 'https://api.basescan.org'
+    www: 'https://basescan.org'
 
 web3:
   eth:
@@ -178,6 +182,12 @@ web3:
     endpoints:
       - url: https://andromeda.metis.io/?owner=1088
 
+  base:
+    chainId: 8453
+    chainToken: ETH
+    endpoints:
+      - url: 'https://mainnet.base.org'
+      - url: 'https://1rpc.io/base'
 ns:
   ens:
     registry: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
