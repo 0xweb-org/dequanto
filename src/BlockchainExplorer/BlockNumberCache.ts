@@ -2,6 +2,7 @@ import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TPlatform } from '@dequanto/models/TPlatform';
+import { $platform } from '@dequanto/utils/$platform';
 import memd from 'memd';
 
 
@@ -17,7 +18,7 @@ export class BlockNumberCache {
     constructor (public platform: TPlatform, public name: string) {
 
         this.store = new JsonArrayStore<IBlockNumberCache>({
-            path: `/cache/${platform}/blockNumber-${name}.json`,
+            path: `/cache/${ $platform.toPath(platform) }/blockNumber-${name}.json`,
             key: x => x.address
         });
     }

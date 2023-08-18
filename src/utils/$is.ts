@@ -15,7 +15,8 @@ export namespace $is {
         if (typeof val !== 'string') {
             return false;
         }
-        return /^0x[a-fA-F0-9]{40}$/g.test(val);
+        // Make addresses like `0x0` also valid (assumed zeros)
+        return /^0x[a-fA-F0-9]{1,40}$/g.test(val);
     }
 
     export function TxHash (val: TAddress): boolean {

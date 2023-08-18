@@ -16,6 +16,7 @@ import { $config } from '@dequanto/utils/$config';
 import { Constructor } from 'atma-utils';
 import type { AbiItem } from 'web3-utils';
 import { $str } from '@dequanto/solidity/utils/$str';
+import { $platform } from '@dequanto/utils/$platform';
 
 export interface IBlockChainExplorerParams {
 
@@ -397,7 +398,7 @@ function ensureDefaults (opts: IBlockChainExplorerParams) {
     let platform = opts.platform;
     $require.notNull(platform, `Generic Blockchain Explorer Config should contain platform name`);
 
-    opts.ABI_CACHE ??= `./cache/${platform}/abis.json`
+    opts.ABI_CACHE ??= `./cache/${ $platform.toPath(platform) }/abis.json`
     opts.CONTRACTS ??= [];
     opts.getWeb3 ??= (_) => {
         return Web3ClientFactory.get(platform);

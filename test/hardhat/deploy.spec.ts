@@ -9,6 +9,7 @@ import { $contract } from '@dequanto/utils/$contract';
 import alot from 'alot';
 import { Wallet } from 'ethers';
 import { pubToAddress, toBuffer, keccak256, sha256 } from 'ethereumjs-util';
+import { $error } from '@dequanto/utils/$error';
 
 UTest({
     async 'should deploy solidity contract'() {

@@ -5,6 +5,7 @@ import { TPlatform } from '@dequanto/models/TPlatform';
 import alot from 'alot';
 import { UAction } from 'atma-utest';
 import { HopAddresses } from '../HopAddresses';
+import { $platform } from '@dequanto/utils/$platform';
 
 UAction.create({
     async 'generate contracts' () {
@@ -36,7 +37,7 @@ UAction.create({
                             source: {
                                 abi: contractEntry.value,
                             },
-                            output: `./dequanto/src/bridges/hop/contracts/${platform}/`
+                            output: `./dequanto/src/bridges/hop/contracts/${ $platform.toPath(platform) }/`
                         };
                         let generator = new Generator(opts);
                         await generator.generate();
