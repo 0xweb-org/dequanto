@@ -12,7 +12,7 @@ blockchainExplorer:
     host: 'https://api.etherscan.io'
     www: 'https://etherscan.io'
   eth:goerli:
-    key: ''
+    key: 'FGCTXVXMZAPPW91KCZ91AMZFGBY1GZZB51'
     host: 'https://api-goerli.etherscan.io'
     www: 'https://goerli.etherscan.io'
   polygon:
@@ -25,7 +25,7 @@ blockchainExplorer:
     www: 'https://mumbai.polygonscan.com'
 
   xdai:
-    key: ''
+    key: '123'
     host: 'https://blockscout.com/xdai/mainnet'
     www: 'https://blockscout.com/xdai/mainnet'
   gnosis:
@@ -37,7 +37,7 @@ blockchainExplorer:
     host: 'https://api.celoscan.io'
     www: 'https://celoscan.io'
   heco:
-    key: '...'
+    key: '123'
     host: 'https://api.hecoinfo.com'
     www: 'https://www.hecoinfo.com'
   optimism:
@@ -57,7 +57,7 @@ blockchainExplorer:
     host: 'https://api.ftmscan.com'
     www: 'https://ftmscan.com'
   aurora:
-    key: ''
+    key: '123'
     host: 'https://explorer.aurora.dev'
     www: 'https://explorer.aurora.dev'
   arbitrum:
@@ -65,7 +65,7 @@ blockchainExplorer:
     host: 'https://api.arbiscan.io'
     www: 'https://arbiscan.io'
   metis:
-    key: ''
+    key: '123'
     host: 'https://andromeda-explorer.metis.io/api'
     www: 'https://andromeda-explorer.metis.io'
   base:
