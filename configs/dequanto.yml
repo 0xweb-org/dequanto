@@ -12,6 +12,7 @@ blockchainExplorer:
     host: 'https://api.etherscan.io'
     www: 'https://etherscan.io'
   eth:goerli:
+    key: ''
     host: 'https://api-goerli.etherscan.io'
     www: 'https://goerli.etherscan.io'
   polygon:
