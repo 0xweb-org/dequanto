@@ -16,6 +16,7 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { EVM } from '@dequanto/evm/EVM';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
+import { $is } from '@dequanto/utils/$is';
 
 export interface IGenerateOptions {
     platform: TPlatform
@@ -231,6 +232,11 @@ export class Generator {
         let { code, path } = this.options.source ?? {};
         if (code == null && path == null) {
             throw new Error(`getContractData was called without "code" and "path"`);
+        }
+
+        if (typeof path === 'string' && path.endsWith('.json')) {
+            let json = await this.readFile(path);
+            return json;
         }
 
         let provider = new HardhatProvider();
