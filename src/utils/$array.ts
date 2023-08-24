@@ -67,4 +67,17 @@ export namespace $array {
         }
         return arr;
     }
+
+    export function findIndex<T>(array: T[], matcher: (item: T, i?: number) => boolean, fromIdx?: number) {
+        let i = fromIdx ?? 0;
+        if (i < 0) {
+            i = 0;
+        }
+        for (let i = fromIdx ?? 0; i < array.length; i++) {
+            if (matcher(array[i], i)) {
+                return i;
+            }
+        }
+        return -1;
+    }
 }

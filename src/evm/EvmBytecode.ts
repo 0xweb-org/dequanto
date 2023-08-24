@@ -15,6 +15,7 @@ import IOpcode from './interfaces/IOpcode';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $bytecode } from './utils/$bytecode';
 import { $buffer } from '@dequanto/utils/$buffer';
+import { $array } from '@dequanto/utils/$array';
 
 
 /**
@@ -142,9 +143,9 @@ export class EvmBytecode {
         let opcodes = this.getOpcodes();
 
         /** Select PUSH4 opcodes in first calldataload block to filter any other method calls within the bytecode */
-        let opcodeCalldataLoadIdx = opcodes.findIndex(x => x.name === 'CALLDATALOAD');
+        let opcodeCalldataLoadIdx = $array.findIndex(opcodes, x => x.name === 'CALLDATALOAD');
         let opcodeCalldataLoad = opcodes[opcodeCalldataLoadIdx];
-        let jumpDestIdx = opcodes.findIndex(x => x.name === 'JUMPDEST', opcodeCalldataLoadIdx);
+        let jumpDestIdx = $array.findIndex(opcodes, x => x.name === 'JUMPDEST', opcodeCalldataLoadIdx);
         let jumpDest = opcodes[jumpDestIdx];
         let rangeStart = opcodeCalldataLoadIdx === -1 ? 0 : opcodeCalldataLoad.pc;
         let rangeEnd = opcodeCalldataLoadIdx === -1 ? Infinity : jumpDest.pc;
