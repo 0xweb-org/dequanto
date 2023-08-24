@@ -1,5 +1,5 @@
 import { $is } from '@dequanto/utils/$is';
-import { EVM } from '../EVM';
+import { EvmBytecode } from '../EvmBytecode';
 import Opcode from '../interfaces/IOpcode';
 import stringify from '../utils/stringify';
 
@@ -22,7 +22,7 @@ export class MSTORE {
     }
 }
 
-export default (opcode: Opcode, state: EVM): void => {
+export default (opcode: Opcode, state: EvmBytecode): void => {
     const storeLocation = state.stack.pop();
     const storeData = state.stack.pop();
     if ($is.BigInt(storeLocation)) {

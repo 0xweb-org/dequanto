@@ -1,4 +1,4 @@
-import type { EVM } from './EVM';
+import type { EvmBytecode } from './EvmBytecode';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import IOpcode from './interfaces/IOpcode';
 import Stack from './Stack';
@@ -10,7 +10,7 @@ export class OpcodesWalker {
 
     stack = new Stack();
 
-    constructor(public evm: EVM, public opcodes: IOpcode[]) {
+    constructor(public evm: EvmBytecode, public opcodes: IOpcode[]) {
 
     }
 

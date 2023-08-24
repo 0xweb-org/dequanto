@@ -2,13 +2,13 @@ import { is_NODE } from 'atma-utils';
 import { type Bytes } from 'ethers';
 
 interface IBufferUtils {
-    fromHex (hex: string): Bytes
-    toHex (buffer: Bytes): string
+    fromHex(hex: string): Uint8Array
+    toHex(buffer: Bytes): string
 
-    fromString (string: string, encoding?: BufferEncoding): Bytes
-    toString (buffer: Bytes, encoding?: BufferEncoding): string
+    fromString(string: string, encoding?: BufferEncoding): Bytes
+    toString(buffer: Bytes, encoding?: BufferEncoding): string
 
-    concat (buffers: Bytes[]): Bytes
+    concat(buffers: Bytes[]): Bytes
 }
 
 export type TBytes = Bytes;
@@ -22,7 +22,7 @@ class NodeBufferUtils implements IBufferUtils {
     toString(buffer: Buffer, encoding?: BufferEncoding): string {
         return buffer.toString(encoding);
     }
-    fromHex(hex: string): Bytes {
+    fromHex(hex: string): Uint8Array {
         return Buffer.from(utils.normalizeHex(hex), 'hex');
     }
     toHex(buffer: Buffer): string {
@@ -30,7 +30,7 @@ class NodeBufferUtils implements IBufferUtils {
         return `0x${hex}`;
     }
 
-    concat (buffers: Buffer[]) {
+    concat(buffers: Buffer[]) {
         return Buffer.concat(buffers);
     }
 }
@@ -38,7 +38,7 @@ class NodeBufferUtils implements IBufferUtils {
 const HEX_CHARS = "0123456789abcdef";
 const HEX_DIGITS = {
     0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, a: 10, b: 11, c: 12, d: 13, e: 14, f: 15, A: 10, B: 11, C: 12, D: 13, E: 14, F: 15
-  };
+};
 
 class WebBufferUtils implements IBufferUtils {
     fromString(string: string, encoding?: string): Bytes {
@@ -62,11 +62,11 @@ class WebBufferUtils implements IBufferUtils {
             const a = HEX_DIGITS[hex[i * 2]];
             const b = HEX_DIGITS[hex[i * 2 + 1]];
             if (a == null || b == null) {
-              break;
+                break;
             }
             bytes[i] = (a << 4) | b;
-          }
-          return i === bytes.length
+        }
+        return i === bytes.length
             ? bytes
             : bytes.slice(0, i);
     }
@@ -79,7 +79,7 @@ class WebBufferUtils implements IBufferUtils {
         return '0x' + hex;
     }
 
-    concat (buffers: Uint8Array[]) {
+    concat(buffers: Uint8Array[]) {
         let size = buffers.reduce((a, x) => a + x.length, 0);
         let buffer = new Uint8Array(size);
         let offset = 0;
@@ -93,7 +93,7 @@ class WebBufferUtils implements IBufferUtils {
 }
 
 namespace utils {
-    export function normalizeHex (hex: string) {
+    export function normalizeHex(hex: string) {
         if (hex.startsWith('0x')) {
             hex = hex.substring(2);
         }

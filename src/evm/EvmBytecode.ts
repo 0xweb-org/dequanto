@@ -47,7 +47,7 @@ class Stores {
 }
 
 
-export class EVM {
+export class EvmBytecode {
     pc: number = 0;
     stack = new Stack();
     memory: IMemory = {}
@@ -65,17 +65,17 @@ export class EVM {
     gasUsed: number = 0;
 
     private opcodes: Opcode[] = [];
-    private code: Buffer;
+    private code: Uint8Array;
 
     public store = new Stores();
 
-    constructor(code: string | Buffer) {
-        if (code instanceof Buffer) {
+    constructor(code: string | Uint8Array) {
+        if (code instanceof Uint8Array) {
             this.code = code;
         } else {
             // remove the constructor code, leave the runtime bytecode only;
             code = $bytecode.trimConstructorCode(code);
-            this.code = Buffer.from(code.replace('0x', ''), 'hex');
+            this.code = $buffer.fromHex(code.replace('0x', ''));
         }
     }
 
@@ -139,10 +139,22 @@ export class EVM {
             '4e487b71', // Panic(uint256)
             'ffffffff'
         ];
-        let hashes = this
-            .getOpcodes()
+        let opcodes = this.getOpcodes();
+
+        /** Select PUSH4 opcodes in first calldataload block to filter any other method calls within the bytecode */
+        let opcodeCalldataLoadIdx = opcodes.findIndex(x => x.name === 'CALLDATALOAD');
+        let opcodeCalldataLoad = opcodes[opcodeCalldataLoadIdx];
+        let jumpDestIdx = opcodes.findIndex(x => x.name === 'JUMPDEST', opcodeCalldataLoadIdx);
+        let jumpDest = opcodes[jumpDestIdx];
+        let rangeStart = opcodeCalldataLoadIdx === -1 ? 0 : opcodeCalldataLoad.pc;
+        let rangeEnd = opcodeCalldataLoadIdx === -1 ? Infinity : jumpDest.pc;
+
+        let hashes = opcodes
             .filter(opcode => opcode.name === 'PUSH4')
             .map((opcode, i) => {
+                if (opcode.pc < rangeStart || opcode.pc > rangeEnd) {
+                    return null;
+                }
                 return opcode.pushData?.toString('hex') ?? null
             })
             .filter(x => SKIP.includes(x) === false);
@@ -194,8 +206,8 @@ export class EVM {
         return events;
     }
 
-    clone(): EVM {
-        const clone = new EVM(this.code);
+    clone(): EvmBytecode {
+        const clone = new EvmBytecode(this.code);
         clone.pc = this.pc;
         clone.opcodes = this.opcodes;
         clone.stack = this.stack.clone();

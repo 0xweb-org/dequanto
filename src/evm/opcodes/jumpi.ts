@@ -1,5 +1,5 @@
 import { $is } from '@dequanto/utils/$is';
-import { EVM } from '../EVM';
+import { EvmBytecode } from '../EvmBytecode';
 import Opcode from '../interfaces/IOpcode';
 
 
@@ -60,7 +60,7 @@ export class TopLevelFunction {
     readonly items: any;
     readonly returns: any;
 
-    constructor(state: EVM, items: any, hash: any, gasUsed: number) {
+    constructor(state: EvmBytecode, items: any, hash: any, gasUsed: number) {
         this.name = 'Function';
         this.hash = hash;
         this.gasUsed = gasUsed;
@@ -204,7 +204,7 @@ export class JUMPI {
     }
 }
 
-export default (opcode: Opcode, state: EVM): void => {
+export default (opcode: Opcode, state: EvmBytecode): void => {
     const jumpLocation = state.stack.pop();
     const jumpCondition = state.stack.pop();
     const opcodes = state.getOpcodes();

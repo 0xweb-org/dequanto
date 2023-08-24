@@ -14,7 +14,7 @@ import { $path } from '@dequanto/utils/$path';
 import { $logger, l } from '@dequanto/utils/$logger';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { EVM } from '@dequanto/evm/EVM';
+import { EvmBytecode } from '@dequanto/evm/EvmBytecode';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { $is } from '@dequanto/utils/$is';
 
@@ -282,7 +282,7 @@ export class Generator {
                 throw new Error(`${this.options.platform}:${address} is not a contract`);
             }
 
-            let evm = new EVM(code);
+            let evm = new EvmBytecode(code);
             let abi = await evm.getAbi();
 
             return { abi };

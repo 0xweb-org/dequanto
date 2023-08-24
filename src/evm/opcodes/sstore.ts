@@ -1,5 +1,5 @@
 import { $is } from '@dequanto/utils/$is';
-import { EVM } from '../EVM';
+import { EvmBytecode } from '../EvmBytecode';
 import Opcode from '../interfaces/IOpcode';
 import stringify from '../utils/stringify';
 import { Variable } from './jumpi';
@@ -140,7 +140,7 @@ export class SSTORE {
     }
 }
 
-export default (opcode: Opcode, state: EVM): void => {
+export default (opcode: Opcode, state: EvmBytecode): void => {
     const storeLocation = state.stack.pop();
     const storeData = state.stack.pop();
     if (storeLocation.name === 'SHA3') {

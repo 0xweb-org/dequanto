@@ -1,4 +1,4 @@
-import { EVM } from '../EVM';
+import { EvmBytecode } from '../EvmBytecode';
 import Opcode from '../interfaces/IOpcode';
 import stringify from '../utils/stringify';
 
@@ -50,7 +50,7 @@ export class DELEGATECALL {
     }
 }
 
-export default (opcode: Opcode, state: EVM): void => {
+export default (opcode: Opcode, state: EvmBytecode): void => {
     const gas = state.stack.pop();
     const address = state.stack.pop();
     const memoryStart = state.stack.pop();

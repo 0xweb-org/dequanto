@@ -1,5 +1,5 @@
 import { $is } from '@dequanto/utils/$is';
-import { EVM } from '../EVM';
+import { EvmBytecode } from '../EvmBytecode';
 import Opcode from '../interfaces/IOpcode';
 import stringify from '../utils/stringify';
 
@@ -85,7 +85,7 @@ export class SLOAD {
     }
 }
 
-export default (opcode: Opcode, state: EVM): void => {
+export default (opcode: Opcode, state: EvmBytecode): void => {
     const storeLocation = state.stack.pop();
     if (storeLocation.name === 'SHA3') {
         const mappingItems = parseMapping(...storeLocation.items);

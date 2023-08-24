@@ -1,5 +1,5 @@
 import { $is } from '@dequanto/utils/$is';
-import { EVM } from '../EVM';
+import { EvmBytecode } from '../EvmBytecode';
 import Opcode from '../interfaces/IOpcode';
 import { MLOAD } from './mload';
 
@@ -13,7 +13,7 @@ export class LOG {
     readonly topics: any;
     readonly eventName?: string;
 
-    constructor(state: EVM, topics: any, items?: any, memoryStart?: any, memoryLength?: any) {
+    constructor(state: EvmBytecode, topics: any, items?: any, memoryStart?: any, memoryLength?: any) {
         this.name = 'LOG';
         this.wrapped = true;
         this.topics = topics;
@@ -44,7 +44,7 @@ export class LOG {
     }
 }
 
-export default (opcode: Opcode, state: EVM): void => {
+export default (opcode: Opcode, state: EvmBytecode): void => {
     const topicsCount = parseInt(opcode.name.replace('LOG', ''), 10);
     const memoryStart = state.stack.pop();
     const memoryLength = state.stack.pop();

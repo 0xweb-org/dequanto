@@ -1,4 +1,4 @@
-import { EVM } from '../EVM';
+import { EvmBytecode } from '../EvmBytecode';
 import Opcode from '../interfaces/IOpcode';
 import stringify from '../utils/stringify';
 
@@ -19,7 +19,7 @@ export class SELFDESTRUCT {
     }
 }
 
-export default (opcode: Opcode, state: EVM): void => {
+export default (opcode: Opcode, state: EvmBytecode): void => {
     const address = state.stack.pop();
     state.halted = true;
     state.instructions.push(new SELFDESTRUCT(address));

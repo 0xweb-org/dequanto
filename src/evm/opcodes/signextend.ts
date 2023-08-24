@@ -1,4 +1,4 @@
-import { EVM } from '../EVM';
+import { EvmBytecode } from '../EvmBytecode';
 import Opcode from '../interfaces/IOpcode';
 import { SHL } from './shl';
 import { SAR } from './sar';
@@ -6,7 +6,7 @@ import { SUB } from './sub';
 import { $is } from '@dequanto/utils/$is';
 
 
-export default (opcode: Opcode, state: EVM): void => {
+export default (opcode: Opcode, state: EvmBytecode): void => {
     const left = state.stack.pop();
     const right = state.stack.pop();
     if ($is.BigInt(left) && $is.BigInt(right)) {

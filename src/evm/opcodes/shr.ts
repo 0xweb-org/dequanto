@@ -1,4 +1,4 @@
-import { EVM } from '../EVM';
+import { EvmBytecode } from '../EvmBytecode';
 import Opcode from '../interfaces/IOpcode';
 import stringify from '../utils/stringify';
 import { $is } from '@dequanto/utils/$is';
@@ -22,7 +22,7 @@ export class SHR {
     }
 }
 
-export default (opcode: Opcode, state: EVM): void => {
+export default (opcode: Opcode, state: EvmBytecode): void => {
     const left = state.stack.pop();
     const right = state.stack.pop();
     if ($is.BigInt(left) && $is.BigInt(right)) {

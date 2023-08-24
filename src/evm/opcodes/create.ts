@@ -1,4 +1,4 @@
-import { EVM } from '../EVM';
+import { EvmBytecode } from '../EvmBytecode';
 import Opcode from '../interfaces/IOpcode';
 import stringify from '../utils/stringify';
 
@@ -34,7 +34,7 @@ export class CREATE {
     }
 }
 
-export default (opcode: Opcode, state: EVM): void => {
+export default (opcode: Opcode, state: EvmBytecode): void => {
     const value = state.stack.pop();
     const memoryStart = state.stack.pop();
     const memoryLength = state.stack.pop();

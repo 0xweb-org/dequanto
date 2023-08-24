@@ -1,5 +1,5 @@
 import { $is } from '@dequanto/utils/$is';
-import { EVM } from '../EVM';
+import { EvmBytecode } from '../EvmBytecode';
 import Opcode from '../interfaces/IOpcode';
 
 import stringify from '../utils/stringify';
@@ -23,7 +23,7 @@ export class BYTE {
     }
 }
 
-export default (opcode: Opcode, state: EVM): void => {
+export default (opcode: Opcode, state: EvmBytecode): void => {
     const position = state.stack.pop();
     const data = state.stack.pop();
     if ($is.BigInt(data) && $is.BigInt(position)) {

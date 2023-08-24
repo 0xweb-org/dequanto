@@ -1,5 +1,5 @@
 import { $is } from '@dequanto/utils/$is';
-import { EVM } from '../EVM';
+import { EvmBytecode } from '../EvmBytecode';
 import Opcode from '../interfaces/IOpcode';
 
 import stringify from '../utils/stringify';
@@ -34,7 +34,7 @@ export class CALLDATALOAD {
     }
 }
 
-export default (opcode: Opcode, state: EVM): void => {
+export default (opcode: Opcode, state: EvmBytecode): void => {
     const startLocation = state.stack.pop();
     state.stack.push(new CALLDATALOAD(startLocation));
 };

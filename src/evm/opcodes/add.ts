@@ -1,5 +1,5 @@
 import { $is } from '@dequanto/utils/$is';
-import { EVM } from '../EVM';
+import { EvmBytecode } from '../EvmBytecode';
 import Opcode from '../interfaces/IOpcode';
 import { BigNumber } from '../utils/BigNumber';
 import stringify from '../utils/stringify';
@@ -34,7 +34,7 @@ export class ADD {
     }
 }
 
-export default (opcode: Opcode, state: EVM): void => {
+export default (opcode: Opcode, state: EvmBytecode): void => {
     const left = state.stack.pop();
     const right = state.stack.pop();
     if ($is.BigInt(left) && $is.BigInt(right)) {

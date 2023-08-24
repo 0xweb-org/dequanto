@@ -1,4 +1,4 @@
-import { EVM } from '../EVM';
+import { EvmBytecode } from '../EvmBytecode';
 import Opcode from '../interfaces/IOpcode';
 
 export class CALLDATACOPY {
@@ -28,7 +28,7 @@ export class CALLDATACOPY {
     }
 }
 
-export default (opcode: Opcode, state: EVM): void => {
+export default (opcode: Opcode, state: EvmBytecode): void => {
     const memoryLocation = state.stack.pop();
     const startLocation = state.stack.pop();
     const copyLength = state.stack.pop();

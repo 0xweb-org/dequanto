@@ -1,4 +1,4 @@
-import { EVM } from '../EVM';
+import { EvmBytecode } from '../EvmBytecode';
 import Opcode from '../interfaces/IOpcode';
 import { MLOAD } from './mload';
 import { hex2a } from '../utils/hex';
@@ -54,7 +54,7 @@ export class RETURN {
     }
 }
 
-export default (opcode: Opcode, state: EVM): void => {
+export default (opcode: Opcode, state: EvmBytecode): void => {
     const memoryStart = state.stack.pop();
     const memoryLength = state.stack.pop();
     state.halted = true;
