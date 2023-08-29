@@ -18,7 +18,7 @@ export class Erc4337Agent implements ITxWriterAccountAgent {
             platform: client.platform,
         });
         let tx = builder.getTxData(client);
-        let { writer: opWriter } = await erc4337TxWriter.submitUserOpViaEntryPoint({
+        let { writer: opWriter } = await erc4337TxWriter.submitUserOpViaEntryPointWithOwner({
             erc4337Account: {
                 address: account.address
             },

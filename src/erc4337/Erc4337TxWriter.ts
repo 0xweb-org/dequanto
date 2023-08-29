@@ -41,7 +41,7 @@ export class Erc4337TxWriter {
             value: 0,
             data: '0x'
         };
-        let result = await this.submitUserOpViaEntryPoint({
+        let result = await this.submitUserOpViaEntryPointWithOwner({
             tx,
             ...params
         });
@@ -126,7 +126,7 @@ export class Erc4337TxWriter {
         return { op, opHash }
     }
 
-    async submitUserOpViaEntryPoint(params: {
+    async submitUserOpViaEntryPointWithOwner (params: {
         erc4337Account?: {
             address?: TAddress
             salt?: bigint
@@ -141,5 +141,11 @@ export class Erc4337TxWriter {
         let { op, opHash } = await this.prepareUserOp(params)
         let writer = await service.submitUserOpViaEntryPoint(submitter ?? owner, op);
         return { op, opHash, writer };
+    }
+
+    async submitUserOp (submitter: ChainAccount, signedOp: UserOperation) {
+        let service = this.service;
+        let writer = await service.submitUserOpViaEntryPoint(submitter, signedOp);
+        return writer;
     }
 }

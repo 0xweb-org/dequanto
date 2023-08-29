@@ -66,29 +66,39 @@ export class Config {
         let configPathGlobal = $cli.getParamValue('config-global', parameters) ?? '%APPDATA%/.dequanto/config.yml';
 
         let dequantoConfigs = 'dequanto/configs/';
+
+        /** An optional fallback if none of possible locations will be found */
+        let pfx = '%APP%/';
         let [
-            //- inApp,
             inCwd,
             inNodeModules,
         ] = await Promise.all([
-            //- Directory.existsAsync(env.applicationDir.combine(`./${dequantoConfigs}`).toString()),
             Directory.existsAsync(`./${dequantoConfigs}`),
             Directory.existsAsync(`./node_modules/${dequantoConfigs}`),
         ]);
-        let prfx = '%APP%/';
-        if (inNodeModules) {
-            prfx = './node_modules/'
-        }
+        let rgx0xwebPath = /[/\\]0xweb[/\\].+$/;
+
         if (inCwd) {
-            prfx = './'
+            pfx = './';
+        } else if (inNodeModules) {
+            pfx = './node_modules/';
+        } else if (rgx0xwebPath.test(__filename)) {
+            // check the folder where this 0xweb package could be located
+            let dir = __filename.replace(rgx0xwebPath, '/0xweb/');
+            let path = `${dir}${dequantoConfigs}`;
+            let exists = await Directory.existsAsync(path);
+            if (exists) {
+                pfx = dir;
+            }
         }
+
         let cfg = await AppConfig.fetch<Config>([
             {
-                path: `${prfx}${dequantoConfigs}dequanto.yml`,
+                path: `${pfx}${dequantoConfigs}dequanto.yml`,
                 optional: true,
             },
             {
-                path: `${prfx}${dequantoConfigs}defi.yml`,
+                path: `${pfx}${dequantoConfigs}defi.yml`,
                 optional: true,
             },
             {

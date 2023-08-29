@@ -10,11 +10,21 @@ import alot from 'alot';
 import { Wallet } from 'ethers';
 import { pubToAddress, toBuffer, keccak256, sha256 } from 'ethereumjs-util';
 import { $error } from '@dequanto/utils/$error';
+import { $date } from '@dequanto/utils/$date';
+import { $sign } from '@dequanto/utils/$sign';
+import { $signRaw } from '@dequanto/utils/$signRaw';
+import { $signSerializer } from '@dequanto/utils/$signSerializer';
+import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { $bigint } from '@dequanto/utils/$bigint';
+import { $number } from '@dequanto/utils/$number';
+import crypto from 'crypto';
+
+const provider = new HardhatProvider();
+const client = provider.client();
+
 
 UTest({
     async 'should deploy solidity contract'() {
-        let provider = new HardhatProvider();
-        let client = provider.client();
 
         let { contract, abi } = await provider.deploySol('/test/fixtures/contracts/Foo.sol', {
             arguments: ['Lorem'],
@@ -32,8 +42,6 @@ UTest({
         eq_(name, 'Ipsum');
     },
     async 'should deploy solidity contract from code'() {
-        let provider = new HardhatProvider();
-
         let { contract, abi } = await provider.deployCode(`
             contract Foo {
                 uint public foo;
@@ -52,8 +60,6 @@ UTest({
         eq_(name, 1);
     },
     async 'should delegate call'() {
-        let provider = new HardhatProvider();
-
         let { contract: libraryContract } = await provider.deployCode(`
 
             import "hardhat/console.sol";
@@ -399,8 +405,6 @@ UTest({
     },
 
     async 'checks try catch'() {
-        let provider = new HardhatProvider();
-        let client = provider.client();
         let code = `
             import "hardhat/console.sol";
 
@@ -432,9 +436,97 @@ UTest({
         eq_(r, "FAIL");
     },
 
+    async 'permit token' () {
+        let [ owner, receiver ] = [ ChainAccountProvider.generateNative(), ChainAccountProvider.generateNative() ];
+
+        await client.debug.setBalance(owner.address, 10n**18n);
+        await client.debug.setBalance(receiver.address, 10n**18n);
+
+        let { contract: erc20 } = await provider.deploySol('./test/erc2612/PermitToken.sol', {
+            deployer: owner
+        });
+
+        const value = 5000n;
+        const nonce = await erc20.nonces(owner.address);
+        const deadline = $date.tool().add('1m').toUnixTimestamp();
+
+        let typedDataV4 = {
+            types: {
+                EIP712Domain: [
+                    { name: 'name', type: 'string' },
+                    { name: 'version', type: 'string' },
+                    { name: 'chainId', type: 'uint256' },
+                    { name: 'verifyingContract', type: 'address' },
+                ],
+                Permit: [
+                    {
+                        type: 'address',
+                        name: 'owner',
+                    },
+                    {
+                        type: 'address',
+                        name: 'spender',
+                    },
+                    {
+                        type: 'uint256',
+                        name: 'value',
+                    },
+                    {
+                        type: 'uint256',
+                        name: 'nonce',
+                    },
+                    {
+                        type: 'uint256',
+                        name: 'deadline',
+                    },
+                ],
+
+            },
+            primaryType: 'Permit',
+            domain: {
+                name: 'PermitToken',
+                version: '1',
+                chainId: client.chainId,
+                verifyingContract: erc20.address,
+            },
+            message: {
+                owner: owner.address,
+                spender: receiver.address,
+                value: value,
+                nonce: nonce,
+                deadline: deadline
+            }
+        };
+
+        //let web3 = await client.getWeb3();
+        let hashed = $signSerializer.serializeTypedData(typedDataV4);
+        let hashedHex = $buffer.toHex(hashed);
+
+
+        let sig = await $signRaw.signEC(hashedHex, owner.key);
+
+        let tx = await erc20.permit(receiver,
+            owner.address,
+            receiver.address,
+            value,
+            deadline,
+            sig.v,
+            sig.r,
+            sig.s
+        );
+        let receipt = await tx.wait();
+        eq_(receipt.status, true);
+
+        tx = await erc20.transferFrom(receiver, owner.address, receiver.address, value);
+        receipt = await tx.wait();
+        eq_(receipt.status, true);
+
+        let balance = await erc20.balanceOf(receiver.address);
+        eq_(balance, value);
+    },
+
     async '//sandbox'() {
-
-
 
     }
 });
+

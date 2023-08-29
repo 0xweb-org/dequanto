@@ -165,7 +165,7 @@ UTest({
                 let erc4337Account = await writer.getAccount(ownerFoo);
 
                 let tx = await demoCounterContract.$data().logMe({ address: erc4337Account.address });
-                let { writer: opWriter } = await writer.submitUserOpViaEntryPoint({
+                let { writer: opWriter } = await writer.submitUserOpViaEntryPointWithOwner({
                     tx,
                     owner: ownerFoo,
                     submitter: ownerFoo,
@@ -193,7 +193,7 @@ UTest({
 
                 let tx = await demoCounterContract.$data().logMe({ address: erc4337Account.address });
 
-                let { op, opHash, writer: opWriter } = await writer.submitUserOpViaEntryPoint({
+                let { op, opHash, writer: opWriter } = await writer.submitUserOpViaEntryPointWithOwner({
                     tx,
                     owner: ownerFoo,
                     submitter: submitter,
@@ -261,6 +261,103 @@ UTest({
             },
         });
     },
+
+    async '!gasless erc20 transfer flow' () {
+        let erc4337Contracts = await AccountAbstractionTestableFactory.prepare();
+        let [ owner, receiver ] = [
+            provider.deployer(0),
+            provider.deployer(1),
+        ];
+        let { contract: erc20 } = await provider.deploySol('./test/fixtures/contracts/FooErc20.sol', {
+            deployer: owner
+        });
+        let transferAmount = 100n * 10n**18n;
+
+        let erc4337Account: Erc4337Account;
+        let transferOperation: UserOperation;
+
+        return UTest({
+            async 'owner funds the erc4337 account with tokens' () {
+                let erc4337Writer = new Erc4337TxWriter(client, explorer, {
+                    addresses: {
+                        entryPoint: erc4337Contracts.entryPointContract.address,
+                        accountFactory: erc4337Contracts.accountFactoryContract.address,
+                    }
+                });
+                erc4337Account = await erc4337Writer.getAccount(owner);
+
+                let txTransfer = await erc20.transfer(owner, erc4337Account.address, transferAmount);
+                await txTransfer.wait();
+            },
+
+            async 'owner creates the UserOperation' () {
+                let erc4337Writer = new Erc4337TxWriter(client, explorer, {
+                    addresses: {
+                        entryPoint: erc4337Contracts.entryPointContract.address,
+                        accountFactory: erc4337Contracts.accountFactoryContract.address,
+                    }
+                });
+
+                let txTransferData = await erc20.$data().transfer(erc4337Account, receiver.address, transferAmount);
+
+                let opData = await erc4337Writer.prepareUserOp({
+                    owner: owner,
+                    tx: txTransferData,
+                    erc4337Account: {
+                        address: erc4337Account.address
+                    }
+                });
+                transferOperation = opData.op;
+            },
+
+            async 'receiver submits UserOperation, gets tokens and pays for the gas' () {
+                let erc4337Writer = new Erc4337TxWriter(client, explorer, {
+                    addresses: {
+                        entryPoint: erc4337Contracts.entryPointContract.address,
+                        accountFactory: erc4337Contracts.accountFactoryContract.address,
+                    }
+                });
+
+                let [
+                    ownerBalanceBefore,
+                    receiverBalanceBefore
+                ] = await Promise.all([
+                    client.getBalance(owner.address),
+                    client.getBalance(receiver.address),
+                ]);
+
+                let [
+                    receiverTokenBalanceBefore,
+                ] = await Promise.all([
+                    erc20.balanceOf(receiver.address)
+                ]);
+
+                let tx = await erc4337Writer.submitUserOp(receiver, transferOperation);
+                let txReceipt = await tx.wait();
+
+                let [
+                    ownerBalanceAfter,
+                    receiverBalanceAfter
+                ] = await Promise.all([
+                    client.getBalance(owner.address),
+                    client.getBalance(receiver.address),
+                ]);
+                let [
+                    receiverTokenBalanceAfter,
+                ] = await Promise.all([
+                    erc20.balanceOf(receiver.address)
+                ]);
+
+
+                eq_(ownerBalanceBefore, ownerBalanceAfter);
+                eq_(receiverTokenBalanceBefore, 0n);
+                eq_(receiverTokenBalanceAfter, transferAmount);
+
+                let gasPriceConsumed = txReceipt.effectiveGasPrice * txReceipt.cumulativeGasUsed;
+                eq_(receiverBalanceBefore, receiverBalanceAfter + BigInt(gasPriceConsumed));
+            }
+        });
+    }
 
 })
 

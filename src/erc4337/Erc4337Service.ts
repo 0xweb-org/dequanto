@@ -114,7 +114,11 @@ export class Erc4337Service {
         return $hex.isEmpty(code) === false;
     }
 
-    async getAccountAddress(owner: TAddress, initCode: string) {
+    async getAccountAddress(owner: TAddress, initCode?: string) {
+        if (initCode == null) {
+            let initResult = await this.prepareAccountCreation(owner);
+            initCode = initResult.initCode;
+        }
         let { error, result } = await this.entryPointContract.$call().getSenderAddress({ address: owner }, initCode);
         let senderAddress = error.data.params.sender;
         return senderAddress;

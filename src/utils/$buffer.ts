@@ -25,9 +25,13 @@ class NodeBufferUtils implements IBufferUtils {
     fromHex(hex: string): Uint8Array {
         return Buffer.from(utils.normalizeHex(hex), 'hex');
     }
-    toHex(buffer: Buffer): string {
-        let hex = (buffer as Buffer).toString('hex');
-        return `0x${hex}`;
+    toHex(buffer: Uint8Array | Buffer): string {
+        if (buffer instanceof Buffer) {
+            return `0x` + buffer.toString('hex');
+        }
+        return `0x` + buffer.reduce((hex, x) => {
+            return hex + x.toString(16).padStart(2, '0');
+        }, '');
     }
 
     concat(buffers: Buffer[]) {

@@ -2,6 +2,7 @@ import * as ethUtil from 'ethereumjs-util';
 import * as ethAbi from 'ethereumjs-abi';
 import { $buffer } from './$buffer';
 import { type BytesLike } from 'ethers';
+import { $bigint } from './$bigint';
 
 export namespace $signSerializer {
 
@@ -183,6 +184,12 @@ export namespace $signSerializer {
                 }
             }
 
+            for (let i = 0; i < encodedValues.length; i++) {
+                let val = encodedValues[i];
+                if (typeof val === 'bigint') {
+                    encodedValues[i] = $bigint.toHex(val) as any;
+                }
+            }
             return ethAbi.rawEncode(encodedTypes, encodedValues);
         }
 
