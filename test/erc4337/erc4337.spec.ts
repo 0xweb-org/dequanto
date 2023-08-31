@@ -87,7 +87,7 @@ UTest({
                 accountFactory: erc4337Contracts.accountFactoryContract.address,
             }
         });
-        let { op, writer: opWriter } = await writer.createAccount({ owner, submitter });
+        let { op, writer: opWriter } = await writer.ensureAccount({ owner, submitter });
         let receipt = await opWriter.wait();
         eq_(receipt.status, true);
         eq_($address.isValid(op.sender), true);
@@ -243,26 +243,26 @@ UTest({
                     }
                 });
 
-                let { op } = await erc4337.createAccount({
+                let { accountAddress } = await erc4337.ensureAccount({
                     owner: ownerFoo,
                 });
-                eq_($is.Address(op.sender), true, `${ op.sender } not an address`);
+                eq_($is.Address(accountAddress), true, `${ accountAddress } not an address`);
 
                 let tx = await demoCounterContract.logMe(<Erc4337Account> {
-                    address: op.sender,
+                    address: accountAddress,
                     type: 'erc4337',
                     operator: ownerFoo,
                 });
                 await tx.wait();
                 callCounter++;
 
-                let callCount = await demoCounterContract.calls(op.sender);
+                let callCount = await demoCounterContract.calls(accountAddress);
                 eq_(callCount, callCounter);
             },
         });
     },
 
-    async '!gasless erc20 transfer flow' () {
+    async 'gasless erc20 transfer flow' () {
         let erc4337Contracts = await AccountAbstractionTestableFactory.prepare();
         let [ owner, receiver ] = [
             provider.deployer(0),

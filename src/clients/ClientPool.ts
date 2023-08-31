@@ -60,6 +60,9 @@ export interface IPoolWeb3Request {
 
     /** Supported node features */
     node?: {
+        // For specific url
+        url?: string
+
         /** Supports traceTransaction */
         traceable?: boolean
     }
@@ -403,6 +406,9 @@ export class ClientPool {
         }
         if (opts?.node?.traceable === true) {
             clients = clients.filter(x => x.config.traceable === true);
+        }
+        if (opts?.node?.url != null) {
+            clients = clients.filter(x => x.config.url === opts.node.url);
         }
 
         if (this.discoveredPartial === false) {

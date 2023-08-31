@@ -67,7 +67,10 @@ export class HardhatProvider {
             $require.notNull(platform, `Platform is required to resolve the RPC url for`);
             let platformClient = await Web3ClientFactory.get(platform);
             url = await platformClient.getNodeURL();
-            block = await platformClient.getBlockNumber();
+
+            // ensure we get the web3 for that url
+            let web3 = await platformClient.getWeb3({ node: { url }});
+            block = await web3.eth.getBlockNumber();
         }
         await client.debug.reset({
             forking: {

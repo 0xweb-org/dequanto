@@ -1,8 +1,5 @@
 import { BlockChainExplorerStorage } from '@dequanto/BlockchainExplorer/BlockChainExplorerStorage';
 import { Config } from '@dequanto/Config';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
-import { ContractFactory } from '@dequanto/contracts/ContractFactory';
-import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { SlotsDump } from '@dequanto/solidity/SlotsDump';
 import { SlotsParser } from '@dequanto/solidity/SlotsParser';
@@ -18,7 +15,7 @@ UTest({
     async $before() {
         await Config.fetch();
     },
-    async '!should read and write contracts storage'() {
+    async 'should read and write contracts storage'() {
 
         const code = `
             contract A {

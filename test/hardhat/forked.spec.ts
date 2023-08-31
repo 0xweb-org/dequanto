@@ -43,6 +43,9 @@ UTest({
                 eq_(balance, 100n);
 
                 await client.debug.stopImpersonatingAccount(ownerImpersonated);
+            },
+            async $after () {
+                await client.debug.reset({});
             }
         })
     },

@@ -58,11 +58,14 @@ export class GnosisSafeService {
         }
         let abi = result.abiJson;
         let opCall = $contract.decodeMethodCall(op.data, abi);
+        if (opCall == null) {
+            console.error(`Not decoded for ${op.to} with the abi`, abi);
+        }
         return {
             address: op.to,
-            method: opCall.method,
+            method: opCall?.method,
             value: op.value,
-            arguments: opCall.arguments,
+            arguments: opCall?.arguments,
         };
     }
 

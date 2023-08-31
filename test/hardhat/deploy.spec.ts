@@ -446,11 +446,11 @@ UTest({
             deployer: owner
         });
 
-        const value = 5000n;
+        const amount = 5000n;
         const nonce = await erc20.nonces(owner.address);
         const deadline = $date.tool().add('1m').toUnixTimestamp();
 
-        let typedDataV4 = {
+        let typedData = {
             types: {
                 EIP712Domain: [
                     { name: 'name', type: 'string' },
@@ -459,28 +459,12 @@ UTest({
                     { name: 'verifyingContract', type: 'address' },
                 ],
                 Permit: [
-                    {
-                        type: 'address',
-                        name: 'owner',
-                    },
-                    {
-                        type: 'address',
-                        name: 'spender',
-                    },
-                    {
-                        type: 'uint256',
-                        name: 'value',
-                    },
-                    {
-                        type: 'uint256',
-                        name: 'nonce',
-                    },
-                    {
-                        type: 'uint256',
-                        name: 'deadline',
-                    },
+                    { type: 'address', name: 'owner' },
+                    { type: 'address', name: 'spender' },
+                    { type: 'uint256', name: 'value' },
+                    { type: 'uint256', name: 'nonce' },
+                    { type: 'uint256', name: 'deadline' },
                 ],
-
             },
             primaryType: 'Permit',
             domain: {
@@ -492,37 +476,33 @@ UTest({
             message: {
                 owner: owner.address,
                 spender: receiver.address,
-                value: value,
+                value: amount,
                 nonce: nonce,
                 deadline: deadline
             }
         };
 
-        //let web3 = await client.getWeb3();
-        let hashed = $signSerializer.serializeTypedData(typedDataV4);
-        let hashedHex = $buffer.toHex(hashed);
-
-
-        let sig = await $signRaw.signEC(hashedHex, owner.key);
+        let hashed = $signSerializer.serializeTypedData(typedData);
+        let { v, r, s } = await $signRaw.signEC(hashed, owner.key);
 
         let tx = await erc20.permit(receiver,
             owner.address,
             receiver.address,
-            value,
+            amount,
             deadline,
-            sig.v,
-            sig.r,
-            sig.s
+            v,
+            r,
+            s,
         );
         let receipt = await tx.wait();
         eq_(receipt.status, true);
 
-        tx = await erc20.transferFrom(receiver, owner.address, receiver.address, value);
+        tx = await erc20.transferFrom(receiver, owner.address, receiver.address, amount);
         receipt = await tx.wait();
         eq_(receipt.status, true);
 
         let balance = await erc20.balanceOf(receiver.address);
-        eq_(balance, value);
+        eq_(balance, amount);
     },
 
     async '//sandbox'() {

@@ -8,6 +8,7 @@ import { UserOperation } from './models/UserOperation';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $is } from '@dequanto/utils/$is';
+import { TxWriter } from '@dequanto/txs/TxWriter';
 
 export class Erc4337TxWriter {
     public service = new Erc4337Service(this.client, this.explorer, this.info);
@@ -28,16 +29,30 @@ export class Erc4337TxWriter {
         };
     }
 
-    async createAccount (params: {
+    async ensureAccount (params: {
         owner: ChainAccount,
         submitter?: ChainAccount,
         salt?: bigint
-    }) {
+    }): Promise<{
+        accountAddress: TAddress,
+        op?: UserOperation,
+        opHash?: string
+        writer?: TxWriter,
+    }> {
         let service = this.service;
         let { initCode, initCodeGas } = await service.prepareAccountCreation(params.owner.address, params.salt ?? 0n);
-        let senderAddress = await service.getAccountAddress(params.owner.address, initCode);
+        let erc4337AccountAddress = await service.getAccountAddress(params.owner.address, initCode);
+        if (await service.existsAccount(erc4337AccountAddress)) {
+            return {
+                accountAddress: erc4337AccountAddress,
+                op: null,
+                opHash: null,
+                writer: null
+            };
+        }
+
         let tx = <TransactionConfig> {
-            to: senderAddress,
+            to: erc4337AccountAddress,
             value: 0,
             data: '0x'
         };
@@ -46,7 +61,10 @@ export class Erc4337TxWriter {
             ...params
         });
         await result.writer.wait();
-        return result;
+        return {
+            accountAddress: erc4337AccountAddress,
+            ...result
+        };
     }
 
     async prepareUserOp (params: {
@@ -61,14 +79,14 @@ export class Erc4337TxWriter {
         let service = this.service;
 
         // 1. Prepare ERC4337 contract account via Account Factory
-        let senderAddress: TAddress;
+        let erc4337Address: TAddress;
         let initCode = '0x';
         let initCodeGas = 0;
 
         if ($is.Address(params.erc4337Account?.address)) {
-            senderAddress = params.erc4337Account.address;
+            erc4337Address = params.erc4337Account.address;
 
-            let senderExists = await service.existsAccount(senderAddress);
+            let senderExists = await service.existsAccount(erc4337Address);
             if (senderExists === false) {
                 let salt = params.erc4337Account?.salt ?? 0n;
                 let ownerAddr = owner.address;
@@ -77,15 +95,15 @@ export class Erc4337TxWriter {
                 initCodeGas = result.initCodeGas;
 
                 let address = await service.getAccountAddress(owner.address, initCode);
-                $require.eq(senderAddress.toLowerCase(), address.toLowerCase(), `Sender address does not match. Wrong owner (${ ownerAddr }) or salt(${ salt })? `);
+                $require.eq(erc4337Address.toLowerCase(), address.toLowerCase(), `Sender address does not match. Wrong owner (${ ownerAddr }) or salt(${ salt })? `);
             }
         } else {
             let result = await service.prepareAccountCreation(owner.address, params.erc4337Account?.salt ?? 0n);
             initCode = result.initCode;
             initCodeGas = result.initCodeGas;
-            senderAddress = await service.getAccountAddress(owner.address, initCode);
+            erc4337Address = await service.getAccountAddress(owner.address, initCode);
 
-            let senderExists = await service.existsAccount(senderAddress);
+            let senderExists = await service.existsAccount(erc4337Address);
             if (senderExists) {
                 initCode = '0x';
                 initCodeGas = 0;
@@ -94,7 +112,7 @@ export class Erc4337TxWriter {
 
         // 2. Prepare Target (Demo) contract transaction data
         let callData = tx.data;
-        let callGas = await this.client.getGasEstimation(senderAddress, tx);
+        let callGas = await this.client.getGasEstimation(erc4337Address, tx);
 
         // 3. Prepare contract account execution method
         $require.Address(tx.to);
@@ -106,19 +124,18 @@ export class Erc4337TxWriter {
 
         let [ gasPrice, erc4337AccountBalance, nonce] = await Promise.all([
             this.client.getGasPrice(),
-            this.client.getBalance(senderAddress),
-            service.getNonce(senderAddress, 0n)
+            this.client.getBalance(erc4337Address),
+            service.getNonce(erc4337Address, 0n)
         ]);
         let maxFeePerGas = erc4337AccountBalance === 0n ? 0n : gasPrice.price;
 
         let { op, opHash } = await service.getSignedUserOp(<Partial<UserOperation>>{
-            sender: senderAddress,
+            sender: erc4337Address,
             initCode: initCode,
             callData: accountCallData.data,
             callGasLimit: BigInt(callGas),
             verificationGasLimit: 150000n + BigInt(initCodeGas),
             nonce: nonce,
-
             maxFeePerGas: maxFeePerGas,
             maxPriorityFeePerGas: 10n**9n,
         }, owner);
