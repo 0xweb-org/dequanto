@@ -68,6 +68,9 @@ export class HardhatProvider {
             let platformClient = await Web3ClientFactory.get(platform);
             url = await platformClient.getNodeURL();
 
+            $require.True(/^(http|ws)/.test(url), `Requires the URI path of a node to fork: ${url}`);
+            console.log(`Forking ${platform} node at ${url}`);
+
             // ensure we get the web3 for that url
             let web3 = await platformClient.getWeb3({ node: { url }});
             block = await web3.eth.getBlockNumber();
