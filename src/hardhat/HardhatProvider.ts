@@ -66,10 +66,10 @@ export class HardhatProvider {
             let platform = params.platform;
             $require.notNull(platform, `Platform is required to resolve the RPC url for`);
             let platformClient = await Web3ClientFactory.get(platform);
-            url = await platformClient.getNodeURL();
+            url = await platformClient.getNodeURL({ ws: false });
 
-            $require.True(/^(http|ws)/.test(url), `Requires the URI path of a node to fork: ${url}`);
-            console.log(`Forking ${platform} node at ${url}`);
+            // Hardhat looks like supports only HTTP nodes to fork from
+            $require.True(/^(http)/.test(url), `Requires the HTTP path of a node to fork: ${url}`);
 
             // ensure we get the web3 for that url
             let web3 = await platformClient.getWeb3({ node: { url }});
