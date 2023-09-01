@@ -72,8 +72,9 @@ export class Erc4337TxWriter {
             address?: TAddress
             salt?: bigint
         }
-        tx: TransactionConfig,
+        tx: TransactionConfig
         owner: ChainAccount
+        nonceSalt?: bigint
     }) {
         let { tx, owner } = params
         let service = this.service;
@@ -125,7 +126,7 @@ export class Erc4337TxWriter {
         let [ gasPrice, erc4337AccountBalance, nonce] = await Promise.all([
             this.client.getGasPrice(),
             this.client.getBalance(erc4337Address),
-            service.getNonce(erc4337Address, 0n)
+            service.getNonce(erc4337Address, params.nonceSalt ?? 0n)
         ]);
         let maxFeePerGas = erc4337AccountBalance === 0n ? 0n : gasPrice.price;
 
