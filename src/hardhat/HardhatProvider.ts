@@ -113,7 +113,6 @@ export class HardhatProvider {
         arguments?: any[]
         client?: Web3Client
     }): Promise<T> {
-        let ethers: typeof Ethers = this.hh.ethers;
 
         let client = options?.client ?? this.client();
         let signer = options?.deployer ?? this.deployer();
@@ -125,7 +124,6 @@ export class HardhatProvider {
         const receipt = await contract.deployed();
 
         $logger.log(`Contract ${Ctor.name} deployed to ${contract.address}`);
-
         return new Ctor(contract.address, client);
     }
 

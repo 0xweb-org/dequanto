@@ -1,7 +1,8 @@
+import alot from 'alot';
 import { GnosisSafe } from '@dequanto-contracts/gnosis/GnosisSafe';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { ChainAccount } from '@dequanto/models/TAccount';
-import { TAddress } from '@dequanto/models/TAddress';
+import type { ChainAccount } from '@dequanto/models/TAccount';
+import type { TAddress } from '@dequanto/models/TAddress';
 import SafeServiceClient, {
     ProposeTransactionProps,
     SafeMultisigConfirmationListResponse,
@@ -10,7 +11,7 @@ import SafeServiceClient, {
     SafeMultisigTransactionResponse,
     SignatureResponse
 } from '@gnosis.pm/safe-service-client';
-import { ISafeServiceTransport } from './ISafeServiceTransport';
+import type { ISafeServiceTransport } from './ISafeServiceTransport';
 
 export class InMemoryServiceTransport implements ISafeServiceTransport {
 
@@ -68,11 +69,21 @@ export class InMemoryServiceTransport implements ISafeServiceTransport {
     }
 
     async proposeTransaction (args: ProposeTransactionProps): Promise<void> {
+        let safeTxData = args.safeTransaction.data;
+        let confirmations = args.safeTransaction.signatures
+            ? Array.from(args.safeTransaction.signatures.entries()).map(([_, sig]) => {
+                return {
+                    owner: sig.signer,
+                    signature: sig.data
+                }
+            })
+            : [];
+
         this.txs[args.safeTxHash] = <SafeMultisigTransactionResponse> <any> {
             safe: args.safeAddress,
-            confirmations: [],
+            confirmations,
 
-            ...args.safeTransaction.data
+            ...safeTxData,
         };
     }
 

@@ -41,6 +41,7 @@ export namespace $abiParser {
     const rgxMethodName = /^((?<type>function|event)\s+)?(?<methodName>\w+)/;
     const rgxMethodReturn = /((:|returns)(?<return>.+))?$/;
     const rgxArguments = /^\(.?\)$/;
+    const rgxModifiers = /(?<=\))[\s\w]+$/
     /**
      *  foo(uint256):address
      *  function foo(uint256): (address account, uint256 value)
@@ -56,9 +57,16 @@ export namespace $abiParser {
         let fnParams = $str.removeRgxMatches(methodAbi, matchMethodName, matchReturn).trim();
         $require.notNull(rgxArguments.test(fnParams), `Method arguments in abi ${methodAbi} is not valid. Expect like 'foo(uint256):address`);
 
+        let stateMutability = void 0;
+        let fnModifiers = rgxModifiers.exec(fnParams);
+        if (fnModifiers) {
+            let str = fnModifiers[0]
+            stateMutability = /\b(view|pure)\b/.exec(str)?.[1] ?? void 0;
+            fnParams = $str.removeRgxMatches(fnParams, fnModifiers);
+        }
+
         // Remove trailing '()'
         fnParams = fnParams.substring(1, fnParams.length - 1);
-
 
         let outputs = parseArguments(matchReturn.groups.return?.trim() ?? '');
 
@@ -68,7 +76,7 @@ export namespace $abiParser {
         return <AbiItem> {
             constant: false,
             payable: false,
-            //"stateMutability": "view",
+            stateMutability,
 
             name: fnName,
             signature: isSig ? fnName : void 0,

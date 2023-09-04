@@ -3,12 +3,14 @@ import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExp
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
 import { ContractBase } from './ContractBase';
+import { $abiParser } from '@dequanto/utils/$abiParser';
 
 
 export interface IContractWrapped extends ContractBase {
     abi?: any
     [method: string]: any
 }
+
 
 export namespace ContractFactory {
 
@@ -19,8 +21,13 @@ export namespace ContractFactory {
         return fromAbi(contractAddr, abiJson, client, explorer);
     }
 
-    export function fromAbi<TReturn extends ContractBase = IContractWrapped> (contractAddr: TAddress, abi: AbiItem[], client: Web3Client, explorer: IBlockChainExplorer) {
-        let builder = new ClassBuilder <TReturn> (abi);
+    export function fromAbi<TReturn extends ContractBase = IContractWrapped> (contractAddr: TAddress, abi: (AbiItem | string)[], client: Web3Client, explorer: IBlockChainExplorer) {
+        let arr = abi.map(item => {
+            return typeof item ==='string'
+                ? $abiParser.parseMethod(item)
+                : item
+        });
+        let builder = new ClassBuilder <TReturn> (arr);
         return builder.create(contractAddr, client, explorer) as TReturn;
     }
 }

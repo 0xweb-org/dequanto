@@ -66,7 +66,7 @@ export namespace InputDataUtils {
     /**
      * function work(uint256 id, address worker, uint256 principalAmount, uint256 loan, uint256 maxReturn, bytes calldata data)
      */
-    export function encodeWithABI (IFunctionABI: string | AbiItem, ...params): string {
+    export function encodeWithABI (IFunctionABI: string | (AbiItem & { signature? }), ...params): string {
         let iface = new utils.Interface([ IFunctionABI as any ]);
         let methodName: string;
 
@@ -79,6 +79,10 @@ export namespace InputDataUtils {
             throw new Error(`Invalid method in ${IFunctionABI}. Expects "function foo(...)"`)
         }
         let result = iface.encodeFunctionData(methodName, params);
+        if (typeof IFunctionABI !== 'string' && IFunctionABI.signature != null) {
+            const METHOD_SIG_LENGTH_with_0x = 10
+            result = IFunctionABI.signature + result.substring(METHOD_SIG_LENGTH_with_0x);
+        }
         return result;
     }
 

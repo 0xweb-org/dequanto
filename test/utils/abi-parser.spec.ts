@@ -113,5 +113,16 @@ UTest({
                 { name: 'bar', type: 'uint256' },
             ], str)
         })
+    },
+    'parse with modifiers' () {
+        [
+            `lorem() external view returns (uint256)`,
+            `lorem ( ) view returns (uint256)`,
+        ].forEach(str => {
+            let abi = $abiParser.parseMethod(str);
+            eq_(abi.name, 'lorem', str);
+            eq_(abi.stateMutability, 'view');
+            deepEq_(abi.outputs, [ { name: '', type: 'uint256' } ]);
+        })
     }
 })

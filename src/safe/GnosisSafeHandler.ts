@@ -27,6 +27,7 @@ import { utils } from 'ethers'
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 
 import type { AbiItem } from 'web3-utils';
+import type { TransactionRequest } from '@ethersproject/abstract-provider';
 
 export class GnosisSafeHandler {
 
@@ -109,13 +110,15 @@ export class GnosisSafeHandler {
         return txWriter;
     }
 
-    async execute(writer: TxWriter) {
+    async execute(writer: TxWriter, safeTxParams?: {
+        operation?: 0 | 1
+    }) {
 
         let value = BigInt(writer.builder.data.value?.toString() ?? 0);
 
-        let { safeTxHash, threshold, safeTxData } = await this.createTransaction(writer, value);
+        let { safeTxHash, threshold, safeTxData } = await this.createTransaction(writer, value, safeTxParams);
 
-        if (writer.options.txOutput != null) {
+        if (writer.options?.txOutput != null) {
             await writer.saveTxAndExit({ safeTxHash, safeTxData });
             return;
         }
@@ -136,14 +139,27 @@ export class GnosisSafeHandler {
         return tx;
     }
 
-    async createTxHash (builder: TxDataBuilder, value?: bigint) {
+    async executeTxData (txData: Partial<TransactionRequest>, owner: ChainAccount, safeTxParams?: {
+        // 0 - Call (default)
+        // 1 - DelegateCall
+        operation?: 0 | 1
+    }) {
+        let txBuilder = new TxDataBuilder(this.client, owner, txData);
+        let writer = TxWriter.create(this.client, txBuilder, owner);
+        let tx = await this.execute(writer, safeTxParams);
+        return tx;
+    }
+
+    async createTxHash (builder: TxDataBuilder, value?: bigint, safeTxParams?: {
+        operation?: 0 | 1
+    }) {
         let txData = builder.getTxData(this.client);
 
         let safeTxEstimation: SafeMultisigTransactionEstimate & { data } = {
             to: $address.toChecksum(txData.to),
             value: $bigint.toHex(value ?? BigInt(txData.value?.toString() ?? 0n)),
             data: txData.data ?? null,
-            operation: 0,
+            operation: safeTxParams?.operation ?? 0,
         }
 
         let safeInfo = await this.transport.getSafeInfo(this.safeAddress);
@@ -182,13 +198,15 @@ export class GnosisSafeHandler {
         };
     }
 
-    async createTransaction(writer: TxWriter, value: bigint) {
+    async createTransaction(writer: TxWriter, value: bigint, safeTxParams?: {
+        operation?: 0 | 1
+    }) {
         let builder = writer.builder;
         let {
             safeTxHash,
             safeTxData,
             safeInfo,
-        } = await this.createTxHash(builder, value);
+        } = await this.createTxHash(builder, value, safeTxParams);
 
         let {
             signature,
@@ -201,7 +219,7 @@ export class GnosisSafeHandler {
         let txProps: ProposeTransactionProps = {
             safeAddress: $address.toChecksum(this.safeAddress),
             senderAddress: $address.toChecksum(this.owner.address),
-            safeTransaction: <SafeTransaction>{
+            safeTransaction: <SafeTransaction> {
                 data: safeTxData,
                 signatures: signatures,
             },
