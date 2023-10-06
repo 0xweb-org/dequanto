@@ -2,8 +2,7 @@ import di from 'a-di';
 import memd from 'memd';
 import alot from 'alot';
 
-import Safe from '@gnosis.pm/safe-core-sdk'
-import { SafeTransaction, SafeTransactionData } from '@gnosis.pm/safe-core-sdk-types'
+import type { SafeTransaction, SafeTransactionData } from '@gnosis.pm/safe-core-sdk-types'
 import { ProposeTransactionProps, SafeMultisigTransactionEstimate, SignatureResponse } from '@gnosis.pm/safe-service-client'
 import { ChainAccount } from "@dequanto/models/TAccount";
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
@@ -15,19 +14,17 @@ import { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import { GnosisServiceTransport } from './transport/GnosisServiceTransport';
 import { ISafeServiceTransport } from './transport/ISafeServiceTransport';
 import { $address } from '@dequanto/utils/$address';
-import { $signRaw } from '@dequanto/utils/$signRaw';
 import { $logger } from '@dequanto/utils/$logger';
 import { $bigint } from '@dequanto/utils/$bigint';
-import { $contract } from '@dequanto/utils/$contract';
 import { $promise } from '@dequanto/utils/$promise';
 import { $gnosis } from './$gnosis';
 
-import { utils } from 'ethers'
-
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 
-import type { AbiItem } from 'web3-utils';
-import type { TransactionRequest } from '@ethersproject/abstract-provider';
+import type { TAbiItem } from '@dequanto/types/TAbi';
+import { $sig } from '@dequanto/utils/$sig';
+import { TEth } from '@dequanto/models/TEth';
+import { $abiUtils } from '@dequanto/utils/$abiUtils';
 
 export class GnosisSafeHandler {
 
@@ -57,7 +54,7 @@ export class GnosisSafeHandler {
     async confirmTx(safeTxHash: string, owner?: ChainAccount): Promise<SignatureResponse> {
 
         let acc = owner ?? this.owner;
-        let signature = $signRaw.signEC(safeTxHash, acc.key);
+        let signature = await $sig.sign(safeTxHash, acc);
 
         return this.transport.confirmTx(safeTxHash, {
             owner: acc.address,
@@ -139,7 +136,7 @@ export class GnosisSafeHandler {
         return tx;
     }
 
-    async executeTxData (txData: Partial<TransactionRequest>, owner: ChainAccount, safeTxParams?: {
+    async executeTxData (txData: TEth.TxLike, owner: ChainAccount, safeTxParams?: {
         // 0 - Call (default)
         // 1 - DelegateCall
         operation?: 0 | 1
@@ -193,7 +190,7 @@ export class GnosisSafeHandler {
         return {
             signature: {
                 signer: $address.toChecksum(this.owner.address),
-                data: $signRaw.signEC(safeTxHash, this.owner.key).signature
+                data: (await $sig.sign(safeTxHash, this.owner)).signature
             }
         };
     }
@@ -237,15 +234,15 @@ export class GnosisSafeHandler {
     }
 
 
-    @memd.deco.memoize({ perInstance: true })
-    private async getSafeSdk() {
-        let adapter = await this.getAdapter();
-        const safeSdk = await Safe.create({
-            ethAdapter: adapter,
-            safeAddress: this.safeAddress
-        });
-        return safeSdk;
-    }
+    // @memd.deco.memoize({ perInstance: true })
+    // private async getSafeSdk() {
+    //     let adapter = await this.getAdapter();
+    //     const safeSdk = await Safe.create({
+    //         ethAdapter: adapter,
+    //         safeAddress: this.safeAddress
+    //     });
+    //     return safeSdk;
+    // }
 
     @memd.deco.memoize({ perInstance: true })
     private async getAdapter() {
@@ -281,30 +278,22 @@ export class GnosisSafeHandler {
         return this.client.readContract({
             address: this.safeAddress,
             method: 'getTransactionHash',
-            arguments: args,
+            params: args,
             abi: [
                 SafeAbi.getTransactionHash
             ]
         })
     }
 
-    static parseSafeTx(buffer: string, value?) {
-        const inter = new utils.Interface([ <any> SafeAbi.execTransaction ]);
-        const decodedInput = inter.parseTransaction({
-            data: buffer as string,
-            value: value,
-        });
-        return {
-            name: decodedInput.name,
-            args: $contract.normalizeArgs(Array.from(decodedInput.args))
-        };
+    static parseSafeTx(buffer: TEth.Hex, value?): { name, args: any[]} {
+        return $abiUtils.parseMethodCallData([ SafeAbi.execTransaction ], { input: buffer, value });
     }
 }
 
 // https://etherscan.io/address/0x34cfac646f301356faa8b21e94227e3583fe3f5f#code
 
 const SafeAbi = {
-    nonce: <AbiItem>{
+    nonce: <TAbiItem>{
         "constant": true,
         "inputs": [],
         "name": "nonce",
@@ -319,7 +308,7 @@ const SafeAbi = {
         "stateMutability": "view",
         "type": "function"
     },
-    execTransaction: <AbiItem>{
+    execTransaction: <TAbiItem>{
         "type": "function",
         "stateMutability": "payable",
         "outputs": [
@@ -383,7 +372,7 @@ const SafeAbi = {
             }
         ]
     },
-    getTransactionHash: <AbiItem> {
+    getTransactionHash: <TAbiItem> {
         "type": "function",
         "stateMutability": "view",
         "outputs": [

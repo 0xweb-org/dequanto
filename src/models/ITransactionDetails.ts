@@ -1,8 +1,7 @@
-import { TransactionDescription } from 'ethers/lib/utils';
-import { Transaction } from 'web3-core';
+import { TEth } from './TEth'
 
 
-export interface ITransactionDetails extends Transaction {
+export interface ITransactionDetails extends TEth.TxLike {
     isError?: '1' | string
     details?: {
         name: string

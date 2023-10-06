@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-06-15 23:19
+ *  AUTO-Generated Class: 2023-10-05 18:18
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -15,10 +15,10 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
-import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+
 import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
-import type { AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
+import type { TAbiItem } from '@dequanto/types/TAbi';
+import type { TEth } from '@dequanto/models/TEth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
@@ -28,11 +28,16 @@ import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 
 export class IGovernorCompatibilityBravo extends ContractBase {
     constructor(
-        public address: TAddress = '',
+        public address: TEth.Address = null,
         public client: Web3Client = di.resolve(EthWeb3Client, ),
         public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
+    }
+
+    // 0x4bf5d7e9
+    async CLOCK_MODE (): Promise<string> {
+        return this.$read(this.$getAbiItem('function', 'CLOCK_MODE'));
     }
 
     // 0xdd4e2ba5
@@ -41,8 +46,12 @@ export class IGovernorCompatibilityBravo extends ContractBase {
     }
 
     // 0x40e58ee5
-    async cancel (sender: TSender, proposalId: bigint): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'cancel'), sender, proposalId);
+    async cancel (sender: TSender, proposalId: bigint): Promise<TxWriter>
+    // 0x452115d6
+    async cancel (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TBufferLike[], descriptionHash: TBufferLike): Promise<TxWriter>
+    async cancel (sender: TSender, ...args): Promise<TxWriter> {
+        let abi = this.$getAbiItemOverload([ 'function cancel(uint256)', 'function cancel(address[], uint256[], bytes[], bytes32) returns uint256' ], args);
+        return this.$write(abi, sender, ...args);
     }
 
     // 0x56781388
@@ -70,6 +79,11 @@ export class IGovernorCompatibilityBravo extends ContractBase {
         return this.$write(this.$getAbiItem('function', 'castVoteWithReasonAndParamsBySig'), sender, proposalId, support, reason, params, v, r, s);
     }
 
+    // 0x91ddadf4
+    async clock (): Promise<number> {
+        return this.$read(this.$getAbiItem('function', 'clock'));
+    }
+
     // 0x2656227d
     async execute (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TBufferLike[], descriptionHash: TBufferLike): Promise<TxWriter>
     // 0xfe0d94c1
@@ -90,13 +104,13 @@ export class IGovernorCompatibilityBravo extends ContractBase {
     }
 
     // 0xeb9019d4
-    async getVotes (account: TAddress, blockNumber: bigint): Promise<bigint> {
-        return this.$read(this.$getAbiItem('function', 'getVotes'), account, blockNumber);
+    async getVotes (account: TAddress, timepoint: bigint): Promise<bigint> {
+        return this.$read(this.$getAbiItem('function', 'getVotes'), account, timepoint);
     }
 
     // 0x9a802a6d
-    async getVotesWithParams (account: TAddress, blockNumber: bigint, params: TBufferLike): Promise<bigint> {
-        return this.$read(this.$getAbiItem('function', 'getVotesWithParams'), account, blockNumber, params);
+    async getVotesWithParams (account: TAddress, timepoint: bigint, params: TBufferLike): Promise<bigint> {
+        return this.$read(this.$getAbiItem('function', 'getVotesWithParams'), account, timepoint, params);
     }
 
     // 0x43859632
@@ -117,6 +131,11 @@ export class IGovernorCompatibilityBravo extends ContractBase {
     // 0xc01f9e37
     async proposalDeadline (proposalId: bigint): Promise<bigint> {
         return this.$read(this.$getAbiItem('function', 'proposalDeadline'), proposalId);
+    }
+
+    // 0x143489d0
+    async proposalProposer (proposalId: bigint): Promise<TAddress> {
+        return this.$read(this.$getAbiItem('function', 'proposalProposer'), proposalId);
     }
 
     // 0x2d63f693
@@ -144,8 +163,8 @@ export class IGovernorCompatibilityBravo extends ContractBase {
     }
 
     // 0xf8ce560a
-    async quorum (blockNumber: bigint): Promise<bigint> {
-        return this.$read(this.$getAbiItem('function', 'quorum'), blockNumber);
+    async quorum (timepoint: bigint): Promise<bigint> {
+        return this.$read(this.$getAbiItem('function', 'quorum'), timepoint);
     }
 
     // 0x24bc1a64
@@ -187,13 +206,13 @@ export class IGovernorCompatibilityBravo extends ContractBase {
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
-        tx: Transaction
-        block: BlockTransactionString
+        tx: TEth.Tx
+        block: TEth.Block<TEth.Hex>
         calldata: IMethods[TMethod]
     }> {
         options ??= {};
         options.filter ??= {};
-        options.filter.method = <any> method;
+        options.filter.method = method;
         return <any> this.$onTransaction(options);
     }
 
@@ -221,27 +240,27 @@ export class IGovernorCompatibilityBravo extends ContractBase {
         return this.$onLog('VoteCastWithParams', fn);
     }
 
-    extractLogsProposalCanceled (tx: TransactionReceipt): ITxLogItem<TLogProposalCanceled>[] {
+    extractLogsProposalCanceled (tx: TEth.TxReceipt): ITxLogItem<TLogProposalCanceled>[] {
         let abi = this.$getAbiItem('event', 'ProposalCanceled');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogProposalCanceled>[];
     }
 
-    extractLogsProposalCreated (tx: TransactionReceipt): ITxLogItem<TLogProposalCreated>[] {
+    extractLogsProposalCreated (tx: TEth.TxReceipt): ITxLogItem<TLogProposalCreated>[] {
         let abi = this.$getAbiItem('event', 'ProposalCreated');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogProposalCreated>[];
     }
 
-    extractLogsProposalExecuted (tx: TransactionReceipt): ITxLogItem<TLogProposalExecuted>[] {
+    extractLogsProposalExecuted (tx: TEth.TxReceipt): ITxLogItem<TLogProposalExecuted>[] {
         let abi = this.$getAbiItem('event', 'ProposalExecuted');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogProposalExecuted>[];
     }
 
-    extractLogsVoteCast (tx: TransactionReceipt): ITxLogItem<TLogVoteCast>[] {
+    extractLogsVoteCast (tx: TEth.TxReceipt): ITxLogItem<TLogVoteCast>[] {
         let abi = this.$getAbiItem('event', 'VoteCast');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogVoteCast>[];
     }
 
-    extractLogsVoteCastWithParams (tx: TransactionReceipt): ITxLogItem<TLogVoteCastWithParams>[] {
+    extractLogsVoteCastWithParams (tx: TEth.TxReceipt): ITxLogItem<TLogVoteCastWithParams>[] {
         let abi = this.$getAbiItem('event', 'VoteCastWithParams');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogVoteCastWithParams>[];
     }
@@ -286,7 +305,7 @@ export class IGovernorCompatibilityBravo extends ContractBase {
         return await this.$getPastLogsParsed('VoteCastWithParams', options) as any;
     }
 
-    abi: AbiItem[] = [{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"ProposalCanceled","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"proposalId","type":"uint256"},{"indexed":false,"internalType":"address","name":"proposer","type":"address"},{"indexed":false,"internalType":"address[]","name":"targets","type":"address[]"},{"indexed":false,"internalType":"uint256[]","name":"values","type":"uint256[]"},{"indexed":false,"internalType":"string[]","name":"signatures","type":"string[]"},{"indexed":false,"internalType":"bytes[]","name":"calldatas","type":"bytes[]"},{"indexed":false,"internalType":"uint256","name":"startBlock","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"endBlock","type":"uint256"},{"indexed":false,"internalType":"string","name":"description","type":"string"}],"name":"ProposalCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"ProposalExecuted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"voter","type":"address"},{"indexed":false,"internalType":"uint256","name":"proposalId","type":"uint256"},{"indexed":false,"internalType":"uint8","name":"support","type":"uint8"},{"indexed":false,"internalType":"uint256","name":"weight","type":"uint256"},{"indexed":false,"internalType":"string","name":"reason","type":"string"}],"name":"VoteCast","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"voter","type":"address"},{"indexed":false,"internalType":"uint256","name":"proposalId","type":"uint256"},{"indexed":false,"internalType":"uint8","name":"support","type":"uint8"},{"indexed":false,"internalType":"uint256","name":"weight","type":"uint256"},{"indexed":false,"internalType":"string","name":"reason","type":"string"},{"indexed":false,"internalType":"bytes","name":"params","type":"bytes"}],"name":"VoteCastWithParams","type":"event"},{"inputs":[],"name":"COUNTING_MODE","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"cancel","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"},{"internalType":"uint8","name":"support","type":"uint8"}],"name":"castVote","outputs":[{"internalType":"uint256","name":"balance","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"},{"internalType":"uint8","name":"support","type":"uint8"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"castVoteBySig","outputs":[{"internalType":"uint256","name":"balance","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"},{"internalType":"uint8","name":"support","type":"uint8"},{"internalType":"string","name":"reason","type":"string"}],"name":"castVoteWithReason","outputs":[{"internalType":"uint256","name":"balance","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"},{"internalType":"uint8","name":"support","type":"uint8"},{"internalType":"string","name":"reason","type":"string"},{"internalType":"bytes","name":"params","type":"bytes"}],"name":"castVoteWithReasonAndParams","outputs":[{"internalType":"uint256","name":"balance","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"},{"internalType":"uint8","name":"support","type":"uint8"},{"internalType":"string","name":"reason","type":"string"},{"internalType":"bytes","name":"params","type":"bytes"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"castVoteWithReasonAndParamsBySig","outputs":[{"internalType":"uint256","name":"balance","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"targets","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"},{"internalType":"bytes[]","name":"calldatas","type":"bytes[]"},{"internalType":"bytes32","name":"descriptionHash","type":"bytes32"}],"name":"execute","outputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"execute","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"getActions","outputs":[{"internalType":"address[]","name":"targets","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"},{"internalType":"string[]","name":"signatures","type":"string[]"},{"internalType":"bytes[]","name":"calldatas","type":"bytes[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"},{"internalType":"address","name":"voter","type":"address"}],"name":"getReceipt","outputs":[{"components":[{"internalType":"bool","name":"hasVoted","type":"bool"},{"internalType":"uint8","name":"support","type":"uint8"},{"internalType":"uint96","name":"votes","type":"uint96"}],"internalType":"struct IGovernorCompatibilityBravo.Receipt","name":"","type":"tuple"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"blockNumber","type":"uint256"}],"name":"getVotes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"blockNumber","type":"uint256"},{"internalType":"bytes","name":"params","type":"bytes"}],"name":"getVotesWithParams","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"},{"internalType":"address","name":"account","type":"address"}],"name":"hasVoted","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address[]","name":"targets","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"},{"internalType":"bytes[]","name":"calldatas","type":"bytes[]"},{"internalType":"bytes32","name":"descriptionHash","type":"bytes32"}],"name":"hashProposal","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"proposalDeadline","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"proposalSnapshot","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"proposals","outputs":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"address","name":"proposer","type":"address"},{"internalType":"uint256","name":"eta","type":"uint256"},{"internalType":"uint256","name":"startBlock","type":"uint256"},{"internalType":"uint256","name":"endBlock","type":"uint256"},{"internalType":"uint256","name":"forVotes","type":"uint256"},{"internalType":"uint256","name":"againstVotes","type":"uint256"},{"internalType":"uint256","name":"abstainVotes","type":"uint256"},{"internalType":"bool","name":"canceled","type":"bool"},{"internalType":"bool","name":"executed","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address[]","name":"targets","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"},{"internalType":"bytes[]","name":"calldatas","type":"bytes[]"},{"internalType":"string","name":"description","type":"string"}],"name":"propose","outputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"targets","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"},{"internalType":"string[]","name":"signatures","type":"string[]"},{"internalType":"bytes[]","name":"calldatas","type":"bytes[]"},{"internalType":"string","name":"description","type":"string"}],"name":"propose","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"queue","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"blockNumber","type":"uint256"}],"name":"quorum","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"quorumVotes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"state","outputs":[{"internalType":"enum IGovernor.ProposalState","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"version","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"votingDelay","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"votingPeriod","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]
+    abi: TAbiItem[] = [{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"ProposalCanceled","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"proposalId","type":"uint256"},{"indexed":false,"internalType":"address","name":"proposer","type":"address"},{"indexed":false,"internalType":"address[]","name":"targets","type":"address[]"},{"indexed":false,"internalType":"uint256[]","name":"values","type":"uint256[]"},{"indexed":false,"internalType":"string[]","name":"signatures","type":"string[]"},{"indexed":false,"internalType":"bytes[]","name":"calldatas","type":"bytes[]"},{"indexed":false,"internalType":"uint256","name":"voteStart","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"voteEnd","type":"uint256"},{"indexed":false,"internalType":"string","name":"description","type":"string"}],"name":"ProposalCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"ProposalExecuted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"voter","type":"address"},{"indexed":false,"internalType":"uint256","name":"proposalId","type":"uint256"},{"indexed":false,"internalType":"uint8","name":"support","type":"uint8"},{"indexed":false,"internalType":"uint256","name":"weight","type":"uint256"},{"indexed":false,"internalType":"string","name":"reason","type":"string"}],"name":"VoteCast","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"voter","type":"address"},{"indexed":false,"internalType":"uint256","name":"proposalId","type":"uint256"},{"indexed":false,"internalType":"uint8","name":"support","type":"uint8"},{"indexed":false,"internalType":"uint256","name":"weight","type":"uint256"},{"indexed":false,"internalType":"string","name":"reason","type":"string"},{"indexed":false,"internalType":"bytes","name":"params","type":"bytes"}],"name":"VoteCastWithParams","type":"event"},{"inputs":[],"name":"CLOCK_MODE","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"COUNTING_MODE","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"cancel","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"targets","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"},{"internalType":"bytes[]","name":"calldatas","type":"bytes[]"},{"internalType":"bytes32","name":"descriptionHash","type":"bytes32"}],"name":"cancel","outputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"},{"internalType":"uint8","name":"support","type":"uint8"}],"name":"castVote","outputs":[{"internalType":"uint256","name":"balance","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"},{"internalType":"uint8","name":"support","type":"uint8"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"castVoteBySig","outputs":[{"internalType":"uint256","name":"balance","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"},{"internalType":"uint8","name":"support","type":"uint8"},{"internalType":"string","name":"reason","type":"string"}],"name":"castVoteWithReason","outputs":[{"internalType":"uint256","name":"balance","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"},{"internalType":"uint8","name":"support","type":"uint8"},{"internalType":"string","name":"reason","type":"string"},{"internalType":"bytes","name":"params","type":"bytes"}],"name":"castVoteWithReasonAndParams","outputs":[{"internalType":"uint256","name":"balance","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"},{"internalType":"uint8","name":"support","type":"uint8"},{"internalType":"string","name":"reason","type":"string"},{"internalType":"bytes","name":"params","type":"bytes"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"castVoteWithReasonAndParamsBySig","outputs":[{"internalType":"uint256","name":"balance","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"clock","outputs":[{"internalType":"uint48","name":"","type":"uint48"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address[]","name":"targets","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"},{"internalType":"bytes[]","name":"calldatas","type":"bytes[]"},{"internalType":"bytes32","name":"descriptionHash","type":"bytes32"}],"name":"execute","outputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"execute","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"getActions","outputs":[{"internalType":"address[]","name":"targets","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"},{"internalType":"string[]","name":"signatures","type":"string[]"},{"internalType":"bytes[]","name":"calldatas","type":"bytes[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"},{"internalType":"address","name":"voter","type":"address"}],"name":"getReceipt","outputs":[{"components":[{"internalType":"bool","name":"hasVoted","type":"bool"},{"internalType":"uint8","name":"support","type":"uint8"},{"internalType":"uint96","name":"votes","type":"uint96"}],"internalType":"struct IGovernorCompatibilityBravo.Receipt","name":"","type":"tuple"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"timepoint","type":"uint256"}],"name":"getVotes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"timepoint","type":"uint256"},{"internalType":"bytes","name":"params","type":"bytes"}],"name":"getVotesWithParams","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"},{"internalType":"address","name":"account","type":"address"}],"name":"hasVoted","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address[]","name":"targets","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"},{"internalType":"bytes[]","name":"calldatas","type":"bytes[]"},{"internalType":"bytes32","name":"descriptionHash","type":"bytes32"}],"name":"hashProposal","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"proposalDeadline","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"proposalProposer","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"proposalSnapshot","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"proposals","outputs":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"address","name":"proposer","type":"address"},{"internalType":"uint256","name":"eta","type":"uint256"},{"internalType":"uint256","name":"startBlock","type":"uint256"},{"internalType":"uint256","name":"endBlock","type":"uint256"},{"internalType":"uint256","name":"forVotes","type":"uint256"},{"internalType":"uint256","name":"againstVotes","type":"uint256"},{"internalType":"uint256","name":"abstainVotes","type":"uint256"},{"internalType":"bool","name":"canceled","type":"bool"},{"internalType":"bool","name":"executed","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address[]","name":"targets","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"},{"internalType":"bytes[]","name":"calldatas","type":"bytes[]"},{"internalType":"string","name":"description","type":"string"}],"name":"propose","outputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"targets","type":"address[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"},{"internalType":"string[]","name":"signatures","type":"string[]"},{"internalType":"bytes[]","name":"calldatas","type":"bytes[]"},{"internalType":"string","name":"description","type":"string"}],"name":"propose","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"queue","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"timepoint","type":"uint256"}],"name":"quorum","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"quorumVotes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"proposalId","type":"uint256"}],"name":"state","outputs":[{"internalType":"enum IGovernor.ProposalState","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"version","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"votingDelay","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"votingPeriod","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]
 
     
 }
@@ -300,9 +319,9 @@ type TSender = TAccount & {
     };
     type TLogProposalCanceledParameters = [ proposalId: bigint ];
     type TLogProposalCreated = {
-        proposalId: bigint, proposer: TAddress, targets: TAddress[], values: bigint[], signatures: string[], calldatas: TBufferLike[], startBlock: bigint, endBlock: bigint, description: string
+        proposalId: bigint, proposer: TAddress, targets: TAddress[], values: bigint[], signatures: string[], calldatas: TBufferLike[], voteStart: bigint, voteEnd: bigint, description: string
     };
-    type TLogProposalCreatedParameters = [ proposalId: bigint, proposer: TAddress, targets: TAddress[], values: bigint[], signatures: string[], calldatas: TBufferLike[], startBlock: bigint, endBlock: bigint, description: string ];
+    type TLogProposalCreatedParameters = [ proposalId: bigint, proposer: TAddress, targets: TAddress[], values: bigint[], signatures: string[], calldatas: TBufferLike[], voteStart: bigint, voteEnd: bigint, description: string ];
     type TLogProposalExecuted = {
         proposalId: bigint
     };
@@ -327,6 +346,11 @@ interface IEvents {
 
 
 
+interface IMethodCLOCK_MODE {
+  method: "CLOCK_MODE"
+  arguments: [  ]
+}
+
 interface IMethodCOUNTING_MODE {
   method: "COUNTING_MODE"
   arguments: [  ]
@@ -334,7 +358,7 @@ interface IMethodCOUNTING_MODE {
 
 interface IMethodCancel {
   method: "cancel"
-  arguments: [ proposalId: bigint ]
+  arguments: [ proposalId: bigint ] | [ targets: TAddress[], values: bigint[], calldatas: TBufferLike[], descriptionHash: TBufferLike ]
 }
 
 interface IMethodCastVote {
@@ -362,6 +386,11 @@ interface IMethodCastVoteWithReasonAndParamsBySig {
   arguments: [ proposalId: bigint, support: number, reason: string, params: TBufferLike, v: number, r: TBufferLike, s: TBufferLike ]
 }
 
+interface IMethodClock {
+  method: "clock"
+  arguments: [  ]
+}
+
 interface IMethodExecute {
   method: "execute"
   arguments: [ targets: TAddress[], values: bigint[], calldatas: TBufferLike[], descriptionHash: TBufferLike ] | [ proposalId: bigint ]
@@ -379,12 +408,12 @@ interface IMethodGetReceipt {
 
 interface IMethodGetVotes {
   method: "getVotes"
-  arguments: [ account: TAddress, blockNumber: bigint ]
+  arguments: [ account: TAddress, timepoint: bigint ]
 }
 
 interface IMethodGetVotesWithParams {
   method: "getVotesWithParams"
-  arguments: [ account: TAddress, blockNumber: bigint, params: TBufferLike ]
+  arguments: [ account: TAddress, timepoint: bigint, params: TBufferLike ]
 }
 
 interface IMethodHasVoted {
@@ -404,6 +433,11 @@ interface IMethodName {
 
 interface IMethodProposalDeadline {
   method: "proposalDeadline"
+  arguments: [ proposalId: bigint ]
+}
+
+interface IMethodProposalProposer {
+  method: "proposalProposer"
   arguments: [ proposalId: bigint ]
 }
 
@@ -429,7 +463,7 @@ interface IMethodQueue {
 
 interface IMethodQuorum {
   method: "quorum"
-  arguments: [ blockNumber: bigint ]
+  arguments: [ timepoint: bigint ]
 }
 
 interface IMethodQuorumVotes {
@@ -463,6 +497,7 @@ interface IMethodVotingPeriod {
 }
 
 interface IMethods {
+  CLOCK_MODE: IMethodCLOCK_MODE
   COUNTING_MODE: IMethodCOUNTING_MODE
   cancel: IMethodCancel
   castVote: IMethodCastVote
@@ -470,6 +505,7 @@ interface IMethods {
   castVoteWithReason: IMethodCastVoteWithReason
   castVoteWithReasonAndParams: IMethodCastVoteWithReasonAndParams
   castVoteWithReasonAndParamsBySig: IMethodCastVoteWithReasonAndParamsBySig
+  clock: IMethodClock
   execute: IMethodExecute
   getActions: IMethodGetActions
   getReceipt: IMethodGetReceipt
@@ -479,6 +515,7 @@ interface IMethods {
   hashProposal: IMethodHashProposal
   name: IMethodName
   proposalDeadline: IMethodProposalDeadline
+  proposalProposer: IMethodProposalProposer
   proposalSnapshot: IMethodProposalSnapshot
   proposals: IMethodProposals
   propose: IMethodPropose
@@ -500,6 +537,7 @@ interface IMethods {
 
 interface IIGovernorCompatibilityBravoTxCaller {
     cancel (sender: TSender, proposalId: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    cancel (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TBufferLike[], descriptionHash: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     castVote (sender: TSender, proposalId: bigint, support: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     castVoteBySig (sender: TSender, proposalId: bigint, support: number, v: number, r: TBufferLike, s: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     castVoteWithReason (sender: TSender, proposalId: bigint, support: number, reason: string): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
@@ -514,17 +552,18 @@ interface IIGovernorCompatibilityBravoTxCaller {
 
 
 interface IIGovernorCompatibilityBravoTxData {
-    cancel (sender: TSender, proposalId: bigint): Promise<TransactionConfig>
-    castVote (sender: TSender, proposalId: bigint, support: number): Promise<TransactionConfig>
-    castVoteBySig (sender: TSender, proposalId: bigint, support: number, v: number, r: TBufferLike, s: TBufferLike): Promise<TransactionConfig>
-    castVoteWithReason (sender: TSender, proposalId: bigint, support: number, reason: string): Promise<TransactionConfig>
-    castVoteWithReasonAndParams (sender: TSender, proposalId: bigint, support: number, reason: string, params: TBufferLike): Promise<TransactionConfig>
-    castVoteWithReasonAndParamsBySig (sender: TSender, proposalId: bigint, support: number, reason: string, params: TBufferLike, v: number, r: TBufferLike, s: TBufferLike): Promise<TransactionConfig>
-    execute (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TBufferLike[], descriptionHash: TBufferLike): Promise<TransactionConfig>
-    execute (sender: TSender, proposalId: bigint): Promise<TransactionConfig>
-    propose (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TBufferLike[], description: string): Promise<TransactionConfig>
-    propose (sender: TSender, targets: TAddress[], values: bigint[], signatures: string[], calldatas: TBufferLike[], description: string): Promise<TransactionConfig>
-    queue (sender: TSender, proposalId: bigint): Promise<TransactionConfig>
+    cancel (sender: TSender, proposalId: bigint): Promise<TEth.TxLike>
+    cancel (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TBufferLike[], descriptionHash: TBufferLike): Promise<TEth.TxLike>
+    castVote (sender: TSender, proposalId: bigint, support: number): Promise<TEth.TxLike>
+    castVoteBySig (sender: TSender, proposalId: bigint, support: number, v: number, r: TBufferLike, s: TBufferLike): Promise<TEth.TxLike>
+    castVoteWithReason (sender: TSender, proposalId: bigint, support: number, reason: string): Promise<TEth.TxLike>
+    castVoteWithReasonAndParams (sender: TSender, proposalId: bigint, support: number, reason: string, params: TBufferLike): Promise<TEth.TxLike>
+    castVoteWithReasonAndParamsBySig (sender: TSender, proposalId: bigint, support: number, reason: string, params: TBufferLike, v: number, r: TBufferLike, s: TBufferLike): Promise<TEth.TxLike>
+    execute (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TBufferLike[], descriptionHash: TBufferLike): Promise<TEth.TxLike>
+    execute (sender: TSender, proposalId: bigint): Promise<TEth.TxLike>
+    propose (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TBufferLike[], description: string): Promise<TEth.TxLike>
+    propose (sender: TSender, targets: TAddress[], values: bigint[], signatures: string[], calldatas: TBufferLike[], description: string): Promise<TEth.TxLike>
+    queue (sender: TSender, proposalId: bigint): Promise<TEth.TxLike>
 }
 
 

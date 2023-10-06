@@ -1,5 +1,5 @@
 import alot from 'alot';
-import { type AbiItem } from 'web3-utils';
+import { type TAbiItem } from '@dequanto/types/TAbi';
 import { TAddress } from '@dequanto/models/TAddress';
 import { File } from 'atma-io';
 import { class_Uri } from 'atma-utils';
@@ -22,7 +22,7 @@ export class GeneratorFromAbi {
         return Gen;
     }
 
-    async generate (abiJson: AbiItem[], opts: {
+    async generate (abiJson: TAbiItem[], opts: {
         network: TPlatform
         name: string
         contractName: string
@@ -212,7 +212,7 @@ export class GeneratorFromAbi {
             .replace(`/* IMPORTS */`, imports.join('\n'))
             .replace(`/* ERRORS */`, Gen.serializeErrors(className, abiJson))
             .replace(/\$NAME\$/g, className)
-            .replace(`$ADDRESS$`, opts.address ?? '')
+            .replace(`$ADDRESS$`, opts.address ? `'${opts.address}'` : null)
             .replace(`/* METHODS */`, methods)
             .replace(`/* EVENTS */`, events)
             .replace(`/* EVENTS_EXTRACTORS */`, eventsExtractors)
@@ -274,14 +274,14 @@ export class GeneratorFromAbi {
 namespace Gen {
 
 
-    export function serializeMethodTs (abi: AbiItem) {
+    export function serializeMethodTs (abi: TAbiItem) {
         let isRead = isReader(abi);
         if (isRead) {
             return serializeReadMethodTs(abi);
         }
         return serializeWriteMethodTs(abi);
     }
-    export function serializeMethodTsOverloads (abis: AbiItem[]) {
+    export function serializeMethodTsOverloads (abis: TAbiItem[]) {
         let isRead = abis.every(abi => isReader(abi));
         if (isRead) {
             return serializeReadMethodTsOverloads(abis);
@@ -290,7 +290,7 @@ namespace Gen {
     }
 
     // abi.length > 1 if has method overloads
-    export function serializeMethodInterfacesTs (name: string, abis: AbiItem[]) {
+    export function serializeMethodInterfacesTs (name: string, abis: TAbiItem[]) {
         let args = abis.map(abi => {
             let { fnInputArguments } = serializeArgumentsTs(abi);
             return `[ ${fnInputArguments} ]`;
@@ -324,7 +324,7 @@ namespace Gen {
             code: code.join('\n')
         };
     }
-    export function serializeEventsInterfacesAllTs (events: AbiItem[] ) {
+    export function serializeEventsInterfacesAllTs (events: TAbiItem[] ) {
         let fields = events.map(item => {
             return `  ${item.name}: TLog${item.name}Parameters`;
         });
@@ -339,7 +339,7 @@ namespace Gen {
         };
     }
 
-    export function serializeEvent (abi: AbiItem) {
+    export function serializeEvent (abi: TAbiItem) {
         let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
         return `
             on${abi.name} (fn?: (event: TClientEventsStreamData<TLog${abi.name}Parameters>) => void): ClientEventsStream<TClientEventsStreamData<TLog${abi.name}Parameters>> {
@@ -347,15 +347,15 @@ namespace Gen {
             }
         `;
     }
-    export function serializeEventExtractor (abi: AbiItem) {
+    export function serializeEventExtractor (abi: TAbiItem) {
         return `
-            extractLogs${abi.name} (tx: TransactionReceipt): ITxLogItem<TLog${abi.name}>[] {
+            extractLogs${abi.name} (tx: TEth.TxReceipt): ITxLogItem<TLog${abi.name}>[] {
                 let abi = this.$getAbiItem('event', '${abi.name}');
                 return this.$extractLogs(tx, abi) as any as ITxLogItem<TLog${abi.name}>[];
             }
         `;
     }
-    export function serializeEventFetcher (abi: AbiItem) {
+    export function serializeEventFetcher (abi: TAbiItem) {
         let inputs = abi.inputs;
         let indexed = alot(inputs).takeWhile(x => x.indexed).toArray();
         let indexedParams = indexed.map(param => `${param.name}?: ${ $abiType.getTsType(param.type, param) }`)
@@ -369,7 +369,7 @@ namespace Gen {
             }
         `;
     }
-    export function serializeEventInterface (abi: AbiItem) {
+    export function serializeEventInterface (abi: TAbiItem) {
         let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
         return `
             type TLog${abi.name} = {
@@ -379,11 +379,11 @@ namespace Gen {
         `;
     }
 
-    export function isReader (abi: AbiItem) {
+    export function isReader (abi: TAbiItem) {
         return ['view', 'pure', null].includes(abi.stateMutability);
     }
 
-    export function serializeMethodAbi(abi: AbiItem, includeNames?: boolean) {
+    export function serializeMethodAbi(abi: TAbiItem, includeNames?: boolean) {
         let params = abi.inputs?.map(x => {
             let param = x.type;
             if (includeNames && x.name) {
@@ -399,7 +399,7 @@ namespace Gen {
         return `function ${abi.name}(${params}) ${returnsStr}`.trim();
     }
 
-    function serializeReadMethodTs (abi: AbiItem) {
+    function serializeReadMethodTs (abi: TAbiItem) {
         let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
         if (callInputArguments) {
             callInputArguments = `, ${callInputArguments}`;
@@ -411,7 +411,7 @@ namespace Gen {
             }
         `;
     }
-    function serializeReadMethodTsOverloads (abis: AbiItem[]) {
+    function serializeReadMethodTsOverloads (abis: TAbiItem[]) {
         let overrides = abis.map(abi => {
             let { fnInputArguments, fnResult } = serializeArgumentsTs(abi);
             return `
@@ -432,7 +432,7 @@ namespace Gen {
         `;
     }
 
-    function serializeWriteMethodTs (abi: AbiItem) {
+    function serializeWriteMethodTs (abi: TAbiItem) {
         let { fnInputArguments, callInputArguments } = serializeArgumentsTs(abi);
         if (callInputArguments) {
             callInputArguments = `, ${callInputArguments}`;
@@ -445,7 +445,7 @@ namespace Gen {
             }
         `;
     }
-    function serializeWriteMethodTsOverloads (abis: AbiItem[]) {
+    function serializeWriteMethodTsOverloads (abis: TAbiItem[]) {
         let overrides = abis.map(abi => {
             let { fnInputArguments, fnResult } = serializeArgumentsTs(abi);
             return `
@@ -465,7 +465,7 @@ namespace Gen {
         `;
     }
 
-    function serializeArgumentsTs (abi: AbiItem) {
+    function serializeArgumentsTs (abi: TAbiItem) {
         let inputs = abi.inputs.map((input, i) => {
             let result = { ...input };
             if (result.name == null || result.name === '') {
@@ -555,7 +555,7 @@ namespace Gen {
 
 
 
-    export function serializeErrors(className: string, abiJson: AbiItem[]): string {
+    export function serializeErrors(className: string, abiJson: TAbiItem[]): string {
         let errors = abiJson.filter(x => (x as any).type === 'error');
         if (errors.length === 0) {
             return '';
@@ -580,7 +580,7 @@ namespace Gen {
         return lines.join('\n');
     }
 
-    export function serializeTxCallerMethods (className: string, abiJson: AbiItem[]): string {
+    export function serializeTxCallerMethods (className: string, abiJson: TAbiItem[]): string {
         let methods = abiJson.filter(x => x.type === 'function');
         let writeMethods = methods.filter(abi => isReader(abi) === false);
         let lines = [];
@@ -591,7 +591,7 @@ namespace Gen {
         return lines.join('\n');
 
 
-        function serializeMethodTs (abi: AbiItem) {
+        function serializeMethodTs (abi: TAbiItem) {
             let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
             if (callInputArguments) {
                 callInputArguments = `, ${callInputArguments}`;
@@ -600,7 +600,7 @@ namespace Gen {
         }
     }
 
-    export function serializeTxDataMethods (className: string, abiJson: AbiItem[]): string {
+    export function serializeTxDataMethods (className: string, abiJson: TAbiItem[]): string {
         let methods = abiJson.filter(x => x.type === 'function');
         let writeMethods = methods.filter(abi => isReader(abi) === false);
         let lines = [];
@@ -611,12 +611,12 @@ namespace Gen {
         return lines.join('\n');
 
 
-        function serializeInterfaceMethodTs (abi: AbiItem) {
+        function serializeInterfaceMethodTs (abi: TAbiItem) {
             let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
             if (callInputArguments) {
                 callInputArguments = `, ${callInputArguments}`;
             }
-            return `    ${abi.name} (sender: TSender, ${fnInputArguments}): Promise<TransactionConfig>`;
+            return `    ${abi.name} (sender: TSender, ${fnInputArguments}): Promise<TEth.TxLike>`;
         }
     }
 }

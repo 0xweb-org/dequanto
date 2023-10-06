@@ -8,6 +8,7 @@ import { $hex } from '@dequanto/utils/$hex';
 import { l } from '@dequanto/utils/$logger';
 
 UTest({
+
     async 'should read contracts storage'() {
 
         let provider = new HardhatProvider();
@@ -52,7 +53,6 @@ UTest({
         eq_(await read('owner'), provider.deployer().address.toLowerCase());
         eq_(await read('isTrue'), true);
         eq_(await read('u16'), 31);
-
 
         eq_(toString(await read('password')), 'hello');
 
@@ -101,7 +101,7 @@ UTest({
     },
 
     'arrays': {
-        async 'should read packed flags from single slot'() {
+        async 'should read packed flags from single slot' () {
             let code = `
                 contract Counter {
                     bool public flag = true;
@@ -383,6 +383,6 @@ UTest({
 
             let dynamicBytes = await storage.get('dynamicBytes');
             eq_(dynamicBytes,'0x3344');
-
+        }
     }
-})
+});

@@ -1,5 +1,4 @@
 import alot from 'alot';
-import type { TransactionConfig } from 'web3-core';
 
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
@@ -8,24 +7,24 @@ import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $address } from '@dequanto/utils/$address';
 import { UserOperation, UserOperationDefaults } from './models/UserOperation';
 import { ChainAccount } from '@dequanto/models/TAccount';
-import { $sign } from '@dequanto/utils/$sign';
 import { obj_extendDefaults } from 'atma-utils';
-import { $contract } from '@dequanto/utils/$contract';
 import { $require } from '@dequanto/utils/$require';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { ContractAbiProvider } from '@dequanto/contracts/ContractAbiProvider';
 import { $erc4337 } from './utils/$erc4337';
 import { $hex } from '@dequanto/utils/$hex';
-import { ContractFactory } from '@dequanto/contracts/ContractFactory';
+import { ContractClassFactory } from '@dequanto/contracts/ContractClassFactory';
 import { Erc4337Abi } from './models/Erc4337Abi';
+import { TEth } from '@dequanto/models/TEth';
+import { $sig } from '@dequanto/utils/$sig';
 
 
 export class Erc4337Service {
 
 
-    private accountFactoryContract = ContractFactory.fromAbi(this.info.addresses.accountFactory, Erc4337Abi.AccountFactory, this.client, this.explorer);
-    private accountContract = ContractFactory.fromAbi($address.ZERO, Erc4337Abi.Account, this.client, this.explorer);
-    private entryPointContract = ContractFactory.fromAbi(this.info.addresses.entryPoint, Erc4337Abi.EntryPoint, this.client, this.explorer);
+    private accountFactoryContract = ContractClassFactory.fromAbi(this.info.addresses.accountFactory, Erc4337Abi.AccountFactory, this.client, this.explorer);
+    private accountContract = ContractClassFactory.fromAbi($address.ZERO, Erc4337Abi.Account, this.client, this.explorer);
+    private entryPointContract = ContractClassFactory.fromAbi(this.info.addresses.entryPoint, Erc4337Abi.EntryPoint, this.client, this.explorer);
 
     constructor(public client: Web3Client, public explorer: IBlockChainExplorer, public info: {
         addresses: {
@@ -36,24 +35,26 @@ export class Erc4337Service {
 
     }
 
-    async decodeUserOperations(dataHex: string, options?: { decodeContractCall: boolean }) {
+    async decodeUserOperations(dataHex: TEth.Hex, options?: { decodeContractCall: boolean }) {
         let abi = this.entryPointContract.abi;
-        let entryPointCall = $contract.decodeMethodCall(dataHex, abi);
+        let entryPointCall = $abiUtils.parseMethodCallData(abi, dataHex);
         $require.notNull(entryPointCall, `Entry Point input can not be parsed`);
-        $require.True(entryPointCall.method === 'handleOps', `${entryPointCall.method} is not handleOps`);
+        $require.True(entryPointCall.name === 'handleOps', `${entryPointCall.name} is not handleOps`);
 
-        let userOps = entryPointCall.arguments[0] as UserOperation[];
+        let userOps = entryPointCall.args[0] as UserOperation[];
         let contractCalls = [];
         let contractCallsParsed = [];
         if (options?.decodeContractCall) {
             contractCalls = userOps.map(userOp => {
-                let callData = userOp.callData as string;
+                let callData = userOp.callData as TEth.Hex;
 
-                let accountCall = $contract.decodeMethodCall(callData, this.accountContract.abi);
+                $require.notNull(callData, `UserOperation calldata is undefined`);
+
+                let accountCall = $abiUtils.parseMethodCallData(this.accountContract.abi, callData);
                 $require.notNull(accountCall, `Account input can not be parsed`);
-                $require.True(accountCall.method === 'execute', `${entryPointCall.method} is not execute`);
+                $require.True(accountCall.name === 'execute', `${entryPointCall.name} is not execute`);
 
-                let [address, value, data] = accountCall.arguments;
+                let [address, value, data] = accountCall.args;
                 return {
                     address,
                     value,
@@ -76,11 +77,11 @@ export class Erc4337Service {
                     return null;
                 }
                 let abi = result.abiJson;
-                let innerCall = $contract.decodeMethodCall(call.data, abi);
+                let innerCall = $abiUtils.parseMethodCallData(abi, call.data);
 
                 return {
-                    method: innerCall.method,
-                    arguments: innerCall.arguments,
+                    method: innerCall.name,
+                    arguments: innerCall.args,
                     value: call.value,
                     address: call.address,
                 };
@@ -125,7 +126,7 @@ export class Erc4337Service {
     }
 
     async prepareAccountCallData(targetAddress: TAddress, targetValue: bigint, targetCallData: string) {
-        let accountCallData: TransactionConfig = await this.accountContract.$data().execute(
+        let accountCallData: TEth.TxLike = await this.accountContract.$data().execute(
             { address: $address.ZERO },
             targetAddress,
             targetValue,
@@ -140,7 +141,7 @@ export class Erc4337Service {
         TMethod extends keyof Methods<TContract>,
 
     >(contract: TContract, method: TMethod, sender: { address: TAddress }, ...args: MethodArguments<TContract[TMethod]>) {
-        let callData: TransactionConfig = await contract.$data()[method](sender, ...args);
+        let callData: TEth.TxLike = await contract.$data()[method](sender, ...args);
         let callGas = await this.client.getGasEstimation(sender.address, callData);
         return {
             callData,
@@ -161,7 +162,7 @@ export class Erc4337Service {
         let userOp: UserOperation = obj_extendDefaults(op, UserOperationDefaults);
 
         let opHash = await this.getUserOpHash(userOp);
-        let sig = await $sign.signEIPHashed(this.client, opHash as string, owner);
+        let sig = await $sig.signMessage(opHash as string, owner, this.client);
         return {
             opHash,
             op: {

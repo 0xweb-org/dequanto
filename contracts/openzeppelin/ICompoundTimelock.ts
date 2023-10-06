@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-06-15 23:19
+ *  AUTO-Generated Class: 2023-10-05 18:18
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -15,10 +15,10 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
-import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+
 import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
-import type { AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
+import type { TAbiItem } from '@dequanto/types/TAbi';
+import type { TEth } from '@dequanto/models/TEth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
@@ -28,7 +28,7 @@ import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 
 export class ICompoundTimelock extends ContractBase {
     constructor(
-        public address: TAddress = '',
+        public address: TEth.Address = null,
         public client: Web3Client = di.resolve(EthWeb3Client, ),
         public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
@@ -109,13 +109,13 @@ export class ICompoundTimelock extends ContractBase {
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
-        tx: Transaction
-        block: BlockTransactionString
+        tx: TEth.Tx
+        block: TEth.Block<TEth.Hex>
         calldata: IMethods[TMethod]
     }> {
         options ??= {};
         options.filter ??= {};
-        options.filter.method = <any> method;
+        options.filter.method = method;
         return <any> this.$onTransaction(options);
     }
 
@@ -147,32 +147,32 @@ export class ICompoundTimelock extends ContractBase {
         return this.$onLog('QueueTransaction', fn);
     }
 
-    extractLogsCancelTransaction (tx: TransactionReceipt): ITxLogItem<TLogCancelTransaction>[] {
+    extractLogsCancelTransaction (tx: TEth.TxReceipt): ITxLogItem<TLogCancelTransaction>[] {
         let abi = this.$getAbiItem('event', 'CancelTransaction');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogCancelTransaction>[];
     }
 
-    extractLogsExecuteTransaction (tx: TransactionReceipt): ITxLogItem<TLogExecuteTransaction>[] {
+    extractLogsExecuteTransaction (tx: TEth.TxReceipt): ITxLogItem<TLogExecuteTransaction>[] {
         let abi = this.$getAbiItem('event', 'ExecuteTransaction');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogExecuteTransaction>[];
     }
 
-    extractLogsNewAdmin (tx: TransactionReceipt): ITxLogItem<TLogNewAdmin>[] {
+    extractLogsNewAdmin (tx: TEth.TxReceipt): ITxLogItem<TLogNewAdmin>[] {
         let abi = this.$getAbiItem('event', 'NewAdmin');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogNewAdmin>[];
     }
 
-    extractLogsNewDelay (tx: TransactionReceipt): ITxLogItem<TLogNewDelay>[] {
+    extractLogsNewDelay (tx: TEth.TxReceipt): ITxLogItem<TLogNewDelay>[] {
         let abi = this.$getAbiItem('event', 'NewDelay');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogNewDelay>[];
     }
 
-    extractLogsNewPendingAdmin (tx: TransactionReceipt): ITxLogItem<TLogNewPendingAdmin>[] {
+    extractLogsNewPendingAdmin (tx: TEth.TxReceipt): ITxLogItem<TLogNewPendingAdmin>[] {
         let abi = this.$getAbiItem('event', 'NewPendingAdmin');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogNewPendingAdmin>[];
     }
 
-    extractLogsQueueTransaction (tx: TransactionReceipt): ITxLogItem<TLogQueueTransaction>[] {
+    extractLogsQueueTransaction (tx: TEth.TxReceipt): ITxLogItem<TLogQueueTransaction>[] {
         let abi = this.$getAbiItem('event', 'QueueTransaction');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogQueueTransaction>[];
     }
@@ -225,7 +225,7 @@ export class ICompoundTimelock extends ContractBase {
         return await this.$getPastLogsParsed('QueueTransaction', options) as any;
     }
 
-    abi: AbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"txHash","type":"bytes32"},{"indexed":true,"internalType":"address","name":"target","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"},{"indexed":false,"internalType":"string","name":"signature","type":"string"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"},{"indexed":false,"internalType":"uint256","name":"eta","type":"uint256"}],"name":"CancelTransaction","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"txHash","type":"bytes32"},{"indexed":true,"internalType":"address","name":"target","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"},{"indexed":false,"internalType":"string","name":"signature","type":"string"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"},{"indexed":false,"internalType":"uint256","name":"eta","type":"uint256"}],"name":"ExecuteTransaction","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"newAdmin","type":"address"}],"name":"NewAdmin","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"newDelay","type":"uint256"}],"name":"NewDelay","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"newPendingAdmin","type":"address"}],"name":"NewPendingAdmin","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"txHash","type":"bytes32"},{"indexed":true,"internalType":"address","name":"target","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"},{"indexed":false,"internalType":"string","name":"signature","type":"string"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"},{"indexed":false,"internalType":"uint256","name":"eta","type":"uint256"}],"name":"QueueTransaction","type":"event"},{"inputs":[],"name":"GRACE_PERIOD","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MAXIMUM_DELAY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MINIMUM_DELAY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"acceptAdmin","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"admin","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"target","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"string","name":"signature","type":"string"},{"internalType":"bytes","name":"data","type":"bytes"},{"internalType":"uint256","name":"eta","type":"uint256"}],"name":"cancelTransaction","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"delay","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"target","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"string","name":"signature","type":"string"},{"internalType":"bytes","name":"data","type":"bytes"},{"internalType":"uint256","name":"eta","type":"uint256"}],"name":"executeTransaction","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"pendingAdmin","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"target","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"string","name":"signature","type":"string"},{"internalType":"bytes","name":"data","type":"bytes"},{"internalType":"uint256","name":"eta","type":"uint256"}],"name":"queueTransaction","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"name":"queuedTransactions","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"setDelay","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"setPendingAdmin","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}]
+    abi: TAbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"txHash","type":"bytes32"},{"indexed":true,"internalType":"address","name":"target","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"},{"indexed":false,"internalType":"string","name":"signature","type":"string"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"},{"indexed":false,"internalType":"uint256","name":"eta","type":"uint256"}],"name":"CancelTransaction","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"txHash","type":"bytes32"},{"indexed":true,"internalType":"address","name":"target","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"},{"indexed":false,"internalType":"string","name":"signature","type":"string"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"},{"indexed":false,"internalType":"uint256","name":"eta","type":"uint256"}],"name":"ExecuteTransaction","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"newAdmin","type":"address"}],"name":"NewAdmin","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"newDelay","type":"uint256"}],"name":"NewDelay","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"newPendingAdmin","type":"address"}],"name":"NewPendingAdmin","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"txHash","type":"bytes32"},{"indexed":true,"internalType":"address","name":"target","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"},{"indexed":false,"internalType":"string","name":"signature","type":"string"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"},{"indexed":false,"internalType":"uint256","name":"eta","type":"uint256"}],"name":"QueueTransaction","type":"event"},{"inputs":[],"name":"GRACE_PERIOD","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MAXIMUM_DELAY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MINIMUM_DELAY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"acceptAdmin","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"admin","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"target","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"string","name":"signature","type":"string"},{"internalType":"bytes","name":"data","type":"bytes"},{"internalType":"uint256","name":"eta","type":"uint256"}],"name":"cancelTransaction","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"delay","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"target","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"string","name":"signature","type":"string"},{"internalType":"bytes","name":"data","type":"bytes"},{"internalType":"uint256","name":"eta","type":"uint256"}],"name":"executeTransaction","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"pendingAdmin","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"target","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"string","name":"signature","type":"string"},{"internalType":"bytes","name":"data","type":"bytes"},{"internalType":"uint256","name":"eta","type":"uint256"}],"name":"queueTransaction","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"name":"queuedTransactions","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"setDelay","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"setPendingAdmin","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}]
 
     
 }
@@ -369,12 +369,12 @@ interface IICompoundTimelockTxCaller {
 
 
 interface IICompoundTimelockTxData {
-    acceptAdmin (sender: TSender, ): Promise<TransactionConfig>
-    cancelTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint): Promise<TransactionConfig>
-    executeTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint): Promise<TransactionConfig>
-    queueTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint): Promise<TransactionConfig>
-    setDelay (sender: TSender, input0: bigint): Promise<TransactionConfig>
-    setPendingAdmin (sender: TSender, input0: TAddress): Promise<TransactionConfig>
+    acceptAdmin (sender: TSender, ): Promise<TEth.TxLike>
+    cancelTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint): Promise<TEth.TxLike>
+    executeTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint): Promise<TEth.TxLike>
+    queueTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint): Promise<TEth.TxLike>
+    setDelay (sender: TSender, input0: bigint): Promise<TEth.TxLike>
+    setPendingAdmin (sender: TSender, input0: TAddress): Promise<TEth.TxLike>
 }
 
 

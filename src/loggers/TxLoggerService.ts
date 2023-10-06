@@ -1,17 +1,15 @@
+import di from 'a-di';
 import { ChainAccount } from "@dequanto/models/TAccount";
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { IToken } from '@dequanto/models/IToken';
-import { TAddress } from '@dequanto/models/TAddress';
 import { TokenTransferService } from '@dequanto/tokens/TokenTransferService';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $logger } from '@dequanto/utils/$logger';
-import di from 'a-di';
 import { Everlog } from 'everlog';
 import { ILogger } from 'everlog/fs/LoggerFile';
 import { ICsvColumnValue } from 'everlog/model/ICsvColumn';
-import { TransactionReceipt } from 'web3-core';
+import { TEth } from '@dequanto/models/TEth';
+
 
 export class TxLoggerService {
     logs: ILogger = Everlog.createChannel(this.name, {
@@ -92,7 +90,7 @@ export class TxLoggerService {
         });
     }
 
-    async logTransaction (action: string, tx: TxWriter, onReceipt?: (receipt: TransactionReceipt) => Promise<ICsvColumnValue[]> ) {
+    async logTransaction (action: string, tx: TxWriter, onReceipt?: (receipt: TEth.TxReceipt) => Promise<ICsvColumnValue[]> ) {
         if (tx == null) {
             $logger.log(`TxLogger - Tx is undefined, possible reason: was not sent`);
             this.logs.writeRow([

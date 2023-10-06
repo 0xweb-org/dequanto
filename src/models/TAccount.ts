@@ -1,4 +1,5 @@
 import { TAddress } from './TAddress';
+import { TEth } from './TEth';
 import { TPlatform } from './TPlatform';
 
 
@@ -12,7 +13,7 @@ export interface IAccount {
 
 export interface ChainAccount extends IAccount {
     type?: 'eoa'
-    key?: string;
+    key?: TEth.Hex;
 }
 
 export interface SafeAccount extends IAccount {
@@ -34,4 +35,4 @@ export interface Erc4337Account extends IAccount {
     operator: ChainAccount
 }
 
-export type TAccount = string | ChainAccount | SafeAccount | Erc4337Account;
+export type TAccount = string | IAccount | ChainAccount | SafeAccount | Erc4337Account;

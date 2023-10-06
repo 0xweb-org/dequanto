@@ -1,11 +1,8 @@
-import di from 'a-di';
 import alot from 'alot';
 import memd from 'memd';
 import { Everlog } from 'everlog';
 import { FileSafe } from 'atma-io';
 import { class_Dfr } from 'atma-utils';
-import { BlockTransactionString } from 'web3-eth';
-import { Transaction, TransactionReceipt } from 'web3-core';
 import { PackedRanges } from '../../structs/PackedRanges';
 
 import { $array } from '@dequanto/utils/$array';
@@ -15,6 +12,7 @@ import { $block } from '@dequanto/utils/$block';
 import { $require } from '@dequanto/utils/$require';
 
 import { Web3Client } from '@dequanto/clients/Web3Client';
+import { TEth } from '@dequanto/models/TEth';
 
 interface IBlockIndexer {
     name: string
@@ -23,7 +21,7 @@ interface IBlockIndexer {
         from: number
         to?: number
     }
-    visitor: (block: BlockTransactionString, data: { txs?: Transaction[], receipts?: TransactionReceipt[] }) => Promise<void>
+    visitor: (block: TEth.Block<TEth.Hex>, data: { txs?: TEth.Tx[], receipts?: TEth.TxReceipt[] }) => Promise<void>
     client: Web3Client
 
     loadTransactions?: boolean
@@ -182,7 +180,7 @@ export class BlocksWalker {
         let nr = await this.client.getBlockNumber();
 
         let grouped = await alot(blocks).mapAsync(async block => {
-            let hashes = block.transactions;
+            let hashes = block.transactions as TEth.Hex[];
             let txs = this.params.loadTransactions
                 ? await this.client.getTransactions(hashes)
                 : null;

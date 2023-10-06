@@ -1,12 +1,11 @@
-import { TAddress } from '@dequanto/models/TAddress';
 import { $logger } from '@dequanto/utils/$logger';
 import { Everlog } from'everlog';
-import { TransactionReceipt } from 'web3-core';
 import { TxDataBuilder } from './TxDataBuilder';
+import { TEth } from '@dequanto/models/TEth';
 
 export class TxLogger {
 
-    constructor(public id: string, public from: TAddress, public builder: TxDataBuilder) {
+    constructor(public id: string, public from: TEth.Address, public builder: TxDataBuilder) {
 
     }
 
@@ -29,7 +28,7 @@ export class TxLogger {
             this.builder.data.data?.toString()
         ]);
     }
-    logReceipt(receipt: TransactionReceipt, time: number) {
+    logReceipt(receipt: TEth.TxReceipt, time: number) {
         channels.receipt.writeRow([
             new Date(),
             this.id,

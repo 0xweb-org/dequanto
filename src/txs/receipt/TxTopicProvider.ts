@@ -1,5 +1,5 @@
 import di from 'a-di';
-import { type AbiItem } from 'web3-utils';
+import { type TAbiItem } from '@dequanto/types/TAbi';
 import { IAbiItemFormattable, ITxLogItemDescriptor } from './ITxLogItem';
 import { TxLogsTransfer } from './TxLogsTransfer';
 import { TxTopicInMemoryProvider } from './TxTopicInMemoryProvider';
@@ -22,7 +22,7 @@ export class TxTopicProvider {
         return this.default.get(topicHash);
     }
 
-    register (mix: string | AbiItem |  IAbiItemFormattable | (string | AbiItem | IAbiItemFormattable)[]): this {
+    register (mix: string | TAbiItem |  IAbiItemFormattable | (string | TAbiItem | IAbiItemFormattable)[]): this {
         this.default.register(mix);
         return this;
     }

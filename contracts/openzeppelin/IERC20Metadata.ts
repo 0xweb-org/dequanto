@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-06-15 23:19
+ *  AUTO-Generated Class: 2023-10-05 18:18
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -15,10 +15,10 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
-import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+
 import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
-import type { AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
+import type { TAbiItem } from '@dequanto/types/TAbi';
+import type { TEth } from '@dequanto/models/TEth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
@@ -28,7 +28,7 @@ import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 
 export class IERC20Metadata extends ContractBase {
     constructor(
-        public address: TAddress = '',
+        public address: TEth.Address = null,
         public client: Web3Client = di.resolve(EthWeb3Client, ),
         public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
@@ -89,13 +89,13 @@ export class IERC20Metadata extends ContractBase {
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
-        tx: Transaction
-        block: BlockTransactionString
+        tx: TEth.Tx
+        block: TEth.Block<TEth.Hex>
         calldata: IMethods[TMethod]
     }> {
         options ??= {};
         options.filter ??= {};
-        options.filter.method = <any> method;
+        options.filter.method = method;
         return <any> this.$onTransaction(options);
     }
 
@@ -111,12 +111,12 @@ export class IERC20Metadata extends ContractBase {
         return this.$onLog('Transfer', fn);
     }
 
-    extractLogsApproval (tx: TransactionReceipt): ITxLogItem<TLogApproval>[] {
+    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TLogApproval>[] {
         let abi = this.$getAbiItem('event', 'Approval');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApproval>[];
     }
 
-    extractLogsTransfer (tx: TransactionReceipt): ITxLogItem<TLogTransfer>[] {
+    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TLogTransfer>[] {
         let abi = this.$getAbiItem('event', 'Transfer');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogTransfer>[];
     }
@@ -137,7 +137,7 @@ export class IERC20Metadata extends ContractBase {
         return await this.$getPastLogsParsed('Transfer', options) as any;
     }
 
-    abi: AbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"}]
+    abi: TAbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"}]
 
     
 }
@@ -234,9 +234,9 @@ interface IIERC20MetadataTxCaller {
 
 
 interface IIERC20MetadataTxData {
-    approve (sender: TSender, spender: TAddress, amount: bigint): Promise<TransactionConfig>
-    transfer (sender: TSender, to: TAddress, amount: bigint): Promise<TransactionConfig>
-    transferFrom (sender: TSender, from: TAddress, to: TAddress, amount: bigint): Promise<TransactionConfig>
+    approve (sender: TSender, spender: TAddress, amount: bigint): Promise<TEth.TxLike>
+    transfer (sender: TSender, to: TAddress, amount: bigint): Promise<TEth.TxLike>
+    transferFrom (sender: TSender, from: TAddress, to: TAddress, amount: bigint): Promise<TEth.TxLike>
 }
 
 

@@ -1,6 +1,6 @@
 import { TAddress } from '@dequanto/models/TAddress';
 import { TPlatform } from '@dequanto/models/TPlatform';
-import { type AbiItem } from 'web3-utils';
+import { type TAbiItem } from '@dequanto/types/TAbi';
 
 export interface ITxLogItem<TParams = { [name: string]: any }> {
     blockNumber: number
@@ -15,7 +15,7 @@ export interface ITxLogItem<TParams = { [name: string]: any }> {
 }
 
 export interface ITxLogItemDescriptor {
-    abi: AbiItem
+    abi: TAbiItem
     formatter: IKnownLogFormatter
 }
 export interface IKnownLogFormatter<TLogFormatted = any> {
@@ -23,6 +23,6 @@ export interface IKnownLogFormatter<TLogFormatted = any> {
 }
 
 export interface IAbiItemFormattable {
-    abi: AbiItem | string
+    abi: TAbiItem | string
     formatter: IKnownLogFormatter
 }

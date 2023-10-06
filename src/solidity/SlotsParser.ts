@@ -17,7 +17,7 @@ import { SourceFile } from './SlotsParser/SourceFile';
 import { Ast } from './SlotsParser/Ast';
 import { ISlotsParserOption, ISlotVarDefinition } from './SlotsParser/models';
 
-import type { AbiInput } from 'web3-utils';
+import type { TAbiInput } from '@dequanto/types/TAbi';
 export namespace SlotsParser {
 
     export async function slotsFromAbi (abiDef: string): Promise<ISlotVarDefinition[]> {
@@ -328,7 +328,7 @@ namespace TypeAbiUtil {
         file: SourceFile
     };
 
-    export function get(input: AbiInput): ITypeUtil {
+    export function get(input: TAbiInput): ITypeUtil {
         if (/\]$/.test(input.type)) {
             return new ArrayTypeNameUtil(input);
         }
@@ -348,7 +348,7 @@ namespace TypeAbiUtil {
     }
 
     class ElementaryTypeNameUtil implements ITypeUtil {
-        constructor (public type: AbiInput) {
+        constructor (public type: TAbiInput) {
 
         }
         async sizeOf () {
@@ -359,7 +359,7 @@ namespace TypeAbiUtil {
         }
     }
     class ArrayTypeNameUtil implements ITypeUtil {
-        constructor (public input: AbiInput) {
+        constructor (public input: TAbiInput) {
 
         }
         async sizeOf () {
@@ -387,7 +387,7 @@ namespace TypeAbiUtil {
         }
     }
     class UserDefinedTypeNameUtil implements ITypeUtil {
-        constructor (public input: AbiInput) {
+        constructor (public input: TAbiInput) {
 
         }
         async sizeOf () {
@@ -415,7 +415,7 @@ namespace TypeAbiUtil {
         }
     }
     class MappingUtil implements ITypeUtil {
-        constructor (public input: AbiInput) {
+        constructor (public input: TAbiInput) {
 
         }
         async sizeOf () {

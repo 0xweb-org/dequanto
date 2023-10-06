@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-06-15 23:19
+ *  AUTO-Generated Class: 2023-10-05 18:18
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -15,10 +15,10 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
-import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+
 import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
-import type { AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
+import type { TAbiItem } from '@dequanto/types/TAbi';
+import type { TEth } from '@dequanto/models/TEth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
@@ -28,7 +28,7 @@ import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 
 export class IAMB extends ContractBase {
     constructor(
-        public address: TAddress = '',
+        public address: TEth.Address = null,
         public client: Web3Client = di.resolve(EthWeb3Client, ),
         public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
@@ -109,13 +109,13 @@ export class IAMB extends ContractBase {
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
-        tx: Transaction
-        block: BlockTransactionString
+        tx: TEth.Tx
+        block: TEth.Block<TEth.Hex>
         calldata: IMethods[TMethod]
     }> {
         options ??= {};
         options.filter ??= {};
-        options.filter.method = <any> method;
+        options.filter.method = method;
         return <any> this.$onTransaction(options);
     }
 
@@ -139,22 +139,22 @@ export class IAMB extends ContractBase {
         return this.$onLog('UserRequestForSignature', fn);
     }
 
-    extractLogsAffirmationCompleted (tx: TransactionReceipt): ITxLogItem<TLogAffirmationCompleted>[] {
+    extractLogsAffirmationCompleted (tx: TEth.TxReceipt): ITxLogItem<TLogAffirmationCompleted>[] {
         let abi = this.$getAbiItem('event', 'AffirmationCompleted');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogAffirmationCompleted>[];
     }
 
-    extractLogsRelayedMessage (tx: TransactionReceipt): ITxLogItem<TLogRelayedMessage>[] {
+    extractLogsRelayedMessage (tx: TEth.TxReceipt): ITxLogItem<TLogRelayedMessage>[] {
         let abi = this.$getAbiItem('event', 'RelayedMessage');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRelayedMessage>[];
     }
 
-    extractLogsUserRequestForAffirmation (tx: TransactionReceipt): ITxLogItem<TLogUserRequestForAffirmation>[] {
+    extractLogsUserRequestForAffirmation (tx: TEth.TxReceipt): ITxLogItem<TLogUserRequestForAffirmation>[] {
         let abi = this.$getAbiItem('event', 'UserRequestForAffirmation');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogUserRequestForAffirmation>[];
     }
 
-    extractLogsUserRequestForSignature (tx: TransactionReceipt): ITxLogItem<TLogUserRequestForSignature>[] {
+    extractLogsUserRequestForSignature (tx: TEth.TxReceipt): ITxLogItem<TLogUserRequestForSignature>[] {
         let abi = this.$getAbiItem('event', 'UserRequestForSignature');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogUserRequestForSignature>[];
     }
@@ -191,7 +191,7 @@ export class IAMB extends ContractBase {
         return await this.$getPastLogsParsed('UserRequestForSignature', options) as any;
     }
 
-    abi: AbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":true,"internalType":"address","name":"executor","type":"address"},{"indexed":true,"internalType":"bytes32","name":"messageId","type":"bytes32"},{"indexed":false,"internalType":"bool","name":"status","type":"bool"}],"name":"AffirmationCompleted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":true,"internalType":"address","name":"executor","type":"address"},{"indexed":true,"internalType":"bytes32","name":"messageId","type":"bytes32"},{"indexed":false,"internalType":"bool","name":"status","type":"bool"}],"name":"RelayedMessage","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"messageId","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"encodedData","type":"bytes"}],"name":"UserRequestForAffirmation","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"messageId","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"encodedData","type":"bytes"}],"name":"UserRequestForSignature","type":"event"},{"inputs":[],"name":"destinationChainId","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_messageId","type":"bytes32"}],"name":"failedMessageDataHash","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_messageId","type":"bytes32"}],"name":"failedMessageReceiver","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_messageId","type":"bytes32"}],"name":"failedMessageSender","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"maxGasPerTx","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_messageId","type":"bytes32"}],"name":"messageCallStatus","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"messageId","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"messageSender","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"messageSourceChainId","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_contract","type":"address"},{"internalType":"bytes","name":"_data","type":"bytes"},{"internalType":"uint256","name":"_gas","type":"uint256"}],"name":"requireToConfirmMessage","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_contract","type":"address"},{"internalType":"bytes","name":"_data","type":"bytes"},{"internalType":"uint256","name":"_gas","type":"uint256"}],"name":"requireToPassMessage","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"sourceChainId","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"transactionHash","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"}]
+    abi: TAbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":true,"internalType":"address","name":"executor","type":"address"},{"indexed":true,"internalType":"bytes32","name":"messageId","type":"bytes32"},{"indexed":false,"internalType":"bool","name":"status","type":"bool"}],"name":"AffirmationCompleted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":true,"internalType":"address","name":"executor","type":"address"},{"indexed":true,"internalType":"bytes32","name":"messageId","type":"bytes32"},{"indexed":false,"internalType":"bool","name":"status","type":"bool"}],"name":"RelayedMessage","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"messageId","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"encodedData","type":"bytes"}],"name":"UserRequestForAffirmation","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"messageId","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"encodedData","type":"bytes"}],"name":"UserRequestForSignature","type":"event"},{"inputs":[],"name":"destinationChainId","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_messageId","type":"bytes32"}],"name":"failedMessageDataHash","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_messageId","type":"bytes32"}],"name":"failedMessageReceiver","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_messageId","type":"bytes32"}],"name":"failedMessageSender","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"maxGasPerTx","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_messageId","type":"bytes32"}],"name":"messageCallStatus","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"messageId","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"messageSender","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"messageSourceChainId","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_contract","type":"address"},{"internalType":"bytes","name":"_data","type":"bytes"},{"internalType":"uint256","name":"_gas","type":"uint256"}],"name":"requireToConfirmMessage","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_contract","type":"address"},{"internalType":"bytes","name":"_data","type":"bytes"},{"internalType":"uint256","name":"_gas","type":"uint256"}],"name":"requireToPassMessage","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"sourceChainId","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"transactionHash","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"}]
 
     
 }
@@ -321,8 +321,8 @@ interface IIAMBTxCaller {
 
 
 interface IIAMBTxData {
-    requireToConfirmMessage (sender: TSender, _contract: TAddress, _data: TBufferLike, _gas: bigint): Promise<TransactionConfig>
-    requireToPassMessage (sender: TSender, _contract: TAddress, _data: TBufferLike, _gas: bigint): Promise<TransactionConfig>
+    requireToConfirmMessage (sender: TSender, _contract: TAddress, _data: TBufferLike, _gas: bigint): Promise<TEth.TxLike>
+    requireToPassMessage (sender: TSender, _contract: TAddress, _data: TBufferLike, _gas: bigint): Promise<TEth.TxLike>
 }
 
 

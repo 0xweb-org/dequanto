@@ -1,4 +1,3 @@
-import type { TransactionConfig } from 'web3-core';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IErc4337Info } from './models/IErc4337Info';
 import { ChainAccount, Erc4337Account } from '@dequanto/models/TAccount';
@@ -9,6 +8,7 @@ import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExp
 import { TAddress } from '@dequanto/models/TAddress';
 import { $is } from '@dequanto/utils/$is';
 import { TxWriter } from '@dequanto/txs/TxWriter';
+import { TEth } from '@dequanto/models/TEth';
 
 export class Erc4337TxWriter {
     public service = new Erc4337Service(this.client, this.explorer, this.info);
@@ -51,7 +51,7 @@ export class Erc4337TxWriter {
             };
         }
 
-        let tx = <TransactionConfig> {
+        let tx = <TEth.TxLike> {
             to: erc4337AccountAddress,
             value: 0,
             data: '0x'
@@ -72,7 +72,7 @@ export class Erc4337TxWriter {
             address?: TAddress
             salt?: bigint
         }
-        tx: TransactionConfig
+        tx: TEth.TxLike
         owner: ChainAccount
         nonceSalt?: bigint
     }) {
@@ -82,7 +82,7 @@ export class Erc4337TxWriter {
         // 1. Prepare ERC4337 contract account via Account Factory
         let erc4337Address: TAddress;
         let initCode = '0x';
-        let initCodeGas = 0;
+        let initCodeGas = 0n;
 
         if ($is.Address(params.erc4337Account?.address)) {
             erc4337Address = params.erc4337Account.address;
@@ -107,7 +107,7 @@ export class Erc4337TxWriter {
             let senderExists = await service.existsAccount(erc4337Address);
             if (senderExists) {
                 initCode = '0x';
-                initCodeGas = 0;
+                initCodeGas = 0n;
             }
         }
 
@@ -149,7 +149,7 @@ export class Erc4337TxWriter {
             address?: TAddress
             salt?: bigint
         },
-        tx: TransactionConfig,
+        tx: TEth.TxLike,
         owner: ChainAccount,
         submitter?: ChainAccount,
     }) {

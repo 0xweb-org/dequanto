@@ -1,6 +1,6 @@
 import di from 'a-di';
 import alot from 'alot';
-import { type AbiItem } from 'web3-utils';
+import { type TAbiItem } from '@dequanto/types/TAbi';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { $address } from '@dequanto/utils/$address';
 import { $require } from '@dequanto/utils/$require';
@@ -16,7 +16,6 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { EvmBytecode } from '@dequanto/evm/EvmBytecode';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { $is } from '@dequanto/utils/$is';
 
 export interface IGenerateOptions {
     platform: TPlatform
@@ -24,7 +23,7 @@ export interface IGenerateOptions {
     defaultAddress?: TAddress
 
     source: {
-        abi?: TAddress | AbiItem[]
+        abi?: string | TAddress | TAbiItem[]
         code?: string
         path?: string
     }
@@ -146,7 +145,7 @@ export class Generator {
             source
         } = this.options;
 
-        let abi: AbiItem[];
+        let abi: TAbiItem[];
         let implementation: TAddress;
         let sources: IGeneratorSources;
         if (source.code == null && source.path == null) {
@@ -186,7 +185,7 @@ export class Generator {
             return { abiJson: abi, implementation: opts.implementation };
         }
 
-        let abiJson: AbiItem[]
+        let abiJson: TAbiItem[]
         let implementation: TAddress;
         if (abi.startsWith('0x')) {
             let { abi, implementation: impl } = await this.getAbiByAddress(opts);
@@ -271,7 +270,7 @@ export class Generator {
             let hasProxy = $address.eq(address, implementation) === false;
             $logger.log(`Proxy detected: ${hasProxy ? 'YES' : 'NO' }`, hasProxy ? implementation : '');
 
-            let abiJson = JSON.parse(abi) as AbiItem[];
+            let abiJson = JSON.parse(abi) as TAbiItem[];
             return { abi: abiJson, implementation };
         } catch (error) {
             let message = `ABI is not resolved from ${this.options.platform}/${address}: ${error.message ?? error}. Extract from bytecode...`;

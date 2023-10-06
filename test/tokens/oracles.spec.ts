@@ -1,4 +1,3 @@
-import { AmmV2PriceQuote } from '@dequanto/tokens/TokenExchanges/AmmV2PriceQuote';
 import { AmmV1Oracle } from '@dequanto/tokens/TokenOracles/amm/AmmV1Oracle';
 import { AmmV2Oracle } from '@dequanto/tokens/TokenOracles/amm/AmmV2Oracle';
 import { ChainlinkOracle } from '@dequanto/tokens/TokenOracles/chainlink/ChainlinkOracle';
@@ -19,7 +18,7 @@ UTest({
                 lt_(result.price, 100_000);
                 l`(Chainlink) ${token}: ${result.price}$`;
             },
-            async 'from uniswap' () {
+            async '!from uniswap' () {
 
                 let oracle = new AmmV2Oracle();
                 let { error, result } = await oracle.getPrice({ symbol: 'WETH' });
@@ -29,7 +28,7 @@ UTest({
             }
         });
     },
-    async 'check the chainlink with multihops' () {
+    async 'check the chainlink with multi hops' () {
         let token = 'GTC';
         let oracle = new ChainlinkOracle();
         let { error, result } = await oracle.getPrice({ symbol: token });

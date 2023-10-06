@@ -9,6 +9,8 @@ import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { TestNode } from '../hardhat/TestNode';
 import { $promise } from '@dequanto/utils/$promise';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';
+import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
+import { ContractBase } from '@dequanto/contracts/ContractBase';
 
 declare let include;
 
@@ -37,25 +39,27 @@ UTest({
         let { WETH } = await include.js('/test/tmp/polygon/WETH/WETH.ts');
 
 
-        let weth = new WETH.WETH();
+        let weth: ERC20 & { storage } = new WETH.WETH();
         let decimals = await weth.decimals();
         eq_(decimals, 18);
 
         '> read in batch'
 
-        let nameReq = weth
+        let nameReq = await weth
             .$config({ send: 'manual' })
             .name();
 
-        let totalSupplyReq = await weth
+        let totalSupplyReq = weth
             .$config({ send: 'manual' })
             .totalSupply();
+
 
         let reader = new ContractReader(weth.client);
         let [ name, totalSupply ] = await reader.executeBatch([ nameReq, totalSupplyReq ]);
 
         eq_(name, 'Wrapped Ether');
         gt_(totalSupply, 1000n);
+
 
         let nameFromSlot = await weth.storage._name();
         eq_(nameFromSlot, name);
@@ -101,10 +105,13 @@ UTest({
         let { Foo } = await include.js('/test/tmp/eth/Foo/Foo.ts');
 
         return UTest({
+            $config: {
+                timeout: $date.parseTimespan('1min'),
+            },
             async 'deploy to localhost to listen for WS events' () {
                 let provider = new HardhatProvider();
                 let client = await provider.client('localhost');
-                let foo:any = await provider.deployClass(Foo.Foo, {
+                let foo:ContractBase = await provider.deployClass(Foo.Foo, {
                     arguments: [ 'hello' ],
                     client
                 });
@@ -118,6 +125,7 @@ UTest({
                     client
                 });
 
+                l`> Getting name`;
                 let nameBar = await qux.name();
                 eq_(nameBar, 'qux');
                 notEq_(foo.address, qux.address);
@@ -139,23 +147,26 @@ UTest({
 
                 l`> Subscribe to transactions stream`
                 const transactionsListener = [];
-                foo.onTransaction('*').subscribe((data) => {
+                let subjectStream = foo.$onTransaction({ filter: { method: '*' } });
+                subjectStream.subscribe((data) => {
                     transactionsListener.push(data.calldata);
                 });
+                await subjectStream.onConnected;
 
-                l`> Set new name`
+
+                l`> Set new name (block ${ await client.getBlockNumber() })`
                 let tx = await foo.setName(provider.deployer(), 'bar');
                 let receipt = await tx.wait();
                 eq_(receipt.status, true);
 
-                l`> Check name was set`
+                l`> Check name was set (block ${ await client.getBlockNumber() })`
                 name = await foo.name();
                 eq_(name, 'bar');
 
                 l`> Set new name via setName2`
                 let txSetName2 = await foo.setName2(provider.deployer(), 'bar2');
                 await txSetName2.wait();
-                l`> Check name was set`
+                l`> Check name was set (block ${ await client.getBlockNumber() })`
                 name = await foo.name();
                 eq_(name, 'bar2');
 
@@ -200,7 +211,7 @@ UTest({
 
 
                 await $promise.waitForTrue(() => transactionsListener.length > 2, {
-                    timeoutMessage: `Transactions were not captured`,
+                    timeoutMessage: () => `Transactions were not captured. Got ${transactionsListener.length} Expected: 2`,
                     timeoutMs: 4000,
                     intervalMs: 100,
                 });

@@ -3,6 +3,7 @@ import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExp
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { ContractAbiProvider } from '@dequanto/contracts/ContractAbiProvider';
 import { TAddress } from '@dequanto/models/TAddress';
+import { TEth } from '@dequanto/models/TEth';
 import { $abiParser } from '@dequanto/utils/$abiParser';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $address } from '@dequanto/utils/$address';
@@ -17,14 +18,14 @@ export class GnosisSafeService {
 
     }
 
-    async decodeSafeTx(dataHex: string, options?: { decodeContractCall: boolean }) {
+    async decodeSafeTx(dataHex: TEth.Hex, options?: { decodeContractCall: boolean }) {
         let safeContract = new GnosisSafe($address.ZERO, this.client, this.explorer);
 
         let safeAbi = safeContract.abi;
-        let safeCall = $contract.decodeMethodCall<Parameters<GnosisSafe['execTransaction']>>(dataHex, safeAbi);
+        let safeCall = $abiUtils.parseMethodCallData(safeAbi, dataHex);
         $require.notNull(safeCall, `Safe input can not be parsed`);
 
-        let safeTx = $contract.decodeMethodCallAsObject(dataHex, safeAbi);
+        let safeTx = safeCall.params as TGnosisOperation;
         if ($hex.isEmpty(safeTx.data)) {
             return {
                 address: safeTx.to,
@@ -57,15 +58,15 @@ export class GnosisSafeService {
             };
         }
         let abi = result.abiJson;
-        let opCall = $contract.decodeMethodCall(op.data, abi);
+        let opCall = $abiUtils.parseMethodCallData(abi, op.data);
         if (opCall == null) {
             console.error(`Not decoded for ${op.to} with the abi`, abi);
         }
         return {
             address: op.to,
-            method: opCall?.method,
+            method: opCall?.name,
             value: op.value,
-            arguments: opCall?.arguments,
+            arguments: opCall?.args,
         };
     }
 
@@ -73,7 +74,7 @@ export class GnosisSafeService {
         let abiStr = '(bytes1 operation, address to, uint256 value, bytes data)[]';
         let abiInputs = $abiParser.parseArguments(abiStr);
 
-        let calls = $abiUtils.decodePacked<{ to: TAddress, value: bigint, data: string}[]>(abiInputs[0], bytes);
+        let calls = $abiUtils.decodePacked<TGnosisOperation[]>(abiInputs[0], bytes);
         return await alot(calls).mapAsync(async call => {
             return await this.decodeOperation(call);
         }).toArrayAsync();
@@ -81,7 +82,7 @@ export class GnosisSafeService {
 }
 
 type TGnosisOperation = {
-    to: string
+    to: TEth.Address
     value: number | bigint
-    data: string
+    data: TEth.Hex
 }

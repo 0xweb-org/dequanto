@@ -2,8 +2,9 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { ChainAccount } from '@dequanto/models/TAccount';
 import { $buffer, TBytes } from './$buffer';
 import { $is } from './$is';
-import type { TransactionConfig } from 'web3-core';
-import { ethers } from 'ethers';
+import { TEth } from '@dequanto/models/TEth';
+
+throw new Error(`Deprecated. Use @dequanto/utils/$sig instead.`);
 
 export namespace $sign {
     export type TSignature = {
@@ -40,7 +41,7 @@ export namespace $sign {
 
     }
 
-    export async function signTx (client: Web3Client, tx: TransactionConfig, account: ChainAccount, accountPss?: string): Promise<ReturnType<typeof splitSignature>> {
+    export async function signTx (client: Web3Client, tx: TEth.Tx, account: ChainAccount, accountPss?: string): Promise<ReturnType<typeof splitSignature>> {
         const web3 = await client.getWeb3();
         const key = account.key != null
             ? account.key
@@ -109,7 +110,7 @@ export namespace $sign {
     function toBuffer (message: string | TBytes, opts?: { encoding?: 'utf8' | 'hex' }) {
         if (typeof message === 'string') {
             let encoding = opts?.encoding;
-            if (encoding == null && $is.hexString(message)) {
+            if (encoding == null && $is.Hex(message)) {
                 encoding = 'hex';
                 message = message.substring(2);
             }

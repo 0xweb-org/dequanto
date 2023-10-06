@@ -1,8 +1,7 @@
-import { type BytesLike } from 'ethers';
-
+import { TEth } from '@dequanto/models/TEth';
 
 interface ICrypto {
-    randomBytes(size: number): BytesLike;
+    randomBytes(size: number): Uint8Array;
     createECDH (curve: string)
 }
 

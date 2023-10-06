@@ -1,0 +1,101 @@
+{
+    "methods": [
+        {
+            "name": "eth_chainId",
+            "result": {
+                "name": "Chain ID",
+                "type": "number"
+            }
+        },
+        {
+            "name": "eth_blockNumber",
+            "result": {
+                "name": "Block number",
+                "type": "number"
+            }
+        },
+        {
+            "name": "eth_getCode",
+            "params": [
+                null,
+                {
+                    "name": "Block",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/components/schemas/BlockNumberOrTagOrHash"
+                    }
+                }
+            ]
+        }
+    ],
+    "components": {
+        "schemas": {
+            "ReceiptInfo": {
+                "properties": {
+                    "blockNumber": {
+                        "type": "number"
+                    },
+                    "status": {
+                        "type": "number"
+                    },
+                    "type": {
+                        "type": "number"
+                    }
+                }
+            },
+            "TransactionInfo": {
+                "properties": {
+                    "blockNumber": {
+                        "type": "number"
+                    },
+                    "transactionIndex": {
+                        "type": "number"
+                    }
+                }
+            },
+            "(Transaction1559Unsigned|Transaction2930Unsigned|TransactionLegacyUnsigned)": {
+                "properties": {
+                    "type": {
+                        "type": "number"
+                    },
+                    "chainId": {
+                        "type": "number"
+                    }
+                }
+            },
+            "Block": {
+                "properties": {
+                    "number": {
+                        "type": "number"
+                    },
+                    "timestamp": {
+                        "type": "number"
+                    }
+                }
+            },
+            "Filter": {
+                "properties": {
+                    "fromBlock": {
+                        "type": "number"
+                    },
+                    "toBlock": {
+                        "type": "number"
+                    }
+                }
+            },
+            "Log": {
+                "properties": {
+                    "logIndex": {
+                        "type": "number"
+                    },
+                    "transactionIndex": {
+                        "type": "number"
+                    },
+                    "blockNumber": {
+                        "type": "number"
+                    }
+                }
+            }
+        }
+    }
+}

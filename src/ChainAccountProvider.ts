@@ -1,13 +1,19 @@
 import memd from 'memd';
+
+import { HDKey } from '@scure/bip32'
+import { mnemonicToSeedSync } from '@scure/bip39'
+
+
 import { TAddress } from './models/TAddress'
 import { TPlatform } from './models/TPlatform'
 import { $config } from './utils/$config'
-import { BytesLike, Wallet } from 'ethers';
 import { $address } from './utils/$address';
 import { $crypto, WebCryptoPolyfill } from './utils/$crypto';
 import { $buffer } from './utils/$buffer';
 import { ChainAccount, IAccount, SafeAccount } from './models/TAccount';
 import { $contract } from './utils/$contract';
+import { TEth } from './models/TEth';
+import { $hex } from './utils/$hex';
 
 
 export namespace ChainAccountProvider {
@@ -37,12 +43,7 @@ export namespace ChainAccountProvider {
     export function getAll (): IAccount[] {
        return AccountsConfigProvider.get();
     }
-    export function getAddressFromKey (key: string) {
-        const bytes = $buffer.fromHex(key);
-        const wallet = new Wallet(bytes);
-        return wallet.address;
-    }
-    export function getAddressFromKeyNative (key: string | BytesLike) {
+    export function getAddressFromKey (key: TEth.BufferLike): TEth.Address {
         // use NodeJS crypto module
         const crypto = new WebCryptoPolyfill()
         const wallet = crypto.createECDH('secp256k1');
@@ -55,27 +56,27 @@ export namespace ChainAccountProvider {
         //slices the 04 prefix
         const pubKeyBuffer = wallet.getPublicKey().slice(1);
         const address = $contract.keccak256(pubKeyBuffer).slice(-40);
-        return '0x' + address;
+        return $address.toChecksum(`0x${address}`);
     }
-    export function getAccountFromMnemonic(mnemonic: string, index = 0) {
-        const wallet = Wallet.fromMnemonic(mnemonic, `m/44'/60'/0'/${index}`);
+
+    export function getAccountFromMnemonic(mnemonic: string, index: number): ChainAccount
+    export function getAccountFromMnemonic(mnemonic: string, path: string): ChainAccount
+    export function getAccountFromMnemonic(mnemonic: string, mix: number | string = 0): ChainAccount {
+        const path = typeof mix === 'number'
+            ? `m/44'/60'/0'/${mix}`
+            : mix;
+        const seed = mnemonicToSeedSync(mnemonic);
+        const hdKey = HDKey.fromMasterSeed(seed);
+        const account = hdKey.derive(path);
+
         return {
-            key: wallet.privateKey,
-            address: wallet.address,
+            key: $hex.ensure(account.privateKey),
+            address: getAddressFromKey(account.privateKey),
         };
     }
     export function generate (opts?: { name?: string, platform?: TPlatform }): ChainAccount {
         const bytes = $crypto.randomBytes(32);
-        const wallet = new Wallet(bytes);
-        return {
-            ...(opts ?? {}),
-            address: wallet.address,
-            key: wallet.privateKey
-        };
-    }
-    export function generateNative (opts?: { name?: string, platform?: TPlatform }): ChainAccount {
-        const bytes = $crypto.randomBytes(32);
-        const address = getAddressFromKeyNative(bytes);
+        const address = $address.toChecksum(getAddressFromKey(bytes));
         return {
             ...(opts ?? {}),
             address: address,

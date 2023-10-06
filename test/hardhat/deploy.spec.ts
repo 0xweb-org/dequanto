@@ -2,22 +2,12 @@ import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
 import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { $abiParser } from '@dequanto/utils/$abiParser';
 import { $address } from '@dequanto/utils/$address';
-import { $buffer } from '@dequanto/utils/$buffer';
-import { $contract } from '@dequanto/utils/$contract';
-import alot from 'alot';
-import { Wallet } from 'ethers';
-import { pubToAddress, toBuffer, keccak256, sha256 } from 'ethereumjs-util';
-import { $error } from '@dequanto/utils/$error';
 import { $date } from '@dequanto/utils/$date';
-import { $sign } from '@dequanto/utils/$sign';
-import { $signRaw } from '@dequanto/utils/$signRaw';
 import { $signSerializer } from '@dequanto/utils/$signSerializer';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { $bigint } from '@dequanto/utils/$bigint';
-import { $number } from '@dequanto/utils/$number';
-import crypto from 'crypto';
+import { $sig } from '@dequanto/utils/$sig';
+import { TEth } from '@dequanto/models/TEth';
+import { l } from '@dequanto/utils/$logger';
 
 const provider = new HardhatProvider();
 const client = provider.client();
@@ -391,14 +381,14 @@ UTest({
             client,
         });
         let tx = await contract.appendUnchecked(provider.deployer(), 120);
-        let receipt = await tx.wait();
+        let receipt: TEth.TxReceipt = await tx.wait();
         let gasUnchecked = receipt.gasUsed;
 
         tx = await contract.append(provider.deployer(), 120);
         receipt = await tx.wait();
-        let gasChecked = receipt.gasUsed;
 
-        let ratio = gasUnchecked /gasChecked;
+        let gasChecked = receipt.gasUsed;
+        let ratio = Number(gasUnchecked) / Number(gasChecked);
         gt_(ratio, 0.9);
         lt_(ratio, 1);
         // Gas usage in unchecked array is less than in checked array, but not significant.
@@ -436,15 +426,17 @@ UTest({
         eq_(r, "FAIL");
     },
 
-    async 'permit token' () {
-        let [ owner, receiver ] = [ ChainAccountProvider.generateNative(), ChainAccountProvider.generateNative() ];
+    async '!permit token' () {
+        let [ owner, receiver ] = [ ChainAccountProvider.generate(), ChainAccountProvider.generate() ];
 
         await client.debug.setBalance(owner.address, 10n**18n);
         await client.debug.setBalance(receiver.address, 10n**18n);
 
+        l`deploy`
         let { contract: erc20 } = await provider.deploySol('./test/erc2612/PermitToken.sol', {
             deployer: owner
         });
+        l`deploy completed`
 
         const amount = 5000n;
         const nonce = await erc20.nonces(owner.address);
@@ -483,7 +475,7 @@ UTest({
         };
 
         let hashed = $signSerializer.serializeTypedData(typedData);
-        let { v, r, s } = await $signRaw.signEC(hashed, owner.key);
+        let { v, r, s } = await $sig.sign(hashed, owner);
 
         let tx = await erc20.permit(receiver,
             owner.address,
@@ -505,7 +497,8 @@ UTest({
         eq_(balance, amount);
     },
 
-    async '//sandbox'() {
+    async 'sandbox'() {
+
 
     }
 });

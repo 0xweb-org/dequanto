@@ -37,7 +37,7 @@ UAction.create({
                             source: {
                                 abi: contractEntry.value,
                             },
-                            output: `./dequanto/src/bridges/hop/contracts/${ $platform.toPath(platform) }/`
+                            output: `./src/bridges/hop/contracts/${ $platform.toPath(platform) }/`
                         };
                         let generator = new Generator(opts);
                         await generator.generate();

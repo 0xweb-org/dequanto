@@ -12,10 +12,17 @@
         "Arbiscan",
         "arbitrum",
         "Bscscan",
+        "chainlink",
         "Daiscan",
         "Everlog",
         "Evmscan",
+        "mult",
+        "Pancakeswap",
         "Polyscan",
+        "Promi",
+        "scure",
+        "secp",
+        "Sushiswap",
         "xdai"
     ]
 }

@@ -1,8 +1,14 @@
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { ChainAccount } from '@dequanto/models/TAccount';
 import { TAddress } from '@dequanto/models/TAddress';
-import { $signRaw } from '@dequanto/utils/$signRaw';
-import SafeServiceClient, { ProposeTransactionProps, SafeInfoResponse, SafeMultisigConfirmationListResponse, SafeMultisigTransactionEstimateResponse, SafeMultisigTransactionResponse, SignatureResponse } from '@gnosis.pm/safe-service-client';
+import SafeServiceClient, {
+    ProposeTransactionProps,
+    SafeInfoResponse,
+    SafeMultisigConfirmationListResponse,
+    SafeMultisigTransactionEstimateResponse,
+    SafeMultisigTransactionResponse,
+    SignatureResponse
+} from '@gnosis.pm/safe-service-client';
 import memd from 'memd';
 import { $gnosis } from '../$gnosis';
 import { ISafeServiceTransport } from './ISafeServiceTransport';

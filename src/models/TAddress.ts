@@ -1,1 +1,2 @@
-export type TAddress = string;
+export type TAddress = `0x${string}`;
+

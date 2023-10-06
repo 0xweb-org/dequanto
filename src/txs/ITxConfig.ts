@@ -1,5 +1,6 @@
 import { ChainAccount } from "@dequanto/models/TAccount";
 import { TAddress } from '@dequanto/models/TAddress';
+import { TAbiItem } from '@dequanto/types/TAbi';
 
 export interface ITxConfig {
     gasPrice?: bigint
@@ -24,4 +25,7 @@ export interface ITxConfig {
      * In any case MAX is the count of pending transactions, so any value is safe.
      */
     noncePending?: number
+
+
+    abi?: TAbiItem[]
 }

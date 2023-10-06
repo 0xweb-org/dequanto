@@ -2,7 +2,6 @@ import alot from 'alot';
 import memd from 'memd';
 import axios from 'axios'
 import { IBlockChainExplorer, IBlockChainTransferEvent } from './IBlockChainExplorer';
-import { Transaction } from 'web3-core';
 import { IContractDetails } from '@dequanto/models/IContractDetails';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -14,9 +13,11 @@ import { $require } from '@dequanto/utils/$require';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { $config } from '@dequanto/utils/$config';
 import { Constructor } from 'atma-utils';
-import type { AbiItem } from 'web3-utils';
 import { $str } from '@dequanto/solidity/utils/$str';
 import { $platform } from '@dequanto/utils/$platform';
+import type { TAbiItem } from '@dequanto/types/TAbi';
+import { TEth } from '@dequanto/models/TEth';
+import { $is } from '@dequanto/utils/$is';
 
 export interface IBlockChainExplorerParams {
 
@@ -74,7 +75,7 @@ export namespace BlockChainExplorerFactory {
                 return info;
             }
 
-            async getContractCreation(address: TAddress): Promise<{ creator: TAddress, txHash: string }> {
+            async getContractCreation(address: TAddress): Promise<{ creator: TAddress, txHash: TEth.Hex }> {
                 let url = `${this.config.host}/api?module=contract&action=getcontractcreation&contractaddresses=${address}&apikey=${this.config.key}`;
                 let result = await client.get(url);
                 let json = Array.isArray(result) ? result[0] : result;
@@ -121,7 +122,7 @@ export namespace BlockChainExplorerFactory {
 
                 let abiJson = JSON.parse(abi);
                 if (params?.implementation) {
-                    if (/0x.{64}/.test(params.implementation)) {
+                    if ($is.HexBytes32(params.implementation)) {
                         let web3 = opts.getWeb3(this.platform);
                         let uin256Hex = await web3.getStorageAt(
                             address,
@@ -150,7 +151,7 @@ export namespace BlockChainExplorerFactory {
                         address: address,
                         abi: abiJson,
                         method: 'implementation',
-                        arguments: []
+                        params: []
                     });
                     return this.getContractAbi(implAddress);
                 }
@@ -160,7 +161,7 @@ export namespace BlockChainExplorerFactory {
                         address: address,
                         abi: abiJson,
                         method: 'getTarget',
-                        arguments: []
+                        params: []
                     });
                     return this.getContractAbi(implAddress);
                 }
@@ -238,18 +239,18 @@ export namespace BlockChainExplorerFactory {
                 };
             }
 
-            async getTransactions (addr: TAddress, params?: TxFilter): Promise<Transaction[]> {
+            async getTransactions (addr: TAddress, params?: TxFilter): Promise<TEth.Tx[]> {
                 return this.loadTxs('txlist', addr, params);
             }
-            async getTransactionsAll (addr: TAddress, params?: TxFilter): Promise<Transaction[]> {
+            async getTransactionsAll (addr: TAddress, params?: TxFilter): Promise<TEth.Tx[]> {
                 return this.loadTxsAll('txlist', addr, params);
             }
 
 
-            async getInternalTransactions (addr: TAddress, params?: TxFilter): Promise<Transaction[]> {
+            async getInternalTransactions (addr: TAddress, params?: TxFilter): Promise<TEth.Tx[]> {
                 return this.loadTxs('txlistinternal', addr, params);
             }
-            async getInternalTransactionsAll (addr: TAddress): Promise<Transaction[]> {
+            async getInternalTransactionsAll (addr: TAddress): Promise<TEth.Tx[]> {
                 return this.loadTxsAll('txlistinternal', addr);
             }
 
@@ -292,7 +293,7 @@ export namespace BlockChainExplorerFactory {
                 if (matchAddress == null) {
                     return null;
                 }
-                return matchAddress[0];
+                return matchAddress[0] as TEth.Address;
             }
 
 
@@ -316,11 +317,11 @@ export namespace BlockChainExplorerFactory {
                 return txs;
             }
 
-            async loadTxsAll (type: 'tokentx' | 'txlistinternal' | 'txlist', address: TAddress, params?: TxFilter): Promise<Transaction[]> {
+            async loadTxsAll (type: 'tokentx' | 'txlistinternal' | 'txlist', address: TAddress, params?: TxFilter): Promise<TEth.Tx[]> {
 
                 let page = 1;
                 let size = 1000;
-                let out = [] as Transaction[];
+                let out = [] as TEth.Tx[];
                 let fromBlockNumber = params?.fromBlockNumber;
                 while(true) {
                     let arr = await this.loadTxs(type, address, { fromBlockNumber, sort: 'asc' });
@@ -350,13 +351,13 @@ export namespace BlockChainExplorerFactory {
     }
 }
 
-function isOpenZeppelinProxy(abi: AbiItem[]) {
+function isOpenZeppelinProxy(abi: TAbiItem[]) {
     let $interface = ['upgradeTo', 'implementation'];
     return $interface.every(name => {
         return hasMethod(abi, name);
     });
 }
-function hasImplementationSlot (abi: AbiItem[]) {
+function hasImplementationSlot (abi: TAbiItem[]) {
     let $required = [ 'implementation' ];
     let hasRequired = $required.every(name => {
         return hasMethod(abi, name);
@@ -373,13 +374,13 @@ function hasImplementationSlot (abi: AbiItem[]) {
     }
     return true;
 }
-function hasTargetSlot (abi: AbiItem[]) {
+function hasTargetSlot (abi: TAbiItem[]) {
     let $interface = ['upgrade', 'getTarget'];
     return $interface.every(name => {
         return hasMethod(abi, name);
     })
 }
-function hasMethod (abi: AbiItem[], name: string) {
+function hasMethod (abi: TAbiItem[], name: string) {
     return abi.some(item => item.type === 'function' && item.name === name);
 }
 

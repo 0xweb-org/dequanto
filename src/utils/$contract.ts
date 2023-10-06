@@ -1,25 +1,40 @@
 import alot from 'alot';
-import Web3 from 'web3';
-import { Log, TransactionReceipt } from 'web3-core';
-import { $abiUtils } from './$abiUtils';
+import { keccak_256 } from '@noble/hashes/sha3';
+
+import type { TAbiItem } from '@dequanto/types/TAbi';
+
 import { InputDataUtils } from '@dequanto/contracts/utils/InputDataUtils';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
-import { $abiParser } from './$abiParser';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
-import type { AbiItem } from 'web3-utils';
+
+import { $abiUtils } from './$abiUtils';
+import { $abiParser } from './$abiParser';
 import { $require } from './$require';
+import { $buffer } from './$buffer';
+import { TEth } from '@dequanto/models/TEth';
+import { $abiCoder } from '@dequanto/abi/$abiCoder';
 
 export namespace $contract {
 
-
-    export function keccak256 (str: string | TBufferLike) {
+    export function keccak256 (str: string | TBufferLike, output: 'buffer'): Uint8Array
+    export function keccak256 (str: string | TBufferLike): TEth.Hex
+    export function keccak256 (str: string | TBufferLike, output?: 'buffer'): Uint8Array | TEth.Hex {
         if (str == null || str === '0x') {
             return `0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470`;
         }
-        return Web3.utils.keccak256(str as string);
-    }
-    export function soliditySha3 (str: string) {
-        return Web3.utils.soliditySha3Raw(str);
+        let input;
+        if (typeof str === 'string') {
+            input = str.startsWith('0x')
+                ? $buffer.fromHex(str)
+                : $buffer.fromString(str);
+        } else {
+            input = str;
+        }
+        let hashBytes = keccak_256(input);
+        if (output === 'buffer') {
+            return hashBytes
+        }
+        return $buffer.toHex(hashBytes);
     }
 
     export function normalizeArgs (args: any[]) {
@@ -43,7 +58,7 @@ export namespace $contract {
         return val;
     }
 
-    export function extractLogsForAbi (tx: TransactionReceipt, abiItem: AbiItem): ITxLogItem[] {
+    export function extractLogsForAbi (tx: TEth.TxReceipt, abiItem: TAbiItem): ITxLogItem[] {
         let topicHash = $abiUtils.getMethodHash(abiItem);
         let logs = tx
             .logs
@@ -56,7 +71,7 @@ export namespace $contract {
         return logs;
     }
 
-    export function parseInputData (inputHex: string, abis: AbiItem[]) {
+    export function parseInputData (inputHex: string, abis: TAbiItem[]) {
         let str = inputHex.substring(2);
         if (str === '') {
             return null;
@@ -71,7 +86,7 @@ export namespace $contract {
         if (abi == null) {
             return null;
         }
-        let params: any = InputDataUtils.decodeParamsWithABI(abi, bytesHex);
+        let params: any = $abiCoder.decode(abi.inputs, bytesHex);
 
         let asObject = abi.inputs.every(x => x.name != null);
         if (asObject) {
@@ -85,73 +100,75 @@ export namespace $contract {
         };
     }
 
-    export function decodeMethodCall <TArguments = any[]> (inputHex: string, abis: AbiItem[]) {
-        let str = inputHex.substring(2);
-        if (str === '') {
-            return null;
-        }
-        let methodHex = `0x${str.substring(0, 8)}`;
-        let bytesHex = `0x${str.substring(8)}`;
+    // export function decodeMethodCall <TArguments = any[]> (mix: TEth.Hex | Pick<TEth.Tx, 'input' | 'value'>, abis: TAbiItem[]) {
+    //     if (typeof mix === 'string') {
+    //         return decodeMethodCall({ input: mix }, abis);
+    //     }
+    //     let tx = mix;
+    //     let str = tx.input.substring(2);
+    //     if (str === '') {
+    //         return null;
+    //     }
+    //     let methodHex = `0x${str.substring(0, 8)}`;
+    //     let bytesHex = `0x${str.substring(8)}`;
 
-        let abi = abis.find(abi => {
-            let sig = $abiUtils.getMethodSignature(abi);
-            return sig === methodHex;
-        });
-        if (abi == null) {
-            return null;
-        }
-        let params: any = InputDataUtils.decodeParamsWithABI(abi, bytesHex);
-        let args = params.map(param => {
-            return arrayToObject(param);
-        });
-        return {
-            method: abi.name,
-            arguments: args as TArguments
-        };
-    }
-    export function decodeMethodCallAsObject (inputHex: string, abis: AbiItem[]) {
-        let call = decodeMethodCall(inputHex, abis);
-        if (call == null) {
-            return null;
-        }
+    //     let abi = abis.find(abi => {
+    //         let sig = $abiUtils.getMethodSignature(abi);
+    //         return sig === methodHex;
+    //     });
+    //     if (abi == null) {
+    //         return null;
+    //     }
+    //     let args = $abiCoder.decode(abi.inputs, bytesHex);
+    //     return {
+    //         method: abi.name,
+    //         arguments: args as TArguments,
+    //         value: tx.value
+    //     };
+    // }
+    // export function decodeMethodCallAsObject (inputHex: TEth.Hex, abis: TAbiItem[]) {
+    //     let call = decodeMethodCall(inputHex, abis);
+    //     if (call == null) {
+    //         return null;
+    //     }
 
-        let abi = abis.find(x => x.name === call.method);
-        $require.notNull(abi, `Abi not found for ${call.method}`);
+    //     let abi = abis.find(x => x.name === call.method);
+    //     $require.notNull(abi, `Abi not found for ${call.method}`);
 
-        let obj = {};
-        abi.inputs.forEach((input, i) => {
-            obj[input.name] = call.arguments[i];
-        });
-        return obj as any;
+    //     let obj = {};
+    //     abi.inputs.forEach((input, i) => {
+    //         obj[input.name] = call.arguments[i];
+    //     });
+    //     return obj as any;
 
-    }
-    function arrayToObject (mix) {
-        if (mix == null || typeof mix !== 'object' || Array.isArray(mix) === false) {
-            return normalizeValue(mix);
-        }
-        let obj = {};
-        let keyCount = 0;
-        let proto = Array.prototype;
-        for (let key in mix) {
-            if (key in proto || /^\d+$/.test(key)) {
-                continue;
-            }
-            let val = mix[key];
-            obj[key] = typeof val === 'object'? arrayToObject(val) : normalizeValue(val);
-            keyCount++;
-        }
-        if (keyCount === 0) {
-            if (Array.isArray(mix)) {
-                return mix.map(arrayToObject);
-            }
-            return mix;
-        }
-        return obj;
-    }
+    // }
+    // function arrayToObject (mix) {
+    //     if (mix == null || typeof mix !== 'object' || Array.isArray(mix) === false) {
+    //         return normalizeValue(mix);
+    //     }
+    //     let obj = {};
+    //     let keyCount = 0;
+    //     let proto = Array.prototype;
+    //     for (let key in mix) {
+    //         if (key in proto || /^\d+$/.test(key)) {
+    //             continue;
+    //         }
+    //         let val = mix[key];
+    //         obj[key] = typeof val === 'object'? arrayToObject(val) : normalizeValue(val);
+    //         keyCount++;
+    //     }
+    //     if (keyCount === 0) {
+    //         if (Array.isArray(mix)) {
+    //             return mix.map(arrayToObject);
+    //         }
+    //         return mix;
+    //     }
+    //     return obj;
+    // }
 
 
 
-    export function decodeCustomError (errorDataHex: string | { type, params } | any, abiArr: AbiItem[]) {
+    export function decodeCustomError (errorDataHex: string | { type, params } | any, abiArr: TAbiItem[]) {
         if (errorDataHex == null) {
             return null;
         }
@@ -184,7 +201,7 @@ export namespace $contract {
         };
     }
 
-    export function parseLogWithAbi(log: Log, abiItem: AbiItem | string): ITxLogItem {
+    export function parseLogWithAbi(log: TEth.Log, abiItem: TAbiItem | string): ITxLogItem {
         if(typeof abiItem === 'string') {
             abiItem = $abiParser.parseMethod(abiItem);
         }
@@ -210,7 +227,7 @@ export namespace $contract {
                     value: bytes
                 };
             }
-            let val = InputDataUtils.decode([ type ], bytes);
+            let val = $abiCoder.decode([ type ], bytes);
 
             return {
                 name: type.name,
@@ -219,7 +236,7 @@ export namespace $contract {
         });
 
         if (inputs.length > 0) {
-            let values = InputDataUtils.decode(inputs, log.data);
+            let values = $abiCoder.decode(inputs, log.data);
 
             args.push(...values.map((val, i) => {
                 return {
@@ -246,13 +263,13 @@ export namespace $contract {
 
     export namespace store {
         const knownContracts = [] as {
-            abi: AbiItem[]
+            abi: TAbiItem[]
         }[];
 
         export function getFlattened () {
             return alot(knownContracts).mapMany(x => x.abi).toArray();
         }
-        export function register (contract: { abi: AbiItem[] }) {
+        export function register (contract: { abi: TAbiItem[] }) {
             knownContracts.push(contract)
         }
     }

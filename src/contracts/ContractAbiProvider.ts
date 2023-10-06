@@ -1,4 +1,4 @@
-import { type AbiItem } from 'web3-utils';
+import { type TAbiItem } from '@dequanto/types/TAbi';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { $address } from '@dequanto/utils/$address';
 import { $require } from '@dequanto/utils/$require';
@@ -21,7 +21,7 @@ export class ContractAbiProvider {
 
         $require.notNull(abi, `Abi not provided to get the Abi Json from`);
 
-        let abiJson: AbiItem[]
+        let abiJson: TAbiItem[]
         let implementation: TAddress;
         if (abi.startsWith('0x')) {
             let { abi: abiResult, implementation: impl } = await this.getAbiByAddress(abi, opts);
@@ -58,7 +58,7 @@ export class ContractAbiProvider {
             let hasProxy = $address.eq(address, implementation) === false;
             $logger.log(`Proxy detected: ${hasProxy ? 'YES' : 'NO' }`, hasProxy ? implementation : '');
 
-            let abiJson: AbiItem[] = typeof abi === 'string' ? JSON.parse(abi) : abi;
+            let abiJson: TAbiItem[] = typeof abi === 'string' ? JSON.parse(abi) : abi;
             return { abi: abiJson, implementation };
         } catch (error) {
             $logger.error(error);

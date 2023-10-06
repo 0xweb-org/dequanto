@@ -52,8 +52,10 @@ export namespace $require {
         }
         return val;
     }
-    export function notNull<T> (val: T, message: string): T {
+    export function notNull<T> (val: T, message: string, ...logs): T {
         if (val == null) {
+
+            logs?.forEach(log => console.error(log));
             throw new Error(`Value is undefined. ${message}`);
         }
         return val;

@@ -1,5 +1,5 @@
 import alot from 'alot';
-import type { AbiItem } from 'web3-utils';
+import type { TAbiItem } from '@dequanto/types/TAbi';
 import { OpcodesInfo } from './OpcodesInfo';
 import { JsonObjectStore } from '@dequanto/json/JsonObjectStore';
 import { $path } from '@dequanto/utils/$path';
@@ -97,7 +97,7 @@ export class EvmBytecode {
         return this.opcodes;
     }
 
-    async getAbi(): Promise<AbiItem[]> {
+    async getAbi(): Promise<TAbiItem[]> {
         await this.prepair();
 
         let [functions, events] = await Promise.all([
@@ -164,7 +164,7 @@ export class EvmBytecode {
         return fns;
     }
 
-    async checkInterfaceOf (iface: (AbiItem | string)[]): Promise<{ ok: boolean, missing?: string }> {
+    async checkInterfaceOf (iface: (TAbiItem | string)[]): Promise<{ ok: boolean, missing?: string }> {
         if (iface == null || iface.length === 0) {
             return { ok: false };
         }

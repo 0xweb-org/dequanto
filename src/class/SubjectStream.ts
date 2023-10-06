@@ -1,5 +1,6 @@
 import { Subscription } from "./Subscription";
 import { SubjectKind } from "./SubjectKind";
+import { class_Dfr, class_EventEmitter } from 'atma-utils';
 
 export class SubjectStream<T = any> {
     public value: T = void 0;
@@ -10,11 +11,15 @@ export class SubjectStream<T = any> {
 
     protected _pipe: SubjectStream;
     protected _pipeSub: Subscription
+    protected _mapper: (value: any) => T;
+    protected _events: class_EventEmitter;
 
     /// [SuccessCb, ErrorCb, Options][]
     protected _cbs: [((x: T) => void), ((err: Error | any) => void), {
         once?: boolean;
     }][] = [];
+
+    public onConnected = new class_Dfr();
     public kind = SubjectKind.Stream;
     public canceled: boolean = false;
     constructor() {
@@ -26,14 +31,29 @@ export class SubjectStream<T = any> {
         this.onValue(x)
     }
     onValue (val) {
+
+        val = this._mapper?.(val) ?? val;
+
         this._error = void 0;
         this.value = val;
         this.call(0, val);
+        this._events?.emit('data', val);
     }
     error(err: Error | any) {
         this._error = err;
         this.call(1, err);
+        this._events?.emit('error', err);
     }
+    connected (error?) {
+        if (error != null) {
+            this.onConnected.reject(error);
+            this.error(error);
+            return;
+        }
+        this.onConnected.resolve();
+        this._events?.emit('connected');
+    }
+
     current(): T {
         return this.value;
     }
@@ -61,9 +81,9 @@ export class SubjectStream<T = any> {
         }
         return new Subscription(this, cb);
     }
-    unsubscribe(cb: Function) {
+    unsubscribe(cb?: Function) {
         for (let i = 0; i < this._cbs.length; i++) {
-            if (this._cbs[i][0] === cb) {
+            if (cb == null || this._cbs[i][0] === cb) {
                 this._cbs.splice(i, 1);
             }
         }
@@ -73,6 +93,12 @@ export class SubjectStream<T = any> {
             return;
         }
     }
+
+    on (type: 'data' | 'connected' | 'error', cb) {
+        this._events ??= new class_EventEmitter();
+        this._events.on(type, cb);
+    }
+
     // When binding the to expression like: 'foo.bar.quxStream()' we create additional stream to listen to `foo.bar` properties reassignment
     private onInnerChanged (newStream) {
         this._pipe?.unsubscribe?.(this.next);

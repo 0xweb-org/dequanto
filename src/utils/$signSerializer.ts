@@ -1,8 +1,9 @@
-import * as ethUtil from 'ethereumjs-util';
-import * as ethAbi from 'ethereumjs-abi';
 import { $buffer } from './$buffer';
-import { type BytesLike } from 'ethers';
 import { $bigint } from './$bigint';
+import { $abiCoder } from '@dequanto/abi/$abiCoder';
+import { $contract } from './$contract';
+import { TEth } from '@dequanto/models/TEth';
+import { $is } from './$is';
 
 export namespace $signSerializer {
 
@@ -93,7 +94,7 @@ export namespace $signSerializer {
             data: Record<string, any>,
             types: Record<string, MessageTypeProperty[]>,
             useV4 = true
-        ): Buffer {
+        ): TEth.Hex {
             const encodedTypes = ['bytes32'];
             const encodedValues = [this.hashType(primaryType, types)];
 
@@ -130,7 +131,7 @@ export namespace $signSerializer {
                         return [
                             'bytes32',
                             ethUtil_keccak(
-                                ethAbi.rawEncode(
+                                $abiCoder.encode(
                                     typeValuePairs.map(([t]) => t),
                                     typeValuePairs.map(([, v]) => v)
                                 )
@@ -190,7 +191,7 @@ export namespace $signSerializer {
                     encodedValues[i] = $bigint.toHex(val) as any;
                 }
             }
-            return ethAbi.rawEncode(encodedTypes, encodedValues);
+            return $abiCoder.encode(encodedTypes, encodedValues);
         }
 
         /**
@@ -260,7 +261,7 @@ export namespace $signSerializer {
             data: Record<string, any>,
             types: Record<string, any>,
             useV4 = true
-        ): Buffer {
+        ): Uint8Array {
             return ethUtil_keccak(this.encodeData(primaryType, data, types, useV4));
         }
 
@@ -271,7 +272,7 @@ export namespace $signSerializer {
          * @param {Object} types - Type definitions
          * @returns {Buffer} - Hash of an object
          */
-        private hashType(primaryType: string, types: Record<string, any>): Buffer {
+        private hashType(primaryType: string, types: Record<string, any>): Uint8Array {
             return ethUtil_keccak(this.encodeType(primaryType, types));
         }
 
@@ -305,7 +306,7 @@ export namespace $signSerializer {
         serialize<T extends MessageTypes>(
             typedData: Partial<TypedData | TypedMessage<T>>,
             useV4 = true
-        ): Buffer {
+        ): Uint8Array {
             const sanitizedData = this.sanitizeData(typedData);
             const parts = [$buffer.fromHex('1901')];
 
@@ -334,15 +335,11 @@ export namespace $signSerializer {
 
 
 
-    function ethUtil_keccak(value: BytesLike) {
-        if (typeof value === 'string') {
-            if (value.startsWith('0x')) {
-                value = Buffer.from(value.substring(2), 'hex');
-            } else {
-                value = Buffer.from(value);
-            }
-        }
-        return ethUtil.keccak(value as Buffer);
+    function ethUtil_keccak(mix: string | TEth.BufferLike) {
+        const bytes = typeof mix === 'string' && $is.Hex(mix) === false
+            ? $buffer.fromString(mix)
+            : $buffer.ensure(mix);
+        return $contract.keccak256(bytes, 'buffer');
     }
 
 }

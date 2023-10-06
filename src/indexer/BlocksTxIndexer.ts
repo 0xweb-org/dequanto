@@ -1,10 +1,10 @@
-import type { BlockTransactionString } from 'web3-eth';
-import type { Transaction, TransactionReceipt } from 'web3-core';
+import { class_Dfr } from 'atma-utils';
 import { BlocksWalker } from './handlers/BlocksWalker';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { $logger } from '@dequanto/utils/$logger';
+import { TEth } from '@dequanto/models/TEth';
 
 
 export interface IBlocksTxIndexerOptions {
@@ -26,14 +26,17 @@ export interface IBlocksTxIndexerOptions {
 }
 export type TBlockListener = (
     client: Web3Client,
-    block: BlockTransactionString,
-    data?: { txs?: Transaction[], receipts?: TransactionReceipt[] }
+    block: TEth.Block<TEth.Hex>,
+    data?: { txs?: TEth.Tx[], receipts?: TEth.TxReceipt[] }
 ) => Promise<void>
 
 export class BlocksTxIndexer {
     private client: Web3Client;
     private walker: BlocksWalker;
     private listeners: TBlockListener[] = [];
+
+    public onStarted = new class_Dfr;
+
 
     constructor (public platform: TPlatform, public opts?: IBlocksTxIndexerOptions) {
 
@@ -63,28 +66,43 @@ export class BlocksTxIndexer {
         return this.walker.stats();
     }
 
-    async start (from?: Date | number, to?: Date | number) {
+    public async start (from?: Date | number, to?: Date | number) {
+        try {
+            await this.startInner(from, to);
+            this.onStarted.resolve();
+        } catch (err) {
+            this.onStarted.reject(err);
+            throw err;
+        }
+    }
+    private async startInner (from?: Date | number, to?: Date | number) {
         await this.walker.start(from, to);
 
         if (to == null) {
-            await this.client.subscribe('newBlockHeaders', (error, blockHeader) => {
-                if (error) {
-                    $logger.error(`Subscription to "newBlockHeaders" failed with`, error);
-                    return;
-                }
-                if (blockHeader.transactions?.length === 0) {
-                    // hardhat emits empty blocks
-                    return;
-                }
-                this.walker.processUntil(blockHeader.number + 1);
-            });
-            // Reload the blocknumber, to ensure we didn't missed the block between walker starting and subscription
-            let newTo = await this.client.getBlockNumber();
-            this.walker.processUntil(newTo + 1);
+            try {
+                await this.client.subscribe('newBlockHeaders', (error, blockHeader) => {
+                    if (error) {
+                        $logger.error(`Subscription to "newBlockHeaders" failed with`, error);
+                        return;
+                    }
+                    if (blockHeader.transactions?.length === 0) {
+                        // hardhat emits empty blocks
+                        return;
+                    }
+                    this.walker.processUntil(blockHeader.number + 1);
+                });
+                // Reload the blocknumber, to ensure we didn't missed the block between walker starting and subscription
+                let newTo = await this.client.getBlockNumber();
+                this.walker.processUntil(newTo + 1);
+                console.log('BlockTxIndexer: subscribed', newTo);
+            } catch (error) {
+                console.error(`Subscription failed`, error);
+                throw error;
+            }
         }
     }
 
-    private async indexTransactions (block: BlockTransactionString, data: { txs?: Transaction[], receipts?: TransactionReceipt[] }) {
+    private async indexTransactions (block: TEth.Block<TEth.Hex>, data: { txs?: TEth.Tx[], receipts?: TEth.TxReceipt[] }) {
         for (let i = 0; i < this.listeners.length; i++) {
             let indexer = this.listeners[i];
             try {

@@ -1,11 +1,11 @@
 import { $abiParser } from '@dequanto/utils/$abiParser';
-import type { AbiItem } from 'web3-utils';
+import type { TAbiItem } from '@dequanto/types/TAbi';
 
 export namespace $web3Abi {
 
-    /** Normalize user input by normalizing to the array of AbiItems */
-    export function ensureAbis(abi: string | AbiItem | AbiItem[]): (AbiItem & { signature? })[] {
-        let arr: AbiItem[];
+    /** Normalize user input by normalizing to the array of TAbiItems */
+    export function ensureAbis(abi: string | TAbiItem | TAbiItem[]): (TAbiItem & { signature? })[] {
+        let arr: TAbiItem[];
         if (typeof abi === 'string') {
             arr = [ $abiParser.parseMethod(abi) ];
         } else  if (Array.isArray(abi)) {

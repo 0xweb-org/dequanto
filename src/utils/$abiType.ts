@@ -1,6 +1,6 @@
 import { $types } from '@dequanto/solidity/utils/$types';
 import alot from 'alot';
-import { type AbiInput } from 'web3-utils';
+import { type TAbiInput } from '@dequanto/types/TAbi';
 import { $require } from './$require';
 export namespace $abiType {
 
@@ -90,7 +90,7 @@ export namespace $abiType {
         }
         return getTsType(type);
     }
-    export function getTsType ($abiType: AbiInput['type'], $abi?: { type, name, components? }) {
+    export function getTsType ($abiType: TAbiInput['type'], $abi?: { type, name, components? }) {
         let rgxArray = /\[(?<size>\d+)?\]$/
         let isArray = rgxArray.test($abiType);
 

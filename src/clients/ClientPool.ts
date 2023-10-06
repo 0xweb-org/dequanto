@@ -1,35 +1,46 @@
 import alot from 'alot';
 import memd from 'memd';
-import Web3 from 'web3';
 import { $date } from '@dequanto/utils/$date';
 import { $number } from '@dequanto/utils/$number';
+import { $require } from '@dequanto/utils/$require';
+import { $contract } from '@dequanto/utils/$contract';
+import { $logger, l } from '@dequanto/utils/$logger';
+import { $promise } from '@dequanto/utils/$promise';
+import { $array } from '@dequanto/utils/$array';
+import { $bigint } from '@dequanto/utils/$bigint';
 
-import { PromiEventWrap } from './model/PromiEventWrap';
+import { PromiseEventWrap } from './model/PromiEventWrap';
 import { IWeb3ClientStatus } from './interfaces/IWeb3ClientStatus';
 import { ClientStatus } from './model/ClientStatus';
 import { ClientPoolTrace, ClientPoolTraceError } from './ClientPoolStats';
 import { class_Dfr, obj_extendDefaults } from 'atma-utils';
 import { ClientErrorUtil } from './utils/ClientErrorUtil';
 import { IWeb3ClientOptions } from './interfaces/IWeb3Client';
-import { $logger, l } from '@dequanto/utils/$logger';
-import { $promise } from '@dequanto/utils/$promise';
-import { $array } from '@dequanto/utils/$array';
 import { RateLimitGuard } from './handlers/RateLimitGuard';
 import { Web3BatchRequests } from './Web3BatchRequests';
 
-import type { PromiEvent, WebsocketProvider, provider } from 'web3-core';
-import type { HttpProviderOptions, WebsocketProviderOptions } from 'web3-core-helpers/types/index'
-import { $require } from '@dequanto/utils/$require';
-import { $contract } from '@dequanto/utils/$contract';
+import { HttpTransport } from '@dequanto/rpc/transports/HttpTransport';
+import { WsTransport } from '@dequanto/rpc/transports/WsTransport';
+import { Rpc } from '@dequanto/rpc/Rpc';
+
+import { Web3Transport } from '@dequanto/rpc/transports/compatibility/Web3Transport';
+import { PromiseEvent } from '@dequanto/class/PromiseEvent';
+import { TTransport } from '@dequanto/rpc/transports/ITransport';
+
+import { TRpc } from '@dequanto/rpc/RpcBase';
+import { TEth } from '@dequanto/models/TEth';
+import { $rpc } from '@dequanto/rpc/$rpc';
 
 export interface IPoolClientConfig {
     url?: string
-    options?: HttpProviderOptions | WebsocketProviderOptions
+    options?: TTransport.Options.Http | TTransport.Options.Ws
 
     /** Will be a pefered node for submitting transactions */
     safe?: boolean
     distinct?: boolean
-    web3?: Web3 | provider
+
+    web3?: TTransport.Transport
+
     name?: string
     /** Will be used only if manually requested with .getWeb3, or .getNodeUrl */
     manual?: boolean
@@ -97,25 +108,25 @@ export class ClientPool {
         }
     }
 
-    callSync<TResult>(fn: (web3: Web3) => TResult): TResult {
+    // callSync<TResult>(fn: (web3: Web3) => TResult): TResult {
 
-        let arr = this.clients.filter(x => x.status === 'ok');
-        let wClient = arr[$number.randomInt(0, arr.length)];
-        let { status, result } = wClient.callSync(fn);
-        if (status == ClientStatus.Ok) {
-            return result;
-        }
-        throw result;
-    }
+    //     let arr = this.clients.filter(x => x.status === 'ok');
+    //     let wClient = arr[$number.randomInt(0, arr.length)];
+    //     let { status, result } = wClient.callSync(fn);
+    //     if (status == ClientStatus.Ok) {
+    //         return result;
+    //     }
+    //     throw result;
+    // }
 
-    async callBatched(args: {
-        requests: (web3: Web3) => Promise<any[]>
+    async callBatched(data: {
+        requests: (rpc: Rpc) => Promise<Web3BatchRequests.IRpcRequest[]>
         map?: (results: any[]) => any
     }, opts?: IPoolWeb3Request) {
-        return this.call(async (web3, wClient) => {
-            let requests = await args.requests(web3);
+        return this.call(async (wClient) => {
+            let requests = await data.requests(wClient.rpc);
             let results = await wClient.callBatched(requests);
-            let mapped = args?.map?.(results) ?? results;
+            let mapped = data?.map?.(results) ?? results;
             return mapped;
         }, {
             ...(opts ?? {}),
@@ -128,7 +139,7 @@ export class ClientPool {
         });
     }
 
-    async call<TResult>(fn: (web3: Web3, wClient?: WClient) => Promise<TResult>, opts?: IPoolWeb3Request): Promise<TResult> {
+    async call<TResult>(fn: (wClient: WClient) => Promise<TResult>, opts?: IPoolWeb3Request): Promise<TResult> {
         // Client - Retries
         let used = new Map<WClient, number>();
         let errors = [];
@@ -191,6 +202,10 @@ export class ClientPool {
         let wClient = await this.getWrappedWeb3(options);
         return wClient?.web3;
     }
+    async getRpc(options?: IPoolWeb3Request) {
+        let wClient = await this.getWrappedWeb3(options);
+        return wClient?.rpc;
+    }
     async getWrappedWeb3(options?: IPoolWeb3Request) {
         let wClient = await this.next(null, options, { manual: true });
         if (wClient == null) {
@@ -221,15 +236,15 @@ export class ClientPool {
         return max;
     }
 
-    callPromiEvent<TResult extends PromiEvent<any>>(
-        fn: (web3: Web3) => TResult
+    callPromiEvent<TResult extends PromiseEvent<any>>(
+        fn: (web3: WClient) => TResult
         , opts?: { preferSafe?: boolean, parallel?: number, silent?: boolean, distinct?: boolean }
         , used: Map<WClient, number> = new Map<WClient, number>()
         , errors = []
-        , root?: PromiEventWrap
+        , root?: PromiseEventWrap
     ): TResult {
 
-        root = root ?? new PromiEventWrap();
+        root = root ?? new PromiseEventWrap();
 
         (async () => {
             let wClient = await this.next(used, opts);
@@ -251,11 +266,11 @@ export class ClientPool {
                 return root as any as TResult;
             }
 
-            let promiEvent = wClient.callPromiEvent(fn);
+            let promiseEvent = wClient.callPromiEvent(fn);
 
-            root.bind(promiEvent);
+            root.bind(promiseEvent);
 
-            promiEvent.on('error', async error => {
+            promiseEvent.on('error', async error => {
                 error.message += ` (RPC: ${wClient.config.url})`;
                 if (ClientErrorUtil.isConnectionFailed(error)) {
                     this.callPromiEvent(
@@ -265,8 +280,8 @@ export class ClientPool {
                 }
                 if (ClientErrorUtil.isAlreadyKnown(error)) {
                     $logger.log(`TxWriter ERROR ${error.message}. Check pending...`);
-                    let web3 = await this.getWeb3();
-                    let txs = await web3.eth.getPendingTransactions();
+                    let rpc = await this.getRpc();
+                    let txs = await rpc.eth_pendingTransactions();
                     $logger.log('PENDING ', txs?.map(x => x.hash));
                     // throw anyway
                 }
@@ -298,7 +313,7 @@ export class ClientPool {
         return root as any as TResult;
     }
 
-    // getEventStream (address: TAddress, abi: AbiItem[], event: string) {
+    // getEventStream (address: TAddress, abi: TAbiItem[], event: string) {
     //     if (this.ws == null) {
     //         this.ws = this.clients.find(x => x.config.url?.startsWith('ws'));
     //     }
@@ -322,13 +337,13 @@ export class ClientPool {
         async function getPeerCount(wClient: WClient) {
             /** @TODO Public nodes smt. do not allow net_peerCount methods. Allow to switch this on/off on node-url-config level */
             try {
-                return await wClient.eth.net.getPeerCount();
+                return await wClient.rpc.net_peerCount();
             } catch (error) {
                 return `ERROR: ${error.message}`;
             }
         }
         async function getSyncInfo(wClient: WClient): Promise<IWeb3ClientStatus['syncing']> {
-            let syncing = await wClient.eth.isSyncing();
+            let syncing = await wClient.rpc.eth_syncing();
             if (syncing == null || typeof syncing === 'boolean') {
                 return null;
             }
@@ -339,18 +354,19 @@ export class ClientPool {
             let url = wClient.config.url;
             try {
                 let start = Date.now();
-                let [syncing, blockNumber, peers, node] = await Promise.all([
+                let [syncing, blockNumberUint, peers, node] = await Promise.all([
                     getSyncInfo(wClient),
-                    wClient.eth.getBlockNumber(),
+                    wClient.rpc.eth_blockNumber(),
                     getPeerCount(wClient),
-                    wClient.eth.getNodeInfo(),
+                    wClient.rpc.net_version(),
                 ]);
+                let blockNumber = Number(blockNumberUint);
 
                 let ping = Math.round((Date.now() - start) / 4);
                 let blockNumberBehind = 0;
                 if (syncing?.currentBlock && syncing.currentBlock < blockNumber) {
-                    blockNumberBehind = blockNumber - syncing.currentBlock;
-                    blockNumber = syncing.currentBlock;
+                    blockNumberBehind = blockNumber - Number(syncing.currentBlock);
+                    blockNumber = Number(syncing.currentBlock);
                 }
 
                 return <IWeb3ClientStatus>{
@@ -359,7 +375,7 @@ export class ClientPool {
                     syncing: syncing,
                     blockNumber: blockNumber,
                     blockNumberBehind: blockNumberBehind,
-                    peers: peers,
+                    peers: Number(peers),
                     pingMs: ping,
                     node: node,
                     i: idx,
@@ -531,7 +547,7 @@ export class ClientPool {
                         error: null,
                         status: null,
                         blockNumberBehind: 0,
-                        blockNumber: await $promise.timeout(wClient.eth.getBlockNumber(), 20_000)
+                        blockNumber: await $promise.timeout(wClient.rpc.eth_blockNumber(), 20_000)
                     };
                     onIntermediateSuccess(clientInfo);
                     return clientInfo;
@@ -583,13 +599,13 @@ export class ClientPool {
             if (info.error) {
                 return 'off';
             }
-            if (isNaN(info.blockNumber) || info.blockNumberBehind < -200) {
+            if (info.blockNumber == null || info.blockNumberBehind < -200n) {
                 return 'off';
             }
             return 'ok';
         }
         function onIntermediateSuccess(info: TClientInfo) {
-            const TOLERATE_BLOCK_COUNT = 5;
+            const TOLERATE_BLOCK_COUNT = 5n;
             const WAIT_POOL_OK = Math.min(3, clientInfos.length);
             const count = clientInfos.push(info);
 
@@ -634,8 +650,11 @@ export class WClient {
         ping: 0
     };
 
-    web3: Web3
-    eth: Web3['eth']
+    rpc: Rpc
+
+    // web3: Web3
+    // eth: Web3['eth']
+
     config: IPoolClientConfig
     rateLimitGuard: RateLimitGuard
 
@@ -691,27 +710,35 @@ export class WClient {
         const hasWeb3 = 'web3' in mix && typeof mix.web3 != null;
         if (hasUrl || hasWeb3) {
             this.config = mix;
+            let transport: TTransport.Transport;
+
             if (typeof mix.url === 'string') {
                 let { url, options } = this.config;
                 if (url.startsWith('ws')) {
-                    this.createWebSocketClient();
+                    transport = this.createWebSocketClient(url);
                 } else if (typeof url.startsWith('http')) {
-                    let provider = new Web3.providers.HttpProvider(url, options);
-                    this.web3 = new Web3(provider);
+                    transport = new HttpTransport(<TTransport.Options.Http> {
+                        url,
+                        ...options
+                    });
                 } else {
-                    this.web3 = new Web3(mix.url);
+                    throw new Error(`Unsupported transport url ${url}`);
+                    //this.web3 = new Web3(mix.url);
                 }
             } else if ((mix.web3 as any).eth != null) {
-                this.web3 = <Web3>mix.web3;
+                transport = new Web3Transport(mix.web3);
             } else {
                 // provider
-                this.web3 = new Web3(<provider>mix.web3);
+                //this.web3 = new Web3(<provider>mix.web3);
+                transport = mix.web3 as any as TTransport.Transport;
             }
+            this.rpc = new Rpc(transport);
+            //this.web3 = new Web3(this.rpc);
         } else {
             throw new Error(`Neither Node URL nor Web3 Instance in argument`);
         }
-        this.web3.eth.handleRevert = true;
-        this.eth = this.web3.eth;
+        // this.web3.eth.handleRevert = true;
+        // this.eth = this.web3.eth;
         this.blockRangeLimits = { blocks: Infinity };
 
         if (mix.rateLimit) {
@@ -735,8 +762,9 @@ export class WClient {
         code: WS_STATE.NOTSET
     }
 
-    private createWebSocketClient() {
-        let { url, options } = this.config;
+    @memd.deco.memoize()
+    private createWebSocketClient(url: string) {
+        let { options } = this.config;
 
         options = obj_extendDefaults(options ?? {}, { clientConfig: {} });
         obj_extendDefaults((options as WebsocketProviderOptions).clientConfig, {
@@ -745,17 +773,17 @@ export class WClient {
             maxReceivedMessageSize: 50_000_000,
         });
 
-        let provider = new Web3.providers.WebsocketProvider(url, options);
-        let listener = provider as any;
-        listener.on('close', ev => this.websocket.code = ev.code);
-        listener.on('connect', _ => this.websocket.code = WS_STATE.CONNECTED);
+        let transport = new WsTransport({ url, ...options });
 
-        this.web3 = new Web3(provider);
+        // transport.on('close', ev => this.websocket.code = ev.code);
+        // transport.on('connect', _ => this.websocket.code = WS_STATE.CONNECTED);
+
+        return transport;
     }
 
-    async send<TResult>(fn: (web3: Web3) => PromiEvent<TResult>): Promise<{ status: ClientStatus, error?, result?: PromiEvent<TResult> }> {
+    async send<TResult>(fn: (web3: WClient) => PromiseEvent<TResult>): Promise<{ status: ClientStatus, error?, result?: PromiseEvent<TResult> }> {
         return new Promise((resolve, reject) => {
-            let result = fn(this.web3);
+            let result = fn(this);
 
             result.then(
                 _ => {
@@ -774,8 +802,36 @@ export class WClient {
             );
         });
     }
+    sendSignedTransaction (tx: TEth.Hex) {
+        let promise = new PromiseEvent<TEth.TxReceipt>();
+        this
+            .rpc
+            .eth_sendRawTransaction(tx)
+            .then(async hash => {
+                promise.emit('transactionHash', hash);
+                let receipt = await $rpc.waitForReceipt(this.rpc, hash);
+                promise.resolve(receipt);
+            }, error => {
+                promise.reject(error);
+            });
+        return promise;
+    }
+    sendTransaction (tx) {
+        let promise = new PromiseEvent<TEth.TxReceipt>();
+        this
+            .rpc
+            .eth_sendTransaction(tx)
+            .then(async hash => {
+                promise.emit('transactionHash', hash);
+                let receipt = await $rpc.waitForReceipt(this.rpc, hash);
+                promise.resolve(receipt);
+            }, error => {
+                promise.reject(error);
+            });
+        return promise;
+    }
 
-    async callBatched<TResult = any>(requests: (Web3BatchRequests.IContractRequest | Web3BatchRequests.IRequestBuilder)[]): Promise<TResult[]> {
+    async callBatched<TResult = any>(requests: TRpc.IRpcAction[]): Promise<TResult[]> {
         let total = requests.length;
         let spanLimit = this.getSpanLimit(requests.length);
         let output = [] as TResult[];
@@ -787,14 +843,13 @@ export class WClient {
             if (requests.length > 0 || pageIdx > 1) {
                 $logger.throttled(`Sending ${page.length} batched requests. Loaded ${output.length}/${total}`);
             }
-            let { status, error, result: pageResult } = await this.call(async (web3) => {
-                let batch = new Web3BatchRequests.BatchRequest(web3, page);
+            let { status, error, result: pageResult } = await this.call(async (client) => {
+                let batch = new Web3BatchRequests.BatchRequest(client.rpc, page);
                 let results = await batch.execute();
                 return results;
             });
             if (status === ClientStatus.Ok) {
-                let batchResults = pageResult.map(x => x.result);
-                output.push(...batchResults);
+                output.push(...pageResult);
                 continue;
             }
             if (status === ClientStatus.RateLimited) {
@@ -809,7 +864,7 @@ export class WClient {
         return output;
     }
 
-    async call<TResult extends PromiseLike<any>>(fn: (web3: Web3, wClient?: WClient) => TResult, options?: {
+    async call<TResult extends PromiseLike<any>>(fn: (wClient: WClient) => TResult, options?: {
         // For the rate limit guard, to make sure we wait enough time to proceed with batch request for example
         batchRequestCount?: number
     }): Promise<{ status: ClientStatus, error?, result?: Awaited<TResult>, time: number }> {
@@ -828,7 +883,7 @@ export class WClient {
 
         return new Promise((resolve, reject) => {
             let start = Date.now();
-            let result = fn(this.web3, this);
+            let result = fn(this);
 
             result.then(
                 result => {
@@ -864,8 +919,8 @@ export class WClient {
         });
     }
 
-    callPromiEvent<TResult extends PromiEvent<any>>(fn: (web3: Web3) => TResult): TResult {
-        let result = fn(this.web3);
+    callPromiEvent<TResult extends PromiseEvent<any>>(fn: (web3: WClient) => TResult): TResult {
+        let result = fn(this);
         result.on('error', error => {
             if (ClientErrorUtil.isConnectionFailed(error)) {
                 this.lastStatus = ClientStatus.NetworkError;
@@ -878,8 +933,8 @@ export class WClient {
         })
         return result;
     }
-    callSubscription<TResult extends PromiEvent<any>>(fn: (web3: Web3) => TResult): TResult {
-        let result = fn(this.web3);
+    callSubscription<TResult extends PromiseEvent<any>>(fn: (web3: WClient) => TResult): TResult {
+        let result = fn(this);
         result.on('error', error => {
             if (ClientErrorUtil.isConnectionFailed(error)) {
                 this.lastStatus = ClientStatus.NetworkError;
@@ -894,15 +949,15 @@ export class WClient {
     }
 
 
-    callSync<TResult>(fn: (web3: Web3) => TResult): { status: number, result?: TResult } {
-        try {
-            let result = fn(this.web3);
-            return { status: ClientStatus.Ok, result };
+    // callSync<TResult>(fn: (web3: Web3) => TResult): { status: number, result?: TResult } {
+    //     try {
+    //         let result = fn(this.web3);
+    //         return { status: ClientStatus.Ok, result };
 
-        } catch (error) {
-            return { status: ClientStatus.CallError, result: error }
-        }
-    }
+    //     } catch (error) {
+    //         return { status: ClientStatus.CallError, result: error }
+    //     }
+    // }
 
     onComplete(status: ClientStatus, timeMs: number) {
         let callCount = this.getRequestCount();
@@ -921,28 +976,28 @@ export class WClient {
     }
 
     async ensureConnected(): Promise<Error> {
-        if (this.config.url?.startsWith('ws')) {
-            if (this.websocket.code === WS_STATE.ECONNRESET) {
-                // recreate connection when ERRCONNRESET was thrown previously
-                this.createWebSocketClient();
-            }
+        // if (this.config.url?.startsWith('ws')) {
+        //     if (this.websocket.code === WS_STATE.ECONNRESET) {
+        //         // recreate connection when ERRCONNRESET was thrown previously
+        //         this.createWebSocketClient();
+        //     }
 
-            let web3 = this.web3;
-            let provider = web3.eth.currentProvider as WebsocketProvider & { url };
-            if (provider.connected === false) {
-                provider.connect();
-                try {
-                    await $promise.waitForTrue(() => provider.connected, {
-                        intervalMs: 200,
-                        timeoutMessage: `Couldn't connect to WS ${provider.url}`,
-                        timeoutMs: 20_000
-                    });
-                    return null;
-                } catch (error) {
-                    return error;
-                }
-            }
-        }
+        //     let web3 = this.web3;
+        //     let provider = web3.eth.currentProvider as WebsocketProvider & { url };
+        //     if (provider.connected === false) {
+        //         provider.connect();
+        //         try {
+        //             await $promise.waitForTrue(() => provider.connected, {
+        //                 intervalMs: 200,
+        //                 timeoutMessage: `Couldn't connect to WS ${provider.url}`,
+        //                 timeoutMs: 20_000
+        //             });
+        //             return null;
+        //         } catch (error) {
+        //             return error;
+        //         }
+        //     }
+        // }
         return null;
     }
 

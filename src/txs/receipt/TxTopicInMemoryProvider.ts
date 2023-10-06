@@ -1,6 +1,6 @@
 import { $abiParser } from '@dequanto/utils/$abiParser';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { type AbiItem } from 'web3-utils';
+import { type TAbiItem } from '@dequanto/types/TAbi';
 import { IAbiItemFormattable, IKnownLogFormatter, ITxLogItemDescriptor } from './ITxLogItem';
 
 
@@ -12,7 +12,7 @@ export class TxTopicInMemoryProvider {
 
 
 
-    register(mix: string | AbiItem |  IAbiItemFormattable | (string | AbiItem | IAbiItemFormattable)[]): this {
+    register(mix: string | TAbiItem |  IAbiItemFormattable | (string | TAbiItem | IAbiItemFormattable)[]): this {
         if (mix == null) {
             return this;
         }
@@ -20,7 +20,7 @@ export class TxTopicInMemoryProvider {
             mix.forEach(x => this.register(x));
             return this;
         }
-        let abi: AbiItem | string;
+        let abi: TAbiItem | string;
         let formatter: IKnownLogFormatter;
         if (typeof mix !== 'string' && 'abi' in mix && 'formatter' in mix) {
             abi = mix.abi;

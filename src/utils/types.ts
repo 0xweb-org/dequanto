@@ -1,3 +1,4 @@
+import { TEth } from '@dequanto/models/TEth';
 
 type NoneMethodKeys<T> = {
     [P in keyof T]: T[P] extends ((...args) => any) ? never : P;
@@ -33,3 +34,18 @@ export type ParametersFromSecond<T extends (x, ...args: any) => any> = T extends
 
 export type TCallback<TResult = any> = (error: Error, result?: TResult) => void
 export type TFnWithCallback<TArgs extends any[], TResult> = (...args: [...TArgs, TCallback<TResult>]) => void
+
+
+export type DataLike<T> = T extends bigint
+    ? bigint | number | TEth.Hex
+    : (T extends number
+        ? number | TEth.Hex
+        : (T extends {}
+            ? { [P in keyof T]?: DataLike<T[P]> }
+            : (T extends []
+                ? DataLike<T[0]>[]
+                : T
+            )
+        )
+    );
+

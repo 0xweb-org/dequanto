@@ -65,9 +65,9 @@ export class AmmV2PriceQuote {
             };
         }
 
-        let cacheableDate = opts?.date ?? (opts?.block == null && new Date() || null);
-        if (cacheableDate != null) {
-            let swap = await this.getSwapFromCache(token, amount, cacheableDate);
+        let cashableDate = opts?.date ?? (opts?.block == null && new Date() || null);
+        if (cashableDate != null) {
+            let swap = await this.getSwapFromCache(token, amount, cashableDate);
             if (swap != null) {
                 return swap;
             }
@@ -100,13 +100,13 @@ export class AmmV2PriceQuote {
 
         let pools = await alot(route).mapAsync<TResult<ISwapPool>>(async lp => {
 
-            if (cacheableDate != null) {
-                let price = await this.getPriceInUsdFromCache(lp.from.address, cacheableDate);
+            if (cashableDate != null) {
+                let price = await this.getPriceInUsdFromCache(lp.from.address, cashableDate);
                 if (price != null) {
                     return {
                         result: <ISwapPool> {
                             ...lp,
-                            date: cacheableDate,
+                            date: cashableDate,
                             priceFrom: price
                         }
                     };
@@ -127,7 +127,7 @@ export class AmmV2PriceQuote {
             return {
                 result: <ISwapPool> {
                     ...lp,
-                    date: cacheableDate,
+                    date: cashableDate,
                     reserves: lpReserves
                 }
             };
@@ -322,7 +322,7 @@ namespace TokenPrice {
         let toTokenAddress: TAddress = lp.to.address;
 
         if ($address.eq(fromTokenAddress, fromToken.address) === false) {
-            throw new Error(`Invalid from token addres ${fromTokenAddress} != ${fromToken.address}`);
+            throw new Error(`Invalid from token address ${fromTokenAddress} != ${fromToken.address}`);
         }
 
         let $fromPrice = lp.fromPrice;
@@ -355,6 +355,7 @@ namespace TokenPrice {
         let fromPrice = TokenUtils.calcPrice(fromAmount, fromToken, fromUsd ?? toUsd);
         let toPrice = TokenUtils.calcPrice(amountActual, toToken, toUsd ?? fromUsd);
 
+
         //console.log('FromPice', fromPrice, fromAmount, fromToken, fromUsd, toUsd);
         //$logger.log(`Swap: ${fromToken.symbol}(${fromAmount})[${fromUsd}$] > ${toToken.symbol} (${amountActual})[${toUsd}$]; Price ${fromToken.symbol}: ${fromPrice}`);
 
@@ -381,7 +382,7 @@ namespace TokenPrice {
 
             usd: 0,
 
-            date: new Date(Number(lp.reserves._blockTimestampLast * 1000)),
+            date: new Date(Number(lp.reserves._blockTimestampLast) * 1000),
 
             pool: {
                 address: lp.address,

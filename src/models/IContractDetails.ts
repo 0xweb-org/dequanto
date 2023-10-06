@@ -1,9 +1,10 @@
-import type { AbiItem } from 'web3-utils';
+import type { TAbiItem } from '@dequanto/types/TAbi';
+import { TEth } from './TEth';
 export interface IContractDetails {
     name: string
-    address: string
+    address: TEth.Address
     proxy?: string
     refAbi?: string
 
-    abi?: string | AbiItem[]
+    abi?: string | TAbiItem[]
 }

@@ -1,6 +1,6 @@
 import alot from 'alot';
 import * as parser from '@solidity-parser/parser';
-import type { AbiItem, AbiType, AbiInput } from 'web3-utils';
+import type { TAbiItem, AbiType, TAbiInput } from '@dequanto/types/TAbi';
 import {
     ArrayTypeName,
     AssemblyBlock,
@@ -316,7 +316,7 @@ export namespace Ast {
         throw new Error(`Unknown node ${JSON.stringify(node)}`)
     }
 
-    export function serializeTypeName (name: string, typeName: TypeName | VariableDeclaration, source: ContractDefinition | SourceUnit): AbiInput {
+    export function serializeTypeName (name: string, typeName: TypeName | VariableDeclaration, source: ContractDefinition | SourceUnit): TAbiInput {
         if (isVariableDeclaration(typeName)) {
             return serializeTypeName(typeName.name, typeName.typeName, source);
         }
@@ -350,7 +350,7 @@ export namespace Ast {
         throw new Error(`@TODO implement complex type to abi serializer: ${name} = ${ JSON.stringify(typeName) }`);
     }
 
-    export function getAbi (node: EventDefinition | FunctionDefinition, source: ContractDefinition | SourceUnit): AbiItem {
+    export function getAbi (node: EventDefinition | FunctionDefinition, source: ContractDefinition | SourceUnit): TAbiItem {
         if (Ast.isEventDefinition(node)) {
             return {
                 type: 'event',

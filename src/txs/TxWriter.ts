@@ -3,12 +3,10 @@ import di from 'a-di';
 import { class_Dfr, class_EventEmitter } from 'atma-utils';
 
 import type { ProposeTransactionProps } from '@gnosis.pm/safe-service-client';
-import type { TransactionRequest } from '@ethersproject/abstract-provider';
-import { TransactionReceipt, type PromiEvent } from 'web3-core';
 
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $txData } from '@dequanto/utils/$txData';
-import { $sign } from '@dequanto/utils/$sign';
+
 import { $logger } from '@dequanto/utils/$logger';
 import { $promise } from '@dequanto/utils/$promise';
 import { $account } from '@dequanto/utils/$account';
@@ -32,11 +30,14 @@ import { TxLogParser } from './receipt/TxLogParser';
 import { ISafeServiceTransport } from '@dequanto/safe/transport/ISafeServiceTransport';
 import { SigFileTransport } from './sig-transports/SigFileTransport';
 import { TxWriterAccountAgents } from './agents/TxWriterAccountAgents';
+import { PromiseEvent } from '@dequanto/class/PromiseEvent';
+import { $sig } from '@dequanto/utils/$sig';
+import { TEth } from '@dequanto/models/TEth';
 
 interface ITxWriterEvents {
     transactionHash (hash: string)
-    receipt (receipt: TransactionReceipt)
-    confirmation (confNumber: number, receipt: TransactionReceipt)
+    receipt (receipt: TEth.TxReceipt)
+    confirmation (confNumber: number, receipt: TEth.TxReceipt)
     error (error: Error)
     sent ()
     log (message: string)
@@ -58,7 +59,7 @@ export interface ITxWriterOptions {
     txOutput?: string
 
     /** Provide a pre-signed signature for this transaction data. */
-    signature?: string
+    signature?: TEth.Hex
 
     /**
      * The callback is executed on error, to give the opportunity to build a new Tx to resubmit the tx.
@@ -66,7 +67,7 @@ export interface ITxWriterOptions {
      * @param error - current Error with receipt(if any)
      * @param errCount - num of errors already handled
      */
-    onErrorRebuild? (tx: TxWriter, error: Error & { receipt?: TransactionReceipt }, errCount: number): Promise<TxDataBuilder>
+    onErrorRebuild? (tx: TxWriter, error: Error & { receipt?: TEth.TxReceipt }, errCount: number): Promise<TxDataBuilder>
 
     /**
      * Do not log Transaction states (start, receipt, etc)
@@ -77,9 +78,9 @@ export interface ITxWriterOptions {
 export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
     onSent = new class_Dfr<string>();
-    onCompleted = new class_Dfr<TransactionReceipt>();
+    onCompleted = new class_Dfr<TEth.TxReceipt>();
     onSaved = new class_Dfr<string>();
-    receipt: TransactionReceipt
+    receipt: TEth.TxReceipt
 
     onConfirmed (waitForCount: number): Promise<string> {
         let promise = new class_Dfr();
@@ -94,8 +95,8 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         return promise as any;
     }
 
-    wait (): Promise<TransactionReceipt> {
-        return this.onCompleted as any as Promise<TransactionReceipt>;
+    wait (): Promise<TEth.TxReceipt> {
+        return this.onCompleted as any as Promise<TEth.TxReceipt>;
     }
 
     id = Math.round(Math.random() * 10**10) + '';
@@ -104,7 +105,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         confirmations: number,
         hash?: string
         timeout?: NodeJS.Timer
-        receipt?: TransactionReceipt
+        receipt?: TEth.TxReceipt
         error?: Error
         knownLogs?: ITxLogItem[]
     } = null
@@ -124,7 +125,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     protected constructor (
         public client: Web3Client,
         public builder: TxDataBuilder,
-        public account: TAccount
+        public account: IAccount
     ) {
         super();
     }
@@ -173,15 +174,15 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         let time = Date.now();
         let sender: ChainAccount = await this.getSender();
 
-        if (this.builder.data.nonce == null) {
-            await this.builder.setNonce();
-        }
+        await Promise.all([
+            this.builder.ensureNonce(),
+            this.builder.ensureGas(),
+        ]);
 
         let key = sender?.key;
         let signedTxBuffer = key == null
             ? null
             : await this.builder.signToString(sender.key);
-
 
         if (signedTxBuffer == null) {
             if (this.options?.sigTransport != null) {
@@ -197,7 +198,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
             }
             if (this.options?.signature) {
                 let tx = $txData.getJson(this.builder.data, this.client);
-                signedTxBuffer = await $sign.serializeTx(tx, this.options.signature);
+                signedTxBuffer = await $sig.TxSerializer.serialize(tx, this.options.signature);
             }
         }
         let tx = <TxWriter['tx']> {
@@ -211,18 +212,19 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         this.tx = tx;
         this.txs.push(tx);
 
-        let promiEvent: PromiEvent<TransactionReceipt>;
+        let promiseEvent: PromiseEvent<TEth.TxReceipt>;
         if (signedTxBuffer != null) {
-            promiEvent = this
+            promiseEvent = this
                 .client
                 .sendSignedTransaction(signedTxBuffer);
         } else {
-            promiEvent = this
+            let txData = this.builder.getTxData(this.client);
+            promiseEvent = this
                 .client
-                .sendTransaction(this.builder.getTxData(this.client));
+                .sendTransaction(txData);
         }
 
-        promiEvent
+        promiseEvent
             .once('transactionHash', hash => {
                 if (tx.hash === hash) {
                     return;
@@ -292,7 +294,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
                     throw error;
                 }
 
-            }, async (err: Error & { receipt?: TransactionReceipt, data, transactionHash? }) => {
+            }, async (err: Error & { receipt?: TEth.TxReceipt, data, transactionHash? }) => {
                 if (err.data != null && this.builder.abi != null) {
                     err.data = $contract.decodeCustomError(err.data, this.builder.abi);
                     $error.normalizeEvmCustomError(err);
@@ -306,19 +308,16 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
                 const options = this.options ?? {};
 
-                if (err.receipt?.status === false) {
+                if (err.receipt?.status !== 1) {
                     // read reason
-                    // let client = await this.client.getWeb3();
+                    // let rpc = await this.client.getRpc();
                     // let tx = await this.client.getTransaction(err.receipt.transactionHash);
 
-                    // $logger.log('RECEIPT', err.receipt, tx);
                     // try {
-                    //     let result = await client.eth.call(tx, tx.blockNumber);
-                    //     $logger.log('RESULT', result);
+                    //     let result = await rpc.eth_call(tx, tx.blockNumber);
                     // } catch (err) {
                     //     $logger.log('CALL ERROR', err);
                     // }
-                    // throw new Error('asd');
                 }
 
                 if (ClientErrorUtil.IsInsufficientFunds(err)) {
@@ -341,7 +340,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
                     let nonce = this.builder.data.nonce;
                     // reset nonce
                     await this.builder.setNonce();
-                    this.logger.log(`Nonce was ${Number(nonce)} too low. Reetries left: ${options.retries}. New nonce: ${Number(this.builder.data.nonce)}`);
+                    this.logger.log(`Nonce was ${Number(nonce)} too low. Retries left: ${options.retries}. New nonce: ${Number(this.builder.data.nonce)}`);
                 }
 
                 let submitsCount = this.txs.length;
@@ -367,6 +366,10 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
             });
     }
 
+    public catch (fn) {
+        return this.onCompleted.catch(fn);
+    }
+
     private async getSender (): Promise<ChainAccount> {
         let account = this.account;
 
@@ -384,12 +387,14 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     }
     private getSenderName () {
         let sender = $account.getSender(this.account);
-        return sender.name ?? sender.address;
+        return (sender.name as any) ?? sender.address;
     }
 
-    private async extractLogs(receipt: TransactionReceipt, tx: TxWriter['tx']) {
+    private async extractLogs(receipt: TEth.TxReceipt, tx: TxWriter['tx']) {
         let parser = di.resolve(TxLogParser);
-        let logs = await parser.parse(receipt);
+        let logs = await parser.parse(receipt, {
+            abi: this.builder.abi,
+        });
         tx.knownLogs = logs.filter(x => x != null);
     }
 
@@ -401,12 +406,12 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
             from: sender.address
         });
 
-        let { gasLimit } = this.builder.data;
+        let { gas } = this.builder.data;
         let gasPrice = TxDataBuilder.getGasPrice(this.builder);
 
 
         let LITTLE_BIT_MORE = 1.3;
-        let wei = $bigint.multWithFloat(gasPrice * BigInt(gasLimit as any), LITTLE_BIT_MORE);
+        let wei = $bigint.multWithFloat(gasPrice * BigInt(gas as any), LITTLE_BIT_MORE);
 
         let fundTx = await this.transferNative(gasFunding, sender.address, wei);
         await fundTx.onCompleted;
@@ -531,7 +536,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     static write (
         client: Web3Client,
         builder: TxDataBuilder,
-        account: TAccount,
+        account: IAccount,
         options?: ITxWriterOptions
     ): TxWriter {
         let writer = new TxWriter(client, builder, account);
@@ -542,7 +547,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     static create (
         client: Web3Client,
         builder: TxDataBuilder,
-        account: TAccount,
+        account: IAccount,
         options?: ITxWriterOptions
     ): TxWriter {
         return new TxWriter(client, builder, account);
@@ -550,15 +555,15 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
     static async writeTxData (
         client: Web3Client,
-        data: Partial<TransactionRequest>,
-        account: TAccount,
+        data: Partial<TEth.TxLike>,
+        account: IAccount,
         options?: ITxWriterOptions
     ): Promise<TxWriter> {
         let txBuilder = new TxDataBuilder(client, account as IAccount, data);
 
         await Promise.all([
-            txBuilder.setGas(),
-            txBuilder.setNonce(),
+            txBuilder.ensureGas(),
+            txBuilder.ensureNonce(),
         ]);
 
         let w = new TxWriter(client, txBuilder, account);

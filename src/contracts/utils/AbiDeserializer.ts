@@ -1,14 +1,14 @@
 import { $str } from '@dequanto/solidity/utils/$str';
 import { $abiType } from '@dequanto/utils/$abiType';
 import { $is } from '@dequanto/utils/$is';
-import { type AbiItem, AbiOutput } from 'web3-utils';
+import { type TAbiItem, TAbiOutput } from '@dequanto/types/TAbi';
 import { $abiParser } from '../../utils/$abiParser';
 
 export namespace AbiDeserializer {
 
     type AbiNativeType = string;
 
-    export function process(result: any, types: AbiOutput[]) {
+    export function process(result: any, types: TAbiOutput[]) {
         if (types == null || types.length === 0) {
             // return as-is
             return result;
@@ -27,7 +27,7 @@ export namespace AbiDeserializer {
 
 
 
-    function toType(val, type: AbiOutput) {
+    function toType(val, type: TAbiOutput) {
         if (type == null) {
             return val;
         }
@@ -41,7 +41,7 @@ export namespace AbiDeserializer {
                 case 'boolean':
                     return Boolean(Number(val));
                 case 'string':
-                    return $is.hexString(val)
+                    return $is.Hex(val)
                         ? $str.fromHex(val)
                         : val;
             }
@@ -57,7 +57,7 @@ export namespace AbiDeserializer {
         return val;
     }
 
-    function toArray(value: object, types: AbiOutput[]) {
+    function toArray(value: object, types: TAbiOutput[]) {
         value = normalizeArray(value);
 
         if (Array.isArray(value) === false) {
@@ -70,8 +70,8 @@ export namespace AbiDeserializer {
         }
         return out;
     }
-    function toObject(value: object, types: AbiOutput[]) {
-        let properties = Object.create(null) as { [key: string]: AbiOutput };
+    function toObject(value: object, types: TAbiOutput[]) {
+        let properties = Object.create(null) as { [key: string]: TAbiOutput };
         types.forEach(type => {
             properties[type.name] = type;
         });

@@ -1,32 +1,27 @@
-import type { AbiItem } from 'web3-utils';
-import type { Contract } from 'web3-eth-contract';
-import { Subscription } from 'web3-core-subscriptions';
-import type { EventLog, Log } from 'web3-core';
+import type { TAbiItem } from '@dequanto/types/TAbi';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $contract } from '@dequanto/utils/$contract';
+import { TEth } from '@dequanto/models/TEth';
+import { RpcSubscription } from '@dequanto/rpc/RpcSubscription';
 
 export interface TClientEventsStreamData<T extends any[] = any[]> {
     name: string
-    event: Log
+    event: TEth.Log
     arguments: T
 }
 
 export class ClientEventsStream<T extends TClientEventsStreamData<unknown[]> = any> {
 
-    private abi: AbiItem[];
-    private subscriptions = {
-        data: null as Subscription<Log>,
-        connection: null as Subscription<any>
-    };
+    private abi: TAbiItem[];
     private streams = {
         onData: new SubjectStream<TClientEventsStreamData>(),
         onConnected: new SubjectStream<any>()
     };
-    private innerStream: Subscription<Log>;
+    private innerStream: RpcSubscription<TEth.Log>;
 
-    constructor(public address: TAddress, eventAbi: AbiItem | AbiItem[], stream?: Subscription<Log> ) {
+    constructor(public address: TAddress, eventAbi: TAbiItem | TAbiItem[], stream?: RpcSubscription<TEth.Log> ) {
         this.abi = Array.isArray(eventAbi) ? eventAbi : [ eventAbi ];
         this.onDataInner = this.onDataInner.bind(this);
         this.onConnectedInner = this.onConnectedInner.bind(this);
@@ -36,7 +31,7 @@ export class ClientEventsStream<T extends TClientEventsStreamData<unknown[]> = a
         }
     }
 
-    fromSubscription (web3Subscription: Subscription<Log>) {
+    fromSubscription (web3Subscription: RpcSubscription<TEth.Log>) {
         // if (this.subscriptions.data) {
         //     this.subscriptions.data.unsubscribe();
         //     this.subscriptions.data = null;
@@ -74,7 +69,7 @@ export class ClientEventsStream<T extends TClientEventsStreamData<unknown[]> = a
         stream.error(error);
     }
 
-    private onDataInner (event: Log) {
+    private onDataInner (event: TEth.Log) {
         let stream = this.streams.onData;
         let eventsAbi = this.abi.filter(x => x.type === 'event');
 

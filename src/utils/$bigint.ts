@@ -1,10 +1,12 @@
-import { $is } from './$is';
+import { TEth } from '@dequanto/models/TEth';
+import { $buffer } from './$buffer';
 import { $require } from './$require';
 
 export namespace $bigint {
 
     export const ETHER_DECIMALS = 18;
     export const GWEI_DECIMALS = 9;
+    export const MAX_UINT256 = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn;
 
     export function max(...args: bigint[]): bigint {
         let max: bigint = null;
@@ -27,12 +29,21 @@ export namespace $bigint {
         return min;
     }
 
-    export function toBigInt (amount: string | number | bigint): bigint {
+    export function toBigInt (amount: string | number | bigint | Uint8Array): bigint {
         if (typeof amount === 'bigint') {
             return amount;
         }
         if (typeof amount === 'string') {
-            amount = Number(amount);
+            if (amount.includes('.')) {
+                amount = amount.substring(0, amount.indexOf('.'));
+            }
+            if (amount[0] === '-') {
+                return -BigInt(amount.substring(1));
+            }
+            return BigInt(amount);
+        }
+        if (amount instanceof Uint8Array) {
+            return $buffer.toBigInt(amount);
         }
         return BigInt(Math.round(amount));
     }
@@ -85,21 +96,69 @@ export namespace $bigint {
         return val / round;
     }
 
-    export function toHex (num: string | bigint | number) {
+    export function toHex (num: string | bigint | number): TEth.Hex {
         if (num == null) {
-            return '0x0'
+            num = 0n;
         };
         if (typeof num === 'string') {
-            if (num.startsWith('0x')) {
-                return num;
-            }
             try {
+                let negative = false;
+                if (num[0] === '-') {
+                    num = num.substring(1);
+                    negative = true;
+                }
                 num = BigInt(num);
+                if (negative === true) {
+                    num = -num;
+                }
+
             } catch (error) {
                 throw new Error(`Invalid BigInt ${num}`)
             }
         }
-        return `0x${num.toString(16)}`;
+        if (typeof num === 'number') {
+            num = BigInt(num);
+        }
+        let isNegative = num < 0n;
+        if (isNegative) {
+            num = -num;
+        }
+        let hex = `0x${num.toString(16)}`;
+        if (isNegative) {
+            hex = `-${hex}`;
+        }
+        return hex as TEth.Hex;
+    }
+
+    export function toTwos (value: bigint, bits: number) {
+        const width = BigInt(bits);
+        const limit = (1n << (width - 1n));
+
+        if (value < 0n) {
+            value = -value;
+            $require.True(value <= limit, `NUMERIC_FAULT: too low ${value} <= ${limit}`);
+            const mask = (1n << width) - 1n;
+            return ((~value) & mask) + 1n;
+        } else {
+            $require.True(value < limit, `NUMERIC_FAULT: too high ${value} < ${limit}`);
+        }
+
+        return value;
+    }
+    export function fromTwos (value: bigint, bits: number) {
+        const width = BigInt(bits);
+        $require.True((value >> width) === 0n, `NUMERIC_FAULT: overflow ${value}`);
+
+        // Top bit set; treat as a negative value
+        if (value >> (width - 1n)) {
+            const mask = (1n << width) - 1n;
+            return -(((~value) & mask) + 1n);
+        }
+        return value;
+    }
+    export function mask (value: bigint, _bits: number) {
+        const bits = BigInt(_bits);
+        return value & ((1n << bits) - 1n);
     }
 
     export function toGweiFromWei (val: bigint) {

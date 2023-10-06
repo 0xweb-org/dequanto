@@ -1,12 +1,13 @@
 
-import { class_Dfr, class_EventEmitter, mixin } from 'atma-utils';
-import { PromiEvent } from 'web3-core';
+import { PromiseEvent } from '@dequanto/class/PromiseEvent';
+import { class_Dfr, class_EventEmitter } from 'atma-utils';
 
-export class PromiEventWrap extends class_Dfr {
+
+export class PromiseEventWrap extends class_Dfr {
 
     private _events = new class_EventEmitter();
 
-    $source: PromiEvent<any>
+    $source: PromiseEvent<any>
 
     on (event, cb): this {
 
@@ -27,17 +28,17 @@ export class PromiEventWrap extends class_Dfr {
         this._events.emit(event, ...args);
     }
 
-    /** Attach this wrapper to the promievent */
-    bind (promiEvent: PromiEvent<any>) {
+    /** Attach this wrapper to the promiseEvent */
+    bind (promiseEvent: PromiseEvent<any>) {
 
-        this.$source = promiEvent;
+        this.$source = promiseEvent;
 
         for (let event in this._events._listeners) {
             if (event !== 'error') {
                 this.bindOn(event);
             }
         }
-        promiEvent.then(
+        promiseEvent.then(
             result => {
                 this.resolve(result)
             },

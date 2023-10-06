@@ -5,11 +5,8 @@
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
-import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
-import { type AbiItem } from 'web3-utils';
-import { TransactionReceipt, EventLog } from 'web3-core';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
@@ -17,10 +14,11 @@ import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExp
 
 import { Polyscan } from '@dequanto/BlockchainExplorer/Polyscan'
 import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client'
+import { TEth } from '@dequanto/models/TEth';
 
 export class ERC20Base extends ContractBase {
     constructor(
-        public address: TAddress = '',
+        public address: TAddress = null,
         public client: Web3Client = di.resolve(PolyWeb3Client),
         public explorer: IBlockChainExplorer = di.resolve(Polyscan)
     ) {
@@ -72,20 +70,20 @@ export class ERC20Base extends ContractBase {
         return this.$read('function allowance(address, address) returns uint256', _owner, _spender);
     }
 
-    onApproval (fn: (event: EventLog, owner: TAddress, spender: TAddress, value: bigint) => void): ClientEventsStream<any> {
+    onApproval (fn: (event: TEth.EventLog, owner: TAddress, spender: TAddress, value: bigint) => void): ClientEventsStream<any> {
         return this.$on('Approval', fn);
     }
 
-    onTransfer (fn: (event: EventLog, from: TAddress, to: TAddress, value: bigint) => void): ClientEventsStream<any> {
+    onTransfer (fn: (event: TEth.EventLog, from: TAddress, to: TAddress, value: bigint) => void): ClientEventsStream<any> {
         return this.$on('Transfer', fn);
     }
 
-    extractLogsApproval (tx: TransactionReceipt): ITxLogItem<TLogApproval>[] {
+    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TLogApproval>[] {
         let abi = this.$getAbiItem('event', 'Approval');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApproval>[];
     }
 
-    extractLogsTransfer (tx: TransactionReceipt): ITxLogItem<TLogTransfer>[] {
+    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TLogTransfer>[] {
         let abi = this.$getAbiItem('event', 'Transfer');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogTransfer>[];
     }

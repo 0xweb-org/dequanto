@@ -32,10 +32,12 @@ export class TestNode {
             shell.run();
             await shell.onReadyAsync();
         }
+        return HOST;
     }
 }
 
 async function isServerRunning () {
+
     let provider = new HardhatProvider();
     let client = provider.client('localhost');
     try {

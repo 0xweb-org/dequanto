@@ -1,11 +1,12 @@
 import { IContractDetails } from '@dequanto/models/IContractDetails';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $require } from '@dequanto/utils/$require';
-import { Transaction } from 'web3-core';
+
 
 
 import { IBlockChainExplorer, IBlockChainTransferEvent } from './IBlockChainExplorer';
 import { $address } from '@dequanto/utils/$address';
+import { TEth } from '@dequanto/models/TEth';
 
 export class BlockChainExplorerStorage implements IBlockChainExplorer {
     localDb: IContractDetails[];
@@ -62,7 +63,7 @@ export class BlockChainExplorerStorage implements IBlockChainExplorer {
     getContractMeta(q: string): Promise<IContractDetails> {
         throw new Error('Method not implemented.');
     }
-    getContractCreation(address: string): Promise<{ creator: string; txHash: string; }> {
+    getContractCreation(address: string): Promise<{ creator: TEth.Address; txHash: TEth.Hex; }> {
         throw new Error('Method not implemented.');
     }
     async getContractAbi(address: TAddress, opts?: { implementation?: TAddress; }): Promise<{ abi: string; implementation: TAddress; }> {
@@ -89,16 +90,16 @@ export class BlockChainExplorerStorage implements IBlockChainExplorer {
             ABI: JSON.stringify(_contract.abi)
         }
     }
-    getTransactions(address: string, params?: { fromBlockNumber?: number; page?: number; size?: number; }): Promise<Transaction[]> {
+    getTransactions(address: string, params?: { fromBlockNumber?: number; page?: number; size?: number; }): Promise<TEth.Tx[]> {
         throw new Error('Method not implemented.');
     }
-    getTransactionsAll(address: string): Promise<Transaction[]> {
+    getTransactionsAll(address: string): Promise<TEth.Tx[]> {
         throw new Error('Method not implemented.');
     }
-    getInternalTransactions(address: string, params?: { fromBlockNumber?: number; page?: number; size?: number; }): Promise<Transaction[]> {
+    getInternalTransactions(address: string, params?: { fromBlockNumber?: number; page?: number; size?: number; }): Promise<TEth.Tx[]> {
         throw new Error('Method not implemented.');
     }
-    getInternalTransactionsAll(address: string): Promise<Transaction[]> {
+    getInternalTransactionsAll(address: string): Promise<TEth.Tx[]> {
         throw new Error('Method not implemented.');
     }
     getErc20Transfers(address: string, fromBlockNumber?: number): Promise<IBlockChainTransferEvent[]> {

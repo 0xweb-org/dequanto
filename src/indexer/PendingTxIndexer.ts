@@ -1,5 +1,3 @@
-import { BlockTransactionString } from 'web3-eth'
-import { Transaction } from 'web3-core';
 import { BlocksWalker } from './handlers/BlocksWalker';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TPlatform } from '@dequanto/models/TPlatform';
@@ -7,13 +5,14 @@ import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { TxQueueLoader } from './handlers/TxQueueLoader';
 import { BlocksTxIndexer } from './BlocksTxIndexer';
 import { $number } from '@dequanto/utils/$number';
+import { TEth } from '@dequanto/models/TEth';
 
 
 export interface IPendingTxIndexerOptions {
     /** Name of the indexer */
     name?: string
 }
-export type TPendingTxListener = (client: Web3Client, tx: Transaction) => Promise<void>
+export type TPendingTxListener = (client: Web3Client, tx: TEth.Tx) => Promise<void>
 
 export class PendingTxIndexer {
 
@@ -96,7 +95,7 @@ export class PendingTxIndexer {
     }
 
 
-    private onMempoolTxLoaded (tx: Transaction) {
+    private onMempoolTxLoaded (tx: TEth.Tx) {
         if (tx == null) {
             this.status.txNulls++;
             return;
@@ -105,7 +104,7 @@ export class PendingTxIndexer {
             this.listeners[i](this.client, tx);
         }
     }
-    private onBlockLoaded (block: BlockTransactionString) {
+    private onBlockLoaded (block: TEth.Block<TEth.Hex>) {
         for (let i = 0; i < block.transactions.length; i++) {
             let hash = block.transactions[i];
 

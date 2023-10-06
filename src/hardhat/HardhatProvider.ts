@@ -1,25 +1,32 @@
 import memd from 'memd';
 import alot from 'alot';
-import type Ethers from 'ethers'
-import type { ContractBase } from '@dequanto/contracts/ContractBase';
-import type { Constructor } from 'atma-utils/mixin';
-import type { AbiItem } from 'web3-utils';
-import { ChainAccount } from "@dequanto/models/TAccount";
-import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client';
 import { class_Uri } from 'atma-utils';
 import { File, env, Directory } from 'atma-io';
+
+import type { ContractBase } from '@dequanto/contracts/ContractBase';
+import type { Constructor } from 'atma-utils/mixin';
+import type { TAbiItem } from '@dequanto/types/TAbi';
+import type { TEth } from '@dequanto/models/TEth';
+
+import { ChainAccount } from "@dequanto/models/TAccount";
+import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { ethers } from 'ethers';
+
 import { $logger } from '@dequanto/utils/$logger';
 import { $number } from '@dequanto/utils/$number';
 import { $require } from '@dequanto/utils/$require';
 import { IGeneratorSources } from '@dequanto/gen/Generator';
 import { $path } from '@dequanto/utils/$path';
-import { ContractFactory, IContractWrapped } from '@dequanto/contracts/ContractFactory';
+import { ContractClassFactory, IContractWrapped } from '@dequanto/contracts/ContractClassFactory';
 import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
 import { IWeb3EndpointOptions } from '@dequanto/clients/interfaces/IWeb3EndpointOptions';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
+import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
+
+import { ContractDeployment } from '@dequanto/contracts/deploy/ContractDeployment';
+import { ContractDeployer } from '@dequanto/contracts/deploy/ContractDeployer';
+
 
 
 
@@ -28,14 +35,6 @@ export class HardhatProvider {
     /* lazy load */
     hh = require('hardhat');
 
-    constructor() {
-        if (this.hh.ethers == null) {
-            throw new Error(`Run "npm i @nomiclabs/hardhat-ethers" to install plugin and add "require('@nomiclabs/hardhat-ethers')" to hardhat.config.js`)
-        }
-        if (this.hh.web3 == null) {
-            throw new Error(`Run "npm i @nomiclabs/hardhat-web3" to install plugin and add "require('@nomiclabs/hardhat-web3')" to hardhat.config.js`)
-        }
-    }
 
 
     @memd.deco.memoize()
@@ -45,16 +44,15 @@ export class HardhatProvider {
         if (opts.web3 == null && opts.endpoints == null) {
             if (network == 'localhost') {
                 opts.endpoints = [
-                    { url: 'http://127.0.0.1:8545' },
+                    //{ url: 'http://127.0.0.1:8545' },
                     // Use `manual`, will be used for subscriptions only, otherwise BatchRequests will fail, as not implemented yet
                     // https://github.com/NomicFoundation/hardhat/issues/1324
-                    { url: 'ws://127.0.0.1:8545', manual: true },
+                    { url: 'ws://127.0.0.1:8545' },
                 ];
             } else {
                 opts.web3 = this.hh.web3;
             }
         }
-
         const client = new HardhatWeb3Client(opts);
         return client;
     }
@@ -71,9 +69,12 @@ export class HardhatProvider {
             // Hardhat looks like supports only HTTP nodes to fork from
             $require.True(/^(http)/.test(url), `Requires the HTTP path of a node to fork: ${url}`);
 
-            // ensure we get the web3 for that url
-            let web3 = await platformClient.getWeb3({ node: { url }});
-            block = await web3.eth.getBlockNumber();
+            if (block == null) {
+                let rpc = await platformClient.getRpc({ node: { url }});
+                block = await rpc.eth_blockNumber();
+                // hardhat performance issues on latest block. Requires at least 5 confirmations
+                block -= 5;
+            }
         }
         await client.debug.reset({
             forking: {
@@ -98,18 +99,17 @@ export class HardhatProvider {
 
     @memd.deco.memoize()
     deployer(index: number = 0): ChainAccount {
-        const ethers: typeof Ethers = this.hh.ethers;
         const accounts: any = this.hh.config.networks.hardhat.accounts;
-        const wallet = ethers.Wallet.fromMnemonic(accounts.mnemonic, accounts.path + `/${index}`);
+        const wallet = ChainAccountProvider.getAccountFromMnemonic(accounts.mnemonic, accounts.path + `/${index}`);
         return {
-            key: wallet.privateKey,
+            key: wallet.key,
             address: wallet.address,
         };
     }
 
     @memd.deco.memoize()
     async deployClass<T extends ContractBase>(Ctor: Constructor<T>, options?: {
-        deployer?: Ethers.Signer | ChainAccount
+        deployer?: ChainAccount
         arguments?: any[]
         client?: Web3Client
     }): Promise<T> {
@@ -118,19 +118,18 @@ export class HardhatProvider {
         let signer = options?.deployer ?? this.deployer();
         let params = options?.arguments ?? [];
 
-        let Factory: Ethers.ContractFactory = await this.getFactory([Ctor.name], client, signer);
+        let Factory = await this.getFactory(Ctor.name, client, signer, params);
 
-        const contract = await Factory.deploy(...params);
-        const receipt = await contract.deployed();
+        const receipt = await Factory.deploy();
 
-        $logger.log(`Contract ${Ctor.name} deployed to ${contract.address}`);
-        return new Ctor(contract.address, client);
+        $logger.log(`Contract ${Ctor.name} deployed to ${receipt.contractAddress}`);
+        return new Ctor(receipt.contractAddress, client);
     }
 
     async deploySol <TReturn extends ContractBase = IContractWrapped > (solContractPath: string, options?: {
         client?: Web3Client
         arguments?: any[],
-        deployer?:  Ethers.Signer | ChainAccount,
+        deployer?:  ChainAccount,
         paths?: {
             root?: string
             artifacts?: string
@@ -138,7 +137,7 @@ export class HardhatProvider {
         contractName?: string
     }): Promise<{
         contract: TReturn //Ethers.Contract
-        abi: AbiItem[]
+        abi: TAbiItem[]
         bytecode: string
         source: IGeneratorSources
     }> {
@@ -147,13 +146,13 @@ export class HardhatProvider {
         const args = options?.arguments ?? [];
         const signer = options?.deployer ?? this.deployer();
         const { abi, bytecode, source } = await this.compileSol(solContractPath, options);
-        const Factory: Ethers.ContractFactory = await this.getFactory([abi, bytecode], client, signer);
-        const contractEthers = await Factory.deploy(...args);
-        const receipt = await contractEthers.deployed();
-        const contract = await ContractFactory.fromAbi<TReturn>(contractEthers.address, abi, client, null);
+        const Factory = await this.getFactory([abi, bytecode], client, signer, args);
 
+        const receipt = await Factory.deploy();
+        const contract = await ContractClassFactory.fromAbi<TReturn>(receipt.contractAddress, abi, client, null);
         const explorer = this.explorer();
-        explorer.localDb.push({ name: '', abi: abi, address: contractEthers.address });
+        explorer.localDb.push({ name: '', abi: abi, address: receipt.contractAddress });
+
         return {
             contract: contract,
             abi,
@@ -162,21 +161,21 @@ export class HardhatProvider {
         };
     }
 
-    async deployBytecode <TReturn extends ContractBase = IContractWrapped > (hex: string, options?: {
+    async deployBytecode <TReturn extends ContractBase = IContractWrapped > (hex: TEth.Hex, options?: {
         client?: Web3Client
         arguments?: any[],
-        deployer?:  Ethers.Signer | ChainAccount,
+        deployer?:  ChainAccount,
         paths?: {
             root?: string
             artifacts?: string
         },
         contractName?: string
-        abi?: AbiItem[]
+        abi?: TAbiItem[]
     }): Promise<{
-        contract: TReturn //Ethers.Contract
-        abi: AbiItem[]
-        bytecode: string,
-        receipt: Ethers.ContractReceipt
+        contract: TReturn
+        abi: TAbiItem[]
+        bytecode: TEth.Hex,
+        receipt: TEth.TxReceipt
     }> {
 
         const client = options?.client ?? this.client();
@@ -184,19 +183,18 @@ export class HardhatProvider {
         const signer = options?.deployer ?? this.deployer();
         const { abi } = options ?? {};
         const bytecode = hex;
-        const Factory: Ethers.ContractFactory = await this.getFactory([abi ?? [], bytecode], client, signer);
-        const contractEthers = await Factory.deploy(...args);
-        const receipt = await contractEthers.deployed();
-        const contract = await ContractFactory.fromAbi<TReturn>(contractEthers.address, abi, client, null);
+        const Factory = await this.getFactory([ abi , bytecode ], client, signer, args);
 
-        let receiptFinal = await receipt.deployTransaction.wait();
+        const receipt = await Factory.deploy();
+        const contract = await ContractClassFactory.fromAbi<TReturn>(receipt.contractAddress, abi, client, null);
+
         const explorer = this.explorer();
-        explorer.localDb.push({ name: '', abi: abi, address: contractEthers.address });
+        explorer.localDb.push({ name: '', abi: abi, address: receipt.contractAddress });
         return {
             contract: contract,
             abi,
             bytecode,
-            receipt: receiptFinal,
+            receipt: receipt,
         };
     }
 
@@ -207,8 +205,8 @@ export class HardhatProvider {
         },
         contractName?: string
     }): Promise<{
-        abi: AbiItem[]
-        bytecode: string
+        abi: TAbiItem[]
+        bytecode: TEth.Hex
         output: string
         source: IGeneratorSources
     }> {
@@ -358,29 +356,35 @@ export class HardhatProvider {
         await File.writeAsync(tmp, solidityCode);
         return { tmpFile: tmp, tmpDir: root, options }
     }
-    private getEthersProvider (client: Web3Client) {
-        if (client.options.web3 != null) {
-            let ethers: typeof Ethers & { provider /* hardhat */ } = this.hh.ethers;
-            return ethers.provider;
-        }
 
-        let url = client.options?.endpoints[0].url;
-        if (url.startsWith('ws')) {
-            return new ethers.providers.WebSocketProvider(url);
+
+    private async getFactory (
+        mix: string | [ abi: TAbiItem[], bytecode: TEth.Hex ],
+        client: Web3Client,
+        signer: ChainAccount,
+        params: any[],
+    ): Promise<ContractDeployment> {
+
+        let deployer = new ContractDeployer(client, signer);
+
+        if (typeof mix === 'string') {
+            if (mix.endsWith('json')) {
+                return await deployer.prepareDeployment({
+                    path: mix,
+                    params
+                })
+            }
+            return await deployer.prepareDeployment({
+                name: mix,
+                params
+            })
         }
-        return new ethers.providers.JsonRpcProvider(url);
+        let [ abi, bytecode ]  = mix;
+        return await deployer.prepareDeployment({
+            bytecode,
+            abi,
+            params
+        })
     }
 
-    private async getFactory (factoryArgs: [string] | [any, string], client: Web3Client, signer: Ethers.Signer | ChainAccount): Promise<Ethers.ContractFactory> {
-        let ethers: typeof Ethers = this.hh.ethers;
-        let Factory: Ethers.ContractFactory = await (ethers as any).getContractFactory(...factoryArgs);
-
-        let provider = this.getEthersProvider(client);
-        let $signer = 'key' in signer
-            ? new ethers.Wallet(signer.key, provider)
-            : signer as Ethers.Signer;
-
-        Factory = Factory.connect($signer);
-        return Factory;
-    }
 }

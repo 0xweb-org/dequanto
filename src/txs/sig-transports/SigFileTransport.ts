@@ -1,10 +1,8 @@
-import { $fn } from '@dequanto/utils/$fn';
 import { $logger } from '@dequanto/utils/$logger';
-import { $sign } from '@dequanto/utils/$sign';
 import { $txData } from '@dequanto/utils/$txData';
 import { File } from 'atma-io'
-import { utils } from 'ethers';
 import { TxDataBuilder } from '../TxDataBuilder'
+import { $sig } from '@dequanto/utils/$sig';
 export class SigFileTransport {
 
     async create (path: string, txBuilder: TxDataBuilder, params: { wait: boolean }): Promise<{ path: string, signed?: string }> {
@@ -15,7 +13,7 @@ export class SigFileTransport {
             },
             tx,
             config: txBuilder.config,
-            raw: utils.serializeTransaction(<any> tx),
+            raw: $sig.TxSerializer.serialize(tx),
             signature: null,
         };
 
@@ -43,7 +41,7 @@ export class SigFileTransport {
                     $logger.log(`Signature not found. Still waiting...`);
                     return;
                 }
-                let signed = await $sign.serializeTx(tx, json.signature);
+                let signed = await $sig.TxSerializer.serialize(tx, json.signature);
                 resolve({ path, signed });
             });
         });

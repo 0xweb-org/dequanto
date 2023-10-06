@@ -1,11 +1,10 @@
+import { TEth } from '@dequanto/models/TEth';
 import { $bigint } from '@dequanto/utils/$bigint';
-import type { Transaction, TransactionReceipt } from 'web3-core';
-
 
 
 export namespace $gas {
 
-    export function formatUsed (txData: { gasPrice?: any }, receipt: TransactionReceipt & { effectiveGasPrice }) {
+    export function formatUsed (txData: { gasPrice?: any }, receipt: TEth.TxReceipt) {
         let usage = receipt.gasUsed;
         let price = BigInt(receipt.effectiveGasPrice ?? txData.gasPrice ?? 1);
 

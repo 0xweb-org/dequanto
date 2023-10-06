@@ -5,15 +5,15 @@ import { IContractDetails } from '@dequanto/models/IContractDetails'
 import { ContractProvider, IContractProvider } from './ContractProvider'
 import { IContractReader } from './ContractReader'
 
-import { Transaction, TransactionReceipt } from 'web3-core';
-import { utils } from 'ethers'
 import { ITransactionDetails } from '@dequanto/models/ITransactionDetails'
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder'
 import { TxWriter } from '@dequanto/txs/TxWriter'
 import { Web3Client } from '@dequanto/clients/Web3Client'
-import { $contract } from '@dequanto/utils/$contract'
 import { ChainAccount } from "@dequanto/models/TAccount"
 import { $is } from '@dequanto/utils/$is'
+import { $abiUtils } from '@dequanto/utils/$abiUtils'
+import { TAbiItem } from '@dequanto/types/TAbi'
+import { TEth } from '@dequanto/models/TEth'
 
 export interface IContractInit {
     Ctor?:  new (...args) => any
@@ -25,10 +25,10 @@ export interface IContractInit {
 
 export abstract class Contract {
     name: string = null
-    address: string = null
+    address: TEth.Address = null
     proxyImpl: string = null
     refAbi: string = null
-    abi: string = null
+    abi: string | TAbiItem[] = null
 
     opts: IContractInit
 
@@ -65,42 +65,35 @@ export abstract class Contract {
         return TxWriter.write(this.client, txBuilder, account);
     }
 
-    async getTransactionsFor (address: string, opts?: { decode?: boolean }): Promise<ITransactionDetails[]> {
+    async getTransactionsFor (address: TEth.Address, opts?: { decode?: boolean }): Promise<ITransactionDetails[]> {
         let txs = await this.explorer.getTransactions(address);
         txs = txs.filter(x => x.to.toUpperCase() === this.address.toUpperCase());
         if (opts?.decode) {
-            txs = await this.parseTrasactions(txs);
+            txs = await this.parseTransactions(txs);
         }
         return txs;
     }
 
-    async parseTrasaction (tx: Transaction): Promise<ITransactionDetails> {
-        const abiAddress = this.refAbi
+    async parseTransaction (tx: TEth.TxLike): Promise<ITransactionDetails> {
+        let abiAddress = this.refAbi
             ?? this.proxyImpl
             ?? this.address
             ?? tx.to;
 
-        const abi = this.abi ?? await this.provider.getAbi(abiAddress);
-        const inter = new utils.Interface(abi);
-        const decodedInput = inter.parseTransaction({
-            data: tx.input,
-            value: tx.value,
-        });
-
-
+        let abi = this.abi ?? await this.provider.getAbi(abiAddress);
+        let callData = $abiUtils.parseMethodCallData(abi, tx.input ?? tx.data);
 
         return {
             ...tx,
             details: {
-                name: decodedInput.name,
-                args: $contract.normalizeArgs(Array.from(decodedInput.args))
+                ...callData
             }
         };
     }
 
-    async parseTrasactions (arr: Transaction[]): Promise<ITransactionDetails[]> {
+    async parseTransactions (arr: TEth.TxLike[]): Promise<ITransactionDetails[]> {
         return await alot(arr).mapAsync(async tx => {
-            return await this.parseTrasaction(tx);
+            return await this.parseTransaction(tx);
         }).toArrayAsync();
     }
 

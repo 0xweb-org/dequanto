@@ -1,6 +1,6 @@
 import alot from 'alot';
 import memd from 'memd';
-import type { AbiItem } from 'web3-utils';
+import type { TAbiItem } from '@dequanto/types/TAbi';
 
 import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -90,7 +90,7 @@ export class MappingKeysLoader {
     }
 
     @memd.deco.memoize({ perInstance: true })
-    private async loadEvents(ev: AbiItem) {
+    private async loadEvents(ev: TAbiItem) {
         let reader = new ContractReader(this.client);
         return reader.getLogsParsed(ev, {
             address: this.address,

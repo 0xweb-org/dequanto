@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-06-15 23:19
+ *  AUTO-Generated Class: 2023-10-05 18:18
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -15,10 +15,10 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
-import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+
 import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
-import type { AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
+import type { TAbiItem } from '@dequanto/types/TAbi';
+import type { TEth } from '@dequanto/models/TEth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
@@ -28,11 +28,16 @@ import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 
 export class IArbSys extends ContractBase {
     constructor(
-        public address: TAddress = '',
+        public address: TEth.Address = null,
         public client: Web3Client = di.resolve(EthWeb3Client, ),
         public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
+    }
+
+    // 0x2b407a82
+    async arbBlockHash (arbBlockNum: bigint): Promise<TBufferLike> {
+        return this.$read(this.$getAbiItem('function', 'arbBlockHash'), arbBlockNum);
     }
 
     // 0xa3b1b31d
@@ -50,19 +55,9 @@ export class IArbSys extends ContractBase {
         return this.$read(this.$getAbiItem('function', 'arbOSVersion'));
     }
 
-    // 0xa169625f
-    async getStorageAt (account: TAddress, index: bigint): Promise<bigint> {
-        return this.$read(this.$getAbiItem('function', 'getStorageAt'), account, index);
-    }
-
     // 0xa94597ff
     async getStorageGasAvailable (): Promise<bigint> {
         return this.$read(this.$getAbiItem('function', 'getStorageGasAvailable'));
-    }
-
-    // 0x23ca0cd2
-    async getTransactionCount (account: TAddress): Promise<bigint> {
-        return this.$read(this.$getAbiItem('function', 'getTransactionCount'), account);
     }
 
     // 0x08bd624c
@@ -71,8 +66,8 @@ export class IArbSys extends ContractBase {
     }
 
     // 0x4dbbd506
-    async mapL1SenderContractAddressToL2Alias (_sender: TAddress, dest: TAddress): Promise<TAddress> {
-        return this.$read(this.$getAbiItem('function', 'mapL1SenderContractAddressToL2Alias'), _sender, dest);
+    async mapL1SenderContractAddressToL2Alias (_sender: TAddress, unused: TAddress): Promise<TAddress> {
+        return this.$read(this.$getAbiItem('function', 'mapL1SenderContractAddressToL2Alias'), _sender, unused);
     }
 
     // 0xd74523b3
@@ -80,9 +75,14 @@ export class IArbSys extends ContractBase {
         return this.$read(this.$getAbiItem('function', 'myCallersAddressWithoutAliasing'));
     }
 
+    // 0x7aeecd2a
+    async sendMerkleTreeState (): Promise<{ size: bigint, root: TBufferLike, partials: TBufferLike[] }> {
+        return this.$read(this.$getAbiItem('function', 'sendMerkleTreeState'));
+    }
+
     // 0x928c169a
-    async sendTxToL1 (sender: TSender, destination: TAddress, calldataForL1: TBufferLike): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'sendTxToL1'), sender, destination, calldataForL1);
+    async sendTxToL1 (sender: TSender, destination: TAddress, data: TBufferLike): Promise<TxWriter> {
+        return this.$write(this.$getAbiItem('function', 'sendTxToL1'), sender, destination, data);
     }
 
     // 0x175a260b
@@ -104,13 +104,13 @@ export class IArbSys extends ContractBase {
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
-        tx: Transaction
-        block: BlockTransactionString
+        tx: TEth.Tx
+        block: TEth.Block<TEth.Hex>
         calldata: IMethods[TMethod]
     }> {
         options ??= {};
         options.filter ??= {};
-        options.filter.method = <any> method;
+        options.filter.method = method;
         return <any> this.$onTransaction(options);
     }
 
@@ -122,9 +122,27 @@ export class IArbSys extends ContractBase {
         return this.$onLog('L2ToL1Transaction', fn);
     }
 
-    extractLogsL2ToL1Transaction (tx: TransactionReceipt): ITxLogItem<TLogL2ToL1Transaction>[] {
+    onL2ToL1Tx (fn?: (event: TClientEventsStreamData<TLogL2ToL1TxParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogL2ToL1TxParameters>> {
+        return this.$onLog('L2ToL1Tx', fn);
+    }
+
+    onSendMerkleUpdate (fn?: (event: TClientEventsStreamData<TLogSendMerkleUpdateParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogSendMerkleUpdateParameters>> {
+        return this.$onLog('SendMerkleUpdate', fn);
+    }
+
+    extractLogsL2ToL1Transaction (tx: TEth.TxReceipt): ITxLogItem<TLogL2ToL1Transaction>[] {
         let abi = this.$getAbiItem('event', 'L2ToL1Transaction');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogL2ToL1Transaction>[];
+    }
+
+    extractLogsL2ToL1Tx (tx: TEth.TxReceipt): ITxLogItem<TLogL2ToL1Tx>[] {
+        let abi = this.$getAbiItem('event', 'L2ToL1Tx');
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogL2ToL1Tx>[];
+    }
+
+    extractLogsSendMerkleUpdate (tx: TEth.TxReceipt): ITxLogItem<TLogSendMerkleUpdate>[] {
+        let abi = this.$getAbiItem('event', 'SendMerkleUpdate');
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogSendMerkleUpdate>[];
     }
 
     async getPastLogsL2ToL1Transaction (options?: {
@@ -135,7 +153,23 @@ export class IArbSys extends ContractBase {
         return await this.$getPastLogsParsed('L2ToL1Transaction', options) as any;
     }
 
-    abi: AbiItem[] = [{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"caller","type":"address"},{"indexed":true,"internalType":"address","name":"destination","type":"address"},{"indexed":true,"internalType":"uint256","name":"uniqueId","type":"uint256"},{"indexed":true,"internalType":"uint256","name":"batchNumber","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"indexInBatch","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"arbBlockNum","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"ethBlockNum","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"timestamp","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"callvalue","type":"uint256"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"}],"name":"L2ToL1Transaction","type":"event"},{"inputs":[],"name":"arbBlockNumber","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"arbChainID","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"arbOSVersion","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getStorageAt","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getStorageGasAvailable","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"getTransactionCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"isTopLevelCall","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"address","name":"dest","type":"address"}],"name":"mapL1SenderContractAddressToL2Alias","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"myCallersAddressWithoutAliasing","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"destination","type":"address"},{"internalType":"bytes","name":"calldataForL1","type":"bytes"}],"name":"sendTxToL1","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"wasMyCallersAddressAliased","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"destination","type":"address"}],"name":"withdrawEth","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"payable","type":"function"}]
+    async getPastLogsL2ToL1Tx (options?: {
+        fromBlock?: number | Date
+        toBlock?: number | Date
+        params?: {  }
+    }): Promise<ITxLogItem<TLogL2ToL1Tx>[]> {
+        return await this.$getPastLogsParsed('L2ToL1Tx', options) as any;
+    }
+
+    async getPastLogsSendMerkleUpdate (options?: {
+        fromBlock?: number | Date
+        toBlock?: number | Date
+        params?: { reserved?: bigint,hash?: TBufferLike,position?: bigint }
+    }): Promise<ITxLogItem<TLogSendMerkleUpdate>[]> {
+        return await this.$getPastLogsParsed('SendMerkleUpdate', options) as any;
+    }
+
+    abi: TAbiItem[] = [{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"caller","type":"address"},{"indexed":true,"internalType":"address","name":"destination","type":"address"},{"indexed":true,"internalType":"uint256","name":"uniqueId","type":"uint256"},{"indexed":true,"internalType":"uint256","name":"batchNumber","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"indexInBatch","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"arbBlockNum","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"ethBlockNum","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"timestamp","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"callvalue","type":"uint256"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"}],"name":"L2ToL1Transaction","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"caller","type":"address"},{"indexed":true,"internalType":"address","name":"destination","type":"address"},{"indexed":true,"internalType":"uint256","name":"hash","type":"uint256"},{"indexed":true,"internalType":"uint256","name":"position","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"arbBlockNum","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"ethBlockNum","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"timestamp","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"callvalue","type":"uint256"},{"indexed":false,"internalType":"bytes","name":"data","type":"bytes"}],"name":"L2ToL1Tx","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"reserved","type":"uint256"},{"indexed":true,"internalType":"bytes32","name":"hash","type":"bytes32"},{"indexed":true,"internalType":"uint256","name":"position","type":"uint256"}],"name":"SendMerkleUpdate","type":"event"},{"inputs":[{"internalType":"uint256","name":"arbBlockNum","type":"uint256"}],"name":"arbBlockHash","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"arbBlockNumber","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"arbChainID","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"arbOSVersion","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getStorageGasAvailable","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"isTopLevelCall","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"address","name":"unused","type":"address"}],"name":"mapL1SenderContractAddressToL2Alias","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"myCallersAddressWithoutAliasing","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"sendMerkleTreeState","outputs":[{"internalType":"uint256","name":"size","type":"uint256"},{"internalType":"bytes32","name":"root","type":"bytes32"},{"internalType":"bytes32[]","name":"partials","type":"bytes32[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"destination","type":"address"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"sendTxToL1","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"wasMyCallersAddressAliased","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"destination","type":"address"}],"name":"withdrawEth","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"payable","type":"function"}]
 
     
 }
@@ -148,13 +182,28 @@ type TSender = TAccount & {
         caller: TAddress, destination: TAddress, uniqueId: bigint, batchNumber: bigint, indexInBatch: bigint, arbBlockNum: bigint, ethBlockNum: bigint, timestamp: bigint, callvalue: bigint, data: TBufferLike
     };
     type TLogL2ToL1TransactionParameters = [ caller: TAddress, destination: TAddress, uniqueId: bigint, batchNumber: bigint, indexInBatch: bigint, arbBlockNum: bigint, ethBlockNum: bigint, timestamp: bigint, callvalue: bigint, data: TBufferLike ];
+    type TLogL2ToL1Tx = {
+        caller: TAddress, destination: TAddress, hash: bigint, position: bigint, arbBlockNum: bigint, ethBlockNum: bigint, timestamp: bigint, callvalue: bigint, data: TBufferLike
+    };
+    type TLogL2ToL1TxParameters = [ caller: TAddress, destination: TAddress, hash: bigint, position: bigint, arbBlockNum: bigint, ethBlockNum: bigint, timestamp: bigint, callvalue: bigint, data: TBufferLike ];
+    type TLogSendMerkleUpdate = {
+        reserved: bigint, hash: TBufferLike, position: bigint
+    };
+    type TLogSendMerkleUpdateParameters = [ reserved: bigint, hash: TBufferLike, position: bigint ];
 
 interface IEvents {
   L2ToL1Transaction: TLogL2ToL1TransactionParameters
+  L2ToL1Tx: TLogL2ToL1TxParameters
+  SendMerkleUpdate: TLogSendMerkleUpdateParameters
   '*': any[] 
 }
 
 
+
+interface IMethodArbBlockHash {
+  method: "arbBlockHash"
+  arguments: [ arbBlockNum: bigint ]
+}
 
 interface IMethodArbBlockNumber {
   method: "arbBlockNumber"
@@ -171,19 +220,9 @@ interface IMethodArbOSVersion {
   arguments: [  ]
 }
 
-interface IMethodGetStorageAt {
-  method: "getStorageAt"
-  arguments: [ account: TAddress, index: bigint ]
-}
-
 interface IMethodGetStorageGasAvailable {
   method: "getStorageGasAvailable"
   arguments: [  ]
-}
-
-interface IMethodGetTransactionCount {
-  method: "getTransactionCount"
-  arguments: [ account: TAddress ]
 }
 
 interface IMethodIsTopLevelCall {
@@ -193,7 +232,7 @@ interface IMethodIsTopLevelCall {
 
 interface IMethodMapL1SenderContractAddressToL2Alias {
   method: "mapL1SenderContractAddressToL2Alias"
-  arguments: [ _sender: TAddress, dest: TAddress ]
+  arguments: [ _sender: TAddress, unused: TAddress ]
 }
 
 interface IMethodMyCallersAddressWithoutAliasing {
@@ -201,9 +240,14 @@ interface IMethodMyCallersAddressWithoutAliasing {
   arguments: [  ]
 }
 
+interface IMethodSendMerkleTreeState {
+  method: "sendMerkleTreeState"
+  arguments: [  ]
+}
+
 interface IMethodSendTxToL1 {
   method: "sendTxToL1"
-  arguments: [ destination: TAddress, calldataForL1: TBufferLike ]
+  arguments: [ destination: TAddress, data: TBufferLike ]
 }
 
 interface IMethodWasMyCallersAddressAliased {
@@ -217,15 +261,15 @@ interface IMethodWithdrawEth {
 }
 
 interface IMethods {
+  arbBlockHash: IMethodArbBlockHash
   arbBlockNumber: IMethodArbBlockNumber
   arbChainID: IMethodArbChainID
   arbOSVersion: IMethodArbOSVersion
-  getStorageAt: IMethodGetStorageAt
   getStorageGasAvailable: IMethodGetStorageGasAvailable
-  getTransactionCount: IMethodGetTransactionCount
   isTopLevelCall: IMethodIsTopLevelCall
   mapL1SenderContractAddressToL2Alias: IMethodMapL1SenderContractAddressToL2Alias
   myCallersAddressWithoutAliasing: IMethodMyCallersAddressWithoutAliasing
+  sendMerkleTreeState: IMethodSendMerkleTreeState
   sendTxToL1: IMethodSendTxToL1
   wasMyCallersAddressAliased: IMethodWasMyCallersAddressAliased
   withdrawEth: IMethodWithdrawEth
@@ -238,14 +282,14 @@ interface IMethods {
 
 
 interface IIArbSysTxCaller {
-    sendTxToL1 (sender: TSender, destination: TAddress, calldataForL1: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    sendTxToL1 (sender: TSender, destination: TAddress, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     withdrawEth (sender: TSender, destination: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IIArbSysTxData {
-    sendTxToL1 (sender: TSender, destination: TAddress, calldataForL1: TBufferLike): Promise<TransactionConfig>
-    withdrawEth (sender: TSender, destination: TAddress): Promise<TransactionConfig>
+    sendTxToL1 (sender: TSender, destination: TAddress, data: TBufferLike): Promise<TEth.TxLike>
+    withdrawEth (sender: TSender, destination: TAddress): Promise<TEth.TxLike>
 }
 
 

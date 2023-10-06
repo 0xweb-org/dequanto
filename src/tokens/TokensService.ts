@@ -20,8 +20,10 @@ export class TokensService {
 
     }
 
-    async getTokenOrDefault (address: TAddress, chainLookup: boolean = true): Promise<IToken> {
-        return this.provider.getTokenOrDefault(address, chainLookup);
+    async getTokenOrDefault (symbol: string, chainLookup?: boolean): Promise<IToken>
+    async getTokenOrDefault (address: TAddress, chainLookup?: boolean): Promise<IToken>
+    async getTokenOrDefault (mix: TAddress | string, chainLookup: boolean = true): Promise<IToken> {
+        return this.provider.getTokenOrDefault(mix, chainLookup);
     }
 
 

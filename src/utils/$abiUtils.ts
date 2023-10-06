@@ -1,25 +1,25 @@
-import Web3 from 'web3';
-import { utils } from 'ethers';
-import { $contract } from './$contract';
-import { $abiParser } from './$abiParser';
+import type { TAbiItem, TAbiInput } from '@dequanto/types/TAbi';
+
 import { $is } from './$is';
-import type { AbiItem, AbiInput } from 'web3-utils';
-import type { ParamType } from 'ethers/lib/utils';
 import { $hex } from './$hex';
-import { $buffer } from './$buffer';
+import { $str } from '@dequanto/solidity/utils/$str';
 import { $types } from '@dequanto/solidity/utils/$types';
 import { $abiType } from './$abiType';
-import { $str } from '@dequanto/solidity/utils/$str';
+import { $contract } from './$contract';
+import { $abiParser } from './$abiParser';
+import { ParamType } from '@dequanto/abi/fragments';
+import { $abiCoder } from '@dequanto/abi/$abiCoder';
+import { TEth } from '@dequanto/models/TEth';
+import alot from 'alot';
 
 export namespace $abiUtils {
 
     export function encodePacked(types: string[], values: any[])
     export function encodePacked(typeValues: [string, any][])
     export function encodePacked(types: ReadonlyArray<string | ParamType>, values: ReadonlyArray<any>)
-    export function encodePacked(...val: Parameters<Web3['utils']['encodePacked']>)
     export function encodePacked(...mix) {
 
-        let val: any[];
+        let val: {type, value}[];
         if (arguments.length === 1) {
             let arr = arguments[0];
             let isTypeValueNestedArray = Array.isArray(mix)
@@ -46,22 +46,26 @@ export namespace $abiUtils {
             val = mix;
         }
 
-        return Web3.utils.encodePacked(...val);
+        let types = val.map(x => x.type);
+        let values = val.map(x => x.value);
+        return $abiCoder.encodePacked(types, values);
     }
 
     export function encode(typeValues: [string, any][])
-    export function encode(types: ReadonlyArray<string | ParamType>, values: ReadonlyArray<any>)
-    export function encode(mix: [string, any][] | ReadonlyArray<string | ParamType>, values?: ReadonlyArray<any>) {
-        let types: ReadonlyArray<string | ParamType>;
-        if (Array.isArray(mix) && mix[0].length === 2 && typeof mix[0][0] === 'string') {
+    export function encode(types: ReadonlyArray<string | TAbiInput>, values: any[])
+    export function encode(mix: [string, any][] | ReadonlyArray<string | TAbiInput>, values?: any[]) {
+        let types: (string | ParamType)[];
+        if (Array.isArray(mix) && mix.length > 0 && mix[0].length === 2 && typeof mix[0][0] === 'string') {
             types = mix.map(x => x[0]);
             values = mix.map(x => x[1]);
         } else {
             types = mix as any;
         }
+        if (types.length === 0) {
+            return '0x';
+        }
 
-        let coder = new utils.AbiCoder();
-        return coder.encode(types, values)
+        return $abiCoder.encode(types, values)
     }
 
     export function decode(types: (string | ParamType)[], data: string) {
@@ -73,17 +77,16 @@ export namespace $abiUtils {
         //     types = mix as any;
         // }
 
-        let coder = new utils.AbiCoder();
-        return coder.decode(types, data)
+        return $abiCoder.decode(types, data)
     }
 
 
-    export function decodePacked <T = any>(types: string[] | ParamType[] | AbiInput[] | AbiInput, data: string) {
+    export function decodePacked <T = any>(types: string | string[] | ParamType[] | TAbiInput | TAbiInput[] | ParamType, data: string) {
         return DecodePacked.decodePacked (types, data) as T;
     }
 
     /** Returns complete method/event hash */
-    export function getMethodHash(mix: string | AbiItem) {
+    export function getMethodHash(mix: string | TAbiItem) {
         let abi = typeof mix === 'string'
             ? $abiParser.parseMethod(mix)
             : mix;
@@ -93,7 +96,7 @@ export namespace $abiUtils {
         return hash;
     }
 
-    export function getMethodSignature(mix: string | AbiItem) {
+    export function getMethodSignature(mix: string | TAbiItem) {
         let abi = typeof mix === 'string'
             ? $abiParser.parseMethod(mix)
             : mix;
@@ -102,9 +105,62 @@ export namespace $abiUtils {
         let hash = $contract.keccak256(signature);
         return hash.substring(0, 10);
     }
+    export function serializeMethodCallData(abi: string | TAbiItem, params?: any[]) {
+        if (typeof abi === 'string') {
+            abi = $abiParser.parseMethod(abi);
+        }
+        let sig = abi.signature ?? $abiUtils.getMethodSignature(abi);
+        let data = $abiUtils.encode(abi.inputs, params ?? []);
+        return (sig + data.substring(2)) as TEth.Hex;
+    }
+    export function parseMethodCallData(mixAbi: string | TAbiItem | TAbiItem[], mixInput: TEth.BufferLike | Pick<TEth.TxLike, 'data' | 'input' | 'value'>) {
+        if (typeof mixInput === 'string' || mixInput instanceof Uint8Array) {
+            mixInput = { data: mixInput } as any;
+            return parseMethodCallData(mixAbi, mixInput);
+        }
+        let abis: TAbiItem[];
+        if (typeof mixAbi === 'string') {
+            abis = [ $abiParser.parseMethod(mixAbi) ];
+        } else if (Array.isArray(mixAbi)) {
+            abis = mixAbi;
+        } else {
+            abis = [ mixAbi ];
+        }
+        let tx = mixInput;
+        let input = tx.input?? tx.data;
+        let str = $hex.ensure(input);
+        let methodHex = `${str.substring(0, 10)}`;
+        let bytesHex = `0x${str.substring(10)}`;
 
-    export function getTopicSignature(abi: AbiItem) {
-        if ($is.hexString(abi.name)) {
+        let abiFns = abis.filter(x => x.type === 'function');
+        let abi = abiFns.find(abi => {
+            let sig = getMethodSignature(abi);
+            return sig === methodHex;
+        });
+        if (abi == null) {
+            console.log(`Could not find the ABI for ${methodHex}; Available ${ abiFns.map(x => x.name).join(', ') }`);
+            return null;
+        }
+        let arr: any[] = $abiCoder.decode(abi.inputs, bytesHex);
+
+        // Add parameters as dictionary, to be compatible with web3js, but consider to remove this
+        let params: { [ key: string ]: any }
+        let asObject = abi.inputs.every(x => x.name != null);
+        if (asObject) {
+            params = alot(abi.inputs).map((x, i) => {
+                return { key: x.name, value: arr[i] }
+            }).toDictionary(x => x.key, x => x.value);
+        }
+        return {
+            name: abi.name,
+            args: arr,
+            params,
+            value: tx.value,
+        };
+    }
+
+    export function getTopicSignature(abi: TAbiItem) {
+        if ($is.Hex(abi.name)) {
             // anonymous event
             return abi.name;
         }
@@ -114,7 +170,7 @@ export namespace $abiUtils {
         return hash;
     }
 
-    export function checkInterfaceOf(abi: AbiItem[], iface: AbiItem[]): { ok: boolean, missing?: string } {
+    export function checkInterfaceOf(abi: TAbiItem[], iface: TAbiItem[]): { ok: boolean, missing?: string } {
         if (iface == null || iface.length === 0) {
             return { ok: false };
         }
@@ -152,7 +208,7 @@ export namespace $abiUtils {
         return type;
     }
 
-    function abiEquals(a: AbiItem, b: AbiItem) {
+    function abiEquals(a: TAbiItem, b: TAbiItem) {
         if (a.name !== b.name) {
             return false;
         }
@@ -161,7 +217,7 @@ export namespace $abiUtils {
         if (aInputs.length !== bInputs.length) {
             return false;
         }
-        //@TODO: may be better AbiInput comparison?
+        //@TODO: may be better TAbiInput comparison?
         for (let i = 0; i < aInputs.length; i++) {
             let aInput = aInputs[i];
             let bInput = bInputs[i];
@@ -173,7 +229,7 @@ export namespace $abiUtils {
     }
 
 
-    function serializeMethodSignatureArgumentType(input: AbiItem['inputs'][0]) {
+    function serializeMethodSignatureArgumentType(input: TAbiItem['inputs'][0]) {
         if (input.type === 'tuple') {
             return serializeComponents(input.components);
         }
@@ -185,7 +241,7 @@ export namespace $abiUtils {
         return type;
     }
 
-    function serializeComponents(components: AbiInput[]) {
+    function serializeComponents(components: TAbiInput[]) {
         let types = components.map(x => serializeMethodSignatureArgumentType(x));
         return `(${types.join(',')})`;
     }
@@ -194,7 +250,7 @@ export namespace $abiUtils {
 
 namespace DecodePacked {
 
-    export function decodePacked(mix: string[] | ParamType[] | AbiInput[] | AbiInput, hex: string) {
+    export function decodePacked(mix: string | string[] | ParamType[] | TAbiInput | TAbiInput[] | ParamType, hex: string) {
         let size = $hex.getBytesLength(hex);
         let buffer = { hex, cursor: 0, size }
 

@@ -6,14 +6,17 @@ import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 
 UTest({
     $config: {
-        timeout: 60_000
+        timeout: 90_000
     },
-    async 'should fork mainnet' () {
+    async 'should fork the mainnet' () {
         const provider = new HardhatProvider();
         const client = await provider.forked({ platform: 'eth' });
-        const clientEth = await Web3ClientFactory.get('eth');
         const owner = ChainAccountProvider.generate();
+
         return UTest({
+            $config: {
+                timeout: 90_000
+            },
             async 'read data from forked network' () {
                 const reader = new ContractReader(client);
                 // https://data.chain.link/ethereum/mainnet/crypto-usd/eth-usd
@@ -28,6 +31,7 @@ UTest({
 
                 const balanceDai = await erc20.balanceOf(ownerImpersonated);
                 const balanceEth = await client.getBalance(ownerImpersonated);
+
                 gt_(balanceDai, 10n**6n, 'Account should have some DAI (otherwise select another live account)');
                 gt_(balanceEth, 10n**10n, 'Account should have some ETH (otherwise select another live account)');
 

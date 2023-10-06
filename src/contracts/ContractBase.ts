@@ -3,15 +3,13 @@ import memd from 'memd';
 import alot from 'alot';
 import type { Web3Client } from '@dequanto/clients/Web3Client';
 import type { ITxWriterOptions, TxWriter } from '@dequanto/txs/TxWriter';
-import type { Log, PastLogsOptions, Transaction, TransactionConfig, TransactionReceipt } from 'web3-core';
-import type { BufferLike } from 'ethereumjs-util';
+
 import type { TAccount } from "@dequanto/models/TAccount";
-import type { AbiItem } from 'web3-utils';
+import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import type { TAddress } from '@dequanto/models/TAddress';
 import type { ITxConfig } from '@dequanto/txs/ITxConfig';
-import type { BlockTransactionString } from 'web3-eth';
-import { utils } from 'ethers'
+
 import { $contract } from '@dequanto/utils/$contract';
 import { $class } from '@dequanto/utils/$class';
 import { $abiParser } from '@dequanto/utils/$abiParser';
@@ -23,6 +21,10 @@ import { BlocksTxIndexer, TBlockListener } from '@dequanto/indexer/BlocksTxIndex
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 import { $logger } from '@dequanto/utils/$logger';
 import { $address } from '@dequanto/utils/$address';
+import { TEth } from '@dequanto/models/TEth';
+import { $abiCoder } from '@dequanto/abi/$abiCoder';
+import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { RpcTypes } from '@dequanto/rpc/Rpc';
 
 
 export abstract class ContractBase {
@@ -35,7 +37,7 @@ export abstract class ContractBase {
     private builderConfig?: ITxConfig;
     private writerConfig?: ITxWriterOptions;
 
-    abstract abi?: AbiItem[]
+    abstract abi?: TAbiItem[]
 
     constructor (
         public address: TAddress,
@@ -49,17 +51,20 @@ export abstract class ContractBase {
         let reader = await this.getContractReader();
         return reader.getStorageAt(this.address, position);
     }
-    public parseInputData (buffer: string | BufferLike, value?: string) {
-        const iface = new utils.Interface(this.abi as any);
-        const decodedInput = iface.parseTransaction({
-            data: buffer as string,
-            value: value,
-        });
-        return {
-            name: decodedInput.name,
-            args: $contract.normalizeArgs(Array.from(decodedInput.args)),
-            params: $contract.parseInputData(buffer as string, this.abi)?.params
-        };
+    public parseInputData (buffer: TEth.BufferLike, value?: string) {
+
+        return $abiUtils.parseMethodCallData(this.abi, buffer);
+
+        // const iface = new utils.Interface(this.abi as any);
+        // const decodedInput = iface.parseTransaction({
+        //     data: buffer as string,
+        //     value: value,
+        // });
+        // return {
+        //     name: decodedInput.name,
+        //     args: $contract.normalizeArgs(Array.from(decodedInput.args)),
+        //     params: $contract.parseInputData(buffer as string, this.abi)?.params
+        // };
     }
     public async $executeBatch <T extends readonly unknown[] | []>(values: T): Promise<{ -readonly [P in keyof T]: Awaited<T[P]> }> {
 
@@ -105,23 +110,39 @@ export abstract class ContractBase {
     @memd.deco.memoize({ perInstance: true })
     public $data () {
         let $top = this;
-        let methods = this.abi.filter(abi => abi.type === 'function' && $abiUtil.isReader(abi) === false);
-        let fns = alot(methods).map(method => {
+        let writeMethods = this.abi.filter(abi => abi.type === 'function' && $abiUtil.isReader(abi) === false);
+        let writeFns = alot(writeMethods).map(method => {
             return {
                 name: method.name,
                 async fn (sender: TAccount,...args: any[]) {
-
                     let writer: TxWriter = await $top
-                        .$config({ send: 'manual' })
+                        .$config({
+                            send: 'manual',
+                            gasEstimation: false,
+                        })
                         [method.name](sender, ...args);
 
-                    return writer.builder.data as any as TransactionConfig;
+                    return writer.builder.data as any as TEth.Tx;
+                }
+            }
+        }).toDictionary(x => x.name, x => x.fn);
+
+        let readMethods = this.abi.filter(abi => abi.type === 'function' && $abiUtil.isReader(abi) === true);
+        let readFns = alot(readMethods).map(method => {
+            return {
+                name: method.name,
+                async fn (...args: any[]) {
+                    return {
+                        to: $top.address,
+                        input: $abiUtils.serializeMethodCallData(method, args)
+                    }
                 }
             }
         }).toDictionary(x => x.name, x => x.fn);
 
         let $contract = $class.curry(this, {
-            ...fns
+            ...writeFns,
+            ...readFns
         });
         return $contract as any;
     }
@@ -150,7 +171,7 @@ export abstract class ContractBase {
         return $contract;
     }
 
-    protected $read (abi: string | AbiItem, ...params) {
+    protected $read (abi: string | TAbiItem, ...params) {
         if (this.builderConfig?.send === 'manual') {
             let req = new ContractReaderUtils.DeferredRequest({
                 address: this.address,
@@ -176,15 +197,19 @@ export abstract class ContractBase {
         return events;
     }
 
-    public $onTransaction (options?: BlockWalker.IBlockWalkerOptions): SubjectStream<{ tx: Transaction, block: BlockTransactionString, calldata: { method, arguments: any[] } }> {
+    public $onTransaction (options?: BlockWalker.IBlockWalkerOptions): SubjectStream<{ tx: TEth.Tx, block: TEth.Block, calldata: { method, arguments: any[] } }> {
 
         options ??= {};
         options.logProgress ??= false;
 
-        type TSubject =  { tx: Transaction, block: BlockTransactionString, calldata: { method, arguments: any[] } };
+        type TSubject =  {
+            tx: TEth.Tx,
+            block: TEth.Block,
+            calldata: { method, arguments: any[] }
+        };
         let stream = new SubjectStream<TSubject>();
 
-        BlockWalker.onBlock(this.client, options, async (client, block, { txs }) => {
+        let indexer = BlockWalker.onBlock(this.client, options, async (client, block, { txs }) => {
             txs = txs.filter(x => $address.eq(x.to, this.address));
             if (txs.length === 0) {
                 return;
@@ -193,6 +218,7 @@ export abstract class ContractBase {
             txs.forEach(tx => {
                 try {
                     let calldata = this.parseInputData(tx.input);
+
                     let method = options.filter?.method;
                     if (method != null && method !== '*') {
                         if (calldata.name !== method) {
@@ -219,10 +245,11 @@ export abstract class ContractBase {
                 }
             })
         });
+        indexer.onStarted.pipe(stream.onConnected);
         return stream;
     }
 
-    protected async $write (abi: string | AbiItem, account: TAccount & {  value?: number | string | bigint }, ...params): Promise<TxWriter> {
+    protected async $write (abi: string | TAbiItem, account: TAccount & {  value?: number | string | bigint }, ...params): Promise<TxWriter> {
         let writer = await this.getContractWriter();
         return writer.writeAsync(account, abi, params, {
             abi: this.abi,
@@ -249,18 +276,18 @@ export abstract class ContractBase {
         throw new Error(`Not implemented exception. Got multiple overloads for the argument count ${args.length}. We should pick the ABI by parameters type.`)
     }
 
-    protected $extractLogs (tx: TransactionReceipt, abiItem: AbiItem) {
+    protected $extractLogs (tx: TEth.TxReceipt, abiItem: TAbiItem) {
         let logs = $contract.extractLogsForAbi(tx, abiItem);
         return logs;
     }
-    protected $extractLog (log: Log, abiItem: AbiItem) {
+    protected $extractLog (log: TEth.Log, abiItem: TAbiItem) {
         let parsed = $contract.parseLogWithAbi(log, abiItem);
         return parsed;
     }
-    protected async $getPastLogs(filters: PastLogsOptions) {
+    protected async $getPastLogs(filters: RpcTypes.Filter) {
         return this.getContractReader().getLogs(filters);
     }
-    public async $getPastLogsParsed (mix: string | AbiItem, options?: {
+    public async $getPastLogsParsed (mix: string | TAbiItem, options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {
@@ -276,14 +303,14 @@ export abstract class ContractBase {
         let logs = await this.$getPastLogs(filters);
         return logs.map(log => this.$extractLog(log, abi)) as any;
     }
-    protected async $getPastLogsFilters(mix: string | AbiItem, options: {
+    protected async $getPastLogsFilters(mix: string | TAbiItem, options: {
         topic?: string
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {
             [key: string]: any
         }
-    }): Promise<PastLogsOptions> {
+    }): Promise<RpcTypes.Filter> {
         let abi = typeof mix === 'string'
             ? this.$getAbiItem('event', mix)
             : mix;
@@ -335,24 +362,31 @@ export abstract class ContractBase {
 }
 
 export namespace ContractBaseHelper {
-    export function $getAbiItem (abi: AbiItem[], type: 'event' | 'function' | 'string', name: string, argsCount?: number) {
+    export function $getAbiItem (abi: TAbiItem[], type: 'event' | 'function' | 'string', name: string, argsCount?: number) {
         let arr = abi.filter(x => x.type === type && x.name === name);
         if (arr.length === 0) {
-            throw new Error(`AbiItem ${name} not found`);
+            throw new Error(`TAbiItem ${name} not found`);
         }
         if (arr.length === 1) {
             return arr[0];
         }
         if (argsCount == null) {
-            throw new Error(`Found multiple AbiItems for ${name}. Args count not specified to pick one`);
+            throw new Error(`Found multiple TAbiItems for ${name}. Args count not specified to pick one`);
         }
         return arr.find(x => (x.inputs?.length ?? 0) === argsCount)
     }
 
-    export async function $call (writer: ContractWriter, abi: string | AbiItem, abiArr: AbiItem[], account: TAccount & {  value?: number | string | bigint }, ...params): Promise<{ error?, result? }> {
+    export async function $call (writer: ContractWriter
+        , abi: string | TAbiItem
+        , abiArr: TAbiItem[]
+        , account: TAccount & {  value?: number | string | bigint }
+        , ...params
+    ): Promise<{ error?, result? }> {
         let tx = await writer.writeAsync(account, abi, params, {
             builderConfig: {
                 send: 'manual',
+                gasEstimation: false,
+                nonce: 0,
                 ...(this.builderConfig ?? {})
             },
             writerConfig: this.writerConfig,
@@ -414,7 +448,7 @@ namespace BlockWalker {
 
 
 namespace $abiUtil {
-    export function isReader (abi: AbiItem) {
+    export function isReader (abi: TAbiItem) {
         return ['view', 'pure', null].includes(abi.stateMutability);
     }
 }

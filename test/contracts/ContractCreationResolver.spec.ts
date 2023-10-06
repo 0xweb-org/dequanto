@@ -8,7 +8,7 @@ UTest({
     },
     async 'should get the date for contract' () {
         //> dai-eth uniswap v2 pair
-        let address = '0xa478c2975ab1ea89e8196811f51a7b7ade33eb11';
+        let address = `0xa478c2975ab1ea89e8196811f51a7b7ade33eb11` as const;
         let resolver = ContractCreationResolver.get('eth');
 
         let info = await resolver.getInfo(address);
@@ -17,7 +17,7 @@ UTest({
         eq_(info.timestamp, 1589164213000);
     },
     async 'should throw if not a contract' () {
-        let address = '0xa478c2975ab1ea89e8196811f51a7b7ade33eb00';
+        let address = `0xa478c2975ab1ea89e8196811f51a7b7ade33eb00` as const;
         let resolver = ContractCreationResolver.get('eth');
 
         let { error } = await $promise.caught(resolver.getInfo(address))

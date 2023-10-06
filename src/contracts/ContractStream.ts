@@ -2,12 +2,12 @@ import di from 'a-di';
 import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
-import { type AbiItem } from 'web3-utils';
+import { type TAbiItem } from '@dequanto/types/TAbi';
 import { $require } from '@dequanto/utils/$require';
 
 export class ContractStream  {
 
-    constructor(public address: TAddress, public abi: AbiItem[], public client: Web3Client) {
+    constructor(public address: TAddress, public abi: TAbiItem[], public client: Web3Client) {
         $require.Address(address);
     }
 

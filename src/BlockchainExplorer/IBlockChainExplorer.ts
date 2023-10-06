@@ -1,15 +1,14 @@
-import { TAddress } from '@dequanto/models/TAddress';
 import { IContractDetails } from '@dequanto/models/IContractDetails';
 import { IAbiProvider } from './IAbiProvider';
-import { type Transaction } from 'web3-core';
+import { TEth } from '@dequanto/models/TEth';
 
 
 export interface IBlockChainExplorer extends IAbiProvider {
     localDb: IContractDetails[]
     getContractMeta(q: string): Promise<IContractDetails>;
-    getContractCreation(address: TAddress): Promise<{ creator: TAddress, txHash: string }>;
-    getContractAbi (address: TAddress, opts?: { implementation?: string }): Promise<{ abi: string, implementation: TAddress }>
-    getContractSource (address: TAddress): Promise<{
+    getContractCreation(address: TEth.Address): Promise<{ creator: TEth.Address, txHash: TEth.Hex }>;
+    getContractAbi (address: TEth.Address, opts?: { implementation?: string }): Promise<{ abi: string, implementation: TEth.Address }>
+    getContractSource (address: TEth.Address): Promise<{
         SourceCode: {
             contractName: string
             files: {
@@ -22,14 +21,14 @@ export interface IBlockChainExplorer extends IAbiProvider {
         ABI: string
     }>
 
-    getTransactions (address: TAddress, params?: { fromBlockNumber?: number, page?: number, size?: number }): Promise<Transaction[]>
-    getTransactionsAll (address: TAddress): Promise<Transaction[]>
+    getTransactions (address: TEth.Address, params?: { fromBlockNumber?: number, page?: number, size?: number }): Promise<TEth.TxLike[]>
+    getTransactionsAll (address: TEth.Address): Promise<TEth.TxLike[]>
 
-    getInternalTransactions (address: TAddress, params?: { fromBlockNumber?: number, page?: number, size?: number }): Promise<Transaction[]>
-    getInternalTransactionsAll (address: TAddress): Promise<Transaction[]>
+    getInternalTransactions (address: TEth.Address, params?: { fromBlockNumber?: number, page?: number, size?: number }): Promise<TEth.TxLike[]>
+    getInternalTransactionsAll (address: TEth.Address): Promise<TEth.TxLike[]>
 
-    getErc20Transfers(address: TAddress, fromBlockNumber?: number): Promise<IBlockChainTransferEvent[]>
-    getErc20TransfersAll(address: TAddress, fromBlockNumber?: number): Promise<IBlockChainTransferEvent[]>
+    getErc20Transfers(address: TEth.Address, fromBlockNumber?: number): Promise<IBlockChainTransferEvent[]>
+    getErc20TransfersAll(address: TEth.Address, fromBlockNumber?: number): Promise<IBlockChainTransferEvent[]>
 
     registerAbi (abis: {name, address, abi}[])
 }

@@ -1,8 +1,8 @@
-import { hashPersonalMessage, ecsign } from 'ethereumjs-util';
 import { $buffer } from './$buffer';
 import { $is } from './$is';
-import { ethers, utils } from 'ethers'
 import { TAddress } from '@dequanto/models/TAddress';
+
+throw new Error(`Deprecated. Use @dequanto/utils/$sig instead.`);
 
 export namespace $signRaw {
     export function signEC (message: string | Buffer, privateKey: string | Buffer) {
@@ -36,7 +36,7 @@ export namespace $signRaw {
     function toBuffer (message: string | Buffer, opts?: { encoding?: 'utf8' | 'hex' }) {
         if (typeof message === 'string') {
             let encoding = opts?.encoding;
-            if (encoding == null && $is.hexString(message)) {
+            if (encoding == null && $is.Hex(message)) {
                 encoding = 'hex';
                 message = message.substring(2);
             }

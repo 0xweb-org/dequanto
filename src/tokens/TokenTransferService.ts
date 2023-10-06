@@ -9,13 +9,13 @@ import { ITxWriterOptions, TxWriter } from '@dequanto/txs/TxWriter';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $is } from '@dequanto/utils/$is';
 import { TokensService } from './TokensService';
-import { TransactionReceipt } from 'web3-core';
 import { $address } from '@dequanto/utils/$address';
 import { ITxConfig } from '@dequanto/txs/ITxConfig';
 import { $promise } from '@dequanto/utils/$promise';
 import { LoggerService } from '@dequanto/loggers/LoggerService';
 import { $logger } from '@dequanto/utils/$logger';
 import { $account } from '@dequanto/utils/$account';
+import { TEth } from '@dequanto/models/TEth';
 
 
 export class TokenTransferService {
@@ -51,7 +51,7 @@ export class TokenTransferService {
         let balance = await erc20.balanceOf(address);
         return balance;
     }
-    async getReceived(receipt: TransactionReceipt): Promise<bigint> {
+    async getReceived(receipt: TEth.TxReceipt): Promise<bigint> {
         let receiver = receipt.from;
         let ANYTOKEN = 'USDC';
         let erc20 = await TokensService.erc20(ANYTOKEN, this.client.platform);

@@ -161,7 +161,7 @@ export class SlotsStorageTransportForMapping implements ISlotsStorageTransport {
     }
 
     async getStorageAt (slot: string | number | bigint) {
-        let isValidType = typeof slot === 'number' || typeof slot === 'bigint' || $is.hexString(slot);
+        let isValidType = typeof slot === 'number' || typeof slot === 'bigint' || $is.Hex(slot);
         if (isValidType === false) {
             throw new Error(`Mapping Slot reader supports only numbers for position ${slot}`);
         }

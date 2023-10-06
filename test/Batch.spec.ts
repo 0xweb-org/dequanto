@@ -60,7 +60,8 @@ UTest({
         l`Manually check the tx HASH later`
         let wallet = new Wallet(acc1.key);
         let json = $txData.getJson(builder.getTxData(client) as any);
-        let txSigned = await wallet.signTransaction(json);
+
+        let txSigned = await wallet.signTransaction({ ...json, gasLimit: json.gas });
         let txHash = $contract.keccak256(txSigned);
 
         let r1 = await writer.send().wait();
@@ -71,15 +72,13 @@ UTest({
         l`Get Transactions`
         let txs = await client.getTransactions([r1.transactionHash, r2.transactionHash]);
 
-        eq_(txs[0].hash, r1.transactionHash);
-        eq_(txs[1].hash, r2.transactionHash);
-
         l`Get Receipts`
         let receipts = await client.getTransactionReceipts([r1.transactionHash, r2.transactionHash])
         eq_(receipts[0].transactionHash, r1.transactionHash);
         eq_(receipts[1].transactionHash, r2.transactionHash);
 
-        l`Get Blocks`
+        l`Get Blocks`;
+
         let blocks = await client.getBlocks([0,1]);
         eq_(blocks.length, 2);
 

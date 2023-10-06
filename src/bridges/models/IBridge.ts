@@ -1,9 +1,10 @@
 import { ChainAccount } from "@dequanto/models/TAccount";
 import { TAddress } from '@dequanto/models/TAddress';
+import { TEth } from '@dequanto/models/TEth';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { class_Dfr } from 'atma-utils';
-import { TransactionReceipt } from 'web3-core';
+
 
 export interface IBridge {
     name: string
@@ -24,7 +25,7 @@ export interface IBridge {
         toPlatform: TPlatform
     ): Promise<{
         txWriter: TxWriter;
-        txReceipt: class_Dfr<TransactionReceipt>;
+        txReceipt: class_Dfr<TEth.TxReceipt>;
         txTransferId: class_Dfr<string>;
     }>
 

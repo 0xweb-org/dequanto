@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-06-15 23:19
+ *  AUTO-Generated Class: 2023-10-05 18:18
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -15,24 +15,42 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
-import type { TransactionReceipt, Transaction, EventLog, TransactionConfig } from 'web3-core';
+
 import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
-import type { AbiItem } from 'web3-utils';
-import type { BlockTransactionString } from 'web3-eth';
+import type { TAbiItem } from '@dequanto/types/TAbi';
+import type { TEth } from '@dequanto/models/TEth';
 
 
 import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 
-
+export namespace ERC721VotesErrors {
+    export interface InvalidShortString {
+        type: 'InvalidShortString'
+        params: {
+        }
+    }
+    export interface StringTooLong {
+        type: 'StringTooLong'
+        params: {
+            str: string
+        }
+    }
+    export type Error = InvalidShortString | StringTooLong
+}
 
 export class ERC721Votes extends ContractBase {
     constructor(
-        public address: TAddress = '',
+        public address: TEth.Address = null,
         public client: Web3Client = di.resolve(EthWeb3Client, ),
         public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
+    }
+
+    // 0x4bf5d7e9
+    async CLOCK_MODE (): Promise<string> {
+        return this.$read(this.$getAbiItem('function', 'CLOCK_MODE'));
     }
 
     // 0x3644e515
@@ -50,6 +68,11 @@ export class ERC721Votes extends ContractBase {
         return this.$read(this.$getAbiItem('function', 'balanceOf'), owner);
     }
 
+    // 0x91ddadf4
+    async clock (): Promise<number> {
+        return this.$read(this.$getAbiItem('function', 'clock'));
+    }
+
     // 0x5c19a95c
     async delegate (sender: TSender, delegatee: TAddress): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'delegate'), sender, delegatee);
@@ -65,19 +88,24 @@ export class ERC721Votes extends ContractBase {
         return this.$read(this.$getAbiItem('function', 'delegates'), account);
     }
 
+    // 0x84b0196e
+    async eip712Domain (): Promise<{ fields: TBufferLike, name: string, version: string, chainId: bigint, verifyingContract: TAddress, salt: TBufferLike, extensions: bigint[] }> {
+        return this.$read(this.$getAbiItem('function', 'eip712Domain'));
+    }
+
     // 0x081812fc
     async getApproved (tokenId: bigint): Promise<TAddress> {
         return this.$read(this.$getAbiItem('function', 'getApproved'), tokenId);
     }
 
     // 0x8e539e8c
-    async getPastTotalSupply (blockNumber: bigint): Promise<bigint> {
-        return this.$read(this.$getAbiItem('function', 'getPastTotalSupply'), blockNumber);
+    async getPastTotalSupply (timepoint: bigint): Promise<bigint> {
+        return this.$read(this.$getAbiItem('function', 'getPastTotalSupply'), timepoint);
     }
 
     // 0x3a46b1a8
-    async getPastVotes (account: TAddress, blockNumber: bigint): Promise<bigint> {
-        return this.$read(this.$getAbiItem('function', 'getPastVotes'), account, blockNumber);
+    async getPastVotes (account: TAddress, timepoint: bigint): Promise<bigint> {
+        return this.$read(this.$getAbiItem('function', 'getPastVotes'), account, timepoint);
     }
 
     // 0x9ab24eb0
@@ -148,13 +176,13 @@ export class ERC721Votes extends ContractBase {
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
-        tx: Transaction
-        block: BlockTransactionString
+        tx: TEth.Tx
+        block: TEth.Block<TEth.Hex>
         calldata: IMethods[TMethod]
     }> {
         options ??= {};
         options.filter ??= {};
-        options.filter.method = <any> method;
+        options.filter.method = method;
         return <any> this.$onTransaction(options);
     }
 
@@ -178,31 +206,40 @@ export class ERC721Votes extends ContractBase {
         return this.$onLog('DelegateVotesChanged', fn);
     }
 
+    onEIP712DomainChanged (fn?: (event: TClientEventsStreamData<TLogEIP712DomainChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogEIP712DomainChangedParameters>> {
+        return this.$onLog('EIP712DomainChanged', fn);
+    }
+
     onTransfer (fn?: (event: TClientEventsStreamData<TLogTransferParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogTransferParameters>> {
         return this.$onLog('Transfer', fn);
     }
 
-    extractLogsApproval (tx: TransactionReceipt): ITxLogItem<TLogApproval>[] {
+    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TLogApproval>[] {
         let abi = this.$getAbiItem('event', 'Approval');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApproval>[];
     }
 
-    extractLogsApprovalForAll (tx: TransactionReceipt): ITxLogItem<TLogApprovalForAll>[] {
+    extractLogsApprovalForAll (tx: TEth.TxReceipt): ITxLogItem<TLogApprovalForAll>[] {
         let abi = this.$getAbiItem('event', 'ApprovalForAll');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApprovalForAll>[];
     }
 
-    extractLogsDelegateChanged (tx: TransactionReceipt): ITxLogItem<TLogDelegateChanged>[] {
+    extractLogsDelegateChanged (tx: TEth.TxReceipt): ITxLogItem<TLogDelegateChanged>[] {
         let abi = this.$getAbiItem('event', 'DelegateChanged');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogDelegateChanged>[];
     }
 
-    extractLogsDelegateVotesChanged (tx: TransactionReceipt): ITxLogItem<TLogDelegateVotesChanged>[] {
+    extractLogsDelegateVotesChanged (tx: TEth.TxReceipt): ITxLogItem<TLogDelegateVotesChanged>[] {
         let abi = this.$getAbiItem('event', 'DelegateVotesChanged');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogDelegateVotesChanged>[];
     }
 
-    extractLogsTransfer (tx: TransactionReceipt): ITxLogItem<TLogTransfer>[] {
+    extractLogsEIP712DomainChanged (tx: TEth.TxReceipt): ITxLogItem<TLogEIP712DomainChanged>[] {
+        let abi = this.$getAbiItem('event', 'EIP712DomainChanged');
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogEIP712DomainChanged>[];
+    }
+
+    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TLogTransfer>[] {
         let abi = this.$getAbiItem('event', 'Transfer');
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogTransfer>[];
     }
@@ -239,6 +276,14 @@ export class ERC721Votes extends ContractBase {
         return await this.$getPastLogsParsed('DelegateVotesChanged', options) as any;
     }
 
+    async getPastLogsEIP712DomainChanged (options?: {
+        fromBlock?: number | Date
+        toBlock?: number | Date
+        params?: {  }
+    }): Promise<ITxLogItem<TLogEIP712DomainChanged>[]> {
+        return await this.$getPastLogsParsed('EIP712DomainChanged', options) as any;
+    }
+
     async getPastLogsTransfer (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
@@ -247,7 +292,7 @@ export class ERC721Votes extends ContractBase {
         return await this.$getPastLogsParsed('Transfer', options) as any;
     }
 
-    abi: AbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"delegator","type":"address"},{"indexed":true,"internalType":"address","name":"fromDelegate","type":"address"},{"indexed":true,"internalType":"address","name":"toDelegate","type":"address"}],"name":"DelegateChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"delegate","type":"address"},{"indexed":false,"internalType":"uint256","name":"previousBalance","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"newBalance","type":"uint256"}],"name":"DelegateVotesChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[],"name":"DOMAIN_SEPARATOR","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"delegatee","type":"address"}],"name":"delegate","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"delegatee","type":"address"},{"internalType":"uint256","name":"nonce","type":"uint256"},{"internalType":"uint256","name":"expiry","type":"uint256"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"delegateBySig","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"delegates","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"blockNumber","type":"uint256"}],"name":"getPastTotalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"blockNumber","type":"uint256"}],"name":"getPastVotes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"getVotes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"nonces","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"}]
+    abi: TAbiItem[] = [{"inputs":[],"name":"InvalidShortString","type":"error"},{"inputs":[{"internalType":"string","name":"str","type":"string"}],"name":"StringTooLong","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"delegator","type":"address"},{"indexed":true,"internalType":"address","name":"fromDelegate","type":"address"},{"indexed":true,"internalType":"address","name":"toDelegate","type":"address"}],"name":"DelegateChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"delegate","type":"address"},{"indexed":false,"internalType":"uint256","name":"previousBalance","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"newBalance","type":"uint256"}],"name":"DelegateVotesChanged","type":"event"},{"anonymous":false,"inputs":[],"name":"EIP712DomainChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[],"name":"CLOCK_MODE","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"DOMAIN_SEPARATOR","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"clock","outputs":[{"internalType":"uint48","name":"","type":"uint48"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"delegatee","type":"address"}],"name":"delegate","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"delegatee","type":"address"},{"internalType":"uint256","name":"nonce","type":"uint256"},{"internalType":"uint256","name":"expiry","type":"uint256"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"delegateBySig","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"delegates","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"eip712Domain","outputs":[{"internalType":"bytes1","name":"fields","type":"bytes1"},{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"version","type":"string"},{"internalType":"uint256","name":"chainId","type":"uint256"},{"internalType":"address","name":"verifyingContract","type":"address"},{"internalType":"bytes32","name":"salt","type":"bytes32"},{"internalType":"uint256[]","name":"extensions","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"timepoint","type":"uint256"}],"name":"getPastTotalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"timepoint","type":"uint256"}],"name":"getPastVotes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"getVotes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"nonces","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 
     
 }
@@ -272,6 +317,10 @@ type TSender = TAccount & {
         delegate: TAddress, previousBalance: bigint, newBalance: bigint
     };
     type TLogDelegateVotesChangedParameters = [ delegate: TAddress, previousBalance: bigint, newBalance: bigint ];
+    type TLogEIP712DomainChanged = {
+        
+    };
+    type TLogEIP712DomainChangedParameters = [  ];
     type TLogTransfer = {
         from: TAddress, to: TAddress, tokenId: bigint
     };
@@ -282,11 +331,17 @@ interface IEvents {
   ApprovalForAll: TLogApprovalForAllParameters
   DelegateChanged: TLogDelegateChangedParameters
   DelegateVotesChanged: TLogDelegateVotesChangedParameters
+  EIP712DomainChanged: TLogEIP712DomainChangedParameters
   Transfer: TLogTransferParameters
   '*': any[] 
 }
 
 
+
+interface IMethodCLOCK_MODE {
+  method: "CLOCK_MODE"
+  arguments: [  ]
+}
 
 interface IMethodDOMAIN_SEPARATOR {
   method: "DOMAIN_SEPARATOR"
@@ -301,6 +356,11 @@ interface IMethodApprove {
 interface IMethodBalanceOf {
   method: "balanceOf"
   arguments: [ owner: TAddress ]
+}
+
+interface IMethodClock {
+  method: "clock"
+  arguments: [  ]
 }
 
 interface IMethodDelegate {
@@ -318,6 +378,11 @@ interface IMethodDelegates {
   arguments: [ account: TAddress ]
 }
 
+interface IMethodEip712Domain {
+  method: "eip712Domain"
+  arguments: [  ]
+}
+
 interface IMethodGetApproved {
   method: "getApproved"
   arguments: [ tokenId: bigint ]
@@ -325,12 +390,12 @@ interface IMethodGetApproved {
 
 interface IMethodGetPastTotalSupply {
   method: "getPastTotalSupply"
-  arguments: [ blockNumber: bigint ]
+  arguments: [ timepoint: bigint ]
 }
 
 interface IMethodGetPastVotes {
   method: "getPastVotes"
-  arguments: [ account: TAddress, blockNumber: bigint ]
+  arguments: [ account: TAddress, timepoint: bigint ]
 }
 
 interface IMethodGetVotes {
@@ -389,12 +454,15 @@ interface IMethodTransferFrom {
 }
 
 interface IMethods {
+  CLOCK_MODE: IMethodCLOCK_MODE
   DOMAIN_SEPARATOR: IMethodDOMAIN_SEPARATOR
   approve: IMethodApprove
   balanceOf: IMethodBalanceOf
+  clock: IMethodClock
   delegate: IMethodDelegate
   delegateBySig: IMethodDelegateBySig
   delegates: IMethodDelegates
+  eip712Domain: IMethodEip712Domain
   getApproved: IMethodGetApproved
   getPastTotalSupply: IMethodGetPastTotalSupply
   getPastVotes: IMethodGetPastVotes
@@ -429,13 +497,13 @@ interface IERC721VotesTxCaller {
 
 
 interface IERC721VotesTxData {
-    approve (sender: TSender, to: TAddress, tokenId: bigint): Promise<TransactionConfig>
-    delegate (sender: TSender, delegatee: TAddress): Promise<TransactionConfig>
-    delegateBySig (sender: TSender, delegatee: TAddress, nonce: bigint, expiry: bigint, v: number, r: TBufferLike, s: TBufferLike): Promise<TransactionConfig>
-    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint): Promise<TransactionConfig>
-    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint, data: TBufferLike): Promise<TransactionConfig>
-    setApprovalForAll (sender: TSender, operator: TAddress, approved: boolean): Promise<TransactionConfig>
-    transferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint): Promise<TransactionConfig>
+    approve (sender: TSender, to: TAddress, tokenId: bigint): Promise<TEth.TxLike>
+    delegate (sender: TSender, delegatee: TAddress): Promise<TEth.TxLike>
+    delegateBySig (sender: TSender, delegatee: TAddress, nonce: bigint, expiry: bigint, v: number, r: TBufferLike, s: TBufferLike): Promise<TEth.TxLike>
+    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint): Promise<TEth.TxLike>
+    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    setApprovalForAll (sender: TSender, operator: TAddress, approved: boolean): Promise<TEth.TxLike>
+    transferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint): Promise<TEth.TxLike>
 }
 
 

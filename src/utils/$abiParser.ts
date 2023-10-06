@@ -1,4 +1,4 @@
-import type { AbiItem, AbiInput, AbiOutput } from 'web3-utils';
+import type { TAbiItem, TAbiInput, TAbiOutput } from '@dequanto/types/TAbi';
 import { $require } from './$require';
 import { $str } from '@dequanto/solidity/utils/$str';
 
@@ -8,7 +8,7 @@ interface IParameter {
     components?: IParameter[]
 }
 export namespace $abiParser {
-    export function getReturnType (abi: AbiItem): 'array' | 'object' | 'uint256' | 'boolean' | 'buffer' | string {
+    export function getReturnType (abi: TAbiItem): 'array' | 'object' | 'uint256' | 'boolean' | 'buffer' | string {
         let outputs = abi.outputs;
         if (outputs == null || outputs.length == 0) {
             return 'uint256';
@@ -22,7 +22,7 @@ export namespace $abiParser {
         }
         return 'array';
     }
-    export function getReturnTypeFromTypes (outputs: AbiOutput[]): 'array' | 'object' | 'uint256' | 'boolean' | 'buffer' | string {
+    export function getReturnTypeFromTypes (outputs: TAbiOutput[]): 'array' | 'object' | 'uint256' | 'boolean' | 'buffer' | string {
         if (outputs == null || outputs.length == 0) {
             return 'uint256';
         }
@@ -47,7 +47,7 @@ export namespace $abiParser {
      *  function foo(uint256): (address account, uint256 value)
      *  function foo(uint256) returns (address)
      */
-    export function parseMethod (methodAbi: string): AbiItem {
+    export function parseMethod (methodAbi: string): TAbiItem {
         let matchMethodName = rgxMethodName.exec(methodAbi);
         $require.notNull(matchMethodName, `Method name in abi ${methodAbi} is not valid. Expect like 'foo(uint256):address`);
 
@@ -73,7 +73,7 @@ export namespace $abiParser {
         let inputs = Parse.parametersLine(fnParams)
         let isSig = /^0x[A-F\d]{8}$/i.test(fnName);
 
-        return <AbiItem> {
+        return <TAbiItem> {
             constant: false,
             payable: false,
             stateMutability,
@@ -92,7 +92,7 @@ export namespace $abiParser {
     // (uint256 foo, uint256 bar)
     // (uint256 foo, uint256 bar)[]
     // ((uint256 foo, uint256 bar) foo, uint256 bar)
-    export function parseArguments (line: string): AbiInput[] {
+    export function parseArguments (line: string): TAbiInput[] {
         line = line?.trim();
 
         if (!line || line === '()') {
@@ -190,7 +190,7 @@ namespace Parse {
                         name: null,
                         type: 'tuple',
                         components: params
-                    } as any as AbiInput;
+                    } as any as TAbiInput;
                 };
                 return params[0];
             });

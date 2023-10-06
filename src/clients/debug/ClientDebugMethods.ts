@@ -15,25 +15,28 @@ export class ClientDebugMethods {
 
     getTransactionTrace (hash: string) {
         return this.client.pool.call(async web3 => {
-            let eth = web3.eth as (typeof web3.eth & { traceTransaction });
+            // let eth = web3.eth as (typeof web3.eth & { traceTransaction });
 
-            if (typeof eth.traceTransaction !== 'function') {
-                web3.eth.extend({
-                    methods: [
-                        {
-                            name: 'traceTransaction',
-                            call: 'debug_traceTransaction',
-                            params: 2,
-                        }
-                    ]
-                })
-            }
+            // if (typeof eth.traceTransaction !== 'function') {
+            //     web3.eth.extend({
+            //         methods: [
+            //             {
+            //                 name: 'traceTransaction',
+            //                 call: 'debug_traceTransaction',
+            //                 params: 2,
+            //             }
+            //         ]
+            //     })
+            // }
 
-            let result = await eth.traceTransaction(hash, {
-                tracer: 'callTracer'
+            // let result = await eth.traceTransaction(hash, {
+            //     tracer: 'callTracer'
+            // });
+            // return result;
+            return web3.rpc.request({
+                method: 'debug_traceTransaction',
+                params: [ hash, { tracer: 'callTracer' }]
             });
-            return result;
-
         }, {
             node: {
                 traceable: true
@@ -77,19 +80,24 @@ export class ClientDebugMethods {
             throw new Error(`RPC method for ${method} is not configured in ${this.client.platform}`);
         }
         return this.client.pool.call(web3 => {
-            let eth = web3.eth as (typeof web3.eth & { [key in typeof method]: Function });
-            if (eth[method] == null) {
-                web3.eth.extend({
-                    methods: [
-                        {
-                            name: method,
-                            call: meta.call,
-                            params: meta.params,
-                        }
-                    ]
-                });
-            }
-            return eth[method](...args);
+            //let eth = web3.eth as (typeof web3.eth & { [key in typeof method]: Function });
+
+            return web3.rpc.request({
+                method: meta.call,
+                params: args
+            });
+            // if (eth[method] == null) {
+            //     web3.eth.extend({
+            //         methods: [
+            //             {
+            //                 name: method,
+            //                 call: meta.call,
+            //                 params: meta.params,
+            //             }
+            //         ]
+            //     });
+            // }
+            // return eth[method](...args);
         })
     }
 }

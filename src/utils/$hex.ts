@@ -1,3 +1,4 @@
+import { TEth } from '@dequanto/models/TEth';
 import { $buffer } from './$buffer';
 import { $require } from './$require';
 export namespace $hex {
@@ -7,21 +8,24 @@ export namespace $hex {
      * @param hex
      * @param byteSize Min bytes count in the hex string
      */
-    export function padBytes(hex: string, byteSize: number, opts?: {padEnd?: boolean}) {
+    export function padBytes(hex: TEth.Hex, byteSize: number, opts?: { padEnd?: boolean }): TEth.Hex {
         let length = byteSize * 2;
         hex = ensure(hex);
         if (hex.length === length + 2) {
             return hex;
         }
-        hex = hex.substring(2)[ opts?.padEnd ? 'padEnd' : 'padStart' ](length, '0');
+        hex = hex.substring(2)[ opts?.padEnd ? 'padEnd' : 'padStart' ](length, '0') as TEth.Hex;
         return `0x${hex}`;
     }
 
     /**
      * Trims '00' bytes from start or end, e.g.  0x68656c6c6f000000 =>  0x68656c6c6f
      */
-    export function trimBytes(hex: string) {
-        return hex.replace(/^0x(0{2})+/, '').replace(/(0{2})+$/, '');
+    export function trimBytes(hex: TEth.Hex): TEth.Hex {
+        if (hex.startsWith('0x00') === false && hex.endsWith('00') === false) {
+            return hex;
+        }
+        return hex.replace(/^0x(0{2})+/, '').replace(/(0{2})+$/, '') as TEth.Hex;
     }
     export function trimLeadingZerosFromNumber(hex: string) {
         hex = hex.replace(/^0x0*/, '');
@@ -51,6 +55,10 @@ export namespace $hex {
         return hex.startsWith('0x')
             ? hex.substring(2)
             : hex;
+    }
+
+    export function concat (arr: (string | TEth.Hex | Uint8Array)[]) {
+        return ('0x' + arr.map(ensure).map(raw).join('')) as TEth.Hex;
     }
 
     export function toHex (value: string | boolean | number | bigint): string {
@@ -98,9 +106,21 @@ export namespace $hex {
     /**
      * Adds `0x` to the start if not present
      */
-    export function ensure (mix: string) {
+    export function ensure (mix: string | number | boolean | bigint | Uint8Array): TEth.Hex {
+        if (mix == null) {
+            return '0x';
+        }
+        if (mix instanceof Uint8Array) {
+            mix = $buffer.toHex(mix);
+        }
+        if (typeof mix === 'number' || typeof mix === 'bigint') {
+            return `0x${mix.toString(16)}`;
+        }
+        if (typeof mix ==='boolean') {
+            return mix ? '0x1' : '0x0';
+        }
         if (mix.startsWith('0x')) {
-            return mix;
+            return mix as TEth.Hex;
         }
         return `0x${mix}`;
     }

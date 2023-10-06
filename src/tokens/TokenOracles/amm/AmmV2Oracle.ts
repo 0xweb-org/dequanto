@@ -19,7 +19,7 @@ const CACHE_PATH = $cache.file(`amm-pairs.json`);
 
 export class AmmV2Oracle implements IOracle {
 
-    private quoter: AmmV1PriceQuote
+    private quoter: AmmV2PriceQuote
 
     public constructor (private clients?: Web3Client[]) {
         let client = clients?.[0] ?? Web3ClientFactory.get('eth');

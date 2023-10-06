@@ -41,8 +41,10 @@ export class TokenDataProvider {
 
     }
 
-    async getTokenOrDefault (address: TAddress, chainLookup: boolean = true): Promise<IToken> {
-        return await this.getToken(address, chainLookup) ?? this.default(address);
+    async getTokenOrDefault (symbol: string, chainLookup: boolean): Promise<IToken>
+    async getTokenOrDefault (address: TAddress, chainLookup: boolean): Promise<IToken>
+    async getTokenOrDefault (mix: string | TAddress, chainLookup: boolean = true): Promise<IToken> {
+        return await this.getToken(mix, chainLookup) ?? ($is.Address(mix) ? this.default(mix) : null);
     }
 
 

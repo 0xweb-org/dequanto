@@ -1,17 +1,16 @@
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { TPlatform } from '@dequanto/models/TPlatform';
-import { TransactionRequest } from '@ethersproject/abstract-provider';
 
-import type Web3 from 'web3';
-import { provider } from 'web3-core';
 import { IPoolClientConfig } from '../ClientPool';
+import { TEth } from '@dequanto/models/TEth';
+import { TTransport } from '@dequanto/rpc/transports/ITransport';
 
 export interface IWeb3Client {
     platform: string
     chainId: number
     defaultGasLimit: number
 
-    sign (txData: TransactionRequest, privateKey: string): Promise<TBufferLike>
+    sign (txData: TEth.Tx, privateKey: string): Promise<TBufferLike>
 }
 
 
@@ -22,8 +21,8 @@ export interface IWeb3ClientOptions {
     // Token symbol: e.g. ETH
     chainToken?: string
     // alias to `provider`
-    web3?: Web3 | provider
-    provider?: Web3 | provider
+    web3?: TTransport.Transport
+    provider?: TTransport.Transport
 
     debug?: {
         setStorageAt?: {

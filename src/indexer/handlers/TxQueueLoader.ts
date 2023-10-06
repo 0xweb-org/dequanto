@@ -1,6 +1,7 @@
 import { Web3Client } from '@dequanto/clients/Web3Client';
+import { TEth } from '@dequanto/models/TEth';
 import { $number } from '@dequanto/utils/$number';
-import { Transaction } from 'web3-core';
+
 
 export class TxQueueLoader {
     private opts = {
@@ -20,20 +21,20 @@ export class TxQueueLoader {
 
     private errors = [] as {
         date: Date
-        hash: string
+        hash: TEth.Hex
         error: Error
     }[]
 
     private lastError: {
         date: Date
-        hash: string
+        hash: TEth.Hex
         error: Error
     }
 
-    private queue: string[] = []
-    private seen: string[] = []
+    private queue: TEth.Hex[] = []
+    private seen: TEth.Hex[] = []
 
-    push (hash: string) {
+    push (hash: TEth.Hex) {
         if (this.seen.includes(hash) === false) {
             this.queue.push(hash);
 
@@ -45,7 +46,7 @@ export class TxQueueLoader {
         this.tick();
     }
 
-    constructor (public client: Web3Client, public cb: (tx: Transaction) => void) {
+    constructor (public client: Web3Client, public cb: (tx: TEth.Tx) => void) {
 
     }
 
@@ -89,7 +90,7 @@ export class TxQueueLoader {
                 this.onCompleted(loader);
             })
     }
-    private onSuccess (tx: Transaction) {
+    private onSuccess (tx: TEth.Tx) {
         this.cb(tx);
     }
     private onCompleted (loader: TxLoader) {
@@ -102,7 +103,7 @@ export class TxQueueLoader {
         this.status.processed++;
         this.tick();
     }
-    private onError (err: Error, hash: string) {
+    private onError (err: Error, hash: TEth.Hex) {
         this.status.errors++;
         this.status.processed++;
 
@@ -125,11 +126,11 @@ class TxLoader {
     started: number
     seconds: number
 
-    constructor (public client: Web3Client, public hash: string) {
+    constructor (public client: Web3Client, public hash: TEth.Hex) {
 
     }
 
-    async load (): Promise<Transaction> {
+    async load (): Promise<TEth.Tx> {
         this.started = Date.now();
         try {
             let tx = await this.client.getTransaction(this.hash, { ws: false });

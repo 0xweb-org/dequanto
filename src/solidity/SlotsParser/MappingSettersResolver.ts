@@ -1,5 +1,5 @@
 import { $logger, l } from '@dequanto/utils/$logger';
-import { type AbiItem } from 'web3-utils';
+import { type TAbiItem } from '@dequanto/types/TAbi';
 import {
     AssemblyBlock,
     AssemblyCall,
@@ -41,18 +41,18 @@ type TVariableLocation = { scope: 'local' | 'state' | 'global' } | { scope: 'arg
 
 
 export type TMappingSetterEvent = {
-    event: AbiItem
+    event: TAbiItem
     accessors: string[]
     accessorsIdxMapping: number[]
 }
 
 export type TMappingSetterMethod = {
-    method: AbiItem
+    method: TAbiItem
     accessors: string[]
 }
 
 type TEventEmitStatement = {
-    abi?: AbiItem
+    abi?: TAbiItem
     name: string;
     args: {
         node: Identifier | IndexAccess | MemberAccess | FunctionCall | NumberLiteral | StringLiteral | BooleanLiteral | Expression;
@@ -66,7 +66,7 @@ type TEventForMappingMutation = { error: Error } | {
     accessors: string[]
     accessorsIdxMapping?: number[]
 } | {
-    method: AbiItem
+    method: TAbiItem
     accessors: string[]
 }
 
@@ -135,7 +135,7 @@ export namespace MappingSettersResolver {
                     }
 
                     let eventDeclaration = allEvents.find(ev => ev.name === event.name && ev.parameters.length === event.args.length);
-                    if (eventDeclaration == null && mutation.event.abi && $is.hexString(event.name) === false) {
+                    if (eventDeclaration == null && mutation.event.abi && $is.Hex(event.name) === false) {
                         $logger.error(`Event ${ event.name } not found in events`)
                     }
                     return <TMappingSetterEvent>{
@@ -512,7 +512,7 @@ namespace $node {
                 }
                 return topic;
             });
-            let abi = <AbiItem>{
+            let abi = <TAbiItem>{
                 name: topics[0],
                 inputs: topics.slice(1).map(topic => {
                     return {

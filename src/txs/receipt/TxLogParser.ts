@@ -1,9 +1,9 @@
 import alot from 'alot';
-import type { AbiItem } from 'web3-utils';
+import type { TAbiItem } from '@dequanto/types/TAbi';
 import { $contract } from '@dequanto/utils/$contract';
-import { TransactionReceipt } from 'web3-core';
 import { TxTopicProvider } from './TxTopicProvider';
 import { TPlatform } from '@dequanto/models/TPlatform';
+import { TEth } from '@dequanto/models/TEth';
 
 export class TxLogParser {
 
@@ -18,7 +18,7 @@ export class TxLogParser {
      *  Sparse arrays will contain NULLs for unparsed log items.
      *  Per default dense arrays - only with known logs - are returned
      */
-    async parse (receipt: TransactionReceipt, opts?: { sparse?: boolean, platform?: TPlatform, abi?: AbiItem | AbiItem[] }) {
+    async parse (receipt: TEth.TxReceipt, opts?: { sparse?: boolean, platform?: TPlatform, abi?: TAbiItem | TAbiItem[] }) {
         if (opts?.abi != null) {
             this.topics.register(opts.abi);
         }

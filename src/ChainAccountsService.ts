@@ -37,7 +37,7 @@ export class ChainAccountsService {
     }
 
     async get (mix: string | TAddress, platform?: TPlatform): Promise<IAccount> {
-        if ($is.hexString(mix) && mix.length >= 64) {
+        if ($is.Hex(mix) && mix.length >= 64) {
             return <ChainAccount> {
                 address: ChainAccountProvider.getAddressFromKey(mix),
                 key: mix

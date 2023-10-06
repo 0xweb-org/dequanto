@@ -1,13 +1,12 @@
 import di from 'a-di';
 import alot from 'alot';
-import type { PastLogsOptions } from 'web3-core';
-import type { AbiItem } from 'web3-utils';
+import { class_Dfr } from 'atma-utils';
+import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { Web3Client } from '@dequanto/clients/Web3Client';
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
 import { AbiDeserializer } from './utils/AbiDeserializer';
 import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
 import { TAddress } from '@dequanto/models/TAddress';
-import { class_Dfr } from 'atma-utils';
 import { $is } from '@dequanto/utils/$is';
 import { $logger } from '@dequanto/utils/$logger';
 import { $abiParser } from '../utils/$abiParser';
@@ -19,6 +18,8 @@ import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { $contract } from '@dequanto/utils/$contract';
 import { $require } from '@dequanto/utils/$require';
 import { $array } from '@dequanto/utils/$array';
+import { RpcTypes } from '@dequanto/rpc/Rpc';
+import { TEth } from '@dequanto/models/TEth';
 
 
 
@@ -26,7 +27,7 @@ export interface IContractReader {
     forBlock (mix: number | Date | undefined): IContractReader
     forBlockNumber (blockNumber: number | undefined): IContractReader
     forBlockAt (date: Date | undefined): IContractReader
-    readAsync<T = any>(address: string, methodAbi: string | AbiItem, ...params: any[]): Promise<T>
+    readAsync<T = any>(address: string, methodAbi: string | TAbiItem, ...params: any[]): Promise<T>
 
 }
 export class ContractReader implements IContractReader {
@@ -73,13 +74,13 @@ export class ContractReader implements IContractReader {
         return this.client.getStorageAt(address, position, blockNumber);
     }
 
-    async readAsync <TResult = any> (address: string, methodAbi: string | AbiItem, ...params: any[]) {
+    async readAsync <TResult = any> (address: TEth.Address, methodAbi: string | TAbiItem, ...params: any[]) {
         let blockNumber: number = void 0;
         if (this.blockNumberTask != null) {
             blockNumber = await this.blockNumberTask;
         }
 
-        let abi: AbiItem;
+        let abi: TAbiItem;
         if (typeof methodAbi === 'string') {
             abi = $abiParser.parseMethod(methodAbi);
         } else {
@@ -93,19 +94,23 @@ export class ContractReader implements IContractReader {
                 address,
                 abi: abiArr,
                 method: method,
-                arguments: params,
+                params: params,
                 blockNumber: blockNumber,
-                options: this.options
+
+                from: this.options.from,
+                //options: this.options
             });
             if (result == null) {
                 throw new Error(`Function call returned undefined`);
             }
-            return AbiDeserializer.process(result, abi.outputs) as TResult;
+            //-return AbiDeserializer.process(result, abi.outputs) as TResult;
+            return result as TResult;
 
         } catch (error) {
             let args = params.map((x, i) => `[${i}] ${x}`).join('\n');
-
-            throw new Error(`Contract: ${address} ${methodAbi} with \n${args}\nfailed with ${error.message}`);
+            let err = new Error(`Contract: ${address} ${methodAbi} with ${args} failed with ${error.message}`);
+            err.stack = error.stack;
+            throw err;
         }
     }
 
@@ -143,11 +148,11 @@ export class ContractReader implements IContractReader {
         return logs.map(log => $contract.parseLogWithAbi(log, abi));
     }
 
-    async getLogs (filters: PastLogsOptions) {
+    async getLogs (filters: RpcTypes.Filter) {
         return this.client.getPastLogs(filters);
     }
 
-    async getLogsFilter(abi: AbiItem | string, options: {
+    async getLogsFilter(abi: TAbiItem | string, options: {
         /** Can be UNDEFINED, then the logs will be searched globally */
         address?: TAddress
         /**
@@ -157,11 +162,11 @@ export class ContractReader implements IContractReader {
         toBlock?: number | Date
         params?: { [key: string]: any } | any[]
 
-    }): Promise<PastLogsOptions> {
+    }): Promise<RpcTypes.Filter> {
         if (typeof abi === 'string') {
             abi = $abiParser.parseMethod(abi);
         }
-        let filters: PastLogsOptions = {
+        let filters: Partial<RpcTypes.Filter> = {
             address: options.address,
         };
 
@@ -205,7 +210,7 @@ export class ContractReader implements IContractReader {
         }
 
         filters.topics = topics;
-        return filters;
+        return filters as RpcTypes.Filter;
     }
 
     static async read (client: Web3Client, address: TAddress, methodAbi: string){
@@ -226,7 +231,7 @@ export namespace ContractReaderUtils {
         constructor (
             public request: {
                 address: TAddress,
-                abi: string | AbiItem,
+                abi: string | TAbiItem,
                 params: any[],
                 blockNumber?: Date | number,
                 options?: {
@@ -244,7 +249,7 @@ export namespace ContractReaderUtils {
 
     export interface IContractReadParams {
         address: TAddress,
-        abi: string | AbiItem
+        abi: string | TAbiItem
         params?: any[]
 
         blockNumber?: number | Date
@@ -276,12 +281,6 @@ export namespace ContractReaderUtils {
         }).toArrayAsync();
 
         let outputs = await client.readContractBatch(reqs);
-        return outputs.map(({result, error}, i) => {
-            if (result == null || error != null) {
-                return { error: error ?? new Error(`Empty output`) };
-            }
-            let outputs = reqs[i].abi[0].outputs;
-            return AbiDeserializer.process(result, outputs);
-        });
+        return outputs;
     }
 }

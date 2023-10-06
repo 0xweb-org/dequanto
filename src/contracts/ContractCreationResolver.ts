@@ -1,7 +1,6 @@
 import memd from 'memd';
 import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { TAddress } from '@dequanto/models/TAddress';
 import { $block } from '@dequanto/utils/$block';
 import { $cache } from '@dequanto/utils/$cache';
 import { TPlatform } from '@dequanto/models/TPlatform';
@@ -9,6 +8,7 @@ import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
 import { $require } from '@dequanto/utils/$require';
 import { $promise } from '@dequanto/utils/$promise';
+import { TEth } from '@dequanto/models/TEth';
 
 export class ContractCreationResolver {
 
@@ -25,20 +25,20 @@ export class ContractCreationResolver {
 
     @memd.deco.memoize({
         trackRef: true,
-        key: (ctx, address: TAddress) => {
+        key: (ctx, address: TEth.Address) => {
             let self = ctx.this as ContractCreationResolver;
             let key = `${self.client.platform}:${address}`;
             return key;
         },
         persistance: new memd.FsTransport({ path:  $cache.file('contract-dates.json') })
     })
-    async getInfo (address: TAddress): Promise<{
+    async getInfo (address: TEth.Address): Promise<{
         block: number
         timestamp: number
         tx: string
     }> {
-        let resovler = new BlockchainExplorerDateResolver(this.client, this.explorer);
-        return resovler.get(address);
+        let resolver = new BlockchainExplorerDateResolver(this.client, this.explorer);
+        return resolver.get(address);
     }
 }
 
@@ -52,7 +52,7 @@ class OnchainDateResolver {
         throw new Error(`Not implemented`);
     }
 
-    async get (address: TAddress) {
+    async get (address: TEth.Address) {
         this.to = await this.client.getBlockNumberCached();
         this.from = 0;
     }
@@ -63,7 +63,7 @@ class BlockchainExplorerDateResolver {
 
     }
 
-    async get (address: TAddress) {
+    async get (address: TEth.Address) {
         let { result: info, error } = await $promise.caught(this.explorer.getContractCreation(address));
         if (error) {
             if (/empty/i.test(error.message)) {

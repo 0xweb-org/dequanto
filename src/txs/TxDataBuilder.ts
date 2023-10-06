@@ -1,40 +1,39 @@
+import { type TAbiItem } from '@dequanto/types/TAbi';
+import { File } from 'atma-io';
 import { IAccount, TAccount } from "@dequanto/models/TAccount";
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { InputDataUtils } from '@dequanto/contracts/utils/InputDataUtils';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $account } from '@dequanto/utils/$account';
 import { $bigint } from '@dequanto/utils/$bigint';
-import { type TransactionRequest } from '@ethersproject/abstract-provider';
-import { type TransactionConfig } from 'web3-core';
-import { type AbiItem } from 'web3-utils';
 import { ITxConfig } from './ITxConfig';
-import { File } from 'atma-io';
 import { $number } from '@dequanto/utils/$number';
+import { TEth } from '@dequanto/models/TEth';
+import { $sig } from '@dequanto/utils/$sig';
+import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
+import { $hex } from '@dequanto/utils/$hex';
 
 export class TxDataBuilder {
     protected static nonce: number = -1
-    public abi: AbiItem[] = null;
+    public abi: TAbiItem[] = null;
 
     constructor(
         public client: Web3Client,
         public account: { address?: TAddress },
-        public data: Partial<TransactionRequest>,
+        public data: TEth.TxLike,
         public config: ITxConfig = null,
     ) {
         this.data ??= {};
         this.data.value = this.data.value ?? 0;
         this.data.chainId = client.chainId;
+        this.abi = config?.abi;
     }
 
-    setInputDataWithTypes(types: any[], paramaters: any[]): this {
-        this.data.data = InputDataUtils.encodeWithTypes(this.client, types, paramaters);
-        return this;
-    }
-    setInputDataWithABI(IFunctionABI: string | AbiItem, ...params): this {
+    setInputDataWithABI(abi: string | TAbiItem, ...params): this {
         try {
-            this.data.data = InputDataUtils.encodeWithABI(IFunctionABI, ...params);
+            this.data.data = $abiUtils.serializeMethodCallData(abi, params);;
         } catch (error) {
-            error.message = `${JSON.stringify(IFunctionABI)}\n${error.message}`;
+            error.message = `${JSON.stringify(abi)}\n${error.message}`;
             throw error;
         }
         return this;
@@ -60,36 +59,48 @@ export class TxDataBuilder {
         return this;
     }
 
+    async ensureNonce () {
+        if (this.data.nonce == null) {
+            await this.setNonce();
+        }
+    }
+
     async setNonce(opts?: {
         // sets the nonce of the first tx in pending state
         overriding?: boolean
         // set the nonce of the N-th tx in pending state
         noncePending?: number
         // custom nonce value
-        nonce?: number
+        nonce?: number | bigint
     }) {
-        let nonce: number;
+        let nonce: bigint;
         if (opts?.nonce != null) {
-            nonce = opts.nonce
+            nonce = BigInt(opts.nonce)
         } else if (opts?.overriding) {
             nonce = await this.client.getTransactionCount(this.account.address);
             // override first pending TX:
         } else if (opts?.noncePending != null) {
-            let pendingIndex = opts.noncePending - 1;
-            let submited = await this.client.getTransactionCount(this.account.address);
+            let pendingIndex = BigInt(opts.noncePending) - 1n;
+            let submitted = await this.client.getTransactionCount(this.account.address);
             let next = pendingIndex;
             if (next > 0) {
                 let total = await this.client.getTransactionCount(this.account.address, 'pending');
-                let pendingCount = total - submited;
-                if (pendingCount > 0 && next > pendingCount - 1) {
-                    next = pendingCount - 1;
+                let pendingCount = total - submitted;
+                if (pendingCount > 0n && next > pendingCount - 1n) {
+                    next = pendingCount - 1n;
                 }
             }
-            nonce = submited + next;
+            nonce = submitted + next;
         } else {
             nonce = await this.client.getTransactionCount(this.account.address, 'pending');
         }
         this.data.nonce = nonce;
+    }
+
+    async ensureGas () {
+        if (this.data.gasPrice == null && this.data.maxFeePerGas == null) {
+            await this.setGas();
+        }
     }
 
     async setGas({
@@ -116,7 +127,7 @@ export class TxDataBuilder {
             price != null ?
                 { price, base: price, priority: 10n**9n }
                 : this.client.getGasPrice(),
-            gasEstimation
+            gasEstimation == null || gasEstimation === true
                 ? this.client.getGasEstimation(from ?? this.account.address, this.data)
                 : (gasLimit ?? this.client.defaultGasLimit ?? 2_000_000)
         ]);
@@ -135,6 +146,7 @@ export class TxDataBuilder {
         if (type === 1) {
             let $baseFee = $bigint.multWithFloat(gasPrice.price, $priceRatio);
             this.data.gasPrice = $bigint.toHex($baseFee);
+            this.data.type = 1;
         } else {
             let $baseFee = $bigint.multWithFloat(gasPrice.base ?? gasPrice.price, $priceRatio);
             let $priorityFee = gasPrice.priority ?? 10n**9n;
@@ -152,7 +164,7 @@ export class TxDataBuilder {
         } else if (hasLimitFixed === false) {
             $gasLimitRatio = 1.5;
         }
-        this.data.gasLimit = gasLimit ?? Math.floor(Number(gasUsage) * $gasLimitRatio);
+        this.data.gas = gasLimit ?? Math.floor(Number(gasUsage) * $gasLimitRatio);
 
         return this;
     }
@@ -177,21 +189,27 @@ export class TxDataBuilder {
     }
 
     getTxData (client?: Web3Client) {
-        return <TransactionConfig> <any> {
+        let txData = {
             ...this.data,
-
             from: this.account?.address ?? void 0,
             chainId: $number.toHex(this.data.chainId ?? client?.chainId ?? this.client?.chainId),
         };
+        for (let key in txData) {
+            if (key === 'type') {
+                continue;
+            }
+            txData[key] = $hex.ensure(txData[key]);
+        }
+        return txData as TEth.TxLike;
     }
 
 
     /** Returns base64 string of the Tx Data */
-    async signToString(privateKey: string): Promise<string> {
-        if (privateKey.startsWith('0x')) {
-            privateKey = privateKey.substring(2);
-        }
-        return this.client.sign(this.data, privateKey);
+    async signToString(privateKey: TEth.Hex): Promise<TEth.Hex> {
+        let address = ChainAccountProvider.getAddressFromKey(privateKey)
+        let rpc = await this.client.getRpc();
+        let txSig = await $sig.signTx(this.data, { address, key: privateKey }, rpc);
+        return txSig;
     }
 
     toJSON () {
@@ -214,7 +232,7 @@ export class TxDataBuilder {
 
     static fromJSON (client: Web3Client, account: TAccount, json: {
         config: ITxConfig,
-        tx: TransactionRequest,
+        tx: TEth.TxLike,
     }) {
 
         let sender = $account.getSender(account);
@@ -226,7 +244,7 @@ export class TxDataBuilder {
         );
     }
 
-    static normalize(data: Partial<TransactionRequest>) {
+    static normalize(data: Partial<TEth.TxLike>) {
         for (let key in data) {
             let v = data[key];
             if (typeof v === 'string' && /^\d+$/.test(v)) {

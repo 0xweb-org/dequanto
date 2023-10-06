@@ -1,11 +1,9 @@
+import Safe, { ContractNetworksConfig, SafeAccountConfig, SafeFactory } from '@gnosis.pm/safe-core-sdk'
 import { ChainAccount } from "@dequanto/models/TAccount";
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
-import Safe, { ContractNetworksConfig, SafeAccountConfig, SafeFactory } from '@gnosis.pm/safe-core-sdk'
 import { $gnosis } from './$gnosis';
 import { GnosisSafeHandler } from './GnosisSafeHandler';
-
-
 
 
 export abstract class GnosisSafeFactory {
@@ -26,9 +24,7 @@ export abstract class GnosisSafeFactory {
           owners: config.owners,
           threshold: config.threshold ?? config.owners.length,
         };
-
         const safeSdk: Safe = await safeFactory.deploySafe({ safeAccountConfig });
-
         const safe = new GnosisSafeHandler({
             safeAddress: safeSdk.getAddress(),
             owner: owner,

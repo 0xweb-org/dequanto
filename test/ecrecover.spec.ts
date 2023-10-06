@@ -3,7 +3,7 @@ import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $contract } from '@dequanto/utils/$contract';
-import { $signRaw } from '@dequanto/utils/$signRaw';
+import { $sig } from '@dequanto/utils/$sig';
 
 UTest({
     async 'should sign a message'() {
@@ -29,7 +29,7 @@ UTest({
         ]);
 
         let hash = $contract.keccak256(encodedParams);
-        let { v, r, s } = await $signRaw.signEC(hash, signer.key);
+        let { v, r, s } = await $sig.sign(hash, signer);
 
         let reader = new ContractReader(client);
         let isValid = await reader.readAsync(
@@ -50,14 +50,14 @@ UTest({
         let signer = ChainAccountProvider.generate();
         let json = {
             data: { name: 'Foo' },
-            sig: ''
+            sig: null
         };
 
         let message1 = $contract.keccak256(JSON.stringify(json.data));
-        json.sig = await $signRaw.signEC(message1, signer.key).signature;
+        json.sig = await $sig.sign(message1, signer);
 
         let message2 = $contract.keccak256(JSON.stringify(json.data));
-        let recovered = await $signRaw.ecrecover(message2, json.sig);
+        let recovered = await $sig.recover(message2, json.sig);
         eq_(recovered, signer.address);
     }
 });
