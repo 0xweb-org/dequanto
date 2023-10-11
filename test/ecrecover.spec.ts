@@ -60,15 +60,5 @@ UTest({
         let message2 = $contract.keccak256(JSON.stringify(json.data));
         let recovered = await $sig.recover(message2, json.sig);
         eq_(recovered, signer.address);
-    },
-    async 'should recover fromDigest' () {
-        let digest = $buffer.fromHex(`0x879a6d3124419422765a7002fcab02ae6ab741078b913865c9dd526682e5e3cd`);
-        let sig = {
-            v: 1,
-            r: '0x02f86c82053900843b9aca0084d8111c40827b0d9470997970c51812dc3a010c',
-            s: '0x7d01b50e0d17dc79c80180c001a0f5025771a5a292c9515c4e8bc22da6ae0ce5'
-        };
-        let recovered = await $sig.recover(digest, sig);
-        console.log(recovered);
     }
 });

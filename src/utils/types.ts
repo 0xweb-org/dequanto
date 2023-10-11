@@ -49,3 +49,10 @@ export type DataLike<T> = T extends bigint
         )
     );
 
+
+
+export type TOverrideReturns<TObject extends { [key: string]: Function }, TReturn> = {
+    [P in keyof TObject]: TObject[P] extends (...args: infer TParams) => any
+        ? (...args: TParams) => TReturn
+        : never;
+}

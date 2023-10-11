@@ -19,6 +19,7 @@ import { SubjectStream } from '@dequanto/class/SubjectStream';
 import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { TEth } from '@dequanto/models/TEth';
+import type { TOverrideReturns } from '@dequanto/utils/types';
 
 
 /* IMPORTS */
@@ -37,11 +38,14 @@ export class $NAME$ extends ContractBase {
 /* METHODS */
 
     $call () {
-        return super.$call() as I$NAME$TxCaller;;
+        return super.$call() as I$NAME$TxCaller;
     }
 
     $data (): I$NAME$TxData {
         return super.$data() as I$NAME$TxData;
+    }
+    $gas (): TOverrideReturns<I$NAME$TxCaller, Promise<{ gas?: bigint, price?: bigint, error?: Error & { data?: { type: string, params } } }>> {
+        return super.$gas() as any;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{

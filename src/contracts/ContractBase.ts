@@ -4,7 +4,7 @@ import alot from 'alot';
 import type { Web3Client } from '@dequanto/clients/Web3Client';
 import type { ITxWriterOptions, TxWriter } from '@dequanto/txs/TxWriter';
 
-import type { TAccount } from "@dequanto/models/TAccount";
+import type { IAccount, TAccount } from "@dequanto/models/TAccount";
 import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 import type { TAddress } from '@dequanto/models/TAddress';
@@ -22,9 +22,9 @@ import { SubjectStream } from '@dequanto/class/SubjectStream';
 import { $logger } from '@dequanto/utils/$logger';
 import { $address } from '@dequanto/utils/$address';
 import { TEth } from '@dequanto/models/TEth';
-import { $abiCoder } from '@dequanto/abi/$abiCoder';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { RpcTypes } from '@dequanto/rpc/Rpc';
+import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 
 
 export abstract class ContractBase {
@@ -143,6 +143,33 @@ export abstract class ContractBase {
         let $contract = $class.curry(this, {
             ...writeFns,
             ...readFns
+        });
+        return $contract as any;
+    }
+
+    @memd.deco.memoize({ perInstance: true })
+    public $gas () {
+        let abiArr = this.abi;
+        let writer = this.getContractWriter();
+
+        let methods = this.abi.filter(abi => abi.type === 'function' && $abiUtil.isReader(abi) === false);
+        let fns = alot(methods).map(abiMethod => {
+            return {
+                name: abiMethod.name,
+                async fn (sender: IAccount,...args: any[]) {
+                    return ContractBaseHelper.$gas(
+                        writer,
+                        abiMethod,
+                        abiArr,
+                        sender,
+                        ...args
+                    );
+                }
+            }
+        }).toDictionary(x => x.name, x => x.fn);
+
+        let $contract = $class.curry(this, {
+            ...fns
         });
         return $contract as any;
     }
@@ -347,6 +374,7 @@ export abstract class ContractBase {
     @memd.deco.memoize({ perInstance: true })
     protected getContractWriter () {
         if (this.abi != null) {
+            // Updates the singleton instance
             let logParser = di.resolve(TxTopicInMemoryProvider);
             logParser.register(this.abi);
         }
@@ -395,6 +423,38 @@ export namespace ContractBaseHelper {
             let result = await tx.call();
             return {
                 result
+            };
+        } catch (error) {
+            if (error.data) {
+                error.data = $contract.decodeCustomError(error.data, abiArr);
+            }
+            return {
+                error
+            }
+        }
+    }
+    export async function $gas (writer: ContractWriter
+        , abi: string | TAbiItem
+        , abiArr: TAbiItem[]
+        , account: IAccount & {  value?: number | string | bigint }
+        , ...params
+    ): Promise<{ error?, gas?: bigint, price?: bigint }> {
+
+        let txBuilder = new TxDataBuilder(writer.client, account, {
+            to: writer.address
+        });
+
+        txBuilder.setInputDataWithABI(abi, ...params);
+        txBuilder.abi = abiArr;
+
+        try {
+            txBuilder = await txBuilder.setGas({
+                gasEstimation: true,
+                gasLimitRatio: 1,
+            });
+            return {
+                gas: BigInt(txBuilder.data.gas),
+                price: BigInt(txBuilder.data.gasPrice ?? txBuilder.data.maxFeePerGas),
             };
         } catch (error) {
             if (error.data) {
