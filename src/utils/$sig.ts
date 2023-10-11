@@ -150,16 +150,8 @@ export namespace $sig {
                 ? utils.splitSignature(signature)
                 : signature;
 
-            let vNum = Number(v);
-            let recovery: 0 | 1;
-            if (vNum === 0 || vNum === 1) {
-                recovery = vNum;
-            } else if (vNum === 27 || vNum === 28) {
-                recovery = (vNum - 27) as 0 | 1;
-            } else if (vNum > 35) {
-                vNum -= 35;
-                recovery = vNum % 2 === 0 ? 0 : 1;
-            }
+
+            let recovery = utils.toYParity(v);
             r = r.substring(2);
             s = s.substring(2);
 
@@ -219,7 +211,21 @@ export namespace $sig {
             }
             return message;
         }
-
+        export function toYParity (v: TEth.Hex | number) {
+            let vNum = Number(v);
+            let recovery: 0 | 1;
+            if (vNum === 0 || vNum === 1) {
+                recovery = vNum;
+            } else if (vNum === 27 || vNum === 28) {
+                recovery = (vNum - 27) as 0 | 1;
+            } else if (vNum > 35) {
+                vNum -= 35;
+                recovery = vNum % 2 === 0 ? 0 : 1;
+            } else {
+                throw new Error(`Invalid signature v value: ${v}`);
+            }
+            return recovery;
+        }
 
     }
 
@@ -284,12 +290,11 @@ export namespace $sig {
 
             if (sig) {
                 serializedTransaction.push(
-                    $to.hex(Number(sig.v) % 2 === 1 ? null : 1), // yParity
+                    $to.hex(utils.toYParity(sig.v) === 1 ? 1 : null), // yParity
                     $to.hex(sig.r),
                     $to.hex(sig.s),
-                )
+                );
             }
-
             return $hex.concat([
                 '0x02',
                 $rlp.encode(serializedTransaction),
@@ -313,7 +318,7 @@ export namespace $sig {
 
             if (sig) {
                 serializedTransaction.push(
-                    $to.hex(Number(sig.v) % 2 === 1 ? null : 1),
+                    $to.hex(utils.toYParity(sig.v) === 1 ? 1 : null), // yParity
                     $to.hex(sig.r),
                     $to.hex(sig.s),
                 )
@@ -564,7 +569,7 @@ export namespace $sig {
             return accessList
         }
 
-        export namespace $to {
+        namespace $to {
             export function bigint(value: TEth.Hex, $default = void 0): bigint {
                 return $hex.isEmpty(value) ? $default : BigInt(value);
             }

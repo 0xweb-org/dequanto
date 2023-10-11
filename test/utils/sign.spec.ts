@@ -268,24 +268,34 @@ UTest({
                 let recovered = await $sig.recoverTx(txRaw);
                 eq_(recovered, account.address);
             },
-            // async 'recover from json'() {
-            //     let json = {
-            //         tx: {
-            //             to: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
-            //             value: '0x1', //1,
-            //             chainId: '0x539', //1337,
-            //             nonce: '0x0', //0,
-            //             maxFeePerGas: '0xd8111c40',
-            //             maxPriorityFeePerGas: '0x3b9aca00',
-            //             type: 2,
-            //             gas: '0x7b0d', //31501
-            //         } ,
-            //         signature: '0x7deabb9e403afcc093207548f30982e9fb62f3e70d5b93c117c4e591bb9d61502ec4cbfaea61e081e00e87a7f05e47ba6dfc07b54fd71027843fceccd393914fa95'
-            //     } as const;
-            //     let txRaw = $sig.TxSerializer.serialize(json.tx, json.signature);
-            //     let address = await $sig.recoverTx(txRaw);
-            //     eq_(address, account.address);
-            // }
+            async 'recover tx' () {
+                let txRaw = `0x02f86c82053980843b9aca0084d8111c40827b0d9470997970c51812dc3a010c7d01b50e0d17dc79c80180c080a023710dc4562e3bd283ad4492fe4b11495c7c4dc8b35fbc47fd1ac50e1cc7bd14a02e2867b545932dea642b8c3f12ed975b7068ded94d3926ab3f0a6a0cdad7c8f6` as const;
+                let recovered = await $sig.recoverTx(txRaw);
+                eq_(recovered, account.address);
+            },
+            async 'recover from json'() {
+                let json = {
+                    tx: {
+                        to: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+                        value: 1,
+                        chainId: 1337,
+                        nonce: '0x0',
+                        maxFeePerGas: '0xd8111c40',
+                        maxPriorityFeePerGas: '0x3b9aca00',
+                        type: 2,
+                        gas: 31501
+                      },
+                      signature: {
+                        v: 0,
+                        r: '0x23710dc4562e3bd283ad4492fe4b11495c7c4dc8b35fbc47fd1ac50e1cc7bd14',
+                        s: '0x2e2867b545932dea642b8c3f12ed975b7068ded94d3926ab3f0a6a0cdad7c8f6'
+                      },
+                      account: { address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' }
+                } as const;
+                let txRaw = $sig.TxSerializer.serialize(json.tx, json.signature);
+                let address = await $sig.recoverTx(txRaw);
+                eq_(address, account.address);
+            }
         });
     }
 })
