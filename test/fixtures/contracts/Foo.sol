@@ -1,7 +1,12 @@
 pragma solidity ^0.8.2;
 
+import { FooNestedModel } from './FooNestedModel.sol';
+
 contract Foo {
     string public name;
+
+    FooNestedModel.User user = FooNestedModel.User(address(1), 50);
+
     event Updated (string newName);
     event Updated2 (string newName);
 

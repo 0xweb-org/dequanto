@@ -86,7 +86,7 @@ UTest({
         let source = await File.readAsync(genPath, { skipHooks: true });
         has_(source, 'onTransfer');
     },
-    async 'generate and check with deployed contract' () {
+    async '!generate and check with deployed contract' () {
 
         await hh.run('compile', {
             sources: '/test/fixtures/contracts',
@@ -118,6 +118,17 @@ UTest({
 
                 let name = await foo.name();
                 eq_(name, 'hello');
+
+                l`> check storage simple`;
+                let nameFromSlot = await foo.storage.name();
+                eq_(nameFromSlot, 'hello');
+
+                l`> check storage nested`
+                let user = await foo.storage.user();
+                deepEq_(user, {
+                    account: '0x0000000000000000000000000000000000000001',
+                    amount: 50n
+                })
 
                 l`> Deploy second contract`;
                 let qux:any = await provider.deployClass(Foo.Foo, {

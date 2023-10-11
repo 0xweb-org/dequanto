@@ -16,6 +16,8 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { EvmBytecode } from '@dequanto/evm/EvmBytecode';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
+import { TEth } from '@dequanto/models/TEth';
+import { $hex } from '@dequanto/utils/$hex';
 
 export interface IGenerateOptions {
     platform: TPlatform
@@ -37,7 +39,7 @@ export interface IGenerateOptions {
      * b) The implementation address
      * c) Method function to read the implementation address from
      */
-    implementation?: string
+    implementation?: TEth.Hex | TEth.Address | string
 
     /** ABI will be save alongside with TS classes */
     saveAbi?: boolean
@@ -150,10 +152,14 @@ export class Generator {
         let sources: IGeneratorSources;
         if (source.code == null && source.path == null) {
             // Load from block-explorer by address (follows also proxy)
-            let result = await this.getAbi({ implementation: implSource });
+            let result = await this.getAbi({ implementation: implSource as TEth.Address });
             abi = result.abiJson;
             implementation = result.implementation;
-            sources = await this.getSources(implementation, name);
+
+            sources = await this.getSources(implementation, name, {
+                sourcePath: result.sourcePath,
+                contractName: result.contractName,
+            });
         } else {
             // Compile localhost
             let result = await this.getContractData();
@@ -177,14 +183,19 @@ export class Generator {
         });
     }
 
-    private async getAbi(opts: { implementation: string }) {
+    private async getAbi(opts: { implementation: TEth.Address }) {
         let abi = this.options.source.abi;
         $require.notNull(abi, `Abi not provided to get the Abi Json from`);
 
         if (Array.isArray(abi)) {
-            return { abiJson: abi, implementation: opts.implementation };
+            return {
+                abiJson: abi,
+                implementation: opts.implementation
+            };
         }
 
+        let sourcePath: string;
+        let contractName: string;
         let abiJson: TAbiItem[]
         let implementation: TAddress;
         if (abi.startsWith('0x')) {
@@ -194,18 +205,41 @@ export class Generator {
         } else {
             let path = abi;
             let json = await this.readFile(path)
-            abiJson = Array.isArray(json) ? json : json.abi;
+            if (Array.isArray(json)) {
+                // simple json with abi as an array
+                abiJson = json;
+            } else {
+                // should be compiled json artifact
+                abiJson = json.abi;
+                sourcePath = json.sourceName;
+                contractName = json.contractName;
+            }
         }
 
         $require.notNull(abiJson, `Abi not resolved from ${abi}`);
-        return { abiJson, implementation };
+        return { abiJson, implementation, sourcePath, contractName };
     }
-    private async getSources (implementation: TAddress, name: string): Promise<{
+    private async getSources (implementation: TAddress, name: string, opts?: {
+        contractName?: string,
+        sourcePath?: string
+    }): Promise<{
         contractName: string,
         files: {
             [path: string]: { content: string }
         }
     }> {
+        if (opts?.sourcePath != null) {
+            let contractName = opts.contractName ?? name;
+            let sourceCode = await File.readAsync<string>(opts.sourcePath);
+            return {
+                contractName,
+                files: {
+                    [opts.sourcePath]: {
+                        content: sourceCode
+                    }
+                }
+            };
+        }
         if ($address.isValid(implementation) === false) {
             return null;
         }
@@ -277,7 +311,7 @@ export class Generator {
             l`${message}`
 
             let code = await this.client.getCode(address);
-            if (code == null || code === '' || code === '0x') {
+            if ($hex.isEmpty(code)) {
                 throw new Error(`${this.options.platform}:${address} is not a contract`);
             }
 

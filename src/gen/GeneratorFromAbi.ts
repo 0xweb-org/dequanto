@@ -212,7 +212,7 @@ export class GeneratorFromAbi {
             .replace(`/* IMPORTS */`, imports.join('\n'))
             .replace(`/* ERRORS */`, Gen.serializeErrors(className, abiJson))
             .replace(/\$NAME\$/g, className)
-            .replace(`$ADDRESS$`, opts.address ? `'${opts.address}'` : null)
+            .replace(`$ADDRESS$`, opts.address ? `'${opts.address}'` : 'null')
             .replace(`/* METHODS */`, methods)
             .replace(`/* EVENTS */`, events)
             .replace(`/* EVENTS_EXTRACTORS */`, eventsExtractors)
