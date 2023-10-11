@@ -44,7 +44,7 @@ export class HardhatProvider {
         if (opts.web3 == null && opts.endpoints == null) {
             if (network == 'localhost') {
                 opts.endpoints = [
-                    //{ url: 'http://127.0.0.1:8545' },
+                    { url: 'http://127.0.0.1:8545' },
                     // Use `manual`, will be used for subscriptions only, otherwise BatchRequests will fail, as not implemented yet
                     // https://github.com/NomicFoundation/hardhat/issues/1324
                     { url: 'ws://127.0.0.1:8545' },
