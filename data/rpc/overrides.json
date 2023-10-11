@@ -58,6 +58,9 @@
                     "type": {
                         "type": "number"
                     },
+                    "nonce": {
+                        "type": "number"
+                    },
                     "chainId": {
                         "type": "number"
                     }

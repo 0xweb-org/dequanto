@@ -94,7 +94,7 @@ export class TxDataBuilder {
         } else {
             nonce = await this.client.getTransactionCount(this.account.address, 'pending');
         }
-        this.data.nonce = nonce;
+        this.data.nonce = Number(nonce);
     }
 
     async ensureGas () {

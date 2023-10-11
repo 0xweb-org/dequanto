@@ -11,10 +11,9 @@ import { $buffer } from '@dequanto/utils/$buffer';
 
 (BigInt as any).prototype.valueOf = function () {
     if (this > BigInt(Number.MAX_VALUE)) {
-        throw new Error(`BigInt to Number overfows: ${this}`)
+        throw new Error(`BigInt to Number overflows: ${this}`)
     }
     return Number(this);
 };
 
 export function BigIntSerializer () {}
-

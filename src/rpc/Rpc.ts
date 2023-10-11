@@ -2304,7 +2304,8 @@ export type AccessListEntry = {
 export type Transaction1559Unsigned = {
     /* type */
     type: number;
-    nonce: bigint;
+    /* nonce */
+    nonce: number;
     to: TEth.Address;
     gas: bigint;
     value: bigint;
@@ -2323,7 +2324,8 @@ export type Transaction1559Unsigned = {
 export type Transaction2930Unsigned = {
     /* type */
     type: number;
-    nonce: bigint;
+    /* nonce */
+    nonce: number;
     to: TEth.Address;
     gas: bigint;
     value: bigint;
@@ -2340,7 +2342,8 @@ export type Transaction2930Unsigned = {
 export type TransactionLegacyUnsigned = {
     /* type */
     type: number;
-    nonce: bigint;
+    /* nonce */
+    nonce: number;
     to: TEth.Address;
     gas: bigint;
     value: bigint;
