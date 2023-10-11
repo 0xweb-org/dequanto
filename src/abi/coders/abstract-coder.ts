@@ -291,7 +291,7 @@ export function checkResultErrors(result: Result): Array<{ path: Array<string | 
 function getValue(value: bigint): Uint8Array {
     let bytes = $buffer.fromBigInt(value);
 
-    assert (bytes.length <= WordSize, `BUFFER_OVERRUN: value out-of-bounds ${bytes.length} > ${WordSize}`);
+    $require.True(bytes.length <= WordSize, `BUFFER_OVERRUN: value out-of-bounds ${bytes.length} > ${WordSize}`);
 
     if (bytes.length !== WordSize) {
         bytes = $buffer.concat([ Padding.slice(bytes.length % WordSize), bytes ]);

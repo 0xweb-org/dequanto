@@ -1,8 +1,12 @@
 import { $array } from '@dequanto/utils/$array';
 import { TTransport } from './transports/ITransport';
+import { TEth } from '@dequanto/models/TEth';
 
 export class RpcError extends Error {
-    constructor (json: { code: number, message: string, data?: { message } }, ctx?: string | TTransport.Request) {
+    code: number
+    data: TEth.Hex
+
+    constructor (json: { code: number, message: string, data?: { message?, data? } }, ctx?: string | TTransport.Request) {
         let message = json.data?.message ?? json.message;
         if (ctx != null) {
             if (typeof ctx !== 'string') {
@@ -11,7 +15,8 @@ export class RpcError extends Error {
             message = `${message} ${ctx}`;
         }
         super(message);
-
+        this.code = json.code;
+        this.data = json.data?.data;
         //> utils.cleanStack(this);
     }
 }

@@ -1,3 +1,4 @@
+import { TEth } from '@dequanto/models/TEth';
 import { RpcSubscription } from '../RpcSubscription';
 
 export namespace TTransport {
@@ -24,7 +25,7 @@ export namespace TTransport {
             code: number,
             reason?: string
             message: string
-            data?: { message }
+            data?: { message: string, data: TEth.Hex }
         }
         result?: any
     }
