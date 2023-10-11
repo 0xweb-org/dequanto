@@ -377,6 +377,9 @@ export namespace $sig {
                     return '0x';
                 }
                 let hex = $hex.ensure(mix);
+                if (hex === '0x0') {
+                    return '0x';
+                }
                 if (hex.startsWith('0x00')) {
                     hex = $hex.trimBytes(hex);
                 }
