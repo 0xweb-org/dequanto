@@ -156,12 +156,13 @@ export class Generator {
             abi = result.abiJson;
             implementation = result.implementation;
 
-            sources = await this.getSources(implementation, name, {
+            sources = await this.getSources(name, {
+                implementation,
                 sourcePath: result.sourcePath,
                 contractName: result.contractName,
             });
         } else {
-            // Compile localhost
+            // From local JSON or SOL file
             let result = await this.getContractData();
             abi = result.abi;
             sources = result.source;
@@ -219,7 +220,8 @@ export class Generator {
         $require.notNull(abiJson, `Abi not resolved from ${abi}`);
         return { abiJson, implementation, sourcePath, contractName };
     }
-    private async getSources (implementation: TAddress, name: string, opts?: {
+    private async getSources (name: string, opts: {
+        implementation?: TAddress,
         contractName?: string,
         sourcePath?: string
     }): Promise<{
@@ -228,7 +230,7 @@ export class Generator {
             [path: string]: { content: string }
         }
     }> {
-        if (opts?.sourcePath != null) {
+        if (opts.sourcePath != null) {
             let contractName = opts.contractName ?? name;
             let sourceCode = await File.readAsync<string>(opts.sourcePath);
             return {
@@ -240,12 +242,12 @@ export class Generator {
                 }
             };
         }
-        if ($address.isValid(implementation) === false) {
+        if ($address.isValid(opts.implementation) === false) {
             return null;
         }
 
-        $logger.log('Loading contract source code.');
-        let meta = await this.explorer.getContractSource(implementation);
+        $logger.log('Loading contract source code from blockchain explorer.');
+        let meta = await this.explorer.getContractSource(opts.implementation);
         if (meta?.SourceCode == null) {
             $logger.log('No contract source found.');
             return null;
@@ -269,7 +271,16 @@ export class Generator {
 
         if (typeof path === 'string' && path.endsWith('.json')) {
             let json = await this.readFile(path);
-            return json;
+            let { abi, bytecode, sourceName, contractName } = json
+            let source = await this.getSources(contractName, {
+                sourcePath: sourceName,
+                contractName,
+            });
+            return {
+                abi,
+                bytecode,
+                source
+            };
         }
 
         let provider = new HardhatProvider();
