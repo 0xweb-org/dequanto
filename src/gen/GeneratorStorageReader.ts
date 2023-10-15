@@ -65,8 +65,8 @@ export class GeneratorStorageReader {
         let className = $gen.toClassName(opts.name + 'StorageReader');
         let code = template
             .replace(`$NAME$`, className)
-            .replace(`/* METHODS */`, codeMethods)
-            .replace(`$SLOTS$`, JSON.stringify(slots, null, '    '))
+            .replace(`/* METHODS */`, () => codeMethods)
+            .replace(`$SLOTS$`, () => JSON.stringify(slots, null, '    '))
 
 
         return {
