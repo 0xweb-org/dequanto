@@ -16,6 +16,7 @@ import type {
     StructDefinition
 } from '@solidity-parser/parser/dist/src/ast-types';
 import { $semver } from '@dequanto/utils/$semver';
+import { $path } from '@dequanto/utils/$path';
 
 
 export class TSourceFileContract {
@@ -24,9 +25,12 @@ export class TSourceFileContract {
 }
 
 export class SourceFile {
+    public path: string;
     public version: string;
-    public file = new File(this.path);
-    constructor(public path: string, public source?: string, public inMemoryFile?: ISlotsParserOption['files']) {
+    public file: InstanceType<typeof File>;
+    constructor(path: string, public source?: string, public inMemoryFile?: ISlotsParserOption['files']) {
+        this.path = $path.normalize(path);
+        this.file = new File(this.path);
     }
 
     @memd.deco.memoize({ perInstance: true })

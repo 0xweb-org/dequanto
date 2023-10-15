@@ -22,7 +22,7 @@ export namespace $path {
         return /\.\w+($|\?)/.test(path);
     }
     export function normalize (path: string) {
-        return path
+        path = path
             // Replace all / duplicates, but not near the protocol
             .replace(/(?<![:/])\/{2,}/g, '/')
             // Use forward slashes
@@ -30,6 +30,20 @@ export namespace $path {
             // Replace "foo/./bar" with single slash: "foo/bar"
             .replace(/\/\.\//g, '/')
             ;
+        while (true) {
+            let next = path.replace(/([^\/]+)\/\.\.\//g, (match, p1) => {
+                if (p1 !== '..' && p1 !== '.') {
+                    return '/';
+                }
+                return match;
+            });
+            if (next === path) {
+                // nothing to collapse
+                break;
+            }
+            path = next;
+        }
+        return path;
     }
 
     function getRoot () {

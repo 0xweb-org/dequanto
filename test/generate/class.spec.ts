@@ -111,7 +111,7 @@ UTest({
             async 'deploy to localhost to listen for WS events' () {
                 let provider = new HardhatProvider();
                 let client = await provider.client('localhost');
-                let foo:ContractBase = await provider.deployClass(Foo.Foo, {
+                let { contract: foo }= await provider.deployClass<any>(Foo.Foo, {
                     arguments: [ 'hello' ],
                     client
                 });
@@ -131,7 +131,7 @@ UTest({
                 })
 
                 l`> Deploy second contract`;
-                let qux:any = await provider.deployClass(Foo.Foo, {
+                let { contract: qux } = await provider.deployClass<any>(Foo.Foo, {
                     arguments: [ 'qux' ],
                     client
                 });
@@ -241,7 +241,7 @@ UTest({
                 let provider = new HardhatProvider();
                 // use in-memory, as is enough
                 let client = await provider.client('hardhat');
-                let foo:any = await provider.deployClass(Foo.Foo, {
+                let { contract: foo } = await provider.deployClass<any>(Foo.Foo, {
                     arguments: [ 'hello' ],
                     client
                 });
@@ -271,7 +271,7 @@ UTest({
                 let provider = new HardhatProvider();
                 // use in-memory, as is enough
                 let client = await provider.client('hardhat');
-                let foo:any = await provider.deployClass(Foo.Foo, {
+                let { contract: foo } = await provider.deployClass<any>(Foo.Foo, {
                     arguments: [ 'hello' ],
                     client
                 });
