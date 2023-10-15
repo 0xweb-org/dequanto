@@ -214,25 +214,25 @@ export class GeneratorFromAbi {
             .replace(/\$Web3ClientOptions\$/g, Web3ClientOptions)
             .replace(/\$EvmScanOptions\$/g, EvmScanOptions)
 
-            .replace(`/* IMPORTS */`, imports.join('\n'))
-            .replace(`/* ERRORS */`, Gen.serializeErrors(className, abiJson))
+            .replace(`/* IMPORTS */`, () => imports.join('\n'))
+            .replace(`/* ERRORS */`, () => Gen.serializeErrors(className, abiJson))
             .replace(/\$NAME\$/g, className)
             .replace(`$ADDRESS$`, opts.address ? `'${opts.address}'` : 'null')
             .replace(`/* METHODS */`, methods)
             .replace(`/* EVENTS */`, events)
             .replace(`/* EVENTS_EXTRACTORS */`, eventsExtractors)
             .replace(`/* EVENTS_FETCHERS */`, eventsFetchers)
-            .replace(`$ABI$`, JSON.stringify(abiJson))
+            .replace(`$ABI$`, () => JSON.stringify(abiJson))
             .replace(`$DATE$`, $date.format(new Date(), 'yyyy-MM-dd HH:mm'))
             .replace(`$EXPLORER_URL$`, sourceUri)
-            .replace(`/* $EVENT_INTERFACES$ */`, eventInterfaces.join('\n') + '\n\n' + eventInterfacesAll.code + '\n\n')
+            .replace(`/* $EVENT_INTERFACES$ */`, () => eventInterfaces.join('\n') + '\n\n' + eventInterfacesAll.code + '\n\n')
 
             .replace(`/* STORAGE_READER_PROPERTY */`, storageReaderProperty)
-            .replace(`/* STORAGE_READER_CLASS */`, storageReaderClass || '')
-            .replace(`/* TX_CALLER_METHODS */`, Gen.serializeTxCallerMethods(className, abiJson))
-            .replace(`/* TX_DATA_METHODS */`, Gen.serializeTxDataMethods(className, abiJson))
+            .replace(`/* STORAGE_READER_CLASS */`, () => storageReaderClass)
+            .replace(`/* TX_CALLER_METHODS */`, () => Gen.serializeTxCallerMethods(className, abiJson))
+            .replace(`/* TX_DATA_METHODS */`, () => Gen.serializeTxDataMethods(className, abiJson))
 
-            .replace(`/* $METHOD_INTERFACES$ */`, methodInterfacesArr.map(x => x.code).join('\n\n') + '\n\n' + methodInterfacesAll.code + '\n\n')
+            .replace(`/* $METHOD_INTERFACES$ */`, () => methodInterfacesArr.map(x => x.code).join('\n\n') + '\n\n' + methodInterfacesAll.code + '\n\n')
             ;
 
 
