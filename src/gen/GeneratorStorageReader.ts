@@ -22,7 +22,7 @@ export class GeneratorStorageReader {
             [file: string]: { content: string }
         },
         client?: Web3Client
-    }): Promise<{ code?: string, className?: string, error?: Error }> {
+    }): Promise<{ code?: string, className?: string, sourcePath?: string, error?: Error }> {
 
 
         let { client, sources, contractName, address } = opts;
@@ -71,7 +71,8 @@ export class GeneratorStorageReader {
 
         return {
             className: className,
-            code: code
+            code: code,
+            sourcePath: file.path
         };
     }
 

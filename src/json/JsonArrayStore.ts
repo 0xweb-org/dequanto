@@ -5,6 +5,7 @@ import alot from 'alot'
 
 import { JsonConvert } from 'class-json'
 import { Alot } from 'alot/alot'
+import { $promise } from '@dequanto/utils/$promise'
 
 export interface IStoreOptions<T, TOut = T> {
     path: string
@@ -91,6 +92,18 @@ export class JsonArrayStore<T> {
         let entry = this.removeSync(key);
         await this.flush();
         return entry;
+    }
+    async removeMany(keys: (string | number)[]) {
+        if (keys == null || keys.length === 0) {
+            return;
+        }
+        if (this.hash == null) {
+            await this.restore();
+        }
+
+        let entries = keys.map(key => this.removeSync(key));
+        await this.flush();
+        return entries;
     }
 
     async upsertMany(arr: Partial<T>[]): Promise<T[]> {
@@ -245,12 +258,13 @@ class JsonArrayFs<T> {
     private async writeInner (arr: T[]) {
         try {
             let v = this.version;
+            console.log(`JsonArrayStore: WRITE    | `, v, ` |`)
             let data = Fs.serialize(arr, this.Type, this.format);
             await File.writeAsync(this.pathBak, data);
-            await File.renameAsync(this.pathBak, this.pathFilename);
+            await this.renameFileAsync(this.pathBak, this.pathFilename);
             this.callWriteListeners(v, null);
         } catch (error) {
-            console.error(`JsonArrayStore.WriteInner`, error);
+            console.error(`JsonArrayStore.WriteInner>`, error);
             this.errored = error;
         } finally {
             if (this.pending == null) {
@@ -261,6 +275,25 @@ class JsonArrayFs<T> {
             let next = this.pending;
             this.pending = null;
             this.writeInner(next);
+        }
+    }
+    private async renameFileAsync (pathBak: string, pathFilename: string, opts?: { retries: number }) {
+        opts ??= { retries: 0 };
+
+        try {
+            await File.renameAsync(pathBak, pathFilename);
+        } catch (error) {
+            let isPERM = error.message.includes('EPERM') || error.code === 'EPERM';
+            if (isPERM === false) {
+                throw error;
+            }
+            if (opts.retries > 5) {
+                error.message = `After ${opts.retries} retries: ${ error.message}`;
+                throw error;
+            }
+            await File.removeAsync(pathFilename);
+            await $promise.wait(150);
+            await this.renameFileAsync(pathBak, pathFilename, opts);
         }
     }
 

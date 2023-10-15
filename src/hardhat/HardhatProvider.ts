@@ -112,21 +112,27 @@ export class HardhatProvider {
         deployer?: ChainAccount
         arguments?: any[]
         client?: Web3Client
-    }): Promise<T> {
+    }): Promise<{
+        contract: T,
+        receipt: TEth.TxReceipt
+    }> {
 
         let client = options?.client ?? this.client();
         let signer = options?.deployer ?? this.deployer();
         let params = options?.arguments ?? [];
-
         let Factory = await this.getFactory(Ctor.name, client, signer, params);
 
         const receipt = await Factory.deploy();
 
         $logger.log(`Contract ${Ctor.name} deployed to ${receipt.contractAddress}`);
-        return new Ctor(receipt.contractAddress, client);
+        const contract = new Ctor(receipt.contractAddress, client);
+        return {
+            contract,
+            receipt
+        };
     }
 
-    async deploySol <TReturn extends ContractBase = IContractWrapped > (solContractPath: string, options?: {
+    async deploySol <TReturn extends ContractBase = IContractWrapped> (solContractPath: string, options?: {
         client?: Web3Client
         arguments?: any[],
         deployer?:  ChainAccount,
@@ -136,7 +142,8 @@ export class HardhatProvider {
         },
         contractName?: string
     }): Promise<{
-        contract: TReturn //Ethers.Contract
+        contract: TReturn
+        receipt: TEth.TxReceipt
         abi: TAbiItem[]
         bytecode: string
         source: IGeneratorSources
@@ -154,7 +161,8 @@ export class HardhatProvider {
         explorer.localDb.push({ name: '', abi: abi, address: receipt.contractAddress });
 
         return {
-            contract: contract,
+            contract,
+            receipt,
             abi,
             bytecode,
             source
@@ -173,9 +181,9 @@ export class HardhatProvider {
         abi?: TAbiItem[]
     }): Promise<{
         contract: TReturn
-        abi: TAbiItem[]
-        bytecode: TEth.Hex,
         receipt: TEth.TxReceipt
+        abi: TAbiItem[]
+        bytecode: TEth.Hex
     }> {
 
         const client = options?.client ?? this.client();

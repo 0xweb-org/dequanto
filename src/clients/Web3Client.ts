@@ -340,7 +340,7 @@ export abstract class Web3Client implements IWeb3Client {
                 to: tx.to,
                 data: data,
                 value: $hex.ensure(tx.value ?? '0x0'),
-                nonce: $hex.ensure(tx.nonce),
+                //nonce: $hex.ensure(tx.nonce),
             };
             let rpc = web3.rpc;
             let gasAmount = await rpc.eth_estimateGas(txData);

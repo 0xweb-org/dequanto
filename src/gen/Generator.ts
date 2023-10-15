@@ -232,12 +232,16 @@ export class Generator {
     }> {
         if (opts.sourcePath != null) {
             let contractName = opts.contractName ?? name;
-            let sourceCode = await File.readAsync<string>(opts.sourcePath);
+            let { path, code } = await this.resolveSourcePath(opts.sourcePath);
+            if (path == null) {
+                console.error(`Source path not found: ${opts.sourcePath}`);
+                return null;
+            }
             return {
                 contractName,
                 files: {
-                    [opts.sourcePath]: {
-                        content: sourceCode
+                    [path]: {
+                        content: code
                     }
                 }
             };
@@ -253,6 +257,16 @@ export class Generator {
             return null;
         }
         return meta.SourceCode;
+    }
+    private async resolveSourcePath (path: string): Promise<{ path: string, code: string }> {
+        if (await File.existsAsync(path)) {
+            return { path, code: await File.readAsync(path) };
+        }
+        let nodePath = `node_modules/${path}`;
+        if (await File.existsAsync(nodePath)) {
+            return { path: nodePath, code: await File.readAsync(nodePath) };
+        }
+        return { path: null, code: null };
     }
     private async getContractData (): Promise<{
         abi,

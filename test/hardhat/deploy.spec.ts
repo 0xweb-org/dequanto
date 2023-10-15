@@ -426,7 +426,7 @@ UTest({
         eq_(r, "FAIL");
     },
 
-    async '!permit token' () {
+    async 'permit token' () {
         let [ owner, receiver ] = [ ChainAccountProvider.generate(), ChainAccountProvider.generate() ];
 
         await client.debug.setBalance(owner.address, 10n**18n);
@@ -495,6 +495,47 @@ UTest({
 
         let balance = await erc20.balanceOf(receiver.address);
         eq_(balance, amount);
+    },
+
+    async 'calldata with anonymous event' () {
+        let code = `
+
+            contract Foo {
+                event LogNote(
+                    bytes4 indexed sig,
+                    address indexed usr,
+                    bytes32 indexed arg1,
+                    bytes32 indexed arg2,
+                    bytes data
+                ) anonymous;
+
+                modifier note() {
+                    _;
+                    bytes32 arg1;
+                    bytes32 arg2;
+                    assembly {
+                        arg1 := calldataload(4)
+                        arg2 := calldataload(36)
+                    }
+
+                    emit LogNote(msg.sig, msg.sender, arg1, arg2, msg.data);
+                }
+
+                function foo () external note {
+
+                }
+                function bar (uint256 a1, uint256 a2) external note {
+
+                }
+            }
+        `;
+        let { contract } = await provider.deployCode(code, {
+            client,
+        });
+        let r1 = await contract.$receipt().foo(provider.deployer());
+        eq_(r1.logs[0].topics[2], '0x0000000000000000000000000000000000000000000000000000000000000000');
+        let r2 = await contract.$receipt().bar(provider.deployer(), 1n, 2n);
+        eq_(r2.logs[0].topics[2], '0x0000000000000000000000000000000000000000000000000000000000000001');
     },
 
     async 'sandbox'() {

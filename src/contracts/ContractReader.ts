@@ -34,7 +34,7 @@ export class ContractReader implements IContractReader {
     private blockNumberTask: Promise<number>;
     private options: Parameters<Web3Client['readContract']>[0]['options'] = {};
 
-    constructor(public client: Web3Client = di.resolve(EthWeb3Client)) {
+    constructor(public client: Web3Client = di.resolve(EthWeb3Client), private ctx?: { name?: string }) {
 
     }
     forBlock (mix: number | Date | undefined) {
@@ -103,12 +103,10 @@ export class ContractReader implements IContractReader {
             if (result == null) {
                 throw new Error(`Function call returned undefined`);
             }
-            //-return AbiDeserializer.process(result, abi.outputs) as TResult;
             return result as TResult;
-
         } catch (error) {
             let args = params.map((x, i) => `[${i}] ${x}`).join('\n');
-            let err = new Error(`Contract: ${address} ${methodAbi} with ${args} failed with ${error.message}`);
+            let err = new Error(`Read ${this.ctx?.name ?? ''} ${address}.${method}(${args}) failed with ${error.message}`);
             err.stack = error.stack;
             throw err;
         }

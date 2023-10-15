@@ -80,6 +80,12 @@ export abstract class ContractBase {
         return $contract;
     }
 
+    public $address<T extends this>(this: T, address: TAddress): T {
+        let Ctor = this.constructor as any;
+        let x = new Ctor(address, this.client, this.explorer);
+        return x;
+    }
+
     @memd.deco.memoize({ perInstance: true })
     public $call () {
         let abiArr = this.abi;
@@ -164,6 +170,25 @@ export abstract class ContractBase {
                         sender,
                         ...args
                     );
+                }
+            }
+        }).toDictionary(x => x.name, x => x.fn);
+
+        let $contract = $class.curry(this, {
+            ...fns
+        });
+        return $contract as any;
+    }
+
+    @memd.deco.memoize({ perInstance: true })
+    public $receipt <T extends this> (this: T): T {
+        let $top = this;
+        let methods = this.abi.filter(abi => abi.type === 'function' && $abiUtil.isReader(abi) === false);
+        let fns = alot(methods).map(abiMethod => {
+            return {
+                name: abiMethod.name,
+                async fn (sender: IAccount,...args: any[]) {
+                    return await (await ($top[abiMethod.name](sender, ...args))).wait();
                 }
             }
         }).toDictionary(x => x.name, x => x.fn);
@@ -367,7 +392,7 @@ export abstract class ContractBase {
 
     @memd.deco.memoize({ perInstance: true })
     private getContractReaderInner () {
-        let reader = new ContractReader(this.client);
+        let reader = new ContractReader(this.client, { name: this.constructor.name });
         return reader;
     }
 

@@ -66,5 +66,5 @@ export namespace $address {
         return `0x${address.join('')}`
     }
 
-    export const ZERO = '0x0000000000000000000000000000000000000000'
+    export const ZERO: TEth.Address = `0x0000000000000000000000000000000000000000`
 }

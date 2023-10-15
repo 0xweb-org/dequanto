@@ -58,7 +58,7 @@ export namespace $contract {
         return val;
     }
 
-    export function extractLogsForAbi (tx: TEth.TxReceipt, abiItem: TAbiItem): ITxLogItem[] {
+    export function extractLogsForAbi (tx: TEth.TxReceipt, abiItem: string | TAbiItem): ITxLogItem[] {
         let topicHash = $abiUtils.getMethodHash(abiItem);
         let logs = tx
             .logs
@@ -245,9 +245,9 @@ export namespace $contract {
                 };
             }));
         }
-        let params = args.reduce((aggr, arg) => {
-            aggr[arg.name] = arg.value;
-            return aggr;
+        let params = args.reduce((agr, arg) => {
+            agr[arg.name] = arg.value;
+            return agr;
         }, {});
 
         return {

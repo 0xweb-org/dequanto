@@ -47,7 +47,10 @@ export class RpcContract {
         let { methodAbi, methodRequest } = await this.getCallRequestRaw(req);
 
         try {
-            let hex = await this.client.request(methodRequest)
+            let hex = await this.client.request(methodRequest);
+            if ($hex.isEmpty(hex)) {
+                return null;
+            }
             if (methodAbi == null) {
                 return hex;
             }

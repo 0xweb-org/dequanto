@@ -108,7 +108,7 @@ export class GeneratorFromAbi {
         let EtherscanStr;
         let EthWeb3ClientStr;
         let imports = [];
-        let explorerUrl: string;
+        let sourceUri: string;
         let Web3ClientOptions = '';
         let EvmScanOptions = '';
         switch (opts.network) {
@@ -119,7 +119,7 @@ export class GeneratorFromAbi {
                     `import { Bscscan } from '@dequanto/BlockchainExplorer/Bscscan'`,
                     `import { BscWeb3Client } from '@dequanto/clients/BscWeb3Client'`,
                 ];
-                explorerUrl = `https://bscscan.com/address/${opts.address}#code`;
+                sourceUri = `https://bscscan.com/address/${opts.address}#code`;
                 break;
             case 'polygon':
                 EtherscanStr = 'Polyscan';
@@ -128,7 +128,7 @@ export class GeneratorFromAbi {
                     `import { Polyscan } from '@dequanto/BlockchainExplorer/Polyscan'`,
                     `import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client'`,
                 ];
-                explorerUrl = `https://polygonscan.com/address/${opts.address}#code`;
+                sourceUri = `https://polygonscan.com/address/${opts.address}#code`;
                 break;
             case 'xdai':
                 EtherscanStr = 'XDaiscan';
@@ -137,7 +137,7 @@ export class GeneratorFromAbi {
                     `import { XDaiscan } from '@dequanto/chains/xdai/XDaiscan'`,
                     `import { XDaiWeb3Client } from '@dequanto/chains/xdai/XDaiWeb3Client'`,
                 ];
-                explorerUrl = `https://blockscout.com/xdai/mainnet/address/${opts.address}/contracts`;
+                sourceUri = `https://blockscout.com/xdai/mainnet/address/${opts.address}/contracts`;
                 break;
             case 'eth':
                 EtherscanStr = 'Etherscan';
@@ -146,7 +146,7 @@ export class GeneratorFromAbi {
                     `import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'`,
                     `import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'`,
                 ];
-                explorerUrl = `https://etherscan.io/address/${opts.address}#code`;
+                sourceUri = `https://etherscan.io/address/${opts.address}#code`;
                 break;
             case 'hardhat':
                 EtherscanStr = 'Etherscan';
@@ -155,7 +155,7 @@ export class GeneratorFromAbi {
                     `import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'`,
                     `import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client'`,
                 ];
-                explorerUrl = ``;
+                sourceUri = ``;
                 break;
             default: {
                 let web3Config = $config.get(`web3.${opts.network}`);
@@ -169,10 +169,10 @@ export class GeneratorFromAbi {
                     Web3ClientOptions = `{ platform: '${opts.network}' }`;
                     EvmScanOptions = `{ platform: '${opts.network}' }`;
 
-                    explorerUrl = '';
+                    sourceUri = '';
                     let evmscan = $config.get(`blockchainExplorer.${opts.network}`)
                     if (evmscan?.www) {
-                        explorerUrl = `${evmscan.www}/address/${opts.address}#code`;
+                        sourceUri = `${evmscan.www}/address/${opts.address}#code`;
                     }
                     break;
                 }
@@ -181,11 +181,16 @@ export class GeneratorFromAbi {
             }
         }
 
+
         let storageReaderProperty = '';
         let storageReaderClass = '';
         try {
             let storageReaderGenerator = new GeneratorStorageReader();
             let reader = await storageReaderGenerator.generate({ ...opts });
+
+            if (reader.sourcePath != null && opts.address == null) {
+                sourceUri = reader.sourcePath;
+            }
 
             let property = reader.className
                 ? `storage = new ${reader.className}(this.address, this.client, this.explorer);`
@@ -219,7 +224,7 @@ export class GeneratorFromAbi {
             .replace(`/* EVENTS_FETCHERS */`, eventsFetchers)
             .replace(`$ABI$`, JSON.stringify(abiJson))
             .replace(`$DATE$`, $date.format(new Date(), 'yyyy-MM-dd HH:mm'))
-            .replace(`$EXPLORER_URL$`, explorerUrl)
+            .replace(`$EXPLORER_URL$`, sourceUri)
             .replace(`/* $EVENT_INTERFACES$ */`, eventInterfaces.join('\n') + '\n\n' + eventInterfacesAll.code + '\n\n')
 
             .replace(`/* STORAGE_READER_PROPERTY */`, storageReaderProperty)
