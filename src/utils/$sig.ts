@@ -191,8 +191,8 @@ export namespace $sig {
     }
 
     export namespace $key {
-        export function encrypt (key: TEth.Hex, secret: string) {
-            let encrypted = $crypto.encrypt(key, { secret, encoding: 'hex'});
+        export async function encrypt (key: TEth.Hex, secret: string) {
+            let encrypted = await $crypto.encrypt(key, { secret, encoding: 'hex'});
             return `p1:${encrypted}`;
         }
     }
