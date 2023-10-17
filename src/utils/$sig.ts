@@ -66,7 +66,6 @@ export namespace $sig {
         return address;
     }
 
-
     export namespace $rpc {
         export async function signTx(rpc: Rpc, tx: TEth.TxLike): Promise<TEth.Hex> {
             let body = {
@@ -188,6 +187,13 @@ export namespace $sig {
                 const prefix = $buffer.fromString(`\u0019Ethereum Signed Message:\n${buffer.length}`, 'utf-8')
                 return $contract.keccak256($buffer.concat([prefix, buffer]))
             }
+        }
+    }
+
+    export namespace $key {
+        export function encrypt (key: TEth.Hex, secret: string) {
+            let encrypted = $crypto.encrypt(key, { secret, encoding: 'hex'});
+            return `p1:${encrypted}`;
         }
     }
 
