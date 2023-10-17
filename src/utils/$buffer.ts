@@ -100,8 +100,8 @@ class NodeBufferUtils extends BufferBase {
     fromString(str: string, encoding?: BufferEncoding): Uint8Array {
         return Buffer.from(str, encoding ?? 'utf8');
     }
-    toString(buffer: Buffer, encoding?: BufferEncoding): string {
-        return buffer.toString(encoding);
+    toString(buffer: Uint8Array, encoding: BufferEncoding = 'utf8'): string {
+        return Buffer.from(buffer).toString(encoding);
     }
     fromHex(hex: string): Uint8Array {
         return Buffer.from(utils.normalizeHex(hex), 'hex');
@@ -114,7 +114,7 @@ class NodeBufferUtils extends BufferBase {
             return hex + x.toString(16).padStart(2, '0');
         }, '')) as TEth.Hex;
     }
-    concat(buffers: Buffer[]) {
+    concat(buffers: Uint8Array[]) {
         return Buffer.concat(buffers);
     }
 }

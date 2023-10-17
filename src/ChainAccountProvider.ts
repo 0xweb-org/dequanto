@@ -8,7 +8,7 @@ import { TAddress } from './models/TAddress'
 import { TPlatform } from './models/TPlatform'
 import { $config } from './utils/$config'
 import { $address } from './utils/$address';
-import { $crypto, WebCryptoPolyfill } from './utils/$crypto';
+import { $crypto, $cryptoImpl } from './utils/$crypto';
 import { $buffer } from './utils/$buffer';
 import { ChainAccount, IAccount, SafeAccount } from './models/TAccount';
 import { $contract } from './utils/$contract';
@@ -45,7 +45,7 @@ export namespace ChainAccountProvider {
     }
     export function getAddressFromKey (key: TEth.BufferLike): TEth.Address {
         // use NodeJS crypto module
-        const crypto = new WebCryptoPolyfill()
+        const crypto = new $cryptoImpl.Node()
         const wallet = crypto.createECDH('secp256k1');
 
         wallet.setPrivateKey(

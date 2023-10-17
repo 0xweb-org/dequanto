@@ -483,20 +483,23 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
     toJSON (): TTxWriterJson {
         let account = this.account;
+        let accountJson: string | any;
         if (typeof account !== 'string') {
-            account = <ChainAccount | SafeAccount> JSON.parse(JSON.stringify(account));
+            accountJson = JSON.parse(JSON.stringify(account)) as (ChainAccount | SafeAccount | Erc4337Account);
             // Clean any KEY to prevent leaking. When resubmitted if one is required should be taken from the storage
-            if ('operator' in account) {
-                delete account.operator?.key;
+            if ('operator' in accountJson) {
+                delete accountJson.operator.key;
             } else {
-                delete account.key;
+                delete accountJson.key;
             }
+        } else {
+            accountJson = account;
         }
         return {
             id: this.id,
             platform: this.client.platform,
             options: this.options,
-            account: account,
+            account: accountJson,
             txs: this.txs,
             builder: this.builder.toJSON(),
         };

@@ -9,6 +9,9 @@ import { $rlp } from '@dequanto/abi/$rlp';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
 import { TEth } from '@dequanto/models/TEth';
+import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
+import { $crypto } from '@dequanto/utils/$crypto';
+import { $config } from '@dequanto/utils/$config';
 
 const account = {
     // hardhat
@@ -286,7 +289,7 @@ UTest({
                         gas: 31501
                       },
                       signature: {
-                        v: 0,
+                        v: '0x0',
                         r: '0x23710dc4562e3bd283ad4492fe4b11495c7c4dc8b35fbc47fd1ac50e1cc7bd14',
                         s: '0x2e2867b545932dea642b8c3f12ed975b7068ded94d3926ab3f0a6a0cdad7c8f6'
                       },
@@ -297,5 +300,19 @@ UTest({
                 eq_(address, account.address);
             }
         });
+    },
+    async 'check with encrypted key' () {
+        let account = ChainAccountProvider.generate();
+        let pss = '012345';
+
+        let accountEncrypted = {
+            address: null,
+            key: `p1:${await $crypto.encrypt(account.key, { secret: pss, encoding: 'hex' })}`
+        }
+        $config.set('pin', pss);
+
+        let signature = await $sig.signMessage('Hello', accountEncrypted as any);
+        let recovered = await $sig.recoverMessage('Hello', signature);
+        eq_(recovered, account.address);
     }
 })

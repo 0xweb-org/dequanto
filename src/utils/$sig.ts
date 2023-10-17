@@ -6,36 +6,49 @@ import { $is } from './$is';
 import { $hex } from './$hex';
 import { $address } from './$address';
 import { $signSerializer } from './$signSerializer';
-import { ChainAccount } from '@dequanto/models/TAccount';
 import { $rlp } from '@dequanto/abi/$rlp';
 import { $require } from './$require';
 import type { Web3Client } from '@dequanto/clients/Web3Client';
 import type { Rpc, RpcTypes } from '@dequanto/rpc/Rpc';
+import { $crypto } from './$crypto';
+import { $config } from './$config';
+import { ChainAccount } from '@dequanto/models/TAccount';
 
 
 export namespace $sig {
 
     export async function signTypedData(typedData: Partial<RpcTypes.TypedData>, account: TEth.ChainAccount, rpc?: Rpc): Promise<TSignature> {
         if (account.key != null) {
-            return $ec.$eip191.signTypedData(typedData, account);
+            return await KeyUtils.withKey(account, account => $ec.$eip191.signTypedData(typedData, account));
         }
         return $rpc.signTypedData(rpc, typedData, account);
     }
     export async function sign(message: string | Uint8Array, account: TEth.ChainAccount, rpc?: Rpc): Promise<TSignature> {
         if (account.key != null) {
-            return $ec.sign(message, account);
+            return await KeyUtils.withKey(account, account => $ec.sign(message, account));
         }
         return $rpc.sign(rpc, message, account);
     }
     export async function signMessage(message: string | Uint8Array, account: TEth.ChainAccount, mix?: Rpc | Web3Client): Promise<TSignature> {
         if (account.key != null) {
-            return $ec.$eip191.signMessage(message, account);
+            return await KeyUtils.withKey(account, account => $ec.$eip191.signMessage(message, account));
         }
         let rpc = 'getRpc' in mix
             ? await mix.getRpc()
             : mix;
         return $rpc.signMessage(rpc, message, account);
     }
+    export async function signTx(tx: TEth.TxLike, account: TEth.ChainAccount, rpc?: Rpc): Promise<TEth.Hex> {
+        tx.from ??= account.address;
+
+        if ($hex.isEmpty(account.key)) {
+            $require.notNull(rpc, `The account has no private key locally, and the RPC handler is not provided`);
+
+            return $rpc.signTx(rpc, tx);
+        }
+        return await KeyUtils.withKey(account, account => $ec.signTx(tx, account));
+    }
+
     export function recover(digest: string | TEth.Hex | Uint8Array, signature: TEth.Hex | { v, r, s }): TEth.Address {
         return $ec.recoverAddress(digest, signature);
     }
@@ -43,16 +56,6 @@ export namespace $sig {
         return $ec.$eip191.recoverAddressFromMessage(digest, signature);
     }
 
-    export async function signTx(tx: TEth.TxLike, account: TEth.ChainAccount, rpc?: Rpc): Promise<TEth.Hex> {
-        tx.from ??= account.address;
-
-        if ($hex.isEmpty(account.key)) {
-            console.log(account);
-            $require.notNull(rpc, `The account has no private key locally, and the RPC handler is not provided`);
-            return $rpc.signTx(rpc, tx);
-        }
-        return $ec.signTx(tx, account);
-    }
     export function recoverTx(signedTxRaw: TEth.Hex) {
         let txSigned = TxDeserializer.deserialize(signedTxRaw);
         let { v, r, s } = txSigned;
@@ -589,4 +592,44 @@ export namespace $sig {
         signature?: TEth.Hex
         signatureVRS?: TEth.Hex
     };
+}
+
+
+namespace KeyUtils {
+    // decrypts the private key
+    export async function withKey <TReturn> (account: TEth.ChainAccount, fn: (account: TEth.ChainAccount) => TReturn): Promise<TReturn> {
+        let rgx = /^p1:/
+        let encryptionMatch = rgx.exec(account.key);
+        if (encryptionMatch == null) {
+            return fn(account);
+        }
+        let secret = resolveSecret();
+        let key = await $crypto.decrypt(account.key.substring(encryptionMatch[0].length) as TEth.Hex, {
+            secret,
+            encoding: 'hex',
+        });
+        let accountEncrypted = {
+            address: account.address,
+            key
+        };
+        try {
+            return fn(accountEncrypted);
+        } finally {
+            delete accountEncrypted.key;
+            key = null;
+        }
+    }
+    function resolveSecret(): string {
+        let pin = $config.get('pin');
+        if (pin != null) {
+            return pin;
+        }
+        if (typeof process !== 'undefined') {
+            let pin = process.env.PIN;
+            if (pin != null) {
+                return pin;
+            }
+        }
+        throw new Error('Account key is encrypted, please provide a PIN to unlock it.');
+    }
 }
