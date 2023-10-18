@@ -195,8 +195,8 @@ namespace NodeCryptoImpl {
 }
 
 export const $crypto: ICrypto = typeof crypto === "undefined"
-    ? new WebCryptoImpl.CryptoWeb()
-    : new NodeCryptoImpl.CryptoNode()
+    ? new NodeCryptoImpl.CryptoNode()
+    : new WebCryptoImpl.CryptoWeb()
     ;
 
 export const $cryptoImpl = {
