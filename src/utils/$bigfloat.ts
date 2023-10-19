@@ -242,10 +242,6 @@ function from (mix: TNumeric): BigFloat {
         if (isNaN(mix)) {
             throw new Error(`Cannot calculate with NaN`);
         }
-
-        if (Math.abs(mix) > Number.MAX_SAFE_INTEGER) {
-            throw new Error(`Provided Number (${mix}) is out of safe integer range`);
-        }
         let mantissa = $num.getMantissa(mix);
         let valueNr = Math.floor(mix * Number(mantissa));
         return new BigFloat( BigInt(valueNr), mantissa);
@@ -529,13 +525,13 @@ namespace math {
 const CONFIG = {
     DECIMAL_PLACES: 18,
     ROUNDING_MODE: ROUNDING_MODE.ROUND_HALF_UP,
-    EXPONENTIAL_AT: [-7, 21],
+    EXPONENTIAL_AT: [-24, 24],
     RANGE: 1E9
 }
 
 
 
-export namespace $bignumber {
+export namespace $bigfloat {
     export function from (mix: TNumeric) {
         return BigFloat.from(mix);
     }

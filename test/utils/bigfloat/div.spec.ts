@@ -1,4 +1,4 @@
-import { $bignumber } from '@dequanto/utils/$bn';
+import { $bigfloat } from '@dequanto/utils/$bigfloat';
 
 
 // Compare Java implementation
@@ -22,10 +22,10 @@ UTest({
         function t(dividend, divisor, expected, dp?, rm?) {
 
             if (dp != null) {
-                $bignumber.config({ DECIMAL_PLACES: dp, ROUNDING_MODE: rm });
+                $bigfloat.config({ DECIMAL_PLACES: dp, ROUNDING_MODE: rm });
             }
             try {
-                let big = $bignumber.from(dividend).div(divisor);
+                let big = $bigfloat.from(dividend).div(divisor);
 
                 big = big.dp(dp ?? 40, rm ?? 4);
 
@@ -41,7 +41,7 @@ UTest({
                 throw e;
             }
         }
-        $bignumber.config({
+        $bigfloat.config({
             DECIMAL_PLACES: 40,
             ROUNDING_MODE: 4,
             EXPONENTIAL_AT: [-7, 21],

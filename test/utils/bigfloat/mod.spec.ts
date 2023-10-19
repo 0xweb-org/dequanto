@@ -1,10 +1,10 @@
-import { $bignumber } from '@dequanto/utils/$bn';
+import { $bigfloat } from '@dequanto/utils/$bigfloat';
 
 UTest({
     'modulo' () {
 
         function t(value, mod, expected) {
-            let big = $bignumber.from(value).mod(mod);
+            let big = $bigfloat.from(value).mod(mod);
             let bigResult;
             if (typeof expected === 'number') {
                 bigResult = big.toNumber();

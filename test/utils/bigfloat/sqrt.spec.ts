@@ -1,4 +1,4 @@
-import { $bignumber } from '@dequanto/utils/$bn';
+import { $bigfloat } from '@dequanto/utils/$bigfloat';
 
 
 
@@ -8,10 +8,10 @@ UTest({
         function t(expected, value, dp?, rm?) {
 
             if (dp != null) {
-                $bignumber.config({ DECIMAL_PLACES: dp, ROUNDING_MODE: rm });
+                $bigfloat.config({ DECIMAL_PLACES: dp, ROUNDING_MODE: rm });
             }
             try {
-                let big = $bignumber.from(value).sqrt();
+                let big = $bigfloat.from(value).sqrt();
                 if (dp != null) {
                     big = big.dp(dp, rm);
                 }
@@ -28,7 +28,7 @@ UTest({
                 throw e;
             }
         }
-        $bignumber.config({
+        $bigfloat.config({
             DECIMAL_PLACES: 20,
             ROUNDING_MODE: 4,
             EXPONENTIAL_AT: [-20, 30],

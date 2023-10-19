@@ -1,4 +1,4 @@
-import { $bignumber, ROUNDING_MODE } from '@dequanto/utils/$bn';
+import { $bigfloat, ROUNDING_MODE } from '@dequanto/utils/$bigfloat';
 
 // https://docs.oracle.com/javase/8/docs/api/java/math/RoundingMode.html
 
@@ -19,7 +19,7 @@ UTest({
 
             ];
             fixtures.forEach(([x, expect]) => {
-                let result = $bignumber.from(x).dp(0, ROUNDING_MODE.ROUND_UP);
+                let result = $bigfloat.from(x).dp(0, ROUNDING_MODE.ROUND_UP);
                 eq_(Number(result.value), expect, `${x} -> ${expect} but got ${result.value}`);
             });
         },
@@ -37,7 +37,7 @@ UTest({
                 [-5.5, -5]
             ];
             fixtures.forEach(([x, expect]) => {
-                let result = $bignumber.from(x).dp(0, ROUNDING_MODE.ROUND_DOWN);
+                let result = $bigfloat.from(x).dp(0, ROUNDING_MODE.ROUND_DOWN);
                 eq_(Number(result.value), expect, `${x} -> ${expect} but got ${result.value}`);
             });
         },
@@ -55,7 +55,7 @@ UTest({
                 [-5.5, -5]
             ];
             fixtures.forEach(([x, expect]) => {
-                let result = $bignumber.from(x).dp(0, ROUNDING_MODE.ROUND_CEIL);
+                let result = $bigfloat.from(x).dp(0, ROUNDING_MODE.ROUND_CEIL);
                 eq_(Number(result.value), expect, `${x} -> ${expect} but got ${result.value}`);
             });
         },
@@ -73,7 +73,7 @@ UTest({
                 [-5.5, -6]
             ];
             fixtures.forEach(([x, expect]) => {
-                let result = $bignumber.from(x).dp(0, ROUNDING_MODE.ROUND_FLOOR);
+                let result = $bigfloat.from(x).dp(0, ROUNDING_MODE.ROUND_FLOOR);
                 eq_(Number(result.value), expect, `${x} -> ${expect} but got ${result.value}`);
             });
         },
@@ -91,7 +91,7 @@ UTest({
                 [-5.5, -6]
             ];
             fixtures.forEach(([x, expect]) => {
-                let result = $bignumber.from(x).dp(0, ROUNDING_MODE.ROUND_HALF_UP);
+                let result = $bigfloat.from(x).dp(0, ROUNDING_MODE.ROUND_HALF_UP);
                 eq_(Number(result.value), expect, `${x} -> ${expect} but got ${result.value}`);
             });
         },
@@ -109,7 +109,7 @@ UTest({
                 [-5.5, -5]
             ];
             fixtures.forEach(([x, expect]) => {
-                let result = $bignumber.from(x).dp(0, ROUNDING_MODE.ROUND_HALF_DOWN);
+                let result = $bigfloat.from(x).dp(0, ROUNDING_MODE.ROUND_HALF_DOWN);
                 eq_(Number(result.value), expect, `${x} -> ${expect} but got ${result.value}`);
             });
         },
@@ -127,7 +127,7 @@ UTest({
                 [-5.5, -6]
             ];
             fixtures.forEach(([x, expect]) => {
-                let result = $bignumber.from(x).dp(0, ROUNDING_MODE.ROUND_HALF_EVEN);
+                let result = $bigfloat.from(x).dp(0, ROUNDING_MODE.ROUND_HALF_EVEN);
                 eq_(Number(result.value), expect, `${x} -> ${expect} but got ${result.value}`);
             });
         },
@@ -146,7 +146,7 @@ UTest({
                 [-5.5, -5]
             ];
             fixtures.forEach(([x, expect]) => {
-                let result = $bignumber.from(x).dp(0, ROUNDING_MODE.ROUND_HALF_CEIL);
+                let result = $bigfloat.from(x).dp(0, ROUNDING_MODE.ROUND_HALF_CEIL);
                 eq_(Number(result.value), expect, `${x} -> ${expect} but got ${result.value}`);
                 eq_(Number(result.value), Math.round(x));
             });
@@ -166,7 +166,7 @@ UTest({
                 [-5.5, -6]
             ];
             fixtures.forEach(([x, expect]) => {
-                let result = $bignumber.from(x).dp(0, ROUNDING_MODE.ROUND_HALF_FLOOR);
+                let result = $bigfloat.from(x).dp(0, ROUNDING_MODE.ROUND_HALF_FLOOR);
                 eq_(Number(result.value), expect, `${x} -> ${expect} but got ${result.value}`);
             });
         }
