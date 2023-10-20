@@ -11,6 +11,7 @@ import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
 import { $address } from '@dequanto/utils/$address';
 import { $require } from '@dequanto/utils/$require';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { $sig } from '@dequanto/utils/$sig';
 
 export class Web3 {
     eth = new Web3Eth(this.client);
@@ -65,9 +66,9 @@ class Web3EthAccounts {
 class Web3EthWallet {
     $accounts: ChainAccount[] = []
 
-    add (key: TEth.Hex) {
+    async add (key: TEth.Hex) {
         const account = <ChainAccount> {
-            address: ChainAccountProvider.getAddressFromKey(key),
+            address: await $sig.$account.getAddressFromKey(key),
             key,
             type: 'eoa'
         }

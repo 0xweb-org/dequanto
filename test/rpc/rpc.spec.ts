@@ -144,7 +144,7 @@ function RpcUtest(name: string, rpc: Rpc, client: Web3Client) {
                 }
             })
         },
-        async '!should submit contract call'() {
+        async 'should submit contract call'() {
             let hardhat = new HardhatProvider();
 
             let { contract, abi } = await hardhat.deployCode(`
@@ -330,12 +330,12 @@ function RpcUtest(name: string, rpc: Rpc, client: Web3Client) {
                     constructor (uint value) public {
                         _value = value;
                     }
-                    function getFoo () external pure returns (uint256) {
+                    function getFoo () external view returns (uint256) {
                         return _value;
                     }
                 }
             `);
-            let deployer = new ContractDeployer(client, acc1).prepareDeployment({
+            let deployer = await new ContractDeployer(client, acc1).prepareDeployment({
                 bytecode,
                 abi,
                 params: [ 42 ]

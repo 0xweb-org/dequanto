@@ -141,7 +141,7 @@ export namespace TEth {
 
     export interface ChainAccount extends IAccount {
         type?: 'eoa'
-        key?: Hex;
+        key?: Hex | `p1:0x${string}`;
     }
 
     export interface SafeAccount extends IAccount {

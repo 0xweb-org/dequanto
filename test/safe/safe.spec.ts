@@ -92,7 +92,7 @@ UTest({
         eq_(opSwap.method, 'swap');
     },
 
-    async '!create in-memory safe and manually receive tokens' () {
+    async 'create in-memory safe and manually receive tokens' () {
         let provider = new HardhatProvider();
         let client = provider.client();
         let owner1 = provider.deployer();

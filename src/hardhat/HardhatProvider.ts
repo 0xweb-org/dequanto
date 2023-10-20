@@ -26,6 +26,7 @@ import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
 
 import { ContractDeployment } from '@dequanto/contracts/deploy/ContractDeployment';
 import { ContractDeployer } from '@dequanto/contracts/deploy/ContractDeployer';
+import { $sig } from '@dequanto/utils/$sig';
 
 
 
@@ -100,10 +101,10 @@ export class HardhatProvider {
     @memd.deco.memoize()
     deployer(index: number = 0): ChainAccount {
         const accounts: any = this.hh.config.networks.hardhat.accounts;
-        const wallet = ChainAccountProvider.getAccountFromMnemonic(accounts.mnemonic, accounts.path + `/${index}`);
+        const account = $sig.$account.fromMnemonic(accounts.mnemonic, index);
         return {
-            key: wallet.key,
-            address: wallet.address,
+            key: account.key,
+            address: account.address,
         };
     }
 

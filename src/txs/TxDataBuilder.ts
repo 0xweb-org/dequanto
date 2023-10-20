@@ -205,8 +205,8 @@ export class TxDataBuilder {
 
 
     /** Returns base64 string of the Tx Data */
-    async signToString(privateKey: TEth.Hex): Promise<TEth.Hex> {
-        let address = ChainAccountProvider.getAddressFromKey(privateKey)
+    async signToString(privateKey: TEth.ChainAccount['key']): Promise<TEth.Hex> {
+        let address = await $sig.$account.getAddressFromKey(privateKey);
         let rpc = await this.client.getRpc();
         let txSig = await $sig.signTx(this.data, { address, key: privateKey }, rpc);
         return txSig;

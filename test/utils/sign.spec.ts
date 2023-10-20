@@ -314,5 +314,17 @@ UTest({
         let signature = await $sig.signMessage('Hello', accountEncrypted as any);
         let recovered = await $sig.recoverMessage('Hello', signature);
         eq_(recovered, account.address);
+    },
+    'accounts': {
+        async 'get address from private key' () {
+            let account = ChainAccountProvider.generate();
+            let address = await $sig.$account.getAddressFromKey(account.key);
+            eq_(address, account.address);
+        },
+        async 'get account from private mnemonic' () {
+            let account0 = await $sig.$account.fromMnemonic('test test test test test test test test test test test junk');
+            eq_(account0.address, `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`);
+            eq_(account0.key, `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`);
+        }
     }
 })

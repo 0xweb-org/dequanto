@@ -11,6 +11,7 @@ import { $is } from './utils/$is';
 import { Config } from './Config';
 import { $require } from './utils/$require';
 import appcfg from 'appcfg';
+import { $sig } from './utils/$sig';
 
 export class ChainAccountsService {
     private store: IChainAccountsStore;
@@ -39,7 +40,8 @@ export class ChainAccountsService {
     async get (mix: string | TAddress, platform?: TPlatform): Promise<IAccount> {
         if ($is.Hex(mix) && mix.length >= 64) {
             return <ChainAccount> {
-                address: ChainAccountProvider.getAddressFromKey(mix),
+                type: 'eoa',
+                address: await $sig.$account.getAddressFromKey(mix),
                 key: mix
             };
         }

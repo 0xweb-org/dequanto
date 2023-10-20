@@ -34,6 +34,13 @@ export abstract class RpcBase {
     async batch (arr: TRpc.IRpcAction[]): Promise<any[]> {
         let body = arr.map(req => this._wrapBody(req));
         let resp = await this._transport.request(body);
+        if (Array.isArray(resp) === false) {
+            if ('error' in resp) {
+                let error = resp.error as any;
+                throw new RpcError(error);
+            }
+            throw new Error(`Invalid response, though no error is returned`);
+        }
         return resp.map((resp, i) => {
             let req = arr[i];
             if ('error' in resp) {

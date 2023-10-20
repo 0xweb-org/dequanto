@@ -10,9 +10,11 @@ import { $rlp } from '@dequanto/abi/$rlp';
 import { $require } from './$require';
 import type { Web3Client } from '@dequanto/clients/Web3Client';
 import type { Rpc, RpcTypes } from '@dequanto/rpc/Rpc';
-import { $crypto } from './$crypto';
+import { $crypto, $cryptoImpl } from './$crypto';
 import { $config } from './$config';
-import { ChainAccount } from '@dequanto/models/TAccount';
+import { HDKey } from '@scure/bip32'
+import { mnemonicToSeedSync } from '@scure/bip39'
+import { wordlist as english } from '@scure/bip39/wordlists/english';
 
 
 export namespace $sig {
@@ -187,6 +189,50 @@ export namespace $sig {
                 const prefix = $buffer.fromString(`\u0019Ethereum Signed Message:\n${buffer.length}`, 'utf-8')
                 return $contract.keccak256($buffer.concat([prefix, buffer]))
             }
+        }
+    }
+
+    export namespace $account {
+
+        export function generate () {
+            const bytes = $crypto.randomBytes(32);
+            const key = $buffer.toHex(bytes);
+            const address = $address.toChecksum(getAddressFromPlainKey(key));
+            return { key, address }
+        }
+
+        export function fromMnemonic(mnemonic: string, index?: number): TEth.ChainAccount
+        export function fromMnemonic(mnemonic: string, path: string): TEth.ChainAccount
+        export function fromMnemonic(mnemonic: string, mix: number | string = 0): TEth.ChainAccount {
+
+            const path = typeof mix === 'number'
+                ? `m/44'/60'/0'/0/${mix}`
+                : mix;
+            const seed = mnemonicToSeedSync(mnemonic);
+            const hdKey = HDKey.fromMasterSeed(seed, );
+            const account = hdKey.derive(path);
+            const privateKey = $hex.ensure(account.privateKey);
+            return {
+                type: 'eoa',
+                key: privateKey,
+                address: getAddressFromPlainKey(privateKey),
+            };
+        }
+
+        /** The key may be encrypted */
+        export function getAddressFromKey(key: TKey): Promise<TEth.Address> {
+            return KeyUtils.withKey({ key }, account => {
+                const publicKey = secp256k1.getPublicKey($buffer.fromHex(account.key), false);
+                const publicKeyHex = $buffer.toHex(publicKey);
+                const address = $contract.keccak256(`0x${publicKeyHex.substring(4)}`).slice(-40)
+                return $address.toChecksum(`0x${address}`);
+            });
+        }
+        export function getAddressFromPlainKey(key: TEth.Hex): TEth.Address {
+            const publicKey = secp256k1.getPublicKey($buffer.fromHex(key), false);
+            const publicKeyHex = $buffer.toHex(publicKey);
+            const address = $contract.keccak256(`0x${publicKeyHex.substring(4)}`).slice(-40)
+            return $address.toChecksum(`0x${address}`);
         }
     }
 
@@ -600,11 +646,12 @@ export namespace $sig {
     };
 }
 
+type TKey = TEth.Hex | `p1:0x${string}`;
 
 namespace KeyUtils {
-    // decrypts the private key
+    const rgx = /^p1:/
+
     export async function withKey <TReturn> (account: TEth.ChainAccount, fn: (account: TEth.ChainAccount) => TReturn): Promise<TReturn> {
-        let rgx = /^p1:/
         let encryptionMatch = rgx.exec(account.key);
         if (encryptionMatch == null) {
             return fn(account);
@@ -614,14 +661,14 @@ namespace KeyUtils {
             secret,
             encoding: 'hex',
         });
-        let accountEncrypted = {
+        let accountDecrypted = {
             address: account.address,
             key
         };
         try {
-            return fn(accountEncrypted);
+            return fn(accountDecrypted);
         } finally {
-            delete accountEncrypted.key;
+            delete accountDecrypted.key;
             key = null;
         }
     }

@@ -13,7 +13,7 @@ export interface IAccount {
 
 export interface ChainAccount extends IAccount {
     type?: 'eoa'
-    key?: TEth.Hex;
+    key?: TEth.Hex | `p1:0x${string}`;
 }
 
 export interface SafeAccount extends IAccount {

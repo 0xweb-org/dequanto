@@ -14,6 +14,7 @@ import { ChainAccount, IAccount, SafeAccount } from './models/TAccount';
 import { $contract } from './utils/$contract';
 import { TEth } from './models/TEth';
 import { $hex } from './utils/$hex';
+import { $sig } from './utils/$sig';
 
 
 export namespace ChainAccountProvider {
@@ -43,21 +44,7 @@ export namespace ChainAccountProvider {
     export function getAll (): IAccount[] {
        return AccountsConfigProvider.get();
     }
-    export function getAddressFromKey (key: TEth.BufferLike): TEth.Address {
-        // use NodeJS crypto module
-        const crypto = new $cryptoImpl.Node()
-        const wallet = crypto.createECDH('secp256k1');
 
-        wallet.setPrivateKey(
-            typeof key ==='string'
-            ? $buffer.fromHex(key)
-            : key
-        );
-        //slices the 04 prefix
-        const pubKeyBuffer = wallet.getPublicKey().slice(1);
-        const address = $contract.keccak256(pubKeyBuffer).slice(-40);
-        return $address.toChecksum(`0x${address}`);
-    }
 
     export function getAccountFromMnemonic(mnemonic: string, index: number): ChainAccount
     export function getAccountFromMnemonic(mnemonic: string, path: string): ChainAccount
@@ -71,16 +58,15 @@ export namespace ChainAccountProvider {
 
         return {
             key: $hex.ensure(account.privateKey),
-            address: getAddressFromKey(account.privateKey),
+            address: null, //getAddressFromKey(account.privateKey),
         };
     }
     export function generate (opts?: { name?: string, platform?: TPlatform }): ChainAccount {
-        const bytes = $crypto.randomBytes(32);
-        const address = $address.toChecksum(getAddressFromKey(bytes));
+        let { key, address } = $sig.$account.generate();
         return {
             ...(opts ?? {}),
-            address: address,
-            key: $buffer.toHex(bytes as any)
+            key,
+            address
         };
     }
 

@@ -1,11 +1,6 @@
 import memd from 'memd';
-import hre from "hardhat";
-
-import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client';
 import { Socket } from 'net';
 import { Shell } from 'shellbee'
-import { $config } from '@dequanto/utils/$config';
-import { $promise } from '@dequanto/utils/$promise';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 
 const PORT = `8545`;
@@ -41,7 +36,8 @@ async function isServerRunning () {
     let provider = new HardhatProvider();
     let client = provider.client('localhost');
     try {
-        let nr = await client.getBlockNumber();
+        let rpc = await client.getRpc();
+        let nr = await rpc.eth_blockNumber();
         return true;
     } catch (error) {
         return false;

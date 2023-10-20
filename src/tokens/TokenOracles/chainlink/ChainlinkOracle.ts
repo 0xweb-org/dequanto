@@ -57,6 +57,8 @@ export class ChainlinkOracle implements IOracle {
             return { price, config }
         }).toArrayAsync();
 
+        console.log(hops);
+
         let { amountEth: price } = hops.reduce((prev, hop) => {
             let { price, config } = hop;
             let amountOut = $bigint.multWithFloat(price.answer, prev.amountEth);
@@ -108,8 +110,6 @@ export class ChainlinkOracle implements IOracle {
         } catch (error) {
             // skip error, and try to check another old ABI
         }
-
-
         let [ answer, updatedAt ] = await Promise.all([
             reader.readAsync <bigint> (feedAddress, this.abi.latestAnswer),
             reader.readAsync <string> (feedAddress, this.abi.latestTimestamp)

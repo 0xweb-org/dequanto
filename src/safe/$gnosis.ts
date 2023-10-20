@@ -9,7 +9,7 @@ export namespace $gnosis {
         const web3 = new Web3(client);
 
         if (owner.key) {
-            web3.eth.accounts.wallet.add($hex.ensure(owner.key));
+            await web3.eth.accounts.wallet.add($hex.ensure(owner.key));
         }
 
         const ethAdapter = new Web3Adapter({

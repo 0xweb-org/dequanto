@@ -1,10 +1,7 @@
-import { $abiCoder } from '@dequanto/abi/$abiCoder';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IAccount } from '@dequanto/models/TAccount';
 import { TEth } from '@dequanto/models/TEth';
-import { TxWriter } from '@dequanto/txs/TxWriter';
 import { TAbiItem } from '@dequanto/types/TAbi';
-import { $hex } from '@dequanto/utils/$hex';
 import { $require } from '@dequanto/utils/$require';
 import { ContractDeployment } from './ContractDeployment';
 import { $is } from '@dequanto/utils/$is';
@@ -44,11 +41,11 @@ export class ContractDeployer {
 
     }
 
-    async prepareDeployment (byName: TDeploymentByName)
-    async prepareDeployment (byMetaFile: TDeploymentByMetaFile)
-    async prepareDeployment (byMetaJson: TDeploymentByMetaJson)
-    async prepareDeployment (byBytecode: TDeploymentWithBytecode)
-    async prepareDeployment (ctx: TDeploymentByName | TDeploymentWithBytecode | TDeploymentByMetaFile | TDeploymentByMetaJson) {
+    async prepareDeployment (byName: TDeploymentByName): Promise<ContractDeployment>
+    async prepareDeployment (byMetaFile: TDeploymentByMetaFile): Promise<ContractDeployment>
+    async prepareDeployment (byMetaJson: TDeploymentByMetaJson): Promise<ContractDeployment>
+    async prepareDeployment (byBytecode: TDeploymentWithBytecode): Promise<ContractDeployment>
+    async prepareDeployment (ctx: TDeploymentByName | TDeploymentWithBytecode | TDeploymentByMetaFile | TDeploymentByMetaJson): Promise<ContractDeployment> {
         if ('bytecode' in ctx) {
             return this.fromBytecode(ctx);
         }
