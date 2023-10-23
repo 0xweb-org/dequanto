@@ -1,4 +1,3 @@
-import { $str } from '@dequanto/solidity/utils/$str';
 import { $bigint } from './$bigint';
 import { $require } from './$require';
 
@@ -72,27 +71,46 @@ class BigFloat {
         let int = this.value / this.mantissa;
         return int;
     }
+    toJSON () {
+        return this.toString();
+    }
+    valueOf () {
+        return this.toString();
+    }
+    toFormat (locales?: string | string[], options?: Intl.NumberFormatOptions) {
+        let str = this.toString();
+        // NumberFormat supports also fractional bignumber as string, e.g.:
+        // new Intl.NumberFormat().format('123123123123123123123123123123123123.231555555')
+        return new Intl.NumberFormat(locales, options).format(str as any);
+    }
 
     // a-b
     minus (mix: TNumeric) {
         return math.minus(this, from(mix));
     }
+    sub (mix: TNumeric) {
+        return math.minus(this, from(mix));
+    }
+
     // a+b
     plus (mix: TNumeric) {
+        return math.plus(this, from(mix));
+    }
+    add (mix: TNumeric) {
         return math.plus(this, from(mix));
     }
 
     // a*b
     multipliedBy (mix: TNumeric) {
-        return math.mult(this, from(mix));
+        return math.mul(this, from(mix));
     }
     // a*b
     times (mix: TNumeric) {
-        return math.mult(this, from(mix));
+        return math.mul(this, from(mix));
     }
     // a*b
-    mult (mix: TNumeric) {
-        return math.mult(this, from(mix));
+    mul (mix: TNumeric) {
+        return math.mul(this, from(mix));
     }
 
     // a/b
@@ -225,7 +243,7 @@ function from (mix: TNumeric): BigFloat {
         }
         if (eps !== 1n) {
             if (eps > 0n) {
-                result = result.mult(eps).compact();
+                result = result.mul(eps).compact();
             } else {
                 result = result.div(-eps).compact();
             }
@@ -314,7 +332,7 @@ namespace math {
         let roundingBit = getRoundingBit(value, truncValue, truncMantissa, rm);
         return new BigFloat(value + roundingBit, 10n ** BigInt(dp));
     }
-    export function mult (a: BigFloat, b: BigFloat): BigFloat {
+    export function mul (a: BigFloat, b: BigFloat): BigFloat {
         let value = a.value * b.value;
         let mantissa = a.mantissa * b.mantissa;
         return new BigFloat(value, mantissa);
@@ -337,13 +355,11 @@ namespace math {
 
         let value = aValue / b.value;
         let mantissa = aMantissa / b.mantissa;
-        // console.log(a, b);
-        //console.log(`Value`, aValue, b.value, 'Result\n', value);
 
         let fractional = $bigint.abs((aValue * 10n / b.value) % value);
         let fractionalMantissa = 10n;
         let roundingBit = getRoundingBit(value, fractional, fractionalMantissa, ROUNDING_MODE.ROUND_DOWN);
-        //console.log(a, b, 'bit', roundingBit, `result`, value, mantissa, 'dp', CONFIG.DECIMAL_PLACES, precisionExp);
+
         value += roundingBit;
         return new BigFloat(value, mantissa);
     }
@@ -373,12 +389,10 @@ namespace math {
 
     }
     export function rootNth(a: BigFloat, k = 2n) {
-        const mantissa = 10n**18n;
+        let precision = CONFIG.DECIMAL_PLACES * 2 + 4;
+        let mantissa = a.mantissa * 10n**BigInt(precision);
         let rootValue = calcRootNthBigInt(a.value * mantissa, k);
-        let rootMantissa = calcRootNthBigInt(a.mantissa * mantissa, k);
-
-        console.log(a.value, rootValue, rootMantissa);
-        return div(new BigFloat(rootValue, mantissa), new BigFloat(rootMantissa, mantissa));
+        return new BigFloat(rootValue, a.mantissa * 10n**BigInt(precision / 2)).compact();
     }
 
     function calcRootNthBigInt(value: bigint, k = 2n) {
@@ -388,7 +402,7 @@ namespace math {
 
         let o = 0n;
         let x = value;
-        let limit = 1000;
+        let limit = 5000;
 
         while (x ** k !== k && x !== o && --limit) {
             o = x;
