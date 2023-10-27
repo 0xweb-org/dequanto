@@ -14,7 +14,9 @@ export class LoggerService implements ILogger {
         std?: boolean
         memory?: number
     }) {
-        if (options.fs !== false) {
+        this.options ??= {};
+
+        if (this.options.fs !== false) {
             this.fs = GlobalChannel.singleton();
         }
     }
