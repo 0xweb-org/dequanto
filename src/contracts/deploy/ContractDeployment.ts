@@ -10,13 +10,18 @@ import { $require } from '@dequanto/utils/$require';
 
 export class ContractDeployment {
 
-    constructor (private ctx: {
+    constructor (public ctx: {
         client: Web3Client
         account: IAccount
         bytecode: TEth.Hex
+        deployedBytecode: TEth.Hex
 
         abi?: TAbiItem[]
         params?: any[]
+        source?: {
+            // JSON meta file
+            path: string
+        }
     }) {
 
     }
@@ -25,8 +30,10 @@ export class ContractDeployment {
         let { account, abi, bytecode, params, client } = this.ctx;
         let ctorAbi = abi?.find(x => x.type === 'constructor');
         if (ctorAbi) {
-            $require.eq(ctorAbi.inputs.length, params?.length);
-
+            if (ctorAbi.inputs.length !== params?.length) {
+                console.log(ctorAbi);
+                throw new Error(`Expected ${ctorAbi.inputs.length} arguments for constructor, but got ${params?.length}`);
+            }
             let encoded = $abiCoder.encode(ctorAbi.inputs, params);
             bytecode += $hex.raw(encoded);
         }
@@ -39,16 +46,8 @@ export class ContractDeployment {
     }
 
     async deploy(): Promise<TEth.TxReceipt> {
-
-        try {
-            let tx = this.createTx().send();
-            let receipt = await tx.wait();
-            return receipt;
-
-        } catch (error) {
-            error.message = `Failed to deploy the contract: ${error.message}`;
-            throw error;
-        }
-
+        let tx = this.createTx().send();
+        let receipt = await tx.wait();
+        return receipt;
     }
 }

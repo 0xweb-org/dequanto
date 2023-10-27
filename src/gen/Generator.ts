@@ -76,8 +76,26 @@ export class Generator {
         }
     }
 
-    static async generateForClass (path: string) {
+    static async generateFromSol (path: string) {
+        let name = /(?<contractName>[^\\/]+).sol$/.exec(path)?.groups?.contractName;
+        $require.notEmpty(name, `Contract name not resolved from the path ${path}`);
+        $require.True(await File.existsAsync(path), `${path} does not exist`);
 
+        let generator = new Generator({
+            platform: 'hardhat',
+            name: name,
+            source: {
+                path
+            },
+            output: './0xweb/hardhat/'
+        });
+        return generator.generate();
+    }
+
+    /**
+     * @deprecated Was possible to generate the Contract Class based on the meta information header in TS file
+     */
+    static async generateForClass (path: string) {
         let i = path.indexOf('*');
         if (i > -1) {
             let base = path.substring(0, i).replace(/\\/g, '/');

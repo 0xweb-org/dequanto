@@ -1,6 +1,7 @@
 import { IContractDetails } from '@dequanto/models/IContractDetails';
 import { IAbiProvider } from './IAbiProvider';
 import { TEth } from '@dequanto/models/TEth';
+import { TAddress } from '@dequanto/models/TAddress';
 
 
 export interface IBlockChainExplorer extends IAbiProvider {
@@ -20,6 +21,20 @@ export interface IBlockChainExplorer extends IAbiProvider {
         ContractName: string
         ABI: string
     }>
+
+    submitContractValidation (contractData: {
+        address: TAddress
+        sourceCode: string | any
+        contractName
+        compilerVersion
+        optimizer?: {
+            enabled?: boolean
+            runs: number
+        }
+        arguments?: TEth.Hex
+    }): Promise<string>
+
+    checkContractValidationSubmission (submission: { guid }): Promise<string>
 
     getTransactions (address: TEth.Address, params?: { fromBlockNumber?: number, page?: number, size?: number }): Promise<TEth.TxLike[]>
     getTransactionsAll (address: TEth.Address): Promise<TEth.TxLike[]>

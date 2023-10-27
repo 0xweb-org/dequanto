@@ -168,6 +168,48 @@ export namespace BlockChainExplorerFactory {
                 return { abi, implementation: address };
             }
 
+            async submitContractValidation (contractData: {
+                address: TAddress
+                sourceCode: string | any
+                contractName
+                compilerVersion
+                optimizer?: {
+                    enabled?: boolean
+                    runs: number
+                },
+                arguments: TEth.Hex
+            }) {
+                let url = `${this.config.host}/api`;
+                let body = {
+                    apikey: this.config.key,
+                    module: 'contract',
+                    action: 'verifysourcecode',
+                    contractaddress: contractData.address,
+                    sourceCode: contractData.sourceCode,
+                    codeformat: 'solidity-standard-json-input',
+                    contractname: contractData.contractName,
+                    compilerversion: contractData.compilerVersion,
+                    optimizationUsed: contractData.optimizer == null || contractData.optimizer.enabled === false ? 0 : 1,
+                    runs: contractData.optimizer?.runs,
+                    constructorArguements: contractData.arguments?.replace('0x', '')
+                };
+                let result = await client.post(url, {
+                    body
+                });
+                return result;
+            }
+
+            async checkContractValidationSubmission (submission: { guid }) {
+                let url = `${this.config.host}/api`;
+                let result = await client.get(url, {
+                    apikey: this.config.key,
+                    module: "contract",
+                    action: "checkverifystatus",
+                    guid: submission.guid
+                });
+                return result;
+            }
+
             async getContractSource (address: string): Promise<{
                 SourceCode: {
                     contractName: string
@@ -428,8 +470,17 @@ function ensureDefaults (opts: IBlockChainExplorerParams) {
 class Client {
 
     @memd.deco.queued({ throttle: 1000 / 5 })
-    async get (url: string) {
-        return this.getInner(url)
+    async get (url: string, params?) {
+        return this.getInner(url, {
+            params
+        })
+    }
+
+    async post (url: string, opts: {
+        params?: Record<string, any>
+        body: any
+    }) {
+        return this.postInner(url, opts)
     }
 
     @memd.deco.queued({ throttle: 1000 / 5 })
@@ -457,8 +508,10 @@ class Client {
         return arr;
     }
 
-    private async getInner (url: string, opts?: { retryCount: number }) {
-        let resp = await axios.get(url);
+    private async getInner (url: string, opts?: { retryCount?: number, params? }) {
+        let resp = await axios.get(url, {
+            params: opts.params
+        });
         let data = resp.data as { status: string, message: 'OK' | 'NOTOK', result: any };
         if (data.message === 'NOTOK') {
             let str = data.result;
@@ -469,9 +522,40 @@ class Client {
                 }
                 await $promise.wait(200);
                 return this.getInner(url, {
+                    ...(opts ?? {}),
                     retryCount: count
                 });
             }
+            throw new Error(str);
+        }
+        if (data.result == null) {
+            $logger.warn(`Blockchain "${url}" explorer returned empty result`, data);
+        }
+        return data.result;
+    }
+    private async postInner (url: string, opts: {
+        body: any
+        params?: any
+        retryCount?: number
+    }) {
+
+        const params = new URLSearchParams();
+        for (let key in opts.body) {
+            params.append(key, opts.body[key]);
+        }
+
+        let resp = await axios.request({
+            url,
+            method: 'post',
+            //params: opts.params,
+            data: params,
+            headers: {
+                "content-type": "application/x-www-form-urlencoded"
+            }
+        });
+        let data = resp.data as { status: string, message: 'OK' | 'NOTOK', result: any };
+        if (data.message === 'NOTOK') {
+            let str = data.result;
             throw new Error(str);
         }
         if (data.result == null) {

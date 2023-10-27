@@ -8,6 +8,10 @@ export namespace $is {
     export function notNull<T> (val: T): boolean {
         return val != null
     }
+    export function notEmpty<T extends string | []> (val: T): boolean {
+        return val != null && val.length > 0;
+    }
+
     export function BigInt<T> (val: bigint | any): val is bigint {
         return typeof val === 'bigint';
     }

@@ -108,28 +108,54 @@ export class HardhatProvider {
         };
     }
 
+    async getFactoryForClass <T extends ContractBase>(Ctor: Constructor<T>, options?: {
+        deployer?: ChainAccount
+        arguments?: any[]
+        client?: Web3Client
+    }): Promise<{
+        factory: ContractDeployment
+        abi: TAbiItem[]
+        bytecode: TEth.Hex
+        deployedBytecode: TEth.Hex
+    }> {
+        let client = options?.client ?? this.client();
+        let signer = options?.deployer ?? this.deployer();
+        let params = options?.arguments ?? [];
+        let factory = await this.getFactory(Ctor.name, client, signer, params);
+        return {
+            factory,
+
+            bytecode: factory.ctx.bytecode,
+            deployedBytecode: factory.ctx.deployedBytecode,
+            abi: factory.ctx.abi
+        }
+    }
+
     @memd.deco.memoize()
     async deployClass<T extends ContractBase>(Ctor: Constructor<T>, options?: {
         deployer?: ChainAccount
         arguments?: any[]
         client?: Web3Client
     }): Promise<{
-        contract: T,
+        contract: T
         receipt: TEth.TxReceipt
+        abi: TAbiItem[]
+        bytecode: TEth.Hex
+        deployedBytecode: TEth.Hex
     }> {
 
         let client = options?.client ?? this.client();
-        let signer = options?.deployer ?? this.deployer();
-        let params = options?.arguments ?? [];
-        let Factory = await this.getFactory(Ctor.name, client, signer, params);
+        let { factory, abi } = await this.getFactoryForClass(Ctor, options);
+        let receipt = await factory.deploy();
 
-        const receipt = await Factory.deploy();
-
-        $logger.log(`Contract ${Ctor.name} deployed to ${receipt.contractAddress}`);
-        const contract = new Ctor(receipt.contractAddress, client);
+        $logger.log(`Contract ${Ctor.name} deployed(${receipt.status}) to ${receipt.contractAddress} in tx:${receipt.transactionHash}`);
+        let contract = new Ctor(receipt.contractAddress, client);
         return {
             contract,
-            receipt
+            receipt,
+            abi: contract.abi,
+            bytecode: factory.ctx.bytecode,
+            deployedBytecode: factory.ctx.deployedBytecode
         };
     }
 
@@ -146,7 +172,7 @@ export class HardhatProvider {
         contract: TReturn
         receipt: TEth.TxReceipt
         abi: TAbiItem[]
-        bytecode: string
+        bytecode: TEth.Hex
         source: IGeneratorSources
     }> {
 

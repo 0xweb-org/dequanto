@@ -16,6 +16,7 @@ import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $bytecode } from './utils/$bytecode';
 import { $buffer } from '@dequanto/utils/$buffer';
 import { $array } from '@dequanto/utils/$array';
+import { TEth } from '@dequanto/models/TEth';
 
 
 /**
@@ -70,7 +71,7 @@ export class EvmBytecode {
 
     public store = new Stores();
 
-    constructor(code: string | Uint8Array) {
+    constructor(code: TEth.Hex | Uint8Array) {
         if (code instanceof Uint8Array) {
             this.code = code;
         } else {
@@ -98,7 +99,7 @@ export class EvmBytecode {
     }
 
     async getAbi(): Promise<TAbiItem[]> {
-        await this.prepair();
+        await this.prepare();
 
         let [functions, events] = await Promise.all([
             this.getFunctions(),
@@ -226,7 +227,7 @@ export class EvmBytecode {
     }
 
 
-    async prepair (): Promise<this> {
+    async prepare (): Promise<this> {
         await this.store.readAll();
         return this;
     }

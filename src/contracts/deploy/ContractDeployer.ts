@@ -24,6 +24,10 @@ type TDeploymentByMetaJson = {
         contractName: string
         abi: TAbiItem[]
         bytecode: TEth.Hex
+        deployedBytecode: TEth.Hex
+    }
+    source?: {
+        path: string
     }
     name?: string
     artifacts?: string
@@ -31,9 +35,13 @@ type TDeploymentByMetaJson = {
 }
 type TDeploymentWithBytecode = {
     bytecode: TEth.Hex
+    deployedBytecode?: TEth.Hex
     name?: string
     abi?: TAbiItem[]
     params?: any[]
+    source?: {
+        path: string
+    }
 }
 
 export class ContractDeployer {
@@ -82,30 +90,34 @@ export class ContractDeployer {
         let json = await File.readAsync<TDeploymentByMetaJson['json']>(ctx.path);
         return this.fromMetaJson({
             ...ctx,
-            json: json
+            json: json,
+            source: {
+                path: ctx.path
+            }
         })
     }
 
     private async fromMetaJson (ctx: TDeploymentByMetaJson) {
         $require.notNull(ctx.json?.bytecode, 'Contract bytecode is expected in json');
-
-
         return this.fromBytecode({
             ...ctx,
             bytecode: ctx.json.bytecode,
+            deployedBytecode: ctx.json.deployedBytecode,
             abi: ctx.json.abi
         });
     }
 
     private async fromBytecode (ctx: TDeploymentWithBytecode) {
-        $require.True($is.Hex(ctx.bytecode), 'bytecode must be a hex string');
+        $require.True($is.Hex(ctx.bytecode), `bytecode must be a hex string: ${ctx.bytecode}`);
 
         let deployment = new ContractDeployment({
             client: this.client,
             account: this.account,
             bytecode: ctx.bytecode,
+            deployedBytecode: ctx.deployedBytecode,
             abi: ctx.abi ?? [],
-            params: ctx.params ?? []
+            params: ctx.params ?? [],
+            source: ctx.source
         });
         return deployment;
     }

@@ -38,7 +38,7 @@ export class GeneratorFromAbi {
     }) {
 
         let methodsArr = alot(abiJson)
-            .filter(x => x.type === 'function')
+            .filter(x => x.type === 'function' || x.type === 'constructor')
             .groupBy(x => x.name)
             .map(group => {
                 if (group.values.length === 1) {
@@ -54,6 +54,8 @@ export class GeneratorFromAbi {
             .filter(Boolean)
             .map(Str.formatMethod)
             .toArray();
+
+
 
         let methodInterfacesArr = alot(abiJson)
             .filter(x => x.type === 'function')
@@ -278,8 +280,10 @@ export class GeneratorFromAbi {
 
 namespace Gen {
 
-
     export function serializeMethodTs (abi: TAbiItem) {
+        if (abi.type === 'constructor') {
+            return serializeConstructorMethodTs(abi);
+        }
         let isRead = isReader(abi);
         if (isRead) {
             return serializeReadMethodTs(abi);
@@ -447,6 +451,17 @@ namespace Gen {
             // ${$abiUtils.getMethodSignature(abi)}
             async ${abi.name} (sender: TSender, ${fnInputArguments}): Promise<TxWriter> {
                 return this.$write(this.$getAbiItem('function', '${abi.name}'), sender${callInputArguments});
+            }
+        `;
+    }
+    function serializeConstructorMethodTs (abi: TAbiItem) {
+        let { fnInputArguments, callInputArguments } = serializeArgumentsTs(abi);
+        if (callInputArguments) {
+            callInputArguments = `, ${callInputArguments}`;
+        }
+        return `
+            async $constructor (deployer: TSender, ${fnInputArguments}): Promise<TxWriter> {
+                throw new Error('Not implemented. Use the ContractDeployer class to deploy the contract');
             }
         `;
     }

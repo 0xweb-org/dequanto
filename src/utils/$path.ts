@@ -33,7 +33,7 @@ export namespace $path {
         while (true) {
             let next = path.replace(/([^\/]+)\/\.\.\//g, (match, p1) => {
                 if (p1 !== '..' && p1 !== '.') {
-                    return '/';
+                    return '';
                 }
                 return match;
             });

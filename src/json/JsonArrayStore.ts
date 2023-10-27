@@ -124,7 +124,7 @@ export class JsonArrayStore<T> {
         let arr = await this.fs.read();
         let keyFn = this.options.key;
         if (this.array != null) {
-            // write was called inbetween
+            // write was called in-between
             return;
         }
 
@@ -258,7 +258,6 @@ class JsonArrayFs<T> {
     private async writeInner (arr: T[]) {
         try {
             let v = this.version;
-            console.log(`JsonArrayStore: WRITE    | `, v, ` |`)
             let data = Fs.serialize(arr, this.Type, this.format);
             await File.writeAsync(this.pathBak, data);
             await this.renameFileAsync(this.pathBak, this.pathFilename);
