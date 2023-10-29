@@ -530,6 +530,28 @@ export class Deployments {
         let store = await this.getDeploymentsStore();
         await store.saveAll(deployments);
     }
+
+
+    public async configure<T extends TCtor, TValue>(Ctor: Constructor<T>, opts: {
+        id?: string;
+
+        value: TValue
+        current?: (x: T) => Promise<TValue>;
+        updater: (x: T, value: TValue) => Promise<any>;
+    }) {
+        let x = await this.get(Ctor, {
+            id: opts.id
+        });
+        $require.notNull(x, `Deployment not found for ${Ctor.name} ${opts.id ?? ''}.`);
+
+        if (opts.current != null) {
+            let current = await opts.current(x);
+            if (isEqual(current, opts.value)) {
+                return;
+            }
+        }
+        await opts.updater(x, opts.value);
+    }
 }
 
 
@@ -541,4 +563,39 @@ type TConstructorArgs<T extends TCtor> = T['$constructor'] extends Function ? {
     arguments: ParametersFromSecond<T['$constructor']>
 }: {
     arguments?: any[]
+}
+
+
+function isEqual (a, b) {
+    if (a == null || b == null) {
+        return a == b;
+    }
+    if (typeof a !== 'object' && typeof b !== 'object') {
+        // Not strictly equal
+        return a == b;
+    }
+    // check arrays
+    if (Array.isArray(a) || Array.isArray(b)) {
+        if (a.length !== b.length) {
+            return false;
+        }
+        return a.every((x, i) => {
+            return isEqual(x, b[i]);
+        });
+    }
+    // check objects
+    for (let key in a) {
+        let aValue = a[key];
+        let bValue = b[key];
+        if (isEqual(aValue, bValue) === false) {
+            return false;
+        }
+    }
+    for (let key in b) {
+        if (key in a === false && b[key] != null) {
+            // value present in b, but was not in a
+            return false;
+        }
+    }
+    return true;
 }
