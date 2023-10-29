@@ -48,4 +48,10 @@ export class HardhatWeb3Client extends Web3Client {
             }
         });
     }
+
+    configureFork (fork: TPlatform) {
+        this.forked = {
+            platform: fork,
+        };
+    }
 }

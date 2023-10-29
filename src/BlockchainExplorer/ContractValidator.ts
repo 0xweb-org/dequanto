@@ -31,7 +31,7 @@ export class ContractValidator {
 
     }
 
-    async ensure (Ctor: TContractInfo, opts?: { id?: string, waitConfirmation?: boolean }): Promise<void>  {
+    async ensure (Ctor: TContractInfo, opts: { id?: string, waitConfirmation?: boolean } = {}): Promise<void>  {
         let status = await this.submit(Ctor, opts);
         if (status.status === 'verified' || opts.waitConfirmation === false) {
             return;

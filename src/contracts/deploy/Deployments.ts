@@ -1,24 +1,26 @@
-import memd from 'memd';
-import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { Constructor, class_Uri } from 'atma-utils';
+import { ContractBase } from '@dequanto/contracts/ContractBase';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $date } from '@dequanto/utils/$date';
-import { TEth } from '@dequanto/models/TEth';
+import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
 import { IAccount } from '@dequanto/models/TAccount';
-import { $address } from '@dequanto/utils/$address';
+import { TAddress } from '@dequanto/models/TAddress';
+import { TEth } from '@dequanto/models/TEth';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { ParametersFromSecond } from '@dequanto/utils/types';
+import { $address } from '@dequanto/utils/$address';
 import { $contract } from '@dequanto/utils/$contract';
+import { $date } from '@dequanto/utils/$date';
 import { $require } from '@dequanto/utils/$require';
+import { ParametersFromSecond } from '@dequanto/utils/types';
+import { Constructor, class_Uri } from 'atma-utils';
+import memd from 'memd';
 
-import { ContractValidator } from '@dequanto/BlockchainExplorer/ContractValidator';
 import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
-import { $is } from '@dequanto/utils/$is';
+import { ContractValidator } from '@dequanto/BlockchainExplorer/ContractValidator';
+import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client';
 import { LoggerService } from '@dequanto/loggers/LoggerService';
+import { $is } from '@dequanto/utils/$is';
 import alot from 'alot';
+import { File } from 'atma-io';
 
 
 export interface IDeployment {
@@ -63,13 +65,21 @@ export class Deployments {
         TransparentProxy: {}
     }
 
-    constructor(public client: Web3Client, public deployer: IAccount, public opts?: {
+    constructor(public client: Web3Client, public deployer: IAccount, public opts: {
         Proxy?: Constructor<ContractBase>,
         ProxyAdmin?: Constructor<IProxyAdmin>
         directory?: string
-    }) {
+
+        // TPlatform of a forked network
+        fork?: string
+    } = {}) {
         this._config.TransparentProxy.Proxy = opts?.Proxy;
         this._config.TransparentProxy.ProxyAdmin = opts?.ProxyAdmin;
+
+        if (opts?.fork) {
+            $require.eq(client.platform, 'hardhat', 'Only hardhat is supported for forked networks');
+            (client as HardhatWeb3Client).configureFork(opts.fork);
+        }
     }
 
     async has<T extends ContractBase>(Ctor: Constructor<T>, opts?: {
@@ -120,16 +130,15 @@ export class Deployments {
         return deployments;
     }
 
-    async ensureContract<T extends ContractBase>(Ctor: Constructor<T>, opts?: {
+    async ensureContract<T extends TCtor>(Ctor: Constructor<T>, opts?: TConstructorArgs<T> & {
         id?: string;
         force?: boolean;
-        arguments?: ConstructorParameters<Constructor<T>>;
     }): Promise<T> {
         let { contract } = await this.ensure(Ctor, opts);
         return contract;
     }
 
-    async ensure<T extends ContractBase & { $constructor?: TInit }, TInit extends TInitializer>(Ctor: Constructor<T>, opts?: {
+    async ensure<T extends TCtor>(Ctor: Constructor<T>, opts?: TConstructorArgs<T> & {
         id?: string
 
         /** Will deploy the contract */
@@ -137,14 +146,13 @@ export class Deployments {
         /** Will check if local bytecode has changed and will deploy */
         latest?: boolean
 
-        arguments?: T['$constructor'] extends Function ? ParametersFromSecond<T['$constructor']> : any[]
-        validation?: boolean | 'silent'
+         validation?: boolean | 'silent'
     }): Promise<{
         contract: T
         receipt?: TEth.TxReceipt
         deployment: IDeployment
     }> {
-        opts ??= {};
+        opts ??= {} as any;
 
         let currentDeployment = await this.getDeploymentInfo(Ctor, opts);
         let contract = await this.get(Ctor, opts);
@@ -193,11 +201,15 @@ export class Deployments {
         if (this.client.platform !== 'hardhat' && opts?.validation !== false) {
             let explorer = await BlockChainExplorerProvider.get(this.client.platform);
             let validator = new ContractValidator(this, explorer);
-            let waitConfirmation = opts?.validation !== 'silent'
-            await validator.ensure(Ctor, {
-                ...opts,
-                waitConfirmation: waitConfirmation
-            });
+            let waitConfirmation = false; opts?.validation !== 'silent';
+            try {
+                await validator.ensure(Ctor, {
+                    ...opts,
+                    waitConfirmation: waitConfirmation
+                });
+            } catch (error) {
+                this._logger.error(`Verification error ${error.message}`);
+            }
         }
 
         return {
@@ -325,8 +337,63 @@ export class Deployments {
 
     @memd.deco.memoize({ perInstance: true })
     private async getDeploymentsStore() {
-        const array = new JsonArrayStore<IDeployment>({
-            path: class_Uri.combine(this.opts?.directory ?? './deploy', `deployments-${this.client.platform.replace(/[:]/g, '-')}.json`),
+        let directory = this.opts.directory ?? './deploy';
+        let path: string;
+        let platformPathNormalized = this.client.platform.replace(/[:]/g, '-');
+        let fork = this.opts.fork;
+        if (fork == null) {
+            path = class_Uri.combine(directory, `deployments-${platformPathNormalized}.json`)
+        } else {
+
+            $require.eq(this.client.platform, 'hardhat', 'Forks are only supported on Hardhat');
+
+            let upstreamPlatformNormalized = fork.replace(/[:]/g, '-');
+            let upstreamFilename = `deployments-${upstreamPlatformNormalized}.json`;
+            let upstreamDeploymentsPath = class_Uri.combine(directory, upstreamFilename);
+
+            path = class_Uri.combine(directory, `deployments-${platformPathNormalized}-${upstreamPlatformNormalized}.json`);
+
+            if (await File.existsAsync(upstreamDeploymentsPath)) {
+                let shouldCopy = true;
+                if (await File.existsAsync(path)) {
+                    // forked deployments path already exists, check if stale
+                    let blockNumber = await this.client.getBlockNumber();
+                    let upstreamDeployments = await File.readAsync<IDeployment[]>(upstreamDeploymentsPath);
+
+                    // 1. Check if the original(upstream) network has more recent deployments
+                    let hasNewDeployments = upstreamDeployments.some(x => x.block > blockNumber);
+                    shouldCopy = hasNewDeployments;
+
+                    if (shouldCopy === false) {
+                        let deployments = await File.readAsync<IDeployment[]>(path);
+                        // 2. Just-in-case, check if there are deployments with higher block number, as the current HEAD
+                        hasNewDeployments = deployments.some(x => x.block > blockNumber);
+                        shouldCopy = hasNewDeployments;
+
+                        if (shouldCopy === false) {
+                            // 3. Check if the latest deployments transaction exists in current forked network
+                            let latestDeployment = alot(deployments).maxItem(x => x.block);
+                            if (latestDeployment != null) {
+                                try {
+                                    let tx = await this.client.getTransaction(latestDeployment.tx);
+                                    shouldCopy = tx == null;
+                                } catch (error) {
+                                    shouldCopy = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (shouldCopy) {
+                    await File.copyToAsync(upstreamDeploymentsPath, path, {
+                        silent: true
+                    });
+                }
+            }
+        }
+        let array = new JsonArrayStore<IDeployment>({
+            path: path,
             key: x => x.id,
             format: true,
         });
@@ -341,6 +408,8 @@ export class Deployments {
         $contract.store.register(contract as any);
 
         let store = await this.getDeploymentsStore();
+        let currentDeployment = await store.getSingle(info.id);
+
         let deployment = <IDeployment> {
             id: info.id,
             name: info.name,
@@ -352,17 +421,23 @@ export class Deployments {
             deployer: this.deployer.address,
             timestamp: $date.toUnixTimestamp(new Date()),
 
-            // Even though deployment could be the logic implementation, we set it to null, to let the deployer later to reconfigure the proxy
-            implementation: null,
+            // If current deployment is the implementation, set the field to null, for later reconfiguration, otherwise keep the field uninitialized
+            implementation: currentDeployment?.implementation ? null : void 0,
         };
-        let currentDeployment = await store.getSingle(info.id);
+
         if (currentDeployment) {
             let history = currentDeployment.history ?? [];
             let historyItem = {
                 ...currentDeployment,
+                address: currentDeployment.implementation ?? currentDeployment.address,
                 id: void 0,
                 name: void 0,
                 history: void 0,
+                implementation: void 0,
+                bytecodeHash: void 0,
+                deployer: void 0,
+                timestamp: void 0,
+                proxyFor: void 0,
             };
             history.push(historyItem);
             deployment.history = history;
@@ -377,10 +452,8 @@ export class Deployments {
     }
 
     async updateProxyDeployment (deploymentImplementation: IDeployment, deploymentProxy: IDeployment) {
-        if (deploymentImplementation.implementation != null) {
-            return;
-        }
-        deploymentImplementation.implementation = deploymentImplementation.address;
+
+        deploymentImplementation.implementation = deploymentImplementation.implementation ?? deploymentImplementation.address;
         deploymentImplementation.address = deploymentProxy.address;
         deploymentProxy.proxyFor = deploymentImplementation.implementation;
 
@@ -401,6 +474,26 @@ export class Deployments {
     }
 
     private async isSameBytecode<T extends ContractBase>(Ctor: Constructor<T>, deployment: IDeployment) {
+        let bytecodeHash = deployment.bytecodeHash;
+        if (bytecodeHash == null) {
+            let address = deployment.implementation ?? deployment.address;
+            let bytecode = await this.client.getCode(address);
+            $require.True($is.Hex(bytecode), `Bytecode not resolved for ${address}`);
+            bytecodeHash = $contract.keccak256(bytecode);
+        }
+
+        let { deployedBytecode } = await this._hh.getFactoryForClass(Ctor);
+        let newBytecode = $contract.keccak256(deployedBytecode);
+        if (newBytecode === bytecodeHash) {
+            this._logger.log(`${deployment.id} bytecode has not changed`);
+            return true;
+        }
+
+        this._logger.log(`${deployment.id} bytecode has changed. Redeploying...`);
+        return false;
+    }
+
+    private async isSimilarStorageLayout<T extends ContractBase>(Ctor: Constructor<T>, deployment: IDeployment) {
         let bytecodeHash = deployment.bytecodeHash;
         if (bytecodeHash == null) {
             let address = deployment.implementation ?? deployment.address;
@@ -441,3 +534,11 @@ export class Deployments {
 
 
 type TInitializer = (...args: any[]) => any
+
+
+type TCtor = ContractBase & { $constructor?: (...args: any[]) => any }
+type TConstructorArgs<T extends TCtor> = T['$constructor'] extends Function ? {
+    arguments: ParametersFromSecond<T['$constructor']>
+}: {
+    arguments?: any[]
+}

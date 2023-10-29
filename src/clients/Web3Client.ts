@@ -39,6 +39,13 @@ export abstract class Web3Client implements IWeb3Client {
     abstract chainToken: string;
     abstract defaultGasLimit: number;
 
+
+    // Hardhat network could be launched in forking mode
+    forked?: {
+        platform: TPlatform;
+        block?: number;
+    }
+
     defaultTxType: 1 | 2 = 2;
 
     async sign(txData: TEth.TxLike, privateKey: TEth.Hex): Promise<string> {

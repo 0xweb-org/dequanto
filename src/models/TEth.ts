@@ -43,7 +43,7 @@ export namespace TEth {
         hash?: Hex
         blockNumber?: number
 
-        nonce: bigint
+        nonce: number
         to?: Address
         from?: Address
         gas?: bigint
