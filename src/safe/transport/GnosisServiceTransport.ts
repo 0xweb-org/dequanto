@@ -70,6 +70,7 @@ export class GnosisServiceTransport implements ISafeServiceTransport {
     }
 
     private getServiceApiEndpoint(chainId: number) {
+        return 'https://safe.bnbchain.org/cgw/v1/chains/5611/';
         let network = '';
         if (chainId === 100) {
             network = `xdai.`;

@@ -532,6 +532,9 @@ export class Deployments {
     }
 
 
+    /**
+     * A simple method to configure the contracts state
+     */
     public async configure<T extends TCtor, TValue>(Ctor: Constructor<T>, opts: {
         id?: string;
 

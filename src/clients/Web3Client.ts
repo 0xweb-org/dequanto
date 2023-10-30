@@ -81,8 +81,6 @@ export abstract class Web3Client implements IWeb3Client {
         return this.with (async wClient => {
             return wClient.rpc.request<TResult>(req);
         });
-        // let web3 = await this.getWeb3();
-        // return web3.rpc.request(req);
     }
 
     async batch(arr: TRpc.IRpcAction[]): Promise<any[]> {
@@ -184,13 +182,13 @@ export abstract class Web3Client implements IWeb3Client {
     }
 
 
-    getBalance(address: TEth.Address, blockNumber?: RpcTypes.BlockNumberOrTagOrHash): Promise<bigint> {
+    getBalance(address: TEth.Address, blockNumber: RpcTypes.BlockNumberOrTagOrHash = 'latest'): Promise<bigint> {
         return this.pool.call(async web3 => {
             let wei = await web3.rpc.eth_getBalance(address, blockNumber);
             return wei;
         });
     }
-    getBalances(addresses: TEth.Address[], blockNumber?: number): Promise<bigint[]> {
+    getBalances(addresses: TEth.Address[], blockNumber: RpcTypes.BlockNumberOrTagOrHash = 'latest'): Promise<bigint[]> {
         return this.pool.call(async web3 => {
             let rpc = web3.rpc;
             let requests = addresses.map(address => {
@@ -314,17 +312,17 @@ export abstract class Web3Client implements IWeb3Client {
             }
         });
     }
-    getStorageAt(address: TEth.Address, position: number | bigint | TEth.Hex, blockNumber?: number) {
+    getStorageAt(address: TEth.Address, position: number | bigint | TEth.Hex, blockNumber: RpcTypes.BlockNumberOrTagOrHash = 'latest') {
         return this.pool.call(web3 => {
-            return web3.rpc.eth_getStorageAt(address, <any>position, blockNumber ?? 'latest');
+            return web3.rpc.eth_getStorageAt(address, <any>position, blockNumber);
         });
     }
-    getStorageAtBatched(address: TEth.Address, slots: (string | number | bigint)[], blockNumber?: number) {
+    getStorageAtBatched(address: TEth.Address, slots: (string | number | bigint)[], blockNumber: RpcTypes.BlockNumberOrTagOrHash = 'latest') {
         return this.pool.callBatched({
             async requests(rpc) {
                 return slots.map(storageSlot => ({
                     address,
-                    ...rpc.req.eth_getStorageAt(address, BigInt(storageSlot), blockNumber ?? 'latest')
+                    ...rpc.req.eth_getStorageAt(address, BigInt(storageSlot), blockNumber)
                 }));
             }
         });
