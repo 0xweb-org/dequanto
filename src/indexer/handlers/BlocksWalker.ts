@@ -38,7 +38,7 @@ export class BlocksWalker {
         blockLoadTime: 0
     };
 
-    private cachedState = new FileSafe(`./0xweb/block-indexers/${this.params.name}.json`, {
+    private cachedState = new FileSafe(`./0xc/block-indexers/${this.params.name}.json`, {
         cached: false,
         processSafe: true,
         threadSafe: true
