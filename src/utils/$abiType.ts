@@ -90,20 +90,20 @@ export namespace $abiType {
         }
         return getTsType(type);
     }
-    export function getTsType ($abiType: TAbiInput['type'], $abi?: { type, name, components? }) {
+    export function getTsType ($abiType: TAbiInput['type'], $abi?: { name, components? }) {
         let rgxArray = /\[(?<size>\d+)?\]$/
         let isArray = rgxArray.test($abiType);
-
-        // fix subarrays
-        let rgxSubType = /\[\]\[\d+\]$/
-        if (rgxSubType.test($abiType)) {
-            $abiType = $abiType.replace(rgxSubType, '');
+        if (isArray) {
+            return getTsType($abiType.replace(rgxArray, ''), $abi) + '[]';
         }
 
-        let abiType = isArray
-            ? $abiType.replace(rgxArray, '')
-            : $abiType;
+        // // -fix subArrays
+        // let rgxSubType = /\[\]\[\d+\]$/
+        // if (rgxSubType.test($abiType)) {
+        //     $abiType = $abiType.replace(rgxSubType, '');
+        // }
 
+        let abiType =$abiType;
         let tsType = AbiTsTypes[abiType];
         if (tsType == null) {
             let byRgx = alot(AbiTsTypesRgx).map(definition => ({ match: definition.rgx.exec(abiType), definition })).first(x => x.match != null);
@@ -128,9 +128,7 @@ export namespace $abiType {
             throw new Error(`Unknown abi type in return: "${abiType}"`);
         }
 
-        return isArray
-            ? `${tsType}[]`
-            : `${tsType}`;
+        return tsType;
     };
 
     export namespace array {
