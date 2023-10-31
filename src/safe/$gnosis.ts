@@ -1,6 +1,5 @@
 import Web3Adapter from '@gnosis.pm/safe-web3-lib';
 import { ChainAccount } from '@dequanto/models/TAccount';
-import { $hex } from '@dequanto/utils/$hex';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { Web3 } from '@dequanto/clients/compatibility/Web3';
 
@@ -9,7 +8,7 @@ export namespace $gnosis {
         const web3 = new Web3(client);
 
         if (owner.key) {
-            await web3.eth.accounts.wallet.add($hex.ensure(owner.key));
+            await web3.eth.accounts.wallet.add(owner.key);
         }
 
         const ethAdapter = new Web3Adapter({

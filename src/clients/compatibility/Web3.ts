@@ -66,7 +66,7 @@ class Web3EthAccounts {
 class Web3EthWallet {
     $accounts: ChainAccount[] = []
 
-    async add (key: TEth.Hex) {
+    async add (key: TEth.Hex | `p1:${TEth.Hex}`) {
         const account = <ChainAccount> {
             address: await $sig.$account.getAddressFromKey(key),
             key,
