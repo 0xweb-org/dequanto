@@ -14,9 +14,10 @@ import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $sig } from '@dequanto/utils/$sig';
 
 export class Web3 {
-    eth = new Web3Eth(this.client);
+    eth: Web3Eth
 
     constructor(public client: Web3Client) {
+        this.eth = new Web3Eth(client);
     }
 }
 
@@ -91,8 +92,8 @@ namespace $Web3Contract {
 
 
     class Web3Contract {
-        options = {
-            address: this.address
+        options: {
+            address: TAddress
         };
 
         methods = new Proxy(this, {
@@ -108,7 +109,9 @@ namespace $Web3Contract {
         })
 
         constructor(public eth: Web3Eth, public abi: TEth.Abi.Item[], public address: TAddress) {
-
+            this.options = {
+                address: this.address
+            };
         }
 
     }

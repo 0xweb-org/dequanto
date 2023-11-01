@@ -16,16 +16,16 @@ import { ContractReader } from '@dequanto/contracts/ContractReader';
 
 export class MappingKeysLoader {
 
-    private address = this.params.address;
-    private implementation = this.params.implementation;
+    private address: TAddress
+    private implementation?: TAddress
 
-    private client = this.params.client ?? Web3ClientFactory.get(this.params.platform ?? 'eth')
-    private explorer = this.params.explorer ?? BlockChainExplorerProvider.get(this.client.platform)
-    private sourceCodeProvider = this.params.sourceCodeProvider ?? new SourceCodeProvider(this.client, this.explorer)
+    private client: Web3Client
+    private explorer: IBlockChainExplorer
+    private sourceCodeProvider: SourceCodeProvider
 
-    private logger = this.params.logger ?? $logger;
+    private logger: typeof $logger
 
-    constructor(private params: {
+    constructor(params: {
         address: TAddress
         /** Optionally, the implementation contract to load sources from. Otherwise it will detect automatically if the "address" is the proxy contract */
         implementation?: TAddress
@@ -36,7 +36,15 @@ export class MappingKeysLoader {
         sourceCodeProvider?: SourceCodeProvider
         logger?: typeof $logger
     }) {
-        $require.Address(this?.address);
+        $require.Address(params?.address);
+
+        this.address = params.address;
+        this.implementation = params.implementation;
+
+        this.client = params.client ?? Web3ClientFactory.get(params.platform ?? 'eth')
+        this.explorer = params.explorer ?? BlockChainExplorerProvider.get(this.client.platform)
+        this.sourceCodeProvider = params.sourceCodeProvider ?? new SourceCodeProvider(this.client, this.explorer)
+        this.logger = params.logger ?? $logger;
     }
 
     async load(mappingVarName: string) {

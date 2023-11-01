@@ -11,10 +11,10 @@ import { TxWriter } from '@dequanto/txs/TxWriter';
 import { TEth } from '@dequanto/models/TEth';
 
 export class Erc4337TxWriter {
-    public service = new Erc4337Service(this.client, this.explorer, this.info);
+    public service: Erc4337Service;
 
     constructor(public client: Web3Client, public explorer: IBlockChainExplorer, public info: IErc4337Info) {
-
+        this.service = new Erc4337Service(client, explorer, info);
     }
 
     async getAccount (owner: ChainAccount) {

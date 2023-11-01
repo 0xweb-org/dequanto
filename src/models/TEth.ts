@@ -1,6 +1,7 @@
 
 export namespace TEth {
     export type Hex = `0x${string}`
+    export type HexRaw = `${string}`
     export type Address = `0x${string}`
     export type BufferLike = Hex | Uint8Array
 

@@ -345,7 +345,7 @@ UTest({
         eq_(raw, '0x0000000000000000000000000000000000000000000000024b18673804bbcc00');
 
     },
-    async 'generat positions' () {
+    async 'generate positions' () {
         return UTest({
             async 'generate array location' () {
                 let x = new SlotsStorageTransportForArray(null, 0);

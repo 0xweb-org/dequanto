@@ -34,26 +34,27 @@ export namespace ContractClassFactory {
 
 
 class ClassBuilder<T extends ContractBase> {
-    private Ctor = class extends ContractBase {
-        abi?
-    };
 
     constructor (private abi: TAbiItem[]) {
 
     }
 
     create (contractAddr: TAddress, client: Web3Client, explorer: IBlockChainExplorer) {
-        let { Ctor, abi } = this;
+        let Ctor = this.createClass(this.abi)
 
-        Ctor.prototype.abi = abi;
+        this.defineMethods(Ctor, this.abi);
 
-        this.createMethods();
         let instance = new Ctor(contractAddr, client, explorer);
         return instance as IContractWrapped;
     }
 
-    private createMethods () {
-        let { Ctor, abi } = this;
+    private createClass (abi: TAbiItem[]) {
+        return class extends ContractBase {
+            abi = abi
+        };
+    }
+
+    private defineMethods (Ctor, abi) {
 
         abi
             .filter(x => x.type === 'function')

@@ -5,12 +5,12 @@ import { INsProvider } from './providers/INsProvider';
 
 export class NameService {
 
-    providers: INsProvider[] = [
-        new EnsProvider(this.client)
-    ];
+    providers: INsProvider[];
 
     constructor(public client: Web3Client) {
-
+        this.providers = [
+            new EnsProvider(client)
+        ];
     }
 
     getAddress (domain: string) {

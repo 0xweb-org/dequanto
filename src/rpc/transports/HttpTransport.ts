@@ -4,10 +4,10 @@ import { RequestError, TTransport } from './ITransport';
 
 export class HttpTransport implements TTransport.Transport {
 
-    id = this.options.url;
+    public id: string;
 
     constructor(private options: TTransport.Options.Http) {
-
+        this.id = this.options.url;
     }
 
 

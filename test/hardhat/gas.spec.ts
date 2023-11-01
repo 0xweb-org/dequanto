@@ -18,6 +18,7 @@ UTest({
         let { contract } = await provider.deployCode(code1, {
             client,
         });
+
         let { gas } = await contract.$gas().foo(deployer, 1);
         eq_(gas, 21391);
     }

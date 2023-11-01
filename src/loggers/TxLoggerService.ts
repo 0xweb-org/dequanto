@@ -12,50 +12,49 @@ import { TEth } from '@dequanto/models/TEth';
 
 
 export class TxLoggerService {
-    logs: ILogger = Everlog.createChannel(this.name, {
-        columns: [
-            {
-                type: 'date',
-                name: 'Date'
-            },
-            {
-                type: 'string',
-                name: 'Action'
-            },
-            {
-                type: 'string',
-                name: 'From'
-            },
-            {
-                type: 'string',
-                name: 'To'
-            },
-            {
-                type: 'string',
-                name: 'Tx',
-            },
-            {
-                type: 'boolean',
-                name: 'Status'
-            },
-            {
-                type: 'number',
-                name: 'Time'
-            },
-            {
-                type: 'number',
-                name: 'Gas Used',
-            },
-            {
-                type: 'number',
-                name: 'Gas Price',
-            }
-        ]
-    });
-
+    logs: ILogger;
 
     constructor(public name: string) {
-
+        this.logs = Everlog.createChannel(name, {
+            columns: [
+                {
+                    type: 'date',
+                    name: 'Date'
+                },
+                {
+                    type: 'string',
+                    name: 'Action'
+                },
+                {
+                    type: 'string',
+                    name: 'From'
+                },
+                {
+                    type: 'string',
+                    name: 'To'
+                },
+                {
+                    type: 'string',
+                    name: 'Tx',
+                },
+                {
+                    type: 'boolean',
+                    name: 'Status'
+                },
+                {
+                    type: 'number',
+                    name: 'Time'
+                },
+                {
+                    type: 'number',
+                    name: 'Gas Used',
+                },
+                {
+                    type: 'number',
+                    name: 'Gas Price',
+                }
+            ]
+        });
     }
 
     async logSwapTransaction(tx: TxWriter, swap: {

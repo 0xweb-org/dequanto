@@ -17,26 +17,19 @@ import { MappingKeysLoader } from './storage/MappingKeysLoader';
 import { SlotsStorageTransport } from './storage/SlotsStorageTransport';
 import { $hex } from '@dequanto/utils/$hex';
 import alot from 'alot';
+import { TEth } from '@dequanto/models/TEth';
 
 export class SlotsDump {
-    private address = this.params.address;
-    private implementation = this.params.implementation;
+    private address: TAddress
+    private implementation?: TAddress
 
-    private client = this.params.client ?? Web3ClientFactory.get(this.params.platform ?? 'eth')
-    private explorer = this.params.explorer ?? BlockChainExplorerProvider.get(this.client.platform)
-    private sourceCodeProvider = this.params.sourceCodeProvider ?? new SourceCodeProvider(this.client, this.explorer)
+    private client: Web3Client
+    private explorer: IBlockChainExplorer
+    private sourceCodeProvider: SourceCodeProvider
 
-    private logger = this.params.logger ?? $logger;
+    private logger: typeof $logger
 
-    private keysLoader = new MappingKeysLoader({
-        address: this.address,
-        implementation: this.implementation,
-        client: this.client,
-        explorer: this.explorer,
-        logger: this.logger,
-        platform: this.params.platform,
-        sourceCodeProvider: this.sourceCodeProvider
-    })
+    private keysLoader: MappingKeysLoader
 
     constructor(private params: {
         address: TAddress
@@ -55,7 +48,26 @@ export class SlotsDump {
             },
         }
     }) {
-        $require.Address(this?.address);
+        $require.Address(params?.address);
+
+        this.address = params.address;
+        this.implementation = params.implementation;
+
+        this.client = params.client ?? Web3ClientFactory.get(params.platform ?? 'eth')
+        this.explorer = params.explorer ?? BlockChainExplorerProvider.get(this.client.platform)
+        this.sourceCodeProvider = params.sourceCodeProvider ?? new SourceCodeProvider(this.client, this.explorer)
+
+        this.logger = params.logger ?? $logger;
+
+        this.keysLoader = new MappingKeysLoader({
+            address: this.address,
+            implementation: this.implementation,
+            client: this.client,
+            explorer: this.explorer,
+            logger: this.logger,
+            platform: params.platform,
+            sourceCodeProvider: this.sourceCodeProvider
+        })
     }
 
     async getStorage () {
@@ -133,7 +145,7 @@ class MockedStorageTransport extends SlotsStorageTransport {
         super(client, address, params)
     }
 
-    protected async getStorageAtInner(slot: string): Promise<string> {
+    protected async getStorageAtInner(slot: TEth.Hex): Promise<TEth.Hex> {
         slot = $hex.padBytes(slot, 32);
 
         let data = await this.loader.getStorageAt(slot);
@@ -157,11 +169,13 @@ class BatchLoader {
     private queueHash = {} as { [slot: string]: class_Dfr };
     private isBusy = false;
 
-    constructor(public address: TAddress, public client: Web3Client, public params?: { blockNumber: number }) {
+    constructor(public address: TAddress, public client: Web3Client, public params?: {
+        blockNumber: number
+    }) {
 
     }
 
-    getStorageAt(slot: string): Promise<string> {
+    getStorageAt(slot: TEth.Hex): Promise<TEth.Hex> {
 
         let dfr = new class_Dfr();
         this.total++;

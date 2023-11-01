@@ -13,7 +13,7 @@ import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExp
 import { ContractAbiProvider } from '@dequanto/contracts/ContractAbiProvider';
 import { $erc4337 } from './utils/$erc4337';
 import { $hex } from '@dequanto/utils/$hex';
-import { ContractClassFactory } from '@dequanto/contracts/ContractClassFactory';
+import { ContractClassFactory, IContractWrapped } from '@dequanto/contracts/ContractClassFactory';
 import { Erc4337Abi } from './models/Erc4337Abi';
 import { TEth } from '@dequanto/models/TEth';
 import { $sig } from '@dequanto/utils/$sig';
@@ -22,9 +22,9 @@ import { $sig } from '@dequanto/utils/$sig';
 export class Erc4337Service {
 
 
-    private accountFactoryContract = ContractClassFactory.fromAbi(this.info.addresses.accountFactory, Erc4337Abi.AccountFactory, this.client, this.explorer);
-    private accountContract = ContractClassFactory.fromAbi($address.ZERO, Erc4337Abi.Account, this.client, this.explorer);
-    private entryPointContract = ContractClassFactory.fromAbi(this.info.addresses.entryPoint, Erc4337Abi.EntryPoint, this.client, this.explorer);
+    private accountFactoryContract: IContractWrapped
+    private accountContract: IContractWrapped
+    private entryPointContract: IContractWrapped
 
     constructor(public client: Web3Client, public explorer: IBlockChainExplorer, public info: {
         addresses: {
@@ -32,6 +32,11 @@ export class Erc4337Service {
             accountFactory: TAddress
         }
     }) {
+
+        this.accountFactoryContract = ContractClassFactory.fromAbi(this.info.addresses.accountFactory, Erc4337Abi.AccountFactory, this.client, this.explorer);
+        this.accountContract = ContractClassFactory.fromAbi($address.ZERO, Erc4337Abi.Account, this.client, this.explorer);
+        this.entryPointContract = ContractClassFactory.fromAbi(this.info.addresses.entryPoint, Erc4337Abi.EntryPoint, this.client, this.explorer);
+
 
     }
 

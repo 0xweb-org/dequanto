@@ -8,17 +8,21 @@ import { TxWriter } from '@dequanto/txs/TxWriter';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { TokensServiceFactory } from './TokensServiceFactory';
 import { $require } from '@dequanto/utils/$require';
+import { TokensService } from './TokensService';
+import { RpcTypes } from '@dequanto/rpc/Rpc';
 
 
 export class TokenService {
 
-    private tokensProvider = TokensServiceFactory.get(this.client.platform);
+    private tokensProvider: TokensService;
 
     constructor(public client: Web3Client) {
-
+        this.tokensProvider = TokensServiceFactory.get(this.client.platform);
     }
 
-    async balanceOf(address: TAddress, token: string | IToken, params?: { forBlock?: number }): Promise<bigint> {
+    async balanceOf(address: TAddress, token: string | IToken, params?: {
+        forBlock?: RpcTypes.BlockNumberOrTagOrHash
+    }): Promise<bigint> {
         token = await this.getToken(token);
         let isNative = this.tokensProvider.isNative(token.address);
         if (isNative) {

@@ -114,12 +114,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     options: ITxWriterOptions;
 
 
-    private logger = new TxLogger(
-        this.id,
-        this.getSenderName(),
-
-        this.builder
-    );
+    private logger: TxLogger;
     private confirmationAwaiters = [] as { count: number, promise }[]
 
     protected constructor (
@@ -128,6 +123,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         public account: IAccount
     ) {
         super();
+        this.logger = new TxLogger(this.id, this.getSenderName(), this.builder);
     }
 
     public send (options?: ITxWriterOptions): this {

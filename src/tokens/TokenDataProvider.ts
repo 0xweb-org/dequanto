@@ -22,27 +22,32 @@ import { $config } from '@dequanto/utils/$config';
 export class TokenDataProvider {
 
     private config = new TPConfig();
-
-    private providers = [
-        this.config,
-        new TPOneInch(),
-        new TPSushiswap(),
-        // @TODO uniswap thegraph api doesn't work any more
-        // new TPUniswap(),
-        new TPCoinmarketcap(),
-        new TPCoingecko(),
-        new ArbTokenProvider(),
-        new TPExplorer(this.platform, this.explorer),
-        new TPChain(this.platform, this.client),
-    ] as ITokenProvider[];
+    private providers: ITokenProvider[];
 
 
-    constructor(private platform: TPlatform, private explorer?: IBlockChainExplorer, private client?: Web3Client, private forked?: TokenDataProvider) {
+    constructor(
+        private platform: TPlatform
+        , private explorer?: IBlockChainExplorer
+        , private client?: Web3Client
+        , private forked?: TokenDataProvider
+    ) {
 
+        this.providers =[
+            this.config,
+            new TPOneInch(),
+            new TPSushiswap(),
+            // @TODO uniswap thegraph api doesn't work any more
+            // new TPUniswap(),
+            new TPCoinmarketcap(),
+            new TPCoingecko(),
+            new ArbTokenProvider(),
+            new TPExplorer(this.platform, this.explorer),
+            new TPChain(this.platform, this.client),
+        ];
     }
 
-    async getTokenOrDefault (symbol: string, chainLookup: boolean): Promise<IToken>
-    async getTokenOrDefault (address: TAddress, chainLookup: boolean): Promise<IToken>
+    async getTokenOrDefault (symbol: string, chainLookup?: boolean): Promise<IToken>
+    async getTokenOrDefault (address: TAddress, chainLookup?: boolean): Promise<IToken>
     async getTokenOrDefault (mix: string | TAddress, chainLookup: boolean = true): Promise<IToken> {
         return await this.getToken(mix, chainLookup) ?? ($is.Address(mix) ? this.default(mix) : null);
     }

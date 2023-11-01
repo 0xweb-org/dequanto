@@ -184,6 +184,7 @@ export class GeneratorFromAbi {
         }
 
 
+        let storageReaderInitializer = '';
         let storageReaderProperty = '';
         let storageReaderClass = '';
         try {
@@ -193,20 +194,16 @@ export class GeneratorFromAbi {
             if (reader.sourcePath != null && opts.address == null) {
                 sourceUri = reader.sourcePath;
             }
-
-            let property = reader.className
-                ? `storage = new ${reader.className}(this.address, this.client, this.explorer);`
-                : '';
-
-            storageReaderClass = reader.code;
-            storageReaderProperty = property;
-            if (property) {
+            if (reader.className) {
+                storageReaderClass = reader.code;
+                storageReaderProperty = `storage: ${reader.className}`;
+                storageReaderInitializer = `this.storage = new ${reader.className}(this.address, this.client, this.explorer);`;
                 $logger.log(`green<StorageReader> was generated`);
             } else {
-                $logger.log(`red<StorageReader> was not generated: ${reader.error?.message}`);
+                $logger.log(`yellow<StorageReader> was not generated: ${reader.error?.message}`);
             }
         } catch (error) {
-            $logger.log(`Storage Reader is skipped due to the error: ${error.message}`);
+            $logger.error(`Storage Reader is skipped due to the error: ${error.message}`);
         }
 
         let className = $gen.toClassName(name);
@@ -229,6 +226,7 @@ export class GeneratorFromAbi {
             .replace(`$EXPLORER_URL$`, sourceUri)
             .replace(`/* $EVENT_INTERFACES$ */`, () => eventInterfaces.join('\n') + '\n\n' + eventInterfacesAll.code + '\n\n')
 
+            .replace(`/* STORAGE_READER_INITIALIZER */`, storageReaderInitializer)
             .replace(`/* STORAGE_READER_PROPERTY */`, storageReaderProperty)
             .replace(`/* STORAGE_READER_CLASS */`, () => storageReaderClass)
             .replace(`/* TX_CALLER_METHODS */`, () => Gen.serializeTxCallerMethods(className, abiJson))

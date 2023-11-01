@@ -1,3 +1,4 @@
+import { TEth } from '@dequanto/models/TEth';
 import { $buffer } from '@dequanto/utils/$buffer';
 import { $hex } from '@dequanto/utils/$hex';
 import { $require } from '@dequanto/utils/$require';
@@ -27,7 +28,7 @@ export namespace $str {
         return sliced;
     }
 
-    export function writeFromEnd(hex: string, hexIn: string, positionBits: number, bits: number) {
+    export function writeFromEnd(hex: TEth.Hex, hexIn: TEth.Hex | TEth.HexRaw, positionBits: number, bits: number): TEth.Hex {
         hexIn = hexIn.startsWith('0x')
             ? hexIn.substring(2)
             : hexIn;
@@ -39,10 +40,10 @@ export namespace $str {
             throw new Error(`Not enough space to write the buffer (${len}B) at position ${position / 8}B`);
         }
         let sliced = hex.substring(0, start) + hexIn + hex.substring(start + len);
-        return sliced;
+        return sliced as TEth.Hex;
     }
 
-    export function fromHex(hex: string) {
+    export function fromHex(hex: TEth.Hex) {
         let trimmed = $hex.trimBytes(hex);
         return $buffer.fromHex(trimmed).toString();
     }

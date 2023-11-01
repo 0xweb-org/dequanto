@@ -57,8 +57,6 @@ export class ChainlinkOracle implements IOracle {
             return { price, config }
         }).toArrayAsync();
 
-        console.log(hops);
-
         let { amountEth: price } = hops.reduce((prev, hop) => {
             let { price, config } = hop;
             let amountOut = $bigint.multWithFloat(price.answer, prev.amountEth);

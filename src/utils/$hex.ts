@@ -61,29 +61,29 @@ export namespace $hex {
         return ('0x' + arr.map(ensure).map(raw).join('')) as TEth.Hex;
     }
 
-    export function toHex (value: string | boolean | number | bigint): string {
+    export function toHex (value: string | boolean | number | bigint): TEth.Hex {
         switch (typeof value) {
             case 'string': {
                 if (value.startsWith('0x')) {
-                    return value;
+                    return value as TEth.Hex;
                 }
                 return $buffer.toHex($buffer.fromString(value));
             }
             case 'number':
             case 'bigint':
                 let hex = value.toString(16);
-                return '0x' + hex;
+                return ('0x' + hex) as TEth.Hex;
             case 'boolean':
                 return value ? '0x1' : '0x0';
         }
         throw new Error(`Invalid value to convert to hex: ${value}`);
     }
-    export function toHexBuffer (value: string | boolean | number | bigint): string {
+    export function toHexBuffer (value: string | boolean | number | bigint): TEth.Hex {
         value = toHex(value);
         if (value.length % 2 === 1) {
             value = '0x0' + value.substring(2);
         }
-        return value;
+        return value as TEth.Hex;
     }
 
     export function convert (hex: string, abiType: 'uint256' | 'address' | 'bool' | 'string' | string) {

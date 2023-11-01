@@ -229,7 +229,7 @@ UTest({
 
                 let methods = transactionsListener.map(x => x.method);
                 deepEq_(methods, [
-                    // 3 set TX were emited above
+                    // 3 set TX were emitted above
                     'setName',
                     'setName2',
                     'setName',

@@ -14,10 +14,10 @@ import { TokenDataProvider } from './TokenDataProvider';
 export class TokensService {
 
 
-    provider = new TokenDataProvider(this.platform, this.explorer, null, this.forked);
+    provider: TokenDataProvider
 
     constructor(private platform: TPlatform, private explorer?: IBlockChainExplorer, private forked?: TokenDataProvider) {
-
+        this.provider = new TokenDataProvider(this.platform, this.explorer, null, this.forked);
     }
 
     async getTokenOrDefault (symbol: string, chainLookup?: boolean): Promise<IToken>

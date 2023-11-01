@@ -17,15 +17,15 @@ export class JsonObjectStore<T> {
     private data: T;
 
 
-    private fs = new JsonFs<T>(
-        this.options.path,
-        this.options.Type,
-        this.options.map,
-        this.options.format
-    );
+    private fs: JsonFs<T>;
 
     constructor (public options: IStoreOptions<T>) {
-
+        this.fs = new JsonFs<T>(
+            this.options.path,
+            this.options.Type,
+            this.options.map,
+            this.options.format
+        );
     }
 
 
@@ -78,15 +78,13 @@ class JsonFs<T> {
     private value: T;
     private pending: T;
     private busy = false;
-    // private pathBak = this.path + '.bak';
-    // private pathFilename = this.path.substring(this.path.lastIndexOf('/') + 1);
 
     public lock = new class_Dfr;
 
-    private _file = new File(this.path, { threadSafe: true });
+    private _file: InstanceType<typeof File>;
 
     constructor (public path: string, public Type?: any,  public mapFn?: (x: T) => any, public format?: boolean) {
-
+        this._file = new File(this.path, { threadSafe: true });
     }
 
     public write (value: T) {

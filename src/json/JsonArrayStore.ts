@@ -20,13 +20,14 @@ export class JsonArrayStore<T> {
     private array: T[];
     private hash: { [key: string]: T }
 
-    private fs = new JsonArrayFs<T>(this.options.path, this.options.Type, this.options.map, this.options.format);
+    private fs: JsonArrayFs<T>;
 
     constructor (public options: IStoreOptions<T>) {
         let keyFn = this.options.key;
         if (keyFn == null) {
             throw new Error('Key getter must be defined');
         }
+        this.fs = new JsonArrayFs<T>(this.options.path, this.options.Type, this.options.map, this.options.format);
     }
 
     async query(): Promise<Alot<T>> {
@@ -182,13 +183,15 @@ class JsonArrayFs<T> {
     private array: T[];
     private pending: T[];
     private busy = false;
-    private pathBak = this.path + '.bak';
-    private pathFilename = this.path.substring(this.path.lastIndexOf('/') + 1);
+    private pathBak: string;
+    private pathFilename: string;
 
     public lock = new class_Dfr;
 
     constructor (public path: string, public Type?: Function,  public mapFn?: (x: T) => any, public format?: boolean) {
         this.lock.resolve();
+        this.pathBak = this.path + '.bak';
+        this.pathFilename = this.path.substring(this.path.lastIndexOf('/') + 1);
     }
 
     public write (arr: T[]) {

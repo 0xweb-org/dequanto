@@ -6,12 +6,12 @@ import { RpcSubscription } from '../RpcSubscription';
 
 
 export class WsTransport  implements TTransport.Transport {
-    private ws = WsTransportSingleton.create(this.options.url, {});
-
-    id = this.options.url;
+    private ws: WsTransportSingleton;
+    public id: string
 
     constructor(private options: TTransport.Options.Ws) {
-
+        this.id = this.options.url;
+        this.ws = WsTransportSingleton.create(this.options.url, {});
     }
 
     async request (req: TTransport.Request)

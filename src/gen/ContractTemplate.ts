@@ -33,6 +33,8 @@ export class $NAME$ extends ContractBase {
         public explorer: IBlockChainExplorer = di.resolve($Etherscan$, $EvmScanOptions$),
     ) {
         super(address, client, explorer)
+
+        /* STORAGE_READER_INITIALIZER */
     }
 
 /* METHODS */

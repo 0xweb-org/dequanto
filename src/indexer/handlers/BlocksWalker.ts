@@ -13,6 +13,7 @@ import { $require } from '@dequanto/utils/$require';
 
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TEth } from '@dequanto/models/TEth';
+import { ILogger } from 'everlog/fs/LoggerFile';
 
 interface IBlockIndexer {
     name: string
@@ -32,35 +33,39 @@ interface IBlockIndexer {
 export class BlocksWalker {
     public onEndPromise = new class_Dfr;
 
-    private client = this.params.client;
-    private visitor = this.params.visitor;
+    private client: Web3Client;
+    private visitor: IBlockIndexer['visitor'];
     private status = {
         blockLoadTime: 0
     };
 
-    private cachedState = new FileSafe(`./0xc/block-indexers/${this.params.name}.json`, {
-        cached: false,
-        processSafe: true,
-        threadSafe: true
-    });
-    private everlog = Everlog.createChannel(`indexer-${this.params.name}`, {
-        fields: [
-            { name: 'Date', type: 'date' },
-            { name: 'Total', type: 'number' },
-            { name: 'Processed', type: 'number' },
-            { name: 'AvgTime', type: 'number' },
-            { name: 'BlockLoadTime', type: 'number' },
-            { name: 'Error', type: 'string' },
-        ]
-    });
+    private cachedState: InstanceType<typeof FileSafe>
+    private everlog: ILogger;
 
-    private ranges = new PackedRanges({
-        ...this.params.blocks,
-    });
+    private ranges: PackedRanges;
     private walker: RangeWalker;
 
     constructor(public params: IBlockIndexer) {
-
+        this.client = this.params.client;
+        this.visitor = this.params.visitor;
+        this.cachedState = new FileSafe(`./0xc/block-indexers/${this.params.name}.json`, {
+            cached: false,
+            processSafe: true,
+            threadSafe: true
+        });
+        this.everlog = Everlog.createChannel(`indexer-${this.params.name}`, {
+            fields: [
+                { name: 'Date', type: 'date' },
+                { name: 'Total', type: 'number' },
+                { name: 'Processed', type: 'number' },
+                { name: 'AvgTime', type: 'number' },
+                { name: 'BlockLoadTime', type: 'number' },
+                { name: 'Error', type: 'string' },
+            ]
+        });
+        this.ranges = new PackedRanges({
+            ...this.params.blocks,
+        })
     }
 
 

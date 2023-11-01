@@ -17,14 +17,15 @@ import { $bigint } from '@dequanto/utils/$bigint';
 import { AmmPairV2Service, ISwapPool, ISwapPoolInfo } from './AmmBase/V2/AmmPairV2Service';
 import { SushiswapPolygonExchange } from './SushiswapPolygonExchange';
 import { ISwapOptions } from '../TokenOracles/IOracle';
+import { ILogger } from '@dequanto/loggers/ILogger';
 
 
 export class AmmV2PriceQuote {
 
     private exchange: AmmV2ExchangeBase
-    private tokensService = di.resolve(TokensService, this.client.platform, this.explorer)
-    private pairService = di.resolve(AmmPairV2Service, this.client, this.explorer)
-    private logger = di.resolve(LoggerService, 'AmmPriceV2Oracle');
+    private tokensService: TokensService
+    private pairService: AmmPairV2Service
+    private logger: ILogger
 
     constructor(public client: Web3Client, public explorer: IBlockChainExplorer) {
         switch (client.platform) {
@@ -40,6 +41,9 @@ export class AmmV2PriceQuote {
             default:
                 throw new Error(`Unsupported Platform for exchange yet: ${client.platform}`);
         }
+        this.tokensService = di.resolve(TokensService, this.client.platform, this.explorer)
+        this.pairService = di.resolve(AmmPairV2Service, this.client, this.explorer)
+        this.logger = di.resolve(LoggerService, 'AmmPriceV2Oracle');
     }
 
     async getPrice (token: IToken, opts?: ISwapOptions): TResultAsync<ISwapRouted> {
@@ -120,7 +124,7 @@ export class AmmV2PriceQuote {
 
             if (lpReserves == null || lpReserves._reserve0 < 1000n) {
                 let error = new Error(`Small reserve in the routed pool ${lp.address}: ${lpReserves._reserve1} - ${lpReserves._reserve0}`);
-                this.logger.write(error.message);
+                this.logger.log(error.message);
                 return { error };
             }
 

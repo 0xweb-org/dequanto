@@ -3,6 +3,7 @@
 /cache/
 /artifacts/
 /0xweb/
+/0xc/
 hardhat-*.config.js
 del.act.ts
 /.dequanto

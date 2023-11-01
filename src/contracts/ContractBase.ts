@@ -199,16 +199,16 @@ export abstract class ContractBase {
         return $contract as any;
     }
 
-    public forBlock (mix: number | undefined | Date): this {
+    public forBlock (mix: number | bigint | undefined | Date): this {
         if (mix == null) {
             return this;
         }
-        if (typeof mix === 'undefined' || typeof mix === 'number') {
+        if (typeof mix === 'undefined' || typeof mix === 'number' || typeof mix === 'bigint') {
             return this.forBlockNumber(mix);
         }
         return this.forBlockAt(mix);
     }
-    protected forBlockNumber (blockNumber: number | undefined): this {
+    protected forBlockNumber (blockNumber: number | bigint | undefined): this {
         let $contract = $class.curry(this, {
             blockNumber: blockNumber,
             blockDate: null

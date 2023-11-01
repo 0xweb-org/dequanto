@@ -8,14 +8,14 @@ import { TPlatform } from '@dequanto/models/TPlatform';
 
 export class Wallet {
 
-    tokensService = di.resolve(TokensService, this.account.platform, this.explorer)
+    tokensService: TokensService
 
     constructor (
         public account: { platform: TPlatform, address: TAddress },
         public client: Web3Client,
         public explorer: IBlockChainExplorer
     ) {
-
+        this.tokensService = di.resolve(TokensService, this.account.platform, this.explorer)
     }
 
     async balanceOf (tokenAddress: TAddress)

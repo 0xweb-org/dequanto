@@ -16,11 +16,13 @@ import { UniswapV2Exchange } from './TokenExchanges/UniswapV2Exchange';
 import { SushiswapPolygonExchange } from './TokenExchanges/SushiswapPolygonExchange';
 import { $logger } from '@dequanto/utils/$logger';
 import { $require } from '@dequanto/utils/$require';
+import { Web3Client } from '@dequanto/clients/Web3Client';
+import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
 
 export class TokenExchangeService {
 
-    client = Web3ClientFactory.get(this.platform);
-    explorer = BlockChainExplorerProvider.get(this.platform);
+    client: Web3Client;
+    explorer: IBlockChainExplorer;
 
     exchange: AmmV2ExchangeBase
     stables: string[]
@@ -42,6 +44,9 @@ export class TokenExchangeService {
             default:
                 throw new Error(`Unsupported Platform for exchange yet: ${platform}`);
         }
+
+        this.client = Web3ClientFactory.get(this.platform);
+        this.explorer = BlockChainExplorerProvider.get(this.platform);
     }
 
     async calcUSD (from: string | Partial<IToken>, fromAmount: number | bigint, date?: Date): Promise<{

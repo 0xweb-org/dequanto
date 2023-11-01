@@ -78,7 +78,7 @@ const CACHE_SECONDS = $date.parseTimespan('7d', { get: 's' });
 
 export class AmmPairV2Service {
     private exchange: AmmV2ExchangeBase
-    private tokensService = di.resolve(TokensService, this.client.platform, this.explorer);
+    private tokensService: TokensService;
 
     private targetCoins: string[]
 
@@ -99,6 +99,8 @@ export class AmmPairV2Service {
             default:
                 throw new Error(`Unsupported Platform for exchange yet: ${client.platform}`);
         }
+
+        this.tokensService = di.resolve(TokensService, this.client.platform, this.explorer);
     }
 
     @memd.deco.memoize({

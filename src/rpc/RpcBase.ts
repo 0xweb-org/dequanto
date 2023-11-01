@@ -11,14 +11,14 @@ let ID = 0;
 
 export abstract class RpcBase {
 
-    protected _transport = RpcTransport.create(this.transportInfo)
-    public fns: {
-        [name: string]: (...params) => Promise<any>
-    } = {}
+    protected _transport: TTransport.Transport;
 
+    public fns = {} as {
+        [name: string]: (...params) => Promise<any>
+    };
 
     constructor (protected transportInfo?: TTransport.Options.Any) {
-
+        this._transport = RpcTransport.create(this.transportInfo);
     }
 
     async request <TResult = any> (req: TRpc.IRpcAction): Promise<TResult> {

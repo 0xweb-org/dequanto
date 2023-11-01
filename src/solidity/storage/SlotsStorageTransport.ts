@@ -9,6 +9,7 @@ import { $hex } from '@dequanto/utils/$hex';
 import { $is } from '@dequanto/utils/$is';
 import { $require } from '@dequanto/utils/$require';
 import { ISlotVarDefinition } from '../SlotsParser/models';
+import { TEth } from '@dequanto/models/TEth';
 
 export interface ISlotsStorageTransport {
     getStorageAt (slot: string | number | bigint, position: number, size: number): Promise<string>
@@ -64,30 +65,35 @@ export class SlotsStorageTransport implements ISlotsStorageTransport {
 
     }
 
-    async getStorageAt (slot: string | number | bigint, position: number, size: number) {
+    async getStorageAt (slot: number | bigint | TEth.Hex, position: number, size: number) {
         slot = $hex.toHex(slot);
 
         let mem  = await this.getStorageAtInner(slot);
         if (size != null && size < 256) {
-            mem = '0x' + $str.sliceFromEnd(mem, position, size);
+            mem = ('0x' + $str.sliceFromEnd(mem, position, size)) as TEth.Hex;
         }
         return mem;
     }
 
-    async setStorageAt (slot: string | number | bigint, position: number, size: number, buffer: string | number | bigint | boolean) {
+    async setStorageAt (
+        slot: string | number | bigint | TEth.Hex
+        , position: number | bigint | TEth.Hex
+        , size: number
+        , value: string | number | bigint | boolean | TEth.Hex
+    ) {
         $require.notNull(slot, `Slot position is undefined`);
-        $require.notNull(buffer, `Slot value is undefined`);
+        $require.notNull(value, `Slot value is undefined`);
 
-        slot = $hex.toHex(slot);
-        buffer = $hex.toHexBuffer(buffer);
+        let slotHex = $hex.toHex(slot);
+        let buffer = $hex.toHexBuffer(value);
 
         let SLOT_SIZE = 256;
         if (size != null && size < SLOT_SIZE) {
-            let current = await this.client.getStorageAt(this.address, slot);
+            let current = await this.client.getStorageAt(this.address, slotHex);
             let bytesLen = size / 8;
 
             buffer = $hex.padBytes(buffer, bytesLen);
-            buffer = $str.writeFromEnd(current, buffer, position, size)
+            buffer = $str.writeFromEnd(current, buffer, Number(position), size)
             buffer = $hex.ensure(buffer);
         }
 
@@ -103,7 +109,7 @@ export class SlotsStorageTransport implements ISlotsStorageTransport {
         return BigInt(slot);
     }
 
-    protected async getStorageAtInner (slot: string) {
+    protected async getStorageAtInner (slot: number | bigint | TEth.Hex) {
         return await this.client.getStorageAt(this.address, slot, this.params?.blockNumber);
     }
 }
@@ -132,7 +138,6 @@ export class SlotsStorageTransportForArray implements ISlotsStorageTransport {
     }
 
     mapToGlobalSlot (slotPositionNr: number | bigint = 0) {
-
         let packedRoot = this.transport?.mapToGlobalSlot(this.slotNr) ?? 0n;
         let packedNextHash = $abiUtils.encodePacked({
             value: $hex.padBytes($hex.toHexBuffer(packedRoot), 32),

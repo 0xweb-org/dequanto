@@ -17,6 +17,7 @@ export namespace $abiUtils {
     export function encodePacked(types: string[], values: any[])
     export function encodePacked(typeValues: [string, any][])
     export function encodePacked(types: ReadonlyArray<string | ParamType>, values: ReadonlyArray<any>)
+    export function encodePacked(...typeValues: { type: string, value: any }[])
     export function encodePacked(...mix) {
 
         let val: {type, value}[];

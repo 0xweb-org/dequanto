@@ -34,15 +34,16 @@ interface ITokenPrice {
 
 export class TokenPriceService {
 
-    private tokens = di.resolve(TokensService, this.client.platform, this.explorer)
-    private oracle = di.resolve(
-        AmmV2PriceQuote
-        , this.client
-        , this.explorer
-    );
+    private tokens: TokensService
+    private oracle: AmmV2PriceQuote
 
     constructor(private client: Web3Client, private explorer: IBlockChainExplorer) {
-
+        this.tokens = di.resolve(TokensService, this.client.platform, this.explorer)
+        this.oracle = di.resolve(
+            AmmV2PriceQuote
+            , this.client
+            , this.explorer
+        );
     }
 
     async getPrice (symbol: string, opts?: ITokenPriceOptions): Promise<ITokenPrice>
