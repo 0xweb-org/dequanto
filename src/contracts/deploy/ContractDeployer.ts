@@ -6,10 +6,18 @@ import { $require } from '@dequanto/utils/$require';
 import { ContractDeployment } from './ContractDeployment';
 import { $is } from '@dequanto/utils/$is';
 import { Directory, File } from 'atma-io';
+import { Constructor } from 'atma-utils';
+import { ContractBase } from '../ContractBase';
 
 
 type TDeploymentByName = {
     name: string
+    artifacts?: string
+    params?: any[]
+}
+
+type TDeploymentByContract = {
+    contract: Constructor<ContractBase>
     artifacts?: string
     params?: any[]
 }
@@ -49,11 +57,15 @@ export class ContractDeployer {
 
     }
 
+    async prepareDeployment (byContractClass: TDeploymentByContract): Promise<ContractDeployment>
     async prepareDeployment (byName: TDeploymentByName): Promise<ContractDeployment>
     async prepareDeployment (byMetaFile: TDeploymentByMetaFile): Promise<ContractDeployment>
     async prepareDeployment (byMetaJson: TDeploymentByMetaJson): Promise<ContractDeployment>
     async prepareDeployment (byBytecode: TDeploymentWithBytecode): Promise<ContractDeployment>
-    async prepareDeployment (ctx: TDeploymentByName | TDeploymentWithBytecode | TDeploymentByMetaFile | TDeploymentByMetaJson): Promise<ContractDeployment> {
+    async prepareDeployment (ctx: TDeploymentByContract | TDeploymentByName | TDeploymentWithBytecode | TDeploymentByMetaFile | TDeploymentByMetaJson): Promise<ContractDeployment> {
+        if ('contract' in ctx) {
+            return this.fromContract(ctx);
+        }
         if ('bytecode' in ctx) {
             return this.fromBytecode(ctx);
         }
@@ -80,6 +92,21 @@ export class ContractDeployer {
         return this.fromMetaFile ({
             ...ctx,
             path: file.uri.toString()
+        });
+    }
+    private async fromContract (ctx: TDeploymentByContract) {
+        $require.notNull(ctx.contract, 'Contract class is required');
+
+        let artifact = new ctx.contract().$meta?.artifact;
+        if (artifact != null) {
+            return this.fromMetaFile ({
+                ...ctx,
+                path: artifact
+            });
+        }
+        return this.fromName ({
+            ...ctx,
+            name: ctx.contract.name
         });
     }
 

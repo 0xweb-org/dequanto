@@ -166,6 +166,8 @@ export class Generator {
         } = this.options;
 
         let abi: TAbiItem[];
+        // compiled json meta output
+        let artifact: string;
         let implementation: TAddress;
         let sources: IGeneratorSources;
         if (source.code == null && source.path == null) {
@@ -184,6 +186,7 @@ export class Generator {
             let result = await this.getContractData();
             abi = result.abi;
             sources = result.source;
+            artifact = result.artifact;
         }
 
         let generator = di.resolve(GeneratorFromAbi);
@@ -199,6 +202,7 @@ export class Generator {
             saveAbi: this.options.saveAbi,
             saveSources: this.options.saveSources,
             client: this.client,
+            artifact
         });
     }
 
@@ -242,6 +246,7 @@ export class Generator {
         implementation?: TAddress,
         contractName?: string,
         sourcePath?: string
+        location?: string
     }): Promise<{
         contractName: string,
         files: {
@@ -250,7 +255,7 @@ export class Generator {
     }> {
         if (opts.sourcePath != null) {
             let contractName = opts.contractName ?? name;
-            let { path, code } = await this.resolveSourcePath(opts.sourcePath);
+            let { path, code } = await this.resolveSourcePath(opts.sourcePath, opts);
             if (path == null) {
                 console.error(`Source path not found: ${opts.sourcePath}`);
                 return null;
@@ -276,7 +281,16 @@ export class Generator {
         }
         return meta.SourceCode;
     }
-    private async resolveSourcePath (path: string): Promise<{ path: string, code: string }> {
+    private async resolveSourcePath (path: string, opts?: {
+        // current directory, in case we have loaded *.json artifact previously
+        location?: string
+    }): Promise<{ path: string, code: string }> {
+        if (opts?.location != null && path.startsWith('.')) {
+            let absPath = $path.normalize(class_Uri.combine(opts.location, path));
+            if (await File.existsAsync(absPath)) {
+                return { path: absPath, code: await File.readAsync(absPath) };
+            }
+        }
         if (await File.existsAsync(path)) {
             return { path, code: await File.readAsync(path) };
         }
@@ -287,8 +301,9 @@ export class Generator {
         return { path: null, code: null };
     }
     private async getContractData (): Promise<{
-        abi,
-        bytecode,
+        abi: TAbiItem[]
+        bytecode: TEth.Hex
+        artifact: string
         source: {
             contractName: string,
             files: {
@@ -307,10 +322,12 @@ export class Generator {
             let source = await this.getSources(contractName, {
                 sourcePath: sourceName,
                 contractName,
+                location: new class_Uri(path).toDir()
             });
             return {
                 abi,
                 bytecode,
+                artifact: path,
                 source
             };
         }
@@ -364,6 +381,7 @@ export class Generator {
             return { abi };
         }
     }
+
 }
 
 export interface IGeneratorSources {

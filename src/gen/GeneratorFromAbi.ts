@@ -34,6 +34,8 @@ export class GeneratorFromAbi {
         sources?: {
             [file: string]: { content: string }
         },
+        /** Path to the compiled meta json file (with ABI and Bytecode) */
+        artifact?: string
         client?: Web3Client
     }) {
 
@@ -183,6 +185,11 @@ export class GeneratorFromAbi {
             }
         }
 
+        let metaProperty = '';
+        if (opts.artifact) {
+            let path = this.getRelativePath(opts.artifact);
+            metaProperty = `$meta = { artifact: '${path}' }` ;
+        }
 
         let storageReaderInitializer = '';
         let storageReaderProperty = '';
@@ -192,7 +199,7 @@ export class GeneratorFromAbi {
             let reader = await storageReaderGenerator.generate({ ...opts });
 
             if (reader.sourcePath != null && opts.address == null) {
-                sourceUri = reader.sourcePath;
+                sourceUri = this.getRelativePath(reader.sourcePath);
             }
             if (reader.className) {
                 storageReaderClass = reader.code;
@@ -213,6 +220,7 @@ export class GeneratorFromAbi {
             .replace(/\$Web3ClientOptions\$/g, Web3ClientOptions)
             .replace(/\$EvmScanOptions\$/g, EvmScanOptions)
 
+            .replace(`/* META_PROPERTY */`, () => metaProperty)
             .replace(`/* IMPORTS */`, () => imports.join('\n'))
             .replace(`/* ERRORS */`, () => Gen.serializeErrors(className, abiJson))
             .replace(/\$NAME\$/g, className)
@@ -272,6 +280,18 @@ export class GeneratorFromAbi {
             implementation: opts.implementation,
             contractName: opts.contractName
         };
+    }
+
+
+    private getRelativePath (path: string) {
+        if (path == null) {
+            return path;
+        }
+        let uri = new class_Uri(path);
+        if (uri.isRelative()) {
+            return path;
+        }
+        return uri.toRelativeString(process.cwd() + '/');
     }
 }
 

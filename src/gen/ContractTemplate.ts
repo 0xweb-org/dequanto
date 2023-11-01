@@ -37,6 +37,8 @@ export class $NAME$ extends ContractBase {
         /* STORAGE_READER_INITIALIZER */
     }
 
+    /* META_PROPERTY */
+
 /* METHODS */
 
     $call () {

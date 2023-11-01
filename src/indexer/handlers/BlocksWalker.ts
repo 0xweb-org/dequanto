@@ -3,7 +3,7 @@ import memd from 'memd';
 import { Everlog } from 'everlog';
 import { FileSafe } from 'atma-io';
 import { class_Dfr } from 'atma-utils';
-import { PackedRanges } from '../../structs/PackedRanges';
+import { PackedRanges } from '../../class/PackedRanges';
 
 import { $array } from '@dequanto/utils/$array';
 import { $date } from '@dequanto/utils/$date';

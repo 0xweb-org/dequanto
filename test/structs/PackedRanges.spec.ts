@@ -1,4 +1,4 @@
-import { PackedRanges } from '@dequanto/structs/PackedRanges';
+import { PackedRanges } from '@dequanto/class/PackedRanges';
 
 UTest({
     'adding numbers' () {

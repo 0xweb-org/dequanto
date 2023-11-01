@@ -121,7 +121,7 @@ export class HardhatProvider {
         let client = options?.client ?? this.client();
         let signer = options?.deployer ?? this.deployer();
         let params = options?.arguments ?? [];
-        let factory = await this.getFactory(Ctor.name, client, signer, params);
+        let factory = await this.getFactory(Ctor, client, signer, params);
         return {
             factory,
 
@@ -131,7 +131,6 @@ export class HardhatProvider {
         }
     }
 
-    @memd.deco.memoize()
     async deployClass<T extends ContractBase>(Ctor: Constructor<T>, options?: {
         deployer?: ChainAccount
         arguments?: any[]
@@ -243,6 +242,8 @@ export class HardhatProvider {
         abi: TAbiItem[]
         bytecode: TEth.Hex
         output: string
+        // renamed output
+        artifact: string
         source: IGeneratorSources
     }> {
 
@@ -342,6 +343,7 @@ export class HardhatProvider {
             abi,
             bytecode,
             output,
+            artifact: output,
             source: {
                 contractName: options?.contractName,
                 files: fileMap
@@ -394,14 +396,19 @@ export class HardhatProvider {
 
 
     private async getFactory (
-        mix: string | [ abi: TAbiItem[], bytecode: TEth.Hex ],
+        mix: string | Constructor<ContractBase> | [ abi: TAbiItem[], bytecode: TEth.Hex ],
         client: Web3Client,
         signer: ChainAccount,
         params: any[],
     ): Promise<ContractDeployment> {
 
         let deployer = new ContractDeployer(client, signer);
-
+        if (typeof mix === 'function') {
+            return await deployer.prepareDeployment({
+                contract: mix,
+                params
+            })
+        }
         if (typeof mix === 'string') {
             if (mix.endsWith('json')) {
                 return await deployer.prepareDeployment({

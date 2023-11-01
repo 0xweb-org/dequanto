@@ -38,6 +38,10 @@ export abstract class ContractBase {
     private writerConfig?: ITxWriterOptions;
 
     abstract abi?: TAbiItem[]
+    abstract $meta?: {
+        // Path to the compiled JSON artifact file
+        artifact?: string
+    }
 
     constructor (
         public address: TAddress,
