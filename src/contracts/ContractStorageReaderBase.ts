@@ -1,4 +1,4 @@
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
 import { ISlotVarDefinition } from '@dequanto/solidity/SlotsParser/models';

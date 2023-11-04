@@ -11,9 +11,9 @@ import { TransactionReceipt } from 'web3-core';
 import { EventData } from 'web3-eth-contract';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 
-import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
+import { Etherscan } from '@dequanto/explorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 export class WETHBase extends ContractBase {
     constructor(

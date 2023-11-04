@@ -12,7 +12,7 @@ import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageRe
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
 
@@ -21,7 +21,7 @@ import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { TEth } from '@dequanto/models/TEth';
 
 
-import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
+import { Etherscan } from '@dequanto/explorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 
 
@@ -136,7 +136,7 @@ export class ITransparentUpgradeableProxy extends ContractBase {
 
     abi: TAbiItem[] = [{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"previousAdmin","type":"address"},{"indexed":false,"internalType":"address","name":"newAdmin","type":"address"}],"name":"AdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"beacon","type":"address"}],"name":"BeaconUpgraded","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"implementation","type":"address"}],"name":"Upgraded","type":"event"},{"inputs":[],"name":"admin","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"changeAdmin","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"implementation","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"upgradeTo","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"upgradeToAndCall","outputs":[],"stateMutability":"payable","type":"function"}]
 
-    
+
 }
 
 type TSender = TAccount & {
@@ -160,7 +160,7 @@ interface IEvents {
   AdminChanged: TLogAdminChangedParameters
   BeaconUpgraded: TLogBeaconUpgradedParameters
   Upgraded: TLogUpgradedParameters
-  '*': any[] 
+  '*': any[]
 }
 
 
@@ -196,7 +196,7 @@ interface IMethods {
   implementation: IMethodImplementation
   upgradeTo: IMethodUpgradeTo
   upgradeToAndCall: IMethodUpgradeToAndCall
-  '*': { method: string, arguments: any[] } 
+  '*': { method: string, arguments: any[] }
 }
 
 

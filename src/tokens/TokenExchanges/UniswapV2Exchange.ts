@@ -2,9 +2,9 @@ import di from 'a-di';
 import { $config } from '@dequanto/utils/$config';
 import { AmmV2ExchangeBase } from './AmmV2ExchangeBase';
 
-import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan';
+import { Etherscan } from '@dequanto/explorer/Etherscan';
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { $require } from '@dequanto/utils/$require';
 

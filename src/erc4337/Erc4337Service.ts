@@ -9,7 +9,7 @@ import { UserOperation, UserOperationDefaults } from './models/UserOperation';
 import { ChainAccount } from '@dequanto/models/TAccount';
 import { obj_extendDefaults } from 'atma-utils';
 import { $require } from '@dequanto/utils/$require';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { ContractAbiProvider } from '@dequanto/contracts/ContractAbiProvider';
 import { $erc4337 } from './utils/$erc4337';
 import { $hex } from '@dequanto/utils/$hex';

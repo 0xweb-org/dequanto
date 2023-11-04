@@ -1,7 +1,7 @@
 import di from 'a-di';
 
 import { $config } from '@dequanto/utils/$config';
-import { BlockChainExplorerFactory } from '@dequanto/BlockchainExplorer/BlockChainExplorerFactory';
+import { BlockChainExplorerFactory } from '@dequanto/explorer/BlockChainExplorerFactory';
 import { ArbWeb3Client } from './ArbWeb3Client';
 
 const contracts = $config.get('contracts.arbitrum', []);

@@ -12,7 +12,7 @@ import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageRe
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
 
@@ -21,7 +21,7 @@ import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { TEth } from '@dequanto/models/TEth';
 
 
-import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
+import { Etherscan } from '@dequanto/explorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 
 
@@ -86,7 +86,7 @@ export class TokenTimelock extends ContractBase {
 
     abi: TAbiItem[] = [{"inputs":[{"internalType":"contract IERC20","name":"token_","type":"address"},{"internalType":"address","name":"beneficiary_","type":"address"},{"internalType":"uint256","name":"releaseTime_","type":"uint256"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"beneficiary","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"release","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"releaseTime","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"token","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"}]
 
-    
+
 }
 
 type TSender = TAccount & {
@@ -96,7 +96,7 @@ type TSender = TAccount & {
 
 
 interface IEvents {
-  '*': any[] 
+  '*': any[]
 }
 
 
@@ -126,7 +126,7 @@ interface IMethods {
   release: IMethodRelease
   releaseTime: IMethodReleaseTime
   token: IMethodToken
-  '*': { method: string, arguments: any[] } 
+  '*': { method: string, arguments: any[] }
 }
 
 

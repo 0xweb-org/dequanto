@@ -2,7 +2,7 @@ import di from 'a-di'
 import { ContractReader } from './ContractReader'
 import { Contract, IContractInit } from './Contract'
 import { ContractProvider } from './ContractProvider'
-import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
+import { Etherscan } from '@dequanto/explorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 
 export class EthContract extends Contract {

@@ -1,7 +1,7 @@
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 
-import { Bscscan } from '@dequanto/BlockchainExplorer/Bscscan';
+import { Bscscan } from '@dequanto/explorer/Bscscan';
 import { BscWeb3Client } from '@dequanto/clients/BscWeb3Client';
 
 import { ContractBase } from '@dequanto/contracts/ContractBase';

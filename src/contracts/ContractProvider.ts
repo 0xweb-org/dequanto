@@ -1,5 +1,5 @@
-import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { Etherscan } from '@dequanto/explorer/Etherscan';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { IContractDetails } from '@dequanto/models/IContractDetails';
 import { TAddress } from '@dequanto/models/TAddress';
 import di from 'a-di';

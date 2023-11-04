@@ -1,7 +1,7 @@
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 
-import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan';
+import { Etherscan } from '@dequanto/explorer/Etherscan';
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
 
 import { ContractBase } from '@dequanto/contracts/ContractBase';

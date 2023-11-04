@@ -6,7 +6,7 @@ import type { ITxWriterOptions, TxWriter } from '@dequanto/txs/TxWriter';
 
 import type { IAccount, TAccount } from "@dequanto/models/TAccount";
 import type { TAbiItem } from '@dequanto/types/TAbi';
-import type { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import type { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import type { TAddress } from '@dequanto/models/TAddress';
 import type { ITxConfig } from '@dequanto/txs/ITxConfig';
 

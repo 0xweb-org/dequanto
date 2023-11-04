@@ -18,7 +18,7 @@ import { $require } from '@dequanto/utils/$require';
 import { IGeneratorSources } from '@dequanto/gen/Generator';
 import { $path } from '@dequanto/utils/$path';
 import { ContractClassFactory, IContractWrapped } from '@dequanto/contracts/ContractClassFactory';
-import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
+import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
 import { IWeb3EndpointOptions } from '@dequanto/clients/interfaces/IWeb3EndpointOptions';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';

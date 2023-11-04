@@ -1,7 +1,7 @@
 import di from 'a-di'
 import { BscWeb3Client } from '@dequanto/clients/BscWeb3Client'
 import { ContractReader } from './ContractReader'
-import { Bscscan } from '@dequanto/BlockchainExplorer/Bscscan'
+import { Bscscan } from '@dequanto/explorer/Bscscan'
 import { Contract, IContractInit } from './Contract'
 import { ContractProvider } from './ContractProvider'
 

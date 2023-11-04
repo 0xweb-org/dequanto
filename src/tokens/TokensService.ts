@@ -1,13 +1,13 @@
 import di from 'a-di';
 import memd from 'memd';
 import { TAddress } from '@dequanto/models/TAddress';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { IToken } from '@dequanto/models/IToken';
 import { ITokenProvider } from './TokenProviders/ITokenProvider';
 import { ERC20 } from '@dequanto/contracts/common/ERC20';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
+import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
 import { TokenDataProvider } from './TokenDataProvider';
 
 

@@ -1,6 +1,6 @@
 import di from 'a-di';
 import alot from 'alot';
-import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
+import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { IToken } from '@dequanto/models/IToken';
 import { TPlatform } from '@dequanto/models/TPlatform';
@@ -17,7 +17,7 @@ import { SushiswapPolygonExchange } from './TokenExchanges/SushiswapPolygonExcha
 import { $logger } from '@dequanto/utils/$logger';
 import { $require } from '@dequanto/utils/$require';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 
 export class TokenExchangeService {
 

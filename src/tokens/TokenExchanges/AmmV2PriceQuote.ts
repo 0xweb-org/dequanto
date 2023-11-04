@@ -1,6 +1,6 @@
 import di from 'a-di';
 import alot from 'alot';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IToken } from '@dequanto/models/IToken';
 import { AmmV2ExchangeBase } from './AmmV2ExchangeBase';

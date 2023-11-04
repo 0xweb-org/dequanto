@@ -10,7 +10,7 @@ import { TransactionReceipt } from 'web3-core';
 import { EventData } from 'web3-eth-contract';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 
 import { XDaiscan } from '@dequanto/chains/xdai/XDaiscan'
 import { XDaiWeb3Client } from '@dequanto/chains/xdai/XDaiWeb3Client'

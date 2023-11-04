@@ -1,14 +1,14 @@
 import di from 'a-di';
 import alot from 'alot';
 import { type TAbiItem } from '@dequanto/types/TAbi';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { $address } from '@dequanto/utils/$address';
 import { $require } from '@dequanto/utils/$require';
 import { GeneratorFromAbi } from './GeneratorFromAbi';
 import { TAddress } from '@dequanto/models/TAddress';
 import { File, Directory } from 'atma-io';
 import { class_Uri, obj_setProperty } from 'atma-utils';
-import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
+import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { $path } from '@dequanto/utils/$path';
 import { $logger, l } from '@dequanto/utils/$logger';

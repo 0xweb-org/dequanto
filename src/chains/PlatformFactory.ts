@@ -1,5 +1,5 @@
-import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { ChainAccountsService } from '@dequanto/ChainAccountsService';
 import { IWeb3EndpointOptions } from '@dequanto/clients/interfaces/IWeb3EndpointOptions';
 import { Web3Client } from '@dequanto/clients/Web3Client';

@@ -4,14 +4,14 @@
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 
-import { Bscscan } from '@dequanto/BlockchainExplorer/Bscscan';
+import { Bscscan } from '@dequanto/explorer/Bscscan';
 import { BscWeb3Client } from '@dequanto/clients/BscWeb3Client';
 import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
 import { AbiItem } from 'web3-utils';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 
 export class AmmVaultV2ContractBase extends ContractBase {
     constructor(

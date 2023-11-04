@@ -5,7 +5,7 @@ import { env } from 'atma-io';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $date } from '@dequanto/utils/$date';
 
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { $address } from '@dequanto/utils/$address';
 import { TAddress } from '@dequanto/models/TAddress';

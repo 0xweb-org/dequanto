@@ -1,7 +1,7 @@
 import di from 'a-di';
 
 import { $config } from '@dequanto/utils/$config';
-import { BlockChainExplorerFactory } from '@dequanto/BlockchainExplorer/BlockChainExplorerFactory';
+import { BlockChainExplorerFactory } from '@dequanto/explorer/BlockChainExplorerFactory';
 import { BobaWeb3Client } from './BobaWeb3Client';
 
 const config = $config.get('blockchainExplorer.boba');

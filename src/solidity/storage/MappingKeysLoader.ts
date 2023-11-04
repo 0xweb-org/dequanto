@@ -2,7 +2,7 @@ import alot from 'alot';
 import memd from 'memd';
 import type { TAbiItem } from '@dequanto/types/TAbi';
 
-import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
+import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $require } from '@dequanto/utils/$require';
 import { MappingSettersResolver } from '../SlotsParser/MappingSettersResolver';
@@ -10,7 +10,7 @@ import { SourceCodeProvider } from '../SourceCodeProvider';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { $logger } from '@dequanto/utils/$logger';
 import { ContractReader } from '@dequanto/contracts/ContractReader';
 

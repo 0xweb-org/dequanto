@@ -1,12 +1,12 @@
 import di from 'a-di';
-import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan';
+import { Etherscan } from '@dequanto/explorer/Etherscan';
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { TokenPriceService, TokenPriceServiceCacheable } from './TokenPriceService';
 import { BscWeb3Client } from '@dequanto/clients/BscWeb3Client';
-import { Bscscan } from '@dequanto/BlockchainExplorer/Bscscan';
+import { Bscscan } from '@dequanto/explorer/Bscscan';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 
 export namespace TokenPriceServiceProvider {
 

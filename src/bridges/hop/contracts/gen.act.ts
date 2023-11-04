@@ -1,5 +1,5 @@
-import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { Generator } from '@dequanto/gen/Generator';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import alot from 'alot';

@@ -10,9 +10,9 @@ import { ContractBase } from '@dequanto/contracts/ContractBase';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 
-import { Polyscan } from '@dequanto/BlockchainExplorer/Polyscan'
+import { Polyscan } from '@dequanto/explorer/Polyscan'
 import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client'
 import { TEth } from '@dequanto/models/TEth';
 

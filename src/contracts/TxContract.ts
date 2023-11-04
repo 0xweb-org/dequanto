@@ -1,7 +1,7 @@
 import di from 'a-di';
 import alot from 'alot';
-import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { Etherscan } from '@dequanto/explorer/Etherscan';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { ITransactionDetails } from '@dequanto/models/ITransactionDetails';
 import { ContractProvider } from './ContractProvider';
 import { TEth } from '@dequanto/models/TEth';

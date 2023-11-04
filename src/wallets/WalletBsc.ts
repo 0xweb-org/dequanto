@@ -1,7 +1,7 @@
 import di from 'a-di';
 import { BscWeb3Client } from '@dequanto/clients/BscWeb3Client';
 import { Wallet } from './Wallet';
-import { Bscscan } from '@dequanto/BlockchainExplorer/Bscscan';
+import { Bscscan } from '@dequanto/explorer/Bscscan';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { TAddress } from '@dequanto/models/TAddress';
 

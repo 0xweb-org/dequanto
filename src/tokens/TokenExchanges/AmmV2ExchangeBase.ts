@@ -1,7 +1,7 @@
 import di from 'a-di';
 import memd from 'memd';
 import alot from 'alot';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';

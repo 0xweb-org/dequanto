@@ -14,8 +14,8 @@ import { ParametersFromSecond } from '@dequanto/utils/types';
 import { Constructor, class_Uri } from 'atma-utils';
 import memd from 'memd';
 
-import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
-import { ContractValidator } from '@dequanto/BlockchainExplorer/ContractValidator';
+import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
+import { ContractValidator } from '@dequanto/explorer/ContractValidator';
 import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client';
 import { LoggerService } from '@dequanto/loggers/LoggerService';
 import { $is } from '@dequanto/utils/$is';

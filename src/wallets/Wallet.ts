@@ -1,5 +1,5 @@
 import di from 'a-di';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { ERC20 } from '@dequanto/contracts/common/ERC20';
 import { TAddress } from '@dequanto/models/TAddress';

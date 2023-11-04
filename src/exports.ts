@@ -58,8 +58,8 @@
 // export { Web3Client } from './clients/Web3Client'
 // export { Web3ClientFactory } from './clients/Web3ClientFactory'
 
-// export { BlockChainExplorerFactory } from './BlockchainExplorer/BlockChainExplorerFactory'
-// export { BlockChainExplorerProvider } from './BlockchainExplorer/BlockChainExplorerProvider'
+// export { BlockChainExplorerFactory } from './explorer/BlockChainExplorerFactory'
+// export { BlockChainExplorerProvider } from './explorer/BlockChainExplorerProvider'
 
 // export { Rpc } from './rpc/Rpc'
 // export { RpcContract } from './rpc/RpcContract'

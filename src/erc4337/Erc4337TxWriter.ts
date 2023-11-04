@@ -4,7 +4,7 @@ import { ChainAccount, Erc4337Account } from '@dequanto/models/TAccount';
 import { Erc4337Service } from './Erc4337Service';
 import { $require } from '@dequanto/utils/$require';
 import { UserOperation } from './models/UserOperation';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $is } from '@dequanto/utils/$is';
 import { TxWriter } from '@dequanto/txs/TxWriter';

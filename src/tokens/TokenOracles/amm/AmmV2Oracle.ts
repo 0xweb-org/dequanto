@@ -10,7 +10,7 @@ import { TResultAsync } from '@dequanto/models/TResult';
 import { $require } from '@dequanto/utils/$require';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { AmmV2PriceQuote } from '@dequanto/tokens/TokenExchanges/AmmV2PriceQuote';
-import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
+import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
 import { TokensServiceFactory } from '@dequanto/tokens/TokensServiceFactory';
 import { $cache } from '@dequanto/utils/$cache';
 

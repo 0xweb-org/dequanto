@@ -120,7 +120,7 @@ export class GeneratorFromAbi {
                 EtherscanStr = 'Bscscan';
                 EthWeb3ClientStr = 'BscWeb3Client';
                 imports = [
-                    `import { Bscscan } from '@dequanto/BlockchainExplorer/Bscscan'`,
+                    `import { Bscscan } from '@dequanto/explorer/Bscscan'`,
                     `import { BscWeb3Client } from '@dequanto/clients/BscWeb3Client'`,
                 ];
                 sourceUri = `https://bscscan.com/address/${opts.address}#code`;
@@ -129,7 +129,7 @@ export class GeneratorFromAbi {
                 EtherscanStr = 'Polyscan';
                 EthWeb3ClientStr = 'PolyWeb3Client';
                 imports = [
-                    `import { Polyscan } from '@dequanto/BlockchainExplorer/Polyscan'`,
+                    `import { Polyscan } from '@dequanto/explorer/Polyscan'`,
                     `import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client'`,
                 ];
                 sourceUri = `https://polygonscan.com/address/${opts.address}#code`;
@@ -147,7 +147,7 @@ export class GeneratorFromAbi {
                 EtherscanStr = 'Etherscan';
                 EthWeb3ClientStr = 'EthWeb3Client';
                 imports = [
-                    `import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'`,
+                    `import { Etherscan } from '@dequanto/explorer/Etherscan'`,
                     `import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'`,
                 ];
                 sourceUri = `https://etherscan.io/address/${opts.address}#code`;
@@ -156,7 +156,7 @@ export class GeneratorFromAbi {
                 EtherscanStr = 'Etherscan';
                 EthWeb3ClientStr = 'HardhatWeb3Client';
                 imports = [
-                    `import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'`,
+                    `import { Etherscan } from '@dequanto/explorer/Etherscan'`,
                     `import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client'`,
                 ];
                 sourceUri = ``;
@@ -167,7 +167,7 @@ export class GeneratorFromAbi {
                     EtherscanStr = 'Evmscan';
                     EthWeb3ClientStr = 'EvmWeb3Client';
                     imports = [
-                        `import { Evmscan } from '@dequanto/BlockchainExplorer/Evmscan'`,
+                        `import { Evmscan } from '@dequanto/explorer/Evmscan'`,
                         `import { EvmWeb3Client } from '@dequanto/clients/EvmWeb3Client'`,
                     ];
                     Web3ClientOptions = `{ platform: '${opts.network}' }`;

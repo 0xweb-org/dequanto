@@ -12,7 +12,7 @@ import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageRe
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
 
@@ -21,7 +21,7 @@ import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { TEth } from '@dequanto/models/TEth';
 
 
-import { Etherscan } from '@dequanto/BlockchainExplorer/Etherscan'
+import { Etherscan } from '@dequanto/explorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 
 export namespace EntryPointErrors {
@@ -393,7 +393,7 @@ type TSender = TAccount & {
     };
     type TLogAccountDeployedParameters = [ userOpHash: TBufferLike, _sender: TAddress, factory: TAddress, paymaster: TAddress ];
     type TLogBeforeExecution = {
-        
+
     };
     type TLogBeforeExecutionParameters = [  ];
     type TLogDeposited = {
@@ -440,7 +440,7 @@ interface IEvents {
   UserOperationEvent: TLogUserOperationEventParameters
   UserOperationRevertReason: TLogUserOperationRevertReasonParameters
   Withdrawn: TLogWithdrawnParameters
-  '*': any[] 
+  '*': any[]
 }
 
 
@@ -566,7 +566,7 @@ interface IMethods {
   unlockStake: IMethodUnlockStake
   withdrawStake: IMethodWithdrawStake
   withdrawTo: IMethodWithdrawTo
-  '*': { method: string, arguments: any[] } 
+  '*': { method: string, arguments: any[] }
 }
 
 

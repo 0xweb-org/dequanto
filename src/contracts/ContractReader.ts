@@ -13,7 +13,7 @@ import { $abiParser } from '../utils/$abiParser';
 import { $block } from '@dequanto/utils/$block';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { ContractCreationResolver } from './ContractCreationResolver';
-import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
+import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { $contract } from '@dequanto/utils/$contract';
 import { $require } from '@dequanto/utils/$require';

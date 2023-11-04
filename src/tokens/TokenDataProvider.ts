@@ -1,6 +1,6 @@
 import alot from 'alot';
 import memd from 'memd';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { ArbTokenProvider } from '@dequanto/chains/arbitrum/ArbTokenProvider';
 import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';

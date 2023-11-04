@@ -1,11 +1,11 @@
 import memd from 'memd';
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { $block } from '@dequanto/utils/$block';
 import { $cache } from '@dequanto/utils/$cache';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { BlockChainExplorerProvider } from '@dequanto/BlockchainExplorer/BlockChainExplorerProvider';
+import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
 import { $require } from '@dequanto/utils/$require';
 import { $promise } from '@dequanto/utils/$promise';
 import { TEth } from '@dequanto/models/TEth';

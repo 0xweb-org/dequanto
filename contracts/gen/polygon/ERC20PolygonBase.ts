@@ -1,7 +1,7 @@
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 
-import { Polyscan } from '@dequanto/BlockchainExplorer/Polyscan';
+import { Polyscan } from '@dequanto/explorer/Polyscan';
 import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client';
 import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
 import { ContractBase } from '@dequanto/contracts/ContractBase';

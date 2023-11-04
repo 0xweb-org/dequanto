@@ -1,4 +1,4 @@
-import { Bscscan } from '@dequanto/BlockchainExplorer/Bscscan';
+import { Bscscan } from '@dequanto/explorer/Bscscan';
 import { File } from 'atma-io'
 import axios from 'axios';
 

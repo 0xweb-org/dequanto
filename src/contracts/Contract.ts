@@ -1,6 +1,6 @@
 import di from 'a-di'
 import alot from 'alot'
-import { IBlockChainExplorer } from '@dequanto/BlockchainExplorer/IBlockChainExplorer'
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer'
 import { IContractDetails } from '@dequanto/models/IContractDetails'
 import { ContractProvider, IContractProvider } from './ContractProvider'
 import { IContractReader } from './ContractReader'
