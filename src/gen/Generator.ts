@@ -87,7 +87,8 @@ export class Generator {
             source: {
                 path
             },
-            output: './0xc/hardhat/'
+            output: './0xc/hardhat/',
+            saveSources: false,
         });
         return generator.generate();
     }

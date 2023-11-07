@@ -331,9 +331,8 @@ export class HardhatProvider {
             });
         }
 
-        let { abi, bytecode } = await File.readAsync<{ abi, bytecode }> (output);
+        let { abi, bytecode, contractName } = await File.readAsync<{ abi, bytecode, contractName }> (output);
         let files = await Directory.readFilesAsync(dir, '*.sol');
-
         let { contract, ContractCtor } = ContractClassFactory.fromAbi<T>(null, abi, null, null, {
             $meta: {
                 artifact: output
@@ -355,7 +354,7 @@ export class HardhatProvider {
             output,
             artifact: output,
             source: {
-                contractName: options?.contractName,
+                contractName: contractName ?? options?.contractName,
                 files: fileMap
             },
             ContractCtor

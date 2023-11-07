@@ -1,7 +1,7 @@
 import { IContractWrapped } from '@dequanto/contracts/ContractClassFactory';
 import { Deployments  } from '@dequanto/contracts/deploy/Deployments';
 import { IProxyAdmin } from '@dequanto/contracts/deploy/proxy/ProxyDeployment';
-import { IDeployment } from '@dequanto/contracts/deploy/storage/DeploymentsStorage';
+import { IDeployment, IProxyStorageLayout } from '@dequanto/contracts/deploy/storage/DeploymentsStorage';
 import { Generator } from '@dequanto/gen/Generator';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { File } from 'atma-io';
@@ -29,12 +29,15 @@ export default UTest({
     },
     async 'should deploy the generated contract'() {
         let info = await Generator.generateFromSol('./test/fixtures/deployments/DeploymentsFoo.sol');
-
         let { DeploymentsFoo } = await include
             .instance()
             .js(info.main);
 
         return UTest({
+            async 'is new installation' () {
+                eq_(await File.existsAsync(deploymentsOutput), false);
+                eq_(await File.existsAsync(deploymentsProxyOutput), false);
+            },
             async 'deploy'() {
                 let { contract: foo } = await deployments.ensure<IContractWrapped>(DeploymentsFoo.DeploymentsFoo);
 
@@ -44,12 +47,15 @@ export default UTest({
                 let { contract: fooAnother } = await deployments.ensure(DeploymentsFoo.DeploymentsFoo);
                 eq_(foo.address, fooAnother.address);
 
-                let deploymentsJson = await File.readAsync<IDeployment[]>(deploymentsOutput);
+                let deploymentsJson = await File.readAsync<IDeployment[]>(deploymentsOutput, { cached: false});
                 let deploymentInfo = deploymentsJson.find(x => x.id === 'DeploymentsFoo');
                 eq_(deploymentInfo.address, foo.address);
                 eq_(deploymentInfo.deployer, deployer.address);
+
+                //
+                eq_(await File.existsAsync(deploymentsProxyOutput), false);
             },
-            async '!with proxy' () {
+            async 'with proxy' () {
                 return UTest({
                     async 'initial deploy'() {
                         let { contract, deployment } = await deployments.ensureWithProxy<IContractWrapped, any>(DeploymentsFoo.DeploymentsFoo, {
@@ -59,13 +65,19 @@ export default UTest({
                         let x = await contract.getValue();
                         eq_(x, 6n);
 
-                        let deploymentsJson = await File.readAsync<IDeployment[]>(deploymentsOutput);
+                        let deploymentsJson = await File.readAsync<IDeployment[]>(deploymentsOutput, { cached: false});
                         let deploymentInfo = deploymentsJson.find(x => x.id === 'DeploymentsFooWithProxy');
-                        eq_(deploymentInfo.address, contract.address);
+                        eq_(deploymentInfo?.address, contract.address);
 
                         let proxyDeploymentInfo = deploymentsJson.find(x => x.id === 'DeploymentsFooWithProxyProxy');
-                        eq_(proxyDeploymentInfo.address, contract.address);
-                        eq_(proxyDeploymentInfo.proxyFor, deploymentInfo.implementation);
+                        eq_(proxyDeploymentInfo?.address, contract.address);
+                        eq_(proxyDeploymentInfo?.proxyFor, deploymentInfo.implementation);
+
+
+                        let deploymentsLayoutsJson = await File.readAsync<IProxyStorageLayout[]>(deploymentsProxyOutput, { cached: false});
+                        let layout = deploymentsLayoutsJson.find(x => x.id === 'DeploymentsFooWithProxyProxy')?.slots;
+                        eq_(layout.length, 1);
+                        eq_(layout[0].type, 'uint256');
 
                         // Will set externally the new Value
                         let receipt = await contract.$receipt().setValue(deployer, 5n);

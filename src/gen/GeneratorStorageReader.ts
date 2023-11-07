@@ -24,7 +24,6 @@ export class GeneratorStorageReader {
         client?: Web3Client
     }): Promise<{ code?: string, className?: string, sourcePath?: string, error?: Error }> {
 
-
         let { client, sources, contractName, address } = opts;
         let files = alot.fromObject(sources ?? {}).map(x => {
             return {
@@ -38,18 +37,17 @@ export class GeneratorStorageReader {
                 error: new Error(`Not possible to generate the StorageReader class, without the source code`)
             };
         }
-
         let file = null as (typeof files[0]);
         if (files.length === 1) {
             file = files[0];
         } else {
-            let rgx = new RegExp(`contract \s*${contractName}`, 'i')
-            let main = await alot(files.reverse()).findAsync(async x => {
-                return rgx.test(x.content);
+            $require.notNull(contractName, `Contract name expected`);
+
+            let rgx = new RegExp(`contract \\s*${contractName}\\b`, 'i')
+            let main = files.reverse().find(x => {
+                let r = rgx.test(x.content);
+                return r;
             });
-            if (main == null) {
-                main = files[0];
-            }
             file = main;
         }
 
