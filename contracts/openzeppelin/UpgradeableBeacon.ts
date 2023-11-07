@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-10-05 18:18
+ *  AUTO-Generated Class: 2023-11-05 00:36
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -19,6 +19,7 @@ import { SubjectStream } from '@dequanto/class/SubjectStream';
 import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { TEth } from '@dequanto/models/TEth';
+import type { TOverrideReturns } from '@dequanto/utils/types';
 
 
 import { Etherscan } from '@dequanto/explorer/Etherscan'
@@ -33,6 +34,14 @@ export class UpgradeableBeacon extends ContractBase {
         public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
+
+        
+    }
+
+    
+
+    async $constructor (deployer: TSender, implementation_: TAddress): Promise<TxWriter> {
+        throw new Error('Not implemented. Use the ContractDeployer class to deploy the contract');
     }
 
     // 0x5c60da1b
@@ -61,11 +70,14 @@ export class UpgradeableBeacon extends ContractBase {
     }
 
     $call () {
-        return super.$call() as IUpgradeableBeaconTxCaller;;
+        return super.$call() as IUpgradeableBeaconTxCaller;
     }
 
     $data (): IUpgradeableBeaconTxData {
         return super.$data() as IUpgradeableBeaconTxData;
+    }
+    $gas (): TOverrideReturns<IUpgradeableBeaconTxCaller, Promise<{ gas?: bigint, price?: bigint, error?: Error & { data?: { type: string, params } } }>> {
+        return super.$gas() as any;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -119,7 +131,7 @@ export class UpgradeableBeacon extends ContractBase {
 
     abi: TAbiItem[] = [{"inputs":[{"internalType":"address","name":"implementation_","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"implementation","type":"address"}],"name":"Upgraded","type":"event"},{"inputs":[],"name":"implementation","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newImplementation","type":"address"}],"name":"upgradeTo","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 
-
+    
 }
 
 type TSender = TAccount & {
@@ -138,7 +150,7 @@ type TSender = TAccount & {
 interface IEvents {
   OwnershipTransferred: TLogOwnershipTransferredParameters
   Upgraded: TLogUpgradedParameters
-  '*': any[]
+  '*': any[] 
 }
 
 
@@ -174,7 +186,7 @@ interface IMethods {
   renounceOwnership: IMethodRenounceOwnership
   transferOwnership: IMethodTransferOwnership
   upgradeTo: IMethodUpgradeTo
-  '*': { method: string, arguments: any[] }
+  '*': { method: string, arguments: any[] } 
 }
 
 

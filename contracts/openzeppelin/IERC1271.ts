@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-10-05 18:18
+ *  AUTO-Generated Class: 2023-11-05 00:36
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -19,6 +19,7 @@ import { SubjectStream } from '@dequanto/class/SubjectStream';
 import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { TEth } from '@dequanto/models/TEth';
+import type { TOverrideReturns } from '@dequanto/utils/types';
 
 
 import { Etherscan } from '@dequanto/explorer/Etherscan'
@@ -33,7 +34,11 @@ export class IERC1271 extends ContractBase {
         public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
+
+        
     }
+
+    
 
     // 0x1626ba7e
     async isValidSignature (hash: TBufferLike, signature: TBufferLike): Promise<TBufferLike> {
@@ -41,11 +46,14 @@ export class IERC1271 extends ContractBase {
     }
 
     $call () {
-        return super.$call() as IIERC1271TxCaller;;
+        return super.$call() as IIERC1271TxCaller;
     }
 
     $data (): IIERC1271TxData {
         return super.$data() as IIERC1271TxData;
+    }
+    $gas (): TOverrideReturns<IIERC1271TxCaller, Promise<{ gas?: bigint, price?: bigint, error?: Error & { data?: { type: string, params } } }>> {
+        return super.$gas() as any;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -71,7 +79,7 @@ export class IERC1271 extends ContractBase {
 
     abi: TAbiItem[] = [{"inputs":[{"internalType":"bytes32","name":"hash","type":"bytes32"},{"internalType":"bytes","name":"signature","type":"bytes"}],"name":"isValidSignature","outputs":[{"internalType":"bytes4","name":"magicValue","type":"bytes4"}],"stateMutability":"view","type":"function"}]
 
-
+    
 }
 
 type TSender = TAccount & {
@@ -81,7 +89,7 @@ type TSender = TAccount & {
 
 
 interface IEvents {
-  '*': any[]
+  '*': any[] 
 }
 
 
@@ -93,7 +101,7 @@ interface IMethodIsValidSignature {
 
 interface IMethods {
   isValidSignature: IMethodIsValidSignature
-  '*': { method: string, arguments: any[] }
+  '*': { method: string, arguments: any[] } 
 }
 
 

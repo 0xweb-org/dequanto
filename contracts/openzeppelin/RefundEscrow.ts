@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-10-05 18:18
+ *  AUTO-Generated Class: 2023-11-05 00:36
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -19,6 +19,7 @@ import { SubjectStream } from '@dequanto/class/SubjectStream';
 import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { TEth } from '@dequanto/models/TEth';
+import type { TOverrideReturns } from '@dequanto/utils/types';
 
 
 import { Etherscan } from '@dequanto/explorer/Etherscan'
@@ -33,6 +34,14 @@ export class RefundEscrow extends ContractBase {
         public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
+
+        
+    }
+
+    
+
+    async $constructor (deployer: TSender, beneficiary_: TAddress): Promise<TxWriter> {
+        throw new Error('Not implemented. Use the ContractDeployer class to deploy the contract');
     }
 
     // 0x38af3eed
@@ -96,11 +105,14 @@ export class RefundEscrow extends ContractBase {
     }
 
     $call () {
-        return super.$call() as IRefundEscrowTxCaller;;
+        return super.$call() as IRefundEscrowTxCaller;
     }
 
     $data (): IRefundEscrowTxData {
         return super.$data() as IRefundEscrowTxData;
+    }
+    $gas (): TOverrideReturns<IRefundEscrowTxCaller, Promise<{ gas?: bigint, price?: bigint, error?: Error & { data?: { type: string, params } } }>> {
+        return super.$gas() as any;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -205,7 +217,7 @@ export class RefundEscrow extends ContractBase {
 
     abi: TAbiItem[] = [{"inputs":[{"internalType":"address payable","name":"beneficiary_","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"payee","type":"address"},{"indexed":false,"internalType":"uint256","name":"weiAmount","type":"uint256"}],"name":"Deposited","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[],"name":"RefundsClosed","type":"event"},{"anonymous":false,"inputs":[],"name":"RefundsEnabled","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"payee","type":"address"},{"indexed":false,"internalType":"uint256","name":"weiAmount","type":"uint256"}],"name":"Withdrawn","type":"event"},{"inputs":[],"name":"beneficiary","outputs":[{"internalType":"address payable","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"beneficiaryWithdraw","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"close","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"refundee","type":"address"}],"name":"deposit","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"payee","type":"address"}],"name":"depositsOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"enableRefunds","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"state","outputs":[{"internalType":"enum RefundEscrow.State","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address payable","name":"payee","type":"address"}],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"withdrawalAllowed","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"}]
 
-
+    
 }
 
 type TSender = TAccount & {
@@ -221,11 +233,11 @@ type TSender = TAccount & {
     };
     type TLogOwnershipTransferredParameters = [ previousOwner: TAddress, newOwner: TAddress ];
     type TLogRefundsClosed = {
-
+        
     };
     type TLogRefundsClosedParameters = [  ];
     type TLogRefundsEnabled = {
-
+        
     };
     type TLogRefundsEnabledParameters = [  ];
     type TLogWithdrawn = {
@@ -239,7 +251,7 @@ interface IEvents {
   RefundsClosed: TLogRefundsClosedParameters
   RefundsEnabled: TLogRefundsEnabledParameters
   Withdrawn: TLogWithdrawnParameters
-  '*': any[]
+  '*': any[] 
 }
 
 
@@ -317,7 +329,7 @@ interface IMethods {
   transferOwnership: IMethodTransferOwnership
   withdraw: IMethodWithdraw
   withdrawalAllowed: IMethodWithdrawalAllowed
-  '*': { method: string, arguments: any[] }
+  '*': { method: string, arguments: any[] } 
 }
 
 

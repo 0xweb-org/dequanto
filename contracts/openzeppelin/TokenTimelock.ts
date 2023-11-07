@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-10-05 18:18
+ *  AUTO-Generated Class: 2023-11-05 00:36
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -19,6 +19,7 @@ import { SubjectStream } from '@dequanto/class/SubjectStream';
 import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { TEth } from '@dequanto/models/TEth';
+import type { TOverrideReturns } from '@dequanto/utils/types';
 
 
 import { Etherscan } from '@dequanto/explorer/Etherscan'
@@ -33,6 +34,14 @@ export class TokenTimelock extends ContractBase {
         public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
+
+        
+    }
+
+    
+
+    async $constructor (deployer: TSender, token_: TAddress, beneficiary_: TAddress, releaseTime_: bigint): Promise<TxWriter> {
+        throw new Error('Not implemented. Use the ContractDeployer class to deploy the contract');
     }
 
     // 0x38af3eed
@@ -56,11 +65,14 @@ export class TokenTimelock extends ContractBase {
     }
 
     $call () {
-        return super.$call() as ITokenTimelockTxCaller;;
+        return super.$call() as ITokenTimelockTxCaller;
     }
 
     $data (): ITokenTimelockTxData {
         return super.$data() as ITokenTimelockTxData;
+    }
+    $gas (): TOverrideReturns<ITokenTimelockTxCaller, Promise<{ gas?: bigint, price?: bigint, error?: Error & { data?: { type: string, params } } }>> {
+        return super.$gas() as any;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -86,7 +98,7 @@ export class TokenTimelock extends ContractBase {
 
     abi: TAbiItem[] = [{"inputs":[{"internalType":"contract IERC20","name":"token_","type":"address"},{"internalType":"address","name":"beneficiary_","type":"address"},{"internalType":"uint256","name":"releaseTime_","type":"uint256"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"beneficiary","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"release","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"releaseTime","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"token","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"}]
 
-
+    
 }
 
 type TSender = TAccount & {
@@ -96,7 +108,7 @@ type TSender = TAccount & {
 
 
 interface IEvents {
-  '*': any[]
+  '*': any[] 
 }
 
 
@@ -126,7 +138,7 @@ interface IMethods {
   release: IMethodRelease
   releaseTime: IMethodReleaseTime
   token: IMethodToken
-  '*': { method: string, arguments: any[] }
+  '*': { method: string, arguments: any[] } 
 }
 
 

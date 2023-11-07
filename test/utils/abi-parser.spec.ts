@@ -124,5 +124,18 @@ UTest({
             eq_(abi.stateMutability, 'view');
             deepEq_(abi.outputs, [ { name: '', type: 'uint256' } ]);
         })
+    },
+    'parse with memory keywords' () {
+        [
+            `upgradeToAndCall(address newImplementation, bytes memory data) external`,
+            `upgradeToAndCall(address newImplementation, bytes calldata data) external`,
+        ].forEach(str => {
+            let abi = $abiParser.parseMethod(str);
+            eq_(abi.name, 'upgradeToAndCall', str);
+
+            deepEq_(abi.inputs[0], { name: 'newImplementation', type: 'address' });
+            deepEq_(abi.inputs[1], { name: 'data', type: 'bytes' });
+        })
+
     }
 })

@@ -25,6 +25,7 @@ import { TEth } from '@dequanto/models/TEth';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { RpcTypes } from '@dequanto/rpc/Rpc';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
+import { ContractStorageReaderBase } from './ContractStorageReaderBase';
 
 
 export abstract class ContractBase {
@@ -38,10 +39,13 @@ export abstract class ContractBase {
     private writerConfig?: ITxWriterOptions;
 
     abstract abi?: TAbiItem[]
-    abstract $meta?: {
+
+    $meta?: {
         // Path to the compiled JSON artifact file
         artifact?: string
     }
+
+    storage?: ContractStorageReaderBase
 
     constructor (
         public address: TAddress,

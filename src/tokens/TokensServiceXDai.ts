@@ -1,10 +1,10 @@
 import di from 'a-di';
 import { TokensService } from './TokensService';
-import { ERC20 } from '@dequanto/contracts/common/ERC20';
 import { TAddress } from '@dequanto/models/TAddress';
 import { XDaiscan } from '@dequanto/chains/xdai/XDaiscan';
 import { IToken } from '@dequanto/models/IToken';
 import { ITokenProvider } from './TokenProviders/ITokenProvider';
+import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
 
 export class TokensServiceXDai extends TokensService {
     constructor () {

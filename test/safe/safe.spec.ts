@@ -1,7 +1,7 @@
 import { File } from 'atma-io';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { GnosisSafeFactory } from '@dequanto/safe/GnosisSafeFactory';
-import { GnosisSafe } from '@dequanto-contracts/gnosis/GnosisSafe';
+import { GnosisSafe } from '@dequanto-contracts/safe/GnosisSafe';
 import { GnosisSafeHandler } from '@dequanto/safe/GnosisSafeHandler';
 import { InMemoryServiceTransport } from '@dequanto/safe/transport/InMemoryServiceTransport';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';

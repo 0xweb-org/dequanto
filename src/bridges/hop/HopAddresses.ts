@@ -515,4 +515,4 @@ export const HopAddresses = {
       }
     }
   }
-}
+} as const

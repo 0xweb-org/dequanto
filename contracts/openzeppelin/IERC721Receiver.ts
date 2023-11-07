@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-10-05 18:18
+ *  AUTO-Generated Class: 2023-11-05 00:36
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -19,6 +19,7 @@ import { SubjectStream } from '@dequanto/class/SubjectStream';
 import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { TEth } from '@dequanto/models/TEth';
+import type { TOverrideReturns } from '@dequanto/utils/types';
 
 
 import { Etherscan } from '@dequanto/explorer/Etherscan'
@@ -33,7 +34,11 @@ export class IERC721Receiver extends ContractBase {
         public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
+
+        
     }
+
+    
 
     // 0x150b7a02
     async onERC721Received (sender: TSender, operator: TAddress, from: TAddress, tokenId: bigint, data: TBufferLike): Promise<TxWriter> {
@@ -41,11 +46,14 @@ export class IERC721Receiver extends ContractBase {
     }
 
     $call () {
-        return super.$call() as IIERC721ReceiverTxCaller;;
+        return super.$call() as IIERC721ReceiverTxCaller;
     }
 
     $data (): IIERC721ReceiverTxData {
         return super.$data() as IIERC721ReceiverTxData;
+    }
+    $gas (): TOverrideReturns<IIERC721ReceiverTxCaller, Promise<{ gas?: bigint, price?: bigint, error?: Error & { data?: { type: string, params } } }>> {
+        return super.$gas() as any;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -71,7 +79,7 @@ export class IERC721Receiver extends ContractBase {
 
     abi: TAbiItem[] = [{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"address","name":"from","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"onERC721Received","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"}]
 
-
+    
 }
 
 type TSender = TAccount & {
@@ -81,7 +89,7 @@ type TSender = TAccount & {
 
 
 interface IEvents {
-  '*': any[]
+  '*': any[] 
 }
 
 
@@ -93,7 +101,7 @@ interface IMethodOnERC721Received {
 
 interface IMethods {
   onERC721Received: IMethodOnERC721Received
-  '*': { method: string, arguments: any[] }
+  '*': { method: string, arguments: any[] } 
 }
 
 

@@ -169,6 +169,7 @@ export class HardhatProvider {
         contractName?: string
     }): Promise<{
         contract: TReturn
+        ContractCtor: Constructor<TReturn>,
         receipt: TEth.TxReceipt
         abi: TAbiItem[]
         bytecode: TEth.Hex
@@ -182,12 +183,13 @@ export class HardhatProvider {
         const Factory = await this.getFactory([abi, bytecode], client, signer, args);
 
         const receipt = await Factory.deploy();
-        const contract = await ContractClassFactory.fromAbi<TReturn>(receipt.contractAddress, abi, client, null);
+        const { contract, ContractCtor } = await ContractClassFactory.fromAbi<TReturn>(receipt.contractAddress, abi, client, null);
         const explorer = this.explorer();
         explorer.localDb.push({ name: '', abi: abi, address: receipt.contractAddress });
 
         return {
             contract,
+            ContractCtor,
             receipt,
             abi,
             bytecode,
@@ -207,6 +209,7 @@ export class HardhatProvider {
         abi?: TAbiItem[]
     }): Promise<{
         contract: TReturn
+        ContractCtor: Constructor<TReturn>
         receipt: TEth.TxReceipt
         abi: TAbiItem[]
         bytecode: TEth.Hex
@@ -220,19 +223,20 @@ export class HardhatProvider {
         const Factory = await this.getFactory([ abi , bytecode ], client, signer, args);
 
         const receipt = await Factory.deploy();
-        const contract = await ContractClassFactory.fromAbi<TReturn>(receipt.contractAddress, abi, client, null);
+        const { contract, ContractCtor } = await ContractClassFactory.fromAbi<TReturn>(receipt.contractAddress, abi, client, null);
 
         const explorer = this.explorer();
         explorer.localDb.push({ name: '', abi: abi, address: receipt.contractAddress });
         return {
-            contract: contract,
+            contract,
+            ContractCtor,
             abi,
             bytecode,
             receipt: receipt,
         };
     }
 
-    async compileSol (solContractPath: string, options?: {
+    async compileSol<T extends ContractBase = IContractWrapped> (solContractPath: string, options?: {
         paths?: {
             root?: string
             artifacts?: string
@@ -245,6 +249,7 @@ export class HardhatProvider {
         // renamed output
         artifact: string
         source: IGeneratorSources
+        ContractCtor: Constructor<T>
     }> {
 
         solContractPath = $path.normalize(solContractPath);
@@ -329,6 +334,11 @@ export class HardhatProvider {
         let { abi, bytecode } = await File.readAsync<{ abi, bytecode }> (output);
         let files = await Directory.readFilesAsync(dir, '*.sol');
 
+        let { contract, ContractCtor } = ContractClassFactory.fromAbi<T>(null, abi, null, null, {
+            $meta: {
+                artifact: output
+            }
+        })
 
         let fileMap = await alot(files)
         .mapAsync(async file => {
@@ -347,7 +357,8 @@ export class HardhatProvider {
             source: {
                 contractName: options?.contractName,
                 files: fileMap
-            }
+            },
+            ContractCtor
         };
     }
 

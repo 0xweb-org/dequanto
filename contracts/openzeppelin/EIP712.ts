@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-10-05 18:18
+ *  AUTO-Generated Class: 2023-11-05 00:35
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -19,6 +19,7 @@ import { SubjectStream } from '@dequanto/class/SubjectStream';
 import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { TEth } from '@dequanto/models/TEth';
+import type { TOverrideReturns } from '@dequanto/utils/types';
 
 
 import { Etherscan } from '@dequanto/explorer/Etherscan'
@@ -46,7 +47,11 @@ export class EIP712 extends ContractBase {
         public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
+
+        
     }
+
+    
 
     // 0x84b0196e
     async eip712Domain (): Promise<{ fields: TBufferLike, name: string, version: string, chainId: bigint, verifyingContract: TAddress, salt: TBufferLike, extensions: bigint[] }> {
@@ -54,11 +59,14 @@ export class EIP712 extends ContractBase {
     }
 
     $call () {
-        return super.$call() as IEIP712TxCaller;;
+        return super.$call() as IEIP712TxCaller;
     }
 
     $data (): IEIP712TxData {
         return super.$data() as IEIP712TxData;
+    }
+    $gas (): TOverrideReturns<IEIP712TxCaller, Promise<{ gas?: bigint, price?: bigint, error?: Error & { data?: { type: string, params } } }>> {
+        return super.$gas() as any;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -95,7 +103,7 @@ export class EIP712 extends ContractBase {
 
     abi: TAbiItem[] = [{"inputs":[],"name":"InvalidShortString","type":"error"},{"inputs":[{"internalType":"string","name":"str","type":"string"}],"name":"StringTooLong","type":"error"},{"anonymous":false,"inputs":[],"name":"EIP712DomainChanged","type":"event"},{"inputs":[],"name":"eip712Domain","outputs":[{"internalType":"bytes1","name":"fields","type":"bytes1"},{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"version","type":"string"},{"internalType":"uint256","name":"chainId","type":"uint256"},{"internalType":"address","name":"verifyingContract","type":"address"},{"internalType":"bytes32","name":"salt","type":"bytes32"},{"internalType":"uint256[]","name":"extensions","type":"uint256[]"}],"stateMutability":"view","type":"function"}]
 
-
+    
 }
 
 type TSender = TAccount & {
@@ -103,13 +111,13 @@ type TSender = TAccount & {
 }
 
     type TLogEIP712DomainChanged = {
-
+        
     };
     type TLogEIP712DomainChangedParameters = [  ];
 
 interface IEvents {
   EIP712DomainChanged: TLogEIP712DomainChangedParameters
-  '*': any[]
+  '*': any[] 
 }
 
 
@@ -121,7 +129,7 @@ interface IMethodEip712Domain {
 
 interface IMethods {
   eip712Domain: IMethodEip712Domain
-  '*': { method: string, arguments: any[] }
+  '*': { method: string, arguments: any[] } 
 }
 
 

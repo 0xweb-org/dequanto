@@ -1,8 +1,8 @@
 import di from 'a-di';
 import { TokensService } from './TokensService';
 import { Bscscan } from '@dequanto/explorer/Bscscan';
-import { ERC20 } from '@dequanto/contracts/common/ERC20';
 import { TAddress } from '@dequanto/models/TAddress';
+import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
 
 export class TokensServiceBsc extends TokensService {
     constructor () {

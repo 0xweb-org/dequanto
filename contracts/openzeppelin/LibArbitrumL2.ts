@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-10-05 18:18
+ *  AUTO-Generated Class: 2023-11-05 00:36
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -19,6 +19,7 @@ import { SubjectStream } from '@dequanto/class/SubjectStream';
 import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { TEth } from '@dequanto/models/TEth';
+import type { TOverrideReturns } from '@dequanto/utils/types';
 
 
 import { Etherscan } from '@dequanto/explorer/Etherscan'
@@ -33,7 +34,11 @@ export class LibArbitrumL2 extends ContractBase {
         public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
+
+        
     }
+
+    
 
     // 0xbf0a12cf
     async ARBSYS (): Promise<TAddress> {
@@ -41,11 +46,14 @@ export class LibArbitrumL2 extends ContractBase {
     }
 
     $call () {
-        return super.$call() as ILibArbitrumL2TxCaller;;
+        return super.$call() as ILibArbitrumL2TxCaller;
     }
 
     $data (): ILibArbitrumL2TxData {
         return super.$data() as ILibArbitrumL2TxData;
+    }
+    $gas (): TOverrideReturns<ILibArbitrumL2TxCaller, Promise<{ gas?: bigint, price?: bigint, error?: Error & { data?: { type: string, params } } }>> {
+        return super.$gas() as any;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -71,7 +79,7 @@ export class LibArbitrumL2 extends ContractBase {
 
     abi: TAbiItem[] = [{"inputs":[],"name":"ARBSYS","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"}]
 
-
+    
 }
 
 type TSender = TAccount & {
@@ -81,7 +89,7 @@ type TSender = TAccount & {
 
 
 interface IEvents {
-  '*': any[]
+  '*': any[] 
 }
 
 
@@ -93,7 +101,7 @@ interface IMethodARBSYS {
 
 interface IMethods {
   ARBSYS: IMethodARBSYS
-  '*': { method: string, arguments: any[] }
+  '*': { method: string, arguments: any[] } 
 }
 
 

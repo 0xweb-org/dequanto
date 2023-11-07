@@ -2,9 +2,9 @@ import di from 'a-di';
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
 import { TxLogParser } from '@dequanto/txs/receipt/TxLogParser'
 import { File } from 'atma-io'
-import { TransactionReceipt } from 'web3-core';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { $contract } from '@dequanto/utils/$contract';
+import { TEth } from '@dequanto/models/TEth';
 
 const tx = {
     swap: `0x7e91bf011c11e5e8a553db696bd4b070507b7149af841eb0319010bbfb03502a`
@@ -16,7 +16,7 @@ UTest({
         await File.writeAsync(`./test/fixtures/receipts/swap.json`, receipt);
     },
     async 'parse swap logs' () {
-        let swapReceipt = await File.readAsync<TransactionReceipt>('./test/fixtures/receipts/swap.json');
+        let swapReceipt = await File.readAsync<TEth.TxReceipt>('./test/fixtures/receipts/swap.json');
 
         let parser = new TxLogParser();
         let logs = await parser.parse(swapReceipt);

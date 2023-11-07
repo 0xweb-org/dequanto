@@ -167,6 +167,11 @@ export namespace $abiParser {
         if (match) {
             name = match.groups.name;
             type = match.groups.type;
+
+            let trimmed = type.replace(/\b(memory|calldata)\b/, '').trim();
+            if (trimmed !== '') {
+                type = trimmed;
+            }
         }
         return [
             {

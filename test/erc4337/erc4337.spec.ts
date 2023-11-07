@@ -1,10 +1,8 @@
 import { l } from '@dequanto/utils/$logger';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
-import { EntryPoint } from '@dequanto-contracts/ERC4337/EntryPoint/EntryPoint';
+
 import { Erc4337Service } from '@dequanto/erc4337/Erc4337Service';
-import { SimpleAccount } from '@dequanto-contracts/ERC4337/SimpleAccount/SimpleAccount';
-import { SimpleAccountFactory } from '@dequanto-contracts/ERC4337/SimpleAccountFactory/SimpleAccountFactory';
 import { UserOperation } from '@dequanto/erc4337/models/UserOperation';
 import { Erc4337TxWriter } from '@dequanto/erc4337/Erc4337TxWriter';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
@@ -16,6 +14,9 @@ import { Erc4337Account } from '@dequanto/models/TAccount';
 import { $is } from '@dequanto/utils/$is';
 import { Config } from '@dequanto/Config';
 import { $config } from '@dequanto/utils/$config';
+import { EntryPoint } from '@dequanto-contracts/erc4337/EntryPoint/EntryPoint';
+import { SimpleAccount } from '@dequanto-contracts/erc4337/SimpleAccount/SimpleAccount';
+import { SimpleAccountFactory } from '@dequanto-contracts/erc4337/SimpleAccountFactory/SimpleAccountFactory';
 
 const provider = new HardhatProvider();
 const client = provider.client();

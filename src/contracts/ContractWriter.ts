@@ -6,7 +6,7 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $abiParser } from '../utils/$abiParser';
-import { ChainAccount, TAccount } from "@dequanto/models/TAccount";
+import { ChainAccount, IAccount, TAccount } from "@dequanto/models/TAccount";
 import { ITxConfig } from '@dequanto/txs/ITxConfig';
 import { $logger } from '@dequanto/utils/$logger';
 import { $class } from '@dequanto/utils/$class';
@@ -19,7 +19,11 @@ interface IChainAccountSender extends ChainAccount {
 
 
 export interface IContractWriter {
-    writeAsync<T = any>(eoa: { address?: string, key: string }, methodAbi: string | TAbiItem, ...params: any[]): Promise<TxWriter>
+    writeAsync<T = any>(
+        account:  IAccount & {  value?: number | string | bigint }
+        , methodAbi: string | TAbiItem,
+        ...params: any[]
+    ): Promise<TxWriter>
 }
 
 export class ContractWriter implements IContractWriter {
@@ -52,7 +56,7 @@ export class ContractWriter implements IContractWriter {
     * @returns {TxWriter}
      */
     async writeAsync<T = any>(
-        account: TAccount & {  value?: number | string | bigint },
+        account: IAccount & {  value?: number | string | bigint },
         interfaceAbi: string | TAbiItem,
         params: any[],
         configs?: {

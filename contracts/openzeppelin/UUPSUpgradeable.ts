@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-10-05 18:18
+ *  AUTO-Generated Class: 2023-11-05 00:36
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -19,6 +19,7 @@ import { SubjectStream } from '@dequanto/class/SubjectStream';
 import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { TEth } from '@dequanto/models/TEth';
+import type { TOverrideReturns } from '@dequanto/utils/types';
 
 
 import { Etherscan } from '@dequanto/explorer/Etherscan'
@@ -33,7 +34,11 @@ export class UUPSUpgradeable extends ContractBase {
         public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
+
+        
     }
+
+    
 
     // 0x52d1902d
     async proxiableUUID (): Promise<TBufferLike> {
@@ -51,11 +56,14 @@ export class UUPSUpgradeable extends ContractBase {
     }
 
     $call () {
-        return super.$call() as IUUPSUpgradeableTxCaller;;
+        return super.$call() as IUUPSUpgradeableTxCaller;
     }
 
     $data (): IUUPSUpgradeableTxData {
         return super.$data() as IUUPSUpgradeableTxData;
+    }
+    $gas (): TOverrideReturns<IUUPSUpgradeableTxCaller, Promise<{ gas?: bigint, price?: bigint, error?: Error & { data?: { type: string, params } } }>> {
+        return super.$gas() as any;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -126,7 +134,7 @@ export class UUPSUpgradeable extends ContractBase {
 
     abi: TAbiItem[] = [{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"previousAdmin","type":"address"},{"indexed":false,"internalType":"address","name":"newAdmin","type":"address"}],"name":"AdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"beacon","type":"address"}],"name":"BeaconUpgraded","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"implementation","type":"address"}],"name":"Upgraded","type":"event"},{"inputs":[],"name":"proxiableUUID","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"newImplementation","type":"address"}],"name":"upgradeTo","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newImplementation","type":"address"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"upgradeToAndCall","outputs":[],"stateMutability":"payable","type":"function"}]
 
-
+    
 }
 
 type TSender = TAccount & {
@@ -150,7 +158,7 @@ interface IEvents {
   AdminChanged: TLogAdminChangedParameters
   BeaconUpgraded: TLogBeaconUpgradedParameters
   Upgraded: TLogUpgradedParameters
-  '*': any[]
+  '*': any[] 
 }
 
 
@@ -174,7 +182,7 @@ interface IMethods {
   proxiableUUID: IMethodProxiableUUID
   upgradeTo: IMethodUpgradeTo
   upgradeToAndCall: IMethodUpgradeToAndCall
-  '*': { method: string, arguments: any[] }
+  '*': { method: string, arguments: any[] } 
 }
 
 

@@ -3,15 +3,16 @@ import axios from 'axios';
 import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
 import { ChainAccount } from "@dequanto/models/TAccount";
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { ERC20 } from '@dequanto/contracts/common/ERC20';
 import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { class_Uri } from 'atma-utils';
 import { TokensService } from '../TokensService';
-import { OneInchRouterContract } from '@dequanto/defi/OneInch/OneInchRouter';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
+import { Web3Client } from '@dequanto/clients/Web3Client';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
 
 const PLATFORMS = {
     eth: 1,
@@ -21,10 +22,12 @@ const PLATFORMS = {
 
 export class OneInchExchange {
 
-    client = Web3ClientFactory.get(this.platform);
-    explorer = BlockChainExplorerProvider.get(this.platform);
+    client: Web3Client
+    explorer: IBlockChainExplorer
 
     constructor(public platform: TPlatform) {
+        this.client = Web3ClientFactory.get(this.platform);
+        this.explorer = BlockChainExplorerProvider.get(this.platform);
 
     }
 

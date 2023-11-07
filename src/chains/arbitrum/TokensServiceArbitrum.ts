@@ -1,9 +1,9 @@
 import di from 'a-di';
 
-import { ERC20 } from '@dequanto/contracts/common/ERC20';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TokensService } from '@dequanto/tokens/TokensService';
 import { Arbiscan } from './Arbiscan';
+import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
 
 
 export class TokensServiceArbitrum extends TokensService {

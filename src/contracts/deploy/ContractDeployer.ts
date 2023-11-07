@@ -104,6 +104,7 @@ export class ContractDeployer {
                 path: artifact
             });
         }
+        $require.notEmpty(ctx.contract.name, `Contract name is empty. Anonymous class?`);
         return this.fromName ({
             ...ctx,
             name: ctx.contract.name

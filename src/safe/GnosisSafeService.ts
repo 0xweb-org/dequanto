@@ -1,4 +1,4 @@
-import { GnosisSafe } from '@dequanto-contracts/gnosis/GnosisSafe';
+import { GnosisSafe } from '@dequanto-contracts/safe/GnosisSafe';
 import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { ContractAbiProvider } from '@dequanto/contracts/ContractAbiProvider';

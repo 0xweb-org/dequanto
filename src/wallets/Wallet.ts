@@ -1,10 +1,10 @@
 import di from 'a-di';
 import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { ERC20 } from '@dequanto/contracts/common/ERC20';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TokensService } from '@dequanto/tokens/TokensService';
 import { TPlatform } from '@dequanto/models/TPlatform';
+import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
 
 export class Wallet {
 

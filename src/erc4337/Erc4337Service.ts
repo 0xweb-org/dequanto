@@ -33,9 +33,15 @@ export class Erc4337Service {
         }
     }) {
 
-        this.accountFactoryContract = ContractClassFactory.fromAbi(this.info.addresses.accountFactory, Erc4337Abi.AccountFactory, this.client, this.explorer);
-        this.accountContract = ContractClassFactory.fromAbi($address.ZERO, Erc4337Abi.Account, this.client, this.explorer);
-        this.entryPointContract = ContractClassFactory.fromAbi(this.info.addresses.entryPoint, Erc4337Abi.EntryPoint, this.client, this.explorer);
+        this.accountFactoryContract = ContractClassFactory
+            .fromAbi(this.info.addresses.accountFactory, Erc4337Abi.AccountFactory, this.client, this.explorer)
+            .contract;
+        this.accountContract = ContractClassFactory
+            .fromAbi($address.ZERO, Erc4337Abi.Account, this.client, this.explorer)
+            .contract;
+        this.entryPointContract = ContractClassFactory
+            .fromAbi(this.info.addresses.entryPoint, Erc4337Abi.EntryPoint, this.client, this.explorer)
+            .contract;
 
 
     }

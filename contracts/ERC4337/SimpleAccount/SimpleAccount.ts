@@ -1,6 +1,6 @@
 /**
- *  AUTO-Generated Class: 2023-10-05 18:18
- *  Implementation: https://etherscan.io/address/undefined#code
+ *  AUTO-Generated Class: 2023-11-05 00:40
+ *  Implementation: test/fixtures/erc4337/samples/VerifyingPaymaster.sol
  */
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -19,6 +19,7 @@ import { SubjectStream } from '@dequanto/class/SubjectStream';
 import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { TEth } from '@dequanto/models/TEth';
+import type { TOverrideReturns } from '@dequanto/utils/types';
 
 
 import { Etherscan } from '@dequanto/explorer/Etherscan'
@@ -33,6 +34,14 @@ export class SimpleAccount extends ContractBase {
         public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
+
+        this.storage = new SimpleAccountStorageReader(this.address, this.client, this.explorer);
+    }
+
+    $meta = { artifact: 'artifacts/./test/fixtures/erc4337/samples/SimpleAccount.sol/SimpleAccount.json' }
+
+    async $constructor (deployer: TSender, anEntryPoint: TAddress): Promise<TxWriter> {
+        throw new Error('Not implemented. Use the ContractDeployer class to deploy the contract');
     }
 
     // 0x4a58db19
@@ -126,11 +135,14 @@ export class SimpleAccount extends ContractBase {
     }
 
     $call () {
-        return super.$call() as ISimpleAccountTxCaller;;
+        return super.$call() as ISimpleAccountTxCaller;
     }
 
     $data (): ISimpleAccountTxData {
         return super.$data() as ISimpleAccountTxData;
+    }
+    $gas (): TOverrideReturns<ISimpleAccountTxCaller, Promise<{ gas?: bigint, price?: bigint, error?: Error & { data?: { type: string, params } } }>> {
+        return super.$gas() as any;
     }
 
     onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
@@ -235,7 +247,7 @@ export class SimpleAccount extends ContractBase {
 
     abi: TAbiItem[] = [{"inputs":[{"internalType":"contract IEntryPoint","name":"anEntryPoint","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"previousAdmin","type":"address"},{"indexed":false,"internalType":"address","name":"newAdmin","type":"address"}],"name":"AdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"beacon","type":"address"}],"name":"BeaconUpgraded","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint8","name":"version","type":"uint8"}],"name":"Initialized","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"contract IEntryPoint","name":"entryPoint","type":"address"},{"indexed":true,"internalType":"address","name":"owner","type":"address"}],"name":"SimpleAccountInitialized","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"implementation","type":"address"}],"name":"Upgraded","type":"event"},{"inputs":[],"name":"addDeposit","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"entryPoint","outputs":[{"internalType":"contract IEntryPoint","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"dest","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"bytes","name":"func","type":"bytes"}],"name":"execute","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"dest","type":"address[]"},{"internalType":"bytes[]","name":"func","type":"bytes[]"}],"name":"executeBatch","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"getDeposit","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getNonce","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"anOwner","type":"address"}],"name":"initialize","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256[]","name":"","type":"uint256[]"},{"internalType":"uint256[]","name":"","type":"uint256[]"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC1155BatchReceived","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC1155Received","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC721Received","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"proxiableUUID","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"tokensReceived","outputs":[],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"newImplementation","type":"address"}],"name":"upgradeTo","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newImplementation","type":"address"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"upgradeToAndCall","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"components":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"uint256","name":"nonce","type":"uint256"},{"internalType":"bytes","name":"initCode","type":"bytes"},{"internalType":"bytes","name":"callData","type":"bytes"},{"internalType":"uint256","name":"callGasLimit","type":"uint256"},{"internalType":"uint256","name":"verificationGasLimit","type":"uint256"},{"internalType":"uint256","name":"preVerificationGas","type":"uint256"},{"internalType":"uint256","name":"maxFeePerGas","type":"uint256"},{"internalType":"uint256","name":"maxPriorityFeePerGas","type":"uint256"},{"internalType":"bytes","name":"paymasterAndData","type":"bytes"},{"internalType":"bytes","name":"signature","type":"bytes"}],"internalType":"struct UserOperation","name":"userOp","type":"tuple"},{"internalType":"bytes32","name":"userOpHash","type":"bytes32"},{"internalType":"uint256","name":"missingAccountFunds","type":"uint256"}],"name":"validateUserOp","outputs":[{"internalType":"uint256","name":"validationData","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address payable","name":"withdrawAddress","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"withdrawDepositTo","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}]
 
-    storage = new SimpleAccountStorageReader(this.address, this.client, this.explorer);
+    storage: SimpleAccountStorageReader
 }
 
 type TSender = TAccount & {
@@ -269,7 +281,7 @@ interface IEvents {
   Initialized: TLogInitializedParameters
   SimpleAccountInitialized: TLogSimpleAccountInitializedParameters
   Upgraded: TLogUpgradedParameters
-  '*': any[]
+  '*': any[] 
 }
 
 
@@ -383,7 +395,7 @@ interface IMethods {
   upgradeToAndCall: IMethodUpgradeToAndCall
   validateUserOp: IMethodValidateUserOp
   withdrawDepositTo: IMethodWithdrawDepositTo
-  '*': { method: string, arguments: any[] }
+  '*': { method: string, arguments: any[] } 
 }
 
 
@@ -401,17 +413,50 @@ class SimpleAccountStorageReader extends ContractStorageReaderBase {
         this.$createHandler(this.$slots);
     }
 
-    async accountImplementation(): Promise<TAddress> {
-        return this.$storage.get(['accountImplementation', ]);
+    async _owner(): Promise<TAddress> {
+        return this.$storage.get(['_owner', ]);
+    }
+
+    async entryPoint(): Promise<TAddress> {
+        return this.$storage.get(['entryPoint', ]);
+    }
+
+    async verifyingSigner(): Promise<TAddress> {
+        return this.$storage.get(['verifyingSigner', ]);
+    }
+
+    async senderNonce(key: TAddress): Promise<bigint> {
+        return this.$storage.get(['senderNonce', key]);
     }
 
     $slots = [
     {
         "slot": 0,
         "position": 0,
-        "name": "accountImplementation",
+        "name": "_owner",
         "size": 160,
         "type": "address"
+    },
+    {
+        "slot": 1,
+        "position": 0,
+        "name": "entryPoint",
+        "size": 160,
+        "type": "address"
+    },
+    {
+        "slot": 2,
+        "position": 0,
+        "name": "verifyingSigner",
+        "size": 160,
+        "type": "address"
+    },
+    {
+        "slot": 3,
+        "position": 0,
+        "name": "senderNonce",
+        "size": null,
+        "type": "mapping(address => uint256)"
     }
 ]
 

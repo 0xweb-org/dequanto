@@ -4,6 +4,7 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
 import { ContractBase } from './ContractBase';
 import { $abiParser } from '@dequanto/utils/$abiParser';
+import { Constructor } from 'atma-utils';
 
 
 export interface IContractWrapped extends ContractBase {
@@ -21,36 +22,54 @@ export namespace ContractClassFactory {
         return fromAbi(contractAddr, abiJson, client, explorer);
     }
 
-    export function fromAbi<TReturn extends ContractBase = IContractWrapped> (contractAddr: TAddress, abi: (TAbiItem | string)[], client: Web3Client, explorer: IBlockChainExplorer) {
+    export function fromAbi<TReturn extends ContractBase = IContractWrapped> (
+        contractAddr: TAddress
+        , abi: (TAbiItem | string)[]
+        , client: Web3Client
+        , explorer: IBlockChainExplorer
+        , opts?: {
+            $meta?: ContractBase['$meta']
+        }
+    ): {
+        ContractCtor: Constructor<TReturn>
+        contract: TReturn
+    } {
         let arr = abi.map(item => {
             return typeof item ==='string'
                 ? $abiParser.parseMethod(item)
                 : item
         });
-        let builder = new ClassBuilder <TReturn> (arr);
-        return builder.create(contractAddr, client, explorer) as TReturn;
+        let builder = new ClassBuilder <TReturn> (arr, opts);
+        return builder.create(contractAddr, client, explorer);
     }
 }
 
 
 class ClassBuilder<T extends ContractBase> {
 
-    constructor (private abi: TAbiItem[]) {
+    constructor (private abi: TAbiItem[], private opts?: {
+        $meta?: ContractBase['$meta']
+    }) {
 
     }
 
     create (contractAddr: TAddress, client: Web3Client, explorer: IBlockChainExplorer) {
-        let Ctor = this.createClass(this.abi)
+        let ContractCtor = this.createClass(this.abi)
 
-        this.defineMethods(Ctor, this.abi);
+        this.defineMethods(ContractCtor, this.abi);
 
-        let instance = new Ctor(contractAddr, client, explorer);
-        return instance as IContractWrapped;
+        let contract = new ContractCtor(contractAddr, client, explorer);
+        return {
+            ContractCtor: ContractCtor as Constructor<T>,
+            contract: contract as T,
+        };
     }
 
     private createClass (abi: TAbiItem[]) {
+        let $meta = this.opts?.$meta;
         return class extends ContractBase {
             abi = abi
+            $meta = $meta
         };
     }
 

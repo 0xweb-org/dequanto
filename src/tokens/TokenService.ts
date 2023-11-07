@@ -1,6 +1,5 @@
 import di from 'a-di';
 import { ChainAccount } from "@dequanto/models/TAccount";
-import { WXDaiTokenContract } from '@dequanto/chains/xdai/tokens/WXDaiTokenContract';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -10,6 +9,7 @@ import { TokensServiceFactory } from './TokensServiceFactory';
 import { $require } from '@dequanto/utils/$require';
 import { TokensService } from './TokensService';
 import { RpcTypes } from '@dequanto/rpc/Rpc';
+import { WETH } from '@dequanto-contracts/weth/WETH/WETH';
 
 
 export class TokenService {
@@ -75,10 +75,10 @@ export class TokenService {
         }
         $require.gt(amountWei, 0n);
 
-        let depositor: { deposit: WXDaiTokenContract['deposit'] };
+        let depositor: { deposit: WETH['deposit'] };
         switch (this.client.platform) {
             case 'xdai':
-                depositor = di.resolve(WXDaiTokenContract);
+                depositor = di.resolve(WETH, '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d');
                 break;
         }
         if (depositor == null) {
@@ -93,10 +93,10 @@ export class TokenService {
      *
      */
      async unwrapNative (account: ChainAccount, amount?: number | bigint): Promise<TxWriter> {
-        let depositor: { balanceOf: WXDaiTokenContract['balanceOf'], withdraw: WXDaiTokenContract['withdraw'] };
+        let depositor: { balanceOf: WETH['balanceOf'], withdraw: WETH['withdraw'] };
         switch (this.client.platform) {
             case 'xdai':
-                depositor = di.resolve(WXDaiTokenContract);
+                depositor = di.resolve(WETH, '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d');
                 break;
         }
         if (depositor == null) {
