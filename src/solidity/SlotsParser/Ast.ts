@@ -9,14 +9,23 @@ import {
     BaseASTNode,
     BinaryOperation,
     BooleanLiteral,
-    ContractDefinition, DecimalNumber, ElementaryTypeName, EmitStatement, EnumDefinition,
+    ContractDefinition,
+    DecimalNumber,
+    ElementaryTypeName,
+    EmitStatement,
+    EnumDefinition,
     EventDefinition,
     Expression,
     FunctionCall,
     FunctionDefinition,
     HexNumber,
     Identifier,
-    ImportDirective, IndexAccess, MemberAccess, ModifierDefinition, NumberLiteral, SourceUnit,
+    ImportDirective,
+    IndexAccess,
+    MemberAccess,
+    ModifierDefinition,
+    NumberLiteral,
+    SourceUnit,
     StateVariableDeclaration,
     StringLiteral,
     StructDefinition,
@@ -28,6 +37,7 @@ import {
 } from '@solidity-parser/parser/dist/src/ast-types';
 import { $logger } from '@dequanto/utils/$logger';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { TSourceFileContract } from './SourceFile';
 
 export namespace Ast {
     export function parse(code: string, opts?: { path: string; }): { ast: SourceUnit, version: string } {
@@ -88,7 +98,11 @@ export namespace Ast {
         }
         return fns;
     }
-    export function getUserDefinedType(node: ContractDefinition | SourceUnit, name: string): (StructDefinition | ContractDefinition | EnumDefinition) & { parent?; } {
+    export function getUserDefinedType(
+        node: ContractDefinition | SourceUnit
+        , name: string
+        , $sourceFiles?: TSourceFileContract[]
+    ): (StructDefinition | ContractDefinition | EnumDefinition) & { parent?; } {
         let [key, ...nestings] = name.split('.');
         let nodeFound = getUserDefinedTypeRaw(node, key);
         if (nodeFound == null) {
@@ -101,6 +115,12 @@ export namespace Ast {
         while (nestings.length > 0 && nodeFound != null) {
             key = nestings.shift();
             nodeFound = getUserDefinedTypeRaw(nodeFound as any, key);
+        }
+        if (nodeFound == null && $sourceFiles?.length > 0) {
+            nodeFound = alot($sourceFiles)
+                .map(x => Ast.getUserDefinedType(x.contract, name))
+                .filter(x => x != null)
+                .first();
         }
         return nodeFound as any;
     }
@@ -251,7 +271,6 @@ export namespace Ast {
         return null;
     }
 
-
     function getUserDefinedTypeRaw(node: ContractDefinition | SourceUnit, name: string): StructDefinition | ContractDefinition | EnumDefinition {
         let arr = isContractDefinition(node)
             ? node.subNodes
@@ -266,8 +285,6 @@ export namespace Ast {
         }
         return null;
     }
-
-
 
     export function serialize (node: Identifier
         | MemberAccess
@@ -316,9 +333,14 @@ export namespace Ast {
         throw new Error(`Unknown node ${JSON.stringify(node)}`)
     }
 
-    export function serializeTypeName (name: string, typeName: TypeName | VariableDeclaration, source: ContractDefinition | SourceUnit): TAbiInput {
+    export function serializeTypeName (
+        name: string
+        , typeName: TypeName | VariableDeclaration
+        , source: ContractDefinition | SourceUnit
+        , $sourceFiles: TSourceFileContract[]
+    ): TAbiInput {
         if (isVariableDeclaration(typeName)) {
-            return serializeTypeName(typeName.name, typeName.typeName, source);
+            return serializeTypeName(typeName.name, typeName.typeName, source, $sourceFiles);
         }
         if (isElementaryTypeName(typeName)) {
             return {
@@ -342,7 +364,7 @@ export namespace Ast {
                     name: name,
                     type: 'tuple',
                     components: struct.members.map(member => {
-                        return serializeTypeName(member.name, member.typeName, source)
+                        return serializeTypeName(member.name, member.typeName, source, $sourceFiles)
                     })
                 };
             }
@@ -350,7 +372,11 @@ export namespace Ast {
         throw new Error(`@TODO implement complex type to abi serializer: ${name} = ${ JSON.stringify(typeName) }`);
     }
 
-    export function getAbi (node: EventDefinition | FunctionDefinition, source: ContractDefinition | SourceUnit): TAbiItem {
+    export function getAbi (
+        node: EventDefinition | FunctionDefinition
+        , source: ContractDefinition | SourceUnit
+        , $sourceFiles: TSourceFileContract[]
+    ): TAbiItem {
         if (Ast.isEventDefinition(node)) {
             return {
                 type: 'event',
@@ -359,7 +385,7 @@ export namespace Ast {
                     return {
                         name: param.name,
                         type: serialize(param.typeName)
-                    }
+                    };
                 })
             }
         }
@@ -368,11 +394,10 @@ export namespace Ast {
                 type: 'function',
                 name: node.name ?? (node.isConstructor ? 'constructor' : null),
                 inputs: node.parameters.map(param => {
-                    return serializeTypeName(param.name, param.typeName, source);
+                    return serializeTypeName(param.name, param.typeName, source, $sourceFiles);
                 })
             }
         }
-
         throw new Error(`Unknown node to get the ABI from: ${(node as any)?.type}`)
     }
 }

@@ -119,7 +119,7 @@ export class SourceFile {
         return contract;
     }
     async getUserDefinedType(name: string, skipImports?: { [path: string]: boolean; }): Promise<ContractDefinition | StructDefinition | EnumDefinition> {
-        // Fix infintie recursion of nested imports;
+        // Fix infinite recursion of nested imports;
         skipImports ??= {};
 
         let ast = await this.getAst();

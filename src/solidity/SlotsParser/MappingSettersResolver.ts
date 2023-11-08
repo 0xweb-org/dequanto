@@ -113,7 +113,15 @@ export namespace MappingSettersResolver {
 
         let arr = alot(allMethods)
             .mapMany(method => {
-                let mutations = $astSetters.extractMappingMutations(mappingVarName, method, allMethods, allModifiers, allEvents, contract);
+                let mutations = $astSetters.extractMappingMutations(
+                    mappingVarName
+                    , method
+                    , allMethods
+                    , allModifiers
+                    , allEvents
+                    , contract
+                    , $base
+                );
                 if (mutations == null || mutations.length == 0) {
                     // No mutation
                     return [];
@@ -139,7 +147,7 @@ export namespace MappingSettersResolver {
                         $logger.error(`Event ${ event.name } not found in events`)
                     }
                     return <TMappingSetterEvent>{
-                        event: mutation.event.abi ?? Ast.getAbi(eventDeclaration, contract),
+                        event: mutation.event.abi ?? Ast.getAbi(eventDeclaration, contract, $base),
                         accessors: mutation.accessors,
                         accessorsIdxMapping: mutation.accessorsIdxMapping,
                     };
@@ -171,6 +179,7 @@ namespace $astSetters {
         , allModifiers: ModifierDefinition[]
         , allEvents: EventDefinition[]
         , source: ContractDefinition | SourceUnit
+        , $sourceFiles: TSourceFileContract[]
     ): TEventForMappingMutation[] {
 
         let body = method.body;
@@ -346,7 +355,7 @@ namespace $astSetters {
             }
 
             return {
-                method: Ast.getAbi(method, source),
+                method: Ast.getAbi(method, source, $sourceFiles),
                 accessors: setterIdentifiers.map(x => x.key)
             }
         }).toArray();
