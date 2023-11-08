@@ -37,7 +37,7 @@ import {
 } from '@solidity-parser/parser/dist/src/ast-types';
 import { $logger } from '@dequanto/utils/$logger';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { TSourceFileContract } from './SourceFile';
+import { SourceFile, TSourceFileContract } from './SourceFile';
 
 export namespace Ast {
     export function parse(code: string, opts?: { path: string; }): { ast: SourceUnit, version: string } {
@@ -98,11 +98,7 @@ export namespace Ast {
         }
         return fns;
     }
-    export function getUserDefinedType(
-        node: ContractDefinition | SourceUnit
-        , name: string
-        , $sourceFiles?: TSourceFileContract[]
-    ): (StructDefinition | ContractDefinition | EnumDefinition) & { parent?; } {
+    export function getUserDefinedType(node: ContractDefinition | SourceUnit, name: string): (StructDefinition | ContractDefinition | EnumDefinition) & { parent?; } {
         let [key, ...nestings] = name.split('.');
         let nodeFound = getUserDefinedTypeRaw(node, key);
         if (nodeFound == null) {
@@ -115,12 +111,6 @@ export namespace Ast {
         while (nestings.length > 0 && nodeFound != null) {
             key = nestings.shift();
             nodeFound = getUserDefinedTypeRaw(nodeFound as any, key);
-        }
-        if (nodeFound == null && $sourceFiles?.length > 0) {
-            nodeFound = alot($sourceFiles)
-                .map(x => Ast.getUserDefinedType(x.contract, name))
-                .filter(x => x != null)
-                .first();
         }
         return nodeFound as any;
     }
@@ -296,7 +286,7 @@ export namespace Ast {
         | DecimalNumber
         | HexNumber
         | NumberLiteral
-    ) {
+    ): string {
         if (Ast.isIdentifier(node)) {
             return node.name;
         }
@@ -333,20 +323,20 @@ export namespace Ast {
         throw new Error(`Unknown node ${JSON.stringify(node)}`)
     }
 
-    export function serializeTypeName (
+    export async function serializeTypeName (
         name: string
         , typeName: TypeName | VariableDeclaration
         , source: ContractDefinition | SourceUnit
-        , $sourceFiles: TSourceFileContract[]
-    ): TAbiInput {
+        , sourceFile: SourceFile
+    ): Promise<TAbiInput> {
         if (isVariableDeclaration(typeName)) {
-            return serializeTypeName(typeName.name, typeName.typeName, source, $sourceFiles);
+            return serializeTypeName(typeName.name, typeName.typeName, source, sourceFile);
         }
         if (isElementaryTypeName(typeName)) {
             return {
                 name: name,
                 type: typeName.name
-            }
+            };
         }
         if (isArrayTypeName(typeName)) {
             let baseTypeName = typeName.baseTypeName;
@@ -359,24 +349,27 @@ export namespace Ast {
         }
         if (isUserDefinedTypeName(typeName)) {
             let struct = Ast.getUserDefinedType(source, typeName.namePath);
+            if (struct == null) {
+                struct = await sourceFile.getUserDefinedType(typeName.namePath);
+            }
             if (struct != null && isStructDefinition(struct)) {
                 return {
                     name: name,
                     type: 'tuple',
-                    components: struct.members.map(member => {
-                        return serializeTypeName(member.name, member.typeName, source, $sourceFiles)
-                    })
+                    components: await alot(struct.members).mapAsync(async member => {
+                        return await serializeTypeName(member.name, member.typeName, source, sourceFile)
+                    }).toArrayAsync()
                 };
             }
         }
         throw new Error(`@TODO implement complex type to abi serializer: ${name} = ${ JSON.stringify(typeName) }`);
     }
 
-    export function getAbi (
+    export async function getAbi (
         node: EventDefinition | FunctionDefinition
         , source: ContractDefinition | SourceUnit
-        , $sourceFiles: TSourceFileContract[]
-    ): TAbiItem {
+        , sourceFile?: SourceFile
+    ): Promise<TAbiItem> {
         if (Ast.isEventDefinition(node)) {
             return {
                 type: 'event',
@@ -393,9 +386,9 @@ export namespace Ast {
             return {
                 type: 'function',
                 name: node.name ?? (node.isConstructor ? 'constructor' : null),
-                inputs: node.parameters.map(param => {
-                    return serializeTypeName(param.name, param.typeName, source, $sourceFiles);
-                })
+                inputs: await alot(node.parameters).mapAsync(async param => {
+                    return serializeTypeName(param.name, param.typeName, source, sourceFile);
+                }).toArrayAsync()
             }
         }
         throw new Error(`Unknown node to get the ABI from: ${(node as any)?.type}`)

@@ -85,13 +85,14 @@ export namespace MappingSettersResolver {
                 return await extractSettersSingle(
                     mappingVarName,
                     item.contract,
-                    chain.slice(0, i)
+                    chain.slice(0, i),
+                    sourceFile
                 );
             })
             .toArrayAsync({ threads: 1 });
 
         let errors = alot(arr).mapMany(x => x.errors ?? []).toArray();
-        let events = alot(arr).mapMany(x => x.events ?? []).distinctBy(x => x.event.name + x.accessorsIdxMapping.join('') ).toArray();
+        let events = alot(arr).mapMany(x => x.events ?? []).distinctBy(x => x.event.name + x.accessorsIdxMapping.join('')).toArray();
         let methods = alot(arr).mapMany(x => x.methods ?? []).distinctBy(x => x.method.name).toArray();
 
         return {
@@ -101,61 +102,68 @@ export namespace MappingSettersResolver {
         };
     }
 
-    async function extractSettersSingle(mappingVarName: string, contract: ContractDefinition, $base: TSourceFileContract[]): Promise<{
+    async function extractSettersSingle(
+        mappingVarName: string
+        , contract: ContractDefinition
+        , inheritance: TSourceFileContract[]
+        , sourceFile: SourceFile
+    ): Promise<{
         errors: Error[],
         events: TMappingSetterEvent[]
         methods?: TMappingSetterMethod[],
     }> {
 
-        let allEvents = Ast.getEventDefinitions(contract, $base?.map(x => x.contract));
-        let allMethods = Ast.getFunctionDeclarations(contract, $base?.map(x => x.contract));
-        let allModifiers = Ast.getModifierDefinitions(contract, $base?.map(x => x.contract));
+        let allEvents = Ast.getEventDefinitions(contract, inheritance?.map(x => x.contract));
+        let allMethods = Ast.getFunctionDeclarations(contract, inheritance?.map(x => x.contract));
+        let allModifiers = Ast.getModifierDefinitions(contract, inheritance?.map(x => x.contract));
 
-        let arr = alot(allMethods)
-            .mapMany(method => {
-                let mutations = $astSetters.extractMappingMutations(
+        let arr = await alot(allMethods)
+            .mapManyAsync(async method => {
+                let mutations = await $astSetters.extractMappingMutations(
                     mappingVarName
                     , method
                     , allMethods
                     , allModifiers
                     , allEvents
                     , contract
-                    , $base
+                    , sourceFile
                 );
                 if (mutations == null || mutations.length == 0) {
                     // No mutation
                     return [];
                 }
-                return alot(mutations).map(mutation => {
-                    if ('error' in mutation) {
-                        // Some error in mutation extractor
-                        $logger.error(`${mutation.error}`);
-                        return { error: mutation.error };
-                    }
 
-                    if ('method' in mutation) {
-                        return mutation;
-                    }
+                return await alot(mutations)
+                    .mapAsync(async mutation => {
+                        if ('error' in mutation) {
+                            // Some error in mutation extractor
+                            $logger.error(`${mutation.error}`);
+                            return { error: mutation.error };
+                        }
 
-                    let event = mutation.event;
-                    if (event == null) {
-                        return { error: new Error(`No event found for ${mappingVarName} mutation in method ${method.name}`) };
-                    }
+                        if ('method' in mutation) {
+                            return mutation;
+                        }
 
-                    let eventDeclaration = allEvents.find(ev => ev.name === event.name && ev.parameters.length === event.args.length);
-                    if (eventDeclaration == null && mutation.event.abi && $is.Hex(event.name) === false) {
-                        $logger.error(`Event ${ event.name } not found in events`)
-                    }
-                    return <TMappingSetterEvent>{
-                        event: mutation.event.abi ?? Ast.getAbi(eventDeclaration, contract, $base),
-                        accessors: mutation.accessors,
-                        accessorsIdxMapping: mutation.accessorsIdxMapping,
-                    };
-                })
-                .toArray();
+                        let event = mutation.event;
+                        if (event == null) {
+                            return { error: new Error(`No event found for ${mappingVarName} mutation in method ${method.name}`) };
+                        }
+
+                        let eventDeclaration = allEvents.find(ev => ev.name === event.name && ev.parameters.length === event.args.length);
+                        if (eventDeclaration == null && mutation.event.abi && $is.Hex(event.name) === false) {
+                            $logger.error(`Event ${event.name} not found in events`)
+                        }
+                        return <TMappingSetterEvent>{
+                            event: mutation.event.abi ?? await Ast.getAbi(eventDeclaration, contract, sourceFile),
+                            accessors: mutation.accessors,
+                            accessorsIdxMapping: mutation.accessorsIdxMapping,
+                        };
+                    })
+                    .toArrayAsync();
             })
-            .filter(x => x != null)
-            .toArray();
+            .filterAsync(x => x != null)
+            .toArrayAsync();
 
         let errors = arr.map(x => 'error' in x ? x.error : null).filter(Boolean);
         let events = arr.map(x => 'event' in x ? x : null).filter(Boolean);
@@ -163,7 +171,7 @@ export namespace MappingSettersResolver {
 
         return {
             errors,
-            events: alot(events).distinctBy(x => x.event.name + x.accessorsIdxMapping.join('') ).toArray(),
+            events: alot(events).distinctBy(x => x.event.name + x.accessorsIdxMapping.join('')).toArray(),
             methods: methods
         }
     }
@@ -172,15 +180,15 @@ export namespace MappingSettersResolver {
 
 namespace $astSetters {
 
-    export function extractMappingMutations(
+    export async function extractMappingMutations(
         mappingVarName: string
         , method: FunctionDefinition
         , allMethods: FunctionDefinition[]
         , allModifiers: ModifierDefinition[]
         , allEvents: EventDefinition[]
         , source: ContractDefinition | SourceUnit
-        , $sourceFiles: TSourceFileContract[]
-    ): TEventForMappingMutation[] {
+        , sourceFile: SourceFile
+    ): Promise<TEventForMappingMutation[]> {
 
         let body = method.body;
 
@@ -226,7 +234,7 @@ namespace $astSetters {
             // Mapping mutation not found. Skip this method
             return [];
         }
-        let results = alot(matches).map(match => {
+        let results = await alot(matches).mapAsync(async match => {
 
             // Mapping mutation found
             // Get the accessors breadcrumbs
@@ -256,7 +264,7 @@ namespace $astSetters {
                 };
             });
 
-            let eventInfo = $node.findArgumentLogInFunction(method, null, setterIdentifiers.map(x => x.key), allEvents, source);
+            let eventInfo = await $node.findArgumentLogInFunction(method, null, setterIdentifiers.map(x => x.key), allEvents, source);
             if (eventInfo) {
                 return eventInfo;
             }
@@ -272,11 +280,12 @@ namespace $astSetters {
                 ?.filter(Boolean);
 
             if (modifiers?.length > 0) {
-                let inModifiers = modifiers
-                    .map(mod => {
-                        return $node.findArgumentLogInFunction(mod, method, setterIdentifiers.map(x => x.key), allEvents, source);
+                let inModifiers = await alot(modifiers)
+                    .mapAsync(async mod => {
+                        return await $node.findArgumentLogInFunction(mod, method, setterIdentifiers.map(x => x.key), allEvents, source);
                     })
-                    .filter(Boolean);
+                    .filterAsync(x => x != null)
+                    .toArrayAsync();
 
                 if (inModifiers.length > 0) {
                     let [eventInfo] = inModifiers;
@@ -291,9 +300,9 @@ namespace $astSetters {
             // Check method calls, which pass the setterIdentifiers into
             let methodCallInfos = $node.findMethodCallsInFunctionWithParameters(method, setterIdentifiers, allMethods);
             if (methodCallInfos.length > 0) {
-                let eventInfos = methodCallInfos
-                    .map(methodCallInfo => {
-                        let eventInfo = $node.findArgumentLogInFunction(methodCallInfo.method, null, methodCallInfo.argumentKeyMapping, allEvents, source);
+                let eventInfos = await alot(methodCallInfos)
+                    .mapAsync(async methodCallInfo => {
+                        let eventInfo = await $node.findArgumentLogInFunction(methodCallInfo.method, null, methodCallInfo.argumentKeyMapping, allEvents, source);
                         if (eventInfo == null) {
                             return null;
                         }
@@ -302,7 +311,8 @@ namespace $astSetters {
                             methodCallInfo,
                         }
                     })
-                    .filter(Boolean);
+                    .filterAsync(x => x != null)
+                    .toArrayAsync();
 
                 if (eventInfos.length > 0) {
                     let { eventInfo, methodCallInfo } = eventInfos[0];
@@ -326,12 +336,12 @@ namespace $astSetters {
                 if (fromArguments) {
 
                     let methodCallInfos = $node.findMethodReferences(method, allMethods);
-                    let eventInfos = methodCallInfos
-                        .map(methodCallInfo => {
+                    let eventInfos = await alot(methodCallInfos)
+                        .mapAsync(async methodCallInfo => {
                             let argumentKeyMapping = argumentsMapping.map(idx => {
                                 return Ast.serialize(methodCallInfo.ref.arguments[idx]);
                             });
-                            let eventInfo = $node.findArgumentLogInFunction(methodCallInfo.method, null, argumentKeyMapping, allEvents, source);
+                            let eventInfo = await $node.findArgumentLogInFunction(methodCallInfo.method, null, argumentKeyMapping, allEvents, source);
                             if (eventInfo == null) {
                                 return null;
                             }
@@ -340,7 +350,8 @@ namespace $astSetters {
                                 methodCallInfo,
                             }
                         })
-                        .filter(Boolean);
+                        .filterAsync(x => x != null)
+                        .toArrayAsync();
 
                     if (eventInfos.length > 0) {
                         let { eventInfo, methodCallInfo } = eventInfos[0];
@@ -355,10 +366,10 @@ namespace $astSetters {
             }
 
             return {
-                method: Ast.getAbi(method, source, $sourceFiles),
+                method: await Ast.getAbi(method, source, sourceFile),
                 accessors: setterIdentifiers.map(x => x.key)
-            }
-        }).toArray();
+            };
+        }).toArrayAsync();
 
         return results;
     }
@@ -424,20 +435,20 @@ namespace $node {
         return { scope: 'state' }
     }
 
-    export function findEventsInFunction(
+    export async function findEventsInFunction(
         method: FunctionDefinition | ModifierDefinition
         , parent: FunctionDefinition
         /** <0.5.0 was no emit statement, search for a method which equals to event declaration */
         , allEvents: EventDefinition[]
         , source: ContractDefinition | SourceUnit
-    ): TEventEmitStatement[] {
+    ): Promise<TEventEmitStatement[]> {
         let body = method.body;
         let events = Ast.findMany<EmitStatement>(body, node => {
             return Ast.isEmitStatement(node) || (Ast.isFunctionCall(node) && allEvents.some(x => x.name === Ast.getFunctionName(node)));
         }).map(match => {
             // transform functionCall to eventCall in <0.5.0
             if (Ast.isFunctionCall(match.node)) {
-                match.node = <EmitStatement> { type: 'EmitStatement', eventCall: match.node };
+                match.node = <EmitStatement>{ type: 'EmitStatement', eventCall: match.node };
             }
             return match;
         });
@@ -494,7 +505,7 @@ namespace $node {
             return Ast.isAssemblyCall(node) && node.functionName?.startsWith('log');
         });
         if (assemblyLogCall) {
-            let topics = assemblyLogCall.node.arguments.slice(2).map(arg => {
+            let topics = await alot(assemblyLogCall.node.arguments.slice(2)).mapAsync(async arg => {
                 let topic = Ast.serialize(arg);
                 let $method = Ast.isModifierDefinition(method)
                     ? parent
@@ -502,7 +513,7 @@ namespace $node {
 
 
                 if (topic === 'shl(224, shr(224, calldataload(0)))') {
-                    let abi = Ast.getAbi($method, source);
+                    let abi = await Ast.getAbi($method, source);
                     let signature = $abiUtils.getTopicSignature(abi);
                     return signature;
                 }
@@ -520,7 +531,7 @@ namespace $node {
                     }
                 }
                 return topic;
-            });
+            }).toArrayAsync();
             let abi = <TAbiItem>{
                 name: topics[0],
                 inputs: topics.slice(1).map(topic => {
@@ -624,18 +635,19 @@ namespace $node {
             .filter(Boolean);
     }
 
-    export function findArgumentLogInFunction(
+    export async function findArgumentLogInFunction(
         method: FunctionDefinition | ModifierDefinition
         , parent: FunctionDefinition
         , accessors: string[]
         , allEvents: EventDefinition[]
         , source: ContractDefinition | SourceUnit
-    ): {
+    ): Promise<{
         event: TEventEmitStatement,
         accessors: string[],
         accessorsIdxMapping: number[]
-    } {
-        let events = $node.findEventsInFunction(method, parent, allEvents, source).filter(event => {
+    }> {
+        let eventsInFunction = await $node.findEventsInFunction(method, parent, allEvents, source);
+        let events = eventsInFunction.filter(event => {
             return accessors.every(key => event.args.some(arg => arg.key === key));
         });
         if (events.length > 0) {
@@ -659,30 +671,3 @@ namespace $node {
 
 }
 
-
-// /**
-//  * Mapping Acessors> ..(ToMethod Parameters)?.. ToEventParameters
-//  */
-// function getIdxMapping(mappings: number[][]) {
-//     return mappings[ mappings.length - 1];
-
-//     if (mappings.length === 1) {
-//         // gets the final event parameters mappings
-//         return mappings[0];
-//     }
-
-//     /**
-//      * allowances[user][address]
-//      * E.g. call inner method like doSomething(address, user) | the mapping will be 1, 0
-//      * E.g. emit event in that method Log(arg1, arg2) | the mapping EventParams<>FunctionParams will be 0, 1
-//      */
-//     let cursor = mappings[0];
-//     for (let i = 1; i < mappings.length; i++) {
-//         let [to] = mappings;
-
-//         cursor = cursor.map((idx, i) => {
-//             return to[idx]
-//         });
-//     }
-//     return cursor;
-// }
