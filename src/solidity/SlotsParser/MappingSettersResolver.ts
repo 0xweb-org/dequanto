@@ -84,9 +84,8 @@ export namespace MappingSettersResolver {
             .mapAsync(async (item, i) => {
                 return await extractSettersSingle(
                     mappingVarName,
-                    item.contract,
+                    item,
                     chain.slice(0, i),
-                    sourceFile
                 );
             })
             .toArrayAsync({ threads: 1 });
@@ -104,18 +103,17 @@ export namespace MappingSettersResolver {
 
     async function extractSettersSingle(
         mappingVarName: string
-        , contract: ContractDefinition
+        , sourceContract: TSourceFileContract
         , inheritance: TSourceFileContract[]
-        , sourceFile: SourceFile
     ): Promise<{
         errors: Error[],
         events: TMappingSetterEvent[]
         methods?: TMappingSetterMethod[],
     }> {
 
-        let allEvents = Ast.getEventDefinitions(contract, inheritance?.map(x => x.contract));
-        let allMethods = Ast.getFunctionDeclarations(contract, inheritance?.map(x => x.contract));
-        let allModifiers = Ast.getModifierDefinitions(contract, inheritance?.map(x => x.contract));
+        let allEvents = Ast.getEventDefinitions(sourceContract.contract, inheritance?.map(x => x.contract));
+        let allMethods = Ast.getFunctionDeclarations(sourceContract.contract, inheritance?.map(x => x.contract));
+        let allModifiers = Ast.getModifierDefinitions(sourceContract.contract, inheritance?.map(x => x.contract));
 
         let arr = await alot(allMethods)
             .mapManyAsync(async method => {
@@ -125,8 +123,8 @@ export namespace MappingSettersResolver {
                     , allMethods
                     , allModifiers
                     , allEvents
-                    , contract
-                    , sourceFile
+                    , sourceContract
+                    , inheritance
                 );
                 if (mutations == null || mutations.length == 0) {
                     // No mutation
@@ -142,6 +140,7 @@ export namespace MappingSettersResolver {
                         }
 
                         if ('method' in mutation) {
+                            // We got only method, but no Event that CONTAINS the Mapping Key within the method
                             return mutation;
                         }
 
@@ -155,7 +154,7 @@ export namespace MappingSettersResolver {
                             $logger.error(`Event ${event.name} not found in events`)
                         }
                         return <TMappingSetterEvent>{
-                            event: mutation.event.abi ?? await Ast.getAbi(eventDeclaration, contract, sourceFile),
+                            event: mutation.event.abi ?? await Ast.getAbi(eventDeclaration, sourceContract, inheritance),
                             accessors: mutation.accessors,
                             accessorsIdxMapping: mutation.accessorsIdxMapping,
                         };
@@ -186,8 +185,8 @@ namespace $astSetters {
         , allMethods: FunctionDefinition[]
         , allModifiers: ModifierDefinition[]
         , allEvents: EventDefinition[]
-        , source: ContractDefinition | SourceUnit
-        , sourceFile: SourceFile
+        , source: TSourceFileContract
+        , inheritance: TSourceFileContract[]
     ): Promise<TEventForMappingMutation[]> {
 
         let body = method.body;
@@ -365,8 +364,9 @@ namespace $astSetters {
                 }
             }
 
+            // local variables are not logged to get the Mapping Key from.
             return {
-                method: await Ast.getAbi(method, source, sourceFile),
+                method: await Ast.getAbi(method, source, inheritance),
                 accessors: setterIdentifiers.map(x => x.key)
             };
         }).toArrayAsync();
@@ -422,7 +422,10 @@ namespace $node {
         if (localVars.some(x => x.node.identifier.name === varName)) {
             return { scope: 'local' };
         }
-        let methodArg = method.parameters?.find(param => param.identifier.name === varName);
+        //console.log('params', method.parameters);
+        let methodArg = method.parameters?.find(param => {
+            return param.identifier?.name === varName;
+        });
         if (methodArg != null) {
             return {
                 scope: 'argument',
@@ -440,7 +443,7 @@ namespace $node {
         , parent: FunctionDefinition
         /** <0.5.0 was no emit statement, search for a method which equals to event declaration */
         , allEvents: EventDefinition[]
-        , source: ContractDefinition | SourceUnit
+        , source: TSourceFileContract
     ): Promise<TEventEmitStatement[]> {
         let body = method.body;
         let events = Ast.findMany<EmitStatement>(body, node => {
@@ -510,7 +513,6 @@ namespace $node {
                 let $method = Ast.isModifierDefinition(method)
                     ? parent
                     : method;
-
 
                 if (topic === 'shl(224, shr(224, calldataload(0)))') {
                     let abi = await Ast.getAbi($method, source);
@@ -640,7 +642,7 @@ namespace $node {
         , parent: FunctionDefinition
         , accessors: string[]
         , allEvents: EventDefinition[]
-        , source: ContractDefinition | SourceUnit
+        , source: TSourceFileContract
     ): Promise<{
         event: TEventEmitStatement,
         accessors: string[],

@@ -68,7 +68,10 @@ export namespace Ast {
     }
     export function getVariableDeclarations(contract: ContractDefinition) {
         let declarations = contract.subNodes.filter(isStateVariableDeclaration) as StateVariableDeclaration[];
-        let vars = alot(declarations).mapMany(x => x.variables).toArray() as VariableDeclaration[];
+        let vars = alot(declarations)
+            .mapMany(x => x.variables)
+            .filter(x => x != null)
+            .toArray() as VariableDeclaration[];
         return vars;
     }
     export function getFunctionDeclarations(contract: ContractDefinition, inheritanceChain?: ContractDefinition[]) {
@@ -146,6 +149,7 @@ export namespace Ast {
                 continue;
             }
             if (Array.isArray(val)) {
+                val = val.filter(x => x != null);
                 if (val.length === 0 || val[0].type == null) {
                     continue;
                 }
@@ -326,11 +330,11 @@ export namespace Ast {
     export async function serializeTypeName (
         name: string
         , typeName: TypeName | VariableDeclaration
-        , source: ContractDefinition | SourceUnit
-        , sourceFile: SourceFile
+        , source: TSourceFileContract
+        , inheritance: TSourceFileContract[]
     ): Promise<TAbiInput> {
         if (isVariableDeclaration(typeName)) {
-            return serializeTypeName(typeName.name, typeName.typeName, source, sourceFile);
+            return serializeTypeName(typeName.name, typeName.typeName, source, inheritance);
         }
         if (isElementaryTypeName(typeName)) {
             return {
@@ -348,27 +352,43 @@ export namespace Ast {
             }
         }
         if (isUserDefinedTypeName(typeName)) {
-            let struct = Ast.getUserDefinedType(source, typeName.namePath);
-            if (struct == null) {
-                struct = await sourceFile.getUserDefinedType(typeName.namePath);
+            let struct = Ast.getUserDefinedType(source.contract, typeName.namePath);
+            if (struct == null && inheritance?.length > 0) {
+                struct = alot(inheritance)
+                    .map(x => Ast.getUserDefinedType(x.contract, typeName.namePath))
+                    .filter(x => x != null)
+                    .first();
             }
-            if (struct != null && isStructDefinition(struct)) {
-                return {
-                    name: name,
-                    type: 'tuple',
-                    components: await alot(struct.members).mapAsync(async member => {
-                        return await serializeTypeName(member.name, member.typeName, source, sourceFile)
-                    }).toArrayAsync()
-                };
+            if (struct == null) {
+                struct = await source.file?.getUserDefinedType(typeName.namePath);
+            }
+
+            if (struct != null) {
+                if (isStructDefinition(struct)) {
+                    return {
+                        name: name,
+                        type: 'tuple',
+                        components: await alot(struct.members).mapAsync(async member => {
+                            return await serializeTypeName(member.name, member.typeName, source, inheritance)
+                        }).toArrayAsync()
+                    };
+                }
+                if (isContractDefinition(struct)) {
+                    return {
+                        name: name,
+                        type: 'address'
+                    };
+                }
             }
         }
+
         throw new Error(`@TODO implement complex type to abi serializer: ${name} = ${ JSON.stringify(typeName) }`);
     }
 
     export async function getAbi (
         node: EventDefinition | FunctionDefinition
-        , source: ContractDefinition | SourceUnit
-        , sourceFile?: SourceFile
+        , source: TSourceFileContract
+        , inheritance?: TSourceFileContract[]
     ): Promise<TAbiItem> {
         if (Ast.isEventDefinition(node)) {
             return {
@@ -387,7 +407,7 @@ export namespace Ast {
                 type: 'function',
                 name: node.name ?? (node.isConstructor ? 'constructor' : null),
                 inputs: await alot(node.parameters).mapAsync(async param => {
-                    return serializeTypeName(param.name, param.typeName, source, sourceFile);
+                    return serializeTypeName(param.name, param.typeName, source, inheritance);
                 }).toArrayAsync()
             }
         }

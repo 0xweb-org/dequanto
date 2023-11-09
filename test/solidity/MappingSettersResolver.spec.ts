@@ -1,6 +1,7 @@
 import { MappingSettersResolver } from '@dequanto/solidity/SlotsParser/MappingSettersResolver';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $contract } from '@dequanto/utils/$contract';
+import { Directory, File } from 'atma-io';
 
 UTest({
     async 'should get simple event (with different orders)'() {
@@ -338,14 +339,18 @@ UTest({
     },
     async 'should parse DAI contract'() {
 
-        let result = await MappingSettersResolver.getEventsForMappingMutations('nonces', { path: './test/fixtures/parser/DAI.sol' });
-        //-console.dir(result, { depth: null })
-        let [event] = result.events;
+        let result = await MappingSettersResolver.getEventsForMappingMutations('nonces', {
+            path: './test/fixtures/parser/DAI.sol'
+        });
+
+        let [ event ] = result.events;
         eq_(event.event.name, 'Approval');
         deepEq_(event.accessorsIdxMapping, [0])
     },
     async 'should parse old ENJToken contract'() {
-        let result = await MappingSettersResolver.getEventsForMappingMutations('balanceOf', { path: './test/fixtures/parser/v04/ENJToken.sol' });
+        let result = await MappingSettersResolver.getEventsForMappingMutations('balanceOf', {
+            path: './test/fixtures/parser/v04/ENJToken.sol'
+        });
         eq_(result.events.length, 2);
         eq_(result.events[0].event.name, 'Transfer');
         deepEq_(result.events[0].accessorsIdxMapping, [0]);
@@ -355,7 +360,9 @@ UTest({
     },
     async 'should handle _transfer method, which has "from" and "to" mutations in one method'() {
         //SafeToken
-        let { events, errors, methods } = await MappingSettersResolver.getEventsForMappingMutations('_balances', { path: './test/fixtures/parser/SAFE/SafeToken.sol' });
+        let { events, errors, methods } = await MappingSettersResolver.getEventsForMappingMutations('_balances', {
+            path: './test/fixtures/parser/SAFE/SafeToken.sol'
+        });
 
         eq_(errors[0], null);
         eq_(methods[0], null);
@@ -403,11 +410,8 @@ UTest({
 
         let code = `
             contract A {
-
                 mapping(address => bool) internal blacklisted;
-
                 function initializeV2(address lostAndFound) external {
-
                     blacklisted[address(this)] = true;
                 }
             }
@@ -417,5 +421,37 @@ UTest({
         eq_(result.methods.length, 1);
         eq_(result.methods[0].method.name, 'initializeV2');
         eq_(result.methods[0].accessors[0], 'address(this)');
+    },
+    async 'should parse complex contract with multiple files'() {
+
+        let path = `./test/fixtures/mapping-setters/UniswapV3Staker/UniswapV3Staker.sol`;
+
+        let result = await MappingSettersResolver.getEventsForMappingMutations('incentives', {
+            path: path
+        }, 'UniswapV3Staker');
+        eq_(result.events.length, 0);
+        eq_(result.methods.length, 1);
+        has_(result.methods[0], {
+            method: { name: 'createIncentive' },
+            accessors: [ 'incentiveId' ]
+        });
+
+        result = await MappingSettersResolver.getEventsForMappingMutations('deposits', {
+            path: path
+        }, 'UniswapV3Staker');
+        eq_(result.methods.length, 0);
+        eq_(result.events.length, 2);
+        has_(result.events, [
+            {
+                event: { name: 'DepositTransferred' },
+                accessors: [ 'tokenId' ],
+                accessorsIdxMapping: [ 0 ]
+            },
+            {
+                event: { name: 'TokenStaked' },
+                accessors: [ 'tokenId' ],
+                accessorsIdxMapping: [ 0 ]
+            },
+        ])
     },
 })
