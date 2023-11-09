@@ -1,3 +1,4 @@
+import alot from 'alot';
 import memd from 'memd';
 import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
 import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
@@ -10,14 +11,14 @@ import { $perf } from '@dequanto/utils/$perf';
 import { $require } from '@dequanto/utils/$require';
 import { class_Dfr } from 'atma-utils';
 import { SlotsParser } from './SlotsParser';
-import { ISlotVarDefinition } from './SlotsParser/models';
+import { ISlotVarDefinition, ISlotsParserOption } from './SlotsParser/models';
 import { SlotsStorage } from './SlotsStorage';
 import { SourceCodeProvider } from './SourceCodeProvider';
 import { MappingKeysLoader } from './storage/MappingKeysLoader';
 import { SlotsStorageTransport } from './storage/SlotsStorageTransport';
 import { $hex } from '@dequanto/utils/$hex';
-import alot from 'alot';
 import { TEth } from '@dequanto/models/TEth';
+import { RpcTypes } from '@dequanto/rpc/Rpc';
 
 export class SlotsDump {
     private address: TAddress
@@ -47,6 +48,7 @@ export class SlotsDump {
                 [file: string]: { content: string }
             },
         }
+        parser?: ISlotsParserOption
     }) {
         $require.Address(params?.address);
 
@@ -129,7 +131,8 @@ export class SlotsDump {
             path: sources.main.path,
             code: sources.main.content
         }, sources.main.contractName, {
-            files: sources.files
+            files: sources.files,
+            ...(this.params.parser ?? {})
         });
         return slots;
     }
@@ -170,7 +173,7 @@ class BatchLoader {
     private isBusy = false;
 
     constructor(public address: TAddress, public client: Web3Client, public params?: {
-        blockNumber: number
+        blockNumber: RpcTypes.BlockNumberOrTagOrHash
     }) {
 
     }

@@ -16,10 +16,14 @@ import { ISlotVarDefinition } from './SlotsParser/models';
 import { $abiType } from '@dequanto/utils/$abiType';
 import { $types } from './utils/$types';
 import { SlotBytesHandler } from './storage/handlers/SlotBytesHandler';
+import { SlotValueConstantHandler } from './storage/handlers/SlotValueContantHandler';
+import { SlotValueImmutableHandler } from './storage/handlers/SlotValueImmutableHandler';
 
 export class SlotsStorage {
 
-    static createWithClient(client: Web3Client, address: TAddress, slots: ISlotVarDefinition[], params?: { blockNumber: number }) {
+    static createWithClient(client: Web3Client, address: TAddress, slots: ISlotVarDefinition[], params?: {
+        blockNumber: number
+    }) {
         let reader = new SlotsStorageTransport(client, address, params);
         return new SlotsStorage(reader, slots)
     }
@@ -153,6 +157,12 @@ export class SlotsStorage {
         return { keys, handler };
     }
     private getSlotStorage(slot: ISlotVarDefinition): Constructor<ASlotsStorageHandler> {
+        if (SlotValueConstantHandler.supports(slot)) {
+            return SlotValueConstantHandler;
+        }
+        if (SlotValueImmutableHandler.supports(slot)) {
+            return SlotValueImmutableHandler;
+        }
         if (SlotFixedArrayHandler.supports(slot)) {
             return SlotFixedArrayHandler;
         }

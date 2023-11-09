@@ -87,10 +87,79 @@ UTest({
             type: 'bytes16'
         });
     },
+    async 'constants and immutables'() {
+        return UTest({
+            async 'should ignore constants per default'() {
+                const input = `
+                    contract Test {
+                        uint256 constant a = 1;
+                        uint256 b;
+                    }
+                `;
+                const slots = await SlotsParser.slots({
+                    code: input,
+                    path: './test/solidity/Parser.sol'
+                }, 'Test');
+                eq_(slots.length, 1);
+                has_(slots[0], {
+                    name: 'b',
+                    slot: 0,
+                    position: 0,
+                })
+            },
+            async 'should contain constants but with correct positions'() {
+                const input = `
+                    contract Test {
+                        uint256 constant a = 2 + 3;
+                        uint256 b;
+                    }
+                `;
+                const slots = await SlotsParser.slots({
+                    code: input,
+                    path: './test/solidity/Parser.sol'
+                }, 'Test', {
+                    withConstants: true
+                });
+                eq_(slots.length, 2);
+                has_(slots[0], {
+                    name: 'a',
+                    memory: 'constant',
+                    value: 5n
+                })
+                has_(slots[1], {
+                    name: 'b',
+                    slot: 0,
+                    position: 0,
+                })
+            },
+            async 'should ignore immutable per default'() {
+                const input = `
+                    contract Test {
+                        uint256 immutable a;
+                        uint256 b;
+                        constructor (uint256 value) {
+                            a = value;
+                        }
+                    }
+                `;
+                const slots = await SlotsParser.slots({
+                    code: input,
+                    path: './test/solidity/Parser.sol'
+                }, 'Test');
+                eq_(slots.length, 1);
+                has_(slots[0], {
+                    name: 'b',
+                    slot: 0,
+                    position: 0,
+                })
+            }
+        })
+
+    },
     async 'should extract slots from abi'() {
 
         return UTest({
-            async 'simple struct' () {
+            async 'simple struct'() {
                 const input = `
                     (uint256 foo, uint256[3] bar)
                 `;
@@ -112,7 +181,7 @@ UTest({
                     type: 'uint256[3]'
                 });
             },
-            async 'should parse array' () {
+            async 'should parse array'() {
                 const input = `
                     (address[] foo)
                 `;
@@ -337,7 +406,7 @@ UTest({
         expectSlot(10, '_owner');
         expectSlot(11, '__gap');
 
-        function expectSlot (nr: number, name: string) {
+        function expectSlot(nr: number, name: string) {
             let slot = slots.find(x => x.name === name);
             eq_(slot.slot, nr);
         }
@@ -375,7 +444,7 @@ UTest({
         expectSlot(17, '_permitNonces');
         expectSlot(18, '_initializedVersion');
 
-        function expectSlot (nr: number, name: string) {
+        function expectSlot(nr: number, name: string) {
             let slot = slots.find(x => x.name === name);
             $require.notNull(slot, nr + ': ' + name);
             eq_(slot.slot, nr);

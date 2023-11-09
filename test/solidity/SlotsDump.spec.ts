@@ -93,7 +93,7 @@ UTest({
                 let countA = await contract.countA();
                 eq_(countA, 8n);
             },
-            async 'should write contracts storage from JSON' () {
+            async 'should write contracts storage from JSON'() {
                 await dump.restoreStorageFromJSON({
                     countA: 12n
                 });
@@ -101,25 +101,56 @@ UTest({
                 eq_(countA, 12n);
             },
         });
-
-
     },
 
-    async '//should read mapping keys'() {
-        // SAFE
-        let loader = new MappingKeysLoader({
-            address: '0x5afe3855358e112b5647b952709e6165e1c1eeee'
+    async '!dump with constants and immutables'() {
+        const code = `
+        contract A {
+            uint           public countA = 3;
+            uint constant  public countB = 4;
+            uint           public countC = 5;
+            uint immutable public countD;
+            uint           public countE = 6;
+
+            constructor (uint256 _countD) {
+                countD = _countD;
+            }
+        }
+    `;
+        const deployer = provider.deployer();
+        const { contract, abi } = await provider.deployCode(code, {
+            client,
+            arguments: [12]
         });
-        let keys = await loader.load('_balances');
-        console.log(keys.map(arr => arr.join('.')));
-    },
-    async '//slots dump'() {
-        // SAFE
-        let loader = new SlotsDump({
-            address: '0x5afe3855358e112b5647b952709e6165e1c1eeee'
+        const explorer = new BlockChainExplorerStorage({
+            contracts: {
+                [contract.address]: {
+                    abi,
+                    source: code
+                }
+            }
         });
-        let { json, memory } = await loader.getStorage()
-        await File.writeAsync('./tmp/storage.csv', memory.map(x => x.join(', ')).join('\n'));
-        await File.writeAsync('./tmp/storageJson.json', json);
+        const dump = new SlotsDump({
+            address: contract.address,
+            client,
+            explorer,
+            parser: {
+                withConstants: true,
+                withImmutables: true
+            }
+        });
+
+        return UTest({
+            async 'should read contract storage'() {
+                let { json } = await dump.getStorage();
+                deepEq_(json, {
+                    countA: 3,
+                    countB: 4n,
+                    countC: 5,
+                    countD: 12n,
+                    countE: 6
+                })
+            }
+        });
     }
 })

@@ -2,6 +2,7 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { ISlotVarDefinition } from '../SlotsParser/models';
 import { IAccessorItem } from './Accessor';
 import { ISlotsStorageTransport } from './SlotsStorageTransport';
+import { Web3Client } from '@dequanto/clients/Web3Client';
 
 export abstract class ASlotsStorageHandler {
     constructor(public transport: ISlotsStorageTransport, public slot: ISlotVarDefinition) {

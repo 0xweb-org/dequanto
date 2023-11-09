@@ -31,7 +31,7 @@ export class SlotsCursorTransport implements ISlotsStorageTransport {
         slot: number | bigint,
         position?: number,
         size?: number,
-    } , public transport: ISlotsStorageTransport) {
+    } , public transport: SlotsStorageTransport | ISlotsStorageTransport) {
 
     }
 
@@ -61,7 +61,7 @@ export class SlotsCursorTransport implements ISlotsStorageTransport {
 
 export class SlotsStorageTransport implements ISlotsStorageTransport {
 
-    constructor (protected client: Web3Client, public address: TAddress, public params?: { blockNumber }) {
+    constructor (public client: Web3Client, public address: TAddress, public params?: { blockNumber }) {
 
     }
 

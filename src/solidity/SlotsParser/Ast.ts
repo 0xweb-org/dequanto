@@ -118,10 +118,10 @@ export namespace Ast {
         return nodeFound as any;
     }
 
-    export function find <T extends BaseASTNode = BaseASTNode> (
+    export function find<T extends BaseASTNode = BaseASTNode>(
         node: BaseASTNode | BaseASTNode[]
         , matcher: (node: BaseASTNode) => boolean
-    ): { node: T, stack: BaseASTNode[]} {
+    ): { node: T, stack: BaseASTNode[] } {
         if (Array.isArray(node)) {
             let result = alot(node)
                 .map(x => find(x, matcher))
@@ -132,17 +132,17 @@ export namespace Ast {
         return result[0] as { node: T, stack: BaseASTNode[] }
     }
 
-    export function findMany <T extends BaseASTNode = BaseASTNode> (
+    export function findMany<T extends BaseASTNode = BaseASTNode>(
         node: BaseASTNode
         , matcher: (node: BaseASTNode) => boolean
         , opts?: { single?: boolean }
         , stack: BaseASTNode[] = []
-    ): { node: T, stack: BaseASTNode[]}[] {
+    ): { node: T, stack: BaseASTNode[] }[] {
         let foundMany = [];
         if (matcher(node)) {
-            return [ { node: node as T, stack } ];
+            return [{ node: node as T, stack }];
         }
-        let $stack = [ ...stack, node ];
+        let $stack = [...stack, node];
         for (let key in node) {
             let val = node[key];
             if (val == null || typeof val !== 'object') {
@@ -178,86 +178,86 @@ export namespace Ast {
         return foundMany;
     }
 
-    export function isBinaryOperation (node: BaseASTNode): node is BinaryOperation {
+    export function isBinaryOperation(node: BaseASTNode): node is BinaryOperation {
         return node?.type === 'BinaryOperation';
     }
-    export function isUnaryOperation (node: BaseASTNode): node is UnaryOperation {
+    export function isUnaryOperation(node: BaseASTNode): node is UnaryOperation {
         return node?.type === 'UnaryOperation';
     }
-    export function isIndexAccess (node: BaseASTNode): node is IndexAccess {
+    export function isIndexAccess(node: BaseASTNode): node is IndexAccess {
         return node?.type === 'IndexAccess';
     }
     export function isMemberAccess(node: BaseASTNode): node is MemberAccess {
         return node?.type === 'MemberAccess';
     }
-    export function isIdentifier (node: BaseASTNode): node is Identifier {
+    export function isIdentifier(node: BaseASTNode): node is Identifier {
         return node?.type === 'Identifier';
     }
-    export function isEmitStatement (node: BaseASTNode): node is EmitStatement {
+    export function isEmitStatement(node: BaseASTNode): node is EmitStatement {
         return node?.type === 'EmitStatement';
     }
-    export function isAssemblyBlock (node: BaseASTNode): node is AssemblyBlock {
+    export function isAssemblyBlock(node: BaseASTNode): node is AssemblyBlock {
         return node?.type === 'AssemblyBlock';
     }
-    export function isAssemblyCall (node: BaseASTNode): node is AssemblyCall {
+    export function isAssemblyCall(node: BaseASTNode): node is AssemblyCall {
         return node?.type === 'AssemblyCall';
     }
     export function isEventDefinition(node: BaseASTNode): node is EventDefinition {
         return node?.type === 'EventDefinition';
     }
-    export function isFunctionCall (node: BaseASTNode): node is FunctionCall {
+    export function isFunctionCall(node: BaseASTNode): node is FunctionCall {
         return node?.type === 'FunctionCall';
     }
-    export function isFunctionDefinition (node: BaseASTNode): node is FunctionDefinition {
+    export function isFunctionDefinition(node: BaseASTNode): node is FunctionDefinition {
         return node?.type === 'FunctionDefinition';
     }
-    export function isModifierDefinition (node: BaseASTNode): node is ModifierDefinition {
+    export function isModifierDefinition(node: BaseASTNode): node is ModifierDefinition {
         return node?.type === 'ModifierDefinition';
     }
-    export function isStateVariableDeclaration (node: BaseASTNode): node is StateVariableDeclaration {
+    export function isStateVariableDeclaration(node: BaseASTNode): node is StateVariableDeclaration {
         return node?.type === 'StateVariableDeclaration';
     }
-    export function isImportDirective (node: BaseASTNode): node is ImportDirective {
+    export function isImportDirective(node: BaseASTNode): node is ImportDirective {
         return node?.type === 'ImportDirective';
     }
-    export function isContractDefinition (node: BaseASTNode): node is ContractDefinition {
+    export function isContractDefinition(node: BaseASTNode): node is ContractDefinition {
         return node?.type === 'ContractDefinition';
     }
-    export function isVariableDeclarationStatement (node: BaseASTNode): node is VariableDeclarationStatement {
+    export function isVariableDeclarationStatement(node: BaseASTNode): node is VariableDeclarationStatement {
         return node?.type === 'VariableDeclarationStatement';
     }
-    export function isVariableDeclaration (node: BaseASTNode): node is VariableDeclaration {
+    export function isVariableDeclaration(node: BaseASTNode): node is VariableDeclaration {
         return node?.type === 'VariableDeclaration';
     }
-    export function isElementaryTypeName (node: BaseASTNode): node is ElementaryTypeName {
+    export function isElementaryTypeName(node: BaseASTNode): node is ElementaryTypeName {
         return node?.type === 'ElementaryTypeName';
     }
-    export function isArrayTypeName (node: BaseASTNode): node is ArrayTypeName {
+    export function isArrayTypeName(node: BaseASTNode): node is ArrayTypeName {
         return node?.type === 'ArrayTypeName';
     }
-    export function isUserDefinedTypeName (node: BaseASTNode): node is UserDefinedTypeName {
+    export function isUserDefinedTypeName(node: BaseASTNode): node is UserDefinedTypeName {
         return node?.type === 'UserDefinedTypeName';
     }
-    export function isDecimalNumber (node: BaseASTNode): node is DecimalNumber {
+    export function isDecimalNumber(node: BaseASTNode): node is DecimalNumber {
         return node?.type === 'DecimalNumber';
     }
-    export function isHexNumber (node: BaseASTNode): node is HexNumber {
+    export function isHexNumber(node: BaseASTNode): node is HexNumber {
         return node?.type === 'HexNumber';
     }
-    export function isNumberLiteral (node: BaseASTNode): node is NumberLiteral {
+    export function isNumberLiteral(node: BaseASTNode): node is NumberLiteral {
         return node?.type === 'NumberLiteral';
     }
-    export function isStringLiteral (node: BaseASTNode): node is StringLiteral {
+    export function isStringLiteral(node: BaseASTNode): node is StringLiteral {
         return node?.type === 'StringLiteral';
     }
-    export function isBooleanLiteral (node: BaseASTNode): node is BooleanLiteral {
+    export function isBooleanLiteral(node: BaseASTNode): node is BooleanLiteral {
         return node?.type === 'BooleanLiteral';
     }
-    export function isStructDefinition (node: BaseASTNode): node is StructDefinition {
+    export function isStructDefinition(node: BaseASTNode): node is StructDefinition {
         return node?.type === 'StructDefinition';
     }
 
-    export function getFunctionName (node: FunctionCall) {
+    export function getFunctionName(node: FunctionCall) {
         let expression = node.expression;
         if (Ast.isIdentifier(expression)) {
             return expression.name;
@@ -280,7 +280,7 @@ export namespace Ast {
         return null;
     }
 
-    export function serialize (node: Identifier
+    export function serialize(node: Identifier
         | MemberAccess
         | FunctionCall
         | EventDefinition
@@ -303,7 +303,7 @@ export namespace Ast {
         if (Ast.isFunctionCall(node)) {
             let name = serialize(node.expression);
             let args = node.arguments.map(node => serialize(node));
-            return `${name}(${ args.join(', ') })`;
+            return `${name}(${args.join(', ')})`;
         }
         if (Ast.isElementaryTypeName(node)) {
             let typeName = $abiUtils.fromAliasIfAny(node.name);
@@ -323,11 +323,10 @@ export namespace Ast {
         if (isNumberLiteral(node)) {
             return node.number;
         }
-
         throw new Error(`Unknown node ${JSON.stringify(node)}`)
     }
 
-    export async function serializeTypeName (
+    export async function serializeTypeName(
         name: string
         , typeName: TypeName | VariableDeclaration
         , source: TSourceFileContract
@@ -382,10 +381,10 @@ export namespace Ast {
             }
         }
 
-        throw new Error(`@TODO implement complex type to abi serializer: ${name} = ${ JSON.stringify(typeName) }`);
+        throw new Error(`@TODO implement complex type to abi serializer: ${name} = ${JSON.stringify(typeName)}`);
     }
 
-    export async function getAbi (
+    export async function getAbi(
         node: EventDefinition | FunctionDefinition
         , source: TSourceFileContract
         , inheritance?: TSourceFileContract[]
@@ -412,5 +411,34 @@ export namespace Ast {
             }
         }
         throw new Error(`Unknown node to get the ABI from: ${(node as any)?.type}`)
+    }
+
+    export function evaluate<TResult extends bigint | string = bigint | string>(node: Expression): TResult {
+        if (isNumberLiteral(node)) {
+            return BigInt(node.number) as TResult;
+        }
+        if (isBinaryOperation(node)) {
+            let a = evaluate<bigint>(node.left);
+            let b = evaluate<bigint>(node.right);
+            switch (node.operator) {
+                case '+':
+                    return a + b as TResult;
+                case '-':
+                    return a - b as TResult;
+                case '/':
+                    return a / b as TResult;
+                case '*':
+                    return a * b as TResult;
+                case '**':
+                    return a ** b as TResult;
+                case '%':
+                    return a % b as TResult;
+                case '<<':
+                    return a << b as TResult;
+                case '>>':
+                    return a >> b as TResult;
+            }
+        }
+        throw new Error(`Unknown node ${JSON.stringify(node)}`)
     }
 }

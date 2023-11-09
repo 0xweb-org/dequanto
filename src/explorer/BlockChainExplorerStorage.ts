@@ -49,6 +49,12 @@ export class BlockChainExplorerStorage implements IBlockChainExplorer {
             }
         }
     }
+    submitContractValidation(contractData: { address: `0x${string}`; sourceCode: any; contractName: any; compilerVersion: any; optimizer?: { enabled?: boolean; runs: number; }; arguments?: `0x${string}`; }): Promise<string> {
+        throw new Error('Method not implemented.');
+    }
+    checkContractValidationSubmission(submission: { guid: any; }): Promise<string> {
+        throw new Error('Method not implemented.');
+    }
     registerAbi(abis: { name: any; address: any; abi: any; }[]) {
         abis.forEach(x => {
             let fromDb = this.localDb.find(current => $address.eq(current.address, x.address));

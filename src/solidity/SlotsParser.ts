@@ -46,19 +46,16 @@ export namespace SlotsParser {
     export async function slots (source: { path: string, code?: string }, contractName?: string, opts?: ISlotsParserOption): Promise<ISlotVarDefinition[]> {
         const sourceFile = new SourceFile(source.path, source.code, opts?.files);
         const chain = await sourceFile.getContractInheritanceChain(contractName);
-        return await extractSlots(chain);
+        return await extractSlots(chain, opts);
     }
 
-    async function extractSlots(inheritanceChain: { contract: ContractDefinition, file: SourceFile }[]) {
-        let offset = { slot: 0, position: 0 };
+    async function extractSlots(inheritanceChain: { contract: ContractDefinition, file: SourceFile }[], opts?: ISlotsParserOption) {
 
-        //let inheritanceChainContracts = [ ...inheritanceChain.map(x => x.contract)].reverse();
         let slotsDef = await alot(inheritanceChain)
             .mapManyAsync(async (item, i) => {
                 let slots = await extractSlotsSingle({
-                    ...item,
-                    //contractBase: inheritanceChainContracts.slice(inheritanceChainContracts.length - i)
-                }, offset);
+                    ...item
+                }, opts);
                 return slots;
             })
             .toArrayAsync({ threads: 1 });
@@ -74,31 +71,53 @@ export namespace SlotsParser {
             })
             .toArray();
 
-        // slotsDef = alot(slotsDef.reverse())
-        //     .distinctBy(x => x.name)
-        //     .toArray()
-        //     .reverse();
-
+        let offset = { slot: 0, position: 0 };
         slotsDef = applyPositions(slotsDef, offset);
-
         return slotsDef;
     }
-    async function extractSlotsSingle (contract: TypeUtil.ITypeCtx, offset: { slot: number, position: number }) {
+    async function extractSlotsSingle (contract: TypeUtil.ITypeCtx, opts?: {
+        withConstants?: boolean
+        withImmutables?: boolean
+    }) {
 
-        let vars = Ast.getVariableDeclarations(contract.contract);
-        vars = vars.filter(x => x.isDeclaredConst !== true)
+        let vars = alot(Ast.getVariableDeclarations(contract.contract))
+            .map($var => {
+                if ($var.isDeclaredConst && opts?.withConstants !== true) {
+                    return null;
+                }
+                if (($var as any /** not in typings */).isImmutable && opts?.withImmutables !== true) {
+                    return null;
+                }
+                return $var;
+            })
+            .filter(x => x != null)
+            .toArray();
 
         let slotsDef = await alot(vars)
             .mapAsync(async v => {
                 let util = TypeUtil.get(v.typeName, contract);
                 if (util) {
-                    return {
+                    let $var = {
                         slot: null as number,
                         position: null as number,
                         name: v.name,
                         size: await util.sizeOf(),
                         type: await util.serialize(),
-                    };
+                    } as ISlotVarDefinition;
+                    if (v.isDeclaredConst) {
+                        $var.memory = 'constant';
+                        if (v.expression) {
+                            try {
+                                $var.value = Ast.evaluate(v.expression);
+                            } catch (error) {
+                                console.error('Skipped', error);
+                            }
+                        }
+                    }
+                    if ((v as any /** not in typings */).isImmutable) {
+                        $var.memory = 'immutable';
+                    }
+                    return $var;
                 }
 
                 throw new Error(`Unknown var ${v.name} ${v.typeName.type}`);
@@ -108,30 +127,34 @@ export namespace SlotsParser {
         return slotsDef;
     }
 
-    function applyPositions (slotsDef: ISlotVarDefinition[], offset?: { slot: number, position: number }) {
+    function applyPositions ($vars: ISlotVarDefinition[], offset?: { slot: number, position: number }) {
         offset ??= { slot: 0, position: 0 };
 
         const MAX = 256;
-        slotsDef.forEach(size => {
-            if (size.size === Infinity) {
+        $vars.forEach($var => {
+            if ($var.memory === 'constant' || $var.memory === 'immutable') {
+                // skip calculation for static variables
+                return;
+            }
+            if ($var.size === Infinity) {
                 if (offset.position > 0) {
                     // was previously moved further in a slot, so just take the next slot
                     offset.position = 0;
                     offset.slot += 1;
                 }
 
-                size.slot = offset.slot;
-                size.position = 0;
+                $var.slot = offset.slot;
+                $var.position = 0;
 
                 // move to the start of the next slot
                 offset.slot += 1;
                 offset.position = 0;
                 return;
             }
-            if (size.size <= MAX - offset.position && TypeUtil.isComplexType(size.type) === false) {
-                size.slot = offset.slot;
-                size.position = offset.position;
-                offset.position += size.size;
+            if ($var.size <= MAX - offset.position && TypeUtil.isComplexType($var.type) === false) {
+                $var.slot = offset.slot;
+                $var.position = offset.position;
+                offset.position += $var.size;
                 return;
             }
             if (offset.position > 0) {
@@ -139,15 +162,15 @@ export namespace SlotsParser {
                 offset.position = 0;
                 // > moves to next slot
             }
-            size.slot = offset.slot;
-            size.position = offset.position;
+            $var.slot = offset.slot;
+            $var.position = offset.position;
 
-            let slots = Math.floor(size.size / MAX);
+            let slots = Math.floor($var.size / MAX);
 
             offset.slot += slots;
-            offset.position = size.size % MAX;
+            offset.position = $var.size % MAX;
         });
-        return slotsDef;
+        return $vars;
     }
 }
 
@@ -344,7 +367,7 @@ namespace TypeAbiUtil {
             return new MappingUtil(input)
         }
 
-        throw new Error(`Unknow type ${input.type} for ${input.name}`);
+        throw new Error(`Unknown type ${input.type} for ${input.name}`);
     }
 
     class ElementaryTypeNameUtil implements ITypeUtil {
