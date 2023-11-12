@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { ITokenBase } from '@dequanto/models/IToken';
 import { TResultAsync } from '@dequanto/models/TResult';
 import { $config } from '@dequanto/utils/$config';
@@ -8,6 +7,7 @@ import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { $block } from '@dequanto/utils/$block';
 import { $require } from '@dequanto/utils/$require';
 import { TPCoingecko } from '@dequanto/tokens/TokenProviders/TPCoingecko';
+import { $http } from '@dequanto/utils/$http';
 
 export class CoingeckoOracle  implements IOracle {
 
@@ -56,10 +56,10 @@ export class CoingeckoOracle  implements IOracle {
         let query = {
             ids: tokenId,
             vs_currencies:'usd',
-            include_market_cap: false,
-            include_24hr_vol: false,
-            include_24hr_change:false,
-            include_last_updated_at:true,
+            include_market_cap: 'false',
+            include_24hr_vol: 'false',
+            include_24hr_change:'false',
+            include_last_updated_at:'true',
             precision:'full'
         };
         let resp = await this.fetch<ICoingeckoCurrentPrice>(path, query);
@@ -75,7 +75,7 @@ export class CoingeckoOracle  implements IOracle {
         let path = `/coins/${tokenId}/history`;
         let query = {
             date: $date.format(date, dateFormat),
-            localization: false
+            localization: 'false'
         }
         let data = await this.fetch<ICoingeckoHistoryPrice>(path, query);
         let price = data.market_data.current_price.usd;
@@ -85,12 +85,13 @@ export class CoingeckoOracle  implements IOracle {
         }
     }
 
-    private async fetch <TResult> (path: string, query?: { [key: string]: string | number | boolean }) {
+    private async fetch <TResult> (path: string, query?: { [key: string]: string  }) {
         let headers = {};
         if (this.config.key != null) {
             headers['x-cg-pro-api-key'] = this.config.key;
         }
-        let resp = await axios.get<TResult>(`${this.config.root}${path}`, {
+        let resp = await $http.get<TResult>({
+            url: `${this.config.root}${path}`,
             params: query,
             headers
         });

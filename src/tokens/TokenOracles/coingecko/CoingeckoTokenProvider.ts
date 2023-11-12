@@ -1,9 +1,9 @@
-import axios from 'axios';
 import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
 import { ITokenBase } from '@dequanto/models/IToken';
 import { $config } from '@dequanto/utils/$config';
 import { $path } from '@dequanto/utils/$path';
 import { $is } from '@dequanto/utils/$is';
+import { $http } from '@dequanto/utils/$http';
 
 
 // https://www.coingecko.com/en/api/documentation
@@ -37,7 +37,7 @@ export class CoingeckoTokenProvider {
     }
 
     private async downloadList () {
-        let resp = await axios.get<{id, symbol, name, platforms: { platform, decimals, address }[] }[]>(`${this.root}/coins/list`);
+        let resp = await $http.get<{id, symbol, name, platforms: { platform, decimals, address }[] }[]>(`${this.root}/coins/list`);
         return resp.data;
     }
 }

@@ -1,9 +1,9 @@
-import axios from 'axios'
 import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
 import { ITokenProvider } from './ITokenProvider';
 import { ATokenProvider } from './ATokenProvider';
 import { ITokenGlob } from '@dequanto/models/ITokenGlob';
 import { $path } from '@dequanto/utils/$path';
+import { $http } from '@dequanto/utils/$http';
 
 
 const TheGraphUrl = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2';
@@ -32,7 +32,10 @@ export class TPUniswap extends ATokenProvider implements ITokenProvider {
                 }
             `
         };
-        let resp = await axios.post(TheGraphUrl, body);
+        let resp = await $http.post({
+            url: TheGraphUrl,
+            body: body
+        });
         return resp.data.data?.tokens[0];
     }
 
@@ -54,8 +57,7 @@ export class TPUniswap extends ATokenProvider implements ITokenProvider {
                 `
             };
 
-            let resp = await axios.post(TheGraphUrl, body);
-            console.log(resp);
+            let resp = await $http.post({ url: TheGraphUrl, body });
             let tokens = resp.data.data?.tokens ?? [];
 
             let arr = tokens.map(uniT => {

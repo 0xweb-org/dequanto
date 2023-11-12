@@ -1,4 +1,3 @@
-import axios, { AxiosResponse } from 'axios';
 import { $address } from '@dequanto/utils/$address';
 import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
 import { IToken, ITokenBase } from '@dequanto/models/IToken';
@@ -12,6 +11,7 @@ import { $path } from '@dequanto/utils/$path';
 import alot from 'alot';
 import { Config } from '@dequanto/Config';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
+import { $http } from '@dequanto/utils/$http';
 
 
 export class TPSushiswap extends ATokenProvider implements ITokenProvider  {
@@ -72,7 +72,7 @@ export class TPSushiswap extends ATokenProvider implements ITokenProvider  {
             decimals: number | 18
         };
 
-        let resp = await axios.get<TResponse[]>(url);
+        let resp = await $http.get<TResponse[]>(url);
         let tokens = resp
             .data
             .filter(x => x.chainId in platforms)
@@ -85,58 +85,4 @@ export class TPSushiswap extends ATokenProvider implements ITokenProvider  {
         return tokens;
     }
 
-    // private async downloadForPlatform(platform: TPlatform) {
-    //     let url: string;
-    //     let mapper: (resp: AxiosResponse) => IToken[];
-
-    //     function mapperApi (resp: AxiosResponse): IToken[] {
-    //         let arr = resp.data[1];
-    //         return arr.map(t => {
-    //             return <IToken> {
-    //                 symbol: t.Symbol,
-    //                 name: t.Name,
-    //                 decimals: t.Decimals,
-    //                 platform: platform,
-    //                 address: t.Contract,
-    //             }
-    //         })
-    //     }
-    //     function mapperGithub (resp: AxiosResponse): IToken[] {
-    //         let arr = resp.data;
-    //         return arr.map(t => {
-    //             return <IToken> {
-    //                 symbol: t.symbol,
-    //                 name: t.name,
-    //                 decimals: t.decimals,
-    //                 platform: platform,
-    //                 address: t.address,
-    //             }
-    //         })
-    //     }
-
-    //     switch (platform) {
-    //         case 'eth':
-    //             url = `https://api2.sushipro.io/?action=all_tokens&chainID=1`;
-    //             mapper = mapperApi;
-    //             break;
-    //         case 'bsc':
-    //             throw new Error(`Bsc is not supported by sushiswap api`);
-    //             break;
-    //         case 'polygon':
-    //             url = `https://api2.sushipro.io/?action=all_tokens&chainID=137`;
-    //             mapper = mapperApi;
-    //             break;
-    //         case 'xdai':
-    //             url = `https://raw.githubusercontent.com/sushiswap/default-token-list/master/tokens/xdai.json`;
-    //             mapper = mapperGithub;
-    //             break;
-    //         default:
-    //             throw new Error(`Invalid Platform ${platform}`)
-    //     }
-
-    //     let resp = await axios.get<[{}, { Contract, Symbol, Name, Decimals }[]] | {symbol, name, decimals, address } >(url);
-    //     let tokens = mapper(resp);
-
-    //     return tokens;
-    // }
 }

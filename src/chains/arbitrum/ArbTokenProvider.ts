@@ -3,7 +3,6 @@ import { ITokenGlob } from '@dequanto/models/ITokenGlob';
 import { ATokenProvider } from '@dequanto/tokens/TokenProviders/ATokenProvider';
 import { ITokenProvider } from '@dequanto/tokens/TokenProviders/ITokenProvider';
 import { $path } from '@dequanto/utils/$path';
-import axios from 'axios';
 
 
 
@@ -18,7 +17,8 @@ export class ArbTokenProvider  extends ATokenProvider  implements ITokenProvider
     }
 
     async redownloadTokens(): Promise<any> {
-        let { data: json } = await axios.get(`https://bridge.arbitrum.io/token-list-42161.json`);
+        let resp = await fetch(`https://bridge.arbitrum.io/token-list-42161.json`);
+        let json = await resp.json();
 
         let tokens = json.tokens.map(token => {
             return <ITokenGlob> {

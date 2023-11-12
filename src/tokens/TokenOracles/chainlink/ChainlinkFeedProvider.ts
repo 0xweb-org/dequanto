@@ -1,5 +1,4 @@
 import alot from 'alot';
-import axios from 'axios'
 import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
 import { IToken } from '@dequanto/models/IToken';
 import { ITokenGlob } from '@dequanto/models/ITokenGlob';
@@ -10,6 +9,7 @@ import { $require } from '@dequanto/utils/$require';
 import { l } from '@dequanto/utils/$logger';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $str } from '@dequanto/solidity/utils/$str';
+import { $http } from '@dequanto/utils/$http';
 
 
 export interface IChainlinkFeedInfo {
@@ -89,7 +89,7 @@ export class ChainlinkFeedProvider {
     }
 
     private async fetchFeed (path: string, platform: TPlatform) {
-        const resp = await axios.get<any[]>(path);
+        const resp = await $http.get<any[]>(path);
 
         const tokens = alot(resp.data).map(feed => {
             let pair: [ string, string ];

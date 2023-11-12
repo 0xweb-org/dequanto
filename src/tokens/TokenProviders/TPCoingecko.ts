@@ -1,4 +1,3 @@
-import axios, { type AxiosError } from 'axios';
 import memd from 'memd';
 import alot from 'alot';
 import { File } from 'atma-io';
@@ -13,6 +12,7 @@ import { $promise } from '@dequanto/utils/$promise';
 import { ITokenBase } from '@dequanto/models/IToken';
 import { $address } from '@dequanto/utils/$address';
 import { $require } from '@dequanto/utils/$require';
+import { $http } from '@dequanto/utils/$http';
 
 // https://www.coingecko.com/en/api/documentation
 
@@ -118,7 +118,7 @@ export class TPCoingecko extends ATokenProvider  implements ITokenProvider {
 
 
     private async downloadList () {
-        let resp = await axios.get<{id, symbol, name}[]>(`https://api.coingecko.com/api/v3/coins/list`);
+        let resp = await $http.get<{id, symbol, name}[]>(`https://api.coingecko.com/api/v3/coins/list`);
         return resp.data;
     }
 
@@ -140,10 +140,10 @@ export class TPCoingecko extends ATokenProvider  implements ITokenProvider {
         let wait = 10_000;
         async function fetch  () {
             try {
-                let resp = await axios.get<TDetails>(`https://api.coingecko.com/api/v3/coins/${id}`);
+                let resp = await $http.get<TDetails>(`https://api.coingecko.com/api/v3/coins/${id}`);
                 return resp.data
             } catch (error) {
-                let e = error as AxiosError;
+                let e = error;
                 if (e.response?.status === 404) {
                     return <TDetails> { id, detail_platforms: {} };
                 }

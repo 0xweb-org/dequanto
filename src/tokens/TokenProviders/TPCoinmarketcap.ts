@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { class_Uri } from 'atma-utils';
 import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
 import { $config } from '@dequanto/utils/$config';
@@ -8,6 +7,7 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { ATokenProvider } from './ATokenProvider';
 import { ITokenProvider } from './ITokenProvider';
+import { $http } from '@dequanto/utils/$http';
 
 
 const coinmarketcap = $config.get('coinmarketcap') as {
@@ -34,7 +34,7 @@ export class TPCoinmarketcap extends ATokenProvider implements ITokenProvider {
             return [];
         }
         let url = class_Uri.combine(HOST, `/v1/cryptocurrency/map?CMC_PRO_API_KEY=${coinmarketcap.key}`);
-        let resp = await axios.get(url);
+        let resp = await $http.get(url);
         let tokens = resp.data.data as {
             "name": string
             "symbol": string

@@ -180,9 +180,12 @@ export class Deployments {
         };
     }
 
-    async ensureWithProxy< T extends (ContractBase & { initialize?: TInit }), TInit extends TInitializer>(
+    async ensureWithProxy<
+        T extends (ContractBase & { initialize?: TInit }),
+        TInit extends TInitializer
+    >(
         CtorImpl: Constructor<T>,
-        opts?: {
+        opts?: TConstructorArgs<T> & {
             id?: string
             force?: boolean
             latest?: boolean
@@ -206,8 +209,8 @@ export class Deployments {
 
         let implantationOpts = {
             ...opts,
-            // Implementation must be initializable
-            arguments: null
+            // No need to pass the initialization variables (if any)
+            initialize: null
         }
         let {
             contract: contractImpl,

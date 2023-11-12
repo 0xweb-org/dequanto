@@ -1,5 +1,4 @@
 import di from 'a-di';
-import axios from 'axios';
 import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
 import { ChainAccount } from "@dequanto/models/TAccount";
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
@@ -13,6 +12,7 @@ import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
+import { $http } from '@dequanto/utils/$http';
 
 const PLATFORMS = {
     eth: 1,
@@ -49,7 +49,7 @@ export class OneInchExchange {
         ];
         let callURL = this.getUrl(`/approve/calldata?${query.join('&')}`);
 
-        let { data: tx } = await axios.get(callURL);
+        let { data: tx } = await $http.get(callURL);
         let txWriter = await this.sendTx(account, tx);
         let receipt = await txWriter.onCompleted;
 
@@ -73,7 +73,7 @@ export class OneInchExchange {
         ];
         let callURL = this.getUrl(`/swap?${query.join('&')}`);
 
-        let { data } = await axios.get(callURL);
+        let { data } = await $http.get(callURL);
 
         await this.approve(account, from, Infinity, data.tx.to);
         return this.sendTx(account, data.tx);

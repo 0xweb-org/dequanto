@@ -1,6 +1,5 @@
 import alot from 'alot';
 import memd from 'memd';
-import axios from 'axios'
 import { IBlockChainExplorer, IBlockChainTransferEvent } from './IBlockChainExplorer';
 import { IContractDetails } from '@dequanto/models/IContractDetails';
 import { Web3Client } from '@dequanto/clients/Web3Client';
@@ -18,6 +17,7 @@ import { $platform } from '@dequanto/utils/$platform';
 import type { TAbiItem } from '@dequanto/types/TAbi';
 import { TEth } from '@dequanto/models/TEth';
 import { $is } from '@dequanto/utils/$is';
+import { $http } from '@dequanto/utils/$http';
 
 export interface IBlockChainExplorerParams {
 
@@ -485,7 +485,7 @@ class Client {
 
     @memd.deco.queued({ throttle: 1000 / 5 })
     async getHtml (url: string) {
-        let resp = await axios.get(url);
+        let resp = await $http.get(url);
         if (resp.status !== 200) {
             throw new Error(`${url} not loaded with status ${resp.status}.`);
         }
@@ -509,7 +509,8 @@ class Client {
     }
 
     private async getInner (url: string, opts?: { retryCount?: number, params? }) {
-        let resp = await axios.get(url, {
+        let resp = await $http.get({
+            url,
             params: opts.params
         });
         let data = resp.data as { status: string, message: 'OK' | 'NOTOK', result: any };
@@ -539,16 +540,11 @@ class Client {
         retryCount?: number
     }) {
 
-        const params = new URLSearchParams();
-        for (let key in opts.body) {
-            params.append(key, opts.body[key]);
-        }
-
-        let resp = await axios.request({
+        let resp = await $http.post({
             url,
             method: 'post',
             //params: opts.params,
-            data: params,
+            body: opts.body,
             headers: {
                 "content-type": "application/x-www-form-urlencoded"
             }

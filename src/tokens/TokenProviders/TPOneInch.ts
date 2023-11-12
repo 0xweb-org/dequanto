@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
 import { IToken } from '@dequanto/models/IToken';
 import { ITokenGlob } from '@dequanto/models/ITokenGlob';
@@ -7,6 +6,7 @@ import { TokenUtils } from '../utils/TokenUtils';
 import { ITokenProvider } from './ITokenProvider';
 import { ATokenProvider } from './ATokenProvider';
 import { $path } from '@dequanto/utils/$path';
+import { $http } from '@dequanto/utils/$http';
 
 
 
@@ -51,7 +51,7 @@ export class TPOneInch extends ATokenProvider implements ITokenProvider {
                 throw new Error(`Invalid Platform ${platform}`)
         }
 
-        let resp = await axios.get(url);
+        let resp = await $http.get(url);
         let hash = resp.data.tokens;
 
         let arr = Object.keys(hash).map(key => {
