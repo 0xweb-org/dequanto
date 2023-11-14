@@ -1,27 +1,18 @@
 import { Bscscan } from '@dequanto/explorer/Bscscan';
+import { $http } from '@dequanto/utils/$http';
 import { File } from 'atma-io'
-import axios from 'axios';
-
-const ax = axios as any;
 
 UTest({
     async $before () {
-        ax.getOriginal = ax.get;
-        ax.get = async function (url, ...args) {
-            if (url.includes('address/0xfbD2aa7efA2B46Ce3c58D7ab0D92C176c71499C0')) {
-                return {
-                    status: 200,
-                    data: await File.readAsync<string>('./test/fixtures/explorer/0xfbD2aa7efA2B46Ce3c58D7ab0D92C176c71499C0.html'),
-                    headers: {
-                        'Content-Type': 'text/html'
-                    }
-                };
-            }
-            return ax.getOriginal(url, ...args);
-        };
-    },
-    async $after () {
-        ax.get = ax.getOriginal;
+        $http.register(/address\/0xfbD2aa7efA2B46Ce3c58D7ab0D92C176c71499C0/, async (opts) => {
+            return {
+                status: 200,
+                data: await File.readAsync<string>('./test/fixtures/explorer/0xfbD2aa7efA2B46Ce3c58D7ab0D92C176c71499C0.html'),
+                headers: {
+                    'Content-Type': 'text/html'
+                }
+            };
+        });
     },
 
     async 'should fetch ABI by similar ByteCode' () {

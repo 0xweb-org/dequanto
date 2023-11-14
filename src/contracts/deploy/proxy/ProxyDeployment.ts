@@ -20,6 +20,10 @@ export interface IProxyAdmin extends ContractBase {
     upgradeAndCall
 }
 
+export interface IBeaconProxy extends ContractBase {
+    $constructor (deployer: IAccount, beacon: TEth.Address, initData: TEth.Hex)
+}
+
 interface IProxyDeploymentCtx {
 
     ImplementationContract: Constructor<ContractBase>,

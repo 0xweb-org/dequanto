@@ -40,8 +40,7 @@
     "everlog": "^1.0.10",
     "includejs": "^0.16.9",
     "isomorphic-ws": "^5.0.0",
-    "memd": "^0.3.12",
-    "papaparse": "^5.3.1"
+    "memd": "^0.3.12"
   },
   "atma": {
     "configs": "./configs/**.yml",

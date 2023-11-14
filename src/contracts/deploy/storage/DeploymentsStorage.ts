@@ -19,6 +19,8 @@ import { $date } from '@dequanto/utils/$date';
 export interface IDeployment {
     id: string
     name: string
+    // TS/JS file
+    main: string
     address: TAddress
 
     // If the Contract was deployed with Proxy - the Address is the address of the proxy
@@ -41,7 +43,7 @@ export interface IProxyStorageLayout {
 }
 
 
-export class DeploymentsStorage {
+export class  DeploymentsStorage {
 
     constructor (public client: Web3Client, public deployer: IAccount, public opts: {
         directory?: string
@@ -99,6 +101,7 @@ export class DeploymentsStorage {
         let deployment = <IDeployment> {
             id: info.id,
             name: info.name,
+            main: contract.$meta.class,
             bytecodeHash: info.bytecodeHash,
             address: contract.address,
             block: receipt.blockNumber,
@@ -129,6 +132,8 @@ export class DeploymentsStorage {
             deployment.history = history;
         }
         await store.upsert(deployment);
+
+        await this.ensureDeploymentsPathInOxweb();
         return deployment;
     }
 
@@ -236,5 +241,42 @@ export class DeploymentsStorage {
         let deployments = await store.getAll();
         let stale = deployments.filter(x => x.timestamp == null || x.timestamp < block.timestamp);
         await store.removeMany(stale.map(x => x.id));
+    }
+
+    @memd.deco.memoize({ perInstance: true })
+    @memd.deco.queued()
+    private async ensureDeploymentsPathInOxweb () {
+        type TDeployments = {
+            deployments: {
+                [platform: string]: {
+                    name?: string
+                    path: string
+                }[]
+            }
+        }
+        let path0xweb = `0xweb.json`;
+        let json = await File.existsAsync(path0xweb)
+            ? await File.readAsync<TDeployments>(path0xweb, { cached: false })
+            : <TDeployments> {};
+
+        if (json.deployments == null) {
+            json.deployments = {};
+        }
+        if (json.deployments[this.client.platform] == null) {
+            json.deployments[this.client.platform] = [];
+        }
+        let store = await this.getDeploymentsStore();
+        let path = store.options.path;
+
+        let arr = json.deployments[this.client.platform];
+        let has = arr.some(x => x.name == this.opts.name && x.path == path);
+        if (has) {
+            return;
+        }
+        arr.push({
+            name: this.opts.name ?? void 0,
+            path: path,
+        });
+        await File.writeAsync(path0xweb, json);
     }
 }

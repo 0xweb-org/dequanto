@@ -4,8 +4,8 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IWeb3EndpointOptions } from '@dequanto/clients/interfaces/IWeb3EndpointOptions';
 import { ClientEndpoints } from '@dequanto/clients/utils/ClientEndpoints';
 import memd from 'memd';
-import axios from 'axios';
 import { $bigint } from '@dequanto/utils/$bigint';
+import { $http } from '@dequanto/utils/$http';
 
 export class XDaiWeb3Client extends Web3Client {
 
@@ -46,7 +46,7 @@ export class XDaiWeb3Client extends Web3Client {
 
     @memd.deco.memoize({ maxAge: 10 })
     private async loadGasPrice () {
-        let resp = await axios.get<{ average: number }>(`https://blockscout.com/xdai/mainnet/api/v1/gas-price-oracle`);
+        let resp = await $http.get<{ average: number }>(`https://blockscout.com/xdai/mainnet/api/v1/gas-price-oracle`);
         let avg = resp.data?.average;
         if (avg) {
             return $bigint.toWeiFromGwei(avg);

@@ -260,6 +260,22 @@ export namespace $contract {
         };
     }
 
+    export function formatCall (call: { method?, type?, params? }) {
+        let method = call.method ?? call.type ?? 'Unknown';
+        let paramsStr = '';
+        if (call.params != null) {
+            if (typeof call.params === 'string') {
+                paramsStr = call.params;
+            } else {
+                let arr = [];
+                for (let key in call.params) {
+                    arr.push(`${key}=${call.params[key]}`);
+                }
+                paramsStr = arr.join(', ');
+            }
+        }
+        return `${method}(${paramsStr})`;
+    }
 
     export namespace store {
         const knownContracts = [] as {

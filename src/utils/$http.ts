@@ -8,6 +8,15 @@ import { Directory } from 'atma-io';
 
 export namespace $http {
 
+    const handlers = [] as {
+        rgx: RegExp,
+        handler: (opts: IHttpFetch) => Promise<{ status, data, headers? }>
+    }[];
+
+    export function register (rgx: RegExp, handler: (typeof handlers[0]['handler'])) {
+        handlers.push({ rgx, handler });
+    }
+
     export interface IHttpFetch {
         url: string
         method?: 'GET' | string
@@ -48,11 +57,20 @@ export namespace $http {
                 }
             }
         }
-        let resp = await fetch(url, {
+
+
+        let options = {
             method: opts.method ?? 'GET',
             headers: headers,
             body: body
-        });
+        };
+
+        let handler = handlers.find(x => x.rgx.test(url));
+        if (handler) {
+            return handler.handler(opts);
+        }
+
+        let resp = await fetch(url, options);
         let contentType = resp.headers.get('Content-Type');
         let data: any = resp.body;
         if (opts.responseType !== 'stream') {

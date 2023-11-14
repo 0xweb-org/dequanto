@@ -12,6 +12,7 @@ import { $sig } from '@dequanto/utils/$sig';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
 import { $hex } from '@dequanto/utils/$hex';
+import { $contract } from '@dequanto/utils/$contract';
 
 export class TxDataBuilder {
     protected static nonce: number = -1
@@ -128,7 +129,7 @@ export class TxDataBuilder {
                 { price, base: price, priority: 10n**9n }
                 : this.client.getGasPrice(),
             gasEstimation == null || gasEstimation === true
-                ? this.client.getGasEstimation(from ?? this.account.address, this.data)
+                ? this.getGasEstimation(from ?? this.account.address)
                 : (gasLimit ?? this.client.defaultGasLimit ?? 2_000_000)
         ]);
 
@@ -228,6 +229,22 @@ export class TxDataBuilder {
             ...json,
             ...(additionalProperties ?? {})
         });
+    }
+
+    private async getGasEstimation (from: TAddress) {
+        try {
+            return await this.client.getGasEstimation(from, this.data)
+        } catch (error) {
+            let message = error.message;
+            if (error.data?.type != null) {
+                message += `\nError: ` + $contract.formatCall(error.data);
+            }
+            let parsed = $contract.parseInputData(this.data.data, this.abi);
+            if (parsed) {
+                message += `\nMethod: ` + $contract.formatCall(parsed);
+            }
+            throw new Error(message);
+        }
     }
 
     static fromJSON (client: Web3Client, account: TAccount, json: {

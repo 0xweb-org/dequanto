@@ -1,7 +1,5 @@
 import { MappingSettersResolver } from '@dequanto/solidity/SlotsParser/MappingSettersResolver';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $contract } from '@dequanto/utils/$contract';
-import { Directory, File } from 'atma-io';
 
 UTest({
     async 'should get simple event (with different orders)'() {
@@ -343,7 +341,7 @@ UTest({
             path: './test/fixtures/parser/DAI.sol'
         });
 
-        let [ event ] = result.events;
+        let [event] = result.events;
         eq_(event.event.name, 'Approval');
         deepEq_(event.accessorsIdxMapping, [0])
     },
@@ -427,7 +425,7 @@ UTest({
         let path = `./test/fixtures/mapping-setters/UniswapV3Staker/UniswapV3Staker.sol`;
 
         return UTest({
-            async 'no Events, method mutates the mapping but the Event Logged does not contain the mapping key (is not easy calculable)' () {
+            async 'no Events, method mutates the mapping but the Event Logged does not contain the mapping key (is not easy calculable)'() {
                 // should we implement complex static calculations to get the mapping key?
                 let result = await MappingSettersResolver.getEventsForMappingMutations('incentives', {
                     path: path
@@ -436,10 +434,10 @@ UTest({
                 eq_(result.methods.length, 1);
                 has_(result.methods[0], {
                     method: { name: 'createIncentive' },
-                    accessors: [ 'incentiveId' ]
+                    accessors: ['incentiveId']
                 });
             },
-            async 'extract correct Events and Mapping Keys' () {
+            async 'extract correct Events and Mapping Keys'() {
                 let result = await MappingSettersResolver.getEventsForMappingMutations('deposits', {
                     path: path
                 }, 'UniswapV3Staker');
@@ -448,29 +446,29 @@ UTest({
                 has_(result.events, [
                     {
                         event: { name: 'DepositTransferred' },
-                        accessors: [ 'tokenId' ],
-                        accessorsIdxMapping: [ 0 ]
+                        accessors: ['tokenId'],
+                        accessorsIdxMapping: [0]
                     },
                     {
                         event: { name: 'TokenStaked' },
-                        accessors: [ 'tokenId' ],
-                        accessorsIdxMapping: [ 0 ]
+                        accessors: ['tokenId'],
+                        accessorsIdxMapping: [0]
                     },
                 ])
             },
-            async 'extract correct complex mapping keys for nested mappings' () {
+            async 'extract correct complex mapping keys for nested mappings'() {
                 let result = await MappingSettersResolver.getEventsForMappingMutations('_stakes', {
                     path: path
                 }, 'UniswapV3Staker');
                 has_(result.events, [
                     {
                         event: { name: 'TokenStaked' },
-                        accessors: [ 'tokenId', 'incentiveId' ],
-                        accessorsIdxMapping: [ 0, 1 ]
+                        accessors: ['tokenId', 'incentiveId'],
+                        accessorsIdxMapping: [0, 1]
                     }
                 ]);
             },
-            async 'no Events, but should at least contain the methods' () {
+            async 'no Events, but should at least contain the methods'() {
                 // should we implement complex static calculations to get the mapping key?
                 let result = await MappingSettersResolver.getEventsForMappingMutations('rewards', {
                     path: path
@@ -479,12 +477,38 @@ UTest({
                 has_(result.methods, [
                     {
                         method: { name: 'unstakeToken' },
-                        accessors: [ 'key.rewardToken', 'deposit.owner' ]
+                        accessors: ['key.rewardToken', 'deposit.owner']
                     },
                     {
                         method: { name: 'claimReward' },
-                        accessors: [ 'rewardToken', 'msg.sender' ]
+                        accessors: ['rewardToken', 'msg.sender']
                     },
+                ]);
+            }
+        });
+    },
+    async 'should parse ERC20'() {
+
+        let path = `./test/fixtures/mapping-setters/GTC.sol`;
+
+        return UTest({
+            async 'no Events, method mutates the mapping but the Event Logged does not contain the mapping key (is not easy calculable)'() {
+                // should we implement complex static calculations to get the mapping key?
+                let result = await MappingSettersResolver.getEventsForMappingMutations('balances', {
+                    path: path
+                }, 'GTC');
+
+                has_(result.events, [
+                    {
+                        event: { type: 'event', name: 'Transfer' },
+                        accessors: ['account'],
+                        accessorsIdxMapping: [1]
+                    },
+                    {
+                        event: { type: 'event', name: 'Transfer' },
+                        accessors: ['src'],
+                        accessorsIdxMapping: [0]
+                    }
                 ]);
             }
         });

@@ -16,27 +16,28 @@ import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client';
 import { LoggerService } from '@dequanto/loggers/LoggerService';
 import { $is } from '@dequanto/utils/$is';
 
-import { IProxy, IProxyAdmin, ProxyDeployment } from './proxy/ProxyDeployment';
+import { IBeaconProxy, IProxy, IProxyAdmin, ProxyDeployment } from './proxy/ProxyDeployment';
 import { DeploymentsStorage, IDeployment } from './storage/DeploymentsStorage';
+import { TAddress } from '@dequanto/models/TAddress';
 
 
 export class Deployments {
+    public store: DeploymentsStorage;
+
     private _logger = new LoggerService('deployments', {
         fs: false,
         std: true
     });
     private _hh = new HardhatProvider();
     private _proxyDeployment: ProxyDeployment;
-    private _store: DeploymentsStorage;
-
     private _config: {
         TransparentProxy?: {
             Proxy?: Constructor<ContractBase>,
             ProxyAdmin?: Constructor<IProxyAdmin>
         }
     } = {
-        TransparentProxy: {}
-    }
+            TransparentProxy: {}
+        }
 
     constructor(public client: Web3Client, public deployer: IAccount, public opts: {
         Proxy?: Constructor<ContractBase>,
@@ -50,8 +51,8 @@ export class Deployments {
     } = {}) {
         this._config.TransparentProxy.Proxy = opts?.Proxy;
         this._config.TransparentProxy.ProxyAdmin = opts?.ProxyAdmin;
-        this._store = new DeploymentsStorage(client, deployer, opts);
-        this._proxyDeployment = new ProxyDeployment(this._store, this._config);
+        this.store = new DeploymentsStorage(client, deployer, opts);
+        this._proxyDeployment = new ProxyDeployment(this.store, this._config);
 
         if (opts?.fork) {
             $require.eq(client.platform, 'hardhat', 'Only hardhat is supported for forked networks');
@@ -63,17 +64,29 @@ export class Deployments {
         id?: string;
         params?: ConstructorParameters<Constructor<T>>;
     }): Promise<boolean> {
-        let x = await this.get(Ctor, opts);
+        let x = await this.getOrNull(Ctor, opts);
         return x != null;
     }
 
     async get<T extends ContractBase>(Ctor: Constructor<T>, opts?: {
         id?: string;
     }): Promise<T> {
-        let deployment = await this._store.getDeploymentInfo(Ctor, opts);
-        return deployment == null
-            ? null
-            : new Ctor(deployment.address, this.client);
+        let contract = await this.getOrNull(Ctor, opts);
+        if (contract == null) {
+            throw new Error(`Deployment ${Ctor.name} ${opts?.id ?? ''} not found in ${this.client.platform} [${this.store.opts?.name ?? this.store.opts?.directory ?? ''}]`);
+        }
+        return contract;
+    }
+
+    private async getOrNull<T extends ContractBase>(Ctor: Constructor<T>, opts: {
+        id?: string;
+    }): Promise<T> {
+        let deployment = await this.store.getDeploymentInfo(Ctor, opts);
+        let address = deployment?.address;
+        if (address == null) {
+            return null;
+        }
+        return new Ctor(address, this.client);
     }
 
     /**
@@ -83,7 +96,7 @@ export class Deployments {
     async getAs<TDeployed extends ContractBase, TWrapped extends ContractBase>(Ctor: Constructor<TDeployed>, CtorWrapped: Constructor<TWrapped>, opts?: {
         id?: string;
     }): Promise<TWrapped> {
-        let deployment = await this._store.getDeploymentInfo(Ctor, opts);
+        let deployment = await this.store.getDeploymentInfo(Ctor, opts);
         return deployment == null
             ? null
             : new CtorWrapped(deployment.address, this.client);
@@ -107,7 +120,7 @@ export class Deployments {
         /** Will check if local bytecode has changed and will deploy */
         latest?: boolean
 
-         validation?: boolean | 'silent'
+        validation?: boolean | 'silent'
     }): Promise<{
         contract: T
         receipt?: TEth.TxReceipt
@@ -115,8 +128,8 @@ export class Deployments {
     }> {
         opts ??= {} as any;
 
-        let currentDeployment = await this._store.getDeploymentInfo(Ctor, opts);
-        let contract = await this.get(Ctor, opts);
+        let currentDeployment = await this.store.getDeploymentInfo(Ctor, opts);
+        let contract = await this.getOrNull(Ctor, opts);
         if (contract != null && opts.force !== true && opts.latest !== true) {
             // return already deployed contract
             $contract.store.register(contract as any);
@@ -153,7 +166,7 @@ export class Deployments {
             deployer: this.deployer as any,
         });
 
-        let deployment = await this._store.saveDeployment(deployedContract, {
+        let deployment = await this.store.saveDeployment(deployedContract, {
             id,
             name: Ctor.name,
             bytecodeHash: $contract.keccak256(deployedBytecode)
@@ -205,7 +218,7 @@ export class Deployments {
         let id = opts?.id ?? CtorImpl.name;
         let version = /V?(?<version>\d)$/i.exec(id);
         let proxyId = version == null
-            ? `${id}Proxy` : `${ id.substring(0, id.length - version[0].length) }Proxy`;
+            ? `${id}Proxy` : `${id.substring(0, id.length - version[0].length)}Proxy`;
 
         let implantationOpts = {
             ...opts,
@@ -218,15 +231,7 @@ export class Deployments {
             deployment: contractImplDeployment
         } = await this.ensure(CtorImpl, implantationOpts);
 
-        let data: TEth.Hex = null;
-        let initializeAbi = contractImpl.abi.find(x => x.name === 'initialize');
-        if (initializeAbi) {
-            if (opts.initialize?.length !== initializeAbi.inputs.length) {
-                throw new Error(`Wrong number of arguments (${opts.initialize?.length}) for initializer method (${initializeAbi.inputs.length}) in ${id}.`);
-            }
-            data = $abiUtils.serializeMethodCallData(initializeAbi, opts.initialize ?? []);
-        }
-
+        let data = serializeInitData(id, contractImpl, opts.initialize);
         let implementationAddress = contractImplDeployment.implementation ?? contractImplDeployment.address;
 
         let {
@@ -250,8 +255,8 @@ export class Deployments {
             contractImplDeployment.address = contractProxy.address;
 
             contractProxyDeployment.proxyFor = contractImplDeployment.implementation;
-            await this._store.updateDeployment(contractImplDeployment);
-            await this._store.updateDeployment(contractProxyDeployment);
+            await this.store.updateDeployment(contractImplDeployment);
+            await this.store.updateDeployment(contractProxyDeployment);
         }
 
 
@@ -266,6 +271,56 @@ export class Deployments {
         };
     }
 
+    /**
+     * Deploys the Beacon contract. Implementation is the target contract (can be a proxy or normal contract)
+     * https://docs.openzeppelin.com/contracts/5.x/api/proxy#beacon
+     **/
+    async ensureBeacon<
+        T extends (ContractBase & { initialize?: TInit }),
+        TInit extends TInitializer
+    >(
+        implementation: T,
+        opts: Omit<TConstructorArgs<T>, 'arguments'> & {
+            id: string
+            force?: boolean
+            latest?: boolean
+            initialize?: ParametersFromSecond<T['initialize']>
+            Beacon: Constructor<IBeaconProxy>
+            arguments?: never
+        }
+    ): Promise<{
+        // the Implementation Contract with the address set to Beacon Implementation
+        contract: T
+        contractReceipt?: TEth.TxReceipt
+        deployment: IDeployment
+    }> {
+
+        let data = serializeInitData(opts.id, implementation, opts?.initialize);
+        let {
+            contract: contractBeacon,
+            receipt: contractBeaconReceipt,
+            deployment: contractBeaconDeployment
+        } = await this.ensure(opts.Beacon, {
+            id: opts.id,
+            arguments: [
+                implementation.address,
+                data
+            ]
+        });
+
+        if (contractBeaconDeployment.implementation == null) {
+            // Set the Proxy contract as the main Address
+            contractBeaconDeployment.implementation = contractBeaconDeployment.address;
+            contractBeaconDeployment.address = implementation.address;
+        }
+
+        let contract = implementation.$address(contractBeacon.address)
+        return {
+            contract: contract,
+            contractReceipt: contractBeaconReceipt,
+            deployment: contractBeaconDeployment
+        };
+    }
 
 
     private async isSameBytecode<T extends ContractBase>(Ctor: Constructor<T>, deployment: IDeployment) {
@@ -291,8 +346,8 @@ export class Deployments {
 
 
 
-    public async fixBytecodeHashesByReread () {
-        let deployments = await this._store.getDeployments();
+    public async fixBytecodeHashesByReread() {
+        let deployments = await this.store.getDeployments();
         await alot(deployments).forEachAsync(async (deployment, i) => {
             this._logger.log(`Fixing BytecodeHashes: ${i}/${deployments.length}`);
 
@@ -305,24 +360,28 @@ export class Deployments {
         }).toArrayAsync({ threads: 4 });
 
 
-        await this._store.saveAll(deployments);
+        await this.store.saveAll(deployments);
     }
 
 
     /**
      * A simple method to configure the contracts state
      */
-    public async configure<T extends TCtor, TValue>(Ctor: Constructor<T>, opts: {
+    public async configure<T extends TCtor, TValue>(Ctor: Constructor<T> | T, opts: {
         id?: string;
 
         value: TValue
         current?: (x: T) => Promise<TValue>;
         updater: (x: T, value: TValue) => Promise<any>;
     }) {
-        let x = await this.get(Ctor, {
-            id: opts.id
-        });
-        $require.notNull(x, `Deployment not found for ${Ctor.name} ${opts.id ?? ''}.`);
+        let x: T;
+        if (typeof Ctor === 'function') {
+            x = await this.get(Ctor, {
+                id: opts.id
+            });
+        } else {
+            x = Ctor;
+        }
 
         if (opts.current != null) {
             let current = await opts.current(x);
@@ -341,12 +400,12 @@ type TInitializer = (...args: any[]) => any
 type TCtor = ContractBase & { $constructor?: (...args: any[]) => any }
 type TConstructorArgs<T extends TCtor> = T['$constructor'] extends Function ? {
     arguments: ParametersFromSecond<T['$constructor']>
-}: {
+} : {
     arguments?: any[]
 }
 
 
-function isEqual (a, b) {
+function isEqual(a, b) {
     if (a == null || b == null) {
         return a == b;
     }
@@ -378,4 +437,16 @@ function isEqual (a, b) {
         }
     }
     return true;
+}
+
+function serializeInitData(id: string, contract: ContractBase, initializeParams: any) {
+    let data: TEth.Hex = null;
+    let initializeAbi = contract.abi.find(x => x.name === 'initialize');
+    if (initializeAbi) {
+        if (initializeParams?.length !== initializeAbi.inputs.length) {
+            throw new Error(`Wrong number of arguments (${initializeParams?.length}) for initializer method (${initializeAbi.inputs.length}) in ${id}.`);
+        }
+        data = $abiUtils.serializeMethodCallData(initializeAbi, initializeParams ?? []);
+    }
+    return data;
 }

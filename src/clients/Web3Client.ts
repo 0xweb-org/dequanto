@@ -29,6 +29,7 @@ import { RpcTypes } from '@dequanto/rpc/Rpc';
 import { TRpc } from '@dequanto/rpc/RpcBase';
 import { $sig } from '@dequanto/utils/$sig';
 import { $bytecode } from '@dequanto/evm/utils/$bytecode';
+import { $contract } from '@dequanto/utils/$contract';
 
 export abstract class Web3Client implements IWeb3Client {
 

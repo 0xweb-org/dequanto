@@ -185,10 +185,21 @@ export class GeneratorFromAbi {
             }
         }
 
+        let outputDirectory = name;
+        let outputFilename = /[^\\/]+$/.exec(name)[0];
+        let outputPath = /\.(ts|js)$/.test(opts.output)
+            ? opts.output
+            : class_Uri.combine(opts.output, outputDirectory, `${outputFilename}.ts`);
+
         let metaProperty = '';
         if (opts.artifact) {
-            let path = this.getRelativePath(opts.artifact);
-            metaProperty = `$meta = { artifact: '${path}' }` ;
+            let pathArtifact = this.getRelativePath(opts.artifact);
+            let pathClass = this.getRelativePath(outputPath);
+            let meta = {
+                artifact: pathArtifact,
+                class: pathClass
+            };
+            metaProperty = `$meta = ${ JSON.stringify(meta, null, 4) }` ;
         }
 
         let storageReaderInitializer = '';
@@ -244,28 +255,22 @@ export class GeneratorFromAbi {
             ;
 
 
-        let directory = name;
-        let filename = /[^\\/]+$/.exec(name)[0];
 
-        let path = /\.ts$/.test(opts.output)
-            ? opts.output
-            : class_Uri.combine(opts.output, directory, `${filename}.ts`);
-
-        await File.writeAsync(path, code, { skipHooks: true });
+        await File.writeAsync(outputPath, code, { skipHooks: true });
 
         if (opts.saveAbi) {
-            let path = class_Uri.combine(opts.output, directory, `${filename}.json`);
+            let path = class_Uri.combine(opts.output, outputDirectory, `${outputFilename}.json`);
             await File.writeAsync(path, abiJson);
         }
 
-        $logger.log(`bold<green<${className}>> ABI wrapper class created: bold<${path}>`);
+        $logger.log(`bold<green<${className}>> ABI wrapper class created: bold<${outputPath}>`);
 
         let sources = opts.sources;
         let sourceFiles = [];
         if (sources && opts.saveSources !== false) {
             sourceFiles = await alot.fromObject(sources).mapAsync(async entry => {
                 let sourceFilename = /\/?([^/]+$)/.exec(entry.key)[1];
-                let path = class_Uri.combine(opts.output, directory, filename, sourceFilename);
+                let path = class_Uri.combine(opts.output, outputDirectory, outputFilename, sourceFilename);
                 await File.writeAsync(path, entry.value.content, { skipHooks: true });
 
                 $logger.log(`Source code saved: ${path}`);
@@ -273,7 +278,7 @@ export class GeneratorFromAbi {
             }).toArrayAsync();
         }
         return {
-            main: path,
+            main: outputPath,
             sources: sourceFiles,
             platform: opts.network,
             address: opts.address,

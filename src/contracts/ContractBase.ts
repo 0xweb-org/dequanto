@@ -43,6 +43,8 @@ export abstract class ContractBase {
     $meta?: {
         // Path to the compiled JSON artifact file
         artifact?: string
+        // Path to the generated TS/JS class filename
+        class?: string
     }
 
     storage?: ContractStorageReaderBase
