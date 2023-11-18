@@ -2,17 +2,15 @@ import { $date } from '@dequanto/utils/$date';
 import { Everlog } from 'everlog';
 import { ILogger } from './ILogger';
 import memd from 'memd';
+import { $logger } from '@dequanto/utils/$logger';
 
 export class LoggerService implements ILogger {
-
-    public logs: any[][] = [];
 
     private fs: GlobalChannel;
 
     constructor(public name: string = 'journal', public options?: {
         fs?: boolean
         std?: boolean
-        memory?: number
     }) {
         this.options ??= {};
 
@@ -39,19 +37,8 @@ export class LoggerService implements ILogger {
         if (this.options.fs !== false) {
             this.fs.write(level, this.name, params)
         }
-
-        let args = [$date.format(new Date(), 'HH:mm:ss'), ...params ]
         if (this.options.std !== false) {
-            console[level](...args);
-        }
-
-        let maxMemory = this.options?.memory ?? 5000;
-        if (maxMemory !== 0) {
-            let size = this.logs.push([level, ...args]);
-            if (size > maxMemory) {
-                let removeAmount = Math.floor(maxMemory * .3);
-                this.logs.splice(0, removeAmount);
-            }
+            $logger[level](...params);
         }
     }
 }

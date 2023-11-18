@@ -239,7 +239,7 @@ export class TxDataBuilder {
             if (error.data?.type != null) {
                 message += `\nError: ` + $contract.formatCall(error.data);
             }
-            let parsed = $contract.parseInputData(this.data.data, this.abi);
+            let parsed = $contract.parseInputData(this.data.data, this.abi ?? $contract.store.getFlattened());
             if (parsed) {
                 message += `\nMethod: ` + $contract.formatCall(parsed);
             }

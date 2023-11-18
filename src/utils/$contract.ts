@@ -72,6 +72,9 @@ export namespace $contract {
     }
 
     export function parseInputData (inputHex: string, abis: TAbiItem[]) {
+        if (abis == null || abis.length === 0) {
+            return null;
+        }
         let str = inputHex.substring(2);
         if (str === '') {
             return null;

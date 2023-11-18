@@ -145,7 +145,16 @@ export class HardhatProvider {
 
         let client = options?.client ?? this.client();
         let { factory, abi } = await this.getFactoryForClass(Ctor, options);
-        let receipt = await factory.deploy();
+        let receipt: TEth.TxReceipt;
+
+        try {
+            console.log(`deploy class`)
+            receipt = await factory.deploy();
+        } catch (error) {
+            let wrapped = new Error(`Deploy ${Ctor.name} failed: ` + error.message);
+            (wrapped as any).data = error.data;
+            throw wrapped;
+        }
 
         $logger.log(`Contract ${Ctor.name} deployed(${receipt.status}) to ${receipt.contractAddress} in tx:${receipt.transactionHash}`);
         let contract = new Ctor(receipt.contractAddress, client);

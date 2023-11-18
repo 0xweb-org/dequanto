@@ -169,11 +169,15 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
         let time = Date.now();
         let sender: ChainAccount = await this.getSender();
-
-        await Promise.all([
-            this.builder.ensureNonce(),
-            this.builder.ensureGas(),
-        ]);
+        try {
+            await Promise.all([
+                this.builder.ensureNonce(),
+                this.builder.ensureGas(),
+            ]);
+        } catch (error) {
+            this.onCompleted.reject(error);
+            return;
+        }
 
         let key = sender?.key;
         let signedTxBuffer = key == null

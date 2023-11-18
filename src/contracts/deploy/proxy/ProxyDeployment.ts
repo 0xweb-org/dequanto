@@ -23,15 +23,14 @@ export interface IProxyAdmin extends ContractBase {
 export interface IBeaconProxy extends ContractBase {
     $constructor (deployer: IAccount, beacon: TEth.Address, initData: TEth.Hex)
 }
+export interface IBeacon extends ContractBase {
+    $constructor (deployer: IAccount, implementation: TEth.Address)
+    implementation(): Promise<TEth.Address>
+    upgradeTo (sender: IAccount, newImplementation: TAddress)
+}
 
-interface IProxyDeploymentCtx {
-
-    ImplementationContract: Constructor<ContractBase>,
-    proxyId: string
-    TransparentProxy?: {
-        Proxy?: Constructor<ContractBase>,
-        ProxyAdmin?: Constructor<IProxyAdmin>
-    }
+interface IDeploymentCtx {
+    ImplementationContract: Constructor<ContractBase>
     deployer: IAccount
     deployments: Deployments
     implementation: {
@@ -43,6 +42,28 @@ interface IProxyDeploymentCtx {
     }
 }
 
+interface IProxyDeploymentCtx extends IDeploymentCtx {
+    proxyId: string
+    TransparentProxy?: {
+        Proxy?: Constructor<ContractBase>,
+        ProxyAdmin?: Constructor<IProxyAdmin>
+    }
+    Beacon?: {
+        Beacon?: Constructor<IBeacon>,
+        BeaconProxy?: Constructor<IBeaconProxy>
+    }
+}
+
+
+interface IBeaconDeploymentCtx extends IDeploymentCtx {
+    beaconId: string
+    beaconProxyId: string
+    Beacon?: {
+        Beacon?: Constructor<IBeacon>,
+        BeaconProxy?: Constructor<IBeaconProxy>
+    }
+}
+
 // Supports OpenZeppelin proxy deployments
 
 export class ProxyDeployment {
@@ -51,6 +72,10 @@ export class ProxyDeployment {
         TransparentProxy?: {
             Proxy?: Constructor<ContractBase>,
             ProxyAdmin?: Constructor<IProxyAdmin>
+        },
+        Beacon?: {
+            Beacon?: Constructor<IBeacon>,
+            BeaconProxy?: Constructor<IBeaconProxy>
         }
     }) {
 
@@ -58,9 +83,17 @@ export class ProxyDeployment {
 
     async ensureProxy(ctx: IProxyDeploymentCtx) {
         $require.notEmpty(ctx.proxyId, `ProxyId for the contract is required`);
-
+        $require.Address(ctx.implementation?.address, `Implementation address is required`);
         //@TODO add support of UUPS proxy
-        return this.ensureTransparentProxy(ctx)
+        return this.ensureTransparentProxy(ctx);
+    }
+
+    async ensureBeaconProxy(ctx: IBeaconDeploymentCtx) {
+        $require.notEmpty(ctx.beaconId, `BeaconId for the contract is required`);
+        $require.notEmpty(ctx.beaconProxyId, `BeaconProxyId for the contract is required`);
+        $require.Address(ctx.implementation?.address, `Implementation address is required`);
+
+        return this.ensureBeaconInner(ctx);
     }
 
 
@@ -76,7 +109,6 @@ export class ProxyDeployment {
             client
         } = deployments;
         let {
-
             address: implAddress,
             initData
         } = ctx.implementation;
@@ -147,7 +179,7 @@ export class ProxyDeployment {
             let slotValue = await client.getStorageAt(contractProxy.address, SLOT);
             let address = `0x` + slotValue.slice(-40);
             if ($address.eq(address, implAddress) === false) {
-                await this.requireCompatibleStorageLayout(ctx);
+                await this.requireCompatibleStorageLayout(proxyId, ctx);
 
                 console.log(`Upgrading ProxyAdmin to ${implAddress}`);
                 let receipt = await Interfaces.call(
@@ -158,12 +190,12 @@ export class ProxyDeployment {
                     implAddress,
                     null // data
                 );
-                await this.saveStorageLayout(ctx);
+                await this.saveStorageLayout(proxyId, ctx);
             }
         }
         if (hasProxy === false && contractProxyReceipt != null) {
             // new proxy deployment, save the storage layout
-            await this.saveStorageLayout(ctx);
+            await this.saveStorageLayout(proxyId, ctx);
         }
         return {
             contractProxy,
@@ -172,23 +204,103 @@ export class ProxyDeployment {
         }
     }
 
-    private async saveStorageLayout(ctx: IProxyDeploymentCtx) {
+    protected async ensureBeaconInner(ctx: IBeaconDeploymentCtx) {
+        let {
+            beaconId,
+            beaconProxyId,
+            deployer,
+            deployments,
+            ImplementationContract
+        } = ctx;
+        let {
+            client
+        } = deployments;
+        let {
+            address: implAddress,
+            initData
+        } = ctx.implementation;
+        let {
+            Beacon,
+            BeaconProxy,
+        } = ctx.Beacon ?? this.opts.Beacon;
+        $require.notNull(Beacon, 'Beacon is required');
+        $require.notNull(BeaconProxy, 'BeaconProxy is required');
+
+
+        let beaconOpts = {
+            id: beaconId,
+            arguments: [
+                // address implementation
+                implAddress
+            ] as [ TEth.Address ]
+        };
+        let hasBeacon = await deployments.has(Beacon, beaconOpts);
+        let {
+            contract: contractBeacon,
+            receipt: contractBeaconReceipt,
+            deployment: contractBeaconDeployment,
+        } = await deployments.ensure(Beacon, beaconOpts);
+
+        if (hasBeacon) {
+            let address = await contractBeacon.implementation();
+            if ($address.eq(address, implAddress) === false) {
+                await this.requireCompatibleStorageLayout(beaconId, ctx);
+
+                l`Upgrading Beacon to ${implAddress}`;
+                let receipt = await Interfaces.call(
+                    deployer,
+                    contractBeacon,
+                    Interfaces.Beacon.Beacon.upgradeTo,
+                    implAddress
+                );
+                await this.saveStorageLayout(beaconId, ctx);
+            }
+        } else {
+            if (contractBeaconReceipt?.status) {
+                // new beacon deployment, save the storage layout
+                await this.saveStorageLayout(beaconId, ctx);
+            }
+        }
+
+        let beaconProxyOpts = {
+            id: beaconProxyId,
+            arguments: [
+                // address implementation
+                contractBeacon.address, initData
+            ] as [TEth.Address, TEth.Hex]
+        };
+        let hasBeaconProxy = await deployments.has(BeaconProxy, beaconProxyOpts);
+        let {
+            contract: contractBeaconProxy,
+            receipt: contractBeaconProxyReceipt,
+            deployment: contractBeaconProxyDeployment
+        } = await deployments.ensure(BeaconProxy, beaconProxyOpts);
+
+        return {
+            contractBeacon,
+            contractBeaconDeployment,
+            contractBeaconProxy,
+            contractBeaconProxyDeployment,
+        }
+    }
+
+    private async saveStorageLayout(proxyId: string, ctx: IDeploymentCtx) {
         $require.notNull(ctx.ImplementationContract, `Implementation Contract Class is required to compare the storage layout`);
         let newSlots = new ctx.ImplementationContract().storage?.$storage?.slots ?? [];
         await this.store.saveStorageLayoutInfo({
-            id: ctx.proxyId,
+            id: proxyId,
             slots: newSlots
         });
     }
 
-    private async requireCompatibleStorageLayout(ctx: IProxyDeploymentCtx) {
+    private async requireCompatibleStorageLayout(proxyId: string, ctx: IDeploymentCtx) {
         if (ctx.options?.skipStorageLayoutCheck !== true) {
             $require.notNull(ctx.ImplementationContract, `Implementation Contract Class is required to compare the storage layout`);
 
             let newStorageLayout = new ctx.ImplementationContract().storage?.$storage?.slots;
             $require.notNull(newStorageLayout, `No storage layout was generated for ${ctx.ImplementationContract.name}. `);
 
-            let currentStorageLayout = await this.store.getStorageLayoutInfo(ctx.proxyId);
+            let currentStorageLayout = await this.store.getStorageLayoutInfo(proxyId);
             if (currentStorageLayout != null) {
                 let error = await $proxyDeploy.compareStorageLayout(currentStorageLayout.slots, newStorageLayout);
                 if (error) {
@@ -240,6 +352,12 @@ namespace Interfaces {
             contractProxyAdmin: {
                 upgradeAndCall: 'upgradeAndCall(address proxy, address implementation, bytes memory data) external'
             }
+        }
+    }
+
+    export namespace Beacon {
+        export const Beacon = {
+            upgradeTo: `upgradeTo(address newImplementation)`
         }
     }
 }
