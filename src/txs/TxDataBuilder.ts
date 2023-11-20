@@ -237,8 +237,16 @@ export class TxDataBuilder {
         } catch (error) {
             let message = error.message;
             if (error.data?.type != null) {
-                message += `\nError: ` + $contract.formatCall(error.data);
+                let data = error.data;
+                if (error.data.type === `Unknown` && error.data.params) {
+                    let parsed = $contract.parseInputData(error.data.params, this.abi ?? $contract.store.getFlattened());
+                    if (parsed) {
+                        data = parsed;
+                    }
+                }
+                message += `\nError: ` + $contract.formatCall(data);
             }
+
             let parsed = $contract.parseInputData(this.data.data, this.abi ?? $contract.store.getFlattened());
             if (parsed) {
                 message += `\nMethod: ` + $contract.formatCall(parsed);

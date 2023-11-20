@@ -1,9 +1,8 @@
+import di from 'a-di';
 import { ChainAccount } from "@dequanto/models/TAccount";
 import { ChainAccountsService } from '@dequanto/ChainAccountsService';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { TxLoggerService } from '@dequanto/loggers/TxLoggerService';
 import { IToken } from '@dequanto/models/IToken';
-import di from 'a-di';
 import { ISwapService } from './defi/ISwapService';
 import { Paraswap } from './defi/paraswap/Paraswap';
 
@@ -30,10 +29,6 @@ export class TokenSwapService {
             }
             account = acc;
         }
-        // let transfer = di.resolve(TokenTransferService, this.client);
-        // let balance = await transfer.getBalance(account, params.from);
-        // let token = await transfer.getToken(TOKEN_FROM);
-        // let amount = balance - $bigint.toWei(24, token.decimals);
 
         let { from, to, amount } = params;
 

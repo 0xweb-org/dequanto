@@ -24,7 +24,9 @@ export interface IBeaconProxy extends ContractBase {
     $constructor (deployer: IAccount, beacon: TEth.Address, initData: TEth.Hex)
 }
 export interface IBeacon extends ContractBase {
-    $constructor (deployer: IAccount, implementation: TEth.Address)
+    $constructor (deployer: IAccount, implementation: TEth.Address, initialOwner?: TEth.Address)
+
+
     implementation(): Promise<TEth.Address>
     upgradeTo (sender: IAccount, newImplementation: TAddress)
 }
@@ -226,13 +228,20 @@ export class ProxyDeployment {
         $require.notNull(Beacon, 'Beacon is required');
         $require.notNull(BeaconProxy, 'BeaconProxy is required');
 
+        let ozVersion = this.getOzVersionByBeacon(Beacon);
 
         let beaconOpts = {
             id: beaconId,
-            arguments: [
-                // address implementation
-                implAddress
-            ] as [ TEth.Address ]
+            arguments: ozVersion === 4
+                ? [
+                    // address implementation
+                    implAddress
+                ] as [ TEth.Address ]
+                : [
+                    // address implementation_, address initialOwner
+                    implAddress,
+                    deployer.address
+                ] as [ TEth.Address, TEth.Address ]
         };
         let hasBeacon = await deployments.has(Beacon, beaconOpts);
         let {
@@ -309,6 +318,22 @@ export class ProxyDeployment {
                 }
             }
         }
+    }
+
+    private getOzVersionByBeacon (Beacon: Constructor<IBeacon>): 5 | 4 {
+        let $constructor = new Beacon().abi?.find(x => x.type === 'constructor');
+        $require.notNull($constructor, `Invalid Beacon contract: constructor not found`);
+
+        if ($constructor.inputs.length === 1) {
+            // constructor(address implementation_)
+            return 4;
+        }
+        if ($constructor.inputs.length === 2) {
+            // constructor(address implementation_, address initialOwner)
+            return 5;
+        }
+        console.error($constructor.inputs);
+        throw new Error(`Invalid Beacon contract: invalid constructor signature`);
     }
 }
 

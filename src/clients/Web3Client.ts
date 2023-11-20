@@ -199,9 +199,9 @@ export abstract class Web3Client implements IWeb3Client {
 
         }, { batchRequestCount: addresses.length });
     }
-    getTransactionCount(address: TEth.Address, type?: RpcTypes.BlockNumberOrTagOrHash) {
+    getTransactionCount(address: TEth.Address, blockNumber: RpcTypes.BlockNumberOrTagOrHash = 'latest') {
         return this.pool.call(wClient => {
-            return wClient.rpc.eth_getTransactionCount(address, type);
+            return wClient.rpc.eth_getTransactionCount(address, blockNumber ?? 'latest');
         });
     }
     isSyncing() {

@@ -75,7 +75,7 @@ export namespace $sig {
                 nonce: $hex.ensure(tx.nonce),
                 to: $hex.ensure(tx.to),
                 from: $hex.ensure(tx.from),
-                gas: $hex.ensure(tx.gas),
+                gas: $hex.ensure(tx.gas ?? (tx as any).gasLimit /** alias */),
                 value: $hex.ensure(tx.value),
                 input: $hex.ensure(tx.input ?? tx.data),
                 gasPrice: $hex.ensure(tx.gasPrice),
@@ -305,7 +305,7 @@ export namespace $sig {
         // https://eips.ethereum.org/EIPS/eip-2930
         function getTransactionType(tx: TEth.TxLike): 'legacy' | 'eip1559' | 'eip2930' {
             if (tx.type != null) {
-                switch (tx.type) {
+                switch (Number(tx.type)) {
                     case 0:
                         return 'legacy';
                     case 1:
@@ -314,11 +314,9 @@ export namespace $sig {
                         return 'eip1559';
                 }
             }
-
             if (tx.maxFeePerGas != null || tx.maxPriorityFeePerGas != null) {
                 return 'eip1559';
             }
-
             if (tx.gasPrice != null) {
                 if (tx.accessList != null) {
                     return 'eip2930'
@@ -336,7 +334,7 @@ export namespace $sig {
                 $to.hex(tx.nonce),
                 $to.hex(tx.maxPriorityFeePerGas),
                 $to.hex(tx.maxFeePerGas),
-                $to.hex(tx.gas),
+                $to.hex(tx.gas ?? (tx as any).gasLimit /** alias */),
                 $to.hex(tx.to),
                 $to.hex(tx.value),
                 $to.hex(tx.data ?? tx.input),
@@ -364,7 +362,7 @@ export namespace $sig {
                 $to.hex(tx.chainId),
                 $to.hex(tx.nonce),
                 $to.hex(tx.gasPrice),
-                $to.hex(tx.gas),
+                $to.hex(tx.gas ?? (tx as any).gasLimit /** alias */),
                 $to.hex(tx.to),
                 $to.hex(tx.value),
                 $to.hex(tx.data ?? tx.input),
@@ -389,7 +387,7 @@ export namespace $sig {
             let serializedTransaction = [
                 $to.hex(tx.nonce),
                 $to.hex(tx.gasPrice),
-                $to.hex(tx.gas),
+                $to.hex(tx.gas ?? (tx as any).gasLimit /** alias */),
                 $to.hex(tx.to),
                 $to.hex(tx.value),
                 $to.hex(tx.data ?? tx.input),
@@ -506,7 +504,7 @@ export namespace $sig {
             let tx = <TEth.TxSigned>{
                 type,
                 chainId: Number(chainId),
-                nonce: $to.bigint(nonce, 0n),
+                nonce: $to.number(nonce, 0n),
                 maxPriorityFeePerGas: $to.bigint(maxPriorityFeePerGas, 0n),
                 maxFeePerGas: $to.bigint(maxFeePerGas, 0n),
                 gas: $to.bigint(gas),
@@ -546,7 +544,7 @@ export namespace $sig {
             let tx = <TEth.TxSigned>{
                 type,
                 chainId: Number(chainId),
-                nonce: $to.bigint(nonce),
+                nonce: $to.number(nonce),
                 gasPrice: $to.bigint(gasPrice),
                 gas: $to.bigint(gas),
                 to: $to.hex(to),
@@ -595,7 +593,7 @@ export namespace $sig {
             let tx = <TEth.TxSigned>{
                 type,
                 chainId: chainId,
-                nonce: $to.bigint(nonce),
+                nonce: $to.number(nonce),
                 gasPrice: $to.bigint(gasPrice),
                 gas: $to.bigint(gas),
                 to: $to.hex(to),

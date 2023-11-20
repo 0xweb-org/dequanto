@@ -85,7 +85,10 @@ export class ContractDeployer {
         $require.notNull(ctx.name, 'Contract name is required');
 
         let artifacts = ctx.artifacts ?? './artifacts/';
-        let files = await Directory.readFilesAsync(artifacts, '**.json');
+        let files = await $require.resolved(
+            Directory.readFilesAsync(artifacts, '**.json'),
+            `Artifact files not found for ${ctx.name}`
+        );
         let file = files.find(x => x.uri.file === `${ctx.name}.json`);
         $require.notNull(file, `File for the contract ${ctx.name} not found within: \n ${ files.map(x => x.uri.toString()).join('\n') }`);
 

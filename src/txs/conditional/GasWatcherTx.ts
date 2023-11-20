@@ -102,7 +102,7 @@ export class GasWatcherTx {
         await builder.setGas({
             price: gasPrice,
             priceRatio: 1,
-            gasLimit: data.gasLimit as number,
+            gasLimit: data.gas as number,
         });
 
         writer.tx = null;

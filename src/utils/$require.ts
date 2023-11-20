@@ -54,7 +54,6 @@ export namespace $require {
     }
     export function notNull<T> (val: T, message: string, ...logs): T {
         if (val == null) {
-
             logs?.forEach(log => console.error(log));
             throw new Error(`Value is undefined. ${message}`);
         }
@@ -70,6 +69,14 @@ export namespace $require {
             throw new Error(`Value is empty array. ${message}`);
         }
         return val;
+    }
+
+    export async function resolved <T> (x: PromiseLike<T>, message: string): Promise<T> {
+        try {
+            return await x;
+        } catch (error) {
+            throw new Error(`${message} ${error.message}`);
+        }
     }
 
     export function True(value: boolean, message: string) {

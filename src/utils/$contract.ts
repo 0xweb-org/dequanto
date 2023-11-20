@@ -272,7 +272,11 @@ export namespace $contract {
             } else {
                 let arr = [];
                 for (let key in call.params) {
-                    arr.push(`${key}=${call.params[key]}`);
+                    let value = call.params[key];
+                    if (value != null && typeof value === 'object') {
+                        value = formatJson(value);
+                    }
+                    arr.push(`${key}=${value}`);
                 }
                 paramsStr = arr.join(', ');
             }
@@ -291,5 +295,11 @@ export namespace $contract {
         export function register (contract: { abi: TAbiItem[] }) {
             knownContracts.push(contract)
         }
+    }
+
+    function formatJson (json) {
+        let str = JSON.stringify(json, null, 2);
+        str = str.replace(/"([\w]+)":/g, '$1:');
+        return str;
     }
 }

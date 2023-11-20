@@ -104,7 +104,7 @@ export class OneInchExchange {
 
         let gas = $txData.gas;
         delete $txData.gas;
-        $txData.gasLimit = BigInt(gas) * 2n;
+        $txData.gas = BigInt(gas) * 2n;
 
         let txBuilder = new TxDataBuilder(this.client, account, txData );
         await txBuilder.setNonce();

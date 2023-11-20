@@ -27,6 +27,7 @@ import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
 import { ContractDeployment } from '@dequanto/contracts/deploy/ContractDeployment';
 import { ContractDeployer } from '@dequanto/contracts/deploy/ContractDeployer';
 import { $sig } from '@dequanto/utils/$sig';
+import { $address } from '@dequanto/utils/$address';
 
 
 
@@ -148,7 +149,6 @@ export class HardhatProvider {
         let receipt: TEth.TxReceipt;
 
         try {
-            console.log(`deploy class`)
             receipt = await factory.deploy();
         } catch (error) {
             let wrapped = new Error(`Deploy ${Ctor.name} failed: ` + error.message);
@@ -156,8 +156,9 @@ export class HardhatProvider {
             throw wrapped;
         }
 
-        $logger.log(`Contract ${Ctor.name} deployed(${receipt.status}) to ${receipt.contractAddress} in tx:${receipt.transactionHash}`);
-        let contract = new Ctor(receipt.contractAddress, client);
+        let address = $address.toChecksum(receipt.contractAddress);
+        $logger.log(`Contract ${Ctor.name} deployed(${receipt.status}) to ${address} in tx:${receipt.transactionHash}`);
+        let contract = new Ctor(address, client);
         return {
             contract,
             receipt,

@@ -454,6 +454,14 @@ function isEqual(a, b) {
         return a == b;
     }
     if (typeof a !== 'object' && typeof b !== 'object') {
+
+        if (typeof a === 'string' && typeof b ==='string') {
+            if (a.startsWith('0x') && b.startsWith('0x') && $is.Hex(a) && $is.Hex(b)) {
+                a = a.toLowerCase();
+                b = b.toLowerCase();
+            }
+        }
+
         // Not strictly equal
         return a == b;
     }

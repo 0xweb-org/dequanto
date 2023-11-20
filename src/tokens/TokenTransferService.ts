@@ -1,13 +1,12 @@
 import di from 'a-di';
 
-import { ChainAccount, SafeAccount, TAccount } from "@dequanto/models/TAccount";
+import { ChainAccount, IAccount, SafeAccount, TAccount } from "@dequanto/models/TAccount";
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 import { ITxWriterOptions, TxWriter } from '@dequanto/txs/TxWriter';
 import { $bigint } from '@dequanto/utils/$bigint';
-import { $is } from '@dequanto/utils/$is';
 import { TokensService } from './TokensService';
 import { $address } from '@dequanto/utils/$address';
 import { ITxConfig } from '@dequanto/txs/ITxConfig';
@@ -16,6 +15,7 @@ import { LoggerService } from '@dequanto/loggers/LoggerService';
 import { $logger } from '@dequanto/utils/$logger';
 import { $account } from '@dequanto/utils/$account';
 import { TEth } from '@dequanto/models/TEth';
+import { $require } from '@dequanto/utils/$require';
 
 
 export class TokenTransferService {
@@ -23,10 +23,10 @@ export class TokenTransferService {
     private gasPriorityFee?: number
     private builderConfig: ITxConfig
     private writerConfig: ITxWriterOptions
-    private tokenService = di.resolve(TokensService, this.client.platform)
+    private tokenService: TokensService
 
     constructor (public client: Web3Client, private logger = di.resolve(LoggerService)) {
-
+        this.tokenService = di.resolve(TokensService, this.client.platform);
     }
 
     $config (builderConfig: ITxConfig): this {
@@ -79,7 +79,7 @@ export class TokenTransferService {
         }
         return this.transferErc20All(from, to, token, { remainder });
     }
-    async transfer (from: TAccount, to: TAddress, token: string | IToken, amount: number | bigint) : Promise<TxWriter> {
+    async transfer (from: IAccount, to: TAddress, token: string | IToken, amount: number | bigint) : Promise<TxWriter> {
         token = await this.getToken(token);
         amount = this.getAmount(amount, token);
 
@@ -94,7 +94,7 @@ export class TokenTransferService {
         if (typeof token === 'string') {
             token = await this.tokenService.getKnownToken(token);
         }
-        $is.notNull(token, 'Token is undefined to transfer');
+        $require.notNull(token, 'Token is undefined to transfer');
         return token;
     }
     isNativeToken (token: string | IToken): boolean {
@@ -141,7 +141,7 @@ export class TokenTransferService {
 
             // txBuilder.data.maxFeePerGas = $bigint.toHex($gasPrice - 20n**9n);
             // txBuilder.data.maxPriorityFeePerGas = $bigint.toHex(20n**9n);
-            txBuilder.data.gasLimit = GAS;
+            txBuilder.data.gas = GAS;
             txBuilder.data.type = 1;
 
             txBuilder.setConfig(this.builderConfig);
@@ -170,7 +170,7 @@ export class TokenTransferService {
             }
         });
     }
-    private async transferNative (from: TAccount, to: TAddress, amount: bigint): Promise<TxWriter> {
+    private async transferNative (from: IAccount, to: TAddress, amount: bigint): Promise<TxWriter> {
         let sender = $account.getSender(from);
 
         let txBuilder = new TxDataBuilder(this.client, sender, {
