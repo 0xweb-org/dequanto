@@ -61,6 +61,9 @@ export namespace $rpc {
     }
 
     export function deserialize (model: any, schema: string | string[] | { oneOf: string[] }) {
+        if (model == null) {
+            return model;
+        }
         let type = schema;
         if (typeof schema === 'string') {
             switch (type) {
