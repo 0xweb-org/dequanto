@@ -4,9 +4,7 @@ import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { SlotsDump } from '@dequanto/solidity/SlotsDump';
 import { SlotsParser } from '@dequanto/solidity/SlotsParser';
 import { SlotsStorage } from '@dequanto/solidity/SlotsStorage';
-import { MappingKeysLoader } from '@dequanto/solidity/storage/MappingKeysLoader';
 import { l } from '@dequanto/utils/$logger';
-import { File } from 'atma-io';
 
 const provider = new HardhatProvider();
 const client = provider.client();

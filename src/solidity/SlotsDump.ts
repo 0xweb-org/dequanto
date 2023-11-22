@@ -23,6 +23,7 @@ import { RpcTypes } from '@dequanto/rpc/Rpc';
 export class SlotsDump {
     private address: TAddress
     private implementation?: TAddress
+    private contractName: string
 
     private client: Web3Client
     private explorer: IBlockChainExplorer
@@ -36,6 +37,8 @@ export class SlotsDump {
         address: TAddress
         /** Optionally, the implementation contract to load sources from. Otherwise it will detect automatically if the "address" is the proxy contract */
         implementation?: TAddress
+
+        contractName?: string
 
         platform?: TPlatform
         client?: Web3Client
@@ -54,6 +57,7 @@ export class SlotsDump {
 
         this.address = params.address;
         this.implementation = params.implementation;
+        this.contractName = params.contractName;
 
         this.client = params.client ?? Web3ClientFactory.get(params.platform ?? 'eth')
         this.explorer = params.explorer ?? BlockChainExplorerProvider.get(this.client.platform)
@@ -64,6 +68,7 @@ export class SlotsDump {
         this.keysLoader = new MappingKeysLoader({
             address: this.address,
             implementation: this.implementation,
+            contractName: this.contractName,
             client: this.client,
             explorer: this.explorer,
             logger: this.logger,
@@ -124,6 +129,7 @@ export class SlotsDump {
         let sources = await this.sourceCodeProvider.getSourceCode({
             address: this.address,
             implementation: this.implementation,
+            contractName: this.contractName,
             sources: this.params.sources?.files
         });
 
@@ -179,7 +185,9 @@ class BatchLoader {
     }
 
     getStorageAt(slot: TEth.Hex): Promise<TEth.Hex> {
-
+        if (slot in this.queueHash) {
+            return this.queueHash[slot];
+        }
         let dfr = new class_Dfr();
         this.total++;
         this.queueArr.push(slot);

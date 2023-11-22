@@ -146,7 +146,12 @@ export namespace BlockChainExplorerFactory {
                     }
                     if ($address.isEmpty(uint256Hex) === false) {
                         let hex =  $address.fromBytes32(uint256Hex);
-                        return this.getContractAbi(hex)
+                        try {
+                            return await this.getContractAbi(hex);
+                        } catch (err) {
+                            err.message += `. Proxy ${hex}`;
+                            throw err;
+                        }
                     }
                 }
 

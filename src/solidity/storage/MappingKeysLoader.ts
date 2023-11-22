@@ -18,6 +18,7 @@ export class MappingKeysLoader {
 
     private address: TAddress
     private implementation?: TAddress
+    private contractName: string
 
     private client: Web3Client
     private explorer: IBlockChainExplorer
@@ -30,6 +31,7 @@ export class MappingKeysLoader {
         /** Optionally, the implementation contract to load sources from. Otherwise it will detect automatically if the "address" is the proxy contract */
         implementation?: TAddress
 
+        contractName: string
         platform?: TPlatform
         client?: Web3Client
         explorer?: IBlockChainExplorer
@@ -40,6 +42,7 @@ export class MappingKeysLoader {
 
         this.address = params.address;
         this.implementation = params.implementation;
+        this.contractName = params.contractName;
 
         this.client = params.client ?? Web3ClientFactory.get(params.platform ?? 'eth')
         this.explorer = params.explorer ?? BlockChainExplorerProvider.get(this.client.platform)
@@ -90,6 +93,7 @@ export class MappingKeysLoader {
     @memd.deco.memoize({ perInstance: true })
     private async loadSourceCode() {
         let source = await this.sourceCodeProvider.getSourceCode({
+            contractName: this.contractName,
             address: this.address,
             implementation: this.implementation,
         });

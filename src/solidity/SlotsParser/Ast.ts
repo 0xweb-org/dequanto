@@ -323,6 +323,9 @@ export namespace Ast {
         if (isNumberLiteral(node)) {
             return node.number;
         }
+        if (isStringLiteral(node)) {
+            return `"${node.value?.replace(/"/g, '\\"')}"`;
+        }
         throw new Error(`Unknown node ${JSON.stringify(node)}`)
     }
 
@@ -439,6 +442,10 @@ export namespace Ast {
                     return a >> b as TResult;
             }
         }
-        throw new Error(`Unknown node ${JSON.stringify(node)}`)
+        if (isStringLiteral(node)) {
+            return node.value as TResult;
+        }
+        console.error(`Skip unknown node ${JSON.stringify(node)}`);
+        return null;
     }
 }
