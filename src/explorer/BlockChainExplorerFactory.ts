@@ -47,9 +47,12 @@ export namespace BlockChainExplorerFactory {
         return class implements IBlockChainExplorer {
 
             localDb: IContractDetails[] = opts.CONTRACTS
-            config = opts.getConfig(this.platform)
+            config: { key: string, host: string, www: string };
 
             constructor (public platform?: TPlatform) {
+
+                this.config = opts.getConfig(this.platform)
+
                 if ($str.isNullOrWhiteSpace(opts.ABI_CACHE) === false) {
                     this.getContractAbi = memd.fn.memoize(this.getContractAbi, {
                         trackRef: true,
@@ -133,7 +136,7 @@ export namespace BlockChainExplorerFactory {
                     }
                     throw new Error(`Implement ${params.implementation} support`);
                 }
-                if (isOpenZeppelinProxy(abiJson)) {
+                if (isOpenZeppelinProxy(abiJson) || mightBeProxy(abiJson)) {
                     let web3 = opts.getWeb3(this.platform);
                     // (BigInt($contract.keccak256("eip1967.proxy.implementation")) - 1n).toString(16);
                     let uint256Hex = await web3.getStorageAt(address,`0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`);
@@ -141,8 +144,10 @@ export namespace BlockChainExplorerFactory {
                         // keccak-256 hash of "org.zeppelinos.proxy.implementation"
                         uint256Hex = await web3.getStorageAt(address, `0x7050c9e0f4ca769c69bd3a8ef740bc37934f8e2c036e5a723fd8ee048ed3f8c3`);
                     }
-                    let hex =  $address.fromBytes32(uint256Hex);
-                    return this.getContractAbi(hex)
+                    if ($address.isEmpty(uint256Hex) === false) {
+                        let hex =  $address.fromBytes32(uint256Hex);
+                        return this.getContractAbi(hex)
+                    }
                 }
 
                 if (hasImplementationSlot(abiJson)) {
@@ -398,6 +403,13 @@ function isOpenZeppelinProxy(abi: TAbiItem[]) {
     return $interface.every(name => {
         return hasMethod(abi, name);
     });
+}
+function mightBeProxy(abi: TAbiItem[]) {
+    let methods = abi.filter(x => x.type === 'function');
+    if (methods.length === 0) {
+        return true;
+    }
+    return false;
 }
 function hasImplementationSlot (abi: TAbiItem[]) {
     let $required = [ 'implementation' ];

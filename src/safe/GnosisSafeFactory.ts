@@ -6,6 +6,8 @@ import { $gnosis } from './$gnosis';
 import { GnosisSafeHandler } from './GnosisSafeHandler';
 
 
+// https://github.com/safe-global/safe-deployments/blob/main/src/assets/v1.4.1/safe_l2.json
+
 export abstract class GnosisSafeFactory {
 
     static async create (owner: ChainAccount, client: Web3Client, config: {

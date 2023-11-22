@@ -414,8 +414,9 @@ export class Deployments {
     public async configure<T extends TContract, TValue>(Ctor: Constructor<T> | T, opts: {
         id?: string;
 
-        value: TValue
+        value?: TValue
         current?: (x: T) => Promise<TValue>;
+        shouldUpdate?: () => Promise<boolean>
         updater: (x: T, value: TValue) => Promise<any>;
     }) {
         let x: T;
@@ -430,6 +431,12 @@ export class Deployments {
         if (opts.current != null) {
             let current = await opts.current(x);
             if (isEqual(current, opts.value)) {
+                return;
+            }
+        }
+        if (opts.shouldUpdate != null) {
+            let shouldUpdate = await opts.shouldUpdate();
+            if (!shouldUpdate) {
                 return;
             }
         }

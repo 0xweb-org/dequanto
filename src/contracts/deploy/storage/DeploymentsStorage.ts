@@ -184,44 +184,53 @@ export class  DeploymentsStorage {
 
             path = class_Uri.combine(directory, `${filenamePrefix}${platformPathNormalized}-${upstreamPlatformNormalized}.json`);
 
-            if (await File.existsAsync(upstreamDeploymentsPath)) {
-                let shouldCopy = true;
-                if (await File.existsAsync(path)) {
-                    // forked deployments path already exists, check if stale
-                    let blockNumber = await this.client.getBlockNumber();
+            let upstreamDeploymentExists = await File.existsAsync(upstreamDeploymentsPath);
+
+            let shouldCopy = true;
+            if (await File.existsAsync(path)) {
+                // forked deployments path already exists, check if stale
+                let blockNumber = await this.client.getBlockNumber();
+                if (upstreamDeploymentExists) {
                     let upstreamDeployments = await File.readAsync<IDeployment[]>(upstreamDeploymentsPath);
 
                     // 1. Check if the original(upstream) network has more recent deployments
                     let hasNewDeployments = upstreamDeployments.some(x => x.block > blockNumber);
                     shouldCopy = hasNewDeployments;
+                }
+
+                if (shouldCopy === false) {
+                    let deployments = await File.readAsync<IDeployment[]>(path);
+                    // 2. Just-in-case, check if there are deployments with higher block number, as the current HEAD
+                    let hasNewDeployments = deployments.some(x => x.block > blockNumber);
+                    shouldCopy = hasNewDeployments;
 
                     if (shouldCopy === false) {
-                        let deployments = await File.readAsync<IDeployment[]>(path);
-                        // 2. Just-in-case, check if there are deployments with higher block number, as the current HEAD
-                        hasNewDeployments = deployments.some(x => x.block > blockNumber);
-                        shouldCopy = hasNewDeployments;
-
-                        if (shouldCopy === false) {
-                            // 3. Check if the latest deployments transaction exists in current forked network
-                            let latestDeployment = alot(deployments).maxItem(x => x.block);
-                            if (latestDeployment != null) {
-                                try {
-                                    let tx = await this.client.getTransaction(latestDeployment.tx);
-                                    shouldCopy = tx == null;
-                                } catch (error) {
-                                    shouldCopy = true;
-                                }
+                        // 3. Check if the latest deployments transaction exists in current forked network
+                        let latestDeployment = alot(deployments).maxItem(x => x.block);
+                        if (latestDeployment != null) {
+                            try {
+                                let tx = await this.client.getTransaction(latestDeployment.tx);
+                                shouldCopy = tx == null;
+                            } catch (error) {
+                                shouldCopy = true;
                             }
                         }
                     }
                 }
+            }
 
-                if (shouldCopy) {
+            if (shouldCopy) {
+                // current forked deployments are stale, copy the upstream deployments or clean
+                if (upstreamDeploymentExists) {
                     await File.copyToAsync(upstreamDeploymentsPath, path, {
                         silent: true
                     });
+                } else {
+                    // clear
+                    await File.writeAsync(path, []);
                 }
             }
+
         }
         let array = new JsonArrayStore<IDeployment>({
             path: path,

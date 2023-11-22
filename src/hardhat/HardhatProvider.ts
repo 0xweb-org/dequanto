@@ -151,7 +151,7 @@ export class HardhatProvider {
         try {
             receipt = await factory.deploy();
         } catch (error) {
-            let wrapped = new Error(`Deploy ${Ctor.name} failed: ` + error.message);
+            let wrapped = new Error(`Deploy ${Ctor.name} failed: ` + error.message + `\n ${error.stack}`);
             (wrapped as any).data = error.data;
             throw wrapped;
         }
