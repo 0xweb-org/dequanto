@@ -9,6 +9,7 @@ export class RpcFunction {
         call: string
         params?: TParamSerializer[]
         output?: TReturnDeserializer
+        schemas?
     }) {
 
     }
@@ -33,7 +34,7 @@ export class RpcFunction {
                 if (typeof returnsSchema === 'function') {
                     return returnsSchema(result);
                 }
-                return $rpc.deserialize(result, returnsSchema);
+                return $rpc.deserialize(result, returnsSchema, this.methodInfo.schemas);
             }
             return result;
         }

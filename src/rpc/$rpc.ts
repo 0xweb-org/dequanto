@@ -60,10 +60,14 @@ export namespace $rpc {
         return receipt;
     }
 
-    export function deserialize (model: any, schema: string | string[] | { oneOf: string[] }) {
+    export function deserialize (model: any, schema: string | string[] | { oneOf: string[] }, schemas) {
         if (model == null) {
             return model;
         }
+        if (typeof schema === 'string' && schemas != null && schema in schemas) {
+            schema = schemas[schema];
+        }
+
         let type = schema;
         if (typeof schema === 'string') {
             switch (type) {
@@ -73,6 +77,8 @@ export namespace $rpc {
                     return BigInt(model);
                 case 'boolean':
                     return Boolean(model);
+                case 'string':
+                    return model;
             }
         }
         if (Array.isArray(schema)) {
@@ -81,21 +87,33 @@ export namespace $rpc {
             if (Array.isArray(model) === false) {
                 throw new Error(`Result must be an array: ${JSON.stringify(model)}`);
             }
-            return model.map(x => deserialize(x, schema[0]));
+            return model.map(x => deserialize(x, schema[0], schemas));
         }
         if (typeof schema === 'object') {
             let modelType = typeof model;
             if ('oneOf' in schema) {
-                let oneOf = schema.oneOf.find(x => typeof x === modelType);
+                let oneOf = schema.oneOf.find(x => {
+                    if (Array.isArray(x) && Array.isArray(model)) {
+                        let baseType = x[0];
+                        if (baseType === modelType) {
+                            return true;
+                        }
+                        if (modelType === 'object' && /^[A-Z]/.test(baseType)) {
+                            return true;
+                        }
+                        return false;
+                    }
+                    return typeof x === modelType
+                });
                 if (oneOf) {
-                    return deserialize(model, oneOf);
+                    return deserialize(model, oneOf, schemas);
                 }
                 return model;
             }
             if (modelType === 'object') {
                 let out = {};
                 for (let key in model) {
-                    out[key] = deserialize(model[key], schema[key]);
+                    out[key] = deserialize(model[key], schema[key], schemas);
                 }
                 return out;
             }

@@ -1497,6 +1497,25 @@ engine_exchangeTransitionConfigurationV1(consensusClientConfiguration: {
         }
     },
     "schemas": {
+        "AddEthereumChainParameter": {
+            "chainId": "string",
+            "blockExplorerUrls": [
+                "string"
+            ],
+            "chainName": "string",
+            "iconUrls": [
+                "string"
+            ],
+            "nativeCurrency": "NativeCurrency",
+            "rpcUrls": [
+                "string"
+            ]
+        },
+        "NativeCurrency": {
+            "decimals": "bigint",
+            "name": "string",
+            "symbol": "string"
+        },
         "Permission": {
             "id": "string",
             "@context": [
@@ -1508,6 +1527,47 @@ engine_exchangeTransitionConfigurationV1(consensusClientConfiguration: {
                     "type": "string",
                     "name": "string"
                 }
+            ]
+        },
+        "TypedData": {
+            "types": {},
+            "domain": {},
+            "primaryType": "string",
+            "message": {}
+        },
+        "GenericTransaction": {
+            "type": "number",
+            "nonce": "bigint",
+            "to": "string",
+            "from": "string",
+            "gas": "bigint",
+            "value": "bigint",
+            "input": "string",
+            "gasPrice": "bigint",
+            "maxPriorityFeePerGas": "bigint",
+            "maxFeePerGas": "bigint",
+            "accessList": [
+                "AccessListEntry"
+            ],
+            "chainId": "bigint"
+        },
+        "AccessListEntry": {
+            "address": "string",
+            "storageKeys": [
+                "string"
+            ]
+        },
+        "BlockNumberOrTagOrHash": {
+            "oneOf": [
+                "bigint",
+                "string",
+                "string"
+            ]
+        },
+        "BlockNumberOrTag": {
+            "oneOf": [
+                "bigint",
+                "string"
             ]
         },
         "Block": {
@@ -1548,6 +1608,101 @@ engine_exchangeTransitionConfigurationV1(consensusClientConfiguration: {
                 "string"
             ]
         },
+        "TransactionInfo": {
+            "allOf": [
+                {
+                    "blockHash": "string",
+                    "blockNumber": "number",
+                    "from": "string",
+                    "hash": "string",
+                    "transactionIndex": "number"
+                },
+                "TransactionSigned"
+            ]
+        },
+        "TransactionSigned": {
+            "oneOf": [
+                "Transaction1559Signed",
+                "Transaction2930Signed",
+                "TransactionLegacySigned"
+            ]
+        },
+        "Transaction1559Signed": {
+            "allOf": [
+                "Transaction1559Unsigned",
+                {
+                    "yParity": "number",
+                    "v": "number",
+                    "r": "string",
+                    "s": "string"
+                }
+            ]
+        },
+        "Transaction1559Unsigned": {
+            "type": "number",
+            "nonce": "number",
+            "to": "string",
+            "gas": "bigint",
+            "value": "bigint",
+            "input": "string",
+            "maxPriorityFeePerGas": "bigint",
+            "maxFeePerGas": "bigint",
+            "gasPrice": "bigint",
+            "accessList": [
+                "AccessListEntry"
+            ],
+            "chainId": "number"
+        },
+        "Transaction2930Signed": {
+            "allOf": [
+                "Transaction2930Unsigned",
+                {
+                    "yParity": "number",
+                    "v": "number",
+                    "r": "string",
+                    "s": "string"
+                }
+            ]
+        },
+        "Transaction2930Unsigned": {
+            "type": "number",
+            "nonce": "number",
+            "to": "string",
+            "gas": "bigint",
+            "value": "bigint",
+            "input": "string",
+            "gasPrice": "bigint",
+            "accessList": [
+                "AccessListEntry"
+            ],
+            "chainId": "number"
+        },
+        "TransactionLegacySigned": {
+            "allOf": [
+                "TransactionLegacyUnsigned",
+                {
+                    "v": "number",
+                    "r": "string",
+                    "s": "string"
+                }
+            ]
+        },
+        "TransactionLegacyUnsigned": {
+            "type": "number",
+            "nonce": "number",
+            "to": "string",
+            "gas": "bigint",
+            "value": "bigint",
+            "input": "string",
+            "gasPrice": "bigint",
+            "chainId": "number"
+        },
+        "Withdrawal": {
+            "index": "bigint",
+            "validatorIndex": "bigint",
+            "address": "string",
+            "amount": "bigint"
+        },
         "FilterResults": {
             "oneOf": [
                 [
@@ -1555,6 +1710,42 @@ engine_exchangeTransitionConfigurationV1(consensusClientConfiguration: {
                 ],
                 [
                     "Log"
+                ]
+            ]
+        },
+        "Log": {
+            "removed": "boolean",
+            "logIndex": "number",
+            "transactionIndex": "number",
+            "transactionHash": "string",
+            "blockHash": "string",
+            "blockNumber": "number",
+            "address": "string",
+            "data": "string",
+            "topics": [
+                "string"
+            ]
+        },
+        "Filter": {
+            "fromBlock": "number",
+            "toBlock": "number",
+            "address": {
+                "oneOf": [
+                    "string",
+                    [
+                        "string"
+                    ]
+                ]
+            },
+            "topics": [
+                "FilterTopic"
+            ]
+        },
+        "FilterTopic": {
+            "oneOf": [
+                "string",
+                [
+                    "string"
                 ]
             ]
         },
@@ -1571,16 +1762,11 @@ engine_exchangeTransitionConfigurationV1(consensusClientConfiguration: {
                 "StorageProof"
             ]
         },
-        "TransactionInfo": {
-            "allOf": [
-                {
-                    "blockHash": "string",
-                    "blockNumber": "number",
-                    "from": "string",
-                    "hash": "string",
-                    "transactionIndex": "number"
-                },
-                "TransactionSigned"
+        "StorageProof": {
+            "key": "string",
+            "value": "bigint",
+            "proof": [
+                "string"
             ]
         },
         "ReceiptInfo": {

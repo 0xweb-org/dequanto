@@ -59,7 +59,10 @@ export abstract class RpcBase {
         output?: any
     }[]) {
         rpcInfos.forEach(rpcInfo => {
-            let fn = new RpcFunction(this, rpcInfo);
+            let fn = new RpcFunction(this, {
+                ...rpcInfo,
+                schemas: this.returnSchemas?.schemas
+            });
             this.fns[rpcInfo.name] = fn.caller();
         });
     }
@@ -113,8 +116,7 @@ export abstract class RpcBase {
         if (schema == null || result == null) {
             return result;
         }
-        return $rpc.deserialize(result, schema)
-
+        return $rpc.deserialize(result, schema, this.returnSchemas?.schemas);
     }
 
 

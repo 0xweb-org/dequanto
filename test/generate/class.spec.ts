@@ -205,12 +205,14 @@ UTest({
                 tx = await foo.setName(provider.deployer(), 'qux');
                 receipt = await tx.wait();
 
+                eq_(typeof receipt.blockNumber, 'number');
                 eq_(blockNr + 1, receipt.blockNumber);
                 logs = await foo.getPastLogsUpdated({
                     fromBlock: blockNr + 1
                 });
                 eq_(logs.length, 1);
                 eq_(logs[0].params.newName, 'qux');
+                eq_(typeof logs[0].blockNumber, 'number');
 
 
                 l`Check overloads`

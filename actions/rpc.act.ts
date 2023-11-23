@@ -102,8 +102,10 @@ class Generator {
         let knownSchemas = SchemaWalker.getUsedTypes(rpc);
         for (let key in schemas) {
             if (key in knownSchemas === false) {
+                console.log(`skip`, key);
                 continue;
             }
+            console.log(`include`, key);
             let schema = schemas[key];
             types.push(``);
             if (schema.title) {
@@ -424,22 +426,17 @@ class Generator {
         return `${str}: ${returns}`
     }
     private writeMethodReturnSchemas(rpc: IRpc) {
-        // clone
-        // rpc = JSON.parse(JSON.stringify(rpc));
 
-        // SchemaWalker.mapRef(rpc, {
-        //     [`address`]: 'string',
-        //     [`^(hash|bytes)`]: 'string'
-        // });
-
-        let schemasOut = {};
+        //let schemasOut = {};
         let methods = rpc.methods.reduce((x, method) => {
-            let info = this.jsonReturnsSchema('schema' in method.result ? method.result.schema : method.result, schemasOut);
+            let info = this.jsonReturnsSchema('schema' in method.result ? method.result.schema : method.result, {});
             if (info) {
                 x[method.name] = info;
             }
             return x;
         }, {});
+
+        let schemasOut = SchemaWalker.getUsedTypes(rpc);
         let schemas = Object.keys(schemasOut).reduce((x, schemaName) => {
             let info = this.jsonReturnsSchema(rpc.components.schemas[schemaName] ?? rpc.components.contentDescriptors[schemaName]);
             if (info) {
@@ -856,28 +853,32 @@ namespace SchemaWalker {
         }
     }
 
-    export function getUsedTypes (rpc: IRpc) {
+    export function getUsedTypes (rpc: IRpc): { [schemaName: string]: boolean } {
         let knownSchemas = {};
         SchemaWalker.visitSchema(rpc, (schema) => {
-            if ('$ref' in schema) {
-                let type = SchemaWalker.getRefType(schema);
-                knownSchemas[type] = true;
-                walkGlobalSchemas(type);
-            }
-            return schema;
+            return visitSchema(schema);
         }, { inMethods: true });
 
-        function walkGlobalSchemas (name: string) {
-            SchemaWalker.visitSchema(rpc, (schema) => {
-                if ('$ref' in schema) {
-                    let type = SchemaWalker.getRefType(schema);
-                    if (type in knownSchemas) {
-                        return;
-                    }
+        function visitSchema(schema: ISchema.TSchema) {
+            if ('$ref' in schema) {
+                let type = SchemaWalker.getRefType(schema);
+                if (type in knownSchemas === false) {
                     knownSchemas[type] = true;
                     walkGlobalSchemas(type);
                 }
-                return schema;
+            }
+            if ('oneOf' in schema) {
+                schema.oneOf.forEach(x => visitSchema(x));
+            }
+            if (schema.type === 'array') {
+                visitSchema(schema.items);
+            }
+            return schema;
+        }
+
+        function walkGlobalSchemas (name: string) {
+            SchemaWalker.visitSchema(rpc, (schema) => {
+                return visitSchema(schema);
             }, { inGlobals: name });
         }
         return knownSchemas;
