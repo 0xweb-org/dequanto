@@ -16,6 +16,7 @@ export namespace Fixtures {
                 if (key.startsWith('//')) {
                     return;
                 }
+                console.log(`Test data: ${key}`);
                 let arr = value;
                 if (Array.isArray(arr[0]) === false) {
                     arr = [ arr ];

@@ -98,7 +98,7 @@ UTest({
             const base = {
                 chainId: 1,
                 to: accounts[1].address,
-                nonce: 785n,
+                nonce: 785,
                 value: 10n ** 18n,
             };
             const baseEip1559 = {
