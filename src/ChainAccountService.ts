@@ -28,8 +28,8 @@ export class ChainAccountService {
     }) {
         this.storeConfig = new ConfigStore(params?.config);
         this.storeFs = new FileStore();
-        this.storeCustom = params.store;
-        this.writable = params.writable;
+        this.storeCustom = params?.store;
+        this.writable = params?.writable;
     }
 
 
