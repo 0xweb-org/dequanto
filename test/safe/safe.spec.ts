@@ -5,7 +5,7 @@ import { GnosisSafe } from '@dequanto-contracts/safe/GnosisSafe';
 import { GnosisSafeHandler } from '@dequanto/safe/GnosisSafeHandler';
 import { InMemoryServiceTransport } from '@dequanto/safe/transport/InMemoryServiceTransport';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';
-import { SafeAccount } from '@dequanto/models/TAccount';
+import { EoAccount, IAccount, SafeAccount } from '@dequanto/models/TAccount';
 import { FileServiceTransport } from '@dequanto/safe/transport/FileServiceTransport';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $promise } from '@dequanto/utils/$promise';
@@ -14,6 +14,14 @@ import { $abiParser } from '@dequanto/utils/$abiParser';
 import { GnosisSafeService } from '@dequanto/safe/GnosisSafeService';
 import { $sig } from '@dequanto/utils/$sig';
 import { l } from '@dequanto/utils/$logger';
+import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
+import { Config } from '@dequanto/Config';
+import { TxWriter } from '@dequanto/txs/TxWriter';
+import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
+import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
+import { $http } from '@dequanto/utils/$http';
+import { $account } from '@dequanto/utils/$account';
+import { TEth } from '@dequanto/models/TEth';
 
 const provider = new HardhatProvider();
 const client = provider.client();
@@ -157,12 +165,10 @@ UTest({
         let nonce = await contract.nonce();
         eq_(Number(nonce), 0);
 
-
         let balanceBefore = await freeTokenContract.balanceOf(safe.safeAddress);
         eq_($bigint.toEther(balanceBefore, 18), 0);
 
-
-        '> airdrop some tokens to sender (safe)'
+        '> airdrop some tokens to sender (safe)';
 
         let writer = new ContractWriter(freeTokenContract.address, client);
         let safeAccount = <SafeAccount>{
@@ -204,6 +210,59 @@ UTest({
 
         nonce = await contract.nonce();
         eq_(Number(nonce), 1);
+    },
+
+    async 'integrational test with opBNB' () {
+        // use opBNB as it has quick affordable native test tokens
+
+        // https://multisig.bnbchain.org/transactions/queue?safe=opbnb-testnet:0xBD0D7FF18CE61f21E0b9553f1e42A6A34f9D463A
+        // https://safe-transaction-opbnb-testnet.bnbchain.org/
+        let config = await Config.get();
+
+        let key = config.$get('SAFE_OWNER') as TEth.Hex;
+        if (key == null) {
+            console.log(`Skip safe integrational test because SAFE_OWNER is not set`);
+            return;
+        }
+
+        let client = Web3ClientFactory.get(`opbnb:test`);
+        let hh = new HardhatProvider();
+        let owner1 = await $account.fromKey(key);
+        let owner2 = await hh.deployer(0);
+
+        return UTest({
+            async 'create safe' () {
+                let safe = await GnosisSafeFactory.create(owner1, client, {
+                    owners: [
+                        owner1.address,
+                        owner2.address,
+                    ],
+                    threshold: 2,
+                });
+                has_(safe.safeAddress, /^0x\w+$/);
+
+
+                let { data } = await $http.get<{ owners: string[] }>(`https://safe-transaction-opbnb-testnet.bnbchain.org/api/v1/safes/${safe.safeAddress}/`);
+                deepEq_(data.owners, [ owner1.address, owner2.address ]);
+            },
+            async 'propose transaction' () {
+                let safe = new GnosisSafeHandler({
+                    safeAddress: '0xBD0D7FF18CE61f21E0b9553f1e42A6A34f9D463A',
+                    owner: owner1,
+                    client: client
+                })
+
+                let usdc = `0x845E27B8A4ad1Fe3dc0b41b900dC8C1Bb45141C3` as const;
+                let approveTx = await new ERC20(usdc, client).$config({ send: 'manual'}).approve(safe.safeAddress, owner1.address, 5n);
+
+                let { safeTxHash } = await safe.createTransaction(approveTx, 0n);
+
+                let { data: json } = await $http.get(`https://safe-transaction-opbnb-testnet.bnbchain.org/api/v1/multisig-transactions/${safeTxHash}/`);
+                eq_(json.to, usdc);
+                eq_(json.confirmations.length, 1);
+            }
+        })
+
     }
 })
 
@@ -231,6 +290,9 @@ class SafeTestableFactory {
             deployer: owner1
         });
 
+        l`SafeProxyFactory: ${proxyFactoryContract.address}`;
+        l`SafeMasterCopy: ${safeContract.address}`;
+
         l`Deploy safe instance`;
         let safe = await GnosisSafeFactory.create(owner1, client, {
             owners: [
@@ -238,15 +300,19 @@ class SafeTestableFactory {
                 owner2.address
             ],
             contracts: {
-                [client.chainId + '']: {
-                    multiSendAddress: multiSendContract.address,
-                    multiSendAbi: multiSendAbi,
+                [client.platform]: {
+                    MultiSend: multiSendContract.address,
+                    Safe: safeContract.address,
+                    SafeProxyFactory: proxyFactoryContract.address
 
-                    safeMasterCopyAddress: safeContract.address,
-                    safeMasterCopyAbi: safeAbi,
+                    // multiSendAddress: multiSendContract.address,
+                    // multiSendAbi: multiSendAbi,
 
-                    safeProxyFactoryAbi: proxyFactoryAbi,
-                    safeProxyFactoryAddress: proxyFactoryContract.address
+                    // safeMasterCopyAddress: safeContract.address,
+                    // safeMasterCopyAbi: safeAbi,
+
+                    // safeProxyFactoryAbi: proxyFactoryAbi,
+                    // safeProxyFactoryAddress: proxyFactoryContract.address
                 }
             }
         });

@@ -2,14 +2,11 @@ import { TAbiInput, TAbiItem } from '@dequanto/types/TAbi';
 import { AbiCoder } from './abi-coder';
 import { solidityPacked } from './abi-coder-packed';
 import { ParamType } from './fragments';
-import { $hex } from '@dequanto/utils/$hex';
-import { $is } from '@dequanto/utils/$is';
-import { $address } from '@dequanto/utils/$address';
 import { TEth } from '@dequanto/models/TEth';
 import { $abiParser } from '@dequanto/utils/$abiParser';
 
 export namespace $abiCoder {
-    export function encode(types: (string | ParamType)[], values: any[]): TEth.Hex {
+    export function encode(types: (string | ParamType | TAbiInput)[], values: any[]): TEth.Hex {
         let coder = new AbiCoder();
         return coder.encode(types, values) as TEth.Hex;
     }

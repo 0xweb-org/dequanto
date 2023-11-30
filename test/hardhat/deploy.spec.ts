@@ -1,4 +1,3 @@
-import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
 import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
@@ -8,6 +7,7 @@ import { $signSerializer } from '@dequanto/utils/$signSerializer';
 import { $sig } from '@dequanto/utils/$sig';
 import { TEth } from '@dequanto/models/TEth';
 import { l } from '@dequanto/utils/$logger';
+import { $account } from '@dequanto/utils/$account';
 
 const provider = new HardhatProvider();
 const client = provider.client();
@@ -427,7 +427,7 @@ UTest({
     },
 
     async 'permit token' () {
-        let [ owner, receiver ] = [ ChainAccountProvider.generate(), ChainAccountProvider.generate() ];
+        let [ owner, receiver ] = [ $account.generate(), $account.generate() ];
 
         await client.debug.setBalance(owner.address, 10n**18n);
         await client.debug.setBalance(receiver.address, 10n**18n);

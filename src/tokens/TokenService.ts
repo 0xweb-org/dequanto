@@ -1,5 +1,5 @@
 import di from 'a-di';
-import { ChainAccount } from "@dequanto/models/TAccount";
+import { EoAccount } from "@dequanto/models/TAccount";
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -42,7 +42,7 @@ export class TokenService {
         return wei <= balance;
     }
 
-    async ensureApproved (account: ChainAccount, tokenMix: string | IToken, spender: TAddress, amount: bigint | number): Promise<TxWriter | null> {
+    async ensureApproved (account: EoAccount, tokenMix: string | IToken, spender: TAddress, amount: bigint | number): Promise<TxWriter | null> {
         let token = await this.getToken(tokenMix);
         let erc20 = await this.tokensProvider.erc20(token.address);
         let approved = await erc20.allowance(account.address, spender);
@@ -67,7 +67,7 @@ export class TokenService {
     /**
      * @param amount Can be negative (wraps all with rest)
      */
-    async wrapNativeToERC20 (account: ChainAccount, amount: number): Promise<TxWriter> {
+    async wrapNativeToERC20 (account: EoAccount, amount: number): Promise<TxWriter> {
         let amountWei = $bigint.toWei(amount, 18);
         if (amountWei < 0n) {
             let balance = await this.client.getBalance(account.address);
@@ -92,7 +92,7 @@ export class TokenService {
     /**
      *
      */
-     async unwrapNative (account: ChainAccount, amount?: number | bigint): Promise<TxWriter> {
+     async unwrapNative (account: EoAccount, amount?: number | bigint): Promise<TxWriter> {
         let depositor: { balanceOf: WETH['balanceOf'], withdraw: WETH['withdraw'] };
         switch (this.client.platform) {
             case 'xdai':

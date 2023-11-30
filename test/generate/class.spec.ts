@@ -11,6 +11,8 @@ import { $promise } from '@dequanto/utils/$promise';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
+import alot from 'alot';
+import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 
 declare let include;
 
@@ -108,7 +110,7 @@ UTest({
             $config: {
                 timeout: $date.parseTimespan('1min'),
             },
-            async 'deploy to localhost to listen for WS events' () {
+            async '!deploy to localhost to listen for WS events' () {
                 let provider = new HardhatProvider();
                 let client = await provider.client('localhost');
                 let { contract: foo }= await provider.deployClass<any>(Foo.Foo, {
@@ -181,7 +183,6 @@ UTest({
                 name = await foo.name();
                 eq_(name, 'bar2');
 
-
                 l`> Check logs for FOO contract`
                 let logs = await foo.getPastLogsUpdated({});
                 gte_(logs.length, 1);
@@ -215,6 +216,7 @@ UTest({
                 eq_(typeof logs[0].blockNumber, 'number');
 
 
+
                 l`Check overloads`
                 let zero = await foo.someEcho();
                 eq_(zero, 0);
@@ -237,6 +239,9 @@ UTest({
                     'setName',
                 ]);
 
+                let allLogs = await foo.$getPastLogsParsed('*') as ITxLogItem[];
+                let allEvents = alot(allLogs).map(x => x.event).distinct().toArray();
+                deepEq_(allEvents, [ 'Updated', 'Updated2']);
             },
 
             async 'deploy and check indexed logs' () {

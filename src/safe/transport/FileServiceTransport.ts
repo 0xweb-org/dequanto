@@ -1,26 +1,20 @@
 import { GnosisSafe } from '@dequanto-contracts/safe/GnosisSafe';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { ChainAccount } from '@dequanto/models/TAccount';
+import { EoAccount } from '@dequanto/models/TAccount';
 import { TAddress } from '@dequanto/models/TAddress';
-import {
-    ProposeTransactionProps,
-    SafeMultisigConfirmationListResponse,
-    SafeMultisigConfirmationResponse,
-    SafeMultisigTransactionEstimateResponse,
-    SafeMultisigTransactionResponse,
-    SignatureResponse
-} from '@gnosis.pm/safe-service-client';
+
 import { ISafeServiceTransport } from './ISafeServiceTransport';
 import { File } from 'atma-io';
 import { $address } from '@dequanto/utils/$address';
+import { SafeServiceTypes } from '../types/SafeServiceTypes';
 
 export class FileServiceTransport implements ISafeServiceTransport {
 
-    constructor (public client: Web3Client, public owner: ChainAccount, public path: string) {
+    constructor (public client: Web3Client, public owner: EoAccount, public path: string) {
 
     }
 
-    async getTx (safeTxHash: string): Promise<SafeMultisigTransactionResponse> {
+    async getTx (safeTxHash: string): Promise<SafeServiceTypes.SafeMultisigTransactionResponse> {
         let current = await this.get();
         let tx = current.find(x => x.safeTxHash === safeTxHash);
         if (tx == null) {
@@ -29,7 +23,7 @@ export class FileServiceTransport implements ISafeServiceTransport {
         return tx;
     }
 
-    async getTxConfirmations (safeTxHash: string): Promise<SafeMultisigConfirmationListResponse> {
+    async getTxConfirmations (safeTxHash: string): Promise<SafeServiceTypes.SafeMultisigConfirmationListResponse> {
         let tx = await this.getTx(safeTxHash);
         let confirmations = tx.confirmations ?? [];
         return {
@@ -38,7 +32,7 @@ export class FileServiceTransport implements ISafeServiceTransport {
         };
     }
 
-    async confirmTx(safeTxHash: string, sig: { signature: string, owner: TAddress }): Promise<SignatureResponse> {
+    async confirmTx(safeTxHash: string, sig: { signature: string, owner: TAddress }): Promise<SafeServiceTypes.SignatureResponse> {
         let arr = await this.get();
         let tx = arr.find(x => x.safeTxHash === safeTxHash);
         if (tx == null) {
@@ -56,7 +50,7 @@ export class FileServiceTransport implements ISafeServiceTransport {
             return currentSig;
         }
 
-        let innerSig = <SafeMultisigConfirmationResponse> {
+        let innerSig = <SafeServiceTypes.SafeMultisigConfirmationResponse> {
             owner: sig.owner,
             signature: sig.signature
         };
@@ -75,13 +69,13 @@ export class FileServiceTransport implements ISafeServiceTransport {
         return { nonce, threshold };
     }
 
-    async estimateSafeTransaction(safeAddress: TAddress, safeTxEstimation): Promise<SafeMultisigTransactionEstimateResponse> {
+    async estimateSafeTransaction(safeAddress: TAddress, safeTxEstimation): Promise<SafeServiceTypes.SafeMultisigTransactionEstimateResponse> {
         return {
             safeTxGas: '0x0'
         };
     }
 
-    async proposeTransaction (args: ProposeTransactionProps): Promise<void> {
+    async proposeTransaction (args: SafeServiceTypes.ProposeTransactionProps): Promise<void> {
         let arr = await this.get();
         let current = arr.find(x => x.safeTxHash === args.safeTxHash);
         if (current) {
@@ -89,7 +83,7 @@ export class FileServiceTransport implements ISafeServiceTransport {
             return;
         }
 
-        arr.push(<SafeMultisigTransactionResponse> <any> {
+        arr.push(<SafeServiceTypes.SafeMultisigTransactionResponse> <any> {
             ...args.safeTransaction.data,
 
             safe: args.safeAddress,
@@ -101,14 +95,14 @@ export class FileServiceTransport implements ISafeServiceTransport {
     }
 
 
-    private async get (): Promise<SafeMultisigTransactionResponse[]> {
+    private async get (): Promise<SafeServiceTypes.SafeMultisigTransactionResponse[]> {
         try {
             return await File.readAsync(this.path, { cached: false });
         } catch (error) {
             return []
         }
     }
-    private async save (arr: SafeMultisigTransactionResponse[]): Promise<void> {
+    private async save (arr: SafeServiceTypes.SafeMultisigTransactionResponse[]): Promise<void> {
         await File.writeAsync(this.path, arr);
     }
 

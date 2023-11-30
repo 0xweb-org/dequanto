@@ -1,6 +1,6 @@
 import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
 import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
-import { ChainAccountsService } from '@dequanto/ChainAccountsService';
+import { ChainAccountService } from '@dequanto/ChainAccountService';
 import { IWeb3EndpointOptions } from '@dequanto/clients/interfaces/IWeb3EndpointOptions';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
@@ -18,7 +18,7 @@ export interface IPlatformTools {
     token: TokenService
 
     explorer: IBlockChainExplorer
-    accounts: ChainAccountsService
+    accounts: ChainAccountService
 
     transfer: TokenTransferService
 }
@@ -30,7 +30,7 @@ export class PlatformFactory {
         let client = Web3ClientFactory.get(platform, opts);
         let tokens = TokensServiceFactory.get(platform);
         let explorer = BlockChainExplorerProvider.get(platform);
-        let accounts = new ChainAccountsService();
+        let accounts = new ChainAccountService();
         let transfer = new TokenTransferService(client);
         let token = new TokenService(client);
         return {

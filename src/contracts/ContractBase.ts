@@ -342,8 +342,14 @@ export abstract class ContractBase {
         let logs = $contract.extractLogsForAbi(tx, abiItem);
         return logs;
     }
-    protected $extractLog (log: TEth.Log, abiItem: TAbiItem) {
-        let parsed = $contract.parseLogWithAbi(log, abiItem);
+    protected $extractLog (log: TEth.Log, mix: string | TAbiItem | TAbiItem[] | '*') {
+        let abi: TAbiItem | TAbiItem[];
+        if (typeof mix === 'string') {
+            abi = mix === '*' ? this.abi : this.$getAbiItem('event', mix)
+        } else {
+            abi = mix;
+        }
+        let parsed = $contract.parseLogWithAbi(log, abi);
         return parsed;
     }
     protected async $getPastLogs(filters: RpcTypes.Filter) {
@@ -356,16 +362,13 @@ export abstract class ContractBase {
             [key: string]: any
         }
     }) {
-        let abi = typeof mix === 'string'
-            ? this.$getAbiItem('event', mix)
-            : mix;
-        let filters = await this.$getPastLogsFilters(abi, {
+        let filters = await this.$getPastLogsFilters(mix, {
             ...options
         });
         let logs = await this.$getPastLogs(filters);
-        return logs.map(log => this.$extractLog(log, abi)) as any;
+        return logs.map(log => this.$extractLog(log, mix)) as any;
     }
-    protected async $getPastLogsFilters(mix: string | TAbiItem, options: {
+    protected async $getPastLogsFilters(mix: string | TAbiItem | TAbiItem[], options: {
         topic?: string
         fromBlock?: number | Date
         toBlock?: number | Date
@@ -373,9 +376,18 @@ export abstract class ContractBase {
             [key: string]: any
         }
     }): Promise<RpcTypes.Filter> {
-        let abi = typeof mix === 'string'
-            ? this.$getAbiItem('event', mix)
-            : mix;
+        let abi: TAbiItem | TAbiItem[] | '*';
+        if (typeof mix === 'string') {
+            if (mix === '*') {
+                abi = '*'
+            } else {
+                abi = this.$getAbiItem('event', mix);
+            }
+        } else {
+            abi = mix;
+        }
+
+
         return this.getContractReader().getLogsFilter(
             abi,
             {

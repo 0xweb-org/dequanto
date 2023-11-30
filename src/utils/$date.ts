@@ -118,6 +118,7 @@ export namespace $date {
 
     export function tool(dateStr: string): DateTool
     export function tool(date: Date): DateTool
+    export function tool(): DateTool
     export function tool(date: string | Date = new Date()): DateTool {
         if (typeof date === 'string') {
             date = parse(date);

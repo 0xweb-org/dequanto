@@ -1,17 +1,14 @@
-import Web3 from 'web3';
 import { TestNode } from '../hardhat/TestNode';
 import { $address } from '@dequanto/utils/$address';
 import { $sig } from '@dequanto/utils/$sig';
 import { $rpc } from '@dequanto/rpc/$rpc';
 import { Fixtures } from '../Fixtures';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { $rlp } from '@dequanto/abi/$rlp';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
 import { TEth } from '@dequanto/models/TEth';
-import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
 import { $crypto } from '@dequanto/utils/$crypto';
 import { $config } from '@dequanto/utils/$config';
+import { $account } from '@dequanto/utils/$account';
 
 const account = {
     // hardhat
@@ -302,7 +299,7 @@ UTest({
         });
     },
     async 'check with encrypted key' () {
-        let account = ChainAccountProvider.generate();
+        let account = $account.generate();
         let pss = '012345';
 
         let accountEncrypted = {
@@ -317,7 +314,7 @@ UTest({
     },
     'accounts': {
         async 'get address from private key' () {
-            let account = ChainAccountProvider.generate();
+            let account = $account.generate();
             let address = await $sig.$account.getAddressFromKey(account.key);
             eq_(address, account.address);
         },

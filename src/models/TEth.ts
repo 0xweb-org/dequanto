@@ -168,7 +168,7 @@ export namespace TEth {
         [P in keyof T]?: T[P] extends bigint
             ? bigint | number | string | TEth.Hex
             : ( T[P] extends number
-                ? number | TEth.Hex
+                ? number | TEth.Hex | bigint
                 : (T[P] extends []
                     ? DataLike<T[P][0]>[]
                     : DataLike<T[P]>

@@ -1,4 +1,4 @@
-import type { ChainAccount, TAccount } from '@dequanto/models/TAccount';
+import type { EoAccount, TAccount } from '@dequanto/models/TAccount';
 import type { TxWriter } from '../TxWriter';
 import { SafeAgent } from './SafeAgent';
 import { Erc4337Agent } from './Erc4337Agent';
@@ -7,7 +7,7 @@ import { Erc4337Agent } from './Erc4337Agent';
 
 export interface ITxWriterAccountAgent {
     supports (account: TAccount): boolean
-    process (sender: ChainAccount, account: TAccount, outerWriter: TxWriter): Promise<TxWriter>
+    process (sender: EoAccount, account: TAccount, outerWriter: TxWriter): Promise<TxWriter>
 }
 
 export namespace TxWriterAccountAgents {

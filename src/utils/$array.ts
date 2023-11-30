@@ -22,6 +22,36 @@ export namespace $array {
         return arr;
     }
 
+    export function equal<T>(a: T[], b: T[]) {
+        if (a.length !== b.length) {
+            return false;
+        }
+        for (let i = 0; i < a.length; i++) {
+            let aVal = a[i];
+            if (aVal == null) {
+                if (b[i] != null) {
+                    return false;
+                }
+                continue;
+            }
+            if (typeof aVal !== 'object') {
+                if (aVal != /** not strict eq*/ b[i]) {
+                    return false;
+                }
+                continue;
+            }
+            if (Array.isArray(aVal)) {
+                if (equal(aVal, b[i] as any[]) === false) {
+                    return false;
+                }
+                continue;
+            }
+            console.error(aVal, b[i]);
+            throw new Error(`Invalid comparison`)
+        }
+        return true;
+    }
+
     export function remove<T>(arr: T[], matcher: (x: T) => boolean): T[]
     export function remove<T>(arr: T[], item: T): T[]
     export function remove<T>(arr: T[], x: any): T[] {

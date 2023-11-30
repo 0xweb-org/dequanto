@@ -1,6 +1,6 @@
 import di from 'a-di';
 import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
-import { ChainAccount } from "@dequanto/models/TAccount";
+import { EoAccount } from "@dequanto/models/TAccount";
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { IToken } from '@dequanto/models/IToken';
 import { TPlatform } from '@dequanto/models/TPlatform';
@@ -37,7 +37,7 @@ export class HopBridge implements IBridge {
     // tested and used chains
     private SUPPORTED_CHAINS: TPlatform[] = [ 'polygon', 'xdai' ]
 
-    async withdraw (account: ChainAccount, platform: TPlatform, symbol: string, params?: {
+    async withdraw (account: EoAccount, platform: TPlatform, symbol: string, params?: {
         config?: ITxConfig
         amount?: number
     }) {
@@ -122,7 +122,7 @@ export class HopBridge implements IBridge {
         return { error: null }
     }
 
-    async transfer (account: ChainAccount, amount: number | bigint, symbol: string, fromPlatform: TPlatform, toPlatform: TPlatform) {
+    async transfer (account: EoAccount, amount: number | bigint, symbol: string, fromPlatform: TPlatform, toPlatform: TPlatform) {
         const chainFrom = await di.resolve(PlatformFactory).get(fromPlatform);
 
         // const client = Web3ClientFactory.get(fromPlatform);
@@ -314,7 +314,7 @@ export class HopBridge implements IBridge {
         return bridgeContract.isTransferIdSpent(transferId);
     }
 
-    async transferWithSDK (account: ChainAccount, amount: number | bigint, token: IToken, fromPlatform: TPlatform, toPlatform: TPlatform) {
+    async transferWithSDK (account: EoAccount, amount: number | bigint, token: IToken, fromPlatform: TPlatform, toPlatform: TPlatform) {
         if (typeof amount === 'number') {
             amount = $bigint.toWei(amount, token.decimals);
         }

@@ -1,6 +1,7 @@
-import { ChainAccountProvider } from '@dequanto/ChainAccountProvider'
-import { ChainAccountsService } from '@dequanto/ChainAccountsService';
+
+import { ChainAccountService } from '@dequanto/ChainAccountService';
 import { Config } from '@dequanto/Config';
+import { $account } from '@dequanto/utils/$account';
 import { $is } from '@dequanto/utils/$is';
 import { File } from 'atma-io';
 import memd from 'memd';
@@ -8,7 +9,7 @@ import memd from 'memd';
 
 UTest({
     async 'generate account' () {
-        let { key, address } = ChainAccountProvider.generate();
+        let { key, address } = $account.generate();
         eq_($is.Address(address), true);
     },
     async 'save encrypted account' () {
@@ -24,7 +25,7 @@ UTest({
             });
 
 
-            let service = new ChainAccountsService({ config });
+            let service = new ChainAccountService({ config });
             return { service, config };
         }
 

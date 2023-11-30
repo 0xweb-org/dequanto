@@ -71,12 +71,14 @@ export class EvmBytecode {
 
     public store = new Stores();
 
-    constructor(code: TEth.Hex | Uint8Array) {
+    constructor(code: TEth.Hex | Uint8Array, opts?: { withConstructorCode?: boolean }) {
         if (code instanceof Uint8Array) {
             this.code = code;
         } else {
-            // remove the constructor code, leave the runtime bytecode only;
-            code = $bytecode.trimConstructorCode(code);
+            if (opts?.withConstructorCode !== true) {
+                // remove the constructor code, leave the runtime bytecode only;
+                code = $bytecode.trimConstructorCode(code);
+            }
             this.code = $buffer.fromHex(code.replace('0x', ''));
         }
     }

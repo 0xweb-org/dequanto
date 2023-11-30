@@ -2,16 +2,15 @@ import di from 'a-di';
 import memd from 'memd';
 import alot from 'alot';
 
-import type { SafeTransaction, SafeTransactionData } from '@gnosis.pm/safe-core-sdk-types'
-import { ProposeTransactionProps, SafeMultisigTransactionEstimate, SignatureResponse } from '@gnosis.pm/safe-service-client'
-import { ChainAccount } from "@dequanto/models/TAccount";
+import { EoAccount } from "@dequanto/models/TAccount";
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
 
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';
-import { GnosisServiceTransport } from './transport/GnosisServiceTransport';
+import { SafeServiceTransport } from './transport/SafeServiceTransport';
+import { SafeServiceTypes } from './types/SafeServiceTypes';
 import { ISafeServiceTransport } from './transport/ISafeServiceTransport';
 import { $address } from '@dequanto/utils/$address';
 import { $logger } from '@dequanto/utils/$logger';
@@ -29,20 +28,20 @@ import { $abiUtils } from '@dequanto/utils/$abiUtils';
 export class GnosisSafeHandler {
 
     public safeAddress: TAddress
-    public owner: ChainAccount
+    public owner: EoAccount
     public client: Web3Client
     public transport: ISafeServiceTransport
 
     constructor(config: {
         safeAddress: TAddress
-        owner: ChainAccount
+        owner: EoAccount
         client: Web3Client
         transport?: ISafeServiceTransport
     }) {
         this.safeAddress = config.safeAddress;
         this.owner = config.owner;
         this.client = config.client ?? di.resolve(EthWeb3Client);
-        this.transport = config.transport ?? new GnosisServiceTransport(this.client, this.owner)
+        this.transport = config.transport ?? new SafeServiceTransport(this.client, this.owner)
     }
 
     async getTx(safeTxHash: string) {
@@ -51,7 +50,7 @@ export class GnosisSafeHandler {
     async getTxConfirmations(safeTxHash: string) {
         return this.transport.getTxConfirmations(safeTxHash);
     }
-    async confirmTx(safeTxHash: string, owner?: ChainAccount): Promise<SignatureResponse> {
+    async confirmTx(safeTxHash: string, owner?: EoAccount): Promise<SafeServiceTypes.SignatureResponse> {
 
         let acc = owner ?? this.owner;
         let signature = await $sig.sign(safeTxHash, acc);
@@ -136,7 +135,7 @@ export class GnosisSafeHandler {
         return tx;
     }
 
-    async executeTxData (txData: TEth.TxLike, owner: ChainAccount, safeTxParams?: {
+    async executeTxData (txData: TEth.TxLike, owner: EoAccount, safeTxParams?: {
         // 0 - Call (default)
         // 1 - DelegateCall
         operation?: 0 | 1
@@ -152,7 +151,7 @@ export class GnosisSafeHandler {
     }) {
         let txData = builder.getTxData(this.client);
 
-        let safeTxEstimation: SafeMultisigTransactionEstimate & { data } = {
+        let safeTxEstimation: SafeServiceTypes.SafeMultisigTransactionEstimate & { data } = {
             to: $address.toChecksum(txData.to),
             value: $bigint.toHex(value ?? BigInt(txData.value?.toString() ?? 0n)),
             data: txData.data ?? null,
@@ -163,7 +162,7 @@ export class GnosisSafeHandler {
 
         // let estimated = await this.transport.estimateSafeTransaction(this.safeAddress, safeTxEstimation);
 
-        let safeTxData: SafeTransactionData = {
+        let safeTxData: SafeServiceTypes.SafeTransactionData = {
             ...safeTxEstimation,
 
             safeTxGas: 0, // Number(estimated.safeTxGas),
@@ -196,6 +195,7 @@ export class GnosisSafeHandler {
     }
 
     async createTransaction(writer: TxWriter, value: bigint, safeTxParams?: {
+        // 0=Call, 1=DelegateCall
         operation?: 0 | 1
     }) {
         let builder = writer.builder;
@@ -213,10 +213,10 @@ export class GnosisSafeHandler {
         signatures.set(this.owner.address.toLowerCase(), signature);
 
         // https://docs.gnosis-safe.io/tutorials/tutorial_tx_service_initiate_sign
-        let txProps: ProposeTransactionProps = {
+        let txProps: SafeServiceTypes.ProposeTransactionProps = {
             safeAddress: $address.toChecksum(this.safeAddress),
             senderAddress: $address.toChecksum(this.owner.address),
-            safeTransaction: <SafeTransaction> {
+            safeTransaction: <SafeServiceTypes.SafeTransaction> {
                 data: safeTxData,
                 signatures: signatures,
             },

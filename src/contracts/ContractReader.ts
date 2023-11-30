@@ -150,7 +150,7 @@ export class ContractReader implements IContractReader {
         return this.client.getPastLogs(filters);
     }
 
-    async getLogsFilter(abi: TAbiItem | string, options: {
+    async getLogsFilter(abi: TAbiItem | string | '*', options: {
         /** Can be UNDEFINED, then the logs will be searched globally */
         address?: TAddress
         /**
@@ -161,9 +161,6 @@ export class ContractReader implements IContractReader {
         params?: { [key: string]: any } | any[]
 
     }): Promise<RpcTypes.Filter> {
-        if (typeof abi === 'string') {
-            abi = $abiParser.parseMethod(abi);
-        }
         let filters: Partial<RpcTypes.Filter> = {
             address: options.address,
         };
@@ -187,27 +184,34 @@ export class ContractReader implements IContractReader {
             filters.toBlock = await $block.ensureNumber(options.toBlock, this.client);
         }
 
-        let topic = $abiUtils.getTopicSignature(abi);
-        let topics = [ topic ];
-        if (options.params != null) {
-            alot(abi.inputs)
-                .filter(x => x.indexed)
-                .forEach((arg, i) => {
-                    let param = Array.isArray(options.params)
-                        ? options.params[i]
-                        : options.params?.[arg.name];
-                    if (param == null) {
-                        topics.push(undefined);
-                        return;
-                    }
-                    topics.push(param);
-                })
-                .toArray();
+        if (typeof abi === 'string' && abi === '*') {
+            filters.topics = [];
+        } else {
+            if (typeof abi === 'string') {
+                abi = $abiParser.parseMethod(abi);
+            }
+            let topic = $abiUtils.getTopicSignature(abi);
+            let topics = [ topic ];
+            if (options.params != null) {
+                alot(abi.inputs)
+                    .filter(x => x.indexed)
+                    .forEach((arg, i) => {
+                        let param = Array.isArray(options.params)
+                            ? options.params[i]
+                            : options.params?.[arg.name];
+                        if (param == null) {
+                            topics.push(undefined);
+                            return;
+                        }
+                        topics.push(param);
+                    })
+                    .toArray();
 
-            topics = $array.trimEnd(topics);
+                topics = $array.trimEnd(topics);
+            }
+            filters.topics = topics;
         }
 
-        filters.topics = topics;
         return filters as RpcTypes.Filter;
     }
 

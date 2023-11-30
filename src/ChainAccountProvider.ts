@@ -1,26 +1,20 @@
 import memd from 'memd';
-
 import { HDKey } from '@scure/bip32'
 import { mnemonicToSeedSync } from '@scure/bip39'
-
-
 import { TAddress } from './models/TAddress'
 import { TPlatform } from './models/TPlatform'
 import { $config } from './utils/$config'
 import { $address } from './utils/$address';
-import { $crypto, $cryptoImpl } from './utils/$crypto';
-import { $buffer } from './utils/$buffer';
-import { ChainAccount, IAccount, SafeAccount } from './models/TAccount';
-import { $contract } from './utils/$contract';
-import { TEth } from './models/TEth';
+import { EoAccount, IAccount, SafeAccount } from './models/TAccount';
 import { $hex } from './utils/$hex';
 import { $sig } from './utils/$sig';
 
+throw new Error(`Removed. Use ChainAccountService or $account util`);
 
 export namespace ChainAccountProvider {
     export function get (platform: TPlatform, name: string): IAccount {
         let accounts = AccountsConfigProvider.get();
-        let acc: ChainAccount = accounts?.[platform]?.[name];
+        let acc: EoAccount = accounts?.[platform]?.[name];
         if (acc == null) {
             throw new Error(`Account not resolved by name: ${name} in ${platform}`);
         }
@@ -46,9 +40,9 @@ export namespace ChainAccountProvider {
     }
 
 
-    export function getAccountFromMnemonic(mnemonic: string, index: number): ChainAccount
-    export function getAccountFromMnemonic(mnemonic: string, path: string): ChainAccount
-    export function getAccountFromMnemonic(mnemonic: string, mix: number | string = 0): ChainAccount {
+    export function getAccountFromMnemonic(mnemonic: string, index: number): EoAccount
+    export function getAccountFromMnemonic(mnemonic: string, path: string): EoAccount
+    export function getAccountFromMnemonic(mnemonic: string, mix: number | string = 0): EoAccount {
         const path = typeof mix === 'number'
             ? `m/44'/60'/0'/${mix}`
             : mix;
@@ -61,7 +55,7 @@ export namespace ChainAccountProvider {
             address: null, //getAddressFromKey(account.privateKey),
         };
     }
-    export function generate (opts?: { name?: string, platform?: TPlatform }): ChainAccount {
+    export function generate (opts?: { name?: string, platform?: TPlatform }): EoAccount {
         let { key, address } = $sig.$account.generate();
         return {
             ...(opts ?? {}),
@@ -76,11 +70,11 @@ export namespace ChainAccountProvider {
 
             type TDictionary = {
                 [platform: string]: {
-                    [name: string]: ChainAccount | SafeAccount
+                    [name: string]: EoAccount | SafeAccount
                 }
             };
 
-            let accounts: TDictionary | (ChainAccount | SafeAccount)[] = $config.get('accounts');
+            let accounts: TDictionary | (EoAccount | SafeAccount)[] = $config.get('accounts');
             if (accounts == null) {
                 return [];
             }

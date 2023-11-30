@@ -1,4 +1,4 @@
-import { ChainAccount } from "@dequanto/models/TAccount";
+import { EoAccount } from "@dequanto/models/TAccount";
 import { PlatformFactory } from '@dequanto/chains/PlatformFactory';
 import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -15,7 +15,7 @@ export class TokenHandler {
     }
 
     async transfer (params: {
-        from: TAddress | ChainAccount
+        from: TAddress | EoAccount
         to: TAddress
         token: string | IToken
         amount: number
@@ -23,7 +23,7 @@ export class TokenHandler {
     }) {
 
 
-        let fromAccount:ChainAccount = await this.getAccount(params.from, true);
+        let fromAccount = await this.getAccount(params.from, true) as EoAccount;
         let toAccount = await this.getAccount(params.to, params.internal);
 
         let chain = await this.chain();
@@ -41,12 +41,11 @@ export class TokenHandler {
             let balance = await chain.transfer.getBalance(fromAccount.address, token);
             amountEther = $bigint.toEther(balance, token.decimals);
         }
-        console.log('Transfering: ', amountEther, token.symbol);
+        console.log('Transferring: ', amountEther, token.symbol);
 
         let service = chain.transfer
             .$config({
                 type: 2
-                //gasFunding: ChainAccountProvider.get(PLATFORM, 'quant')
             });
 
         let txToken = params.amount === Infinity
@@ -61,17 +60,17 @@ export class TokenHandler {
         return di.resolve(PlatformFactory).get(this.platform);
     }
 
-    private async getAccount(mix: string | TAddress | ChainAccount, isPrivate?: boolean) {
+    private async getAccount(mix: string | TAddress | EoAccount, isPrivate?: boolean) {
         if (typeof mix === 'object' && 'address' in mix && 'key' in mix) {
             return mix;
         }
         let chain = await this.chain();
-        let account = await chain.accounts.get(mix);
+        let account = await chain.accounts.get(mix as string | TAddress);
         if (account == null) {
             if (isPrivate !== false) {
                 throw new Error(`Account ${mix} not found`);
             }
-            return { address: mix } as any as ChainAccount;
+            return { address: mix } as any as EoAccount;
         }
         return account;
     }

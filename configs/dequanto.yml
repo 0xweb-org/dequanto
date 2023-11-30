@@ -72,6 +72,10 @@ blockchainExplorer:
     key: 'GS1M3QWY41Z36RTV56MV3N1BRKCJ9GWI3C'
     host: 'https://api.basescan.org'
     www: 'https://basescan.org'
+  base:test:
+    key: 'GS1M3QWY41Z36RTV56MV3N1BRKCJ9GWI3C'
+    host: 'https://api-goerli.basescan.org'
+    www: 'https://goerli.basescan.org'
 
 web3:
   eth:
@@ -189,9 +193,22 @@ web3:
     endpoints:
       - url: 'https://mainnet.base.org'
       - url: 'https://1rpc.io/base'
+
+  base:test:
+    chainId: 84531
+    chainToken: ETH
+    endpoints:
+      - url: 'https://goerli.base.org'
+      - url: 'https://base-goerli.public.blastapi.io'
+
 ns:
   ens:
     registry: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
+  sid:
+    bsc:
+      registry: '0x08CEd32a7f3eeC915Ba84415e9C07a7286977956'
+    bsc:test:
+      registry: '0xfFB52185b56603e0fd71De9de4F6f902f05EEA23'
   ud:
     # https://docs.unstoppabledomains.com/send-and-receive-crypto-payments/direct-blockchain-calls/resolve-unstoppable-domain-names
     eth:
@@ -217,3 +234,122 @@ erc4337:
         - eth:goerli
         - polygon
         - polygon:mumbai
+
+safe:
+  transactionService:
+    arbitrum: https://safe-transaction-arbitrum.safe.global
+    aurora: https://safe-transaction-aurora.safe.global
+    avalanche: https://safe-transaction-avalanche.safe.global
+    base: https://safe-transaction-base.safe.global
+    base:goerli: https://safe-transaction-base-testnet.safe.global
+    celo: https://safe-transaction-celo.safe.global
+    eth: https://safe-transaction-mainnet.safe.global
+    gnosis: https://safe-transaction-gnosis-chain.safe.global
+    eth:goerli: https://safe-transaction-goerli.safe.global
+    optimism: https://safe-transaction-optimism.safe.global
+    polygon: https://safe-transaction-polygon.safe.global
+    polygon:zkevm: https://safe-transaction-zkevm.safe.global
+    zksync: https://safe-transaction-zksync.safe.global
+
+    # https://multisig.bnbchain.org
+    # https://github.com/bnb-chain/safe-wallet-web/blob/main/src/config/custom_contract.ts
+    opbnb: https://safe-transaction-opbnb-mainnet.bnbchain.org
+    opbnb:test: https://safe-transaction-opbnb-testnet.bnbchain.org
+    bsc: https://safe-transaction-bsc.safe.global
+
+  contracts:
+    # '1'
+    eth:
+      Safe: '0x41675C099F32341bf84BFc5382aF534df5C7461a'
+      SafeL2: '0x29fcB43b46531BcA003ddC8FCB67FFE91900C762'
+      SafeProxyFactory: '0x4e1DCf7AD4e460CfD30791CCC4F9c8a4f820ec67'
+      MultiSend: '0x38869bf66a61cF6bDB996A6aE40D5853Fd43B526'
+      CreateCall: '0x9b35Af71d77eaf8d7e40252370304687390A1A52'
+
+    # '5'
+    eth:goerli:
+      Safe: '0x41675C099F32341bf84BFc5382aF534df5C7461a'
+      SafeL2: '0x29fcB43b46531BcA003ddC8FCB67FFE91900C762'
+      SafeProxyFactory: '0x4e1DCf7AD4e460CfD30791CCC4F9c8a4f820ec67'
+      MultiSend: '0x38869bf66a61cF6bDB996A6aE40D5853Fd43B526'
+      CreateCall: '0x9b35Af71d77eaf8d7e40252370304687390A1A52'
+
+    # '56'
+    bsc:
+      Safe: '0x41675C099F32341bf84BFc5382aF534df5C7461a'
+      SafeL2: '0x29fcB43b46531BcA003ddC8FCB67FFE91900C762'
+      SafeProxyFactory: '0x4e1DCf7AD4e460CfD30791CCC4F9c8a4f820ec67'
+      MultiSend: '0x38869bf66a61cF6bDB996A6aE40D5853Fd43B526'
+      CreateCall: '0x9b35Af71d77eaf8d7e40252370304687390A1A52'
+
+    # '100'
+    gnosis:
+      Safe: '0x41675C099F32341bf84BFc5382aF534df5C7461a'
+      SafeL2: '0x29fcB43b46531BcA003ddC8FCB67FFE91900C762'
+      SafeProxyFactory: '0x4e1DCf7AD4e460CfD30791CCC4F9c8a4f820ec67'
+      MultiSend: '0x38869bf66a61cF6bDB996A6aE40D5853Fd43B526'
+      CreateCall: '0x9b35Af71d77eaf8d7e40252370304687390A1A52'
+
+    # '137'
+    polygon:
+      Safe: '0x41675C099F32341bf84BFc5382aF534df5C7461a'
+      SafeL2: '0x29fcB43b46531BcA003ddC8FCB67FFE91900C762'
+      SafeProxyFactory: '0x4e1DCf7AD4e460CfD30791CCC4F9c8a4f820ec67'
+      MultiSend: '0x38869bf66a61cF6bDB996A6aE40D5853Fd43B526'
+      CreateCall: '0x9b35Af71d77eaf8d7e40252370304687390A1A52'
+
+    # '1442'
+    polygon:zkevm:
+      Safe: '0x41675C099F32341bf84BFc5382aF534df5C7461a'
+      SafeL2: '0x29fcB43b46531BcA003ddC8FCB67FFE91900C762'
+      SafeProxyFactory: '0x4e1DCf7AD4e460CfD30791CCC4F9c8a4f820ec67'
+      MultiSend: '0x38869bf66a61cF6bDB996A6aE40D5853Fd43B526'
+      CreateCall: '0x9b35Af71d77eaf8d7e40252370304687390A1A52'
+
+    # '80001'
+    polygon:mumbai:
+      Safe: '0x41675C099F32341bf84BFc5382aF534df5C7461a'
+      SafeL2: '0x29fcB43b46531BcA003ddC8FCB67FFE91900C762'
+      SafeProxyFactory: '0x4e1DCf7AD4e460CfD30791CCC4F9c8a4f820ec67'
+      MultiSend: '0x38869bf66a61cF6bDB996A6aE40D5853Fd43B526'
+      CreateCall: '0x9b35Af71d77eaf8d7e40252370304687390A1A52'
+
+    # '8194'
+    torus:test:
+      Safe: '0x41675C099F32341bf84BFc5382aF534df5C7461a'
+      SafeL2: '0x29fcB43b46531BcA003ddC8FCB67FFE91900C762'
+      SafeProxyFactory: '0x4e1DCf7AD4e460CfD30791CCC4F9c8a4f820ec67'
+      MultiSend: '0x38869bf66a61cF6bDB996A6aE40D5853Fd43B526'
+      CreateCall: '0x9b35Af71d77eaf8d7e40252370304687390A1A52'
+
+    # '84531'
+    base:test:
+      Safe: '0x41675C099F32341bf84BFc5382aF534df5C7461a'
+      SafeL2: '0x29fcB43b46531BcA003ddC8FCB67FFE91900C762'
+      SafeProxyFactory: '0x4e1DCf7AD4e460CfD30791CCC4F9c8a4f820ec67'
+      MultiSend: '0x38869bf66a61cF6bDB996A6aE40D5853Fd43B526'
+      CreateCall: '0x9b35Af71d77eaf8d7e40252370304687390A1A52'
+
+    # '204'
+    opbnb:
+      Safe:
+      SafeL2: '0xE2CF742b554F466d5E7a37C371FD47C786d2FBc0'
+      SafeProxyFactory: '0x9fea7F7C69f14aa1a7d62cC9D468fEB2F9371CB3'
+      MultiSend: '0xDeB0467cCfAda493902C8D279A2F41f26b813AC9'
+      CreateCall: '0x392e2F66c3BBF0046c861e0065fB7C7917b18078'
+
+    # '5611'
+    opbnb:test:
+      Safe:
+      SafeL2: '0xE2CF742b554F466d5E7a37C371FD47C786d2FBc0'
+      SafeProxyFactory: '0x9fea7F7C69f14aa1a7d62cC9D468fEB2F9371CB3'
+      MultiSend: '0xDeB0467cCfAda493902C8D279A2F41f26b813AC9'
+      CreateCall: '0x392e2F66c3BBF0046c861e0065fB7C7917b18078'
+
+    # '97'
+    bsc:test:
+      Safe:
+      SafeL2: '0xE2CF742b554F466d5E7a37C371FD47C786d2FBc0'
+      SafeProxyFactory: '0x9fea7F7C69f14aa1a7d62cC9D468fEB2F9371CB3'
+      MultiSend: '0xDeB0467cCfAda493902C8D279A2F41f26b813AC9'
+      CreateCall: '0x392e2F66c3BBF0046c861e0065fB7C7917b18078'

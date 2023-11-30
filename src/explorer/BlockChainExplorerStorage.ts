@@ -49,10 +49,16 @@ export class BlockChainExplorerStorage implements IBlockChainExplorer {
             }
         }
     }
-    submitContractValidation(contractData: { address: `0x${string}`; sourceCode: any; contractName: any; compilerVersion: any; optimizer?: { enabled?: boolean; runs: number; }; arguments?: `0x${string}`; }): Promise<string> {
+    submitContractProxyVerification(contractData: { address: TAddress; expectedImplementation?: TAddress }): Promise<string> {
         throw new Error('Method not implemented.');
     }
-    checkContractValidationSubmission(submission: { guid: any; }): Promise<string> {
+    checkContractProxyVerificationSubmission(submission: { guid: any; }): Promise<string> {
+        throw new Error('Method not implemented.');
+    }
+    submitContractVerification(contractData: { address: `0x${string}`; sourceCode: any; contractName: any; compilerVersion: any; optimizer?: { enabled?: boolean; runs: number; }; arguments?: `0x${string}`; }): Promise<string> {
+        throw new Error('Method not implemented.');
+    }
+    checkContractVerificationSubmission(submission: { guid: any; }): Promise<string> {
         throw new Error('Method not implemented.');
     }
     registerAbi(abis: { name: any; address: any; abi: any; }[]) {

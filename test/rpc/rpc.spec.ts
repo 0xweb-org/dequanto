@@ -5,7 +5,6 @@ import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client';
 import { TxWriter } from '@dequanto/txs/TxWriter';
-import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
 
 import Web3 from 'web3';
 import { Web3Transport } from '@dequanto/rpc/transports/compatibility/Web3Transport';
@@ -16,6 +15,7 @@ import { ContractDeployer } from '@dequanto/contracts/deploy/ContractDeployer';
 import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { TEth } from '@dequanto/models/TEth';
 import Sinon from 'sinon';
+import { $account } from '@dequanto/utils/$account';
 
 const PORT = `8545`;
 const HOST = `127.0.0.1:${PORT}`
@@ -128,7 +128,7 @@ function RpcUtest(name: string, rpc: Rpc, client: Web3Client) {
                 },
                 async 'should transfer ETH'() {
                     let amount = 10n ** 9n;
-                    let acc2 = ChainAccountProvider.generate();
+                    let acc2 = $account.generate();
                     let tx = await TxWriter.writeTxData(client, {
                         to: acc2.address,
                         value: amount,

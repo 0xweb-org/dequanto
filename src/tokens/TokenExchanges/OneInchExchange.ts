@@ -1,6 +1,6 @@
 import di from 'a-di';
 import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
-import { ChainAccount } from "@dequanto/models/TAccount";
+import { EoAccount } from "@dequanto/models/TAccount";
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -31,7 +31,7 @@ export class OneInchExchange {
 
     }
 
-    async approve (account: ChainAccount, from: string | IToken, fromAmount?: number, spender?: TAddress) {
+    async approve (account: EoAccount, from: string | IToken, fromAmount?: number, spender?: TAddress) {
         let tokens = di.resolve(TokensService, this.platform, this.explorer);
         let $from = typeof from === 'string' ? await tokens.getToken(from) : from;
 
@@ -56,7 +56,7 @@ export class OneInchExchange {
         return txWriter;
     }
 
-    async swap (account: ChainAccount, from: string | IToken, to: string | IToken, fromAmount: number) {
+    async swap (account: EoAccount, from: string | IToken, to: string | IToken, fromAmount: number) {
         let tokens = di.resolve(TokensService, this.platform, this.explorer);
 
         let $owner = account.address;
@@ -98,7 +98,7 @@ export class OneInchExchange {
         return BigInt(amount) * 10n ** BigInt(decimals);
     }
 
-    private async sendTx (account: ChainAccount, calldata) {
+    private async sendTx (account: EoAccount, calldata) {
         let txData = TxDataBuilder.normalize(calldata);
         let $txData = txData as any;
 

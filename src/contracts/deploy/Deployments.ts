@@ -11,7 +11,7 @@ import { ParametersFromSecond } from '@dequanto/utils/types';
 import { Constructor } from 'atma-utils';
 
 import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
-import { ContractValidator } from '@dequanto/explorer/ContractValidator';
+import { ContractVerifier } from '@dequanto/explorer/ContractVerifier';
 import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client';
 import { LoggerService } from '@dequanto/loggers/LoggerService';
 import { $is } from '@dequanto/utils/$is';
@@ -20,6 +20,20 @@ import { IBeacon, IBeaconProxy, IProxy, IProxyAdmin, ProxyDeployment } from './p
 import { DeploymentsStorage, IDeployment } from './storage/DeploymentsStorage';
 import { TAddress } from '@dequanto/models/TAddress';
 
+
+type TDeploymentOptions = {
+    id?: string
+
+    /** Will deploy the contract */
+    force?: boolean
+    /** Will check if local bytecode has changed and will deploy */
+    latest?: boolean
+
+    verification?: boolean | 'silent'
+
+    // Will be used for verification process
+    proxyFor?: TAddress
+}
 
 export class Deployments {
     public store: DeploymentsStorage;
@@ -123,16 +137,7 @@ export class Deployments {
         return contract;
     }
 
-    async ensure<T extends TContract>(Ctor: Constructor<T>, opts?: TConstructorArgs<T> & {
-        id?: string
-
-        /** Will deploy the contract */
-        force?: boolean
-        /** Will check if local bytecode has changed and will deploy */
-        latest?: boolean
-
-        validation?: boolean | 'silent'
-    }): Promise<{
+    async ensure<T extends TContract>(Ctor: Constructor<T>, opts?: TConstructorArgs<T> & TDeploymentOptions): Promise<{
         contract: T
         receipt?: TEth.TxReceipt
         deployment: IDeployment
@@ -141,26 +146,31 @@ export class Deployments {
 
         let currentDeployment = await this.store.getDeploymentInfo(Ctor, opts);
         let contract = await this.getOrNull(Ctor, opts);
-        if (contract != null && opts.force !== true && opts.latest !== true) {
-            // return already deployed contract
-            $contract.store.register(contract as any);
-            return {
-                contract,
-                deployment: currentDeployment,
-            };
-        }
+        if (contract != null) {
+            await this.ensureVerification(Ctor, currentDeployment, opts);
 
-        if (contract != null && opts.latest === true) {
-            // was already deployed. Check new bytecode hash
-            let isSame = await this.isSameBytecode(Ctor, currentDeployment);
-            if (isSame) {
+            if (opts.force !== true && opts.latest !== true) {
+                // return already deployed contract
                 $contract.store.register(contract as any);
                 return {
                     contract,
                     deployment: currentDeployment,
                 };
             }
+            if (opts.latest === true) {
+                // was already deployed. Check new bytecode hash
+                let isSame = await this.isSameBytecode(Ctor, currentDeployment);
+                if (isSame) {
+                    $contract.store.register(contract as any);
+                    return {
+                        contract,
+                        deployment: currentDeployment,
+                    };
+                }
+            }
         }
+
+
         // Lets deploy the contract, new, forced, or latest
 
         let constructorArgs = opts.arguments ?? [];
@@ -183,19 +193,10 @@ export class Deployments {
             bytecodeHash: $contract.keccak256(deployedBytecode)
         }, receipt);
 
-        if (this.client.platform !== 'hardhat' && opts?.validation !== false) {
-            let explorer = await BlockChainExplorerProvider.get(this.client.platform);
-            let validator = new ContractValidator(this, explorer);
-            let waitConfirmation = false; opts?.validation !== 'silent';
-            try {
-                await validator.ensure(Ctor, {
-                    ...opts,
-                    waitConfirmation: waitConfirmation
-                });
-            } catch (error) {
-                this._logger.error(`Verification error ${error.message}`);
-            }
-        }
+        await this.ensureVerification(Ctor, deployment, {
+            id: id,
+            verification: opts?.verification,
+        });
 
         return {
             receipt,
@@ -209,12 +210,8 @@ export class Deployments {
         TInit extends TInitializer
     >(
         CtorImpl: Constructor<T>,
-        opts?: TConstructorArgs<T> & {
-            id?: string
-            force?: boolean
-            latest?: boolean
+        opts?: TConstructorArgs<T> & TDeploymentOptions & {
             initialize?: ParametersFromSecond<T['initialize']>
-            validation?: boolean |'silent'
         }
     ): Promise<{
         // the Implementation Contract with the address set to Proxy
@@ -239,7 +236,7 @@ export class Deployments {
             id: id,
             force: opts?.force,
             latest: true,
-            validation: opts?.validation,
+            verification: opts?.verification,
         });
 
         let data = serializeInitData(id, contractImpl, opts.initialize);
@@ -291,14 +288,10 @@ export class Deployments {
         TInit extends TInitializer
     >(
         CtorImpl: Constructor<T>,
-        opts: TConstructorArgs<T> & {
+        opts: TConstructorArgs<T> & TDeploymentOptions & {
             // Supports path with the first slug as the Implementation ID, e.g. `myImplementation/Foo`
             id: string
-
-            force?: boolean
-            latest?: boolean
             initialize?: ParametersFromSecond<T['initialize']>
-            validation?: boolean |'silent'
         }
     ): Promise<{
         // the Implementation Contract with the address set to Beacon Proxy
@@ -329,7 +322,7 @@ export class Deployments {
             id: implId,
             force: opts?.force,
             latest: true,
-            validation: opts?.validation,
+            verification: opts?.verification,
         });
 
         let data = serializeInitData(implId, contractImpl, opts.initialize);
@@ -388,6 +381,35 @@ export class Deployments {
     }
 
 
+    private async ensureVerification <T extends TContract> (Ctor: Constructor<T>, deployment: IDeployment, opts: TDeploymentOptions) {
+        if (this.client.platform === 'hardhat' || opts?.verification === false) {
+            return;
+        }
+
+        let explorer = await BlockChainExplorerProvider.get(this.client.platform);
+        let verifier = new ContractVerifier(this, explorer);
+        if (deployment.verified != null) {
+            return;
+        }
+
+        let waitConfirmation = opts?.verification !== 'silent';
+        let address = deployment.implementation ?? deployment.address;
+        try {
+            await verifier.ensure(Ctor, {
+                id: opts?.id,
+                address: address,
+                waitConfirmation: waitConfirmation,
+                proxyFor: opts?.proxyFor
+            });
+
+            deployment.verified = new Date().toISOString();
+            await this.store.updateDeployment(deployment);
+        } catch (error) {
+            this._logger.error(`Verification error ${error.message}`);
+        }
+    }
+
+
 
 
     public async fixBytecodeHashesByReread() {
@@ -415,7 +437,7 @@ export class Deployments {
         id?: string;
 
         value?: TValue
-        current?: (x: T) => Promise<TValue>;
+        current?: TValue | Promise<TValue> | ((x: T) => Promise<TValue>);
         shouldUpdate?: () => Promise<boolean>
         updater: (x: T, value: TValue) => Promise<any>;
     }) {
@@ -428,8 +450,12 @@ export class Deployments {
             x = Ctor;
         }
 
-        if (opts.current != null) {
-            let current = await opts.current(x);
+        if ('current' in opts) {
+            let currentMix = opts.current;
+            let current = typeof currentMix === 'function'
+                ? await (currentMix as Function)(x)
+                : await currentMix;
+
             if (isEqual(current, opts.value)) {
                 return;
             }

@@ -4,7 +4,13 @@ import { $require } from './$require';
 import * as fs from 'fs';
 import * as stream from 'stream';
 import { Directory } from 'atma-io';
+import { $logger } from './$logger';
 
+
+interface THttpResponse<T> {
+    status: 200 | number
+    data: T
+}
 
 export namespace $http {
 
@@ -21,15 +27,12 @@ export namespace $http {
         url: string
         method?: 'GET' | string
         params?: Record<string, string>
-        body?: string | Record<string, string>
+        body?: string | Record<string, string> | any
         headers?: Record<string, string>
         responseType?: 'stream'
     }
 
-    async function doFetch <T = any> (opts: IHttpFetch): Promise<{
-        status: 200 | number,
-        data: T
-    }> {
+    async function doFetch <T = any> (opts: IHttpFetch): Promise<THttpResponse<T>> {
         let url = opts.url;
         if (opts.params) {
             url += '?' + new URLSearchParams(opts.params).toString();
@@ -70,11 +73,12 @@ export namespace $http {
             return handler.handler(opts);
         }
 
-        let resp = await fetch(url, options);
+        let resp = await doFetchInner(url, options);
+
         let contentType = resp.headers.get('Content-Type');
         let data: any = resp.body;
         if (opts.responseType !== 'stream') {
-            if (contentType.includes('json')) {
+            if (contentType?.includes('json')) {
                 data = await resp.json();
             } else {
                 data = await resp.text();
@@ -92,9 +96,35 @@ export namespace $http {
         return response;
     }
 
-    export function get<T = any> (opts: IHttpFetch)
-    export function get<T = any> (url: string)
-    export function get<T = any> (mix: string | IHttpFetch) {
+    async function doFetchInner (url: string, reqInit: RequestInit, options?: {
+        retries?: number
+    }) {
+        options ??= {};
+        options.retries ??= 3;
+
+        let resp: Response;
+        let timeout = setTimeout(() => {
+            $logger.log(`${reqInit.method} ${url} response takes longer as expected. Waiting...`);
+        }, 8_000);
+        try {
+            resp = await fetch(url, reqInit);
+        } catch (error) {
+            let errCode = error.cause?.code;
+            let message = `Fetch failed for ${ url } with "${error.message }: ${errCode}"`;
+            if (--options.retries < 0) {
+                throw new Error(message);
+            }
+            console.log(`Retry HTTP request after "${message}"`);
+            return doFetchInner(url, reqInit, options);
+        } finally {
+            clearTimeout(timeout);
+        }
+        return resp;
+    }
+
+    export function get<T = any> (opts: IHttpFetch): Promise<THttpResponse<T>>
+    export function get<T = any> (url: string): Promise<THttpResponse<T>>
+    export function get<T = any> (mix: string | IHttpFetch): Promise<THttpResponse<T>> {
         let opts = typeof mix === 'string' ? { url: mix } : mix;
         return doFetch<T>({
             ...opts,

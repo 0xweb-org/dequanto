@@ -2,8 +2,6 @@ import '../env/BigIntSerializer'
 import di from 'a-di';
 import { class_Dfr, class_EventEmitter } from 'atma-utils';
 
-import type { ProposeTransactionProps } from '@gnosis.pm/safe-service-client';
-
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $txData } from '@dequanto/utils/$txData';
 
@@ -18,9 +16,9 @@ import { $error } from '@dequanto/utils/$error';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TxDataBuilder } from './TxDataBuilder';
 import { TxLogger } from './TxLogger';
-import { ChainAccount, Erc4337Account, IAccount, SafeAccount, TAccount } from "@dequanto/models/TAccount";
+import { EoAccount, Erc4337Account, IAccount, SafeAccount, TAccount } from "@dequanto/models/TAccount";
 import { TAddress } from '@dequanto/models/TAddress';
-import { ChainAccountsService } from '@dequanto/ChainAccountsService';
+import { ChainAccountService } from '@dequanto/ChainAccountService';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { ClientErrorUtil } from '@dequanto/clients/utils/ClientErrorUtil';
@@ -33,6 +31,7 @@ import { TxWriterAccountAgents } from './agents/TxWriterAccountAgents';
 import { PromiseEvent } from '@dequanto/class/PromiseEvent';
 import { $sig } from '@dequanto/utils/$sig';
 import { TEth } from '@dequanto/models/TEth';
+import { SafeServiceTypes } from '@dequanto/safe/types/SafeServiceTypes';
 
 interface ITxWriterEvents {
     transactionHash (hash: string)
@@ -41,7 +40,7 @@ interface ITxWriterEvents {
     error (error: Error)
     sent ()
     log (message: string)
-    safeTxProposed (safeTx: ProposeTransactionProps)
+    safeTxProposed (safeTx: SafeServiceTypes.ProposeTransactionProps)
 }
 export interface ITxWriterOptions {
     timeout?: number | boolean
@@ -168,7 +167,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
 
         let time = Date.now();
-        let sender: ChainAccount = await this.getSender();
+        let sender: EoAccount = await this.getSender();
         try {
             await Promise.all([
                 this.builder.ensureNonce(),
@@ -370,17 +369,17 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         return this.onCompleted.catch(fn);
     }
 
-    private async getSender (): Promise<ChainAccount> {
+    private async getSender (): Promise<EoAccount> {
         let account = this.account;
 
         let sender = $account.getSender(account);
         if (sender.key == null) {
             /** check the encrypted storage. In case no key is found, assume the target node contains unlocked or locked account */
             let addressOrName = sender.address ?? sender.name;
-            let service = di.resolve(ChainAccountsService);
+            let service = di.resolve(ChainAccountService);
             let fromStorage = await service.get(addressOrName, this.client.platform);
             if (fromStorage) {
-                sender = fromStorage as ChainAccount;
+                sender = fromStorage as EoAccount;
             }
         }
         return sender;
@@ -467,7 +466,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     }
 
     /** Use this transfer also in case of additional account funding */
-    public async transferNative (from: ChainAccount, to: TAddress, amount: bigint): Promise<TxWriter> {
+    public async transferNative (from: EoAccount, to: TAddress, amount: bigint): Promise<TxWriter> {
         let txBuilder = new TxDataBuilder(this.client, from, {
             to: to,
             value: $bigint.toHex(amount)
@@ -485,7 +484,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         let account = this.account;
         let accountJson: string | any;
         if (typeof account !== 'string') {
-            accountJson = JSON.parse(JSON.stringify(account)) as (ChainAccount | SafeAccount | Erc4337Account);
+            accountJson = JSON.parse(JSON.stringify(account)) as (EoAccount | SafeAccount | Erc4337Account);
             // Clean any KEY to prevent leaking. When resubmitted if one is required should be taken from the storage
             if ('operator' in accountJson) {
                 delete accountJson.operator.key;

@@ -9,7 +9,7 @@ import { ITransactionDetails } from '@dequanto/models/ITransactionDetails'
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder'
 import { TxWriter } from '@dequanto/txs/TxWriter'
 import { Web3Client } from '@dequanto/clients/Web3Client'
-import { ChainAccount } from "@dequanto/models/TAccount"
+import { EoAccount } from "@dequanto/models/TAccount"
 import { $is } from '@dequanto/utils/$is'
 import { $abiUtils } from '@dequanto/utils/$abiUtils'
 import { TAbiItem } from '@dequanto/types/TAbi'
@@ -50,7 +50,7 @@ export abstract class Contract {
         return this.runner.readAsync(this.address, methodAbi, ...params);
     }
 
-    async writeAsyncWithAccount<T = any>(account: ChainAccount, interfaceAbi: string, ...params): Promise<TxWriter> {
+    async writeAsyncWithAccount<T = any>(account: EoAccount, interfaceAbi: string, ...params): Promise<TxWriter> {
 
         let txBuilder = new TxDataBuilder(this.client, account, {
             to: this.address

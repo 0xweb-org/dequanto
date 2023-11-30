@@ -3,7 +3,7 @@ import { keccak_256 } from '@noble/hashes/sha3';
 
 import type { TAbiItem } from '@dequanto/types/TAbi';
 
-import { InputDataUtils } from '@dequanto/contracts/utils/InputDataUtils';
+
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 
@@ -13,12 +13,17 @@ import { $require } from './$require';
 import { $buffer } from './$buffer';
 import { TEth } from '@dequanto/models/TEth';
 import { $abiCoder } from '@dequanto/abi/$abiCoder';
+import { $logger } from './$logger';
+
+import { EvmBytecode } from '@dequanto/evm/EvmBytecode';
+import { $bytecode } from '@dequanto/evm/utils/$bytecode';
+import { $hex } from './$hex';
 
 export namespace $contract {
 
-    export function keccak256 (str: string | TBufferLike, output: 'buffer'): Uint8Array
-    export function keccak256 (str: string | TBufferLike): TEth.Hex
-    export function keccak256 (str: string | TBufferLike, output?: 'buffer'): Uint8Array | TEth.Hex {
+    export function keccak256(str: string | TBufferLike, output: 'buffer'): Uint8Array
+    export function keccak256(str: string | TBufferLike): TEth.Hex
+    export function keccak256(str: string | TBufferLike, output?: 'buffer'): Uint8Array | TEth.Hex {
         if (str == null || str === '0x') {
             return `0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470`;
         }
@@ -37,7 +42,7 @@ export namespace $contract {
         return $buffer.toHex(hashBytes);
     }
 
-    export function normalizeArgs (args: any[]) {
+    export function normalizeArgs(args: any[]) {
         return args.map(val => {
             if (val?._isBigNumber) {
                 return BigInt(val.toString());
@@ -48,7 +53,7 @@ export namespace $contract {
             return val;
         })
     }
-    function normalizeValue (val: any) {
+    function normalizeValue(val: any) {
         if (val == null || typeof val !== 'object') {
             return val;
         }
@@ -58,7 +63,7 @@ export namespace $contract {
         return val;
     }
 
-    export function extractLogsForAbi (tx: TEth.TxReceipt, abiItem: string | TAbiItem): ITxLogItem[] {
+    export function extractLogsForAbi(tx: TEth.TxReceipt, abiItem: string | TAbiItem): ITxLogItem[] {
         let topicHash = $abiUtils.getMethodHash(abiItem);
         let logs = tx
             .logs
@@ -71,7 +76,7 @@ export namespace $contract {
         return logs;
     }
 
-    export function parseInputData (inputHex: string, abis: TAbiItem[]) {
+    export function parseInputData(inputHex: string, abis: TAbiItem[]) {
         if (abis == null || abis.length === 0) {
             return null;
         }
@@ -100,6 +105,32 @@ export namespace $contract {
         return {
             method: abi.name,
             params
+        };
+    }
+
+    export function decodeDeploymentArguments(input: TEth.Hex, ctorAbi: TAbiItem) {
+        let { arguments: hex } = $bytecode.parseContractCreation(input);
+        if ($hex.isEmpty(hex)) {
+            return null;
+        }
+        let decoded = $abiUtils.decode(ctorAbi.inputs, hex);
+        return {
+            encoded: hex,
+            ...decoded
+        };
+    }
+    export function parseDeploymentBytecode(input: TEth.Hex) {
+
+        let evm = new EvmBytecode(input, { withConstructorCode: true });
+        let opcodes = evm.getOpcodes();
+        let codeSize = opcodes.findIndex(x => x.name === 'CODESIZE');
+        let prev = opcodes[codeSize - 1];
+        $require.True(/PUSH/.test(prev.name), `PUSH expected but got ${prev.name}`);
+
+        let codeSizeValue = $buffer.toBigInt(prev.pushData) * 2n;
+
+        return {
+            arguments: '0x' + input.substring(2 /*0x*/ + Number(codeSizeValue)),
         };
     }
 
@@ -171,7 +202,7 @@ export namespace $contract {
 
 
 
-    export function decodeCustomError (errorDataHex: string | { type, params } | any, abiArr: TAbiItem[]) {
+    export function decodeCustomError(errorDataHex: string | { type, params } | any, abiArr: TAbiItem[]) {
         if (errorDataHex == null) {
             return null;
         }
@@ -204,10 +235,27 @@ export namespace $contract {
         };
     }
 
-    export function parseLogWithAbi(log: TEth.Log, abiItem: TAbiItem | string): ITxLogItem {
-        if(typeof abiItem === 'string') {
-            abiItem = $abiParser.parseMethod(abiItem);
+    export function parseLogWithAbi(log: TEth.Log, mix: TAbiItem[] | TAbiItem | string): ITxLogItem {
+        let abiItem: TAbiItem;
+        if (typeof mix === 'string') {
+            abiItem = $abiParser.parseMethod(mix);
+        } else if (Array.isArray(mix)) {
+            abiItem = mix.find(x => {
+                let topic = log.topics[0];
+                let sig = $abiUtils.getTopicSignature(x);
+                return topic === sig;
+            });
+            if (abiItem == null) {
+                $logger.log(`Abi not found for ${log.topics[0]} within ${mix.map(x => x.name)}`);
+                return <any>{
+                    event: 'Unknown',
+                    ...log,
+                }
+            }
+        } else {
+            abiItem = mix;
         }
+
         let inputs = abiItem.inputs.slice();
 
         // Move indexed inputs forward
@@ -230,7 +278,7 @@ export namespace $contract {
                     value: bytes
                 };
             }
-            let val = $abiCoder.decode([ type ], bytes);
+            let val = $abiCoder.decode([type], bytes);
 
             return {
                 name: type.name,
@@ -263,7 +311,7 @@ export namespace $contract {
         };
     }
 
-    export function formatCall (call: { method?, type?, params? }) {
+    export function formatCall(call: { method?, type?, params?}) {
         let method = call.method ?? call.type ?? 'Unknown';
         let paramsStr = '';
         if (call.params != null) {
@@ -289,15 +337,15 @@ export namespace $contract {
             abi: TAbiItem[]
         }[];
 
-        export function getFlattened () {
+        export function getFlattened() {
             return alot(knownContracts).mapMany(x => x.abi).toArray();
         }
-        export function register (contract: { abi: TAbiItem[] }) {
+        export function register(contract: { abi: TAbiItem[] }) {
             knownContracts.push(contract)
         }
     }
 
-    function formatJson (json) {
+    function formatJson(json) {
         let str = JSON.stringify(json, null, 2);
         str = str.replace(/"([\w]+)":/g, '$1:');
         return str;

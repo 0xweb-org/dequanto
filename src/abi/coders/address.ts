@@ -19,7 +19,7 @@ export class AddressCoder extends Coder {
     }
 
     defaultValue(): string {
-        return "0x0000000000000000000000000000000000000000";
+        return $address.ZERO;
     }
 
     encode(writer: Writer, _value: string): number {
@@ -29,7 +29,8 @@ export class AddressCoder extends Coder {
         // } catch (error: any) {
         //     return this._throwError(error.message, _value);
         // }
-        return writer.writeValue(BigInt(_value));
+
+        return writer.writeValue($hex.isEmpty(_value) ? 0n : BigInt(_value));
     }
 
     decode(reader: Reader): any {

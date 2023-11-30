@@ -7,8 +7,7 @@ import { TokensServiceFactory } from '@dequanto/tokens/TokensServiceFactory';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { ParaSwap, NetworkID } from "paraswap";
 import { OptimalRate, SwapSide } from "paraswap-core";
-import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
-import { ChainAccount } from "@dequanto/models/TAccount";
+import { EoAccount } from "@dequanto/models/TAccount";
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client';
@@ -43,7 +42,7 @@ export class Paraswap implements ISwapService {
         return balance;
     }
 
-    async swap (account: ChainAccount, params: {
+    async swap (account: EoAccount, params: {
         from: string | IToken
         to: string | IToken
         fromAmount: number | bigint
@@ -70,7 +69,7 @@ export class Paraswap implements ISwapService {
         return tx;
     }
 
-    async ensureApproved (account: ChainAccount, token: string | IToken, amount: bigint | number) {
+    async ensureApproved (account: EoAccount, token: string | IToken, amount: bigint | number) {
 
         token = await this.getToken(token);
 
@@ -134,7 +133,7 @@ export class Paraswap implements ISwapService {
         return transactionRequest;
     }
 
-    private async sendTx (account: ChainAccount, calldata) {
+    private async sendTx (account: EoAccount, calldata) {
         let txData = TxDataBuilder.normalize(calldata);
         let $txData = txData as any;
 

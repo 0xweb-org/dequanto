@@ -22,7 +22,7 @@ export interface IBlockChainExplorer extends IAbiProvider {
         ABI: string
     }>
 
-    submitContractValidation (contractData: {
+    submitContractVerification (contractData: {
         address: TAddress
         sourceCode: string | any
         contractName
@@ -34,7 +34,14 @@ export interface IBlockChainExplorer extends IAbiProvider {
         arguments?: TEth.Hex
     }): Promise<string>
 
-    checkContractValidationSubmission (submission: { guid }): Promise<string>
+    checkContractVerificationSubmission (submission: { guid }): Promise<string>
+
+    submitContractProxyVerification (contractData: {
+        address: TAddress
+        expectedImplementation?: TAddress
+    }): Promise<string>
+
+    checkContractProxyVerificationSubmission (submission: { guid }): Promise<string>
 
     getTransactions (address: TEth.Address, params?: { fromBlockNumber?: number, page?: number, size?: number }): Promise<TEth.TxLike[]>
     getTransactionsAll (address: TEth.Address): Promise<TEth.TxLike[]>

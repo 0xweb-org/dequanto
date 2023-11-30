@@ -1,6 +1,6 @@
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IErc4337Info } from './models/IErc4337Info';
-import { ChainAccount, Erc4337Account } from '@dequanto/models/TAccount';
+import { EoAccount, Erc4337Account } from '@dequanto/models/TAccount';
 import { Erc4337Service } from './Erc4337Service';
 import { $require } from '@dequanto/utils/$require';
 import { UserOperation } from './models/UserOperation';
@@ -17,7 +17,7 @@ export class Erc4337TxWriter {
         this.service = new Erc4337Service(client, explorer, info);
     }
 
-    async getAccount (owner: ChainAccount) {
+    async getAccount (owner: EoAccount) {
         let service = this.service;
         let { initCode, initCodeGas } = await service.prepareAccountCreation(owner.address);
         let senderAddress = await service.getAccountAddress(owner.address, initCode);
@@ -30,8 +30,8 @@ export class Erc4337TxWriter {
     }
 
     async ensureAccount (params: {
-        owner: ChainAccount,
-        submitter?: ChainAccount,
+        owner: EoAccount,
+        submitter?: EoAccount,
         salt?: bigint
     }): Promise<{
         accountAddress: TAddress,
@@ -73,7 +73,7 @@ export class Erc4337TxWriter {
             salt?: bigint
         }
         tx: TEth.TxLike
-        owner: ChainAccount
+        owner: EoAccount
         nonceSalt?: bigint
     }) {
         let { tx, owner } = params
@@ -150,8 +150,8 @@ export class Erc4337TxWriter {
             salt?: bigint
         },
         tx: TEth.TxLike,
-        owner: ChainAccount,
-        submitter?: ChainAccount,
+        owner: EoAccount,
+        submitter?: EoAccount,
     }) {
         let { submitter, owner } = params
         let service = this.service;
@@ -161,7 +161,7 @@ export class Erc4337TxWriter {
         return { op, opHash, writer };
     }
 
-    async submitUserOp (submitter: ChainAccount, signedOp: UserOperation) {
+    async submitUserOp (submitter: EoAccount, signedOp: UserOperation) {
         let service = this.service;
         let writer = await service.submitUserOpViaEntryPoint(submitter, signedOp);
         return writer;

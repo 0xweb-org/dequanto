@@ -2,6 +2,7 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { $require } from '@dequanto/utils/$require';
 import { EnsProvider } from './providers/EnsProvider';
 import { INsProvider } from './providers/INsProvider';
+import { SpaceIdProvider } from './providers/SpaceIdProvider';
 
 export class NameService {
 
@@ -9,7 +10,8 @@ export class NameService {
 
     constructor(public client: Web3Client) {
         this.providers = [
-            new EnsProvider(client)
+            new EnsProvider(client),
+            new SpaceIdProvider(client),
         ];
     }
 

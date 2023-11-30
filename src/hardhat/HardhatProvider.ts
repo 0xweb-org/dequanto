@@ -8,7 +8,7 @@ import type { Constructor } from 'atma-utils/mixin';
 import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { TEth } from '@dequanto/models/TEth';
 
-import { ChainAccount } from "@dequanto/models/TAccount";
+import { EoAccount } from "@dequanto/models/TAccount";
 import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 
@@ -22,7 +22,6 @@ import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplore
 import { IWeb3EndpointOptions } from '@dequanto/clients/interfaces/IWeb3EndpointOptions';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
 
 import { ContractDeployment } from '@dequanto/contracts/deploy/ContractDeployment';
 import { ContractDeployer } from '@dequanto/contracts/deploy/ContractDeployer';
@@ -100,7 +99,7 @@ export class HardhatProvider {
     }
 
     @memd.deco.memoize()
-    deployer(index: number = 0): ChainAccount {
+    deployer(index: number = 0): EoAccount {
         const accounts: any = this.hh.config.networks.hardhat.accounts;
         const account = $sig.$account.fromMnemonic(accounts.mnemonic, index);
         return {
@@ -110,7 +109,7 @@ export class HardhatProvider {
     }
 
     async getFactoryForClass <T extends ContractBase>(Ctor: Constructor<T>, options?: {
-        deployer?: ChainAccount
+        deployer?: EoAccount
         arguments?: any[]
         client?: Web3Client
     }): Promise<{
@@ -133,7 +132,7 @@ export class HardhatProvider {
     }
 
     async deployClass<T extends ContractBase>(Ctor: Constructor<T>, options?: {
-        deployer?: ChainAccount
+        deployer?: EoAccount
         arguments?: any[]
         client?: Web3Client
     }): Promise<{
@@ -171,7 +170,7 @@ export class HardhatProvider {
     async deploySol <TReturn extends ContractBase = IContractWrapped> (solContractPath: string, options?: {
         client?: Web3Client
         arguments?: any[],
-        deployer?:  ChainAccount,
+        deployer?:  EoAccount,
         paths?: {
             root?: string
             artifacts?: string
@@ -210,7 +209,7 @@ export class HardhatProvider {
     async deployBytecode <TReturn extends ContractBase = IContractWrapped > (hex: TEth.Hex, options?: {
         client?: Web3Client
         arguments?: any[],
-        deployer?:  ChainAccount,
+        deployer?:  EoAccount,
         paths?: {
             root?: string
             artifacts?: string
@@ -418,7 +417,7 @@ export class HardhatProvider {
     private async getFactory (
         mix: string | Constructor<ContractBase> | [ abi: TAbiItem[], bytecode: TEth.Hex ],
         client: Web3Client,
-        signer: ChainAccount,
+        signer: EoAccount,
         params: any[],
     ): Promise<ContractDeployment> {
 

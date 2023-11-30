@@ -4,7 +4,7 @@ import { IContractDetails } from './models/IContractDetails';
 import { TPlatform } from './models/TPlatform';
 import { $secret } from './utils/$secret';
 import { $cli } from './utils/$cli';
-import { obj_extend } from 'atma-utils';
+import { class_Dfr, obj_extend } from 'atma-utils';
 import { Directory } from 'atma-io';
 import { ITokenGlob } from './models/ITokenGlob';
 import { TAddress } from './models/TAddress';
@@ -59,8 +59,21 @@ export class Config {
         platforms: TPlatform[]
     }[]
 
+    safe?: {
+        transactionService: Record<TPlatform, `https://${string}`>
+        contracts: Record<TPlatform, {
+            Safe: TAddress
+            SafeL2?: TAddress
+            SafeProxyFactory: TAddress
+            MultiSend: TAddress
+            CreateCall?: TAddress
+        }>
+    }
+
     @memd.deco.memoize()
     static async fetch (parameters?: { pin?, 'config-accounts'?, 'config-global'? } ) {
+        singleton ??= new class_Dfr();
+
         let unlockedAccountsKey = await $secret.getPin(parameters);
         let configPathAccounts = $cli.getParamValue('config-accounts', parameters) ?? '%APPDATA%/.dequanto/accounts.json';
         let configPathGlobal = $cli.getParamValue('config-global', parameters) ?? '%APPDATA%/.dequanto/config.yml';
@@ -126,7 +139,16 @@ export class Config {
         ]);
 
         obj_extend(config, cfg.toJSON());
+        singleton.resolve(cfg);
         return cfg;
+    }
+
+    /** Will return a config that was previously loaded by fetch with any parameters or will trigger fetch with default parameters  */
+    static get (): PromiseLike<AppConfig<Config>> {
+        if (singleton != null) {
+            return singleton;
+        }
+        return Config.fetch();
     }
 
     static async extend (json) {
@@ -136,3 +158,5 @@ export class Config {
 }
 
 export const config = new Config();
+
+let singleton: class_Dfr<AppConfig<Config>> = null;

@@ -25,6 +25,14 @@ export abstract class RpcBase {
         let body = this._wrapBody(req);
         let resp = await this._transport.request(body);
         if ('error' in resp) {
+            let params = { ...(req.params ?? {}) };
+            for (let key in params) {
+                let val = params[key];
+                if (typeof val === 'string' && val.length > 200) {
+                    params[key] = val.substring(0, 100) + '....' + val.slice(-100);
+                }
+            }
+
             throw new RpcError(resp.error, `${this._transport.id} | ${req.method} ${JSON.stringify(req.params)}`);
         }
         let result = this._unwrapBody(resp);

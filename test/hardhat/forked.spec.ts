@@ -1,8 +1,7 @@
 import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
-import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
+import { $account } from '@dequanto/utils/$account';
 
 UTest({
     $config: {
@@ -11,7 +10,7 @@ UTest({
     async 'should fork the mainnet' () {
         const provider = new HardhatProvider();
         const client = await provider.forked({ platform: 'eth' });
-        const owner = ChainAccountProvider.generate();
+        const owner = $account.generate();
 
         return UTest({
             $config: {

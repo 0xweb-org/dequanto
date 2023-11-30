@@ -6,7 +6,7 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $address } from '@dequanto/utils/$address';
 import { UserOperation, UserOperationDefaults } from './models/UserOperation';
-import { ChainAccount } from '@dequanto/models/TAccount';
+import { EoAccount } from '@dequanto/models/TAccount';
 import { obj_extendDefaults } from 'atma-utils';
 import { $require } from '@dequanto/utils/$require';
 import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
@@ -168,7 +168,7 @@ export class Erc4337Service {
         let hash = await this.entryPointContract.getUserOpHash(op) as string;
         return hash;
     }
-    async getSignedUserOp(op: Partial<UserOperation>, owner: ChainAccount): Promise<{ op: UserOperation, opHash: string }> {
+    async getSignedUserOp(op: Partial<UserOperation>, owner: EoAccount): Promise<{ op: UserOperation, opHash: string }> {
 
         let userOp: UserOperation = obj_extendDefaults(op, UserOperationDefaults);
 
@@ -205,7 +205,7 @@ export class Erc4337Service {
         };
     }
 
-    async submitUserOpViaEntryPoint(sender: ChainAccount, op: UserOperation | UserOperation[]) {
+    async submitUserOpViaEntryPoint(sender: EoAccount, op: UserOperation | UserOperation[]) {
         $require.Address(sender?.address);
 
         let txWriter = await this.entryPointContract.handleOps(sender, Array.isArray(op) ? op : [op], sender.address);

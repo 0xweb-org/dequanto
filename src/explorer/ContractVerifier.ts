@@ -6,33 +6,50 @@ import { Deployments } from '@dequanto/contracts/deploy/Deployments';
 import { LoggerService } from '@dequanto/loggers/LoggerService';
 import { TEth } from '@dequanto/models/TEth';
 import { SourceFile } from '@dequanto/solidity/SlotsParser/SourceFile';
-import { $hex } from '@dequanto/utils/$hex';
 import { $is } from '@dequanto/utils/$is';
 import { $path } from '@dequanto/utils/$path';
 import { $promise } from '@dequanto/utils/$promise';
 import { $require } from '@dequanto/utils/$require';
 import { Constructor, class_Uri } from 'atma-utils';
 import { IBlockChainExplorer } from './IBlockChainExplorer';
+import { $contract } from '@dequanto/utils/$contract';
 
 
 type TSubmissionStatus = {
     status: 'verified' | 'pending'
     guid?: string
 }
+type TSubmissionOptions = {
+    id?: string
+    waitConfirmation?: boolean
+    address?: TEth.Address
+    proxyFor?: TEth.Address
+};
 type TContractInfo<T extends ContractBase = ContractBase> = Constructor<T> | string;
 
-export class ContractValidator {
+export class ContractVerifier {
 
     constructor (
         public deployments: Deployments,
         public explorer: IBlockChainExplorer,
-        public logger = new LoggerService('explorer-validator'),
+        public logger = new LoggerService('ContractVerifier'),
     ) {
 
     }
 
-    async ensure (Ctor: TContractInfo, opts: { id?: string, waitConfirmation?: boolean } = {}): Promise<void>  {
+    async ensure (Ctor: TContractInfo, opts: TSubmissionOptions = {}): Promise<void>  {
+        this.logger.log(`Submit sources for ${typeof Ctor === 'string' ? Ctor : Ctor.name}`);
+
         let status = await this.submit(Ctor, opts);
+        await this.waitForVerification(status, opts);
+
+        if ($is.Address(opts.proxyFor)) {
+            let proxyStatus = await this.submitProxy(opts);
+            await this.waitForProxyVerification(proxyStatus, opts);
+        }
+    }
+
+    private async waitForVerification (status: TSubmissionStatus, opts: TSubmissionOptions): Promise<void> {
         if (status.status === 'verified' || opts.waitConfirmation === false) {
             return;
         }
@@ -40,15 +57,19 @@ export class ContractValidator {
         $require.True(/^\w+$/.test(guid), `Invalid guid response for submission: ${guid}`);
         await $promise.waitForTrue(async () => {
             try {
-                let result = await this.explorer.checkContractValidationSubmission({ guid });
-                return /Verified/.test(result);
+                let result = await this.explorer.checkContractVerificationSubmission({ guid });
+                return /verified/i.test(result);
             } catch (e) {
                 let message = e.message;
-                if (/(Pending|queue)/.test(message)) {
-                    this.logger.log(`Waiting for contract validation submission: ${guid}`);
+                if (/verified/i.test(message)) {
+                    // was already verified
+                    return true;
+                }
+                if (/(pending|queue)/i.test(message)) {
+                    this.logger.log(`Waiting for contract verification submission: ${guid}`);
                     return false;
                 }
-                this.logger.log(`Validation failed: ${message}`);
+                this.logger.log(`Verification failed: ${message}`);
                 throw e;
             }
         }, {
@@ -57,17 +78,20 @@ export class ContractValidator {
         });
     }
 
-    async submit(Ctor: TContractInfo, opts?: {
-        id?: string;
+    private async submit(Ctor: TContractInfo, opts?: {
+        id?: string
+        address?: TEth.Address
+        proxyFor?: TEth.Address
     }): Promise<TSubmissionStatus> {
         let client = this.deployments.client;
         let contractName = typeof Ctor === 'string' ? Ctor : Ctor.name;
-        let deployment = await this.deployments.getDeploymentInfo(Ctor, opts);
+        let deployment = await this.deployments.store.getDeploymentInfo(Ctor, opts);
         $require.notNull(deployment, `Deployment not found for ${opts?.id ?? contractName}`);
-        let address = deployment.implementation ?? deployment.address;
+        let address = opts?.address ?? deployment.implementation ?? deployment.address;
 
+        this.logger.log(`Checking if already verified ${address}`);
         let currentSources = await this.explorer.getContractSource(address);
-        if (currentSources != null && $is.notEmpty(currentSources.ContractName)) {
+        if ($is.notEmpty(currentSources?.ContractName)) {
             return { status:'verified' };
         }
 
@@ -76,25 +100,19 @@ export class ContractValidator {
 
         let constructorArguments = '' as TEth.Hex;
 
-
-
         let deployer = new ContractDeployer(client, null /*account*/);
-        let info = await deployer.prepareDeployment({
-            name: contractName
-        });
+        let info = typeof Ctor === 'string'
+            ? await deployer.prepareDeployment({ name: contractName })
+            : await deployer.prepareDeployment({ contract: Ctor })
+            ;
 
         let abi = info.ctx.abi;
         let ctorAbi = abi.find(x => x.type === 'constructor');
         if (ctorAbi?.inputs?.length > 0) {
             let tx = await this.deployments.client.getTransaction(deployment.tx);
-            let inputBytecode = tx.input;
+            let parsedArguments = $contract.decodeDeploymentArguments(tx.input, ctorAbi);
 
-            let inputBytecodeRaw = $hex.raw(inputBytecode);
-            let deployedBytecodeRaw = $hex.raw(deployedBytecode);
-
-            let index = inputBytecodeRaw.indexOf(deployedBytecodeRaw);
-            let ctorArgumentsEncoded = (`0x` + inputBytecodeRaw.substring(index + deployedBytecodeRaw.length)) as TEth.Hex;
-            constructorArguments = ctorArgumentsEncoded; //$abiCoder.decode(ctorAbi.inputs, ctorArgumentsEncoded);
+            constructorArguments = parsedArguments.encoded;
         }
 
         let jsonMetaPath = info.ctx.source.path;
@@ -138,20 +156,28 @@ export class ContractValidator {
         }, null, 4);
         let sourcesSerializedWrapped = `${sourcesSerialized}`;
 
+        this.logger.log(`Submit ${jsonMeta.sourceName}:${jsonMeta.contractName} and dependencies to verify ${address} contract`);
 
-        let guid = await this.explorer.submitContractValidation({
-            address: address,
-            compilerVersion: `v` + buildInfo.solcLongVersion,
-            contractName: `${jsonMeta.sourceName}:${jsonMeta.contractName}`,
-            optimizer: buildInfo.input.settings.optimizer,
-            arguments: constructorArguments,
-            sourceCode: sourcesSerializedWrapped
-        });
+        try {
+            let guid = await this.explorer.submitContractVerification({
+                address: address,
+                compilerVersion: `v` + buildInfo.solcLongVersion,
+                contractName: `${jsonMeta.sourceName}:${jsonMeta.contractName}`,
+                optimizer: buildInfo.input.settings.optimizer,
+                arguments: constructorArguments,
+                sourceCode: sourcesSerializedWrapped
+            });
 
-        return {
-            status: 'pending',
-            guid
-        };
+            return {
+                status: 'pending',
+                guid
+            };
+        } catch (error) {
+            if (/already verified/i.test(error.message)) {
+                return { status: 'verified' };
+            }
+            throw error;
+        }
     }
 
 
@@ -189,5 +215,54 @@ export class ContractValidator {
 
         this.logger.log(`Found ${Object.keys(sources).length} source files: `, Object.keys(sources));
         return sources;
+    }
+
+    private async submitProxy (opts: TSubmissionOptions): Promise<TSubmissionStatus> {
+        let { address, proxyFor } = opts;
+        try {
+            let guid = await this.explorer.submitContractProxyVerification({
+                address: address,
+                expectedImplementation: proxyFor
+            });
+            return {
+                status: 'pending',
+                guid
+            };
+        } catch (error) {
+            if (/already verified/i.test(error.message)) {
+                return { status: 'verified' };
+            }
+            throw error;
+        }
+    }
+
+    private async waitForProxyVerification (status: TSubmissionStatus, opts: TSubmissionOptions): Promise<void> {
+        if (status.status === 'verified' || opts.waitConfirmation === false) {
+            return;
+        }
+        let guid = status.guid
+        $require.True(/^\w+$/.test(guid), `Invalid guid response for submission: ${guid}`);
+        await $promise.waitForTrue(async () => {
+            try {
+                let result = await this.explorer.checkContractProxyVerificationSubmission({ guid });
+                this.logger.log(`Proxy verification result: ${result}`);
+                return /verified/i.test(result);
+            } catch (e) {
+                let message = e.message;
+                if (/verified/i.test(message)) {
+                    // was already verified
+                    return true;
+                }
+                if (/(pending|queue)/i.test(message)) {
+                    this.logger.log(`Waiting for contract verification submission: ${guid}`);
+                    return false;
+                }
+                this.logger.log(`Verification failed: ${message}`);
+                throw e;
+            }
+        }, {
+            intervalMs: 4000,
+            timeoutMs: 2 * 60 * 1000 // 2 minutes
+        });
     }
 }

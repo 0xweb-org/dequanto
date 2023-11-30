@@ -69,16 +69,21 @@ export namespace $abiUtils {
         return $abiCoder.encode(types, values)
     }
 
-    export function decode(types: (string | ParamType)[], data: string) {
-        // let types: ReadonlyArray<string | ParamType>;
-        // if (Array.isArray(mix) && mix[0].length === 2 && typeof mix[0][0] === 'string') {
-        //     types = mix.map(x => x[0]);
-        //     values = mix.map(x => x[1]);
-        // } else {
-        //     types = mix as any;
-        // }
+    export function decode(types: (string | ParamType | TAbiInput)[], data: string) {
+        let arr: any[] = $abiCoder.decode(types, data);
 
-        return $abiCoder.decode(types, data)
+        // Add parameters as dictionary, to be compatible with web3js, but consider to remove this
+        let params: { [ key: string ]: any }
+        let asObject = types.every(x => x != null && typeof x === 'object' && x.name != null);
+        if (asObject) {
+            params = alot(types as ParamType[]).map((x, i) => {
+                return { key: x.name, value: arr[i] }
+            }).toDictionary(x => x.key, x => x.value);
+        }
+        return {
+            args: arr,
+            params,
+        };
     }
 
 
@@ -142,19 +147,11 @@ export namespace $abiUtils {
             console.log(`Could not find the ABI for ${methodHex}; Available ${ abiFns.map(x => x.name).join(', ') }`);
             return null;
         }
-        let arr: any[] = $abiCoder.decode(abi.inputs, bytesHex);
+        let { args, params } = decode(abi.inputs, bytesHex);
 
-        // Add parameters as dictionary, to be compatible with web3js, but consider to remove this
-        let params: { [ key: string ]: any }
-        let asObject = abi.inputs.every(x => x.name != null);
-        if (asObject) {
-            params = alot(abi.inputs).map((x, i) => {
-                return { key: x.name, value: arr[i] }
-            }).toDictionary(x => x.key, x => x.value);
-        }
         return {
             name: abi.name,
-            args: arr,
+            args,
             params,
             value: tx.value,
         };

@@ -6,12 +6,12 @@ import { RpcTypes } from '@dequanto/rpc/Rpc';
 import { Web3Client } from '../Web3Client';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-import { ChainAccount } from '@dequanto/models/TAccount';
-import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
+import { EoAccount } from '@dequanto/models/TAccount';
 import { $address } from '@dequanto/utils/$address';
 import { $require } from '@dequanto/utils/$require';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $sig } from '@dequanto/utils/$sig';
+import { $abiCoder } from '@dequanto/abi/$abiCoder';
 
 export class Web3 {
     eth: Web3Eth
@@ -65,10 +65,10 @@ class Web3EthAccounts {
 }
 
 class Web3EthWallet {
-    $accounts: ChainAccount[] = []
+    $accounts: EoAccount[] = []
 
     async add (key: TEth.Hex | `p1:${TEth.Hex}`) {
-        const account = <ChainAccount> {
+        const account = <EoAccount> {
             address: await $sig.$account.getAddressFromKey(key),
             key,
             type: 'eoa'
@@ -135,7 +135,7 @@ namespace $Web3Contract {
                 to: this.address,
                 data: this.encodeABI()
             });
-            let [ decoded ] = $abiUtils.decode(this.abi.outputs, result);
+            let [ decoded ] = $abiCoder.decode(this.abi.outputs, result);
             return decoded;
         }
         send (opts: { from, gas }) {

@@ -1,6 +1,6 @@
 import di from 'a-di';
 
-import { ChainAccount, IAccount, SafeAccount, TAccount } from "@dequanto/models/TAccount";
+import { EoAccount, IAccount, SafeAccount, TAccount } from "@dequanto/models/TAccount";
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -61,7 +61,7 @@ export class TokenTransferService {
     }
 
     /** Returns NULL for transaction, if no balance to transfer */
-    async transferAll (from: ChainAccount, to: TAddress, token: string | IToken) : Promise<TxWriter> {
+    async transferAll (from: EoAccount, to: TAddress, token: string | IToken) : Promise<TxWriter> {
         token = await this.getToken(token);
 
         let isNative = this.tokenService.isNative(token.address);
@@ -70,7 +70,7 @@ export class TokenTransferService {
         }
         return this.transferErc20All(from, to, token);
     }
-    async transferAllWithRemainder (from: ChainAccount, to: TAddress, token: string | IToken, remainder: number | bigint) : Promise<TxWriter> {
+    async transferAllWithRemainder (from: EoAccount, to: TAddress, token: string | IToken, remainder: number | bigint) : Promise<TxWriter> {
         token = await this.getToken(token);
 
         let isNative = this.tokenService.isNative(token.address);
@@ -101,7 +101,7 @@ export class TokenTransferService {
         return this.tokenService.isNative(typeof token === 'string' ? token : token.address);
     }
 
-    private async transferNativeAll (from: ChainAccount, to: TAddress, opts?: { remainder: number | bigint }): Promise<TxWriter> {
+    private async transferNativeAll (from: EoAccount, to: TAddress, opts?: { remainder: number | bigint }): Promise<TxWriter> {
         let buildTxRetries = 1;
 
         const buildTx = async () => {
@@ -190,7 +190,7 @@ export class TokenTransferService {
         return TxWriter.write(this.client, txBuilder, from, this.writerConfig);
     }
 
-    private async transferErc20All (from: ChainAccount, to: TAddress, token: IToken, opts?: { remainder?: number | bigint, retryCount?: number }): Promise<TxWriter> {
+    private async transferErc20All (from: EoAccount, to: TAddress, token: IToken, opts?: { remainder?: number | bigint, retryCount?: number }): Promise<TxWriter> {
         let erc20 = await TokensService.erc20(token, this.client.platform);
         let balance = await erc20.balanceOf(from.address);
         if (opts?.remainder != null) {

@@ -13,7 +13,7 @@ import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 
 UAction.create({
 
-    async 'safe'() {
+    async '!safe'() {
         const files = await Directory.readFilesAsync('./src/safe/abi/', '**.json');
         await alot(files)
             .forEachAsync(async file => {
@@ -60,7 +60,7 @@ UAction.create({
             })
             .toArrayAsync();
     },
-    async '!openzeppelin compiled' () {
+    async 'openzeppelin compiled' () {
         let generator = new Generator({
             name: 'TransparentUpgradeableProxy',
             source: {

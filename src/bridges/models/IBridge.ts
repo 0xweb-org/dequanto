@@ -1,4 +1,4 @@
-import { ChainAccount } from "@dequanto/models/TAccount";
+import { EoAccount } from "@dequanto/models/TAccount";
 import { TAddress } from '@dequanto/models/TAddress';
 import { TEth } from '@dequanto/models/TEth';
 import { TPlatform } from '@dequanto/models/TPlatform';
@@ -18,7 +18,7 @@ export interface IBridge {
     ): Promise<{ error: Error | null }>
 
     transfer (
-        account: ChainAccount,
+        account: EoAccount,
         amount: number | bigint,
         symbol: string,
         fromPlatform: TPlatform,

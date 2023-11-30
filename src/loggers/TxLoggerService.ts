@@ -1,5 +1,5 @@
 import di from 'a-di';
-import { ChainAccount } from "@dequanto/models/TAccount";
+import { EoAccount } from "@dequanto/models/TAccount";
 import { IToken } from '@dequanto/models/IToken';
 import { TokenTransferService } from '@dequanto/tokens/TokenTransferService';
 import { TxWriter } from '@dequanto/txs/TxWriter';
@@ -58,7 +58,7 @@ export class TxLoggerService {
     }
 
     async logSwapTransaction(tx: TxWriter, swap: {
-        account: ChainAccount
+        account: EoAccount
         fromToken: string | IToken
         toToken: string | IToken
         amount?: bigint

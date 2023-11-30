@@ -115,7 +115,7 @@ export class AbiCoder {
      *
      *  @returns DataHexstring
      */
-    encode(types: ReadonlyArray<string | ParamType>, values: ReadonlyArray<any>): string {
+    encode(types: ReadonlyArray<string | ParamType | TAbiInput>, values: ReadonlyArray<any>): string {
         $require.eq(values.length, types.length, "types/values length mismatch");
 
         const coders = types.map((type) => this.#getCoder(ParamType.from(type)));

@@ -28,6 +28,8 @@ export interface IDeployment {
 
     proxyFor?: TAddress
 
+    verified?: string
+
     tx: TEth.Hex
     block: number
     deployer: TEth.Address

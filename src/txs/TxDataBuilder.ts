@@ -10,7 +10,6 @@ import { $number } from '@dequanto/utils/$number';
 import { TEth } from '@dequanto/models/TEth';
 import { $sig } from '@dequanto/utils/$sig';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
 import { $hex } from '@dequanto/utils/$hex';
 import { $contract } from '@dequanto/utils/$contract';
 

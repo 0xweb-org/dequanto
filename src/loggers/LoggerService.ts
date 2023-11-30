@@ -38,7 +38,7 @@ export class LoggerService implements ILogger {
             this.fs.write(level, this.name, params)
         }
         if (this.options.std !== false) {
-            $logger[level](...params);
+            $logger[level](this.name, ...params);
         }
     }
 }

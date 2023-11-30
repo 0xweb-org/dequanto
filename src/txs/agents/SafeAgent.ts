@@ -1,4 +1,4 @@
-import { ChainAccount, SafeAccount, TAccount } from '@dequanto/models/TAccount';
+import { EoAccount, SafeAccount, TAccount } from '@dequanto/models/TAccount';
 import { ITxWriterAccountAgent } from './TxWriterAccountAgents';
 import { $account } from '@dequanto/utils/$account';
 import { Web3Client } from '@dequanto/clients/Web3Client';
@@ -10,7 +10,7 @@ export class SafeAgent implements ITxWriterAccountAgent {
     supports (account: TAccount) {
         return $account.isSafe(account);
     }
-    async process (sender: ChainAccount, safeAccount: SafeAccount, outerWriter: TxWriter) {
+    async process (sender: EoAccount, safeAccount: SafeAccount, outerWriter: TxWriter) {
 
         let { client, options } = outerWriter;
         let safe = new GnosisSafeHandler({

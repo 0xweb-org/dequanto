@@ -1,6 +1,5 @@
 import { l } from '@dequanto/utils/$logger';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { ChainAccountProvider } from '@dequanto/ChainAccountProvider';
 
 import { Erc4337Service } from '@dequanto/erc4337/Erc4337Service';
 import { UserOperation } from '@dequanto/erc4337/models/UserOperation';
@@ -17,6 +16,7 @@ import { $config } from '@dequanto/utils/$config';
 import { EntryPoint } from '@dequanto-contracts/erc4337/EntryPoint/EntryPoint';
 import { SimpleAccount } from '@dequanto-contracts/erc4337/SimpleAccount/SimpleAccount';
 import { SimpleAccountFactory } from '@dequanto-contracts/erc4337/SimpleAccountFactory/SimpleAccountFactory';
+import { $account } from '@dequanto/utils/$account';
 
 const provider = new HardhatProvider();
 const client = provider.client();
@@ -77,8 +77,8 @@ UTest({
 
     async 'erc4337 simple create' () {
         let erc4337Contracts = await AccountAbstractionTestableFactory.prepare();
-        let owner = ChainAccountProvider.generate();
-        let submitter = ChainAccountProvider.generate();
+        let owner = $account.generate();
+        let submitter = $account.generate();
         await client.debug.setBalance(submitter.address, 10n**18n);
 
         let writer = new Erc4337TxWriter(client, explorer, {
@@ -112,7 +112,7 @@ UTest({
             }
         });
         let callCounter = 0;
-        let ownerFoo = await ChainAccountProvider.generate();
+        let ownerFoo = await $account.generate();
         await client.debug.setBalance(ownerFoo.address, 10n ** 18n);
 
 
@@ -183,7 +183,7 @@ UTest({
                         accountFactory: erc4337Contracts.accountFactoryContract.address,
                     }
                 });
-                let submitter = await ChainAccountProvider.generate();
+                let submitter = await $account.generate();
                 client.debug.setBalance(submitter.address, 10n ** 18n);
 
                 let erc4337Account = await writer.getAccount(ownerFoo);

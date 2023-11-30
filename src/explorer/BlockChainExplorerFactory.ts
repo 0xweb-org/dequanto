@@ -178,7 +178,7 @@ export namespace BlockChainExplorerFactory {
                 return { abi, implementation: address };
             }
 
-            async submitContractValidation (contractData: {
+            async submitContractVerification (contractData: {
                 address: TAddress
                 sourceCode: string | any
                 contractName
@@ -203,15 +203,15 @@ export namespace BlockChainExplorerFactory {
                     runs: contractData.optimizer?.runs,
                     constructorArguements: contractData.arguments?.replace('0x', '')
                 };
-                let result = await client.post(url, {
+                let guid = await client.post(url, {
                     body
                 });
-                return result;
+                return guid;
             }
 
-            async checkContractValidationSubmission (submission: { guid }) {
+            async checkContractVerificationSubmission (submission: { guid }) {
                 let url = `${this.config.host}/api`;
-                let result = await client.get(url, {
+                let result = await client.get<string>(url, {
                     apikey: this.config.key,
                     module: "contract",
                     action: "checkverifystatus",
@@ -219,6 +219,32 @@ export namespace BlockChainExplorerFactory {
                 });
                 return result;
             }
+
+            async submitContractProxyVerification(contractData: {
+                address: TEth.Address
+                expectedImplementation?: TEth.Address
+            }): Promise<string> {
+                let url = `${this.config.host}/api`;
+                let guid = await client.get<string>(url, {
+                    apikey: this.config.key,
+                    module: "contract",
+                    action: "verifyproxycontract",
+                    address: contractData.address,
+                    expectedimplementation: contractData.expectedImplementation ?? void 0
+                });
+                return guid;
+            }
+            async checkContractProxyVerificationSubmission(submission: { guid: any; }): Promise<string> {
+                let url = `${this.config.host}/api`;
+                let result = await client.get<string>(url, {
+                    apikey: this.config.key,
+                    module: "contract",
+                    action: "checkproxyverification",
+                    guid: submission.guid
+                });
+                return result;
+            }
+
 
             async getContractSource (address: string): Promise<{
                 SourceCode: {
@@ -487,8 +513,8 @@ function ensureDefaults (opts: IBlockChainExplorerParams) {
 class Client {
 
     @memd.deco.queued({ throttle: 1000 / 5 })
-    async get (url: string, params?) {
-        return this.getInner(url, {
+    async get <TOut> (url: string, params?) {
+        return this.getInner <TOut> (url, {
             params
         })
     }
@@ -525,12 +551,17 @@ class Client {
         return arr;
     }
 
-    private async getInner (url: string, opts?: { retryCount?: number, params? }) {
-        let resp = await $http.get({
+    private async getInner <TOut> (url: string, opts?: { retryCount?: number, params? }) {
+        type TResponse = {
+            status: '1' | '0'
+            message: 'OK' | 'NOTOK'
+            result: any
+        }
+        let resp = await $http.get<TResponse>({
             url,
             params: opts.params
         });
-        let data = resp.data as { status: string, message: 'OK' | 'NOTOK', result: any };
+        let data = resp.data;
         if (data.message === 'NOTOK') {
             let str = data.result;
             if (/Max rate/i.test(str)) {
@@ -549,7 +580,7 @@ class Client {
         if (data.result == null) {
             $logger.warn(`Blockchain "${url}" explorer returned empty result`, data);
         }
-        return data.result;
+        return data.result as TOut;
     }
     private async postInner (url: string, opts: {
         body: any

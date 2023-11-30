@@ -6,14 +6,14 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $abiParser } from '../utils/$abiParser';
-import { ChainAccount, IAccount, TAccount } from "@dequanto/models/TAccount";
+import { EoAccount, IAccount, TAccount } from "@dequanto/models/TAccount";
 import { ITxConfig } from '@dequanto/txs/ITxConfig';
 import { $logger } from '@dequanto/utils/$logger';
 import { $class } from '@dequanto/utils/$class';
 import { $account } from '@dequanto/utils/$account';
 import { $require } from '@dequanto/utils/$require';
 
-interface IChainAccountSender extends ChainAccount {
+interface IChainAccountSender extends EoAccount {
     value?: number | string | bigint
 }
 

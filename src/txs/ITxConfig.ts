@@ -1,4 +1,4 @@
-import { ChainAccount } from "@dequanto/models/TAccount";
+import { EoAccount } from "@dequanto/models/TAccount";
 import { TAddress } from '@dequanto/models/TAddress';
 import { TAbiItem } from '@dequanto/types/TAbi';
 
@@ -8,7 +8,7 @@ export interface ITxConfig {
     gasLimit?: number
     gasLimitRatio?: number
 
-    gasFunding?: ChainAccount
+    gasFunding?: EoAccount
     gasEstimation?: boolean
 
     /** Used for gasEstimation */
