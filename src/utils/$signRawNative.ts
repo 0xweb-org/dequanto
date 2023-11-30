@@ -6,6 +6,8 @@ import { $is } from './$is';
 import { $hex } from './$hex';
 import { $address } from './$address';
 
+throw new Error(`Deprecated. Use @dequanto/utils/$sig instead.`);
+
 export namespace $signRawNative {
     export function signEC (message: string | Uint8Array, privateKey: string | Uint8Array, chainId?: number) {
         const sig = secp256k1.sign(

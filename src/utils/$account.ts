@@ -1,12 +1,12 @@
 import { HDKey } from '@scure/bip32'
 import { mnemonicToSeedSync } from '@scure/bip39'
 
+import { TPlatform } from '@dequanto/models/TPlatform';
 import { EoAccount, Erc4337Account, SafeAccount, TAccount } from "@dequanto/models/TAccount";
 import { $address } from './$address';
 import { $sig } from './$sig';
-import { TPlatform } from '@dequanto/models/TPlatform';
 import { $hex } from './$hex';
-import { TEth } from '@dequanto/models/TEth';
+
 
 export namespace $account {
 

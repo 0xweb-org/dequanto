@@ -20,10 +20,9 @@ UTest({
             memd.fn.clearMemoized(Config.fetch);
 
             let config = await Config.fetch({
-                "config-accounts": path,
-                "pin": "12345"
+                configAccounts: path,
+                pin: '12345'
             });
-
 
             let service = new ChainAccountService({ config });
             return { service, config };
@@ -31,7 +30,7 @@ UTest({
 
 
         let { service } = await createService();
-        let account = await service.generate({ name: 'foo' });
+        let account = await service.create({ name: 'foo' });
 
         eq_(await File.existsAsync(path), true);
         let content = await File.readAsync(path, { skipHooks: true });

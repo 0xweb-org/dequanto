@@ -71,7 +71,11 @@ export class Config {
     }
 
     @memd.deco.memoize()
-    static async fetch (parameters?: { pin?, 'config-accounts'?, 'config-global'? } ) {
+    static async fetch (parameters?: {
+        pin?: string
+        configAccounts?: string
+        configGlobal?: string
+    } ) {
         singleton ??= new class_Dfr();
 
         let unlockedAccountsKey = await $secret.getPin(parameters);

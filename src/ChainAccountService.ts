@@ -82,9 +82,9 @@ export class ChainAccountService {
             ...(customAccounts ?? []),
         ];
     }
-    async generate (opts: { name: string, platform?: TPlatform }) {
+    async create (opts: { name: string, platform?: TPlatform }) {
         let current = await this.get(opts.name, { platform: opts.platform });
-        if (current) {
+        if (current != null) {
             return current;
         }
         let account = $account.generate(opts);
@@ -92,7 +92,7 @@ export class ChainAccountService {
         await store.save(account);
         return account;
     }
-    async generateMany (names: string[], platform: TPlatform) {
+    async createMany (names: string[], platform: TPlatform) {
         let newAccounts = [];
         let accounts = await alot(names).mapAsync(async name => {
             let current = await this.get(name, { platform });
@@ -121,7 +121,7 @@ export class ChainAccountService {
             case 'custom':
                 return this.storeCustom;
             default:
-                return this.storeCustom ?? this.storeFs ?? this.storeConfig;
+                return this.storeCustom ?? this.storeConfig ?? this.storeFs;
         }
     }
 }

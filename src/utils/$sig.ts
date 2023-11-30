@@ -10,11 +10,10 @@ import { $rlp } from '@dequanto/abi/$rlp';
 import { $require } from './$require';
 import type { Web3Client } from '@dequanto/clients/Web3Client';
 import type { Rpc, RpcTypes } from '@dequanto/rpc/Rpc';
-import { $crypto, $cryptoImpl } from './$crypto';
+import { $crypto } from './$crypto';
 import { $config } from './$config';
 import { HDKey } from '@scure/bip32'
 import { mnemonicToSeedSync } from '@scure/bip39'
-import { wordlist as english } from '@scure/bip39/wordlists/english';
 
 
 export namespace $sig {
