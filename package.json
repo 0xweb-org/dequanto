@@ -1,6 +1,6 @@
 {
   "name": "dequanto",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "scripts": {
     "hardhat": "node --openssl-legacy-provider ./node_modules/hardhat/internal/cli/cli.js node --hostname 127.0.0.1 --verbose",
     "build": "tsc -p tsconfig-src.json",
