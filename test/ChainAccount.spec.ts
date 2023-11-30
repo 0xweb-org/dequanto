@@ -1,15 +1,16 @@
 
 import { ChainAccountService } from '@dequanto/ChainAccountService';
 import { Config } from '@dequanto/Config';
-import { $account } from '@dequanto/utils/$account';
+import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { $is } from '@dequanto/utils/$is';
+import { $sig } from '@dequanto/utils/$sig';
 import { File } from 'atma-io';
 import memd from 'memd';
 
 
 UTest({
     async 'generate account' () {
-        let { key, address } = $account.generate();
+        let { key, address } = $sig.$account.generate();
         eq_($is.Address(address), true);
     },
     async 'save encrypted account' () {
@@ -42,5 +43,10 @@ UTest({
 
         let account2 = await serviceFresh.get('foo');
         deepEq_(account, account2);
+    },
+
+    async 'fromMnemonic' () {
+        let r1 = await $sig.$account.fromMnemonic('test test test test test test test test test test test junk');
+        eq_(r1.address, new HardhatProvider().deployer().address);
     }
 })

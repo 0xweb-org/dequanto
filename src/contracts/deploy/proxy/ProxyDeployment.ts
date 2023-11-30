@@ -122,8 +122,10 @@ export class ProxyDeployment {
         $require.notNull(ProxyAdmin, 'TransparentProxy.ProxyAdmin is required');
 
 
-        let proxyOpts = {
+        let proxyOpts = <Parameters<Deployments['ensure']>[1]> {
             id: proxyId,
+            // will be used for verification
+            proxyFor: implAddress,
             arguments: [
                 // address _logic, address initialOwner, bytes memory _data
                 implAddress, deployer.address, initData
@@ -137,6 +139,7 @@ export class ProxyDeployment {
             receipt: contractProxyReceipt,
             deployment: contractProxyDeployment
         } = await deployments.ensure(Proxy, proxyOpts);
+
         let contractProxyAdmin: IProxyAdmin;
         let contractProxyAdminId = `${proxyId}Admin`;
 
@@ -232,6 +235,7 @@ export class ProxyDeployment {
 
         let beaconOpts = {
             id: beaconId,
+            proxyFor: implAddress,
             arguments: ozVersion === 4
                 ? [
                     // address implementation
@@ -273,6 +277,8 @@ export class ProxyDeployment {
 
         let beaconProxyOpts = {
             id: beaconProxyId,
+            // Pass the target implementation address for verification
+            proxyFor: implAddress,
             arguments: [
                 // address implementation
                 contractBeacon.address, initData

@@ -8,7 +8,7 @@ import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 import { TEth } from '@dequanto/models/TEth';
 import { $crypto } from '@dequanto/utils/$crypto';
 import { $config } from '@dequanto/utils/$config';
-import { $account } from '@dequanto/utils/$account';
+
 
 const account = {
     // hardhat
@@ -299,7 +299,7 @@ UTest({
         });
     },
     async 'check with encrypted key' () {
-        let account = $account.generate();
+        let account = $sig.$account.generate();
         let pss = '012345';
 
         let accountEncrypted = {
@@ -314,7 +314,7 @@ UTest({
     },
     'accounts': {
         async 'get address from private key' () {
-            let account = $account.generate();
+            let account = $sig.$account.generate();
             let address = await $sig.$account.getAddressFromKey(account.key);
             eq_(address, account.address);
         },

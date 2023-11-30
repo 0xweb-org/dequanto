@@ -1,3 +1,4 @@
+import memd from 'memd';
 import { l } from '@dequanto/utils/$logger';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 
@@ -8,7 +9,6 @@ import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $address } from '@dequanto/utils/$address';
 import { $abiParser } from '@dequanto/utils/$abiParser';
 import { $erc4337 } from '@dequanto/erc4337/utils/$erc4337';
-import memd from 'memd';
 import { Erc4337Account } from '@dequanto/models/TAccount';
 import { $is } from '@dequanto/utils/$is';
 import { Config } from '@dequanto/Config';
@@ -16,7 +16,8 @@ import { $config } from '@dequanto/utils/$config';
 import { EntryPoint } from '@dequanto-contracts/erc4337/EntryPoint/EntryPoint';
 import { SimpleAccount } from '@dequanto-contracts/erc4337/SimpleAccount/SimpleAccount';
 import { SimpleAccountFactory } from '@dequanto-contracts/erc4337/SimpleAccountFactory/SimpleAccountFactory';
-import { $account } from '@dequanto/utils/$account';
+import { $sig } from '@dequanto/utils/$sig';
+
 
 const provider = new HardhatProvider();
 const client = provider.client();
@@ -77,8 +78,8 @@ UTest({
 
     async 'erc4337 simple create' () {
         let erc4337Contracts = await AccountAbstractionTestableFactory.prepare();
-        let owner = $account.generate();
-        let submitter = $account.generate();
+        let owner = $sig.$account.generate();
+        let submitter = $sig.$account.generate();
         await client.debug.setBalance(submitter.address, 10n**18n);
 
         let writer = new Erc4337TxWriter(client, explorer, {
@@ -112,7 +113,7 @@ UTest({
             }
         });
         let callCounter = 0;
-        let ownerFoo = await $account.generate();
+        let ownerFoo = await $sig.$account.generate();
         await client.debug.setBalance(ownerFoo.address, 10n ** 18n);
 
 
@@ -183,7 +184,7 @@ UTest({
                         accountFactory: erc4337Contracts.accountFactoryContract.address,
                     }
                 });
-                let submitter = await $account.generate();
+                let submitter = await $sig.$account.generate();
                 client.debug.setBalance(submitter.address, 10n ** 18n);
 
                 let erc4337Account = await writer.getAccount(ownerFoo);

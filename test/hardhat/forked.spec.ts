@@ -1,7 +1,7 @@
 import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
 import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { $account } from '@dequanto/utils/$account';
+import { $sig } from '@dequanto/utils/$sig';
 
 UTest({
     $config: {
@@ -10,7 +10,7 @@ UTest({
     async 'should fork the mainnet' () {
         const provider = new HardhatProvider();
         const client = await provider.forked({ platform: 'eth' });
-        const owner = $account.generate();
+        const owner = $sig.$account.generate();
 
         return UTest({
             $config: {

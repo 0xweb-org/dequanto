@@ -1,3 +1,4 @@
+import { TPlatform } from './TPlatform'
 
 export namespace TEth {
     export type Hex = `0x${string}`
@@ -139,41 +140,46 @@ export namespace TEth {
         platform?: Platform
     }
 
-
-    export interface ChainAccount extends IAccount {
+    export interface EoAccount extends IAccount {
         type?: 'eoa'
-        key?: Hex | `p1:0x${string}`;
+        key?: TEth.Hex | `p1:0x${string}`;
     }
 
     export interface SafeAccount extends IAccount {
         type: 'safe'
-        provider?: 'gnosis',
+        provider?: 'gnosis'
+
+        // Safe account must include platform information
+        platform: TPlatform
 
         /**
          * @deprecated backcomp. Use `address` prop
          */
         safeAddress?: Address
 
-        operator: ChainAccount
+        operator: EoAccount
     }
 
     export interface Erc4337Account extends IAccount {
         type: 'erc4337'
-        provider?: 'default' | string,
+        provider?: 'default' | string
 
-        operator: ChainAccount
+        // Erc4337 account must include platform information
+        platform: TPlatform
+
+        operator: EoAccount
     }
 
-    export type DataLike <T> = {
+    export type DataLike<T> = {
         [P in keyof T]?: T[P] extends bigint
-            ? bigint | number | string | TEth.Hex
-            : ( T[P] extends number
-                ? number | TEth.Hex | bigint
-                : (T[P] extends []
-                    ? DataLike<T[P][0]>[]
-                    : DataLike<T[P]>
-                )
-            );
+        ? bigint | number | string | TEth.Hex
+        : (T[P] extends number
+            ? number | TEth.Hex | bigint
+            : (T[P] extends []
+                ? DataLike<T[P][0]>[]
+                : DataLike<T[P]>
+            )
+        );
     }
 
     export namespace Abi {

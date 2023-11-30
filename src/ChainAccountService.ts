@@ -14,6 +14,7 @@ import { TEth } from './models/TEth';
 import { $account } from './utils/$account';
 import { $ns } from './ns/utils/$ns';
 import { Web3ClientFactory } from './clients/Web3ClientFactory';
+import { $sig } from './utils/$sig';
 
 export class ChainAccountService {
     private storeConfig: ConfigStore;
@@ -40,15 +41,16 @@ export class ChainAccountService {
     async get (name: string, params?: { platform?: TPlatform }): Promise<IAccount>
     async get (address: TAddress, params?: { platform?: TPlatform }): Promise<IAccount>
 
+    async get (mix: string | TEth.Hex | TAddress, params?: { platform?: TPlatform , index?: number, path?: string }): Promise<IAccount>
     async get (mix: string | TEth.Hex | TAddress, params?: { platform?: TPlatform , index?: number, path?: string }): Promise<IAccount> {
         if ($is.Hex(mix) && mix.length >= 64) {
-            return await $account.fromKey(mix);
+            return await $sig.$account.fromKey(mix);
         }
         if ($address.isValid(mix) === false) {
             // Check mnemonic
             let isMnemonic = /^(?:[a-zA-Z]+ ){11,}[a-zA-Z]+$/.test(mix);
             if (isMnemonic) {
-                return await $account.fromMnemonic(mix, params?.index ?? params.path ?? 0);
+                return await $sig.$account.fromMnemonic(mix, params?.index ?? params.path ?? 0);
             }
             // Check NS
             if ($ns.isNsAlike(mix)) {
@@ -87,7 +89,7 @@ export class ChainAccountService {
         if (current != null) {
             return current;
         }
-        let account = $account.generate(opts);
+        let account = $sig.$account.generate(opts);
         let store = this.getWritableStore();
         await store.save(account);
         return account;
@@ -99,7 +101,7 @@ export class ChainAccountService {
             if (current) {
                 return current;
             }
-            let account = $account.generate({ name, platform });
+            let account = $sig.$account.generate({ name, platform });
             newAccounts.push(account)
             return account;
         }).toArrayAsync();

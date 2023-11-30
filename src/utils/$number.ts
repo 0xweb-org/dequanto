@@ -1,3 +1,4 @@
+import { TEth } from '@dequanto/models/TEth';
 import { $require } from './$require';
 
 export namespace $number {
@@ -102,7 +103,7 @@ export namespace $number {
         throw new Error('Unsupported type to convert to number ' + typeof mix);
     }
 
-    export function toHex (num: string | number) {
+    export function toHex (num: string | number | TEth.Hex | bigint) {
         return `0x` + Number(num).toString(16);
     }
 }

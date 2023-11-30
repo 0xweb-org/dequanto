@@ -427,7 +427,7 @@ UTest({
     },
 
     async 'permit token' () {
-        let [ owner, receiver ] = [ $account.generate(), $account.generate() ];
+        let [ owner, receiver ] = [ $sig.$account.generate(), $sig.$account.generate() ];
 
         await client.debug.setBalance(owner.address, 10n**18n);
         await client.debug.setBalance(receiver.address, 10n**18n);

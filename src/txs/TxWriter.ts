@@ -377,7 +377,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
             /** check the encrypted storage. In case no key is found, assume the target node contains unlocked or locked account */
             let addressOrName = sender.address ?? sender.name;
             let service = di.resolve(ChainAccountService);
-            let fromStorage = await service.get(addressOrName, this.client.platform);
+            let fromStorage = await service.get(addressOrName, { platform: this.client.platform });
             if (fromStorage) {
                 sender = fromStorage as EoAccount;
             }

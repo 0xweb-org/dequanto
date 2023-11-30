@@ -2,8 +2,6 @@
 import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { $account } from '@dequanto/utils/$account';
-import { $buffer } from '@dequanto/utils/$buffer';
 import { $contract } from '@dequanto/utils/$contract';
 import { $sig } from '@dequanto/utils/$sig';
 
@@ -11,8 +9,8 @@ UTest({
     async 'should sign a message'() {
         let amount = 9n;
         let nonce = 1;
-        let signer = $account.generate();
-        let user = $account.generate();
+        let signer = $sig.$account.generate();
+        let user = $sig.$account.generate();
 
 
         let hardhat = new HardhatProvider();
@@ -49,7 +47,7 @@ UTest({
         eq_(isValid, true);
     },
     async 'should sign json' () {
-        let signer = $account.generate();
+        let signer = $sig.$account.generate();
         let json = {
             data: { name: 'Foo' },
             sig: null

@@ -15,7 +15,8 @@ import { ContractDeployer } from '@dequanto/contracts/deploy/ContractDeployer';
 import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { TEth } from '@dequanto/models/TEth';
 import Sinon from 'sinon';
-import { $account } from '@dequanto/utils/$account';
+import { $sig } from '@dequanto/utils/$sig';
+
 
 const PORT = `8545`;
 const HOST = `127.0.0.1:${PORT}`
@@ -128,7 +129,7 @@ function RpcUtest(name: string, rpc: Rpc, client: Web3Client) {
                 },
                 async 'should transfer ETH'() {
                     let amount = 10n ** 9n;
-                    let acc2 = $account.generate();
+                    let acc2 = $sig.$account.generate();
                     let tx = await TxWriter.writeTxData(client, {
                         to: acc2.address,
                         value: amount,

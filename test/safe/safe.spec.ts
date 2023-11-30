@@ -5,7 +5,7 @@ import { GnosisSafe } from '@dequanto-contracts/safe/GnosisSafe';
 import { GnosisSafeHandler } from '@dequanto/safe/GnosisSafeHandler';
 import { InMemoryServiceTransport } from '@dequanto/safe/transport/InMemoryServiceTransport';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';
-import { EoAccount, IAccount, SafeAccount } from '@dequanto/models/TAccount';
+import { SafeAccount } from '@dequanto/models/TAccount';
 import { FileServiceTransport } from '@dequanto/safe/transport/FileServiceTransport';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $promise } from '@dequanto/utils/$promise';
@@ -16,11 +16,8 @@ import { $sig } from '@dequanto/utils/$sig';
 import { l } from '@dequanto/utils/$logger';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { Config } from '@dequanto/Config';
-import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
-import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 import { $http } from '@dequanto/utils/$http';
-import { $account } from '@dequanto/utils/$account';
 import { TEth } from '@dequanto/models/TEth';
 
 const provider = new HardhatProvider();
@@ -227,7 +224,7 @@ UTest({
 
         let client = Web3ClientFactory.get(`opbnb:test`);
         let hh = new HardhatProvider();
-        let owner1 = await $account.fromKey(key);
+        let owner1 = await $sig.$account.fromKey(key);
         let owner2 = await hh.deployer(0);
 
         return UTest({

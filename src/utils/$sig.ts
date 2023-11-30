@@ -14,23 +14,25 @@ import { $crypto } from './$crypto';
 import { $config } from './$config';
 import { HDKey } from '@scure/bip32'
 import { mnemonicToSeedSync } from '@scure/bip39'
+import { TPlatform } from '@dequanto/models/TPlatform';
+import { EoAccount } from '@dequanto/models/TAccount';
 
 
 export namespace $sig {
 
-    export async function signTypedData(typedData: Partial<RpcTypes.TypedData>, account: TEth.ChainAccount, rpc?: Rpc): Promise<TSignature> {
+    export async function signTypedData(typedData: Partial<RpcTypes.TypedData>, account: TEth.EoAccount, rpc?: Rpc): Promise<TSignature> {
         if (account.key != null) {
             return await KeyUtils.withKey(account, account => $ec.$eip191.signTypedData(typedData, account));
         }
         return $rpc.signTypedData(rpc, typedData, account);
     }
-    export async function sign(message: string | Uint8Array, account: TEth.ChainAccount, rpc?: Rpc): Promise<TSignature> {
+    export async function sign(message: string | Uint8Array, account: TEth.EoAccount, rpc?: Rpc): Promise<TSignature> {
         if (account.key != null) {
             return await KeyUtils.withKey(account, account => $ec.sign(message, account));
         }
         return $rpc.sign(rpc, message, account);
     }
-    export async function signMessage(message: string | Uint8Array, account: TEth.ChainAccount, mix?: Rpc | Web3Client): Promise<TSignature> {
+    export async function signMessage(message: string | Uint8Array, account: TEth.EoAccount, mix?: Rpc | Web3Client): Promise<TSignature> {
         if (account.key != null) {
             return await KeyUtils.withKey(account, account => $ec.$eip191.signMessage(message, account));
         }
@@ -39,7 +41,7 @@ export namespace $sig {
             : mix;
         return $rpc.signMessage(rpc, message, account);
     }
-    export async function signTx(tx: TEth.TxLike, account: TEth.ChainAccount, rpc?: Rpc): Promise<TEth.Hex> {
+    export async function signTx(tx: TEth.TxLike, account: TEth.EoAccount, rpc?: Rpc): Promise<TEth.Hex> {
         tx.from ??= account.address;
 
         if ($hex.isEmpty(account.key)) {
@@ -86,16 +88,16 @@ export namespace $sig {
             let hex = await rpc.eth_signTransaction(body as any);
             return hex as TEth.Hex;
         }
-        export async function signTypedData(rpc: Rpc, typedData: Partial<RpcTypes.TypedData>, account: TEth.ChainAccount) {
+        export async function signTypedData(rpc: Rpc, typedData: Partial<RpcTypes.TypedData>, account: TEth.EoAccount) {
             let sig = await rpc.eth_signTypedData_v4(account.address, typedData);
             return utils.splitSignature(sig as TEth.Hex);
         }
-        export async function sign(rpc: Rpc, message: string | Uint8Array, account: TEth.ChainAccount) {
+        export async function sign(rpc: Rpc, message: string | Uint8Array, account: TEth.EoAccount) {
             let challenge = $hex.ensure(message);
             let sig = await rpc.eth_sign(account.address, challenge);
             return utils.splitSignature(sig as TEth.Hex);
         }
-        export async function signMessage(rpc: Rpc, message: string | Uint8Array, account: TEth.ChainAccount): Promise<TSignature> {
+        export async function signMessage(rpc: Rpc, message: string | Uint8Array, account: TEth.EoAccount): Promise<TSignature> {
             let challenge = $hex.ensure(message);
             let sig = await rpc.personal_sign(challenge, account.address);
             return utils.splitSignature(sig);
@@ -104,7 +106,7 @@ export namespace $sig {
 
     export namespace $ec {
 
-        export function signTx(tx: TEth.TxLike, account: TEth.ChainAccount): TEth.Hex {
+        export function signTx(tx: TEth.TxLike, account: TEth.EoAccount): TEth.Hex {
             let hex = TxSerializer.serialize(tx);
             let hashed = $contract.keccak256(hex, 'buffer');
             let sig = sign(hashed, account, Number(tx.chainId));
@@ -112,12 +114,12 @@ export namespace $sig {
             return signed;
         }
 
-        export function signTypedData(typedData: Partial<RpcTypes.TypedData>, account: TEth.ChainAccount) {
+        export function signTypedData(typedData: Partial<RpcTypes.TypedData>, account: TEth.EoAccount) {
             let challenge = $signSerializer.serializeTypedData(typedData as any);
             return sign(challenge, account);
         }
 
-        export function sign(challenge: string | Uint8Array, account: TEth.ChainAccount, chainId?: number): TSignature {
+        export function sign(challenge: string | Uint8Array, account: TEth.EoAccount, chainId?: number): TSignature {
             const sig = secp256k1.sign(
                 utils.toUint8Array(challenge) as Uint8Array,
                 utils.toUint8Array(account.key, { encoding: 'hex' }) as Uint8Array
@@ -170,11 +172,11 @@ export namespace $sig {
 
         // https://eips.ethereum.org/EIPS/eip-191
         export namespace $eip191 {
-            export function signTypedData(typedData: Partial<RpcTypes.TypedData>, account: TEth.ChainAccount) {
+            export function signTypedData(typedData: Partial<RpcTypes.TypedData>, account: TEth.EoAccount) {
                 let challenge = $signSerializer.serializeTypedData(typedData as any);
                 return signMessage(challenge, account);
             }
-            export function signMessage(challenge: string | Uint8Array, account: TEth.ChainAccount) {
+            export function signMessage(challenge: string | Uint8Array, account: TEth.EoAccount) {
                 const buffer = utils.toUint8Array(challenge);
                 const hash = hashPersonalMessage(buffer);
                 return sign(hash, account);
@@ -193,16 +195,22 @@ export namespace $sig {
 
     export namespace $account {
 
-        export function generate () {
+        export function generate (opts?: { name?: string, platform?: TPlatform }): TEth.EoAccount {
             const bytes = $crypto.randomBytes(32);
             const key = $buffer.toHex(bytes);
             const address = $address.toChecksum(getAddressFromPlainKey(key));
-            return { key, address }
+            return {
+                ...(opts ?? {}),
+                type: 'eoa',
+                key,
+                address
+            }
         }
 
-        export function fromMnemonic(mnemonic: string, index?: number): TEth.ChainAccount
-        export function fromMnemonic(mnemonic: string, path: string): TEth.ChainAccount
-        export function fromMnemonic(mnemonic: string, mix: number | string = 0): TEth.ChainAccount {
+        export function fromMnemonic(mnemonic: string, index?: number): TEth.EoAccount
+        export function fromMnemonic(mnemonic: string, path: string): TEth.EoAccount
+        export function fromMnemonic(mnemonic: string, mix?: number | string): TEth.EoAccount
+        export function fromMnemonic(mnemonic: string, mix: number | string = 0): TEth.EoAccount {
 
             const path = typeof mix === 'number'
                 ? `m/44'/60'/0'/0/${mix}`
@@ -215,6 +223,14 @@ export namespace $sig {
                 type: 'eoa',
                 key: privateKey,
                 address: getAddressFromPlainKey(privateKey),
+            };
+        }
+
+        export async function fromKey(key: EoAccount['key']): Promise<TEth.EoAccount> {
+            return <EoAccount> {
+                type: 'eoa',
+                address: await getAddressFromKey(key),
+                key: key
             };
         }
 
@@ -648,7 +664,7 @@ type TKey = TEth.Hex | `p1:0x${string}`;
 namespace KeyUtils {
     const rgx = /^p1:/
 
-    export async function withKey <TReturn> (account: TEth.ChainAccount, fn: (account: TEth.ChainAccount) => TReturn): Promise<TReturn> {
+    export async function withKey <TReturn> (account: TEth.EoAccount, fn: (account: TEth.EoAccount) => TReturn): Promise<TReturn> {
         let encryptionMatch = rgx.exec(account.key);
         if (encryptionMatch == null) {
             return fn(account);
