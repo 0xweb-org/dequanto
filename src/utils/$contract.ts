@@ -128,9 +128,11 @@ export namespace $contract {
         $require.True(/PUSH/.test(prev.name), `PUSH expected but got ${prev.name}`);
 
         let codeSizeValue = $buffer.toBigInt(prev.pushData) * 2n;
+        let inputCursor = 2 /*0x*/ + Number(codeSizeValue);
 
         return {
-            arguments: '0x' + input.substring(2 /*0x*/ + Number(codeSizeValue)),
+            bytecode: input.substring(0, inputCursor),
+            arguments: '0x' + input.substring(inputCursor),
         };
     }
 

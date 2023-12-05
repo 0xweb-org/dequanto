@@ -1,12 +1,12 @@
 import di from 'a-di';
 import type { TAbiItem } from '@dequanto/types/TAbi';
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
-import { ITxWriterOptions, TxWriter } from '@dequanto/txs/TxWriter';
+import { TxWriter, ITxWriterOptions } from '@dequanto/txs/TxWriter';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $abiParser } from '../utils/$abiParser';
-import { EoAccount, IAccount, TAccount } from "@dequanto/models/TAccount";
+import { EoAccount, IAccount } from "@dequanto/models/TAccount";
 import { ITxConfig } from '@dequanto/txs/ITxConfig';
 import { $logger } from '@dequanto/utils/$logger';
 import { $class } from '@dequanto/utils/$class';
@@ -67,7 +67,7 @@ export class ContractWriter implements IContractWriter {
     ): Promise<TxWriter> {
 
         $require.notNull(account, 'Account parameter is undefined.');
-        $require.True(typeof account === 'object' || typeof account === 'string', `ContractWriter expect Account as the first parameter, got: ${ account }`)
+        $require.True(typeof account === 'object' || typeof account === 'string', `ContractWriter expect Account as the first parameter, got: ${ typeof account }`)
 
         let value = typeof account !== 'string'
             ? account.value

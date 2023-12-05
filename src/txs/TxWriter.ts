@@ -13,12 +13,11 @@ import { $require } from '@dequanto/utils/$require';
 import { $contract } from '@dequanto/utils/$contract';
 import { $error } from '@dequanto/utils/$error';
 
-import { Web3Client } from '@dequanto/clients/Web3Client';
+import type { Web3Client } from '@dequanto/clients/Web3Client';
 import { TxDataBuilder } from './TxDataBuilder';
 import { TxLogger } from './TxLogger';
 import { EoAccount, Erc4337Account, IAccount, SafeAccount, TAccount } from "@dequanto/models/TAccount";
 import { TAddress } from '@dequanto/models/TAddress';
-import { ChainAccountService } from '@dequanto/ChainAccountService';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { ClientErrorUtil } from '@dequanto/clients/utils/ClientErrorUtil';
@@ -32,6 +31,7 @@ import { PromiseEvent } from '@dequanto/class/PromiseEvent';
 import { $sig } from '@dequanto/utils/$sig';
 import { TEth } from '@dequanto/models/TEth';
 import { SafeServiceTypes } from '@dequanto/safe/types/SafeServiceTypes';
+import { ChainAccountService } from '@dequanto/ChainAccountService';
 
 interface ITxWriterEvents {
     transactionHash (hash: string)

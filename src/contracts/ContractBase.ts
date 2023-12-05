@@ -324,9 +324,14 @@ export abstract class ContractBase {
         return ContractBaseHelper.$getAbiItem(this.abi, type, name, argsCount);
     }
 
-    protected $getAbiItemOverload (abis: string[], args: any[]) {
+    protected $getAbiItemOverload (abis: (string | TAbiItem)[], args: any[]) {
         let $abis = abis
-            .map(methodAbi => $abiParser.parseMethod(methodAbi))
+            .map(methodAbi => {
+                if (typeof methodAbi ==='string') {
+                    return $abiParser.parseMethod(methodAbi);
+                }
+                return methodAbi;
+            })
             .filter(x => (x.inputs?.length ?? 0) === args.length);
 
         if ($abis.length === 0) {

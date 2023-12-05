@@ -11,6 +11,18 @@ export namespace $is {
     export function notEmpty<T extends string | []> (val: T): boolean {
         return val != null && val.length > 0;
     }
+    export function empty<T extends string | any[] | number | Uint8Array> (val: T): boolean {
+        if (val == null) {
+            return true;
+        }
+        if (typeof val === 'number' && val === 0) {
+            return true;
+        }
+        if (typeof val === 'string' || Array.isArray(val)) {
+            return val.length === 0;
+        }
+        return false;
+    }
 
     export function BigInt<T> (val: bigint | any): val is bigint {
         return typeof val === 'bigint';

@@ -13,7 +13,7 @@ import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 
 UAction.create({
 
-    async '!safe'() {
+    async 'safe'() {
         const files = await Directory.readFilesAsync('./src/safe/abi/', '**.json');
         await alot(files)
             .forEachAsync(async file => {
@@ -103,6 +103,18 @@ UAction.create({
     },
     async 'weth' () {
         await generate(`weth`, `eth`, 'WETH', { abi: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' });
+    },
+
+    async 'ens' () {
+        // https://docs.ens.domains/ens-deployments
+        await generate(`ens`, `eth`, 'EnsBaseRegistrar', { abi: '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85' });
+        await generate(`ens`, `eth`, 'EnsDnsRegistrar', { abi: '0x58774Bb8acD458A640aF0B88238369A167546ef2' });
+        await generate(`ens`, `eth`, 'EnsEthRegistrarController', { abi: '0x253553366Da8546fC250F225fe3d25d0C782303b' });
+        await generate(`ens`, `eth`, 'EnsNameWrapper', { abi: '0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401' });
+        await generate(`ens`, `eth`, 'EnsPublicResolver', { abi: '0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63' });
+        await generate(`ens`, `eth`, 'EnsRegistry', { abi: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e' });
+        await generate(`ens`, `eth`, 'EnsReverseRegistrar', { abi: '0xa58E81fe9b61B5c3fE2AFD33CF304c454AbFc7Cb' });
+
     },
 
     /** HOP protocol was partially implemented, but will take some time to implement bridges packages */

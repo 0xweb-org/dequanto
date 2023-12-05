@@ -176,8 +176,10 @@ export namespace SourceFileImports {
 
         let paths: string[] = [
             class_Uri.combine(directory, path),
-            class_Uri.combine(directory,  getFileName(path)),
             class_Uri.combine('/node_modules/', path),
+
+            /** When downloaded from Blockchain Explorer the files can be flattened into one directory */
+            class_Uri.combine(directory,  getFileName(path)),
         ];
 
         let found = await alot(paths).findAsync(async path => await File.existsAsync(path));

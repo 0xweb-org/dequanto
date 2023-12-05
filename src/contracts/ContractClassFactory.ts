@@ -5,6 +5,7 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { ContractBase } from './ContractBase';
 import { $abiParser } from '@dequanto/utils/$abiParser';
 import { Constructor } from 'atma-utils';
+import alot from 'alot';
 
 
 export interface IContractWrapped extends ContractBase {
@@ -22,11 +23,11 @@ export namespace ContractClassFactory {
         return fromAbi(contractAddr, abiJson, client, explorer);
     }
 
-    export function fromAbi<TReturn extends ContractBase = IContractWrapped> (
+    export function fromAbi<TReturn = IContractWrapped> (
         contractAddr: TAddress
         , abi: (TAbiItem | string)[]
         , client: Web3Client
-        , explorer: IBlockChainExplorer
+        , explorer?: IBlockChainExplorer
         , opts?: {
             $meta?: ContractBase['$meta']
         }
@@ -45,7 +46,7 @@ export namespace ContractClassFactory {
 }
 
 
-class ClassBuilder<T extends ContractBase> {
+class ClassBuilder<T = ContractBase> {
 
     constructor (private abi: TAbiItem[], private opts?: {
         $meta?: ContractBase['$meta']
@@ -73,11 +74,23 @@ class ClassBuilder<T extends ContractBase> {
         };
     }
 
-    private defineMethods (Ctor, abi) {
+    private defineMethods (Ctor, abi: TAbiItem[]) {
 
-        abi
+        alot(abi)
             .filter(x => x.type === 'function')
-            .forEach(abiItem => {
+            .groupBy(x => x.name)
+            .forEach(group => {
+
+                if (group.values.length > 2) {
+                    let abis = group.values;
+                    let abiItem = abis[0];
+                    Ctor.prototype[abiItem.name] = function (this: ContractBase, ...args) {
+                        let abiItem = this.$getAbiItemOverload(abis, args);
+                        return this.$read(abiItem, ...args);
+                    };
+                    return;
+                }
+                let abiItem = group.values[0];
                 let isRead = $abiUtil.isReader(abiItem);
                 if (isRead) {
                     Ctor.prototype[abiItem.name] = function (this: ContractBase, ...args) {
@@ -88,7 +101,8 @@ class ClassBuilder<T extends ContractBase> {
                 Ctor.prototype[abiItem.name] = function (this: ContractBase, account, ...args) {
                     return this.$write(abiItem, account, ...args);
                 };
-            });
+            })
+            .toArray();
     }
 }
 

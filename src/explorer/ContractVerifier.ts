@@ -254,10 +254,10 @@ export class ContractVerifier {
                     return true;
                 }
                 if (/(pending|queue)/i.test(message)) {
-                    this.logger.log(`Waiting for contract verification submission: ${guid}`);
+                    this.logger.log(`Waiting for contract proxy verification submission: ${guid}`);
                     return false;
                 }
-                this.logger.log(`Verification failed: ${message}`);
+                this.logger.log(`Proxy verification failed: ${message}`);
                 throw e;
             }
         }, {

@@ -15,4 +15,12 @@ export namespace $ns {
         }
         return node;
     }
+
+    export function getRoot (uri: string) {
+        let domain = /^[\w\.]+/.exec(uri)[0];
+        return domain;
+    }
+    export function getPath (uri: string) {
+        return uri.replace(/^(\w+:\/\/)?[^/]+\/*/, '');
+    }
 }

@@ -1,8 +1,8 @@
 import { type TAbiItem } from '@dequanto/types/TAbi';
 import { File } from 'atma-io';
-import { IAccount, TAccount } from "@dequanto/models/TAccount";
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { TAddress } from '@dequanto/models/TAddress';
+import type { TAccount } from "@dequanto/models/TAccount";
+import type { Web3Client } from '@dequanto/clients/Web3Client';
+import type { TAddress } from '@dequanto/models/TAddress';
 import { $account } from '@dequanto/utils/$account';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { ITxConfig } from './ITxConfig';

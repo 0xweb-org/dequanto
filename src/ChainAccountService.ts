@@ -6,15 +6,14 @@ import { IAccount } from "./models/TAccount";
 import { JsonArrayStore } from './json/JsonArrayStore';
 import { TAddress } from './models/TAddress';
 import { TPlatform } from './models/TPlatform';
-import { NameService } from './ns/NameService';
+import { TEth } from './models/TEth';
 import { $address } from './utils/$address';
 import { $is } from './utils/$is';
 import { $require } from './utils/$require';
-import { TEth } from './models/TEth';
-import { $account } from './utils/$account';
 import { $ns } from './ns/utils/$ns';
-import { Web3ClientFactory } from './clients/Web3ClientFactory';
 import { $sig } from './utils/$sig';
+import { Web3ClientFactory } from './clients/Web3ClientFactory';
+import { NameService } from './ns/NameService';
 
 export class ChainAccountService {
     private storeConfig: ConfigStore;

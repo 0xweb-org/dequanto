@@ -15,25 +15,33 @@ export class UDProvider implements INsProvider {
 
     }
 
+
     supports (domain: string) {
-        return /\.(x|crypto|coin|wallet|bitcoin|888|nft|dao|zil|blockchain)$/.test(domain);
+        return /\.(x|crypto|coin|wallet|bitcoin|888|nft|dao|zil|blockchain)([/|?]|$)/.test(domain);
     }
 
     async getAddress(domain: string): Promise<TAddress> {
         let hash = $ns.namehash(domain);
         let resolverAddr = await this.getResolverAddress(hash);
-        let address = await this.resolveAddress(hash, resolverAddr);
+        let address = await this.getData(hash, resolverAddr);
         return address;
     }
 
-    private async resolveAddress (hash: TBufferLike, resolverAddr: TAddress) {
+    async getContent(uri: string): Promise<string> {
+        let root = $ns.getRoot(uri);
+        let path = $ns.getPath(uri);
+        let hash = $ns.namehash(root);
+        let resolverAddr = await this.getResolverAddress(hash);
+        let x = await this.getData(hash, resolverAddr, path);
+        return x;
+    }
 
-
+    private async getData (hash: TBufferLike, resolverAddr: TAddress, key: string = 'crypto.ETH.address') {
         let reader = new ContractReader(this.client);
         let data = await reader.readAsync(
             resolverAddr,
             `getData(string[] keys, uint256 tokenId):(address,address,string[])`,
-            ['crypto.ETH.address'],
+            [ key ],
             hash
         );
         let info = data[2];
@@ -43,7 +51,6 @@ export class UDProvider implements INsProvider {
         let platform = this.client.platform;
         let registryAddr = $config.get(`ns.ud.${platform}.registry`);
         $require.Address(registryAddr);
-
         return registryAddr;
     }
 }

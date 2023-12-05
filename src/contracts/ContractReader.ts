@@ -4,7 +4,6 @@ import { class_Dfr } from 'atma-utils';
 import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { Web3Client } from '@dequanto/clients/Web3Client';
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
-import { AbiDeserializer } from './utils/AbiDeserializer';
 import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $is } from '@dequanto/utils/$is';
@@ -20,6 +19,7 @@ import { $require } from '@dequanto/utils/$require';
 import { $array } from '@dequanto/utils/$array';
 import { RpcTypes } from '@dequanto/rpc/Rpc';
 import { TEth } from '@dequanto/models/TEth';
+import { TRpcContractCall } from '@dequanto/rpc/RpcContract';
 
 
 
@@ -32,7 +32,7 @@ export interface IContractReader {
 }
 export class ContractReader implements IContractReader {
     private blockNumberTask: Promise<number>;
-    private options: Parameters<Web3Client['readContract']>[0]['options'] = {};
+    private options: TRpcContractCall = {};
 
     constructor(public client: Web3Client = di.resolve(EthWeb3Client), private ctx?: { name?: string }) {
 
