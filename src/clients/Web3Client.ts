@@ -449,8 +449,11 @@ export abstract class Web3Client implements IWeb3Client {
         });
     }
 
-    getNodeInfos() {
-        return this.pool.getNodeInfos();
+    getNodeInfos(options?: {
+        timeout?: number
+        calls?: ('net_peerCount' | 'eth_blockNumber' | 'eth_syncing' | 'net_version')[]
+    }) {
+        return this.pool.getNodeInfos(options);
     }
     getNodeStats() {
         return this.pool.getNodeStats();

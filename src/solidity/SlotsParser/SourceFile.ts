@@ -71,6 +71,9 @@ export class SourceFile {
         return imports;
     }
 
+    /**
+     * @returns Inheritance chain: From base (root) class to the most derived class.
+     */
     async getContractInheritanceChain(name?: string): Promise<TSourceFileContract[]> {
         let contract = await this.getContract(name);
         if (contract == null) {

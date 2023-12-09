@@ -405,6 +405,9 @@ export class Deployments {
             deployment.verified = new Date().toISOString();
             await this.store.updateDeployment(deployment);
         } catch (error) {
+            deployment.verified = error.message;
+            await this.store.updateDeployment(deployment);
+
             this._logger.error(`Verification error ${error.message}`);
         }
     }

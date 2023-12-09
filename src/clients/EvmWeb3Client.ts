@@ -13,7 +13,7 @@ export class EvmWeb3Client extends EthWeb3Client {
 
 function resolveOptions (options: IWeb3EndpointOptions) {
     $require.notNull(options?.platform, 'Platform is required when generic evm client is used');
-    let cfg = config.web3[options.platform];
+    let cfg = config.web3?.[options.platform];
     if (cfg) {
         for (let key in cfg) {
             if (options[key] == null) {

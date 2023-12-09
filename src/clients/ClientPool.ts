@@ -333,32 +333,55 @@ export class ClientPool {
             });
     }
 
-    async getNodeInfos(): Promise<IWeb3ClientStatus[]> {
-        async function getPeerCount(wClient: WClient) {
-            /** @TODO Public nodes smt. do not allow net_peerCount methods. Allow to switch this on/off on node-url-config level */
-            try {
-                return await wClient.rpc.net_peerCount();
-            } catch (error) {
-                return `ERROR: ${error.message}`;
+    async getNodeInfos(options?: {
+        timeout?: number
+        calls?: ('net_peerCount' | 'eth_blockNumber' | 'eth_syncing' | 'net_version')[]
+    }): Promise<IWeb3ClientStatus[]> {
+        const Calls = {
+            async net_peerCount(wClient: WClient) {
+                /** @TODO Public nodes smt. do not allow net_peerCount methods. Allow to switch this on/off on node-url-config level */
+                try {
+                    return await wClient.rpc.net_peerCount();
+                } catch (error) {
+                    return `ERROR: ${error.message}`;
+                }
+            },
+            async eth_syncing(wClient: WClient): Promise<IWeb3ClientStatus['syncing']> {
+                let syncing = await wClient.rpc.eth_syncing();
+                if (syncing == null || typeof syncing === 'boolean') {
+                    return null;
+                }
+                return syncing as any;
+            },
+            async net_version(wClient: WClient): Promise<IWeb3ClientStatus['node']> {
+                return await wClient.rpc.net_version()
+            },
+            async eth_blockNumber(wClient: WClient): Promise<IWeb3ClientStatus['blockNumber']> {
+                return await wClient.rpc.eth_blockNumber()
             }
-        }
-        async function getSyncInfo(wClient: WClient): Promise<IWeb3ClientStatus['syncing']> {
-            let syncing = await wClient.rpc.eth_syncing();
-            if (syncing == null || typeof syncing === 'boolean') {
+        } as const;
+
+
+        async function query<TReturn extends Promise<any>>(wClient: WClient, method: (wClient: WClient) => TReturn): Promise<TReturn> {
+            let methodName = method.name;
+            let shouldCall = methodName === 'eth_blockNumber' || options?.calls == null || options?.calls.includes(methodName as any);
+            if (shouldCall === false) {
                 return null;
             }
-            return syncing as any;
+            let promise = method(wClient);
+            return options?.timeout == null ? promise : $promise.timeout(promise, options.timeout);
         }
+
         let nodes = await alot(this.clients).mapAsync(async (wClient, idx) => {
 
             let url = wClient.config.url;
             try {
                 let start = Date.now();
                 let [syncing, blockNumberUint, peers, node] = await Promise.all([
-                    getSyncInfo(wClient),
-                    wClient.rpc.eth_blockNumber(),
-                    getPeerCount(wClient),
-                    wClient.rpc.net_version(),
+                    query(wClient, Calls.eth_syncing),
+                    query(wClient, Calls.eth_blockNumber),
+                    query(wClient, Calls.net_peerCount),
+                    query(wClient, Calls.net_version),
                 ]);
                 let blockNumber = Number(blockNumberUint);
 
@@ -371,7 +394,7 @@ export class ClientPool {
 
                 return <IWeb3ClientStatus>{
                     url: url,
-                    status: syncing ? 'sync' : 'live',
+                    status: syncing ? 'sync' : (isNaN(blockNumber) ? 'off':  'live'),
                     syncing: syncing,
                     blockNumber: blockNumber,
                     blockNumberBehind: blockNumberBehind,

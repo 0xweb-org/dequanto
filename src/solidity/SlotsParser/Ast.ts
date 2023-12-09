@@ -18,10 +18,12 @@ import {
     Expression,
     FunctionCall,
     FunctionDefinition,
+    FunctionTypeName,
     HexNumber,
     Identifier,
     ImportDirective,
     IndexAccess,
+    Mapping,
     MemberAccess,
     ModifierDefinition,
     NumberLiteral,
@@ -38,6 +40,8 @@ import {
 import { $logger } from '@dequanto/utils/$logger';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { SourceFile, TSourceFileContract } from './SourceFile';
+import { $array } from '@dequanto/utils/$array';
+import { $types } from '../utils/$types';
 
 export namespace Ast {
     export function parse(code: string, opts?: { path: string; }): { ast: SourceUnit, version: string } {
@@ -235,6 +239,9 @@ export namespace Ast {
     export function isArrayTypeName(node: BaseASTNode): node is ArrayTypeName {
         return node?.type === 'ArrayTypeName';
     }
+    export function isMapping(node: BaseASTNode): node is Mapping {
+        return node?.type === 'Mapping';
+    }
     export function isUserDefinedTypeName(node: BaseASTNode): node is UserDefinedTypeName {
         return node?.type === 'UserDefinedTypeName';
     }
@@ -341,7 +348,7 @@ export namespace Ast {
         if (isElementaryTypeName(typeName)) {
             return {
                 name: name,
-                type: typeName.name
+                type: serialize(typeName)
             };
         }
         if (isArrayTypeName(typeName)) {
@@ -349,46 +356,81 @@ export namespace Ast {
             if (isElementaryTypeName(baseTypeName)) {
                 return {
                     name: name,
-                    type: `${baseTypeName.name}[]`
+                    type: `${serialize(baseTypeName)}[]`
                 }
             }
+            let result = await serializeTypeName(name, typeName.baseTypeName, source, inheritance);
+
+            result.type += `[]`;
+            return result;
         }
         if (isUserDefinedTypeName(typeName)) {
-            let struct = Ast.getUserDefinedType(source.contract, typeName.namePath);
-            if (struct == null && inheritance?.length > 0) {
-                struct = alot(inheritance)
+            let $type = Ast.getUserDefinedType(source.contract, typeName.namePath);
+            if ($type == null && inheritance?.length > 0) {
+                $type = alot(inheritance)
                     .map(x => Ast.getUserDefinedType(x.contract, typeName.namePath))
                     .filter(x => x != null)
                     .first();
             }
-            if (struct == null) {
-                struct = await source.file?.getUserDefinedType(typeName.namePath);
+            if ($type == null) {
+                $type = await source.file?.getUserDefinedType(typeName.namePath);
             }
 
-            if (struct != null) {
-                if (isStructDefinition(struct)) {
+            if ($type != null) {
+                if (isStructDefinition($type)) {
                     return {
                         name: name,
                         type: 'tuple',
-                        components: await alot(struct.members).mapAsync(async member => {
+                        components: await alot($type.members).mapAsync(async member => {
                             return await serializeTypeName(member.name, member.typeName, source, inheritance)
                         }).toArrayAsync()
                     };
                 }
-                if (isContractDefinition(struct)) {
+                if (isContractDefinition($type)) {
                     return {
                         name: name,
                         type: 'address'
                     };
                 }
+            } else {
+                throw new Error(`Could not find type "${typeName.namePath}" by serializing ${name}`);
             }
         }
+        // if (isMapping(typeName)) {
+        //     let baseType = typeName.valueType;
+        //     function toVariableDeclaration (identifier: Identifier, typeName: TypeName): VariableDeclaration {
+        //         return <VariableDeclaration> {
+        //             type: 'VariableDeclaration',
+        //             name: identifier?.name,
+        //             identifier,
+        //             typeName
+        //         };
+        //     }
+        //     if (isMapping(baseType)) {
+        //         let baseTypeInner = baseType.valueType;
+        //         return serializeTypeName(name, <FunctionTypeName> {
+        //             type: 'FunctionTypeName',
+        //             parameterTypes: [
+        //                 toVariableDeclaration(typeName.keyName, typeName.keyType),
+        //                 toVariableDeclaration(baseType.keyName, baseType.keyType),
+        //             ],
+        //             returnTypes: [
+        //                 toVariableDeclaration(baseType.valueName, baseTypeInner),
+        //             ]
+        //         }, source, inheritance)
+        //     }
+        //     return serializeTypeName(name, <FunctionTypeName> {
+        //         type: 'FunctionTypeName',
+        //         parameterTypes: [ toVariableDeclaration(typeName.keyName, typeName.keyType) ],
+        //         returnTypes: [ toVariableDeclaration(typeName.valueName, typeName.valueType)  ]
+        //     }, source, inheritance)
+        // }
 
         throw new Error(`@TODO implement complex type to abi serializer: ${name} = ${JSON.stringify(typeName)}`);
     }
 
     export async function getAbi(
-        node: EventDefinition | FunctionDefinition
+        node: EventDefinition | FunctionDefinition | VariableDeclaration
         , source: TSourceFileContract
         , inheritance?: TSourceFileContract[]
     ): Promise<TAbiItem> {
@@ -406,12 +448,35 @@ export namespace Ast {
         }
         if (Ast.isFunctionDefinition(node)) {
             return {
-                type: 'function',
+                type: node.isConstructor ? 'constructor' : 'function',
                 name: node.name ?? (node.isConstructor ? 'constructor' : null),
                 inputs: await alot(node.parameters).mapAsync(async param => {
                     return serializeTypeName(param.name, param.typeName, source, inheritance);
-                }).toArrayAsync()
+                }).toArrayAsync(),
+                outputs: await alot(node.returnParameters ?? []).mapAsync(async param => {
+                    let abiItem = await serializeTypeName(param.name ?? void 0, param.typeName, source, inheritance);
+                    return abiItem;
+                }).toArrayAsync(),
+                stateMutability: node.stateMutability,
+            };
+        }
+        if (Ast.isVariableDeclaration(node)) {
+
+            if (KeyBasedGetter.isKeyBasedVariable(node)) {
+                let fnDef = KeyBasedGetter.createKeyBasedGetterFunction(node);
+                return getAbi(fnDef, source, inheritance);
             }
+
+            // Generate getter
+            return getAbi(<FunctionDefinition> {
+                type: 'FunctionDefinition',
+                name: node.name,
+                parameters: [],
+                returnParameters: [
+                    node
+                ],
+                stateMutability: 'view'
+            }, source, inheritance);
         }
         throw new Error(`Unknown node to get the ABI from: ${(node as any)?.type}`)
     }
@@ -447,5 +512,62 @@ export namespace Ast {
         }
         console.error(`Skip unknown node ${JSON.stringify(node)}`);
         return null;
+    }
+
+
+    namespace KeyBasedGetter {
+        // for mappings and dynamic arrays
+        export function isKeyBasedVariable ($var: VariableDeclaration): boolean {
+            return isMapping($var.typeName) || (isArrayTypeName($var.typeName))
+        }
+        export function createKeyBasedGetterFunction ($var: VariableDeclaration): FunctionDefinition {
+            let params = [] as VariableDeclaration[];
+            let returns = [] as VariableDeclaration[];
+            let cursor = $var.typeName;
+            // use loop to get nested mappings/arrays, e.g. mapping(uint => mapping(address => uint))
+            while (true) {
+                let extracted =  getKeyParameter(cursor);
+                if (extracted == null) {
+                    break;
+                }
+                params.push(extracted.param);
+                cursor = extracted.base;
+            }
+            return <FunctionDefinition> {
+                type: 'FunctionDefinition',
+                name: $var.name,
+                parameters: params,
+                returnParameters: [ toVariableDeclaration(null, cursor) ],
+                stateMutability: 'view'
+            };
+        }
+
+        function getKeyParameter ($type: TypeName) {
+            if (isMapping($type)) {
+                return {
+                    base: $type.valueType,
+                    param: toVariableDeclaration($type.keyName, $type.keyType)
+                };
+            }
+            if (isArrayTypeName($type)) {
+                return {
+                    base: $type.baseTypeName,
+                    param: toVariableDeclaration({ name: 'index', type: 'Identifier'  }, <ElementaryTypeName> {
+                        type: 'ElementaryTypeName',
+                        name: 'uint256'
+                    })
+                }
+            }
+            return null;
+        }
+
+        function toVariableDeclaration (identifier: Identifier, $type: TypeName): VariableDeclaration {
+            return <VariableDeclaration> {
+                type: 'VariableDeclaration',
+                name: identifier?.name,
+                identifier,
+                typeName: $type
+            };
+        }
     }
 }

@@ -110,7 +110,7 @@ export namespace $promise {
 
         return new Promise(async (resolve, reject) => {
             async function tick () {
-                let [ error, result ] = (await check()) ?? [ null, null ];
+                let [ error, result ] = (await callMethodAndCatchErrors(check)) ?? [ null, null ];
                 if (result != null) {
                     completed = true;
                     resolve(result);
@@ -144,4 +144,11 @@ export namespace $promise {
         });
     }
 
+    async function callMethodAndCatchErrors (fn: Function): Promise<[Error, any]> {
+        try {
+            return await fn();
+        } catch (error) {
+            return [ error, null ];
+        }
+    }
 }

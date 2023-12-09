@@ -186,7 +186,7 @@ export class ProxyDeployment {
             if ($address.eq(address, implAddress) === false) {
                 await this.requireCompatibleStorageLayout(proxyId, ctx);
 
-                console.log(`Upgrading ProxyAdmin to ${implAddress}`);
+                console.log(`Upgrading ProxyAdmin(${contractProxyAdmin.address}) to ${implAddress} (${v})`);
                 let receipt = await Interfaces.call(
                     deployer,
                     contractProxyAdmin,
