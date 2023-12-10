@@ -12,10 +12,31 @@ import type { TAbiInput, TAbiItem, TAbiOutput } from '@dequanto/types/TAbi';
 
 export namespace SolidityParser {
 
-    export async function extractAbi (source: { path: string, code?: string }, contractName?: string, opts?: ISlotsParserOption): Promise<TAbiItem[]> {
+    export async function extractAbi (source: { path: string, code?: string }, contractName?: string, opts?: ISlotsParserOption): Promise<{
+        abi: TAbiItem[]
+        source: {
+            contractName: string,
+            files: {
+                [path: string]: { content: string }
+            }
+        }
+    }> {
         const sourceFile = new SourceFile(source.path, source.code, opts?.files);
         const chain = await sourceFile.getContractInheritanceChain(contractName);
-        return await extractAbiInner(chain, opts);
+        const abi = await extractAbiInner(chain, opts);
+        const contract = await sourceFile.getContract();
+        const content = await sourceFile.getContent();
+        return {
+            abi,
+            source: {
+                contractName: contractName ?? contract.name,
+                files: {
+                    [sourceFile.path]: {
+                        content: content
+                    }
+                }
+            }
+        };
     }
 
     async function extractAbiInner(inheritanceChain: { contract: ContractDefinition, file: SourceFile }[], opts?: ISlotsParserOption) {
@@ -55,10 +76,15 @@ export namespace SolidityParser {
             .mapAsync(async $var => Ast.getAbi($var, contract, inheritanceChain))
             .toArrayAsync();
 
+        let abiEvents = await alot(Ast.getEventDefinitions(contract.contract))
+            .mapAsync(async $event => Ast.getAbi($event, contract, inheritanceChain))
+            .toArrayAsync();
+
 
         return [
             ...abiFns,
             ...abiGetters,
+            ...abiEvents,
         ];
     }
 }

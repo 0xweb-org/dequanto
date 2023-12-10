@@ -27,7 +27,10 @@ export class TSourceFileContract {
 export class SourceFile {
     public path: string;
     public version: string;
+
+    /** @deprecated Use the getter methods for URI or content */
     public file: InstanceType<typeof File>;
+
     constructor(path: string, public source?: string, public inMemoryFile?: ISlotsParserOption['files']) {
         this.path = $path.normalize(path);
         this.file = new File(this.path);
@@ -35,10 +38,7 @@ export class SourceFile {
 
     @memd.deco.memoize({ perInstance: true })
     async getAst() {
-        this.source = this.source ?? await this.file.readAsync({ skipHooks: true });
-        if (this.source == null) {
-            throw new Error(`Source not loaded ${this.file.uri.toLocalFile()}`);
-        }
+        this.source = await this.getContent();
         let { ast, version } = Ast.parse(this.source, { path: this.path });
 
         this.version = version;
@@ -48,6 +48,35 @@ export class SourceFile {
         });
         return ast;
     }
+
+    @memd.deco.memoize({ perInstance: true })
+    async getContent () {
+        if (this.source != null) {
+            return this.source;
+        }
+        let uri = await this.getUri();
+        this.source = await new File(uri).readAsync({ skipHooks: true });
+        return this.source;
+    }
+
+    @memd.deco.memoize({ perInstance: true })
+    async getUri (): Promise<class_Uri> {
+        let path = this.path;
+        if (await File.existsAsync(path) === false) {
+            let nodeModules = class_Uri.combine('node_modules', path);
+            if (await File.existsAsync(nodeModules)) {
+                path = nodeModules;
+            } else {
+                path = null;
+            }
+        }
+        if (path == null) {
+            throw new Error(`Path ${this.path} not found to get the Source from`);
+        }
+        return new class_Uri(path);
+    }
+
+
 
     private reapplyParents(node, parent) {
         node.parent = parent;
@@ -162,7 +191,7 @@ export namespace SourceFileImports {
             }
         }
 
-        let parentUri = parent.file.uri as class_Uri;
+        let parentUri = await parent.getUri();
         let directory = parentUri.toDir();
 
         let { path: filePath, lookupPaths } = await findFilePath(directory, importPath);

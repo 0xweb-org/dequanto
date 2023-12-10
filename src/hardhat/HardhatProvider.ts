@@ -156,7 +156,7 @@ export class HardhatProvider {
         }
 
         let address = $address.toChecksum(receipt.contractAddress);
-        $logger.log(`Contract ${Ctor.name} deployed(${receipt.status}) to ${address} in tx:${receipt.transactionHash}`);
+        $logger.log(`${receipt.status ? '✅' : '⛔' } Contract bold<${Ctor.name}> deployed to bold<${address}> in tx:${receipt.transactionHash}`);
         let contract = new Ctor(address, client);
         return {
             contract,

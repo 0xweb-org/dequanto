@@ -103,7 +103,7 @@ export class  DeploymentsStorage {
         let deployment = <IDeployment> {
             id: info.id,
             name: info.name,
-            main: contract.$meta.class,
+            main: contract.$meta?.class,
             bytecodeHash: info.bytecodeHash,
             address: contract.address,
             block: receipt.blockNumber,

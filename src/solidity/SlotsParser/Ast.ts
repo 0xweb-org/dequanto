@@ -438,12 +438,18 @@ export namespace Ast {
             return {
                 type: 'event',
                 name: node.name,
-                inputs: node.parameters.map(param => {
+                inputs: await alot(node.parameters).mapAsync(async param => {
+                    // return {
+                    //     name: param.name,
+                    //     indexed: param.isIndexed,
+                    //     type: serialize(param.typeName)
+                    // };
+                    let item = await serializeTypeName(param.name, param.typeName, source, inheritance)
                     return {
-                        name: param.name,
-                        type: serialize(param.typeName)
+                        ...item,
+                        indexed: param.isIndexed
                     };
-                })
+                }).toArrayAsync()
             }
         }
         if (Ast.isFunctionDefinition(node)) {
@@ -457,7 +463,7 @@ export namespace Ast {
                     let abiItem = await serializeTypeName(param.name ?? void 0, param.typeName, source, inheritance);
                     return abiItem;
                 }).toArrayAsync(),
-                stateMutability: node.stateMutability,
+                stateMutability: node.stateMutability ?? 'nonpayable',
             };
         }
         if (Ast.isVariableDeclaration(node)) {

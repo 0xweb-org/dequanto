@@ -46,4 +46,23 @@ UTest({
 
         eq_(await contract.symbol(), 'Foo');
     },
+    async '!generate from solidity file by parsing into abi' () {
+        const gen = new Generator({
+            name: 'IERC4626',
+            platform: 'hardhat',
+            source: {
+                path: '@openzeppelin/contracts/interfaces/IERC4626.sol'
+            },
+            output: './test/tmp/hardhat/'
+        });
+        await gen.generate();
+
+        let path = '/test/tmp/hardhat/IERC4626/IERC4626.ts';
+        let { IERC4626 } = await include.js(path);
+        let Ctor = IERC4626.IERC4626 as Constructor<any>;
+        let x = new Ctor();
+
+        eq_(typeof x.asset, 'function');
+        console.dir(x.$meta, { depth: null });
+    }
 })

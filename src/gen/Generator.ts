@@ -18,6 +18,7 @@ import { EvmBytecode } from '@dequanto/evm/EvmBytecode';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { TEth } from '@dequanto/models/TEth';
 import { $hex } from '@dequanto/utils/$hex';
+import { SolidityParser } from '@dequanto/solidity/SolidityParser';
 
 export interface IGenerateOptions {
     platform: TPlatform
@@ -28,6 +29,10 @@ export interface IGenerateOptions {
         abi?: string | TAddress | TAbiItem[]
         code?: string
         path?: string
+    }
+
+    flags?: {
+        useHardhatForSolFiles?: boolean
     }
 
     output?: string
@@ -303,8 +308,8 @@ export class Generator {
     }
     private async getContractData (): Promise<{
         abi: TAbiItem[]
-        bytecode: TEth.Hex
-        artifact: string
+        bytecode?: TEth.Hex
+        artifact?: string
         source: {
             contractName: string,
             files: {
@@ -333,12 +338,17 @@ export class Generator {
             };
         }
 
-        let provider = new HardhatProvider();
-        let result = path != null
-            ? await provider.compileSol(path)
-            : await provider.compileCode(code);
-
-        return result;
+        if (this.options?.flags?.useHardhatForSolFiles === true) {
+            let provider = new HardhatProvider();
+            let result = path != null
+                ? await provider.compileSol(path)
+                : await provider.compileCode(code);
+            return result;
+        }
+        let { abi, source } = await SolidityParser.extractAbi({  path, code }, this.options.name);
+        return {
+            abi, source
+        };
     }
 
     private async readFile<T = any> (path: string) {

@@ -189,7 +189,8 @@ export class ContractVerifier {
         }
 
         async function crawlSourceFile (source: SourceFile) {
-            let path = source.file.uri.toRelativeString(process.cwd() + '/');
+            let uri = await source.getUri();
+            let path = uri.toRelativeString(process.cwd() + '/');
             path = $path.normalize(path);
 
             if (path.startsWith('node_modules/')) {
@@ -199,7 +200,7 @@ export class ContractVerifier {
             if (path in sources) {
                 return;
             }
-            let content = await source.file.readAsync <string> ({ skipHooks: true });
+            let content = await source.getContent();
             sources[path] = {
                 content
             };

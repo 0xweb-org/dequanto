@@ -9,6 +9,8 @@ UTest({
                     uint256 amount;
                 }
 
+                event Submitted(uint256 indexed id, address account);
+
                 bool public myVar;
                 User public admin;
                 mapping(address => uint8) public balances;
@@ -23,7 +25,7 @@ UTest({
             }
         `;
 
-        const abi = await SolidityParser.extractAbi({
+        const { abi } = await SolidityParser.extractAbi({
             code: input,
             path: './test/solidity/Parser.sol'
         }, 'Test');
@@ -73,6 +75,27 @@ UTest({
             stateMutability: 'view',
             type: 'function'
         });
+
+        has_(abi.find(x => x.name === 'Submitted'), {
+            inputs: [
+                { type: 'uint256', name: 'id', 'indexed': true, },
+                { type: 'address', name: 'account' },
+            ],
+            type: 'event'
+        });
+    },
+    async 'should extract from sol file' () {
+        const { abi, source } = await SolidityParser.extractAbi({
+            path: './test/fixtures/deployments/DeploymentsFoo.sol'
+        });
+        eq_(source.contractName, 'DeploymentsFoo');
+        has_(abi.find(x => x.name === 'setValue'), {
+            inputs: [
+                { type: 'uint256', name: 'value' },
+            ],
+            stateMutability: 'nonpayable',
+            type: 'function'
+        });
     },
     async 'should extract from inheritance'() {
         const input = `
@@ -85,7 +108,7 @@ UTest({
                 }
             }
         `;
-        const abi = await SolidityParser.extractAbi({
+        const { abi } = await SolidityParser.extractAbi({
             code: input,
             path: './test/solidity/Parser.sol'
         }, 'Test');
@@ -103,35 +126,7 @@ UTest({
     },
 
     async 'should parse weth.sol'() {
-        let abis = await SolidityParser.extractAbi({ path: './test/fixtures/scan/WETH.sol' }, 'MaticWETH');
-
-        let names = abis.map(x => x.name);
-        deepEq_(names, [
-            'totalSupply', 'balanceOf',
-            'transfer', 'allowance',
-            'approve', 'transferFrom',
-            'constructor', 'name',
-            'symbol', 'decimals',
-            'totalSupply', 'balanceOf',
-            'transfer', 'allowance',
-            'approve', 'transferFrom',
-            'increaseAllowance', 'decreaseAllowance',
-            'deposit', 'hasRole',
-            'getRoleMemberCount', 'getRoleMember',
-            'getRoleAdmin', 'grantRole',
-            'revokeRole', 'renounceRole',
-            'DEFAULT_ADMIN_ROLE', 'getDomainSeperator',
-            'getChainId', 'executeMetaTransaction',
-            'getNonce', 'ERC712_VERSION',
-            'ROOT_CHAIN_ID', 'ROOT_CHAIN_ID_BYTES',
-            'CHILD_CHAIN_ID', 'CHILD_CHAIN_ID_BYTES',
-            'constructor', 'deposit',
-            'withdraw', 'DEPOSITOR_ROLE',
-            'constructor'
-        ]);
-    },
-    async 'should parse Interface from weth.sol'() {
-        let abis = await SolidityParser.extractAbi({ path: './test/fixtures/scan/WETH.sol' }, 'IERC20');
+        let { abi: abis } = await SolidityParser.extractAbi({ path: './test/fixtures/scan/WETH.sol' }, 'MaticWETH');
 
         let names = abis.map(x => x.name);
         deepEq_(names, [
@@ -140,7 +135,63 @@ UTest({
             'transfer',
             'allowance',
             'approve',
-            'transferFrom'
+            'transferFrom',
+            'Transfer',
+            'Approval',
+            'constructor',
+            'name',
+            'symbol',
+            'decimals',
+            'totalSupply',
+            'balanceOf',
+            'transfer',
+            'allowance',
+            'approve',
+            'transferFrom',
+            'increaseAllowance',
+            'decreaseAllowance',
+            'deposit',
+            'hasRole',
+            'getRoleMemberCount',
+            'getRoleMember',
+            'getRoleAdmin',
+            'grantRole',
+            'revokeRole',
+            'renounceRole',
+            'DEFAULT_ADMIN_ROLE',
+            'RoleAdminChanged',
+            'RoleGranted',
+            'RoleRevoked',
+            'getDomainSeperator',
+            'getChainId',
+            'executeMetaTransaction',
+            'getNonce',
+            'MetaTransactionExecuted',
+            'ERC712_VERSION',
+            'ROOT_CHAIN_ID',
+            'ROOT_CHAIN_ID_BYTES',
+            'CHILD_CHAIN_ID',
+            'CHILD_CHAIN_ID_BYTES',
+            'constructor',
+            'deposit',
+            'withdraw',
+            'DEPOSITOR_ROLE',
+            'constructor'
+        ]);
+    },
+    async 'should parse Interface from weth.sol'() {
+        let { abi: abis } = await SolidityParser.extractAbi({ path: './test/fixtures/scan/WETH.sol' }, 'IERC20');
+
+        let names = abis.map(x => x.name);
+        deepEq_(names, [
+            'totalSupply',
+            'balanceOf',
+            'transfer',
+            'allowance',
+            'approve',
+            'transferFrom',
+            'Transfer',
+            'Approval'
         ]);
     },
     async 'should parse multi inheritance'() {
@@ -156,7 +207,7 @@ UTest({
             }
         `;
 
-        const abis = await SolidityParser.extractAbi({
+        const { abi: abis } = await SolidityParser.extractAbi({
             code: input,
             path: './test/solidity/Parser.sol'
         }, 'Token');
@@ -169,7 +220,7 @@ UTest({
 
         return new UTest({
             async 'parse enjtoken'() {
-                const abis = await SolidityParser.extractAbi({
+                const { abi: abis } = await SolidityParser.extractAbi({
                     path: './test/fixtures/parser/v04/ENJToken.sol'
                 }, 'ENJToken');
 
@@ -184,6 +235,7 @@ UTest({
                     'acceptOwnership',
                     'owner',
                     'newOwner',
+                    'OwnerUpdate',
                     'withdrawTokens',
                     'TokenHolder',
                     'withdrawTokens',
@@ -207,6 +259,8 @@ UTest({
                     'totalSupply',
                     'balanceOf',
                     'allowance',
+                    'Transfer',
+                    'Approval',
                     'ENJToken',
                     'transfer',
                     'transferFrom',
@@ -228,23 +282,28 @@ UTest({
                 ]);
             },
             async 'parse presale'() {
-                const abis = await SolidityParser.extractAbi({
+                const { abi: abis } = await SolidityParser.extractAbi({
                     path: './test/fixtures/parser/v04/MultiSigWallet.sol'
                 }, 'MultiSigWallet');
 
                 let names = abis.map(x => x.name);
                 deepEq_(names, [
-                    'MultiSigWallet', 'addOwner',
-                    'removeOwner', 'replaceOwner',
-                    'changeRequirement', 'submitTransaction',
-                    'confirmTransaction', 'revokeConfirmation',
-                    'executeTransaction', 'isConfirmed',
+                    'MultiSigWallet',       'addOwner',
+                    'removeOwner',          'replaceOwner',
+                    'changeRequirement',    'submitTransaction',
+                    'confirmTransaction',   'revokeConfirmation',
+                    'executeTransaction',   'isConfirmed',
                     'getConfirmationCount', 'getTransactionCount',
-                    'getOwners', 'getConfirmations',
-                    'getTransactionIds', 'MAX_OWNER_COUNT',
-                    'transactions', 'confirmations',
-                    'isOwner', 'owners',
-                    'required', 'transactionCount'
+                    'getOwners',            'getConfirmations',
+                    'getTransactionIds',    'MAX_OWNER_COUNT',
+                    'transactions',         'confirmations',
+                    'isOwner',              'owners',
+                    'required',             'transactionCount',
+                    'Confirmation',         'Revocation',
+                    'Submission',           'Execution',
+                    'ExecutionFailure',     'Deposit',
+                    'OwnerAddition',        'OwnerRemoval',
+                    'RequirementChange'
                 ]);
             },
 
@@ -252,9 +311,10 @@ UTest({
 
     },
     async 'should parse AavePriceOracle.sol'() {
-        let abis = await SolidityParser.extractAbi({ path: './test/fixtures/parser/PriceOracle.sol' }, 'PriceOracle');
+        let { abi: abis } = await SolidityParser.extractAbi({ path: './test/fixtures/parser/PriceOracle.sol' }, 'PriceOracle');
         let names = abis.map(x => x.name);
         deepEq_(names, [
+            'Failure',
             'constructor',
             '_setPendingAnchor',
             '_setPaused',
@@ -302,16 +362,31 @@ UTest({
             'aggregator',
             'statusOracle',
             'anchors',
-            'pendingAnchors'
+            'pendingAnchors',
+            'OracleFailure',
+            'NewPendingAnchor',
+            'SetExchangeRate',
+            'SetMaxSwingRate',
+            'ReaderPosted',
+            'SetMaxSwing',
+            'SetMaxSwingForAsset',
+            'SetAssetAggregator',
+            'SetAssetStatusOracle',
+            'PricePosted',
+            'CappedPricePosted',
+            'SetPaused',
+            'NewPendingAnchorAdmin',
+            'NewAnchorAdmin',
+            'NewPoster'
         ]);
     },
     async 'should handle state variable overrides'() {
-        let abis = await SolidityParser.extractAbi({ path: './test/fixtures/contracts/AlphaKlimaSimple.sol' }, 'AlphaKlimaSimple');
+        let { abi: abis } = await SolidityParser.extractAbi({ path: './test/fixtures/contracts/AlphaKlimaSimple.sol' }, 'AlphaKlimaSimple');
         // No public methods/getters
         deepEq_(abis.length, 0);
     },
     async 'should parse USDC.sol'() {
-        let abi = await SolidityParser.extractAbi({ path: './test/fixtures/parser/USDC.sol' });
+        let { abi } = await SolidityParser.extractAbi({ path: './test/fixtures/parser/USDC.sol' });
         let names = abi.map(x => x.name);
         deepEq_(names, [
             'totalSupply',
@@ -320,19 +395,28 @@ UTest({
             'allowance',
             'approve',
             'transferFrom',
+            'Transfer',
+            'Approval',
             'constructor',
             'owner',
             'transferOwnership',
+            'OwnershipTransferred',
             'pause',
             'unpause',
             'updatePauser',
             'pauser',
             'paused',
+            'Pause',
+            'Unpause',
+            'PauserChanged',
             'isBlacklisted',
             'blacklist',
             'unBlacklist',
             'updateBlacklister',
             'blacklister',
+            'Blacklisted',
+            'UnBlacklisted',
+            'BlacklisterChanged',
             'initialize',
             'mint',
             'minterAllowance',
@@ -352,14 +436,22 @@ UTest({
             'decimals',
             'currency',
             'masterMinter',
+            'Mint',
+            'Burn',
+            'MinterConfigured',
+            'MinterRemoved',
+            'MasterMinterChanged',
             'rescuer',
             'rescueERC20',
             'updateRescuer',
+            'RescuerChanged',
             'DOMAIN_SEPARATOR',
             'authorizationState',
             'TRANSFER_WITH_AUTHORIZATION_TYPEHASH',
             'RECEIVE_WITH_AUTHORIZATION_TYPEHASH',
             'CANCEL_AUTHORIZATION_TYPEHASH',
+            'AuthorizationUsed',
+            'AuthorizationCanceled',
             'nonces',
             'PERMIT_TYPEHASH',
             'initializeV2',
