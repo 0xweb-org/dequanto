@@ -2,6 +2,7 @@ import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { SlotsParser } from '@dequanto/solidity/SlotsParser';
 import { SlotsStorage } from '@dequanto/solidity/SlotsStorage';
 import { $address } from '@dequanto/utils/$address';
+import { $contract } from '@dequanto/utils/$contract';
 import { l } from '@dequanto/utils/$logger';
 
 UTest({
@@ -332,5 +333,72 @@ UTest({
             },
         })
     },
+
+    async 'should create reader for struct and read with offset' () {
+        let code = `
+            struct AppStorage {
+                uint256 foo;
+            }
+            library LibAppStorage {
+                bytes32 internal constant DIAMOND_APP_STORAGE_POSITION = keccak256("diamond.app.storage");
+                function appStorage() internal pure returns (AppStorage storage ds) {
+                    bytes32 position = DIAMOND_APP_STORAGE_POSITION;
+                    assembly {
+                        ds.slot := position
+                    }
+                }
+            }
+
+            contract Foo {
+                constructor () {
+                    AppStorage storage fooStorage = LibAppStorage.appStorage();
+                    fooStorage.foo = 123;
+                }
+            }
+        `;
+        let provider = new HardhatProvider();
+        let client = await provider.client();
+
+        let { contract } = await provider.deployCode(code, { client });
+        let slots = await SlotsParser.slots({ path: '', code }, 'AppStorage');
+
+        deepEq_(slots[0], { slot: 0, position: 0, name: 'foo', size: 256, type: 'uint256' });
+
+        let storage = SlotsStorage.createWithClient(client, contract.address, slots, {
+            storageOffset: $contract.keccak256('diamond.app.storage')
+        });
+
+        let fooValue = await storage.get('foo');
+        eq_(fooValue, 123n);
+
+        eq_(Number(await client.getStorageAt(contract.address, 0)), 0);
+    },
+    async '!should create reader for abstract classes' () {
+        let code = `
+            abstract contract FooStorage {
+                uint256 public foo;
+            }
+            contract Foo is FooStorage {
+                uint256 public bar;
+                constructor () {
+                    foo = 31;
+                    bar = 32;
+                }
+            }
+        `;
+        let provider = new HardhatProvider();
+        let client = await provider.client();
+
+        let slots = await SlotsParser.slots({ path: '', code }, 'FooStorage');
+
+        eq_(slots.length, 1);
+        deepEq_(slots[0], { slot: 0, position: 0, name: 'foo', size: 256, type: 'uint256' });
+
+        let { contract } = await provider.deployCode(code, { client });
+        let storage = SlotsStorage.createWithClient(client, contract.address, slots);
+
+        let fooValue = await storage.get('foo');
+        eq_(fooValue, 31n);
+    }
 
 })

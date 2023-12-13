@@ -13,6 +13,7 @@ import { $require } from '@dequanto/utils/$require';
 import { Constructor, class_Uri } from 'atma-utils';
 import { IBlockChainExplorer } from './IBlockChainExplorer';
 import { $contract } from '@dequanto/utils/$contract';
+import { $abiCoder } from '@dequanto/abi/$abiCoder';
 
 
 type TSubmissionStatus = {
@@ -24,6 +25,7 @@ type TSubmissionOptions = {
     waitConfirmation?: boolean
     address?: TEth.Address
     proxyFor?: TEth.Address
+    constructorParams?: any[]
 };
 type TContractInfo<T extends ContractBase = ContractBase> = Constructor<T> | string;
 
@@ -82,6 +84,7 @@ export class ContractVerifier {
         id?: string
         address?: TEth.Address
         proxyFor?: TEth.Address
+        constructorParams?: any[]
     }): Promise<TSubmissionStatus> {
         let client = this.deployments.client;
         let contractName = typeof Ctor === 'string' ? Ctor : Ctor.name;
@@ -109,10 +112,13 @@ export class ContractVerifier {
         let abi = info.ctx.abi;
         let ctorAbi = abi.find(x => x.type === 'constructor');
         if (ctorAbi?.inputs?.length > 0) {
-            let tx = await this.deployments.client.getTransaction(deployment.tx);
-            let parsedArguments = $contract.decodeDeploymentArguments(tx.input, ctorAbi);
-
-            constructorArguments = parsedArguments.encoded;
+            if (opts?.constructorParams == null) {
+                let tx = await this.deployments.client.getTransaction(deployment.tx);
+                let parsedArguments = $contract.decodeDeploymentArguments(tx.input, ctorAbi);
+                constructorArguments = parsedArguments.encoded;
+            } else {
+                constructorArguments = $abiCoder.encode(ctorAbi.inputs, opts.constructorParams);
+            }
         }
 
         let jsonMetaPath = info.ctx.source.path;
@@ -154,6 +160,7 @@ export class ContractVerifier {
             sources: sources,
             settings: buildInfo.input.settings
         }, null, 4);
+
         let sourcesSerializedWrapped = `${sourcesSerialized}`;
 
         this.logger.log(`Submit ${jsonMeta.sourceName}:${jsonMeta.contractName} and dependencies to verify ${address} contract`);
@@ -193,8 +200,9 @@ export class ContractVerifier {
             let path = uri.toRelativeString(process.cwd() + '/');
             path = $path.normalize(path);
 
-            if (path.startsWith('node_modules/')) {
-                path = path.replace('node_modules/', '');
+            let rgxNodeModules = /^\/?node_modules\//;
+            if (rgxNodeModules.test(path)) {
+                path = path.replace(rgxNodeModules, '');
             }
 
             if (path in sources) {

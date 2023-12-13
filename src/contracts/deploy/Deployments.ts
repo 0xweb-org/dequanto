@@ -34,6 +34,10 @@ type TDeploymentOptions = {
     // Will be used for verification process
     proxyFor?: TAddress
 }
+type TVerificationOptions = TDeploymentOptions & {
+    // otherwise will be fetched from the deployment TX
+    constructorParams?: any[]
+}
 
 export class Deployments {
     public store: DeploymentsStorage;
@@ -127,6 +131,22 @@ export class Deployments {
             : new CtorWrapped(deployment.address, this.client);
     }
 
+    async verify (params: {
+        id: string
+        address?: TAddress,
+        Ctor: Constructor<ContractBase>
+        constructorParams?: any[]
+    }) {
+        let deployment = await this.store.getDeploymentInfo('', {
+            id: params.id
+        });
+        $require.notNull(deployment, `Deployment for ${params.id} not found`);
+        await this.ensureVerification(params.Ctor, deployment, {
+            id: params.id,
+            constructorParams: params.constructorParams
+        });
+
+    }
 
 
     async ensureContract<T extends TContract>(Ctor: Constructor<T>, opts?: TConstructorArgs<T> & {
@@ -381,7 +401,7 @@ export class Deployments {
     }
 
 
-    private async ensureVerification <T extends TContract> (Ctor: Constructor<T>, deployment: IDeployment, opts: TDeploymentOptions) {
+    private async ensureVerification <T extends TContract> (Ctor: Constructor<T>, deployment: IDeployment, opts: TVerificationOptions) {
         if (this.client.platform === 'hardhat' || opts?.verification === false) {
             return;
         }
@@ -399,7 +419,8 @@ export class Deployments {
                 id: opts?.id,
                 address: address,
                 waitConfirmation: waitConfirmation,
-                proxyFor: opts?.proxyFor
+                proxyFor: opts?.proxyFor,
+                constructorParams: opts?.constructorParams,
             });
 
             deployment.verified = new Date().toISOString();

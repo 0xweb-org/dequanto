@@ -4,7 +4,7 @@ import { $require } from '@dequanto/utils/$require';
 import { SlotValueHandler } from './storage/handlers/SlotValueHandler';
 import { SlotFixedArrayHandler } from './storage/handlers/SlotFixedArrayHandler';
 import { SlotDynamicArrayHandler } from './storage/handlers/SlotDynamicArrayHandler';
-import { SlotsStorageTransport, ISlotsStorageTransport } from './storage/SlotsStorageTransport';
+import { SlotsStorageTransport, ISlotsStorageTransport, SlotsCursorTransport } from './storage/SlotsStorageTransport';
 import { TAddress } from '@dequanto/models/TAddress';
 import { ASlotsStorageHandler } from './storage/SlotsStorageHandler';
 import { Constructor, is_Object } from 'atma-utils';
@@ -13,19 +13,25 @@ import { SlotStringHandler } from './storage/handlers/SlotStringHandler';
 import { Accessor, IAccessorItem } from './storage/Accessor';
 import { SlotStructHandler } from './storage/handlers/SlotStructHandler';
 import { ISlotVarDefinition } from './SlotsParser/models';
-import { $abiType } from '@dequanto/utils/$abiType';
 import { $types } from './utils/$types';
 import { SlotBytesHandler } from './storage/handlers/SlotBytesHandler';
 import { SlotValueConstantHandler } from './storage/handlers/SlotValueContantHandler';
 import { SlotValueImmutableHandler } from './storage/handlers/SlotValueImmutableHandler';
+import { TEth } from '@dequanto/models/TEth';
 
 export class SlotsStorage {
 
     static createWithClient(client: Web3Client, address: TAddress, slots: ISlotVarDefinition[], params?: {
-        blockNumber: number
+        blockNumber?: number
+        storageOffset?: TEth.Hex | bigint
     }) {
-        let reader = new SlotsStorageTransport(client, address, params);
-        return new SlotsStorage(reader, slots)
+        let transport: ISlotsStorageTransport = new SlotsStorageTransport(client, address, {
+            blockNumber: params?.blockNumber
+        });
+        if (params?.storageOffset != null)  {
+            transport = new SlotsCursorTransport({ slot: BigInt(params.storageOffset) }, transport);
+        }
+        return new SlotsStorage(transport, slots)
     }
 
     constructor(public transport: ISlotsStorageTransport, public slots: ISlotVarDefinition[]) {

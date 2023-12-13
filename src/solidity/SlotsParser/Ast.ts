@@ -61,9 +61,13 @@ export namespace Ast {
         if (contractName == null) {
             return contracts[contracts.length - 1];
         }
-
         let contract = contracts.find(x => x.name === contractName);
         return contract;
+    }
+    export function getStruct(ast: SourceUnit, contractName: string): StructDefinition {
+        let structs = ast.children.filter(isStructDefinition) as StructDefinition[];
+        let struct = structs.find(x => x.name === contractName);
+        return struct;
     }
 
     export function getImports(ast: SourceUnit): ImportDirective[] {
@@ -105,7 +109,7 @@ export namespace Ast {
         }
         return fns;
     }
-    export function getUserDefinedType(node: ContractDefinition | SourceUnit, name: string): (StructDefinition | ContractDefinition | EnumDefinition) & { parent?; } {
+    export function getUserDefinedType(node: ContractDefinition | StructDefinition | SourceUnit, name: string): (StructDefinition | ContractDefinition | EnumDefinition) & { parent?; } {
         let [key, ...nestings] = name.split('.');
         let nodeFound = getUserDefinedTypeRaw(node, key);
         if (nodeFound == null) {
@@ -263,6 +267,9 @@ export namespace Ast {
     export function isStructDefinition(node: BaseASTNode): node is StructDefinition {
         return node?.type === 'StructDefinition';
     }
+    export function isSourceUnit(node: BaseASTNode): node is SourceUnit {
+        return node?.type === 'SourceUnit';
+    }
 
     export function getFunctionName(node: FunctionCall) {
         let expression = node.expression;
@@ -272,10 +279,17 @@ export namespace Ast {
         return null;
     }
 
-    function getUserDefinedTypeRaw(node: ContractDefinition | SourceUnit, name: string): StructDefinition | ContractDefinition | EnumDefinition {
-        let arr = isContractDefinition(node)
-            ? node.subNodes
-            : node.children;
+    function getUserDefinedTypeRaw(node: ContractDefinition | StructDefinition | SourceUnit, name: string): StructDefinition | ContractDefinition | EnumDefinition {
+        let arr: BaseASTNode[];
+        if (isContractDefinition(node)) {
+            arr = node.subNodes
+        } else if (isStructDefinition(node)) {
+            arr = node.members;
+        } else if (isSourceUnit(node)) {
+            arr = node.children
+        } else {
+            throw new Error(`Unexpected node: ${ JSON.stringify(node) } to get UserDefinedType from`);
+        }
 
         let nodeFound = arr
             .filter(x => x.type === 'StructDefinition' || x.type === 'ContractDefinition' || x.type === 'EnumDefinition')

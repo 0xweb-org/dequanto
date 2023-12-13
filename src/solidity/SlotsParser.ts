@@ -5,6 +5,7 @@ import type {
     ContractDefinition,
     ElementaryTypeName,
     Mapping,
+    StructDefinition,
     TypeName,
     UserDefinedTypeName
 } from '@solidity-parser/parser/dist/src/ast-types';
@@ -49,7 +50,10 @@ export namespace SlotsParser {
         return await extractSlots(chain, opts);
     }
 
-    async function extractSlots(inheritanceChain: { contract: ContractDefinition, file: SourceFile }[], opts?: ISlotsParserOption) {
+    async function extractSlots(inheritanceChain: {
+        contract: ContractDefinition | StructDefinition,
+        file: SourceFile
+    }[], opts?: ISlotsParserOption) {
 
         let slotsDef = await alot(inheritanceChain)
             .mapManyAsync(async (item, i) => {
@@ -80,7 +84,7 @@ export namespace SlotsParser {
         withImmutables?: boolean
     }) {
 
-        let vars = alot(Ast.getVariableDeclarations(contract.contract))
+        let vars = Ast.isStructDefinition(contract.contract) ? contract.contract.members : alot(Ast.getVariableDeclarations(contract.contract))
             .map($var => {
                 if ($var.isDeclaredConst && opts?.withConstants !== true) {
                     return null;
@@ -180,7 +184,7 @@ namespace TypeUtil {
         serialize(): Promise<string>
     }
     export interface ITypeCtx {
-        contract: ContractDefinition
+        contract: ContractDefinition | StructDefinition
         contractBase?: ContractDefinition[]
         file: SourceFile
     };
@@ -295,29 +299,29 @@ namespace TypeUtil {
             if (typeDef) {
                 return typeDef;
             }
-            // Search inside the base contracts
-            let baseContracts = this.ctx.contract.baseContracts;
-            if (baseContracts?.length > 0) {
-                typeDef = await alot(baseContracts)
-                    .mapAsync(async $base => {
-                        let namePath = $base.baseName?.namePath;
-                        if (namePath == null) {
-                            return null;
-                        }
-                        let contract = await this.ctx.file.getUserDefinedType(namePath);
-                        if (contract == null || contract.type !== 'ContractDefinition') {
-                            return null;
-                        }
-                        return Ast.getUserDefinedType(contract, name);
-                    })
-                    .firstAsync(x => x != null);
+            if (Ast.isContractDefinition(this.ctx.contract)) {
+                // Search inside the base contracts
+                let baseContracts = this.ctx.contract.baseContracts;
+                if (baseContracts?.length > 0) {
+                    typeDef = await alot(baseContracts)
+                        .mapAsync(async $base => {
+                            let namePath = $base.baseName?.namePath;
+                            if (namePath == null) {
+                                return null;
+                            }
+                            let contract = await this.ctx.file.getUserDefinedType(namePath);
+                            if (contract == null || contract.type !== 'ContractDefinition') {
+                                return null;
+                            }
+                            return Ast.getUserDefinedType(contract, name);
+                        })
+                        .firstAsync(x => x != null);
 
-                if (typeDef) {
-                    return typeDef;
+                    if (typeDef) {
+                        return typeDef;
+                    }
                 }
             }
-
-
 
             $require.notNull(typeDef, `UserDefined Type not resolved ${name} in ${this.ctx.file?.path}`);
             return typeDef;

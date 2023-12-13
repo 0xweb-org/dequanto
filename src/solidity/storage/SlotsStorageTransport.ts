@@ -61,7 +61,9 @@ export class SlotsCursorTransport implements ISlotsStorageTransport {
 
 export class SlotsStorageTransport implements ISlotsStorageTransport {
 
-    constructor (public client: Web3Client, public address: TAddress, public params?: { blockNumber }) {
+    constructor (public client: Web3Client, public address: TAddress, public params?: {
+        blockNumber?: number
+    }) {
 
     }
 

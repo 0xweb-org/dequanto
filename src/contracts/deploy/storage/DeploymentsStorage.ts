@@ -13,6 +13,8 @@ import { $contract } from '@dequanto/utils/$contract';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
 import { IAccount } from '@dequanto/models/TAccount';
 import { $date } from '@dequanto/utils/$date';
+import { $is } from '@dequanto/utils/$is';
+import { $address } from '@dequanto/utils/$address';
 
 
 
@@ -59,15 +61,22 @@ export class  DeploymentsStorage {
 
     async getDeploymentInfo (Ctor: Constructor<any>, opts?: { id?: string }): Promise<IDeployment>
     async getDeploymentInfo (name: string, opts?: { id?: string }): Promise<IDeployment>
+    async getDeploymentInfo (address: TAddress): Promise<IDeployment>
     async getDeploymentInfo (contractInfo: Constructor<any> | string, opts?: { id?: string }): Promise<IDeployment>
-    async getDeploymentInfo (mix: Constructor<any> | string, opts?: { id?: string }): Promise<IDeployment> {
+    async getDeploymentInfo (mix: Constructor<any> | string | TAddress, opts?: { id?: string }): Promise<IDeployment> {
         await this.cleanTestDeploymentsIfAny();
+        if (typeof mix ==='string' && $is.Address(mix)) {
+            let store = await this.getDeploymentsStore();
+            let deployments = await store.getAll();
+            let deployment = deployments.find(x => $address.eq(x.address, mix));
+            return deployment;
+        }
+
         let id = opts?.id ?? (typeof mix === 'string' ? mix : mix.name);
         let store = await this.getDeploymentsStore();
         let deployment = await store.getSingle(id);
         return deployment;
     }
-
 
 
     async updateDeployment (deployment: IDeployment) {

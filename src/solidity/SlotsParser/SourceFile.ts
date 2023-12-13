@@ -21,7 +21,7 @@ import { $path } from '@dequanto/utils/$path';
 
 export class TSourceFileContract {
     file: SourceFile
-    contract: ContractDefinition
+    contract: ContractDefinition | StructDefinition
 }
 
 export class SourceFile {
@@ -106,13 +106,21 @@ export class SourceFile {
     async getContractInheritanceChain(name?: string): Promise<TSourceFileContract[]> {
         let contract = await this.getContract(name);
         if (contract == null) {
-            return [];
+            let struct = await this.getStruct(name);
+            if (struct == null) {
+                // Neither Contract nor Struct found, return empty array
+                return [];
+            }
+            return [ { file: this as SourceFile, contract: struct } ];
         }
         if (name == null) {
             name = contract.name;
         }
 
-        let chain = [{ file: this as SourceFile, contract }];
+        let chain = [{
+            file: this as SourceFile,
+            contract: contract as ContractDefinition | StructDefinition
+        }];
         if (contract.baseContracts?.length > 0) {
 
             let baseContracts = [...contract.baseContracts]
@@ -148,6 +156,11 @@ export class SourceFile {
     async getContract(name?: string): Promise<ContractDefinition> {
         let ast = await this.getAst();
         let contract = await Ast.getContract(ast, name);
+        return contract;
+    }
+    async getStruct(name?: string): Promise<StructDefinition> {
+        let ast = await this.getAst();
+        let contract = await Ast.getStruct(ast, name);
         return contract;
     }
     async getUserDefinedType(name: string, skipImports?: { [path: string]: boolean; }): Promise<ContractDefinition | StructDefinition | EnumDefinition> {
