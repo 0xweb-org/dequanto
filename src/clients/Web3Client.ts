@@ -142,7 +142,9 @@ export abstract class Web3Client implements IWeb3Client {
     ): Promise<RpcSubscription<TEth.Hex>>;
     async subscribe(type, ...params): Promise<RpcSubscription<any>> {
         let wClient = await this.pool.getWrappedWeb3({ ws: true });
+        console.log(`Check ensure connected`);
         await wClient.ensureConnected();
+        console.log(`Check ensure connectd OK`);
 
         switch (type) {
             case 'newBlockHeaders':

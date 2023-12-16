@@ -15,7 +15,7 @@
     "atma-loader-ts": "^1.1.20",
     "atma-utest": "^0.21.30",
     "ethers": "^5.5.1",
-    "hardhat": "^2.14.1",
+    "hardhat": "^2.19.2",
     "shellbee": "^0.5.29",
     "ts-nameof": "^5.0.0",
     "web3": "^1.6.0"

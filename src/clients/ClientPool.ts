@@ -591,6 +591,7 @@ export class ClientPool {
                 let messages = nodeInfos.map(x => {
                     let url = clients[x.i]?.config.url;
                     let message = x.error?.message;
+                    console.log(`Stack`, x.error?.stack);
                     return `  ${url}: ${message}`;
                 }).join('\n');
 
@@ -675,9 +676,6 @@ export class WClient {
 
     rpc: Rpc
 
-    // web3: Web3
-    // eth: Web3['eth']
-
     config: IPoolClientConfig
     rateLimitGuard: RateLimitGuard
 
@@ -755,6 +753,7 @@ export class WClient {
                 //this.web3 = new Web3(<provider>mix.web3);
                 transport = mix.web3 as any as TTransport.Transport;
             }
+
             this.rpc = new Rpc(transport);
             //this.web3 = new Web3(this.rpc);
         } else {

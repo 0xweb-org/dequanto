@@ -25,7 +25,6 @@ export function pack(writer: Writer, coders: ReadonlyArray<Coder>, values: Array
         });
 
     } else {
-        debugger;
         throw new Error("invalid tuple value" + JSON.stringify(values));
     }
 

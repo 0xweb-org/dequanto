@@ -178,11 +178,10 @@ export class BlocksWalker {
     }
 
     private async processBlocks (nrs: number[]) {
+
         // reading block and transactions
         let start = Date.now();
         let blocks = await this.client.getBlocks(nrs);
-
-        let nr = await this.client.getBlockNumber();
 
         let grouped = await alot(blocks).mapAsync(async block => {
             let hashes = block.transactions as TEth.Hex[];

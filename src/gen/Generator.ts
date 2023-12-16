@@ -22,7 +22,13 @@ import { SolidityParser } from '@dequanto/solidity/SolidityParser';
 
 export interface IGenerateOptions {
     platform: TPlatform
+
+    // Class name to create
     name: string
+
+    // Contract name to extract from *.sol
+    contractName?: string
+
     defaultAddress?: TAddress
 
     source: {
@@ -345,7 +351,7 @@ export class Generator {
                 : await provider.compileCode(code);
             return result;
         }
-        let { abi, source } = await SolidityParser.extractAbi({  path, code }, this.options.name);
+        let { abi, source } = await SolidityParser.extractAbi({  path, code }, this.options.contractName);
         return {
             abi, source
         };

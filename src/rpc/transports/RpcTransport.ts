@@ -2,17 +2,18 @@ import { $require } from '@dequanto/utils/$require';
 import { HttpTransport } from './HttpTransport';
 import { WsTransport } from './WsTransport';
 import { TTransport } from './ITransport';
+import { EIP1193Transport, IEip1193Provider } from './compatibility/EIP1193Transport';
 
 export namespace RpcTransport {
-    export function create (info: TTransport.Options.Any | TTransport.Transport): TTransport.Transport {
-        if (info == null) {
+    export function create (mix: TTransport.Options.Any | TTransport.Transport): TTransport.Transport {
+        if (mix == null) {
             return null;
         }
-        if (typeof info === 'string') {
-            info = { url: info };
+        if (typeof mix === 'string') {
+            mix = { url: mix };
         }
-        if ('url' in info) {
-            let url = info.url;
+        if (hasUrl(mix)) {
+            let url = mix.url;
             let protocol = /^(?<protocol>\w+):\/\//.exec(url).groups?.protocol;
             $require.notEmpty(protocol, `Invalid protocol: ${url}`);
             if (/https?/.test(protocol)) {
@@ -25,14 +26,25 @@ export namespace RpcTransport {
                     url
                 });
             }
-            throw new Error(`Unknown protocol: ${info}`);
+            throw new Error(`Unknown protocol: ${mix}`);
+        }
+        if (isEIP1193Compatible(mix)) {
+            return new EIP1193Transport(mix);
+        }
+        if (isTransport(mix)) {
+            return mix;
         }
 
-        if ('request' in info && typeof info.request === 'function') {
-            return info;
-        }
+        throw new Error(`Unknown transport: ${mix}`);
+    }
 
-
-        throw new Error(`Unknown transport: ${info}`);
+    function hasUrl (mix: TTransport.Options.Any): mix is TTransport.Options.Http | TTransport.Options.Ws {
+        return typeof (mix as any).url === 'string';
+    }
+    function isEIP1193Compatible (mix: any): mix is IEip1193Provider  {
+        return typeof (mix as any).sendAsync === 'function';
+    }
+    function isTransport (mix: TTransport.Options.Any): mix is TTransport.Transport  {
+        return typeof (mix as any).request === 'function';
     }
 }

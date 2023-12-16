@@ -44,7 +44,8 @@ UTest({
         let acc2 = provider.deployer(2);
 
         l`Subscribe to pending transactions`
-        client.subscribe('pendingTransactions', <any> assert.await(2));
+        let subscription = await client.subscribe('pendingTransactions', <any> assert.await(2));
+        eq_(typeof subscription.id, 'number');
 
         let builder = new TxDataBuilder(client, acc1, {
             to: acc2.address,

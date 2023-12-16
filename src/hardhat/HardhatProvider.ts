@@ -51,7 +51,7 @@ export class HardhatProvider {
                     { url: 'ws://127.0.0.1:8545' },
                 ];
             } else {
-                opts.web3 = this.hh.web3;
+                opts.web3 = this.hh.network.provider;
             }
         }
         const client = new HardhatWeb3Client(opts);

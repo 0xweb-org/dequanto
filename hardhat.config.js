@@ -1,5 +1,3 @@
-require("@nomiclabs/hardhat-web3");
-require("@nomiclabs/hardhat-ethers");
 require("@0xweb/hardhat");
 
 /**
