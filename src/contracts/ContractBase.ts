@@ -42,10 +42,12 @@ export abstract class ContractBase {
     abstract abi?: TAbiItem[]
 
     $meta?: {
-        // Path to the compiled JSON artifact file
+        // Path to the compiled JSON artifact file (exists when the contract was generated from artifact JSON)
         artifact?: string
         // Path to the generated TS/JS class filename
         class?: string
+        // Path to the SOL file (exists when the contract was generated from SOL)
+        source?: string
     }
 
     storage?: ContractStorageReaderBase

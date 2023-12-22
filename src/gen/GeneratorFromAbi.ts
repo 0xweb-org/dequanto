@@ -33,7 +33,8 @@ export class GeneratorFromAbi {
         saveSources?: boolean
         sources?: {
             [file: string]: { content: string }
-        },
+        }
+        sourceMain?: string
         /** Path to the compiled meta json file (with ABI and Bytecode) */
         artifact?: string
         client?: Web3Client
@@ -191,16 +192,17 @@ export class GeneratorFromAbi {
             ? opts.output
             : class_Uri.combine(opts.output, outputDirectory, `${outputFilename}.ts`);
 
-        let metaProperty = '';
-        if (opts.artifact) {
-            let pathArtifact = this.getRelativePath(opts.artifact);
-            let pathClass = this.getRelativePath(outputPath);
-            let meta = {
-                artifact: pathArtifact,
-                class: pathClass
-            };
-            metaProperty = `$meta = ${ JSON.stringify(meta, null, 4) }` ;
-        }
+        let meta = {
+            artifact: opts.artifact
+                ? this.getRelativePath(opts.artifact)
+                : void 0,
+            source: opts.sourceMain
+                ? this.getRelativePath(opts.sourceMain)
+                : void 0,
+            class: this.getRelativePath(outputPath)
+        };
+        let metaProperty = `$meta = ${ JSON.stringify(meta, null, 4) }` ;
+
 
         let storageReaderInitializer = '';
         let storageReaderProperty = '';

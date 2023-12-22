@@ -180,6 +180,9 @@ export class Generator {
         let abi: TAbiItem[];
         // compiled json meta output
         let artifact: string;
+        // the SOL source file
+        let sourceMain: string;
+
         let implementation: TAddress;
         let sources: IGeneratorSources;
         if (source.code == null && source.path == null) {
@@ -199,6 +202,7 @@ export class Generator {
             abi = result.abi;
             sources = result.source;
             artifact = result.artifact;
+            sourceMain = /\.sol$/.test(source.path) ? source.path : void 0;
         }
 
         let generator = di.resolve(GeneratorFromAbi);
@@ -211,6 +215,7 @@ export class Generator {
             output: output,
             implementation: implementation,
             sources: sources?.files,
+            sourceMain: sourceMain,
             saveAbi: this.options.saveAbi,
             saveSources: this.options.saveSources,
             client: this.client,

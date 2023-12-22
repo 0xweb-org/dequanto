@@ -19,6 +19,12 @@ let FooContract;
 
 declare let include;
 
+let paths = {
+    DeploymentsFoo:   './test/fixtures/deployments/DeploymentsFoo.sol',
+    DeploymentsFooV2: './test/fixtures/deployments/DeploymentsFooV2.sol',
+    DeploymentsFooV3: './test/fixtures/deployments/DeploymentsFooV3.sol',
+};
+
 export default UTest({
     async $before () {
         await File.removeAsync(deploymentsOutput);
@@ -38,7 +44,12 @@ export default UTest({
                 BeaconProxy: BeaconProxy.ContractCtor,
             }
         });
-        let info = await Generator.generateFromSol('./test/fixtures/deployments/DeploymentsFoo.sol');
+
+
+        await hh.compileSol(paths.DeploymentsFoo);
+        await hh.compileSol(paths.DeploymentsFooV2);
+
+        let info = await Generator.generateFromSol(paths.DeploymentsFoo);
         let { DeploymentsFoo } = await include
             .instance()
             .js(info.main);
@@ -68,9 +79,9 @@ export default UTest({
                 //
                 eq_(await File.existsAsync(deploymentsProxyOutput), false);
             },
-            async 'with proxy' () {
+            async '!with proxy' () {
                 return UTest({
-                    async 'initial deploy'() {
+                    async '!initial deploy'() {
                         let { contract, deployment } = await deployments.ensureWithProxy<IContractWrapped, any>(FooContract, {
                             id: 'DeploymentsFooWithProxy',
                             initialize: []
@@ -97,7 +108,8 @@ export default UTest({
                         eq_(receipt.status, 1);
                     },
                     async 'compile and deploy new version' () {
-                        let info = await Generator.generateFromSol('./test/fixtures/deployments/DeploymentsFooV2.sol');
+
+                        let info = await Generator.generateFromSol(paths.DeploymentsFooV2);
                         let { DeploymentsFooV2 } = await include
                             .instance()
                             .js(info.main);
@@ -122,7 +134,7 @@ export default UTest({
                         eq_(contractReceiptNew, null);
                     },
                     async 'compile and try to deploy not compatible version' () {
-                        let info = await Generator.generateFromSol('./test/fixtures/deployments/DeploymentsFooV3.sol');
+                        let info = await Generator.generateFromSol(paths.DeploymentsFooV3);
                         let { DeploymentsFooV3 } = await include
                             .instance()
                             .js(info.main);
@@ -179,7 +191,7 @@ export default UTest({
                 d2Value = await contractD2.getValue();
                 eq_(d2Value, 14n);
 
-                let infoV2 = await Generator.generateFromSol('./test/fixtures/deployments/DeploymentsFooV2.sol');
+                let infoV2 = await Generator.generateFromSol(paths.DeploymentsFooV2);
                 let { DeploymentsFooV2 } = await include
                     .instance()
                     .js(infoV2.main);
@@ -200,7 +212,7 @@ export default UTest({
 
 
                 l`Should error on unsupported storage layout`;
-                let infoV3 = await Generator.generateFromSol('./test/fixtures/deployments/DeploymentsFooV3.sol');
+                let infoV3 = await Generator.generateFromSol(paths.DeploymentsFooV3);
                 let { DeploymentsFooV3 } = await include
                     .instance()
                     .js(infoV3.main);
