@@ -453,11 +453,6 @@ export namespace Ast {
                 type: 'event',
                 name: node.name,
                 inputs: await alot(node.parameters).mapAsync(async param => {
-                    // return {
-                    //     name: param.name,
-                    //     indexed: param.isIndexed,
-                    //     type: serialize(param.typeName)
-                    // };
                     let item = await serializeTypeName(param.name, param.typeName, source, inheritance)
                     return {
                         ...item,
@@ -468,7 +463,7 @@ export namespace Ast {
         }
         if (Ast.isFunctionDefinition(node)) {
             let type: AbiType = node.isConstructor ? 'constructor' : 'function';
-            let name = node.name ?? (node.isConstructor ? 'constructor' : null)
+            let name = node.isConstructor ? 'constructor' : node.name;
             if (name == null) {
                 if (node.isFallback) {
                     type = 'fallback';

@@ -138,7 +138,6 @@ UTest({
             'transferFrom',
             'Transfer',
             'Approval',
-            'constructor',
             'name',
             'symbol',
             'decimals',
@@ -172,7 +171,6 @@ UTest({
             'ROOT_CHAIN_ID_BYTES',
             'CHILD_CHAIN_ID',
             'CHILD_CHAIN_ID_BYTES',
-            'constructor',
             'deposit',
             'withdraw',
             'DEPOSITOR_ROLE',
@@ -226,18 +224,15 @@ UTest({
 
                 let names = abis.map(x => x.name);
                 deepEq_(names, [
-                    'Utils',
                     'owner',
                     'transferOwnership',
                     'acceptOwnership',
-                    'Owned',
                     'transferOwnership',
                     'acceptOwnership',
                     'owner',
                     'newOwner',
                     'OwnerUpdate',
                     'withdrawTokens',
-                    'TokenHolder',
                     'withdrawTokens',
                     'name',
                     'symbol',
@@ -248,7 +243,6 @@ UTest({
                     'transfer',
                     'transferFrom',
                     'approve',
-                    'ERC20Token',
                     'transfer',
                     'transferFrom',
                     'approve',
@@ -261,7 +255,7 @@ UTest({
                     'allowance',
                     'Transfer',
                     'Approval',
-                    'ENJToken',
+                    'constructor',
                     'transfer',
                     'transferFrom',
                     'ENJ_UNIT',
@@ -288,7 +282,7 @@ UTest({
 
                 let names = abis.map(x => x.name);
                 deepEq_(names, [
-                    'MultiSigWallet',       'addOwner',
+                    'constructor',       'addOwner',
                     'removeOwner',          'replaceOwner',
                     'changeRequirement',    'submitTransaction',
                     'confirmTransaction',   'revokeConfirmation',
@@ -397,7 +391,6 @@ UTest({
             'transferFrom',
             'Transfer',
             'Approval',
-            'constructor',
             'owner',
             'transferOwnership',
             'OwnershipTransferred',
