@@ -35,7 +35,7 @@ export namespace $is {
         return /^0x[a-fA-F0-9]{1,40}$/g.test(val);
     }
 
-    export function TxHash (val: TEth.Address): boolean {
+    export function TxHash (val: string | TEth.Hex): boolean {
         if (Hex(val) === false) {
             return false;
         }

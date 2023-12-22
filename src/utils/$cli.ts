@@ -1,6 +1,6 @@
 export namespace $cli {
 
-    export function getParamValue(flag: string, parameters?: Record<string, string>): string | null {
+    export function getParamValue<T = any>(flag: string, parameters?: Record<string, T>): T | null {
         let k1 = cases.camelToHyphenCase(flag);
         let k2 = cases.hyphenToCamelCase(flag);
 
@@ -16,7 +16,7 @@ export namespace $cli {
         for (let i = 0; i < args.length - 1; i++) {
             let key = args[i].replace(/^\-+/, '');
             if (key === k1 || key === k2) {
-                return args[i + 1];
+                return args[i + 1] as T;
             }
         }
         return null;

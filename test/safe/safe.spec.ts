@@ -209,7 +209,7 @@ UTest({
         eq_(Number(nonce), 1);
     },
 
-    async 'integrational test with opBNB' () {
+    async 'integration test with opBNB' () {
         // use opBNB as it has quick affordable native test tokens
 
         // https://multisig.bnbchain.org/transactions/queue?safe=opbnb-testnet:0xBD0D7FF18CE61f21E0b9553f1e42A6A34f9D463A
@@ -218,7 +218,7 @@ UTest({
 
         let key = config.$get('SAFE_OWNER') as TEth.Hex;
         if (key == null) {
-            console.log(`Skip safe integrational test because SAFE_OWNER is not set`);
+            console.log(`Skip safe integration test because SAFE_OWNER is not set`);
             return;
         }
 

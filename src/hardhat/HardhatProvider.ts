@@ -9,7 +9,7 @@ import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { TEth } from '@dequanto/models/TEth';
 
 import { EoAccount } from "@dequanto/models/TAccount";
-import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client';
+import { HardhatWeb3Client } from '@dequanto/hardhat/HardhatWeb3Client';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 
 import { $logger } from '@dequanto/utils/$logger';
@@ -28,15 +28,10 @@ import { ContractDeployer } from '@dequanto/contracts/deploy/ContractDeployer';
 import { $sig } from '@dequanto/utils/$sig';
 import { $address } from '@dequanto/utils/$address';
 
-
-
-
 export class HardhatProvider {
 
     /* lazy load */
     hh = require('hardhat');
-
-
 
     @memd.deco.memoize()
     client(network: 'hardhat' | 'localhost' = 'hardhat', opts: IWeb3EndpointOptions = null) {

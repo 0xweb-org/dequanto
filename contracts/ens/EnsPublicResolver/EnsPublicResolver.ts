@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-03 23:18
+ *  AUTO-Generated Class: 2023-12-22 01:26
  *  Implementation: https://etherscan.io/address/0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63#code
  */
 import di from 'a-di';
@@ -7,7 +7,8 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
+import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBaseUtils } from '@dequanto/contracts/utils/ContractBaseUtils';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
@@ -38,10 +39,10 @@ export class EnsPublicResolver extends ContractBase {
         this.storage = new EnsPublicResolverStorageReader(this.address, this.client, this.explorer);
     }
 
-
+    
 
     async $constructor (deployer: TSender, _ens: TAddress, wrapperAddress: TAddress, _trustedETHController: TAddress, _trustedReverseRegistrar: TAddress): Promise<TxWriter> {
-        throw new Error('Not implemented. Use the ContractDeployer class to deploy the contract');
+        throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
     }
 
     // 0x2203ab56
@@ -195,7 +196,9 @@ export class EnsPublicResolver extends ContractBase {
     $call () {
         return super.$call() as IEnsPublicResolverTxCaller;
     }
-
+    $signed (): TOverrideReturns<IEnsPublicResolverTxCaller, Promise<{ signed: TEth.Hex, error?: Error & { data?: { type: string, params } } }>> {
+        return super.$signed() as any;
+    }
     $data (): IEnsPublicResolverTxData {
         return super.$data() as IEnsPublicResolverTxData;
     }
@@ -537,7 +540,7 @@ interface IEvents {
   PubkeyChanged: TLogPubkeyChangedParameters
   TextChanged: TLogTextChangedParameters
   VersionChanged: TLogVersionChangedParameters
-  '*': any[]
+  '*': any[] 
 }
 
 
@@ -711,7 +714,7 @@ interface IMethods {
   supportsInterface: IMethodSupportsInterface
   text: IMethodText
   zonehash: IMethodZonehash
-  '*': { method: string, arguments: any[] }
+  '*': { method: string, arguments: any[] } 
 }
 
 

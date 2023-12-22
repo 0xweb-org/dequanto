@@ -44,12 +44,13 @@ export namespace SolidityParser {
 
     async function extractAbiInner(inheritanceChain: TSourceFileContract[], opts?: ISlotsParserOption) {
 
+        let count = inheritanceChain.length;
         let abisDef = await alot(inheritanceChain)
             .mapManyAsync(async (item, i) => {
                 let cloned = { ...item };
-                // get the base classes for the item, as inheritanceChain has the base->...->derived direction
+                // get the base classes for the item, as inheritanceChain has the base(root)->...->derived direction
                 let inheritance = inheritanceChain.slice(0, i).reverse();
-                let abis = await extractAbiInnerSingle(cloned, inheritance, opts);
+                let abis = await extractAbiInnerSingle(cloned, inheritance, opts, count - i - 1);
                 return abis;
             })
             .toArrayAsync({ threads: 1 });
@@ -57,10 +58,10 @@ export namespace SolidityParser {
         return abisDef;
     }
 
-    async function extractAbiInnerSingle (ctx: ITypeCtx, inheritanceChain: TSourceFileContract[], opts?: {
+    async function extractAbiInnerSingle (ctx: ITypeCtx, inheritanceChain: TSourceFileContract[], opts: {
         withConstants?: boolean
         withImmutables?: boolean
-    }) {
+    }, inheritanceChainIndex?: number) {
         let contract = ctx.contract as ContractDefinition;
         if (Ast.isContractDefinition(contract) === false) {
             throw new Error(`Contract expected, got ${contract?.constructor.name} for ${ctx.contract.name}`);
@@ -68,6 +69,10 @@ export namespace SolidityParser {
 
         let abiFns = await alot(Ast.getFunctionDeclarations(contract))
             .filter($fn => {
+                if ($fn.isConstructor) {
+                    // Skip constructors in base classes
+                    return inheritanceChainIndex === 0;
+                }
                 let isPublic = $fn.visibility === 'external' || $fn.visibility === 'public' || $fn.isConstructor;
                 return isPublic;
             })

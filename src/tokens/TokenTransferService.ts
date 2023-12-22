@@ -9,7 +9,7 @@ import { ITxWriterOptions, TxWriter } from '@dequanto/txs/TxWriter';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { TokensService } from './TokensService';
 import { $address } from '@dequanto/utils/$address';
-import { ITxConfig } from '@dequanto/txs/ITxConfig';
+import { ITxBuilderOptions } from '@dequanto/txs/ITxBuilderOptions';
 import { $promise } from '@dequanto/utils/$promise';
 import { LoggerService } from '@dequanto/loggers/LoggerService';
 import { $logger } from '@dequanto/utils/$logger';
@@ -21,7 +21,7 @@ import { $require } from '@dequanto/utils/$require';
 export class TokenTransferService {
 
     private gasPriorityFee?: number
-    private builderConfig: ITxConfig
+    private builderConfig: ITxBuilderOptions
     private writerConfig: ITxWriterOptions
     private tokenService: TokensService
 
@@ -29,7 +29,7 @@ export class TokenTransferService {
         this.tokenService = di.resolve(TokensService, this.client.platform);
     }
 
-    $config (builderConfig: ITxConfig): this {
+    $config (builderConfig: ITxBuilderOptions): this {
         this.builderConfig = builderConfig;
         return this;
     }

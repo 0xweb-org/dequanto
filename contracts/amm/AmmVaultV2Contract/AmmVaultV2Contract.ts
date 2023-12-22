@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-11-05 00:36
+ *  AUTO-Generated Class: 2023-12-22 01:26
  *  Implementation: https://bscscan.com/address/0xa80240Eb5d7E05d3F250cF000eEc0891d00b51CC#code
  */
 import di from 'a-di';
@@ -7,7 +7,8 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
+import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBaseUtils } from '@dequanto/contracts/utils/ContractBaseUtils';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
@@ -41,7 +42,7 @@ export class AmmVaultV2Contract extends ContractBase {
     
 
     async $constructor (deployer: TSender, _token: TAddress, _receiptToken: TAddress, _masterchef: TAddress, _admin: TAddress, _treasury: TAddress): Promise<TxWriter> {
-        throw new Error('Not implemented. Use the ContractDeployer class to deploy the contract');
+        throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
     }
 
     // 0x2ad5a53f
@@ -242,7 +243,9 @@ export class AmmVaultV2Contract extends ContractBase {
     $call () {
         return super.$call() as IAmmVaultV2ContractTxCaller;
     }
-
+    $signed (): TOverrideReturns<IAmmVaultV2ContractTxCaller, Promise<{ signed: TEth.Hex, error?: Error & { data?: { type: string, params } } }>> {
+        return super.$signed() as any;
+    }
     $data (): IAmmVaultV2ContractTxData {
         return super.$data() as IAmmVaultV2ContractTxData;
     }
@@ -718,18 +721,6 @@ class AmmVaultV2ContractStorageReader extends ContractStorageReaderBase {
         return this.$storage.get(['_paused', ]);
     }
 
-    async token(): Promise<TAddress> {
-        return this.$storage.get(['token', ]);
-    }
-
-    async receiptToken(): Promise<TAddress> {
-        return this.$storage.get(['receiptToken', ]);
-    }
-
-    async masterchef(): Promise<TAddress> {
-        return this.$storage.get(['masterchef', ]);
-    }
-
     async userInfo(key: TAddress): Promise<{ shares: bigint, lastDepositedTime: bigint, cakeAtLastUserAction: bigint, lastUserActionTime: bigint }> {
         return this.$storage.get(['userInfo', key]);
     }
@@ -784,82 +775,61 @@ class AmmVaultV2ContractStorageReader extends ContractStorageReaderBase {
     {
         "slot": 1,
         "position": 0,
-        "name": "token",
-        "size": 160,
-        "type": "address"
-    },
-    {
-        "slot": 2,
-        "position": 0,
-        "name": "receiptToken",
-        "size": 160,
-        "type": "address"
-    },
-    {
-        "slot": 3,
-        "position": 0,
-        "name": "masterchef",
-        "size": 160,
-        "type": "address"
-    },
-    {
-        "slot": 4,
-        "position": 0,
         "name": "userInfo",
         "size": null,
         "type": "mapping(address => (uint256 shares, uint256 lastDepositedTime, uint256 cakeAtLastUserAction, uint256 lastUserActionTime))"
     },
     {
-        "slot": 5,
+        "slot": 2,
         "position": 0,
         "name": "totalShares",
         "size": 256,
         "type": "uint256"
     },
     {
-        "slot": 6,
+        "slot": 3,
         "position": 0,
         "name": "lastHarvestedTime",
         "size": 256,
         "type": "uint256"
     },
     {
-        "slot": 7,
+        "slot": 4,
         "position": 0,
         "name": "admin",
         "size": 160,
         "type": "address"
     },
     {
-        "slot": 8,
+        "slot": 5,
         "position": 0,
         "name": "treasury",
         "size": 160,
         "type": "address"
     },
     {
-        "slot": 9,
+        "slot": 6,
         "position": 0,
         "name": "performanceFee",
         "size": 256,
         "type": "uint256"
     },
     {
-        "slot": 10,
+        "slot": 7,
         "position": 0,
         "name": "callFee",
         "size": 256,
         "type": "uint256"
     },
     {
-        "slot": 11,
+        "slot": 8,
         "position": 0,
         "name": "withdrawFee",
         "size": 256,
         "type": "uint256"
     },
     {
-        "slot": 12,
+        "slot": 9,
         "position": 0,
         "name": "withdrawFeePeriod",
         "size": 256,

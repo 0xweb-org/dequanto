@@ -5,6 +5,7 @@ import { $is } from './$is';
 
 interface ICrypto {
     randomBytes(size: number): Uint8Array;
+    randomUUID(): string;
     createECDH(curve: string)
 
     sha256 (mix: string | TEth.Hex | Uint8Array): Promise<Uint8Array>;
@@ -27,6 +28,7 @@ const CIPHER_ALGO = 'aes-256-ctr';
 
 abstract class CryptoBase implements ICrypto {
     abstract randomBytes(size: number): Uint8Array;
+    abstract randomUUID(): `${string}-${string}-${string}-${string}-${string}`;
     abstract createECDH(curve: string)
 
     sha256 (mix: string | TEth.Hex | Uint8Array, opts?: { encoding?: undefined | 'binary' }): Promise<Uint8Array>
@@ -104,6 +106,9 @@ namespace WebCryptoImpl {
             let rnd = this.crypto.getRandomValues(array);
             return rnd;
         }
+        randomUUID() {
+            return this.crypto.randomUUID();
+        }
         createECDH(curve: string) {
             /** use this.crypto.subtle.importKey */
             throw new Error("Method not implemented.");
@@ -158,11 +163,14 @@ namespace WebCryptoImpl {
 
 namespace NodeCryptoImpl {
     export class CryptoNode extends CryptoBase {
-        crypto = require('crypto');
+        crypto: typeof import('crypto') = require('crypto');
 
         randomBytes(size: number) {
             const bytes = this.crypto.randomBytes(size);
             return bytes;
+        }
+        randomUUID() {
+            return this.crypto.randomUUID() as `${string}-${string}-${string}-${string}-${string}`;
         }
         createECDH(curve: string) {
             return this.crypto.createECDH(curve);

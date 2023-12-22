@@ -24,6 +24,8 @@ export interface IWeb3ClientOptions {
     web3?: TTransport.Transport
     provider?: TTransport.Transport
 
+    defaultTxType?: 0 | 1 | 2;
+
     debug?: {
         setStorageAt?: {
             call: 'hardhat_setStorageAt' | string

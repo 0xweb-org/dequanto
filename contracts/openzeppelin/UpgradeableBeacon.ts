@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-11-05 00:36
+ *  AUTO-Generated Class: 2023-12-22 01:26
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -7,7 +7,8 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
+import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBaseUtils } from '@dequanto/contracts/utils/ContractBaseUtils';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
@@ -41,7 +42,7 @@ export class UpgradeableBeacon extends ContractBase {
     
 
     async $constructor (deployer: TSender, implementation_: TAddress): Promise<TxWriter> {
-        throw new Error('Not implemented. Use the ContractDeployer class to deploy the contract');
+        throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
     }
 
     // 0x5c60da1b
@@ -72,7 +73,9 @@ export class UpgradeableBeacon extends ContractBase {
     $call () {
         return super.$call() as IUpgradeableBeaconTxCaller;
     }
-
+    $signed (): TOverrideReturns<IUpgradeableBeaconTxCaller, Promise<{ signed: TEth.Hex, error?: Error & { data?: { type: string, params } } }>> {
+        return super.$signed() as any;
+    }
     $data (): IUpgradeableBeaconTxData {
         return super.$data() as IUpgradeableBeaconTxData;
     }

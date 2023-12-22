@@ -32,7 +32,6 @@ export abstract class GnosisSafeFactory {
         };
 
         const cfg = params.contracts?.[client.platform] ?? config.safe?.contracts[client.platform];
-        console.log(config.safe?.contracts);
         $require.notNull(cfg, `No safe contracts for ${client.platform}`);
 
         const safeContract = new Safe(cfg.SafeL2 ?? cfg.Safe, client);

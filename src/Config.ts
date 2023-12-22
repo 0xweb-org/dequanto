@@ -5,7 +5,7 @@ import { TPlatform } from './models/TPlatform';
 import { $secret } from './utils/$secret';
 import { $cli } from './utils/$cli';
 import { class_Dfr, obj_extend } from 'atma-utils';
-import { Directory } from 'atma-io';
+import { Directory, File } from 'atma-io';
 import { ITokenGlob } from './models/ITokenGlob';
 import { TAddress } from './models/TAddress';
 
@@ -69,9 +69,15 @@ export class Config {
             CreateCall?: TAddress
         }>
     }
+    flashbots?: {
+        [platform in TPlatform]: {
+            url: string
+        }
+    }
 
     @memd.deco.memoize()
     static async fetch (parameters?: {
+        dotenv?: boolean
         pin?: string
         configAccounts?: string
         configGlobal?: string
@@ -89,9 +95,11 @@ export class Config {
         let [
             inCwd,
             inNodeModules,
+            inCwdAsConfig,
         ] = await Promise.all([
-            Directory.existsAsync(`./${dequantoConfigs}`),
-            Directory.existsAsync(`./node_modules/${dequantoConfigs}`),
+            File.existsAsync(`./${dequantoConfigs}dequanto.yml`),
+            File.existsAsync(`./node_modules/${dequantoConfigs}dequanto.yml`),
+            File.existsAsync(`./configs/dequanto.yml`),
         ]);
         let rgx0xwebPath = /[/\\]0xweb[/\\].+$/;
 
@@ -99,6 +107,9 @@ export class Config {
             pfx = './';
         } else if (inNodeModules) {
             pfx = './node_modules/';
+        } else if (inCwdAsConfig) {
+            pfx = '';
+            dequantoConfigs = 'configs/';
         } else if (rgx0xwebPath.test(__filename)) {
             // check the folder where this 0xweb package could be located
             let dir = __filename.replace(rgx0xwebPath, '/0xweb/');
@@ -140,6 +151,9 @@ export class Config {
                 path: 'dequanto.yml',
                 optional: true
             },
+            parameters?.dotenv ? {
+                dotenv: true
+            } : null,
         ]);
 
         obj_extend(config, cfg.toJSON());
@@ -148,7 +162,7 @@ export class Config {
     }
 
     /** Will return a config that was previously loaded by fetch with any parameters or will trigger fetch with default parameters  */
-    static get (): PromiseLike<AppConfig<Config>> {
+    static get (): PromiseLike<AppConfig<Config> & Config> {
         if (singleton != null) {
             return singleton;
         }
@@ -163,4 +177,4 @@ export class Config {
 
 export const config = new Config();
 
-let singleton: class_Dfr<AppConfig<Config>> = null;
+let singleton: class_Dfr<AppConfig<Config> & Config> = null;

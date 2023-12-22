@@ -6,8 +6,8 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $abiParser } from '../utils/$abiParser';
-import { EoAccount, IAccount } from "@dequanto/models/TAccount";
-import { ITxConfig } from '@dequanto/txs/ITxConfig';
+import { EoAccount, IAccount, IAccountTx } from "@dequanto/models/TAccount";
+import { ITxBuilderOptions } from '@dequanto/txs/ITxBuilderOptions';
 import { $logger } from '@dequanto/utils/$logger';
 import { $class } from '@dequanto/utils/$class';
 import { $account } from '@dequanto/utils/$account';
@@ -30,18 +30,25 @@ export class ContractWriter implements IContractWriter {
 
     static SILENT = false;
 
-    protected builderConfig?: ITxConfig;
-    protected writerConfig?: ITxWriterOptions;
-
-
-    constructor(public address: TAddress, public client: Web3Client = di.resolve(EthWeb3Client)) {
+    constructor(
+        public address: TAddress,
+        public client: Web3Client,
+        protected builderConfig?: ITxBuilderOptions,
+        protected writerConfig?: ITxWriterOptions,
+    ) {
 
     }
 
-    $config(builderConfig?: ITxConfig, writerConfig?: ITxWriterOptions): this {
+    $config(builderConfig?: ITxBuilderOptions, writerConfig?: ITxWriterOptions): this {
         return $class.curry(this, {
-            builderConfig: builderConfig ?? this.builderConfig,
-            writerConfig: writerConfig ?? this.writerConfig,
+            builderConfig: {
+                ...(this.builderConfig ?? {}),
+                ...(builderConfig ?? {}),
+            },
+            writerConfig: {
+                ...(this.writerConfig ?? {}),
+                ...(writerConfig ?? {})
+            }
         });
     }
 
@@ -56,12 +63,12 @@ export class ContractWriter implements IContractWriter {
     * @returns {TxWriter}
      */
     async writeAsync<T = any>(
-        account: IAccount & {  value?: number | string | bigint },
+        account: IAccountTx,
         interfaceAbi: string | TAbiItem,
         params: any[],
         configs?: {
             abi?: TAbiItem[]
-            builderConfig?: ITxConfig
+            builderConfig?: ITxBuilderOptions
             writerConfig?: ITxWriterOptions
         }
     ): Promise<TxWriter> {
@@ -84,7 +91,7 @@ export class ContractWriter implements IContractWriter {
             ? $abiParser.parseMethod(interfaceAbi)
             : interfaceAbi;
 
-        let builderConfig: ITxConfig = {
+        let builderConfig: ITxBuilderOptions = {
             ...(this.builderConfig ?? {}),
             ...(configs?.builderConfig ?? {}),
         };
@@ -105,10 +112,10 @@ export class ContractWriter implements IContractWriter {
                     from: builderConfig.from ?? sender.address,
                     type: builderConfig.type ?? null,
                 }),
-                txBuilder.setNonce({
-                    nonce: builderConfig.nonce,
-                    noncePending: builderConfig.noncePending,
-                }),
+                // txBuilder.setNonce({
+                //     nonce: builderConfig.nonce,
+                //     noncePending: builderConfig.noncePending,
+                // }),
             ]);
         }
 

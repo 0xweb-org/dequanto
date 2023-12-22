@@ -9,3 +9,4 @@ hardhat-*.config.js
 del.act.ts
 /.dequanto
 .env
+/dequanto.yml

@@ -35,6 +35,7 @@ UAction.create({
             'metamask',
             'coregeth',
             'eth',
+            'flashbots',
             'overrides'
         ].map(scope => {
             return {
@@ -447,7 +448,7 @@ class Generator {
         return JSON.stringify({ methods, schemas }, null, '    ');
     }
 
-    private writeSchema(schema: ISchema.TSchema, ident = '', location?: 'argument' | 'return') {
+    private writeSchema(schema: ISchema.TSchema, ident = '', location?: 'argument' | 'return'): string {
         if ('$ref' in schema) {
             let str = schema.$ref;
             let type = /(schemas|contentDescriptors)\/(?<type>\w+)(\/|$)/.exec(str)?.groups.type;
@@ -481,7 +482,12 @@ class Generator {
             if (schema.items == null) {
                 return `any[]`;
             }
-            return `${this.writeSchema(schema.items, ident + '    ')}[]`
+            let itemSchema = this.writeSchema(schema.items, ident + '    ');
+            if (itemSchema.match(/[|&]/)) {
+                // wrap multiple types with parenthesis
+                itemSchema = `(${itemSchema})`;
+            }
+            return `${itemSchema}[]`
         }
         if (schema.type === 'object') {
             let props = schema.properties;

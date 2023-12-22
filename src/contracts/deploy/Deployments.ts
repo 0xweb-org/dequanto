@@ -12,7 +12,7 @@ import { Constructor } from 'atma-utils';
 
 import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
 import { ContractVerifier } from '@dequanto/explorer/ContractVerifier';
-import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client';
+import { HardhatWeb3Client } from '@dequanto/hardhat/HardhatWeb3Client';
 import { LoggerService } from '@dequanto/loggers/LoggerService';
 import { $is } from '@dequanto/utils/$is';
 

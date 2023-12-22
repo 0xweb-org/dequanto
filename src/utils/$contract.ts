@@ -22,8 +22,8 @@ import { $hex } from './$hex';
 export namespace $contract {
 
     export function keccak256(str: string | TBufferLike, output: 'buffer'): Uint8Array
-    export function keccak256(str: string | TBufferLike): TEth.Hex
-    export function keccak256(str: string | TBufferLike, output?: 'buffer'): Uint8Array | TEth.Hex {
+    export function keccak256(str: string | TBufferLike, output?: 'hex'): TEth.Hex
+    export function keccak256(str: string | TBufferLike, output?: 'buffer' | 'hex'): Uint8Array | TEth.Hex {
         if (str == null || str === '0x') {
             return `0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470`;
         }

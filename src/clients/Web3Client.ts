@@ -47,7 +47,7 @@ export abstract class Web3Client implements IWeb3Client {
         block?: number;
     }
 
-    defaultTxType: 1 | 2 = 2;
+    defaultTxType: 0 | 1 | 2 = 2;
 
     async sign(txData: TEth.TxLike, privateKey: TEth.Hex): Promise<string> {
         let rpc = await this.getRpc();
@@ -75,7 +75,10 @@ export abstract class Web3Client implements IWeb3Client {
             throw new Error(`Neither Node endpoints nor web3 instance provided`);
         }
         this.pool = new ClientPool(this.options);
-        this.debug = new ClientDebugMethods(this, this.options.debug)
+        this.debug = new ClientDebugMethods(this, this.options.debug);
+        if (this.options.defaultTxType != null) {
+            this.defaultTxType = this.options.defaultTxType;
+        }
     }
 
     async request<TResult = any>(req: TRpc.IRpcAction): Promise<TResult> {

@@ -5,23 +5,24 @@ import type { Web3Client } from '@dequanto/clients/Web3Client';
 import type { TAddress } from '@dequanto/models/TAddress';
 import { $account } from '@dequanto/utils/$account';
 import { $bigint } from '@dequanto/utils/$bigint';
-import { ITxConfig } from './ITxConfig';
+import { ITxBuilderNonceOptions, ITxBuilderOptions } from './ITxBuilderOptions';
 import { $number } from '@dequanto/utils/$number';
 import { TEth } from '@dequanto/models/TEth';
 import { $sig } from '@dequanto/utils/$sig';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $hex } from '@dequanto/utils/$hex';
 import { $contract } from '@dequanto/utils/$contract';
+import { TxNonceManager } from './TxNonceManager';
 
 export class TxDataBuilder {
-    protected static nonce: number = -1
+
     public abi: TAbiItem[] = null;
 
     constructor(
         public client: Web3Client,
         public account: { address?: TAddress },
         public data: TEth.TxLike,
-        public config: ITxConfig = null,
+        public config: ITxBuilderOptions = null,
     ) {
         this.data ??= {};
         this.data.value = this.data.value ?? 0;
@@ -54,32 +55,40 @@ export class TxDataBuilder {
         return this;
     }
 
-    setConfig (config: ITxConfig): this {
+    setConfig (config: ITxBuilderOptions): this {
         this.config = config;
         return this;
     }
 
-    async ensureNonce () {
-        if (this.data.nonce == null) {
-            await this.setNonce();
+    async ensureNonce (options?: ITxBuilderNonceOptions) {
+        if (this.data.nonce != null) {
+            // was already set
+            return;
         }
+        await this.setNonce(options);
     }
 
-    async setNonce(opts?: {
-        // sets the nonce of the first tx in pending state
-        overriding?: boolean
-        // set the nonce of the N-th tx in pending state
-        noncePending?: number
-        // custom nonce value
-        nonce?: number | bigint
-    }) {
+    async setNonce(local?: ITxBuilderNonceOptions) {
+
+        let opts = {
+            ...(this.config ?? {}),
+            ...(local ?? {})
+        };
+
         let nonce: bigint;
-        if (opts?.nonce != null) {
-            nonce = BigInt(opts.nonce)
-        } else if (opts?.overriding) {
+        if (opts.nonce != null) {
+            if (typeof opts.nonce === 'number' || typeof opts.nonce === 'bigint') {
+                nonce = BigInt(opts.nonce)
+            } else if (opts.nonce instanceof TxNonceManager) {
+                nonce = await opts.nonce.pickNonce(this.client);
+            } else {
+                console.error(opts.nonce);
+                throw new Error(`Invalid nonce ${typeof opts.nonce}`);
+            }
+        } else if (opts.overriding) {
             nonce = await this.client.getTransactionCount(this.account.address);
             // override first pending TX:
-        } else if (opts?.noncePending != null) {
+        } else if (opts.noncePending != null) {
             let pendingIndex = BigInt(opts.noncePending) - 1n;
             let submitted = await this.client.getTransactionCount(this.account.address);
             let next = pendingIndex;
@@ -92,7 +101,8 @@ export class TxDataBuilder {
             }
             nonce = submitted + next;
         } else {
-            nonce = await this.client.getTransactionCount(this.account.address, 'pending');
+            nonce = await TxNonceManager.loadNonce(this.client, this.account.address);
+
         }
         this.data.nonce = Number(nonce);
     }
@@ -119,7 +129,7 @@ export class TxDataBuilder {
         gasLimit?: string | number
         gasEstimation?: boolean
         from?: TAddress
-        type?: 1 | 2
+        type?: 0 | 1 | 2
 
     } = {}): Promise<this> {
 
@@ -143,10 +153,10 @@ export class TxDataBuilder {
 
         type ??= this.client.defaultTxType;
 
-        if (type === 1) {
+        if (type === 0 || type === 1) {
             let $baseFee = $bigint.multWithFloat(gasPrice.price, $priceRatio);
             this.data.gasPrice = $bigint.toHex($baseFee);
-            this.data.type = 1;
+            this.data.type = type;
         } else {
             let $baseFee = $bigint.multWithFloat(gasPrice.base ?? gasPrice.price, $priceRatio);
             let $priorityFee = gasPrice.priority ?? 10n**9n;
@@ -204,8 +214,9 @@ export class TxDataBuilder {
     }
 
 
-    /** Returns base64 string of the Tx Data */
+    /** Returns raw signed transaction  */
     async signToString(privateKey: TEth.EoAccount['key']): Promise<TEth.Hex> {
+
         let address = await $sig.$account.getAddressFromKey(privateKey);
         let rpc = await this.client.getRpc();
         let txSig = await $sig.signTx(this.data, { address, key: privateKey }, rpc);
@@ -255,7 +266,7 @@ export class TxDataBuilder {
     }
 
     static fromJSON (client: Web3Client, account: TAccount, json: {
-        config: ITxConfig,
+        config: ITxBuilderOptions,
         tx: TEth.TxLike,
     }) {
 

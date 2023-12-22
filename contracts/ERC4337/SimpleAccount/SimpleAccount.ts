@@ -1,13 +1,14 @@
 /**
- *  AUTO-Generated Class: 2023-11-05 00:40
- *  Implementation: test/fixtures/erc4337/samples/VerifyingPaymaster.sol
+ *  AUTO-Generated Class: 2023-12-22 01:26
+ *  Implementation: ./test/fixtures/erc4337/samples/SimpleAccount.sol
  */
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
+import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBaseUtils } from '@dequanto/contracts/utils/ContractBaseUtils';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
@@ -38,35 +39,15 @@ export class SimpleAccount extends ContractBase {
         this.storage = new SimpleAccountStorageReader(this.address, this.client, this.explorer);
     }
 
-    $meta = { artifact: 'artifacts/./test/fixtures/erc4337/samples/SimpleAccount.sol/SimpleAccount.json' }
+    
 
-    async $constructor (deployer: TSender, anEntryPoint: TAddress): Promise<TxWriter> {
-        throw new Error('Not implemented. Use the ContractDeployer class to deploy the contract');
-    }
-
-    // 0x4a58db19
-    async addDeposit (sender: TSender, ): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'addDeposit'), sender);
-    }
-
-    // 0xb0d691fe
-    async entryPoint (): Promise<TAddress> {
-        return this.$read(this.$getAbiItem('function', 'entryPoint'));
-    }
-
-    // 0xb61d27f6
-    async execute (sender: TSender, dest: TAddress, value: bigint, func: TBufferLike): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'execute'), sender, dest, value, func);
-    }
-
-    // 0x18dfb3c7
-    async executeBatch (sender: TSender, dest: TAddress[], func: TBufferLike[]): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'executeBatch'), sender, dest, func);
-    }
-
-    // 0xc399ec88
-    async getDeposit (): Promise<bigint> {
-        return this.$read(this.$getAbiItem('function', 'getDeposit'));
+    // 0x3a871cdd
+    async validateUserOp (sender: TSender, userOp: { sender: TAddress, nonce: bigint, initCode: TBufferLike, callData: TBufferLike, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TBufferLike, signature: TBufferLike }, userOpHash: TBufferLike, missingAccountFunds: bigint): Promise<TxWriter>
+    // 0x3a871cdd
+    async validateUserOp (sender: TSender, userOp: { sender: TAddress, nonce: bigint, initCode: TBufferLike, callData: TBufferLike, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TBufferLike, signature: TBufferLike }, userOpHash: TBufferLike, missingAccountFunds: bigint): Promise<TxWriter>
+    async validateUserOp (sender: TSender, ...args): Promise<TxWriter> {
+        let abi = this.$getAbiItemOverload([ 'function validateUserOp(tuple, bytes32, uint256) returns uint256', 'function validateUserOp(tuple, bytes32, uint256) returns uint256' ], args);
+        return this.$write(abi, sender, ...args);
     }
 
     // 0xd087d288
@@ -74,44 +55,67 @@ export class SimpleAccount extends ContractBase {
         return this.$read(this.$getAbiItem('function', 'getNonce'));
     }
 
-    // 0xc4d66de8
-    async initialize (sender: TSender, anOwner: TAddress): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'initialize'), sender, anOwner);
-    }
-
-    // 0xbc197c81
-    async onERC1155BatchReceived (input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TBufferLike): Promise<TBufferLike> {
-        return this.$read(this.$getAbiItem('function', 'onERC1155BatchReceived'), input0, input1, input2, input3, input4);
-    }
-
-    // 0xf23a6e61
-    async onERC1155Received (input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TBufferLike): Promise<TBufferLike> {
-        return this.$read(this.$getAbiItem('function', 'onERC1155Received'), input0, input1, input2, input3, input4);
-    }
-
-    // 0x150b7a02
-    async onERC721Received (input0: TAddress, input1: TAddress, input2: bigint, input3: TBufferLike): Promise<TBufferLike> {
-        return this.$read(this.$getAbiItem('function', 'onERC721Received'), input0, input1, input2, input3);
-    }
-
-    // 0x8da5cb5b
-    async owner (): Promise<TAddress> {
-        return this.$read(this.$getAbiItem('function', 'owner'));
-    }
-
-    // 0x52d1902d
-    async proxiableUUID (): Promise<TBufferLike> {
-        return this.$read(this.$getAbiItem('function', 'proxiableUUID'));
-    }
-
-    // 0x01ffc9a7
-    async supportsInterface (interfaceId: TBufferLike): Promise<boolean> {
-        return this.$read(this.$getAbiItem('function', 'supportsInterface'), interfaceId);
+    // 0xb0d691fe
+    async entryPoint (): Promise<TAddress>
+    // 0xb0d691fe
+    async entryPoint (): Promise<TAddress>
+    async entryPoint (...args): Promise<TAddress> {
+        let abi = this.$getAbiItemOverload([ 'function entryPoint() returns address', 'function entryPoint() returns address' ], args);
+        return this.$read(abi, ...args);
     }
 
     // 0x0023de29
-    async tokensReceived (input0: TAddress, input1: TAddress, input2: TAddress, input3: bigint, input4: TBufferLike, input5: TBufferLike): Promise<bigint> {
-        return this.$read(this.$getAbiItem('function', 'tokensReceived'), input0, input1, input2, input3, input4, input5);
+    async tokensReceived (sender: TSender, operator: TAddress, from: TAddress, to: TAddress, amount: bigint, userData: TBufferLike, operatorData: TBufferLike): Promise<TxWriter>
+    // 0x0023de29
+    async tokensReceived (sender: TSender, input0: TAddress, input1: TAddress, input2: TAddress, input3: bigint, input4: TBufferLike, input5: TBufferLike): Promise<TxWriter>
+    async tokensReceived (sender: TSender, ...args): Promise<TxWriter> {
+        let abi = this.$getAbiItemOverload([ 'function tokensReceived(address, address, address, uint256, bytes, bytes)', 'function tokensReceived(address, address, address, uint256, bytes, bytes)' ], args);
+        return this.$write(abi, sender, ...args);
+    }
+
+    // 0x150b7a02
+    async onERC721Received (sender: TSender, operator: TAddress, from: TAddress, tokenId: bigint, data: TBufferLike): Promise<TxWriter>
+    // 0x150b7a02
+    async onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TBufferLike): Promise<TxWriter>
+    async onERC721Received (sender: TSender, ...args): Promise<TxWriter> {
+        let abi = this.$getAbiItemOverload([ 'function onERC721Received(address, address, uint256, bytes) returns bytes4', 'function onERC721Received(address, address, uint256, bytes) returns bytes4' ], args);
+        return this.$write(abi, sender, ...args);
+    }
+
+    // 0x01ffc9a7
+    async supportsInterface (interfaceId: TBufferLike): Promise<boolean>
+    // 0x01ffc9a7
+    async supportsInterface (interfaceId: TBufferLike): Promise<boolean>
+    async supportsInterface (...args): Promise<boolean> {
+        let abi = this.$getAbiItemOverload([ 'function supportsInterface(bytes4) returns bool', 'function supportsInterface(bytes4) returns bool' ], args);
+        return this.$read(abi, ...args);
+    }
+
+    // 0xf23a6e61
+    async onERC1155Received (sender: TSender, operator: TAddress, from: TAddress, id: bigint, value: bigint, data: TBufferLike): Promise<TxWriter>
+    // 0xf23a6e61
+    async onERC1155Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TBufferLike): Promise<TxWriter>
+    async onERC1155Received (sender: TSender, ...args): Promise<TxWriter> {
+        let abi = this.$getAbiItemOverload([ 'function onERC1155Received(address, address, uint256, uint256, bytes) returns bytes4', 'function onERC1155Received(address, address, uint256, uint256, bytes) returns bytes4' ], args);
+        return this.$write(abi, sender, ...args);
+    }
+
+    // 0xbc197c81
+    async onERC1155BatchReceived (sender: TSender, operator: TAddress, from: TAddress, ids: bigint[], values: bigint[], data: TBufferLike): Promise<TxWriter>
+    // 0xbc197c81
+    async onERC1155BatchReceived (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TBufferLike): Promise<TxWriter>
+    async onERC1155BatchReceived (sender: TSender, ...args): Promise<TxWriter> {
+        let abi = this.$getAbiItemOverload([ 'function onERC1155BatchReceived(address, address, uint256[], uint256[], bytes) returns bytes4', 'function onERC1155BatchReceived(address, address, uint256[], uint256[], bytes) returns bytes4' ], args);
+        return this.$write(abi, sender, ...args);
+    }
+
+    // 0x52d1902d
+    async proxiableUUID (): Promise<TBufferLike>
+    // 0x52d1902d
+    async proxiableUUID (): Promise<TBufferLike>
+    async proxiableUUID (...args): Promise<TBufferLike> {
+        let abi = this.$getAbiItemOverload([ 'function proxiableUUID() returns bytes32', 'function proxiableUUID() returns bytes32' ], args);
+        return this.$read(abi, ...args);
     }
 
     // 0x3659cfe6
@@ -124,9 +128,29 @@ export class SimpleAccount extends ContractBase {
         return this.$write(this.$getAbiItem('function', 'upgradeToAndCall'), sender, newImplementation, data);
     }
 
-    // 0x3a871cdd
-    async validateUserOp (sender: TSender, userOp: { sender: TAddress, nonce: bigint, initCode: TBufferLike, callData: TBufferLike, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TBufferLike, signature: TBufferLike }, userOpHash: TBufferLike, missingAccountFunds: bigint): Promise<TxWriter> {
-        return this.$write(this.$getAbiItem('function', 'validateUserOp'), sender, userOp, userOpHash, missingAccountFunds);
+    // 0xb61d27f6
+    async execute (sender: TSender, dest: TAddress, value: bigint, func: TBufferLike): Promise<TxWriter> {
+        return this.$write(this.$getAbiItem('function', 'execute'), sender, dest, value, func);
+    }
+
+    // 0x18dfb3c7
+    async executeBatch (sender: TSender, dest: TAddress[], func: TBufferLike[]): Promise<TxWriter> {
+        return this.$write(this.$getAbiItem('function', 'executeBatch'), sender, dest, func);
+    }
+
+    // 0xc4d66de8
+    async initialize (sender: TSender, anOwner: TAddress): Promise<TxWriter> {
+        return this.$write(this.$getAbiItem('function', 'initialize'), sender, anOwner);
+    }
+
+    // 0xc399ec88
+    async getDeposit (): Promise<bigint> {
+        return this.$read(this.$getAbiItem('function', 'getDeposit'));
+    }
+
+    // 0x4a58db19
+    async addDeposit (sender: TSender, ): Promise<TxWriter> {
+        return this.$write(this.$getAbiItem('function', 'addDeposit'), sender);
     }
 
     // 0x4d44560d
@@ -134,10 +158,17 @@ export class SimpleAccount extends ContractBase {
         return this.$write(this.$getAbiItem('function', 'withdrawDepositTo'), sender, withdrawAddress, amount);
     }
 
+    // 0x8da5cb5b
+    async owner (): Promise<TAddress> {
+        return this.$read(this.$getAbiItem('function', 'owner'));
+    }
+
     $call () {
         return super.$call() as ISimpleAccountTxCaller;
     }
-
+    $signed (): TOverrideReturns<ISimpleAccountTxCaller, Promise<{ signed: TEth.Hex, error?: Error & { data?: { type: string, params } } }>> {
+        return super.$signed() as any;
+    }
     $data (): ISimpleAccountTxData {
         return super.$data() as ISimpleAccountTxData;
     }
@@ -160,6 +191,10 @@ export class SimpleAccount extends ContractBase {
         return this.$onLog(event, cb);
     }
 
+    onUpgraded (fn?: (event: TClientEventsStreamData<TLogUpgradedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogUpgradedParameters>> {
+        return this.$onLog('Upgraded', fn);
+    }
+
     onAdminChanged (fn?: (event: TClientEventsStreamData<TLogAdminChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogAdminChangedParameters>> {
         return this.$onLog('AdminChanged', fn);
     }
@@ -176,8 +211,9 @@ export class SimpleAccount extends ContractBase {
         return this.$onLog('SimpleAccountInitialized', fn);
     }
 
-    onUpgraded (fn?: (event: TClientEventsStreamData<TLogUpgradedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogUpgradedParameters>> {
-        return this.$onLog('Upgraded', fn);
+    extractLogsUpgraded (tx: TEth.TxReceipt): ITxLogItem<TLogUpgraded>[] {
+        let abi = this.$getAbiItem('event', 'Upgraded');
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogUpgraded>[];
     }
 
     extractLogsAdminChanged (tx: TEth.TxReceipt): ITxLogItem<TLogAdminChanged>[] {
@@ -200,9 +236,12 @@ export class SimpleAccount extends ContractBase {
         return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogSimpleAccountInitialized>[];
     }
 
-    extractLogsUpgraded (tx: TEth.TxReceipt): ITxLogItem<TLogUpgraded>[] {
-        let abi = this.$getAbiItem('event', 'Upgraded');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogUpgraded>[];
+    async getPastLogsUpgraded (options?: {
+        fromBlock?: number | Date
+        toBlock?: number | Date
+        params?: { implementation?: TAddress }
+    }): Promise<ITxLogItem<TLogUpgraded>[]> {
+        return await this.$getPastLogsParsed('Upgraded', options) as any;
     }
 
     async getPastLogsAdminChanged (options?: {
@@ -237,15 +276,7 @@ export class SimpleAccount extends ContractBase {
         return await this.$getPastLogsParsed('SimpleAccountInitialized', options) as any;
     }
 
-    async getPastLogsUpgraded (options?: {
-        fromBlock?: number | Date
-        toBlock?: number | Date
-        params?: { implementation?: TAddress }
-    }): Promise<ITxLogItem<TLogUpgraded>[]> {
-        return await this.$getPastLogsParsed('Upgraded', options) as any;
-    }
-
-    abi: TAbiItem[] = [{"inputs":[{"internalType":"contract IEntryPoint","name":"anEntryPoint","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"previousAdmin","type":"address"},{"indexed":false,"internalType":"address","name":"newAdmin","type":"address"}],"name":"AdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"beacon","type":"address"}],"name":"BeaconUpgraded","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint8","name":"version","type":"uint8"}],"name":"Initialized","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"contract IEntryPoint","name":"entryPoint","type":"address"},{"indexed":true,"internalType":"address","name":"owner","type":"address"}],"name":"SimpleAccountInitialized","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"implementation","type":"address"}],"name":"Upgraded","type":"event"},{"inputs":[],"name":"addDeposit","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"entryPoint","outputs":[{"internalType":"contract IEntryPoint","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"dest","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"bytes","name":"func","type":"bytes"}],"name":"execute","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"dest","type":"address[]"},{"internalType":"bytes[]","name":"func","type":"bytes[]"}],"name":"executeBatch","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"getDeposit","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getNonce","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"anOwner","type":"address"}],"name":"initialize","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256[]","name":"","type":"uint256[]"},{"internalType":"uint256[]","name":"","type":"uint256[]"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC1155BatchReceived","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC1155Received","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"onERC721Received","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"pure","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"proxiableUUID","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"},{"internalType":"bytes","name":"","type":"bytes"}],"name":"tokensReceived","outputs":[],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"newImplementation","type":"address"}],"name":"upgradeTo","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newImplementation","type":"address"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"upgradeToAndCall","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"components":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"uint256","name":"nonce","type":"uint256"},{"internalType":"bytes","name":"initCode","type":"bytes"},{"internalType":"bytes","name":"callData","type":"bytes"},{"internalType":"uint256","name":"callGasLimit","type":"uint256"},{"internalType":"uint256","name":"verificationGasLimit","type":"uint256"},{"internalType":"uint256","name":"preVerificationGas","type":"uint256"},{"internalType":"uint256","name":"maxFeePerGas","type":"uint256"},{"internalType":"uint256","name":"maxPriorityFeePerGas","type":"uint256"},{"internalType":"bytes","name":"paymasterAndData","type":"bytes"},{"internalType":"bytes","name":"signature","type":"bytes"}],"internalType":"struct UserOperation","name":"userOp","type":"tuple"},{"internalType":"bytes32","name":"userOpHash","type":"bytes32"},{"internalType":"uint256","name":"missingAccountFunds","type":"uint256"}],"name":"validateUserOp","outputs":[{"internalType":"uint256","name":"validationData","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address payable","name":"withdrawAddress","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"withdrawDepositTo","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}]
+    abi: TAbiItem[] = [{"type":"function","name":"validateUserOp","inputs":[{"name":"userOp","type":"tuple","components":[{"name":"sender","type":"address"},{"name":"nonce","type":"uint256"},{"name":"initCode","type":"bytes"},{"name":"callData","type":"bytes"},{"name":"callGasLimit","type":"uint256"},{"name":"verificationGasLimit","type":"uint256"},{"name":"preVerificationGas","type":"uint256"},{"name":"maxFeePerGas","type":"uint256"},{"name":"maxPriorityFeePerGas","type":"uint256"},{"name":"paymasterAndData","type":"bytes"},{"name":"signature","type":"bytes"}]},{"name":"userOpHash","type":"bytes32"},{"name":"missingAccountFunds","type":"uint256"}],"outputs":[{"name":"validationData","type":"uint256"}],"stateMutability":"nonpayable"},{"type":"function","name":"getNonce","inputs":[],"outputs":[{"type":"uint256"}],"stateMutability":"view"},{"type":"function","name":"entryPoint","inputs":[],"outputs":[{"type":"address"}],"stateMutability":"view"},{"type":"function","name":"validateUserOp","inputs":[{"name":"userOp","type":"tuple","components":[{"name":"sender","type":"address"},{"name":"nonce","type":"uint256"},{"name":"initCode","type":"bytes"},{"name":"callData","type":"bytes"},{"name":"callGasLimit","type":"uint256"},{"name":"verificationGasLimit","type":"uint256"},{"name":"preVerificationGas","type":"uint256"},{"name":"maxFeePerGas","type":"uint256"},{"name":"maxPriorityFeePerGas","type":"uint256"},{"name":"paymasterAndData","type":"bytes"},{"name":"signature","type":"bytes"}]},{"name":"userOpHash","type":"bytes32"},{"name":"missingAccountFunds","type":"uint256"}],"outputs":[{"name":"validationData","type":"uint256"}],"stateMutability":"nonpayable"},{"type":"function","name":"tokensReceived","inputs":[{"name":"operator","type":"address"},{"name":"from","type":"address"},{"name":"to","type":"address"},{"name":"amount","type":"uint256"},{"name":"userData","type":"bytes"},{"name":"operatorData","type":"bytes"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"onERC721Received","inputs":[{"name":"operator","type":"address"},{"name":"from","type":"address"},{"name":"tokenId","type":"uint256"},{"name":"data","type":"bytes"}],"outputs":[{"type":"bytes4"}],"stateMutability":"nonpayable"},{"type":"function","name":"supportsInterface","inputs":[{"name":"interfaceId","type":"bytes4"}],"outputs":[{"type":"bool"}],"stateMutability":"view"},{"type":"function","name":"onERC1155Received","inputs":[{"name":"operator","type":"address"},{"name":"from","type":"address"},{"name":"id","type":"uint256"},{"name":"value","type":"uint256"},{"name":"data","type":"bytes"}],"outputs":[{"type":"bytes4"}],"stateMutability":"nonpayable"},{"type":"function","name":"onERC1155BatchReceived","inputs":[{"name":"operator","type":"address"},{"name":"from","type":"address"},{"name":"ids","type":"uint256[]"},{"name":"values","type":"uint256[]"},{"name":"data","type":"bytes"}],"outputs":[{"type":"bytes4"}],"stateMutability":"nonpayable"},{"type":"function","name":"tokensReceived","inputs":[{"name":null,"type":"address"},{"name":null,"type":"address"},{"name":null,"type":"address"},{"name":null,"type":"uint256"},{"name":null,"type":"bytes"},{"name":null,"type":"bytes"}],"outputs":[],"stateMutability":"pure"},{"type":"function","name":"onERC721Received","inputs":[{"name":null,"type":"address"},{"name":null,"type":"address"},{"name":null,"type":"uint256"},{"name":null,"type":"bytes"}],"outputs":[{"type":"bytes4"}],"stateMutability":"pure"},{"type":"function","name":"onERC1155Received","inputs":[{"name":null,"type":"address"},{"name":null,"type":"address"},{"name":null,"type":"uint256"},{"name":null,"type":"uint256"},{"name":null,"type":"bytes"}],"outputs":[{"type":"bytes4"}],"stateMutability":"pure"},{"type":"function","name":"onERC1155BatchReceived","inputs":[{"name":null,"type":"address"},{"name":null,"type":"address"},{"name":null,"type":"uint256[]"},{"name":null,"type":"uint256[]"},{"name":null,"type":"bytes"}],"outputs":[{"type":"bytes4"}],"stateMutability":"pure"},{"type":"function","name":"supportsInterface","inputs":[{"name":"interfaceId","type":"bytes4"}],"outputs":[{"type":"bool"}],"stateMutability":"view"},{"type":"function","name":"proxiableUUID","inputs":[],"outputs":[{"type":"bytes32"}],"stateMutability":"view"},{"type":"event","name":"Upgraded","inputs":[{"name":"implementation","type":"address","indexed":true}]},{"type":"event","name":"AdminChanged","inputs":[{"name":"previousAdmin","type":"address","indexed":false},{"name":"newAdmin","type":"address","indexed":false}]},{"type":"event","name":"BeaconUpgraded","inputs":[{"name":"beacon","type":"address","indexed":true}]},{"type":"function","name":"proxiableUUID","inputs":[],"outputs":[{"type":"bytes32"}],"stateMutability":"view"},{"type":"function","name":"upgradeTo","inputs":[{"name":"newImplementation","type":"address"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"upgradeToAndCall","inputs":[{"name":"newImplementation","type":"address"},{"name":"data","type":"bytes"}],"outputs":[],"stateMutability":"payable"},{"type":"event","name":"Initialized","inputs":[{"name":"version","type":"uint8","indexed":false}]},{"type":"function","name":"entryPoint","inputs":[],"outputs":[{"type":"address"}],"stateMutability":"view"},{"type":"receive","inputs":[],"outputs":[],"stateMutability":"payable"},{"type":"function","name":"execute","inputs":[{"name":"dest","type":"address"},{"name":"value","type":"uint256"},{"name":"func","type":"bytes"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"executeBatch","inputs":[{"name":"dest","type":"address[]"},{"name":"func","type":"bytes[]"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"initialize","inputs":[{"name":"anOwner","type":"address"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"getDeposit","inputs":[],"outputs":[{"type":"uint256"}],"stateMutability":"view"},{"type":"function","name":"addDeposit","inputs":[],"outputs":[],"stateMutability":"payable"},{"type":"function","name":"withdrawDepositTo","inputs":[{"name":"withdrawAddress","type":"address"},{"name":"amount","type":"uint256"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"owner","inputs":[],"outputs":[{"name":"owner","type":"address"}],"stateMutability":"view"},{"type":"event","name":"SimpleAccountInitialized","inputs":[{"name":"entryPoint","type":"address","indexed":true},{"name":"owner","type":"address","indexed":true}]}]
 
     storage: SimpleAccountStorageReader
 }
@@ -254,6 +285,10 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
+    type TLogUpgraded = {
+        implementation: TAddress
+    };
+    type TLogUpgradedParameters = [ implementation: TAddress ];
     type TLogAdminChanged = {
         previousAdmin: TAddress, newAdmin: TAddress
     };
@@ -270,45 +305,21 @@ type TSender = TAccount & {
         entryPoint: TAddress, owner: TAddress
     };
     type TLogSimpleAccountInitializedParameters = [ entryPoint: TAddress, owner: TAddress ];
-    type TLogUpgraded = {
-        implementation: TAddress
-    };
-    type TLogUpgradedParameters = [ implementation: TAddress ];
 
 interface IEvents {
+  Upgraded: TLogUpgradedParameters
   AdminChanged: TLogAdminChangedParameters
   BeaconUpgraded: TLogBeaconUpgradedParameters
   Initialized: TLogInitializedParameters
   SimpleAccountInitialized: TLogSimpleAccountInitializedParameters
-  Upgraded: TLogUpgradedParameters
   '*': any[] 
 }
 
 
 
-interface IMethodAddDeposit {
-  method: "addDeposit"
-  arguments: [  ]
-}
-
-interface IMethodEntryPoint {
-  method: "entryPoint"
-  arguments: [  ]
-}
-
-interface IMethodExecute {
-  method: "execute"
-  arguments: [ dest: TAddress, value: bigint, func: TBufferLike ]
-}
-
-interface IMethodExecuteBatch {
-  method: "executeBatch"
-  arguments: [ dest: TAddress[], func: TBufferLike[] ]
-}
-
-interface IMethodGetDeposit {
-  method: "getDeposit"
-  arguments: [  ]
+interface IMethodValidateUserOp {
+  method: "validateUserOp"
+  arguments: [ userOp: { sender: TAddress, nonce: bigint, initCode: TBufferLike, callData: TBufferLike, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TBufferLike, signature: TBufferLike }, userOpHash: TBufferLike, missingAccountFunds: bigint ] | [ userOp: { sender: TAddress, nonce: bigint, initCode: TBufferLike, callData: TBufferLike, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TBufferLike, signature: TBufferLike }, userOpHash: TBufferLike, missingAccountFunds: bigint ]
 }
 
 interface IMethodGetNonce {
@@ -316,44 +327,39 @@ interface IMethodGetNonce {
   arguments: [  ]
 }
 
-interface IMethodInitialize {
-  method: "initialize"
-  arguments: [ anOwner: TAddress ]
-}
-
-interface IMethodOnERC1155BatchReceived {
-  method: "onERC1155BatchReceived"
-  arguments: [ input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TBufferLike ]
-}
-
-interface IMethodOnERC1155Received {
-  method: "onERC1155Received"
-  arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TBufferLike ]
-}
-
-interface IMethodOnERC721Received {
-  method: "onERC721Received"
-  arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: TBufferLike ]
-}
-
-interface IMethodOwner {
-  method: "owner"
-  arguments: [  ]
-}
-
-interface IMethodProxiableUUID {
-  method: "proxiableUUID"
-  arguments: [  ]
-}
-
-interface IMethodSupportsInterface {
-  method: "supportsInterface"
-  arguments: [ interfaceId: TBufferLike ]
+interface IMethodEntryPoint {
+  method: "entryPoint"
+  arguments: [  ] | [  ]
 }
 
 interface IMethodTokensReceived {
   method: "tokensReceived"
-  arguments: [ input0: TAddress, input1: TAddress, input2: TAddress, input3: bigint, input4: TBufferLike, input5: TBufferLike ]
+  arguments: [ operator: TAddress, from: TAddress, to: TAddress, amount: bigint, userData: TBufferLike, operatorData: TBufferLike ] | [ input0: TAddress, input1: TAddress, input2: TAddress, input3: bigint, input4: TBufferLike, input5: TBufferLike ]
+}
+
+interface IMethodOnERC721Received {
+  method: "onERC721Received"
+  arguments: [ operator: TAddress, from: TAddress, tokenId: bigint, data: TBufferLike ] | [ input0: TAddress, input1: TAddress, input2: bigint, input3: TBufferLike ]
+}
+
+interface IMethodSupportsInterface {
+  method: "supportsInterface"
+  arguments: [ interfaceId: TBufferLike ] | [ interfaceId: TBufferLike ]
+}
+
+interface IMethodOnERC1155Received {
+  method: "onERC1155Received"
+  arguments: [ operator: TAddress, from: TAddress, id: bigint, value: bigint, data: TBufferLike ] | [ input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TBufferLike ]
+}
+
+interface IMethodOnERC1155BatchReceived {
+  method: "onERC1155BatchReceived"
+  arguments: [ operator: TAddress, from: TAddress, ids: bigint[], values: bigint[], data: TBufferLike ] | [ input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TBufferLike ]
+}
+
+interface IMethodProxiableUUID {
+  method: "proxiableUUID"
+  arguments: [  ] | [  ]
 }
 
 interface IMethodUpgradeTo {
@@ -366,9 +372,29 @@ interface IMethodUpgradeToAndCall {
   arguments: [ newImplementation: TAddress, data: TBufferLike ]
 }
 
-interface IMethodValidateUserOp {
-  method: "validateUserOp"
-  arguments: [ userOp: { sender: TAddress, nonce: bigint, initCode: TBufferLike, callData: TBufferLike, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TBufferLike, signature: TBufferLike }, userOpHash: TBufferLike, missingAccountFunds: bigint ]
+interface IMethodExecute {
+  method: "execute"
+  arguments: [ dest: TAddress, value: bigint, func: TBufferLike ]
+}
+
+interface IMethodExecuteBatch {
+  method: "executeBatch"
+  arguments: [ dest: TAddress[], func: TBufferLike[] ]
+}
+
+interface IMethodInitialize {
+  method: "initialize"
+  arguments: [ anOwner: TAddress ]
+}
+
+interface IMethodGetDeposit {
+  method: "getDeposit"
+  arguments: [  ]
+}
+
+interface IMethodAddDeposit {
+  method: "addDeposit"
+  arguments: [  ]
 }
 
 interface IMethodWithdrawDepositTo {
@@ -376,25 +402,30 @@ interface IMethodWithdrawDepositTo {
   arguments: [ withdrawAddress: TAddress, amount: bigint ]
 }
 
+interface IMethodOwner {
+  method: "owner"
+  arguments: [  ]
+}
+
 interface IMethods {
-  addDeposit: IMethodAddDeposit
-  entryPoint: IMethodEntryPoint
-  execute: IMethodExecute
-  executeBatch: IMethodExecuteBatch
-  getDeposit: IMethodGetDeposit
+  validateUserOp: IMethodValidateUserOp
   getNonce: IMethodGetNonce
-  initialize: IMethodInitialize
-  onERC1155BatchReceived: IMethodOnERC1155BatchReceived
-  onERC1155Received: IMethodOnERC1155Received
-  onERC721Received: IMethodOnERC721Received
-  owner: IMethodOwner
-  proxiableUUID: IMethodProxiableUUID
-  supportsInterface: IMethodSupportsInterface
+  entryPoint: IMethodEntryPoint
   tokensReceived: IMethodTokensReceived
+  onERC721Received: IMethodOnERC721Received
+  supportsInterface: IMethodSupportsInterface
+  onERC1155Received: IMethodOnERC1155Received
+  onERC1155BatchReceived: IMethodOnERC1155BatchReceived
+  proxiableUUID: IMethodProxiableUUID
   upgradeTo: IMethodUpgradeTo
   upgradeToAndCall: IMethodUpgradeToAndCall
-  validateUserOp: IMethodValidateUserOp
+  execute: IMethodExecute
+  executeBatch: IMethodExecuteBatch
+  initialize: IMethodInitialize
+  getDeposit: IMethodGetDeposit
+  addDeposit: IMethodAddDeposit
   withdrawDepositTo: IMethodWithdrawDepositTo
+  owner: IMethodOwner
   '*': { method: string, arguments: any[] } 
 }
 
@@ -413,50 +444,39 @@ class SimpleAccountStorageReader extends ContractStorageReaderBase {
         this.$createHandler(this.$slots);
     }
 
-    async _owner(): Promise<TAddress> {
-        return this.$storage.get(['_owner', ]);
+    async _initialized(): Promise<number> {
+        return this.$storage.get(['_initialized', ]);
     }
 
-    async entryPoint(): Promise<TAddress> {
-        return this.$storage.get(['entryPoint', ]);
+    async _initializing(): Promise<boolean> {
+        return this.$storage.get(['_initializing', ]);
     }
 
-    async verifyingSigner(): Promise<TAddress> {
-        return this.$storage.get(['verifyingSigner', ]);
-    }
-
-    async senderNonce(key: TAddress): Promise<bigint> {
-        return this.$storage.get(['senderNonce', key]);
+    async owner(): Promise<TAddress> {
+        return this.$storage.get(['owner', ]);
     }
 
     $slots = [
     {
         "slot": 0,
         "position": 0,
-        "name": "_owner",
-        "size": 160,
-        "type": "address"
+        "name": "_initialized",
+        "size": 8,
+        "type": "uint8"
     },
     {
-        "slot": 1,
-        "position": 0,
-        "name": "entryPoint",
-        "size": 160,
-        "type": "address"
+        "slot": 0,
+        "position": 8,
+        "name": "_initializing",
+        "size": 8,
+        "type": "bool"
     },
     {
-        "slot": 2,
-        "position": 0,
-        "name": "verifyingSigner",
+        "slot": 0,
+        "position": 16,
+        "name": "owner",
         "size": 160,
         "type": "address"
-    },
-    {
-        "slot": 3,
-        "position": 0,
-        "name": "senderNonce",
-        "size": null,
-        "type": "mapping(address => uint256)"
     }
 ]
 
@@ -465,25 +485,35 @@ class SimpleAccountStorageReader extends ContractStorageReaderBase {
 
 
 interface ISimpleAccountTxCaller {
-    addDeposit (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    validateUserOp (sender: TSender, userOp: { sender: TAddress, nonce: bigint, initCode: TBufferLike, callData: TBufferLike, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TBufferLike, signature: TBufferLike }, userOpHash: TBufferLike, missingAccountFunds: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    validateUserOp (sender: TSender, userOp: { sender: TAddress, nonce: bigint, initCode: TBufferLike, callData: TBufferLike, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TBufferLike, signature: TBufferLike }, userOpHash: TBufferLike, missingAccountFunds: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    tokensReceived (sender: TSender, operator: TAddress, from: TAddress, to: TAddress, amount: bigint, userData: TBufferLike, operatorData: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    onERC721Received (sender: TSender, operator: TAddress, from: TAddress, tokenId: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    onERC1155Received (sender: TSender, operator: TAddress, from: TAddress, id: bigint, value: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    onERC1155BatchReceived (sender: TSender, operator: TAddress, from: TAddress, ids: bigint[], values: bigint[], data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    upgradeTo (sender: TSender, newImplementation: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    upgradeToAndCall (sender: TSender, newImplementation: TAddress, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     execute (sender: TSender, dest: TAddress, value: bigint, func: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     executeBatch (sender: TSender, dest: TAddress[], func: TBufferLike[]): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     initialize (sender: TSender, anOwner: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    upgradeTo (sender: TSender, newImplementation: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    upgradeToAndCall (sender: TSender, newImplementation: TAddress, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    validateUserOp (sender: TSender, userOp: { sender: TAddress, nonce: bigint, initCode: TBufferLike, callData: TBufferLike, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TBufferLike, signature: TBufferLike }, userOpHash: TBufferLike, missingAccountFunds: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    addDeposit (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     withdrawDepositTo (sender: TSender, withdrawAddress: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface ISimpleAccountTxData {
-    addDeposit (sender: TSender, ): Promise<TEth.TxLike>
+    validateUserOp (sender: TSender, userOp: { sender: TAddress, nonce: bigint, initCode: TBufferLike, callData: TBufferLike, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TBufferLike, signature: TBufferLike }, userOpHash: TBufferLike, missingAccountFunds: bigint): Promise<TEth.TxLike>
+    validateUserOp (sender: TSender, userOp: { sender: TAddress, nonce: bigint, initCode: TBufferLike, callData: TBufferLike, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TBufferLike, signature: TBufferLike }, userOpHash: TBufferLike, missingAccountFunds: bigint): Promise<TEth.TxLike>
+    tokensReceived (sender: TSender, operator: TAddress, from: TAddress, to: TAddress, amount: bigint, userData: TBufferLike, operatorData: TBufferLike): Promise<TEth.TxLike>
+    onERC721Received (sender: TSender, operator: TAddress, from: TAddress, tokenId: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    onERC1155Received (sender: TSender, operator: TAddress, from: TAddress, id: bigint, value: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    onERC1155BatchReceived (sender: TSender, operator: TAddress, from: TAddress, ids: bigint[], values: bigint[], data: TBufferLike): Promise<TEth.TxLike>
+    upgradeTo (sender: TSender, newImplementation: TAddress): Promise<TEth.TxLike>
+    upgradeToAndCall (sender: TSender, newImplementation: TAddress, data: TBufferLike): Promise<TEth.TxLike>
     execute (sender: TSender, dest: TAddress, value: bigint, func: TBufferLike): Promise<TEth.TxLike>
     executeBatch (sender: TSender, dest: TAddress[], func: TBufferLike[]): Promise<TEth.TxLike>
     initialize (sender: TSender, anOwner: TAddress): Promise<TEth.TxLike>
-    upgradeTo (sender: TSender, newImplementation: TAddress): Promise<TEth.TxLike>
-    upgradeToAndCall (sender: TSender, newImplementation: TAddress, data: TBufferLike): Promise<TEth.TxLike>
-    validateUserOp (sender: TSender, userOp: { sender: TAddress, nonce: bigint, initCode: TBufferLike, callData: TBufferLike, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TBufferLike, signature: TBufferLike }, userOpHash: TBufferLike, missingAccountFunds: bigint): Promise<TEth.TxLike>
+    addDeposit (sender: TSender, ): Promise<TEth.TxLike>
     withdrawDepositTo (sender: TSender, withdrawAddress: TAddress, amount: bigint): Promise<TEth.TxLike>
 }
 

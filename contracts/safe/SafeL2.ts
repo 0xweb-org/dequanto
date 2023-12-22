@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-11-24 00:53
+ *  AUTO-Generated Class: 2023-12-22 01:26
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -7,7 +7,8 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
+import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBaseUtils } from '@dequanto/contracts/utils/ContractBaseUtils';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
@@ -193,7 +194,9 @@ export class SafeL2 extends ContractBase {
     $call () {
         return super.$call() as ISafeL2TxCaller;
     }
-
+    $signed (): TOverrideReturns<ISafeL2TxCaller, Promise<{ signed: TEth.Hex, error?: Error & { data?: { type: string, params } } }>> {
+        return super.$signed() as any;
+    }
     $data (): ISafeL2TxData {
         return super.$data() as ISafeL2TxData;
     }

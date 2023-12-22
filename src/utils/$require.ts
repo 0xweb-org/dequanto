@@ -10,10 +10,10 @@ export namespace $require {
         if (isNaN(val)) {
             throw new Error(`Value is Not-a-Number. ${message}`);
         }
-        if (opts?.min != null && val < opts.min) {
+        if (opts?.min != null && (val as T) < opts.min) {
             throw new Error(`Value ${val} is less than ${opts.min}. ${message}`);
         }
-        if (opts?.max != null && val > opts.max) {
+        if (opts?.max != null && (val as T) > opts.max) {
             throw new Error(`Value ${val} is greater than ${opts.max}. ${message}`);
         }
         return val;
@@ -22,10 +22,10 @@ export namespace $require {
         if (typeof val !== 'bigint') {
             throw new Error(`Expects bigint type, got ${typeof val} (${val}). ${message}`);
         }
-        if (opts?.min != null && val < opts.min) {
+        if (opts?.min != null && (val as T) < opts.min) {
             throw new Error(`Value ${val} is less than ${opts.min}. ${message}`);
         }
-        if (opts?.max != null && val > opts.max) {
+        if (opts?.max != null && (val as T) > opts.max) {
             throw new Error(`Value ${val} is greater than ${opts.max}. ${message}`);
         }
         return val;
@@ -121,6 +121,13 @@ export namespace $require {
     export function TxHash (val: string, message: string = ''): string {
         if ($is.TxHash(val) === false) {
             throw new Error(`Value ${val} is not a valid tx hash. ${message}`);
+        }
+        return val;
+    }
+
+    export function Hex (val: string, message: string = ''): string {
+        if ($is.Hex(val) === false) {
+            throw new Error(`Value ${val} is not a valid hex value. ${message}`);
         }
         return val;
     }

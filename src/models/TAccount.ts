@@ -9,6 +9,11 @@ export interface IAccount {
     platform?: TPlatform
 
     address?: TAddress
+    key?: TEth.Hex | `p1:0x${string}`;
+}
+
+export interface IAccountTx extends IAccount {
+    value?: number | string | bigint;
 }
 
 

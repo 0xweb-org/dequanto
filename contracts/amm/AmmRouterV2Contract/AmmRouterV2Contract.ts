@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-11-05 00:36
+ *  AUTO-Generated Class: 2023-12-22 01:26
  *  Implementation: https://bscscan.com/address/0x10ED43C718714eb63d5aA57B78B54704E256024E#code
  */
 import di from 'a-di';
@@ -7,7 +7,8 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
+import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBaseUtils } from '@dequanto/contracts/utils/ContractBaseUtils';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
@@ -41,7 +42,7 @@ export class AmmRouterV2Contract extends ContractBase {
     
 
     async $constructor (deployer: TSender, _factory: TAddress, _WETH: TAddress): Promise<TxWriter> {
-        throw new Error('Not implemented. Use the ContractDeployer class to deploy the contract');
+        throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
     }
 
     // 0xad5c4648
@@ -167,7 +168,9 @@ export class AmmRouterV2Contract extends ContractBase {
     $call () {
         return super.$call() as IAmmRouterV2ContractTxCaller;
     }
-
+    $signed (): TOverrideReturns<IAmmRouterV2ContractTxCaller, Promise<{ signed: TEth.Hex, error?: Error & { data?: { type: string, params } } }>> {
+        return super.$signed() as any;
+    }
     $data (): IAmmRouterV2ContractTxData {
         return super.$data() as IAmmRouterV2ContractTxData;
     }
@@ -376,30 +379,9 @@ class AmmRouterV2ContractStorageReader extends ContractStorageReaderBase {
         this.$createHandler(this.$slots);
     }
 
-    async factory(): Promise<TAddress> {
-        return this.$storage.get(['factory', ]);
-    }
 
-    async WETH(): Promise<TAddress> {
-        return this.$storage.get(['WETH', ]);
-    }
 
-    $slots = [
-    {
-        "slot": 0,
-        "position": 0,
-        "name": "factory",
-        "size": 160,
-        "type": "address"
-    },
-    {
-        "slot": 1,
-        "position": 0,
-        "name": "WETH",
-        "size": 160,
-        "type": "address"
-    }
-]
+    $slots = []
 
 }
 

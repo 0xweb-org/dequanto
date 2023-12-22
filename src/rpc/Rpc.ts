@@ -1267,6 +1267,136 @@ engine_exchangeTransitionConfigurationV1(consensusClientConfiguration: {
 }> {
     return this.request({ method: 'engine_exchangeTransitionConfigurationV1', params: Array.from(arguments) })
 }
+
+/**
+ * Submits the Bundle <flashbots> 
+ * 
+ * @param flashbotsBundleRequest - 
+ * @returns FlashbotsBundleResponse - 
+ */
+eth_sendBundle(flashbotsBundleRequest: DataLike<RpcTypes.FlashbotsBundleRequest>): Promise<RpcTypes.FlashbotsBundleResponse> {
+    return this.request({ method: 'eth_sendBundle', params: Array.from(arguments) })
+}
+
+/**
+ * Simulates the Bundle <flashbots> 
+ * 
+ * @param flashbotsBundleRequest - 
+ * @returns FlashbotsBundleResult - 
+ */
+eth_callBundle(flashbotsBundleRequest: DataLike<RpcTypes.FlashbotsBundleRequest>): Promise<RpcTypes.FlashbotsBundleResponse> {
+    return this.request({ method: 'eth_callBundle', params: Array.from(arguments) })
+}
+
+/**
+ * Submits the Bundle in new format <flashbots> 
+ * 
+ * @param flashbotsMevBundleRequest - 
+ * @returns FlashbotsMevBundleResult - 
+ */
+mev_sendBundle(flashbotsMevBundleRequest: DataLike<RpcTypes.FlashbotsMevBundleRequest>): Promise<RpcTypes.FlashbotsMevBundleResult> {
+    return this.request({ method: 'mev_sendBundle', params: Array.from(arguments) })
+}
+
+/**
+ * Simulates the Bundle in new format <flashbots> 
+ * 
+ * @param flashbotsMevBundleRequest - 
+ * @returns FlashbotsMevBundleSimulationResponse - 
+ */
+mev_simBundle(flashbotsMevBundleRequest: DataLike<RpcTypes.FlashbotsMevBundleRequest>): Promise<RpcTypes.FlashbotsMevBundleSimulationResponse> {
+    return this.request({ method: 'mev_simBundle', params: Array.from(arguments) })
+}
+
+/**
+ * Prevents a submitted bundle from being included on-chain <flashbots> 
+ * 
+ * @param bundleToBeCanceled - 
+ * @returns bundleCancelationResult - 
+ */
+eth_cancelBundle(bundleToBeCanceled: {
+    [key: string]: any
+}): Promise<string> {
+    return this.request({ method: 'eth_cancelBundle', params: Array.from(arguments) })
+}
+
+/**
+ * Send a single transaction to Flashbots <flashbots> 
+ * 
+ * @param flashbotsSingleBundleReq - 
+ * @returns flashbotsSingleBundleRes - 
+ */
+eth_sendPrivateTransaction(flashbotsSingleBundleReq: DataLike<RpcTypes.FlashbotsSingleBundleReq>): Promise<string> {
+    return this.request({ method: 'eth_sendPrivateTransaction', params: Array.from(arguments) })
+}
+
+/**
+ * Behaves like eth_sendPrivateTransaction but its format is similar to that of eth_sendRawTransaction <flashbots> 
+ * 
+ * @param flashbotsRawTransactionHex - 
+ * @param flashbotsRawTransactionPreferences - 
+ * @returns bundleHash - 
+ */
+eth_sendPrivateRawTransaction(flashbotsRawTransactionHex: string[], flashbotsRawTransactionPreferences?: {
+    hints: any[];
+    builders: any[];
+}): Promise<TEth.Hex> {
+    return this.request({ method: 'eth_sendPrivateRawTransaction', params: Array.from(arguments) })
+}
+
+/**
+ * Stops private transactions from being submitted for future blocks <flashbots> 
+ * 
+ * @param txHashe - 
+ * @returns Tx result - 
+ */
+eth_cancelPrivateTransaction(txHashe: TEth.Hex): Promise<string> {
+    return this.request({ method: 'eth_cancelPrivateTransaction', params: Array.from(arguments) })
+}
+
+/**
+ * Returns a quick summary of how a searcher is performing in the Flashbots ecosystem <flashbots> 
+ * 
+ * @param userStatsRequest - String, a hex encoded recent block number, in order to prevent replay attacks. Must be within 20 blocks of the current chain tip
+ * @returns UserStatsResponse - 
+ */
+flashbots_getUserStats(userStatsRequest: string): Promise<{
+    is_high_priority: boolean;
+    all_time_miner_payments: string;
+    all_time_gas_simulated: string;
+    last_7d_miner_payments: string;
+    last_7d_gas_simulated: string;
+    last_1d_miner_payments: string;
+    last_1d_gas_simulated: string;
+}> {
+    return this.request({ method: 'flashbots_getUserStats', params: Array.from(arguments) })
+}
+
+/**
+ * Returns stats for a single bundle. <flashbots> 
+ * 
+ * @param bundleId - 
+ * @returns Bundle information - 
+ */
+flashbots_getBundleStatsV2(bundleId: {
+    bundleHash: TEth.Hex;
+    blockNumber: TEth.Hex;
+}): Promise<{
+    isHighPriority: boolean;
+    isSimulated: boolean;
+    simulatedAt: string;
+    receivedAt: string;
+    consideredByBuildersAt: {
+            pubkey: string;
+            timestamp: string;
+        }[];
+    sealedByBuildersAt: {
+            pubkey: string;
+            timestamp: string;
+        }[];
+}> {
+    return this.request({ method: 'flashbots_getBundleStatsV2', params: Array.from(arguments) })
+}
     protected returnSchemas = {
     "methods": {
         "eth_subscribe": "string",
@@ -1494,6 +1624,41 @@ engine_exchangeTransitionConfigurationV1(consensusClientConfiguration: {
             "terminalTotalDifficulty": "string",
             "terminalBlockHash": "string",
             "terminalBlockNumber": "string"
+        },
+        "eth_sendBundle": "FlashbotsBundleResponse",
+        "eth_callBundle": "FlashbotsBundleResponse",
+        "mev_sendBundle": "FlashbotsMevBundleResult",
+        "mev_simBundle": "FlashbotsMevBundleSimulationResponse",
+        "eth_cancelBundle": "string",
+        "eth_sendPrivateTransaction": "string",
+        "eth_sendPrivateRawTransaction": "string",
+        "eth_cancelPrivateTransaction": "string",
+        "flashbots_getUserStats": {
+            "is_high_priority": "boolean",
+            "all_time_miner_payments": "string",
+            "all_time_gas_simulated": "string",
+            "last_7d_miner_payments": "string",
+            "last_7d_gas_simulated": "string",
+            "last_1d_miner_payments": "string",
+            "last_1d_gas_simulated": "string"
+        },
+        "flashbots_getBundleStatsV2": {
+            "isHighPriority": "boolean",
+            "isSimulated": "boolean",
+            "simulatedAt": "string",
+            "receivedAt": "string",
+            "consideredByBuildersAt": [
+                {
+                    "pubkey": "string",
+                    "timestamp": "string"
+                }
+            ],
+            "sealedByBuildersAt": [
+                {
+                    "pubkey": "string",
+                    "timestamp": "string"
+                }
+            ]
         }
     },
     "schemas": {
@@ -1813,6 +1978,85 @@ engine_exchangeTransitionConfigurationV1(consensusClientConfiguration: {
             "v": "number",
             "r": "string",
             "s": "string"
+        },
+        "FlashbotsBundleRequest": {
+            "txs": [
+                "string"
+            ],
+            "blockNumber": "string",
+            "minTimestamp": "number",
+            "maxTimestamp": "number",
+            "revertingTxHashes": [
+                "string"
+            ],
+            "replacementUuid": "string"
+        },
+        "FlashbotsBundleResponse": {
+            "bundleHash": "string",
+            "bundleGasPrice": "bigint",
+            "coinbaseDiff": "bigint",
+            "ethSentToCoinbase": "bigint",
+            "gasFees": "bigint",
+            "stateBlockNumber": "number",
+            "totalGasUsed": "number"
+        },
+        "FlashbotsMevBundleRequest": {
+            "version": "string",
+            "inclusion": {
+                "block": "string",
+                "maxBlock": "string"
+            },
+            "body": [
+                {
+                    "oneOf": [
+                        {
+                            "hash": "string",
+                            "tx": "string",
+                            "canRevert": "boolean"
+                        },
+                        {
+                            "tx": "string",
+                            "canRevert": "boolean"
+                        },
+                        "FlashbotsMevBundleRequest"
+                    ]
+                }
+            ],
+            "validity": {},
+            "privacy": {},
+            "metadata": {
+                "originId": "string"
+            }
+        },
+        "FlashbotsMevBundleResult": {
+            "bundleHash": "string"
+        },
+        "FlashbotsMevBundleSimulationResponse": {
+            "success": "boolean",
+            "stateBlock": "string",
+            "mevGasPrice": "string",
+            "profit": "string",
+            "refundableValue": "string",
+            "gasUsed": "string",
+            "logs": [
+                {}
+            ]
+        },
+        "FlashbotsSingleBundleReq": {
+            "tx": "string",
+            "maxBlockNumber": "string",
+            "preferences": {
+                "fast": "boolean",
+                "privacy": {},
+                "validity": {
+                    "refund": [
+                        {
+                            "address": "string",
+                            "percent": "number"
+                        }
+                    ]
+                }
+            }
         }
     }
 };
@@ -2286,6 +2530,44 @@ engine_exchangeTransitionConfigurationV1(consensusClientConfiguration: {
 }):  { method: string, params: any[] } {
     return { method: 'engine_exchangeTransitionConfigurationV1', params: Array.from(arguments) };
 },
+eth_sendBundle(flashbotsBundleRequest: DataLike<RpcTypes.FlashbotsBundleRequest>):  { method: string, params: any[] } {
+    return { method: 'eth_sendBundle', params: Array.from(arguments) };
+},
+eth_callBundle(flashbotsBundleRequest: DataLike<RpcTypes.FlashbotsBundleRequest>):  { method: string, params: any[] } {
+    return { method: 'eth_callBundle', params: Array.from(arguments) };
+},
+mev_sendBundle(flashbotsMevBundleRequest: DataLike<RpcTypes.FlashbotsMevBundleRequest>):  { method: string, params: any[] } {
+    return { method: 'mev_sendBundle', params: Array.from(arguments) };
+},
+mev_simBundle(flashbotsMevBundleRequest: DataLike<RpcTypes.FlashbotsMevBundleRequest>):  { method: string, params: any[] } {
+    return { method: 'mev_simBundle', params: Array.from(arguments) };
+},
+eth_cancelBundle(bundleToBeCanceled: {
+    [key: string]: any
+}):  { method: string, params: any[] } {
+    return { method: 'eth_cancelBundle', params: Array.from(arguments) };
+},
+eth_sendPrivateTransaction(flashbotsSingleBundleReq: DataLike<RpcTypes.FlashbotsSingleBundleReq>):  { method: string, params: any[] } {
+    return { method: 'eth_sendPrivateTransaction', params: Array.from(arguments) };
+},
+eth_sendPrivateRawTransaction(flashbotsRawTransactionHex: string[], flashbotsRawTransactionPreferences?: {
+    hints: any[];
+    builders: any[];
+}):  { method: string, params: any[] } {
+    return { method: 'eth_sendPrivateRawTransaction', params: Array.from(arguments) };
+},
+eth_cancelPrivateTransaction(txHashe: TEth.Hex):  { method: string, params: any[] } {
+    return { method: 'eth_cancelPrivateTransaction', params: Array.from(arguments) };
+},
+flashbots_getUserStats(userStatsRequest: string):  { method: string, params: any[] } {
+    return { method: 'flashbots_getUserStats', params: Array.from(arguments) };
+},
+flashbots_getBundleStatsV2(bundleId: {
+    bundleHash: TEth.Hex;
+    blockNumber: TEth.Hex;
+}):  { method: string, params: any[] } {
+    return { method: 'flashbots_getBundleStatsV2', params: Array.from(arguments) };
+},
     }
 }
 export namespace RpcTypes {
@@ -2634,6 +2916,95 @@ export type Transaction = {
     r: TEth.Hex;
     /* transactionSigS */
     s: TEth.Hex;
+}
+
+
+/** Bundle Input v0 */
+export type FlashbotsBundleRequest = {
+    txs: TEth.Hex[];
+    blockNumber: TEth.Hex;
+    minTimestamp: number;
+    maxTimestamp: number;
+    revertingTxHashes: TEth.Hex[];
+    /* UUIDv4 to uniquely identify submission */
+    replacementUuid: string;
+}
+
+
+/** Bundle Input v0 */
+export type FlashbotsBundleResponse = {
+    bundleHash: TEth.Hex;
+    bundleGasPrice: bigint;
+    coinbaseDiff: bigint;
+    ethSentToCoinbase: bigint;
+    gasFees: bigint;
+    stateBlockNumber: number;
+    totalGasUsed: number;
+    results: any[];
+}
+
+
+/** A new bundle format to send bundles to MEV-Share. */
+export type FlashbotsMevBundleRequest = {
+    version: string;
+    inclusion: {
+        block: TEth.Hex;
+        maxBlock: TEth.Hex;
+    };
+    body: ({
+    hash: TEth.Hex;
+} | {
+    tx: TEth.Hex;
+    canRevert: boolean;
+} | RpcTypes.FlashbotsMevBundleRequest)[];
+    validity: {
+        refund: any[];
+        refundConfig: any[];
+    };
+    privacy: {
+        hints: any[];
+        builders: any[];
+    };
+    metadata: {
+        originId: string;
+    };
+}
+
+
+export type FlashbotsMevBundleResult = {
+    bundleHash: TEth.Hex;
+}
+
+
+export type FlashbotsMevBundleSimulationResponse = {
+    success: boolean;
+    stateBlock: string;
+    mevGasPrice: string;
+    profit: string;
+    refundableValue: string;
+    gasUsed: string;
+    logs: {
+            [key: string]: any
+        }[];
+}
+
+
+export type FlashbotsSingleBundleReq = {
+    tx: string;
+    maxBlockNumber: string;
+    preferences: {
+        fast: boolean;
+        privacy: {
+            hints: any[];
+            builders: any[];
+        };
+        validity: {
+            refund: {
+                    address: TEth.Address;
+                    percent: number;
+                }[];
+        };
+    };
 }
 
 }

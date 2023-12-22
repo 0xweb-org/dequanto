@@ -15,6 +15,10 @@ blockchainExplorer:
     key: 'FGCTXVXMZAPPW91KCZ91AMZFGBY1GZZB51'
     host: 'https://api-goerli.etherscan.io'
     www: 'https://goerli.etherscan.io'
+  eth:sepolia:
+    key: 'FGCTXVXMZAPPW91KCZ91AMZFGBY1GZZB51'
+    host: 'https://api-sepolia.etherscan.io'
+    www: 'https://sepolia.etherscan.io'
   polygon:
     key: 'AQHXXI3KIU5FC8Y1WXX8A346PENKUX7BCE'
     host: 'https://api.polygonscan.com'
@@ -95,6 +99,12 @@ web3:
     endpoints:
       - url: 'https://goerli.infura.io/v3/a83f91c556054576a4c608ad4312720b'
       - url: 'wss://goerli.infura.io/ws/v3/a83f91c556054576a4c608ad4312720b'
+
+  eth:sepolia:
+    chainId: 11155111
+    endpoints:
+      - url: 'https://1rpc.io/sepolia'
+      - url: 'wss://ethereum-sepolia.publicnode.com'
 
   # semi-private accounts at https://rpc.maticvigil.com/
   polygon:
@@ -235,6 +245,14 @@ erc4337:
         - eth:goerli
         - polygon
         - polygon:mumbai
+
+flashbots:
+  eth:
+    url: https://relay.flashbots.net
+  eth:goerli:
+    url: https://relay-goerli.flashbots.net
+  eth:sepolia:
+    url: https://relay-sepolia.flashbots.net
 
 safe:
   transactionService:

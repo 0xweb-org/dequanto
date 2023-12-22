@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-03 23:18
+ *  AUTO-Generated Class: 2023-12-22 01:26
  *  Implementation: https://etherscan.io/address/0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e#code
  */
 import di from 'a-di';
@@ -7,7 +7,8 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
+import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBaseUtils } from '@dequanto/contracts/utils/ContractBaseUtils';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
@@ -25,6 +26,8 @@ import type { TOverrideReturns } from '@dequanto/utils/types';
 import { Etherscan } from '@dequanto/explorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 
+
+
 export class EnsRegistry extends ContractBase {
     constructor(
         public address: TEth.Address = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
@@ -36,10 +39,10 @@ export class EnsRegistry extends ContractBase {
         this.storage = new EnsRegistryStorageReader(this.address, this.client, this.explorer);
     }
 
-
+    
 
     async $constructor (deployer: TSender, _old: TAddress): Promise<TxWriter> {
-        throw new Error('Not implemented. Use the ContractDeployer class to deploy the contract');
+        throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
     }
 
     // 0xe985e9c5
@@ -110,7 +113,9 @@ export class EnsRegistry extends ContractBase {
     $call () {
         return super.$call() as IEnsRegistryTxCaller;
     }
-
+    $signed (): TOverrideReturns<IEnsRegistryTxCaller, Promise<{ signed: TEth.Hex, error?: Error & { data?: { type: string, params } } }>> {
+        return super.$signed() as any;
+    }
     $data (): IEnsRegistryTxData {
         return super.$data() as IEnsRegistryTxData;
     }
@@ -254,7 +259,7 @@ interface IEvents {
   NewResolver: TLogNewResolverParameters
   NewTTL: TLogNewTTLParameters
   Transfer: TLogTransferParameters
-  '*': any[]
+  '*': any[] 
 }
 
 
@@ -338,7 +343,7 @@ interface IMethods {
   setSubnodeRecord: IMethodSetSubnodeRecord
   setTTL: IMethodSetTTL
   ttl: IMethodTtl
-  '*': { method: string, arguments: any[] }
+  '*': { method: string, arguments: any[] } 
 }
 
 

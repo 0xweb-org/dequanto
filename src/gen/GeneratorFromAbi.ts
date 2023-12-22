@@ -157,7 +157,7 @@ export class GeneratorFromAbi {
                 EthWeb3ClientStr = 'HardhatWeb3Client';
                 imports = [
                     `import { Etherscan } from '@dequanto/explorer/Etherscan'`,
-                    `import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client'`,
+                    `import { HardhatWeb3Client } from '@dequanto/hardhat/HardhatWeb3Client'`,
                 ];
                 sourceUri = ``;
                 break;
@@ -307,14 +307,14 @@ namespace Gen {
         if (abi.type === 'constructor') {
             return serializeConstructorMethodTs(abi);
         }
-        let isRead = isReader(abi);
+        let isRead = $abiUtils.isReadMethod(abi);
         if (isRead) {
             return serializeReadMethodTs(abi);
         }
         return serializeWriteMethodTs(abi);
     }
     export function serializeMethodTsOverloads (abis: TAbiItem[]) {
-        let isRead = abis.every(abi => isReader(abi));
+        let isRead = abis.every(abi => $abiUtils.isReadMethod(abi));
         if (isRead) {
             return serializeReadMethodTsOverloads(abis);
         }
@@ -411,10 +411,6 @@ namespace Gen {
         `;
     }
 
-    export function isReader (abi: TAbiItem) {
-        return ['view', 'pure', null].includes(abi.stateMutability);
-    }
-
     export function serializeMethodAbi(abi: TAbiItem, includeNames?: boolean) {
         let params = abi.inputs?.map(x => {
             let param = x.type;
@@ -484,7 +480,7 @@ namespace Gen {
         }
         return `
             async $constructor (deployer: TSender, ${fnInputArguments}): Promise<TxWriter> {
-                throw new Error('Not implemented. Use the ContractDeployer class to deploy the contract');
+                throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
             }
         `;
     }
@@ -625,7 +621,7 @@ namespace Gen {
 
     export function serializeTxCallerMethods (className: string, abiJson: TAbiItem[]): string {
         let methods = abiJson.filter(x => x.type === 'function');
-        let writeMethods = methods.filter(abi => isReader(abi) === false);
+        let writeMethods = methods.filter(abi => $abiUtils.isReadMethod(abi) === false);
         let lines = [];
         writeMethods.forEach(method => {
             lines.push(serializeMethodTs(method));
@@ -645,7 +641,7 @@ namespace Gen {
 
     export function serializeTxDataMethods (className: string, abiJson: TAbiItem[]): string {
         let methods = abiJson.filter(x => x.type === 'function');
-        let writeMethods = methods.filter(abi => isReader(abi) === false);
+        let writeMethods = methods.filter(abi => $abiUtils.isReadMethod(abi) === false);
         let lines = [];
         writeMethods.forEach(method => {
             lines.push(serializeInterfaceMethodTs(method));

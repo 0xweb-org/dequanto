@@ -28,7 +28,7 @@
     "@solidity-parser/parser": "^0.16.0",
     "a-di": "^1.0.25",
     "alot": "^0.3.7",
-    "appcfg": "^0.4.64",
+    "appcfg": "^0.4.70",
     "atma": "^0.15.20",
     "atma-io": "^1.2.67",
     "atma-utils": "^0.2.51",

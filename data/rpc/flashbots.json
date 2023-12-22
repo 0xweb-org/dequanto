@@ -1,0 +1,662 @@
+{
+  "openrpc": "1.2.4",
+  "info": {
+    "title": "Flashbots RPC",
+    "version": "0.0.0"
+  },
+  "methods": [
+    {
+      "name": "eth_sendBundle",
+      "summary": "Submits the Bundle",
+      "params": [
+        {
+          "name": "FlashbotsBundleRequest",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/FlashbotsBundleRequest"
+          }
+        }
+      ],
+      "result": {
+        "name": "FlashbotsBundleResponse",
+        "schema": {
+          "$ref": "#/components/schemas/FlashbotsBundleResponse"
+        }
+      }
+    },
+    {
+      "name": "eth_callBundle",
+      "summary": "Simulates the Bundle",
+      "params": [
+        {
+          "name": "FlashbotsBundleRequest",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/FlashbotsBundleRequest"
+          }
+        }
+      ],
+      "result": {
+        "name": "FlashbotsBundleResult",
+        "schema": {
+          "$ref": "#/components/schemas/FlashbotsBundleResponse"
+        }
+      }
+    },
+    {
+      "name": "mev_sendBundle",
+      "summary": "Submits the Bundle in new format",
+      "params": [
+        {
+          "name": "FlashbotsMevBundleRequest",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/FlashbotsMevBundleRequest"
+          }
+        }
+      ],
+      "result": {
+        "name": "FlashbotsMevBundleResult",
+        "schema": {
+          "$ref": "#/components/schemas/FlashbotsMevBundleResult"
+        }
+      }
+    },
+    {
+      "name": "mev_simBundle",
+      "summary": "Simulates the Bundle in new format",
+      "params": [
+        {
+          "name": "FlashbotsMevBundleRequest",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/FlashbotsMevBundleRequest"
+          }
+        }
+      ],
+      "result": {
+        "name": "FlashbotsMevBundleSimulationResponse",
+        "schema": {
+          "$ref": "#/components/schemas/FlashbotsMevBundleSimulationResponse"
+        }
+      }
+    },
+    {
+      "name": "eth_cancelBundle",
+      "summary": "Prevents a submitted bundle from being included on-chain",
+      "params": [
+        {
+          "name": "bundleToBeCanceled",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "parameters": {
+              "replacementUuid": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "bundleCancelationResult",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    {
+      "name": "eth_sendPrivateTransaction",
+      "summary": "Send a single transaction to Flashbots",
+      "params": [
+        {
+          "name": "flashbotsSingleBundleReq",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/FlashbotsSingleBundleReq"
+          }
+        }
+      ],
+      "result": {
+        "name": "flashbotsSingleBundleRes",
+        "schema": {
+          "description": "tx hash",
+          "type": "string"
+        }
+      }
+    },
+    {
+      "name": "eth_sendPrivateRawTransaction",
+      "summary": "Behaves like eth_sendPrivateTransaction but its format is similar to that of eth_sendRawTransaction",
+      "params": [
+        {
+          "name": "flashbotsRawTransactionHex",
+          "required": true,
+          "schema": {
+            "type": "array",
+            "items": {
+              "description": "Raw Tx Hex",
+              "type": "string"
+            }
+          }
+        },
+        {
+          "name": "flashbotsRawTransactionPreferences",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "hints": {
+                "$ref": "#/components/schemas/FlashbotsHints"
+              },
+              "builders": {
+                "type": "array",
+                "item": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "bundleHash",
+        "schema": {
+          "description": "tx hash",
+          "$ref": "#/components/schemas/bytes"
+        }
+      }
+    },
+    {
+      "name": "eth_cancelPrivateTransaction",
+      "summary": "Stops private transactions from being submitted for future blocks",
+      "params": [
+        {
+          "name": "Tx Hashe",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/bytes"
+          }
+        }
+      ],
+      "result": {
+        "name": "Tx result",
+        "schema": {
+          "description": "tx hash",
+          "type": "string"
+        }
+      }
+    },
+    {
+      "name": "flashbots_getUserStats",
+      "summary": "Returns a quick summary of how a searcher is performing in the Flashbots ecosystem",
+      "params": [
+        {
+          "name": "UserStatsRequest",
+          "description": "String, a hex encoded recent block number, in order to prevent replay attacks. Must be within 20 blocks of the current chain tip",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "result": {
+        "name": "UserStatsResponse",
+        "schema": {
+          "object": "string",
+          "properties": {
+            "is_high_priority": {
+              "type": "boolean"
+            },
+            "all_time_miner_payments": {
+              "type": "string"
+            },
+            "all_time_gas_simulated": {
+              "type": "string"
+            },
+            "last_7d_miner_payments": {
+              "type": "string"
+            },
+            "last_7d_gas_simulated": {
+              "type": "string"
+            },
+            "last_1d_miner_payments": {
+              "type": "string"
+            },
+            "last_1d_gas_simulated": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "flashbots_getBundleStatsV2",
+      "summary": "Returns stats for a single bundle.",
+      "params": [
+        {
+          "name": "Bundle Id",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "required": [
+              "bundleHash",
+              "blockNumber"
+            ],
+            "properties": {
+              "bundleHash": {
+                "description": "String, returned by the flashbots api when calling eth_sendBundle",
+                "$ref": "#/components/schemas/bytes"
+              },
+              "blockNumber": {
+                "description": "String, the block number the bundle was targeting (hex encoded)",
+                "$ref": "#/components/schemas/bytes"
+              }
+            }
+          }
+        }
+      ],
+      "result": {
+        "name": "Bundle information",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "isHighPriority": {
+              "description": "",
+              "type": "boolean"
+            },
+            "isSimulated": {
+              "description": "",
+              "type": "boolean"
+            },
+            "simulatedAt": {
+              "description": "",
+              "type": "string"
+            },
+            "receivedAt": {
+              "description": "",
+              "type": "string"
+            },
+            "consideredByBuildersAt": {
+              "description": "Indicates time at which each builder selected the bundle to be included in the target block",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pubkey": {
+                    "type": "string"
+                  },
+                  "timestamp": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "sealedByBuildersAt": {
+              "description": "Indicates time at which each builder sealed a block containing the bundle",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pubkey": {
+                    "type": "string"
+                  },
+                  "timestamp": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "components": {
+    "schemas": {
+
+      "bytes": {
+        "title": "hex encoded bytes",
+        "type": "string",
+        "pattern": "^0x[0-9a-f]*$"
+      },
+      "hex": {
+        "title": "hex encoded number or bytes",
+        "type": "string",
+        "pattern": "^0x[0-9a-f]*$"
+      },
+      "uint": {
+        "title": "hex encoded unsigned integer",
+        "type": "string",
+        "pattern": "^0x([1-9a-f]+[0-9a-f]*|0)$"
+      },
+      "hash32": {
+        "title": "32 byte hex value",
+        "type": "string",
+        "pattern": "^0x[0-9a-f]{64}$"
+      },
+      "address": {
+        "title": "hex encoded address",
+        "type": "string",
+        "pattern": "^0x[0-9,a-f,A-F]{40}$"
+      },
+
+      "FlashbotsBundleRequest": {
+        "title": "Bundle Input v0",
+        "type": "object",
+        "required": [
+          "txs"
+        ],
+        "properties": {
+          "txs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/bytes"
+            }
+          },
+          "blockNumber": {
+            "$ref": "#/components/schemas/bytes"
+          },
+          "minTimestamp": {
+            "type": "number"
+          },
+          "maxTimestamp": {
+            "type": "number"
+          },
+          "revertingTxHashes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/hash32"
+            }
+          },
+          "replacementUuid": {
+            "title": "UUIDv4 to uniquely identify submission",
+            "type": "string"
+          }
+        }
+      },
+      "FlashbotsBundleResponse": {
+        "title": "Bundle Input v0",
+        "type": "object",
+        "required": [
+          "bundleHash"
+        ],
+        "properties": {
+          "bundleHash": {
+            "$ref": "#/components/schemas/hash32"
+          },
+          "bundleGasPrice": {
+            "$ref":"#/components/schemas/uint"
+          },
+          "coinbaseDiff": {
+            "$ref":"#/components/schemas/uint"
+          },
+          "ethSentToCoinbase": {
+            "$ref":"#/components/schemas/uint"
+          },
+          "gasFees": {
+            "$ref":"#/components/schemas/uint"
+          },
+          "stateBlockNumber": {
+            "type": "number"
+          },
+          "totalGasUsed": {
+            "type": "number"
+          },
+          "results": {
+            "type": "array",
+            "item": {
+              "type": "object",
+              "properties": {
+                "coinbaseDiff": {
+                  "type": "string"
+                },
+                "ethSentToCoinbase": {
+                  "$ref":"#/components/schemas/uint"
+                },
+                "fromAddress": {
+                  "$ref":"#/components/schemas/address"
+                },
+                "gasFees": {
+                  "$ref":"#/components/schemas/uint"
+                },
+                "gasPrice": {
+                  "$ref":"#/components/schemas/uint"
+                },
+                "gasUsed": {
+                  "$ref":"#/components/schemas/uint"
+                },
+                "toAddress": {
+                  "$ref":"#/components/schemas/address"
+                },
+                "txHash": {
+                  "$ref":"#/components/schemas/hash32"
+                },
+                "value": {
+                  "$ref":"#/components/schemas/uint"
+                }
+              }
+            }
+          }
+        }
+      },
+      "FlashbotsMevBundleRequest": {
+        "title": "A new bundle format to send bundles to MEV-Share.",
+        "type": "object",
+        "properties": {
+          "version": {
+            "pattern": "v\\d+\\.\\d+",
+            "type": "string"
+          },
+          "inclusion": {
+            "type": "object",
+            "required": [
+              "block"
+            ],
+            "properties": {
+              "block": {
+                "$ref":"#/components/schemas/bytes"
+              },
+              "maxBlock": {
+                "$ref":"#/components/schemas/bytes"
+              }
+            }
+          },
+          "body": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "hash": {
+                      "$ref":"#/components/schemas/hash32"
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "tx": {
+                      "$ref":"#/components/schemas/bytes"
+                    },
+                    "canRevert": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/FlashbotsMevBundleRequest"
+                }
+              ]
+            }
+          },
+          "validity": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "refund": {
+                "type": "array",
+                "item": {
+                  "type": "object",
+                  "properties": {
+                    "bodyIdx": {
+                      "type": "number"
+                    },
+                    "percent": {
+                      "type": "number"
+                    }
+                  }
+                }
+              },
+              "refundConfig": {
+                "type": "array",
+                "item": {
+                  "type": "object",
+                  "properties": {
+                    "address": {
+                      "$ref":"#/components/schemas/address"
+                    },
+                    "percent": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "privacy": {
+            "type": "object",
+            "properties": {
+              "hints": {
+                "$ref": "#/components/schemas/FlashbotsHints"
+              },
+              "builders": {
+                "type": "array",
+                "item": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "originId": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "FlashbotsMevBundleResult": {
+        "type": "object",
+        "properties": {
+          "bundleHash": {
+            "$ref": "#/components/schemas/hash32"
+          }
+        }
+      },
+      "FlashbotsMevBundleSimulationResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "stateBlock": {
+            "type": "string"
+          },
+          "mevGasPrice": {
+            "type": "string"
+          },
+          "profit": {
+            "type": "string"
+          },
+          "refundableValue": {
+            "type": "string"
+          },
+          "gasUsed": {
+            "type": "string"
+          },
+          "logs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        }
+      },
+      "FlashbotsHints": {
+        "type": "array",
+        "item": {
+          "type": "string",
+          "enum": [
+            "calldata",
+            "contract_address",
+            "logs",
+            "function_selector",
+            "hash",
+            "tx_hash"
+          ]
+        }
+      },
+      "FlashbotsSingleBundleReq": {
+        "type": "object",
+        "required": [
+          "tx"
+        ],
+        "properties": {
+          "tx": {
+            "description": "String, raw signed transaction",
+            "type": "string"
+          },
+          "maxBlockNumber": {
+            "description": "Hex",
+            "type": "string"
+          },
+          "preferences": {
+            "type": "object",
+            "properties": {
+              "fast": {
+                "type": "boolean"
+              },
+              "privacy": {
+                "type": "object",
+                "properties": {
+                  "hints": {
+                    "$ref": "#/components/schemas/FlashbotsHints"
+                  },
+                  "builders": {
+                    "type": "array",
+                    "item": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "validity": {
+                "type": "object",
+                "properties": {
+                  "refund": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "address": {
+                          "$ref":"#/components/schemas/address"
+                        },
+                        "percent": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

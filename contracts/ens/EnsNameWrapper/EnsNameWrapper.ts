@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-03 23:18
+ *  AUTO-Generated Class: 2023-12-22 01:26
  *  Implementation: https://etherscan.io/address/0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401#code
  */
 import di from 'a-di';
@@ -7,7 +7,8 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
+import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBaseUtils } from '@dequanto/contracts/utils/ContractBaseUtils';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
@@ -100,7 +101,7 @@ export class EnsNameWrapper extends ContractBase {
     
 
     async $constructor (deployer: TSender, _ens: TAddress, _registrar: TAddress, _metadataService: TAddress): Promise<TxWriter> {
-        throw new Error('Not implemented. Use the ContractDeployer class to deploy the contract');
+        throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
     }
 
     // 0xed70554d
@@ -345,7 +346,9 @@ export class EnsNameWrapper extends ContractBase {
     $call () {
         return super.$call() as IEnsNameWrapperTxCaller;
     }
-
+    $signed (): TOverrideReturns<IEnsNameWrapperTxCaller, Promise<{ signed: TEth.Hex, error?: Error & { data?: { type: string, params } } }>> {
+        return super.$signed() as any;
+    }
     $data (): IEnsNameWrapperTxData {
         return super.$data() as IEnsNameWrapperTxData;
     }

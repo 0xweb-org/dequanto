@@ -32,6 +32,7 @@ import { $sig } from '@dequanto/utils/$sig';
 import { TEth } from '@dequanto/models/TEth';
 import { SafeServiceTypes } from '@dequanto/safe/types/SafeServiceTypes';
 import { ChainAccountService } from '@dequanto/ChainAccountService';
+import { TxNonceManager } from './TxNonceManager';
 
 interface ITxWriterEvents {
     transactionHash (hash: string)
@@ -54,8 +55,11 @@ export interface ITxWriterOptions {
     /** Optionally disable waiting for the transport response */
     sigTransportWait?: boolean
 
-    /** Write the Tx Data to a JSON file, without submit to the blockchain */
+    /** Save the tx data to the file (before agents run, if any) */
     txOutput?: string
+
+    /** Proceed the Tx up to the signature */
+    signOnly?: boolean
 
     /** Provide a pre-signed signature for this transaction data. */
     signature?: TEth.Hex
@@ -79,6 +83,9 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     onSent = new class_Dfr<string>();
     onCompleted = new class_Dfr<TEth.TxReceipt>();
     onSaved = new class_Dfr<string>();
+
+    onSigned = new class_Dfr<TEth.Hex>();
+
     receipt: TEth.TxReceipt
 
     onConfirmed (waitForCount: number): Promise<string> {
@@ -138,6 +145,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         }
         return this;
     }
+
     public async call() {
         let tx = await this.builder.getTxData(this.client);
         let result = await this.client.call(tx);
@@ -164,7 +172,6 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
             this.pipeInnerWriter(innerWriter);
             return;
         }
-
 
         let time = Date.now();
         let sender: EoAccount = await this.getSender();
@@ -213,9 +220,16 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
         let promiseEvent: PromiseEvent<TEth.TxReceipt>;
         if (signedTxBuffer != null) {
+
+            this.onSigned.resolve(signedTxBuffer);
+            if (this.options?.signOnly === true) {
+                this.onCompleted.reject(new Error(`SIGN_ONLY: Tx not completed as only signature is awaited`));
+                return;
+            }
             promiseEvent = this
                 .client
                 .sendSignedTransaction(signedTxBuffer);
+
         } else {
             let txData = this.builder.getTxData(this.client);
             promiseEvent = this

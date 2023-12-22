@@ -3,9 +3,10 @@ import { $txData } from '@dequanto/utils/$txData';
 import { File } from 'atma-io'
 import { TxDataBuilder } from '../TxDataBuilder'
 import { $sig } from '@dequanto/utils/$sig';
+import { TEth } from '@dequanto/models/TEth';
 export class SigFileTransport {
 
-    async create (path: string, txBuilder: TxDataBuilder, params: { wait: boolean }): Promise<{ path: string, signed?: string }> {
+    async create (path: string, txBuilder: TxDataBuilder, params: { wait: boolean }): Promise<{ path: string, signed?: TEth.Hex }> {
         let tx = $txData.getJson(txBuilder.data, txBuilder.client);
         let json = {
             account: {
@@ -18,8 +19,6 @@ export class SigFileTransport {
         };
 
         await File.writeAsync(path, json);
-
-
 
         $logger.log('');
         $logger.log(`Tx data saved to the file "${path}".`);

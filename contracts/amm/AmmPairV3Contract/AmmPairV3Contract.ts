@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-11-05 00:36
+ *  AUTO-Generated Class: 2023-12-22 01:26
  *  Implementation: https://etherscan.io/address/0x8f8ef111b67c04eb1641f5ff19ee54cda062f163#code
  */
 import di from 'a-di';
@@ -7,7 +7,8 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
+import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBaseUtils } from '@dequanto/contracts/utils/ContractBaseUtils';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
@@ -41,7 +42,7 @@ export class AmmPairV3Contract extends ContractBase {
     
 
     async $constructor (deployer: TSender, ): Promise<TxWriter> {
-        throw new Error('Not implemented. Use the ContractDeployer class to deploy the contract');
+        throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
     }
 
     // 0xa34123a7
@@ -177,7 +178,9 @@ export class AmmPairV3Contract extends ContractBase {
     $call () {
         return super.$call() as IAmmPairV3ContractTxCaller;
     }
-
+    $signed (): TOverrideReturns<IAmmPairV3ContractTxCaller, Promise<{ signed: TEth.Hex, error?: Error & { data?: { type: string, params } } }>> {
+        return super.$signed() as any;
+    }
     $data (): IAmmPairV3ContractTxData {
         return super.$data() as IAmmPairV3ContractTxData;
     }
@@ -589,34 +592,6 @@ class AmmPairV3ContractStorageReader extends ContractStorageReaderBase {
         this.$createHandler(this.$slots);
     }
 
-    async original(): Promise<TAddress> {
-        return this.$storage.get(['original', ]);
-    }
-
-    async factory(): Promise<TAddress> {
-        return this.$storage.get(['factory', ]);
-    }
-
-    async token0(): Promise<TAddress> {
-        return this.$storage.get(['token0', ]);
-    }
-
-    async token1(): Promise<TAddress> {
-        return this.$storage.get(['token1', ]);
-    }
-
-    async fee(): Promise<number> {
-        return this.$storage.get(['fee', ]);
-    }
-
-    async tickSpacing(): Promise<number> {
-        return this.$storage.get(['tickSpacing', ]);
-    }
-
-    async maxLiquidityPerTick(): Promise<bigint> {
-        return this.$storage.get(['maxLiquidityPerTick', ]);
-    }
-
     async slot0(): Promise<{ sqrtPriceX96: bigint, tick: number, observationIndex: number, observationCardinality: number, observationCardinalityNext: number, feeProtocol: number, unlocked: boolean }> {
         return this.$storage.get(['slot0', ]);
     }
@@ -657,110 +632,61 @@ class AmmPairV3ContractStorageReader extends ContractStorageReaderBase {
     {
         "slot": 0,
         "position": 0,
-        "name": "original",
-        "size": 160,
-        "type": "address"
-    },
-    {
-        "slot": 1,
-        "position": 0,
-        "name": "factory",
-        "size": 160,
-        "type": "address"
-    },
-    {
-        "slot": 2,
-        "position": 0,
-        "name": "token0",
-        "size": 160,
-        "type": "address"
-    },
-    {
-        "slot": 3,
-        "position": 0,
-        "name": "token1",
-        "size": 160,
-        "type": "address"
-    },
-    {
-        "slot": 3,
-        "position": 160,
-        "name": "fee",
-        "size": 24,
-        "type": "uint24"
-    },
-    {
-        "slot": 3,
-        "position": 184,
-        "name": "tickSpacing",
-        "size": 24,
-        "type": "int24"
-    },
-    {
-        "slot": 4,
-        "position": 0,
-        "name": "maxLiquidityPerTick",
-        "size": 128,
-        "type": "uint128"
-    },
-    {
-        "slot": 5,
-        "position": 0,
         "name": "slot0",
         "size": 248,
         "type": "(uint160 sqrtPriceX96, int24 tick, uint16 observationIndex, uint16 observationCardinality, uint16 observationCardinalityNext, uint8 feeProtocol, bool unlocked)"
     },
     {
-        "slot": 6,
+        "slot": 1,
         "position": 0,
         "name": "feeGrowthGlobal0X128",
         "size": 256,
         "type": "uint256"
     },
     {
-        "slot": 7,
+        "slot": 2,
         "position": 0,
         "name": "feeGrowthGlobal1X128",
         "size": 256,
         "type": "uint256"
     },
     {
-        "slot": 8,
+        "slot": 3,
         "position": 0,
         "name": "protocolFees",
         "size": 256,
         "type": "(uint128 token0, uint128 token1)"
     },
     {
-        "slot": 9,
+        "slot": 4,
         "position": 0,
         "name": "liquidity",
         "size": 128,
         "type": "uint128"
     },
     {
-        "slot": 10,
+        "slot": 5,
         "position": 0,
         "name": "ticks",
         "size": null,
         "type": "mapping(int24 => (uint128 liquidityGross, int128 liquidityNet, uint256 feeGrowthOutside0X128, uint256 feeGrowthOutside1X128, int56 tickCumulativeOutside, uint160 secondsPerLiquidityOutsideX128, uint32 secondsOutside, bool initialized))"
     },
     {
-        "slot": 11,
+        "slot": 6,
         "position": 0,
         "name": "tickBitmap",
         "size": null,
         "type": "mapping(int16 => uint256)"
     },
     {
-        "slot": 12,
+        "slot": 7,
         "position": 0,
         "name": "positions",
         "size": null,
         "type": "mapping(bytes32 => (uint128 liquidity, uint256 feeGrowthInside0LastX128, uint256 feeGrowthInside1LastX128, uint128 tokensOwed0, uint128 tokensOwed1))"
     },
     {
-        "slot": 13,
+        "slot": 8,
         "position": 0,
         "name": "observations",
         "size": 16776960,

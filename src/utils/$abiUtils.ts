@@ -196,6 +196,11 @@ export namespace $abiUtils {
         }
         return false;
     }
+
+    export function isReadMethod (abi: TAbiItem): boolean {
+        return abi.type === 'function' &&  ['view', 'pure', null].includes(abi.stateMutability);
+    }
+
     export function fromAliasIfAny(type: string) {
         if (type === 'uint') {
             return 'uint256';

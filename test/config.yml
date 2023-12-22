@@ -1,0 +1,4 @@
+accounts:
+  - name: DequantoIntegrationAccount
+    address: '0x1d51b824cFcd58CD9198dD2E4e3C605718b9a712'
+    key: '${INTEGRATION_TEST_ACCOUNT_KEY}'

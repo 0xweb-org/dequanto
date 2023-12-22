@@ -233,23 +233,6 @@ export class GnosisSafeHandler {
         };
     }
 
-
-    // @memd.deco.memoize({ perInstance: true })
-    // private async getSafeSdk() {
-    //     let adapter = await this.getAdapter();
-    //     const safeSdk = await Safe.create({
-    //         ethAdapter: adapter,
-    //         safeAddress: this.safeAddress
-    //     });
-    //     return safeSdk;
-    // }
-
-    @memd.deco.memoize({ perInstance: true })
-    private async getAdapter() {
-        return $gnosis.getAdapter(this.owner, this.client);
-    }
-
-
     private getTransactionHash(params: {
         to,
         value,

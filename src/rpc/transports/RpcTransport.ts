@@ -17,14 +17,10 @@ export namespace RpcTransport {
             let protocol = /^(?<protocol>\w+):\/\//.exec(url).groups?.protocol;
             $require.notEmpty(protocol, `Invalid protocol: ${url}`);
             if (/https?/.test(protocol)) {
-                return new HttpTransport({
-                    url
-                });
+                return new HttpTransport(mix);
             }
             if (/wss?/.test(protocol)) {
-                return new WsTransport({
-                    url
-                });
+                return new WsTransport(mix);
             }
             throw new Error(`Unknown protocol: ${mix}`);
         }
@@ -35,7 +31,7 @@ export namespace RpcTransport {
             return mix;
         }
 
-        throw new Error(`Unknown transport: ${mix}`);
+        throw new Error(`Unknown transport: ${JSON.stringify(mix)}`);
     }
 
     function hasUrl (mix: TTransport.Options.Any): mix is TTransport.Options.Http | TTransport.Options.Ws {

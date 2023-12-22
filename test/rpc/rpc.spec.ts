@@ -3,7 +3,7 @@ import { TestNode } from '../hardhat/TestNode'
 import { $address } from '@dequanto/utils/$address';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { HardhatWeb3Client } from '@dequanto/clients/HardhatWeb3Client';
+import { HardhatWeb3Client } from '@dequanto/hardhat/HardhatWeb3Client';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 
 import Web3 from 'web3';

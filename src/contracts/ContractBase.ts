@@ -8,7 +8,7 @@ import type { IAccount, TAccount } from "@dequanto/models/TAccount";
 import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import type { TAddress } from '@dequanto/models/TAddress';
-import type { ITxConfig } from '@dequanto/txs/ITxConfig';
+import type { ITxBuilderOptions } from '@dequanto/txs/ITxBuilderOptions';
 
 import { $contract } from '@dequanto/utils/$contract';
 import { $class } from '@dequanto/utils/$class';
@@ -24,8 +24,9 @@ import { $address } from '@dequanto/utils/$address';
 import { TEth } from '@dequanto/models/TEth';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { RpcTypes } from '@dequanto/rpc/Rpc';
-import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 import { ContractStorageReaderBase } from './ContractStorageReaderBase';
+import { ContractBaseUtils } from './utils/ContractBaseUtils';
+import { FnSignedWrapper } from './wrappers/FnSignedWrapper';
 
 
 export abstract class ContractBase {
@@ -35,8 +36,8 @@ export abstract class ContractBase {
 
     /** 1.4 for medium*/
     private gasPriorityFee?: number
-    private builderConfig?: ITxConfig;
-    private writerConfig?: ITxWriterOptions;
+    protected builderConfig?: ITxBuilderOptions;
+    protected writerConfig?: ITxWriterOptions;
 
     abstract abi?: TAbiItem[]
 
@@ -82,7 +83,7 @@ export abstract class ContractBase {
         return reader.executeBatch(values);
     }
 
-    public $config (builderConfig?: ITxConfig, writerConfig?: ITxWriterOptions): this {
+    public $config (builderConfig?: ITxBuilderOptions, writerConfig?: ITxWriterOptions): this {
         let $contract = $class.curry(this, {
             builderConfig: builderConfig,
             writerConfig: writerConfig,
@@ -101,12 +102,12 @@ export abstract class ContractBase {
         let abiArr = this.abi;
         let writer = this.getContractWriter();
 
-        let methods = this.abi.filter(abi => abi.type === 'function' && $abiUtil.isReader(abi) === false);
+        let methods = this.abi.filter(abi => abi.type === 'function' && $abiUtils.isReadMethod(abi) === false);
         let fns = alot(methods).map(abiMethod => {
             return {
                 name: abiMethod.name,
                 async fn (sender: TAccount,...args: any[]) {
-                    return ContractBaseHelper.$call(
+                    return ContractBaseUtils.$call(
                         writer,
                         abiMethod,
                         abiArr,
@@ -126,7 +127,7 @@ export abstract class ContractBase {
     @memd.deco.memoize({ perInstance: true })
     public $data () {
         let $top = this;
-        let writeMethods = this.abi.filter(abi => abi.type === 'function' && $abiUtil.isReader(abi) === false);
+        let writeMethods = this.abi.filter(abi => abi.type === 'function' && $abiUtils.isReadMethod(abi) === false);
         let writeFns = alot(writeMethods).map(method => {
             return {
                 name: method.name,
@@ -135,6 +136,7 @@ export abstract class ContractBase {
                         .$config({
                             send: 'manual',
                             gasEstimation: false,
+                            nonce: 0,
                         })
                         [method.name](sender, ...args);
 
@@ -143,7 +145,7 @@ export abstract class ContractBase {
             }
         }).toDictionary(x => x.name, x => x.fn);
 
-        let readMethods = this.abi.filter(abi => abi.type === 'function' && $abiUtil.isReader(abi) === true);
+        let readMethods = this.abi.filter(abi => abi.type === 'function' && $abiUtils.isReadMethod(abi) === true);
         let readFns = alot(readMethods).map(method => {
             return {
                 name: method.name,
@@ -168,12 +170,12 @@ export abstract class ContractBase {
         let abiArr = this.abi;
         let writer = this.getContractWriter();
 
-        let methods = this.abi.filter(abi => abi.type === 'function' && $abiUtil.isReader(abi) === false);
+        let methods = this.abi.filter(abi => abi.type === 'function' && $abiUtils.isReadMethod(abi) === false);
         let fns = alot(methods).map(abiMethod => {
             return {
                 name: abiMethod.name,
                 async fn (sender: IAccount,...args: any[]) {
-                    return ContractBaseHelper.$gas(
+                    return ContractBaseUtils.$gas(
                         writer,
                         abiMethod,
                         abiArr,
@@ -190,10 +192,23 @@ export abstract class ContractBase {
         return $contract as any;
     }
 
+    public $signed (builderConfig?: ITxBuilderOptions, writerConfig?: ITxWriterOptions) {
+        let instance = this.$signedCreate();
+        if (builderConfig != null || writerConfig != null) {
+            instance = instance.$config(builderConfig, writerConfig);
+        }
+        return instance;
+    }
+
+    @memd.deco.memoize({ perInstance: true })
+    private $signedCreate () {
+        return FnSignedWrapper.create(this);
+    }
+
     @memd.deco.memoize({ perInstance: true })
     public $receipt <T extends this> (this: T): T {
         let $top = this;
-        let methods = this.abi.filter(abi => abi.type === 'function' && $abiUtil.isReader(abi) === false);
+        let methods = this.abi.filter(abi => abi.type === 'function' && $abiUtils.isReadMethod(abi) === false);
         let fns = alot(methods).map(abiMethod => {
             return {
                 name: abiMethod.name,
@@ -321,7 +336,7 @@ export abstract class ContractBase {
     }
 
     protected $getAbiItem (type: 'event' | 'function' | 'string', name: string, argsCount?: number) {
-        return ContractBaseHelper.$getAbiItem(this.abi, type, name, argsCount);
+        return ContractBaseUtils.$getAbiItem(this.abi, type, name, argsCount);
     }
 
     protected $getAbiItemOverload (abis: (string | TAbiItem)[], args: any[]) {
@@ -441,84 +456,6 @@ export abstract class ContractBase {
     }
 }
 
-export namespace ContractBaseHelper {
-    export function $getAbiItem (abi: TAbiItem[], type: 'event' | 'function' | 'string', name: string, argsCount?: number) {
-        let arr = abi.filter(x => x.type === type && x.name === name);
-        if (arr.length === 0) {
-            throw new Error(`TAbiItem ${name} not found`);
-        }
-        if (arr.length === 1) {
-            return arr[0];
-        }
-        if (argsCount == null) {
-            throw new Error(`Found multiple TAbiItems for ${name}. Args count not specified to pick one`);
-        }
-        return arr.find(x => (x.inputs?.length ?? 0) === argsCount)
-    }
-
-    export async function $call (writer: ContractWriter
-        , abi: string | TAbiItem
-        , abiArr: TAbiItem[]
-        , account: TAccount & {  value?: number | string | bigint }
-        , ...params
-    ): Promise<{ error?, result? }> {
-        let tx = await writer.writeAsync(account, abi, params, {
-            builderConfig: {
-                send: 'manual',
-                gasEstimation: false,
-                nonce: 0,
-                ...(this.builderConfig ?? {})
-            },
-            writerConfig: this.writerConfig,
-        });
-        try {
-            let result = await tx.call();
-            return {
-                result
-            };
-        } catch (error) {
-            if (error.data) {
-                error.data = $contract.decodeCustomError(error.data, abiArr);
-            }
-            return {
-                error
-            }
-        }
-    }
-    export async function $gas (writer: ContractWriter
-        , abi: string | TAbiItem
-        , abiArr: TAbiItem[]
-        , account: IAccount & {  value?: number | string | bigint }
-        , ...params
-    ): Promise<{ error?, gas?: bigint, price?: bigint }> {
-
-        let txBuilder = new TxDataBuilder(writer.client, account, {
-            to: writer.address
-        });
-
-        txBuilder.setInputDataWithABI(abi, ...params);
-        txBuilder.abi = abiArr;
-
-        try {
-            txBuilder = await txBuilder.setGas({
-                gasEstimation: true,
-                gasLimitRatio: 1,
-            });
-            return {
-                gas: BigInt(txBuilder.data.gas),
-                price: BigInt(txBuilder.data.gasPrice ?? txBuilder.data.maxFeePerGas),
-            };
-        } catch (error) {
-            if (error.data) {
-                error.data = $contract.decodeCustomError(error.data, abiArr);
-            }
-            return {
-                error
-            }
-        }
-    }
-}
-
 namespace BlockWalker {
     export interface IBlockWalkerOptions {
         name?: string,
@@ -555,12 +492,5 @@ namespace BlockWalker {
         indexer.onBlock(cb);
         indexer.start();
         return indexer;
-    }
-}
-
-
-namespace $abiUtil {
-    export function isReader (abi: TAbiItem) {
-        return ['view', 'pure', null].includes(abi.stateMutability);
     }
 }

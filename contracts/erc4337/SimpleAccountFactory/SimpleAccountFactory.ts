@@ -1,13 +1,14 @@
 /**
- *  AUTO-Generated Class: 2023-11-05 00:40
- *  Implementation: test/fixtures/erc4337/samples/VerifyingPaymaster.sol
+ *  AUTO-Generated Class: 2023-12-22 01:26
+ *  Implementation: ./test/fixtures/erc4337/samples/SimpleAccountFactory.sol
  */
 import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TAccount } from '@dequanto/models/TAccount';
 import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase, ContractBaseHelper } from '@dequanto/contracts/ContractBase';
+import { ContractBase } from '@dequanto/contracts/ContractBase';
+import { ContractBaseUtils } from '@dequanto/contracts/utils/ContractBaseUtils';
 import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
@@ -38,15 +39,10 @@ export class SimpleAccountFactory extends ContractBase {
         this.storage = new SimpleAccountFactoryStorageReader(this.address, this.client, this.explorer);
     }
 
-    $meta = { artifact: 'artifacts/./test/fixtures/erc4337/samples/SimpleAccountFactory.sol/SimpleAccountFactory.json' }
+    
 
     async $constructor (deployer: TSender, _entryPoint: TAddress): Promise<TxWriter> {
-        throw new Error('Not implemented. Use the ContractDeployer class to deploy the contract');
-    }
-
-    // 0x11464fbe
-    async accountImplementation (): Promise<TAddress> {
-        return this.$read(this.$getAbiItem('function', 'accountImplementation'));
+        throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
     }
 
     // 0x5fbfb9cf
@@ -59,10 +55,17 @@ export class SimpleAccountFactory extends ContractBase {
         return this.$read(this.$getAbiItem('function', 'getAddress'), owner, salt);
     }
 
+    // 0x11464fbe
+    async accountImplementation (): Promise<TAddress> {
+        return this.$read(this.$getAbiItem('function', 'accountImplementation'));
+    }
+
     $call () {
         return super.$call() as ISimpleAccountFactoryTxCaller;
     }
-
+    $signed (): TOverrideReturns<ISimpleAccountFactoryTxCaller, Promise<{ signed: TEth.Hex, error?: Error & { data?: { type: string, params } } }>> {
+        return super.$signed() as any;
+    }
     $data (): ISimpleAccountFactoryTxData {
         return super.$data() as ISimpleAccountFactoryTxData;
     }
@@ -91,7 +94,7 @@ export class SimpleAccountFactory extends ContractBase {
 
 
 
-    abi: TAbiItem[] = [{"inputs":[{"internalType":"contract IEntryPoint","name":"_entryPoint","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"accountImplementation","outputs":[{"internalType":"contract SimpleAccount","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint256","name":"salt","type":"uint256"}],"name":"createAccount","outputs":[{"internalType":"contract SimpleAccount","name":"ret","type":"address"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint256","name":"salt","type":"uint256"}],"name":"getAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"}]
+    abi: TAbiItem[] = [{"type":"constructor","name":"constructor","inputs":[{"name":"_entryPoint","type":"address"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"createAccount","inputs":[{"name":"owner","type":"address"},{"name":"salt","type":"uint256"}],"outputs":[{"name":"ret","type":"address"}],"stateMutability":"nonpayable"},{"type":"function","name":"getAddress","inputs":[{"name":"owner","type":"address"},{"name":"salt","type":"uint256"}],"outputs":[{"type":"address"}],"stateMutability":"view"},{"type":"function","name":"accountImplementation","inputs":[],"outputs":[{"name":"accountImplementation","type":"address"}],"stateMutability":"view"}]
 
     storage: SimpleAccountFactoryStorageReader
 }
@@ -108,11 +111,6 @@ interface IEvents {
 
 
 
-interface IMethodAccountImplementation {
-  method: "accountImplementation"
-  arguments: [  ]
-}
-
 interface IMethodCreateAccount {
   method: "createAccount"
   arguments: [ owner: TAddress, salt: bigint ]
@@ -123,10 +121,15 @@ interface IMethodGetAddress {
   arguments: [ owner: TAddress, salt: bigint ]
 }
 
+interface IMethodAccountImplementation {
+  method: "accountImplementation"
+  arguments: [  ]
+}
+
 interface IMethods {
-  accountImplementation: IMethodAccountImplementation
   createAccount: IMethodCreateAccount
   getAddress: IMethodGetAddress
+  accountImplementation: IMethodAccountImplementation
   '*': { method: string, arguments: any[] } 
 }
 
@@ -145,52 +148,9 @@ class SimpleAccountFactoryStorageReader extends ContractStorageReaderBase {
         this.$createHandler(this.$slots);
     }
 
-    async _owner(): Promise<TAddress> {
-        return this.$storage.get(['_owner', ]);
-    }
 
-    async entryPoint(): Promise<TAddress> {
-        return this.$storage.get(['entryPoint', ]);
-    }
 
-    async verifyingSigner(): Promise<TAddress> {
-        return this.$storage.get(['verifyingSigner', ]);
-    }
-
-    async senderNonce(key: TAddress): Promise<bigint> {
-        return this.$storage.get(['senderNonce', key]);
-    }
-
-    $slots = [
-    {
-        "slot": 0,
-        "position": 0,
-        "name": "_owner",
-        "size": 160,
-        "type": "address"
-    },
-    {
-        "slot": 1,
-        "position": 0,
-        "name": "entryPoint",
-        "size": 160,
-        "type": "address"
-    },
-    {
-        "slot": 2,
-        "position": 0,
-        "name": "verifyingSigner",
-        "size": 160,
-        "type": "address"
-    },
-    {
-        "slot": 3,
-        "position": 0,
-        "name": "senderNonce",
-        "size": null,
-        "type": "mapping(address => uint256)"
-    }
-]
+    $slots = []
 
 }
 

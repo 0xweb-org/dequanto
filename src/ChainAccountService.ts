@@ -33,23 +33,21 @@ export class ChainAccountService {
     }
 
 
-    async get (key: TEth.Hex | TAddress): Promise<IAccount>
-    async get (mnemonic: string, params?: { index?: number, path?: string }): Promise<IAccount>
-
-    async get (ns: string, params?: { platform?: TPlatform }): Promise<IAccount>
-    async get (name: string, params?: { platform?: TPlatform }): Promise<IAccount>
-    async get (address: TAddress, params?: { platform?: TPlatform }): Promise<IAccount>
-
-    async get (mix: string | TEth.Hex | TAddress, params?: { platform?: TPlatform , index?: number, path?: string }): Promise<IAccount>
-    async get (mix: string | TEth.Hex | TAddress, params?: { platform?: TPlatform , index?: number, path?: string }): Promise<IAccount> {
+    async get <T extends IAccount = IAccount>  (key: TEth.Hex | TAddress): Promise<T>
+    async get <T extends IAccount = IAccount>  (mnemonic: string, params?: { index?: number, path?: string }): Promise<T>
+    async get <T extends IAccount = IAccount>  (ns: string, params?: { platform?: TPlatform }): Promise<T>
+    async get <T extends IAccount = IAccount>  (name: string, params?: { platform?: TPlatform }): Promise<T>
+    async get <T extends IAccount = IAccount>  (address: TAddress, params?: { platform?: TPlatform }): Promise<T>
+    async get<T extends IAccount = IAccount>  (mix: string | TEth.Hex | TAddress, params?: { platform?: TPlatform , index?: number, path?: string }): Promise<T>
+    async get<T extends IAccount = IAccount> (mix: string | TEth.Hex | TAddress, params?: { platform?: TPlatform , index?: number, path?: string }): Promise<T> {
         if ($is.Hex(mix) && mix.length >= 64) {
-            return await $sig.$account.fromKey(mix);
+            return await $sig.$account.fromKey(mix) as T;
         }
         if ($address.isValid(mix) === false) {
             // Check mnemonic
             let isMnemonic = /^(?:[a-zA-Z]+ ){11,}[a-zA-Z]+$/.test(mix);
             if (isMnemonic) {
-                return await $sig.$account.fromMnemonic(mix, params?.index ?? params.path ?? 0);
+                return await $sig.$account.fromMnemonic(mix, params?.index ?? params.path ?? 0) as T;
             }
             // Check NS
             if ($ns.isNsAlike(mix)) {
@@ -69,8 +67,19 @@ export class ChainAccountService {
         if (acc == null && this.storeCustom != null) {
             acc = await this.storeCustom.get(mix);
         }
-        return acc;
+        return acc as T;
     }
+
+    static async get<T = IAccount> (name: string, params?: {
+        platform?: TPlatform
+        store?: IAccountsStore
+        writable?: 'config' | 'fs' | 'custom'
+        config?: appcfg
+    }): Promise<T> {
+        let service = new ChainAccountService(params)
+        return service.get<T>(name, { platform: params?.platform });
+    }
+
     async getAll (): Promise<IAccount[]> {
         let [ configAccounts, fsAccounts, customAccounts ] = await Promise.all([
             this.storeConfig.getAll(),

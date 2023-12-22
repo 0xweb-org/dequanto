@@ -20,7 +20,7 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TokensService } from '@dequanto/tokens/TokensService';
 import { PlatformFactory } from '@dequanto/chains/PlatformFactory';
 import { $require } from '@dequanto/utils/$require';
-import { ITxConfig } from '@dequanto/txs/ITxConfig';
+import { ITxBuilderOptions } from '@dequanto/txs/ITxBuilderOptions';
 import { ITxWriterOptions } from '@dequanto/txs/TxWriter';
 import { $address } from '@dequanto/utils/$address';
 import { $promise } from '@dequanto/utils/$promise';
@@ -38,7 +38,7 @@ export class HopBridge implements IBridge {
     private SUPPORTED_CHAINS: TPlatform[] = [ 'polygon', 'xdai' ]
 
     async withdraw (account: EoAccount, platform: TPlatform, symbol: string, params?: {
-        config?: ITxConfig
+        config?: ITxBuilderOptions
         amount?: number
     }) {
         $require.oneOf(platform, this.SUPPORTED_CHAINS, 'Supporting only tested chains');

@@ -42,7 +42,9 @@ export namespace TTransport {
 
         export type Http = {
             url: string
-        } & Parameters<typeof fetch>[1];
+        } & Omit<Parameters<typeof fetch>[1], 'headers'> & {
+            headers?: Record<string, string | ((req) => Promise<string>)>
+        };
 
         export type Ws = {
             url: string

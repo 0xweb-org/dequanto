@@ -13,13 +13,20 @@ export class HttpTransport implements TTransport.Transport {
 
     async request (req: TTransport.Request | TTransport.Request[]) {
         try {
-            let resp = await fetch(this.options.url, {
-                body: JSON.stringify(req),
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...(this.options.headers ?? {})
+            let body = JSON.stringify(req);
+            let headers = {
+                'Content-Type': 'application/json',
+                ...(this.options.headers ?? {})
+            };
+            for (let key in headers) {
+                if (typeof headers[key] === 'function') {
+                    headers[key] = await headers[key]({ body });
                 }
+            }
+            let resp = await fetch(this.options.url, {
+                method: 'POST',
+                body,
+                headers,
             });
             let data = /json/.test(resp.headers.get('Content-Type'))
                 ? await resp.json()

@@ -467,9 +467,22 @@ export namespace Ast {
             }
         }
         if (Ast.isFunctionDefinition(node)) {
+            let type: AbiType = node.isConstructor ? 'constructor' : 'function';
+            let name = node.name ?? (node.isConstructor ? 'constructor' : null)
+            if (name == null) {
+                if (node.isFallback) {
+                    type = 'fallback';
+                    name = void 0;
+                } else if (node.isReceiveEther) {
+                    type = 'receive';
+                    name = void 0;
+                } else {
+                    throw new Error(`Could not find name for function ${JSON.stringify(node)}`);
+                }
+            }
             return {
-                type: node.isConstructor ? 'constructor' : 'function',
-                name: node.name ?? (node.isConstructor ? 'constructor' : null),
+                type,
+                name,
                 inputs: await alot(node.parameters).mapAsync(async param => {
                     return serializeTypeName(param.name, param.typeName, source, inheritance);
                 }).toArrayAsync(),
