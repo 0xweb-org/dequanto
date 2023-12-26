@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,7 +39,9 @@ export class ERC20FlashMint extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/ERC20FlashMint.ts"
+}
 
     // 0xdd62ed3e
     async allowance (owner: TAddress, spender: TAddress): Promise<bigint> {
@@ -72,7 +74,7 @@ export class ERC20FlashMint extends ContractBase {
     }
 
     // 0x5cffe9de
-    async flashLoan (sender: TSender, receiver: TAddress, token: TAddress, amount: bigint, data: TBufferLike): Promise<TxWriter> {
+    async flashLoan (sender: TSender, receiver: TAddress, token: TAddress, amount: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'flashLoan'), sender, receiver, token, amount, data);
     }
 
@@ -231,7 +233,7 @@ interface IMethodFlashFee {
 
 interface IMethodFlashLoan {
   method: "flashLoan"
-  arguments: [ receiver: TAddress, token: TAddress, amount: bigint, data: TBufferLike ]
+  arguments: [ receiver: TAddress, token: TAddress, amount: bigint, data: TEth.Hex ]
 }
 
 interface IMethodIncreaseAllowance {
@@ -295,7 +297,7 @@ interface IMethods {
 interface IERC20FlashMintTxCaller {
     approve (sender: TSender, spender: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     decreaseAllowance (sender: TSender, spender: TAddress, subtractedValue: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    flashLoan (sender: TSender, receiver: TAddress, token: TAddress, amount: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    flashLoan (sender: TSender, receiver: TAddress, token: TAddress, amount: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     increaseAllowance (sender: TSender, spender: TAddress, addedValue: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     transfer (sender: TSender, to: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     transferFrom (sender: TSender, from: TAddress, to: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
@@ -305,7 +307,7 @@ interface IERC20FlashMintTxCaller {
 interface IERC20FlashMintTxData {
     approve (sender: TSender, spender: TAddress, amount: bigint): Promise<TEth.TxLike>
     decreaseAllowance (sender: TSender, spender: TAddress, subtractedValue: bigint): Promise<TEth.TxLike>
-    flashLoan (sender: TSender, receiver: TAddress, token: TAddress, amount: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    flashLoan (sender: TSender, receiver: TAddress, token: TAddress, amount: bigint, data: TEth.Hex): Promise<TEth.TxLike>
     increaseAllowance (sender: TSender, spender: TAddress, addedValue: bigint): Promise<TEth.TxLike>
     transfer (sender: TSender, to: TAddress, amount: bigint): Promise<TEth.TxLike>
     transferFrom (sender: TSender, from: TAddress, to: TAddress, amount: bigint): Promise<TEth.TxLike>

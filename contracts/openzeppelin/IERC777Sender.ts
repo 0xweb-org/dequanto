@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,10 +39,12 @@ export class IERC777Sender extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/IERC777Sender.ts"
+}
 
     // 0x75ab9782
-    async tokensToSend (sender: TSender, operator: TAddress, from: TAddress, to: TAddress, amount: bigint, userData: TBufferLike, operatorData: TBufferLike): Promise<TxWriter> {
+    async tokensToSend (sender: TSender, operator: TAddress, from: TAddress, to: TAddress, amount: bigint, userData: TEth.Hex, operatorData: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'tokensToSend'), sender, operator, from, to, amount, userData, operatorData);
     }
 
@@ -99,7 +101,7 @@ interface IEvents {
 
 interface IMethodTokensToSend {
   method: "tokensToSend"
-  arguments: [ operator: TAddress, from: TAddress, to: TAddress, amount: bigint, userData: TBufferLike, operatorData: TBufferLike ]
+  arguments: [ operator: TAddress, from: TAddress, to: TAddress, amount: bigint, userData: TEth.Hex, operatorData: TEth.Hex ]
 }
 
 interface IMethods {
@@ -113,12 +115,12 @@ interface IMethods {
 
 
 interface IIERC777SenderTxCaller {
-    tokensToSend (sender: TSender, operator: TAddress, from: TAddress, to: TAddress, amount: bigint, userData: TBufferLike, operatorData: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    tokensToSend (sender: TSender, operator: TAddress, from: TAddress, to: TAddress, amount: bigint, userData: TEth.Hex, operatorData: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IIERC777SenderTxData {
-    tokensToSend (sender: TSender, operator: TAddress, from: TAddress, to: TAddress, amount: bigint, userData: TBufferLike, operatorData: TBufferLike): Promise<TEth.TxLike>
+    tokensToSend (sender: TSender, operator: TAddress, from: TAddress, to: TAddress, amount: bigint, userData: TEth.Hex, operatorData: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

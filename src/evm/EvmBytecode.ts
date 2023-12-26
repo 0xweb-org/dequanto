@@ -17,7 +17,7 @@ import { $bytecode } from './utils/$bytecode';
 import { $buffer } from '@dequanto/utils/$buffer';
 import { $array } from '@dequanto/utils/$array';
 import { TEth } from '@dequanto/models/TEth';
-
+import opcodeFunctions from './utils/opcodes';
 
 /**
  * Functions to SKIP
@@ -98,6 +98,21 @@ export class EvmBytecode {
             }
         }
         return this.opcodes;
+    }
+
+    public getInstructions () {
+        if (this.instructions.length === 0) {
+            const opcodes = this.getOpcodes();
+            for (this.pc; this.pc < opcodes.length && !this.halted; this.pc++) {
+                const opcode = opcodes[this.pc];
+                this.gasUsed += opcode.fee;
+                if (opcode.name in opcodeFunctions === false) {
+                    throw new Error('Unknown OPCODE: ' + opcode.name);
+                }
+                opcodeFunctions[opcode.name](opcode, this);
+            }
+        }
+        return this.instructions;
     }
 
     async getAbi(): Promise<TAbiItem[]> {

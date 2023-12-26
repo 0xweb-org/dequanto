@@ -7,7 +7,7 @@
         },
         "outDir": "./dist",
         "module": "AMD",
-        "moduleResolution": "node",
+        "moduleResolution": "Node",
         "experimentalDecorators": true,
         "target": "es2022",
         "lib": ["dom", "es2022"],

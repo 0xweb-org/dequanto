@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: ./test/fixtures/erc4337/samples/SimpleAccountFactory.sol
  */
 import di from 'a-di';
@@ -39,7 +39,10 @@ export class SimpleAccountFactory extends ContractBase {
         this.storage = new SimpleAccountFactoryStorageReader(this.address, this.client, this.explorer);
     }
 
-    
+    $meta = {
+    "source": "./test/fixtures/erc4337/samples/SimpleAccountFactory.sol",
+    "class": "./contracts/erc4337/SimpleAccountFactory/SimpleAccountFactory.ts"
+}
 
     async $constructor (deployer: TSender, _entryPoint: TAddress): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -96,7 +99,7 @@ export class SimpleAccountFactory extends ContractBase {
 
     abi: TAbiItem[] = [{"type":"constructor","name":"constructor","inputs":[{"name":"_entryPoint","type":"address"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"createAccount","inputs":[{"name":"owner","type":"address"},{"name":"salt","type":"uint256"}],"outputs":[{"name":"ret","type":"address"}],"stateMutability":"nonpayable"},{"type":"function","name":"getAddress","inputs":[{"name":"owner","type":"address"},{"name":"salt","type":"uint256"}],"outputs":[{"type":"address"}],"stateMutability":"view"},{"type":"function","name":"accountImplementation","inputs":[],"outputs":[{"name":"accountImplementation","type":"address"}],"stateMutability":"view"}]
 
-    storage: SimpleAccountFactoryStorageReader
+    declare storage: SimpleAccountFactoryStorageReader
 }
 
 type TSender = TAccount & {

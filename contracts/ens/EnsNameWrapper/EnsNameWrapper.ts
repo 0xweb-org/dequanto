@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401#code
  */
 import di from 'a-di';
@@ -51,8 +51,8 @@ export namespace EnsNameWrapperErrors {
     export interface LabelMismatch {
         type: 'LabelMismatch'
         params: {
-            labelHash: TBufferLike
-            expectedLabelhash: TBufferLike
+            labelHash: TEth.Hex
+            expectedLabelhash: TEth.Hex
         }
     }
     export interface LabelTooLong {
@@ -74,13 +74,13 @@ export namespace EnsNameWrapperErrors {
     export interface OperationProhibited {
         type: 'OperationProhibited'
         params: {
-            node: TBufferLike
+            node: TEth.Hex
         }
     }
     export interface Unauthorised {
         type: 'Unauthorised'
         params: {
-            node: TBufferLike
+            node: TEth.Hex
             addr: TAddress
         }
     }
@@ -98,7 +98,9 @@ export class EnsNameWrapper extends ContractBase {
         this.storage = new EnsNameWrapperStorageReader(this.address, this.client, this.explorer);
     }
 
-    
+    $meta = {
+    "class": "./contracts/ens/EnsNameWrapper/EnsNameWrapper.ts"
+}
 
     async $constructor (deployer: TSender, _ens: TAddress, _registrar: TAddress, _metadataService: TAddress): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -110,7 +112,7 @@ export class EnsNameWrapper extends ContractBase {
     }
 
     // 0xadf4960a
-    async allFusesBurned (node: TBufferLike, fuseMask: number): Promise<boolean> {
+    async allFusesBurned (node: TEth.Hex, fuseMask: number): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'allFusesBurned'), node, fuseMask);
     }
 
@@ -130,12 +132,12 @@ export class EnsNameWrapper extends ContractBase {
     }
 
     // 0x0e4cd725
-    async canExtendSubnames (node: TBufferLike, addr: TAddress): Promise<boolean> {
+    async canExtendSubnames (node: TEth.Hex, addr: TAddress): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'canExtendSubnames'), node, addr);
     }
 
     // 0x41415eab
-    async canModifyName (node: TBufferLike, addr: TAddress): Promise<boolean> {
+    async canModifyName (node: TEth.Hex, addr: TAddress): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'canModifyName'), node, addr);
     }
 
@@ -150,7 +152,7 @@ export class EnsNameWrapper extends ContractBase {
     }
 
     // 0x6e5d6ad2
-    async extendExpiry (sender: TSender, parentNode: TBufferLike, labelhash: TBufferLike, expiry: number): Promise<TxWriter> {
+    async extendExpiry (sender: TSender, parentNode: TEth.Hex, labelhash: TEth.Hex, expiry: number): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'extendExpiry'), sender, parentNode, labelhash, expiry);
     }
 
@@ -170,9 +172,9 @@ export class EnsNameWrapper extends ContractBase {
     }
 
     // 0xd9a50c12
-    async isWrapped (parentNode: TBufferLike, labelhash: TBufferLike): Promise<boolean>
+    async isWrapped (parentNode: TEth.Hex, labelhash: TEth.Hex): Promise<boolean>
     // 0xfd0cd0d9
-    async isWrapped (node: TBufferLike): Promise<boolean>
+    async isWrapped (node: TEth.Hex): Promise<boolean>
     async isWrapped (...args): Promise<boolean> {
         let abi = this.$getAbiItemOverload([ 'function isWrapped(bytes32, bytes32) returns bool', 'function isWrapped(bytes32) returns bool' ], args);
         return this.$read(abi, ...args);
@@ -189,12 +191,12 @@ export class EnsNameWrapper extends ContractBase {
     }
 
     // 0x20c38e2b
-    async names (input0: TBufferLike): Promise<TBufferLike> {
+    async names (input0: TEth.Hex): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'names'), input0);
     }
 
     // 0x150b7a02
-    async onERC721Received (sender: TSender, to: TAddress, input1: TAddress, tokenId: bigint, data: TBufferLike): Promise<TxWriter> {
+    async onERC721Received (sender: TSender, to: TAddress, input1: TAddress, tokenId: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'onERC721Received'), sender, to, input1, tokenId, data);
     }
 
@@ -234,12 +236,12 @@ export class EnsNameWrapper extends ContractBase {
     }
 
     // 0x2eb2c2d6
-    async safeBatchTransferFrom (sender: TSender, from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TBufferLike): Promise<TxWriter> {
+    async safeBatchTransferFrom (sender: TSender, from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'safeBatchTransferFrom'), sender, from, to, ids, amounts, data);
     }
 
     // 0xf242432a
-    async safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TBufferLike): Promise<TxWriter> {
+    async safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'safeTransferFrom'), sender, from, to, id, amount, data);
     }
 
@@ -249,7 +251,7 @@ export class EnsNameWrapper extends ContractBase {
     }
 
     // 0x33c69ea9
-    async setChildFuses (sender: TSender, parentNode: TBufferLike, labelhash: TBufferLike, fuses: number, expiry: number): Promise<TxWriter> {
+    async setChildFuses (sender: TSender, parentNode: TEth.Hex, labelhash: TEth.Hex, fuses: number, expiry: number): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'setChildFuses'), sender, parentNode, labelhash, fuses, expiry);
     }
 
@@ -259,7 +261,7 @@ export class EnsNameWrapper extends ContractBase {
     }
 
     // 0x402906fc
-    async setFuses (sender: TSender, node: TBufferLike, ownerControlledFuses: number): Promise<TxWriter> {
+    async setFuses (sender: TSender, node: TEth.Hex, ownerControlledFuses: number): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'setFuses'), sender, node, ownerControlledFuses);
     }
 
@@ -269,27 +271,27 @@ export class EnsNameWrapper extends ContractBase {
     }
 
     // 0xcf408823
-    async setRecord (sender: TSender, node: TBufferLike, owner: TAddress, resolver: TAddress, ttl: number): Promise<TxWriter> {
+    async setRecord (sender: TSender, node: TEth.Hex, owner: TAddress, resolver: TAddress, ttl: number): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'setRecord'), sender, node, owner, resolver, ttl);
     }
 
     // 0x1896f70a
-    async setResolver (sender: TSender, node: TBufferLike, resolver: TAddress): Promise<TxWriter> {
+    async setResolver (sender: TSender, node: TEth.Hex, resolver: TAddress): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'setResolver'), sender, node, resolver);
     }
 
     // 0xc658e086
-    async setSubnodeOwner (sender: TSender, parentNode: TBufferLike, label: string, owner: TAddress, fuses: number, expiry: number): Promise<TxWriter> {
+    async setSubnodeOwner (sender: TSender, parentNode: TEth.Hex, label: string, owner: TAddress, fuses: number, expiry: number): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'setSubnodeOwner'), sender, parentNode, label, owner, fuses, expiry);
     }
 
     // 0x24c1af44
-    async setSubnodeRecord (sender: TSender, parentNode: TBufferLike, label: string, owner: TAddress, resolver: TAddress, ttl: number, fuses: number, expiry: number): Promise<TxWriter> {
+    async setSubnodeRecord (sender: TSender, parentNode: TEth.Hex, label: string, owner: TAddress, resolver: TAddress, ttl: number, fuses: number, expiry: number): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'setSubnodeRecord'), sender, parentNode, label, owner, resolver, ttl, fuses, expiry);
     }
 
     // 0x14ab9038
-    async setTTL (sender: TSender, node: TBufferLike, ttl: number): Promise<TxWriter> {
+    async setTTL (sender: TSender, node: TEth.Hex, ttl: number): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'setTTL'), sender, node, ttl);
     }
 
@@ -299,7 +301,7 @@ export class EnsNameWrapper extends ContractBase {
     }
 
     // 0x01ffc9a7
-    async supportsInterface (interfaceId: TBufferLike): Promise<boolean> {
+    async supportsInterface (interfaceId: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'supportsInterface'), interfaceId);
     }
 
@@ -309,17 +311,17 @@ export class EnsNameWrapper extends ContractBase {
     }
 
     // 0xd8c9921a
-    async unwrap (sender: TSender, parentNode: TBufferLike, labelhash: TBufferLike, controller: TAddress): Promise<TxWriter> {
+    async unwrap (sender: TSender, parentNode: TEth.Hex, labelhash: TEth.Hex, controller: TAddress): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'unwrap'), sender, parentNode, labelhash, controller);
     }
 
     // 0x8b4dfa75
-    async unwrapETH2LD (sender: TSender, labelhash: TBufferLike, registrant: TAddress, controller: TAddress): Promise<TxWriter> {
+    async unwrapETH2LD (sender: TSender, labelhash: TEth.Hex, registrant: TAddress, controller: TAddress): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'unwrapETH2LD'), sender, labelhash, registrant, controller);
     }
 
     // 0xc93ab3fd
-    async upgrade (sender: TSender, name: TBufferLike, extraData: TBufferLike): Promise<TxWriter> {
+    async upgrade (sender: TSender, name: TEth.Hex, extraData: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'upgrade'), sender, name, extraData);
     }
 
@@ -334,7 +336,7 @@ export class EnsNameWrapper extends ContractBase {
     }
 
     // 0xeb8ae530
-    async wrap (sender: TSender, name: TBufferLike, wrappedOwner: TAddress, resolver: TAddress): Promise<TxWriter> {
+    async wrap (sender: TSender, name: TEth.Hex, wrappedOwner: TAddress, resolver: TAddress): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'wrap'), sender, name, wrappedOwner, resolver);
     }
 
@@ -497,7 +499,7 @@ export class EnsNameWrapper extends ContractBase {
     async getPastLogsExpiryExtended (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { node?: TBufferLike }
+        params?: { node?: TEth.Hex }
     }): Promise<ITxLogItem<TLogExpiryExtended>[]> {
         return await this.$getPastLogsParsed('ExpiryExtended', options) as any;
     }
@@ -505,7 +507,7 @@ export class EnsNameWrapper extends ContractBase {
     async getPastLogsFusesSet (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { node?: TBufferLike }
+        params?: { node?: TEth.Hex }
     }): Promise<ITxLogItem<TLogFusesSet>[]> {
         return await this.$getPastLogsParsed('FusesSet', options) as any;
     }
@@ -513,7 +515,7 @@ export class EnsNameWrapper extends ContractBase {
     async getPastLogsNameUnwrapped (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { node?: TBufferLike }
+        params?: { node?: TEth.Hex }
     }): Promise<ITxLogItem<TLogNameUnwrapped>[]> {
         return await this.$getPastLogsParsed('NameUnwrapped', options) as any;
     }
@@ -521,7 +523,7 @@ export class EnsNameWrapper extends ContractBase {
     async getPastLogsNameWrapped (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { node?: TBufferLike }
+        params?: { node?: TEth.Hex }
     }): Promise<ITxLogItem<TLogNameWrapped>[]> {
         return await this.$getPastLogsParsed('NameWrapped', options) as any;
     }
@@ -560,7 +562,7 @@ export class EnsNameWrapper extends ContractBase {
 
     abi: TAbiItem[] = [{"inputs":[{"internalType":"contract ENS","name":"_ens","type":"address"},{"internalType":"contract IBaseRegistrar","name":"_registrar","type":"address"},{"internalType":"contract IMetadataService","name":"_metadataService","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"CannotUpgrade","type":"error"},{"inputs":[],"name":"IncompatibleParent","type":"error"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"IncorrectTargetOwner","type":"error"},{"inputs":[],"name":"IncorrectTokenType","type":"error"},{"inputs":[{"internalType":"bytes32","name":"labelHash","type":"bytes32"},{"internalType":"bytes32","name":"expectedLabelhash","type":"bytes32"}],"name":"LabelMismatch","type":"error"},{"inputs":[{"internalType":"string","name":"label","type":"string"}],"name":"LabelTooLong","type":"error"},{"inputs":[],"name":"LabelTooShort","type":"error"},{"inputs":[],"name":"NameIsNotWrapped","type":"error"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"}],"name":"OperationProhibited","type":"error"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"address","name":"addr","type":"address"}],"name":"Unauthorised","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"controller","type":"address"},{"indexed":false,"internalType":"bool","name":"active","type":"bool"}],"name":"ControllerChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"node","type":"bytes32"},{"indexed":false,"internalType":"uint64","name":"expiry","type":"uint64"}],"name":"ExpiryExtended","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"node","type":"bytes32"},{"indexed":false,"internalType":"uint32","name":"fuses","type":"uint32"}],"name":"FusesSet","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"node","type":"bytes32"},{"indexed":false,"internalType":"address","name":"owner","type":"address"}],"name":"NameUnwrapped","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"node","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"name","type":"bytes"},{"indexed":false,"internalType":"address","name":"owner","type":"address"},{"indexed":false,"internalType":"uint32","name":"fuses","type":"uint32"},{"indexed":false,"internalType":"uint64","name":"expiry","type":"uint64"}],"name":"NameWrapped","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256[]","name":"ids","type":"uint256[]"},{"indexed":false,"internalType":"uint256[]","name":"values","type":"uint256[]"}],"name":"TransferBatch","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"id","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"TransferSingle","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"string","name":"value","type":"string"},{"indexed":true,"internalType":"uint256","name":"id","type":"uint256"}],"name":"URI","type":"event"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"_tokens","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"uint32","name":"fuseMask","type":"uint32"}],"name":"allFusesBurned","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address[]","name":"accounts","type":"address[]"},{"internalType":"uint256[]","name":"ids","type":"uint256[]"}],"name":"balanceOfBatch","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"address","name":"addr","type":"address"}],"name":"canExtendSubnames","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"address","name":"addr","type":"address"}],"name":"canModifyName","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"controllers","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"ens","outputs":[{"internalType":"contract ENS","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"parentNode","type":"bytes32"},{"internalType":"bytes32","name":"labelhash","type":"bytes32"},{"internalType":"uint64","name":"expiry","type":"uint64"}],"name":"extendExpiry","outputs":[{"internalType":"uint64","name":"","type":"uint64"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"id","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"operator","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"id","type":"uint256"}],"name":"getData","outputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint32","name":"fuses","type":"uint32"},{"internalType":"uint64","name":"expiry","type":"uint64"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"parentNode","type":"bytes32"},{"internalType":"bytes32","name":"labelhash","type":"bytes32"}],"name":"isWrapped","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"}],"name":"isWrapped","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"metadataService","outputs":[{"internalType":"contract IMetadataService","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"name":"names","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"onERC721Received","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"id","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"owner","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_token","type":"address"},{"internalType":"address","name":"_to","type":"address"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"recoverFunds","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"label","type":"string"},{"internalType":"address","name":"wrappedOwner","type":"address"},{"internalType":"uint256","name":"duration","type":"uint256"},{"internalType":"address","name":"resolver","type":"address"},{"internalType":"uint16","name":"ownerControlledFuses","type":"uint16"}],"name":"registerAndWrapETH2LD","outputs":[{"internalType":"uint256","name":"registrarExpiry","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"registrar","outputs":[{"internalType":"contract IBaseRegistrar","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"uint256","name":"duration","type":"uint256"}],"name":"renew","outputs":[{"internalType":"uint256","name":"expires","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256[]","name":"ids","type":"uint256[]"},{"internalType":"uint256[]","name":"amounts","type":"uint256[]"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeBatchTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"parentNode","type":"bytes32"},{"internalType":"bytes32","name":"labelhash","type":"bytes32"},{"internalType":"uint32","name":"fuses","type":"uint32"},{"internalType":"uint64","name":"expiry","type":"uint64"}],"name":"setChildFuses","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"controller","type":"address"},{"internalType":"bool","name":"active","type":"bool"}],"name":"setController","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"uint16","name":"ownerControlledFuses","type":"uint16"}],"name":"setFuses","outputs":[{"internalType":"uint32","name":"","type":"uint32"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"contract IMetadataService","name":"_metadataService","type":"address"}],"name":"setMetadataService","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"resolver","type":"address"},{"internalType":"uint64","name":"ttl","type":"uint64"}],"name":"setRecord","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"address","name":"resolver","type":"address"}],"name":"setResolver","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"parentNode","type":"bytes32"},{"internalType":"string","name":"label","type":"string"},{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint32","name":"fuses","type":"uint32"},{"internalType":"uint64","name":"expiry","type":"uint64"}],"name":"setSubnodeOwner","outputs":[{"internalType":"bytes32","name":"node","type":"bytes32"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"parentNode","type":"bytes32"},{"internalType":"string","name":"label","type":"string"},{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"resolver","type":"address"},{"internalType":"uint64","name":"ttl","type":"uint64"},{"internalType":"uint32","name":"fuses","type":"uint32"},{"internalType":"uint64","name":"expiry","type":"uint64"}],"name":"setSubnodeRecord","outputs":[{"internalType":"bytes32","name":"node","type":"bytes32"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"uint64","name":"ttl","type":"uint64"}],"name":"setTTL","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"contract INameWrapperUpgrade","name":"_upgradeAddress","type":"address"}],"name":"setUpgradeContract","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"parentNode","type":"bytes32"},{"internalType":"bytes32","name":"labelhash","type":"bytes32"},{"internalType":"address","name":"controller","type":"address"}],"name":"unwrap","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"labelhash","type":"bytes32"},{"internalType":"address","name":"registrant","type":"address"},{"internalType":"address","name":"controller","type":"address"}],"name":"unwrapETH2LD","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes","name":"name","type":"bytes"},{"internalType":"bytes","name":"extraData","type":"bytes"}],"name":"upgrade","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"upgradeContract","outputs":[{"internalType":"contract INameWrapperUpgrade","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"uri","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes","name":"name","type":"bytes"},{"internalType":"address","name":"wrappedOwner","type":"address"},{"internalType":"address","name":"resolver","type":"address"}],"name":"wrap","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"label","type":"string"},{"internalType":"address","name":"wrappedOwner","type":"address"},{"internalType":"uint16","name":"ownerControlledFuses","type":"uint16"},{"internalType":"address","name":"resolver","type":"address"}],"name":"wrapETH2LD","outputs":[{"internalType":"uint64","name":"expiry","type":"uint64"}],"stateMutability":"nonpayable","type":"function"}]
 
-    storage: EnsNameWrapperStorageReader
+    declare storage: EnsNameWrapperStorageReader
 }
 
 type TSender = TAccount & {
@@ -580,21 +582,21 @@ type TSender = TAccount & {
     };
     type TLogControllerChangedParameters = [ controller: TAddress, active: boolean ];
     type TLogExpiryExtended = {
-        node: TBufferLike, expiry: number
+        node: TEth.Hex, expiry: number
     };
-    type TLogExpiryExtendedParameters = [ node: TBufferLike, expiry: number ];
+    type TLogExpiryExtendedParameters = [ node: TEth.Hex, expiry: number ];
     type TLogFusesSet = {
-        node: TBufferLike, fuses: number
+        node: TEth.Hex, fuses: number
     };
-    type TLogFusesSetParameters = [ node: TBufferLike, fuses: number ];
+    type TLogFusesSetParameters = [ node: TEth.Hex, fuses: number ];
     type TLogNameUnwrapped = {
-        node: TBufferLike, owner: TAddress
+        node: TEth.Hex, owner: TAddress
     };
-    type TLogNameUnwrappedParameters = [ node: TBufferLike, owner: TAddress ];
+    type TLogNameUnwrappedParameters = [ node: TEth.Hex, owner: TAddress ];
     type TLogNameWrapped = {
-        node: TBufferLike, name: TBufferLike, owner: TAddress, fuses: number, expiry: number
+        node: TEth.Hex, name: TEth.Hex, owner: TAddress, fuses: number, expiry: number
     };
-    type TLogNameWrappedParameters = [ node: TBufferLike, name: TBufferLike, owner: TAddress, fuses: number, expiry: number ];
+    type TLogNameWrappedParameters = [ node: TEth.Hex, name: TEth.Hex, owner: TAddress, fuses: number, expiry: number ];
     type TLogOwnershipTransferred = {
         previousOwner: TAddress, newOwner: TAddress
     };
@@ -636,7 +638,7 @@ interface IMethod_tokens {
 
 interface IMethodAllFusesBurned {
   method: "allFusesBurned"
-  arguments: [ node: TBufferLike, fuseMask: number ]
+  arguments: [ node: TEth.Hex, fuseMask: number ]
 }
 
 interface IMethodApprove {
@@ -656,12 +658,12 @@ interface IMethodBalanceOfBatch {
 
 interface IMethodCanExtendSubnames {
   method: "canExtendSubnames"
-  arguments: [ node: TBufferLike, addr: TAddress ]
+  arguments: [ node: TEth.Hex, addr: TAddress ]
 }
 
 interface IMethodCanModifyName {
   method: "canModifyName"
-  arguments: [ node: TBufferLike, addr: TAddress ]
+  arguments: [ node: TEth.Hex, addr: TAddress ]
 }
 
 interface IMethodControllers {
@@ -676,7 +678,7 @@ interface IMethodEns {
 
 interface IMethodExtendExpiry {
   method: "extendExpiry"
-  arguments: [ parentNode: TBufferLike, labelhash: TBufferLike, expiry: number ]
+  arguments: [ parentNode: TEth.Hex, labelhash: TEth.Hex, expiry: number ]
 }
 
 interface IMethodGetApproved {
@@ -696,7 +698,7 @@ interface IMethodIsApprovedForAll {
 
 interface IMethodIsWrapped {
   method: "isWrapped"
-  arguments: [ parentNode: TBufferLike, labelhash: TBufferLike ] | [ node: TBufferLike ]
+  arguments: [ parentNode: TEth.Hex, labelhash: TEth.Hex ] | [ node: TEth.Hex ]
 }
 
 interface IMethodMetadataService {
@@ -711,12 +713,12 @@ interface IMethodName {
 
 interface IMethodNames {
   method: "names"
-  arguments: [ input0: TBufferLike ]
+  arguments: [ input0: TEth.Hex ]
 }
 
 interface IMethodOnERC721Received {
   method: "onERC721Received"
-  arguments: [ to: TAddress, input1: TAddress, tokenId: bigint, data: TBufferLike ]
+  arguments: [ to: TAddress, input1: TAddress, tokenId: bigint, data: TEth.Hex ]
 }
 
 interface IMethodOwner {
@@ -756,12 +758,12 @@ interface IMethodRenounceOwnership {
 
 interface IMethodSafeBatchTransferFrom {
   method: "safeBatchTransferFrom"
-  arguments: [ from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TBufferLike ]
+  arguments: [ from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex ]
 }
 
 interface IMethodSafeTransferFrom {
   method: "safeTransferFrom"
-  arguments: [ from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TBufferLike ]
+  arguments: [ from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex ]
 }
 
 interface IMethodSetApprovalForAll {
@@ -771,7 +773,7 @@ interface IMethodSetApprovalForAll {
 
 interface IMethodSetChildFuses {
   method: "setChildFuses"
-  arguments: [ parentNode: TBufferLike, labelhash: TBufferLike, fuses: number, expiry: number ]
+  arguments: [ parentNode: TEth.Hex, labelhash: TEth.Hex, fuses: number, expiry: number ]
 }
 
 interface IMethodSetController {
@@ -781,7 +783,7 @@ interface IMethodSetController {
 
 interface IMethodSetFuses {
   method: "setFuses"
-  arguments: [ node: TBufferLike, ownerControlledFuses: number ]
+  arguments: [ node: TEth.Hex, ownerControlledFuses: number ]
 }
 
 interface IMethodSetMetadataService {
@@ -791,27 +793,27 @@ interface IMethodSetMetadataService {
 
 interface IMethodSetRecord {
   method: "setRecord"
-  arguments: [ node: TBufferLike, owner: TAddress, resolver: TAddress, ttl: number ]
+  arguments: [ node: TEth.Hex, owner: TAddress, resolver: TAddress, ttl: number ]
 }
 
 interface IMethodSetResolver {
   method: "setResolver"
-  arguments: [ node: TBufferLike, resolver: TAddress ]
+  arguments: [ node: TEth.Hex, resolver: TAddress ]
 }
 
 interface IMethodSetSubnodeOwner {
   method: "setSubnodeOwner"
-  arguments: [ parentNode: TBufferLike, label: string, owner: TAddress, fuses: number, expiry: number ]
+  arguments: [ parentNode: TEth.Hex, label: string, owner: TAddress, fuses: number, expiry: number ]
 }
 
 interface IMethodSetSubnodeRecord {
   method: "setSubnodeRecord"
-  arguments: [ parentNode: TBufferLike, label: string, owner: TAddress, resolver: TAddress, ttl: number, fuses: number, expiry: number ]
+  arguments: [ parentNode: TEth.Hex, label: string, owner: TAddress, resolver: TAddress, ttl: number, fuses: number, expiry: number ]
 }
 
 interface IMethodSetTTL {
   method: "setTTL"
-  arguments: [ node: TBufferLike, ttl: number ]
+  arguments: [ node: TEth.Hex, ttl: number ]
 }
 
 interface IMethodSetUpgradeContract {
@@ -821,7 +823,7 @@ interface IMethodSetUpgradeContract {
 
 interface IMethodSupportsInterface {
   method: "supportsInterface"
-  arguments: [ interfaceId: TBufferLike ]
+  arguments: [ interfaceId: TEth.Hex ]
 }
 
 interface IMethodTransferOwnership {
@@ -831,17 +833,17 @@ interface IMethodTransferOwnership {
 
 interface IMethodUnwrap {
   method: "unwrap"
-  arguments: [ parentNode: TBufferLike, labelhash: TBufferLike, controller: TAddress ]
+  arguments: [ parentNode: TEth.Hex, labelhash: TEth.Hex, controller: TAddress ]
 }
 
 interface IMethodUnwrapETH2LD {
   method: "unwrapETH2LD"
-  arguments: [ labelhash: TBufferLike, registrant: TAddress, controller: TAddress ]
+  arguments: [ labelhash: TEth.Hex, registrant: TAddress, controller: TAddress ]
 }
 
 interface IMethodUpgrade {
   method: "upgrade"
-  arguments: [ name: TBufferLike, extraData: TBufferLike ]
+  arguments: [ name: TEth.Hex, extraData: TEth.Hex ]
 }
 
 interface IMethodUpgradeContract {
@@ -856,7 +858,7 @@ interface IMethodUri {
 
 interface IMethodWrap {
   method: "wrap"
-  arguments: [ name: TBufferLike, wrappedOwner: TAddress, resolver: TAddress ]
+  arguments: [ name: TEth.Hex, wrappedOwner: TAddress, resolver: TAddress ]
 }
 
 interface IMethodWrapETH2LD {
@@ -938,7 +940,7 @@ class EnsNameWrapperStorageReader extends ContractStorageReaderBase {
         return this.$storage.get(['_tokens', key]);
     }
 
-    async _operatorApprovals(key: TAddress): Promise<Record<TAddress, boolean>> {
+    async _operatorApprovals(key: TAddress): Promise<Record<string | number, boolean>> {
         return this.$storage.get(['_operatorApprovals', key]);
     }
 
@@ -954,7 +956,7 @@ class EnsNameWrapperStorageReader extends ContractStorageReaderBase {
         return this.$storage.get(['metadataService', ]);
     }
 
-    async names(key: TBufferLike): Promise<TBufferLike> {
+    async names(key: TEth.Hex): Promise<TEth.Hex> {
         return this.$storage.get(['names', key]);
     }
 
@@ -1027,60 +1029,60 @@ class EnsNameWrapperStorageReader extends ContractStorageReaderBase {
 
 interface IEnsNameWrapperTxCaller {
     approve (sender: TSender, to: TAddress, tokenId: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    extendExpiry (sender: TSender, parentNode: TBufferLike, labelhash: TBufferLike, expiry: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    onERC721Received (sender: TSender, to: TAddress, input1: TAddress, tokenId: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    extendExpiry (sender: TSender, parentNode: TEth.Hex, labelhash: TEth.Hex, expiry: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    onERC721Received (sender: TSender, to: TAddress, input1: TAddress, tokenId: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     recoverFunds (sender: TSender, _token: TAddress, _to: TAddress, _amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     registerAndWrapETH2LD (sender: TSender, label: string, wrappedOwner: TAddress, duration: bigint, resolver: TAddress, ownerControlledFuses: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     renew (sender: TSender, tokenId: bigint, duration: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     renounceOwnership (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    safeBatchTransferFrom (sender: TSender, from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    safeBatchTransferFrom (sender: TSender, from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setApprovalForAll (sender: TSender, operator: TAddress, approved: boolean): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    setChildFuses (sender: TSender, parentNode: TBufferLike, labelhash: TBufferLike, fuses: number, expiry: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setChildFuses (sender: TSender, parentNode: TEth.Hex, labelhash: TEth.Hex, fuses: number, expiry: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setController (sender: TSender, controller: TAddress, active: boolean): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    setFuses (sender: TSender, node: TBufferLike, ownerControlledFuses: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setFuses (sender: TSender, node: TEth.Hex, ownerControlledFuses: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setMetadataService (sender: TSender, _metadataService: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    setRecord (sender: TSender, node: TBufferLike, owner: TAddress, resolver: TAddress, ttl: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    setResolver (sender: TSender, node: TBufferLike, resolver: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    setSubnodeOwner (sender: TSender, parentNode: TBufferLike, label: string, owner: TAddress, fuses: number, expiry: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    setSubnodeRecord (sender: TSender, parentNode: TBufferLike, label: string, owner: TAddress, resolver: TAddress, ttl: number, fuses: number, expiry: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    setTTL (sender: TSender, node: TBufferLike, ttl: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setRecord (sender: TSender, node: TEth.Hex, owner: TAddress, resolver: TAddress, ttl: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setResolver (sender: TSender, node: TEth.Hex, resolver: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setSubnodeOwner (sender: TSender, parentNode: TEth.Hex, label: string, owner: TAddress, fuses: number, expiry: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setSubnodeRecord (sender: TSender, parentNode: TEth.Hex, label: string, owner: TAddress, resolver: TAddress, ttl: number, fuses: number, expiry: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setTTL (sender: TSender, node: TEth.Hex, ttl: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setUpgradeContract (sender: TSender, _upgradeAddress: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     transferOwnership (sender: TSender, newOwner: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    unwrap (sender: TSender, parentNode: TBufferLike, labelhash: TBufferLike, controller: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    unwrapETH2LD (sender: TSender, labelhash: TBufferLike, registrant: TAddress, controller: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    upgrade (sender: TSender, name: TBufferLike, extraData: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    wrap (sender: TSender, name: TBufferLike, wrappedOwner: TAddress, resolver: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    unwrap (sender: TSender, parentNode: TEth.Hex, labelhash: TEth.Hex, controller: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    unwrapETH2LD (sender: TSender, labelhash: TEth.Hex, registrant: TAddress, controller: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    upgrade (sender: TSender, name: TEth.Hex, extraData: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    wrap (sender: TSender, name: TEth.Hex, wrappedOwner: TAddress, resolver: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     wrapETH2LD (sender: TSender, label: string, wrappedOwner: TAddress, ownerControlledFuses: number, resolver: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IEnsNameWrapperTxData {
     approve (sender: TSender, to: TAddress, tokenId: bigint): Promise<TEth.TxLike>
-    extendExpiry (sender: TSender, parentNode: TBufferLike, labelhash: TBufferLike, expiry: number): Promise<TEth.TxLike>
-    onERC721Received (sender: TSender, to: TAddress, input1: TAddress, tokenId: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    extendExpiry (sender: TSender, parentNode: TEth.Hex, labelhash: TEth.Hex, expiry: number): Promise<TEth.TxLike>
+    onERC721Received (sender: TSender, to: TAddress, input1: TAddress, tokenId: bigint, data: TEth.Hex): Promise<TEth.TxLike>
     recoverFunds (sender: TSender, _token: TAddress, _to: TAddress, _amount: bigint): Promise<TEth.TxLike>
     registerAndWrapETH2LD (sender: TSender, label: string, wrappedOwner: TAddress, duration: bigint, resolver: TAddress, ownerControlledFuses: number): Promise<TEth.TxLike>
     renew (sender: TSender, tokenId: bigint, duration: bigint): Promise<TEth.TxLike>
     renounceOwnership (sender: TSender, ): Promise<TEth.TxLike>
-    safeBatchTransferFrom (sender: TSender, from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TBufferLike): Promise<TEth.TxLike>
-    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    safeBatchTransferFrom (sender: TSender, from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex): Promise<TEth.TxLike>
+    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex): Promise<TEth.TxLike>
     setApprovalForAll (sender: TSender, operator: TAddress, approved: boolean): Promise<TEth.TxLike>
-    setChildFuses (sender: TSender, parentNode: TBufferLike, labelhash: TBufferLike, fuses: number, expiry: number): Promise<TEth.TxLike>
+    setChildFuses (sender: TSender, parentNode: TEth.Hex, labelhash: TEth.Hex, fuses: number, expiry: number): Promise<TEth.TxLike>
     setController (sender: TSender, controller: TAddress, active: boolean): Promise<TEth.TxLike>
-    setFuses (sender: TSender, node: TBufferLike, ownerControlledFuses: number): Promise<TEth.TxLike>
+    setFuses (sender: TSender, node: TEth.Hex, ownerControlledFuses: number): Promise<TEth.TxLike>
     setMetadataService (sender: TSender, _metadataService: TAddress): Promise<TEth.TxLike>
-    setRecord (sender: TSender, node: TBufferLike, owner: TAddress, resolver: TAddress, ttl: number): Promise<TEth.TxLike>
-    setResolver (sender: TSender, node: TBufferLike, resolver: TAddress): Promise<TEth.TxLike>
-    setSubnodeOwner (sender: TSender, parentNode: TBufferLike, label: string, owner: TAddress, fuses: number, expiry: number): Promise<TEth.TxLike>
-    setSubnodeRecord (sender: TSender, parentNode: TBufferLike, label: string, owner: TAddress, resolver: TAddress, ttl: number, fuses: number, expiry: number): Promise<TEth.TxLike>
-    setTTL (sender: TSender, node: TBufferLike, ttl: number): Promise<TEth.TxLike>
+    setRecord (sender: TSender, node: TEth.Hex, owner: TAddress, resolver: TAddress, ttl: number): Promise<TEth.TxLike>
+    setResolver (sender: TSender, node: TEth.Hex, resolver: TAddress): Promise<TEth.TxLike>
+    setSubnodeOwner (sender: TSender, parentNode: TEth.Hex, label: string, owner: TAddress, fuses: number, expiry: number): Promise<TEth.TxLike>
+    setSubnodeRecord (sender: TSender, parentNode: TEth.Hex, label: string, owner: TAddress, resolver: TAddress, ttl: number, fuses: number, expiry: number): Promise<TEth.TxLike>
+    setTTL (sender: TSender, node: TEth.Hex, ttl: number): Promise<TEth.TxLike>
     setUpgradeContract (sender: TSender, _upgradeAddress: TAddress): Promise<TEth.TxLike>
     transferOwnership (sender: TSender, newOwner: TAddress): Promise<TEth.TxLike>
-    unwrap (sender: TSender, parentNode: TBufferLike, labelhash: TBufferLike, controller: TAddress): Promise<TEth.TxLike>
-    unwrapETH2LD (sender: TSender, labelhash: TBufferLike, registrant: TAddress, controller: TAddress): Promise<TEth.TxLike>
-    upgrade (sender: TSender, name: TBufferLike, extraData: TBufferLike): Promise<TEth.TxLike>
-    wrap (sender: TSender, name: TBufferLike, wrappedOwner: TAddress, resolver: TAddress): Promise<TEth.TxLike>
+    unwrap (sender: TSender, parentNode: TEth.Hex, labelhash: TEth.Hex, controller: TAddress): Promise<TEth.TxLike>
+    unwrapETH2LD (sender: TSender, labelhash: TEth.Hex, registrant: TAddress, controller: TAddress): Promise<TEth.TxLike>
+    upgrade (sender: TSender, name: TEth.Hex, extraData: TEth.Hex): Promise<TEth.TxLike>
+    wrap (sender: TSender, name: TEth.Hex, wrappedOwner: TAddress, resolver: TAddress): Promise<TEth.TxLike>
     wrapETH2LD (sender: TSender, label: string, wrappedOwner: TAddress, ownerControlledFuses: number, resolver: TAddress): Promise<TEth.TxLike>
 }
 

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: ./node_modules/@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol
  */
 import di from 'a-di';
@@ -39,9 +39,12 @@ export class TransparentUpgradeableProxy extends ContractBase {
         this.storage = new TransparentUpgradeableProxyStorageReader(this.address, this.client, this.explorer);
     }
 
-    
+    $meta = {
+    "source": "./node_modules/@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol",
+    "class": "./contracts/openzeppelin/compiled/TransparentUpgradeableProxy/TransparentUpgradeableProxy.ts"
+}
 
-    async $constructor (deployer: TSender, _logic: TAddress, admin_: TAddress, _data: TBufferLike): Promise<TxWriter> {
+    async $constructor (deployer: TSender, _logic: TAddress, admin_: TAddress, _data: TEth.Hex): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
     }
 
@@ -126,7 +129,7 @@ export class TransparentUpgradeableProxy extends ContractBase {
 
     abi: TAbiItem[] = [{"type":"fallback","inputs":[],"outputs":[],"stateMutability":"payable"},{"type":"event","name":"Upgraded","inputs":[{"name":"implementation","type":"address","indexed":true}]},{"type":"event","name":"AdminChanged","inputs":[{"name":"previousAdmin","type":"address","indexed":false},{"name":"newAdmin","type":"address","indexed":false}]},{"type":"event","name":"BeaconUpgraded","inputs":[{"name":"beacon","type":"address","indexed":true}]},{"type":"constructor","name":"constructor","inputs":[{"name":"_logic","type":"address"},{"name":"admin_","type":"address"},{"name":"_data","type":"bytes"}],"outputs":[],"stateMutability":"payable"}]
 
-    storage: TransparentUpgradeableProxyStorageReader
+    declare storage: TransparentUpgradeableProxyStorageReader
 }
 
 type TSender = TAccount & {

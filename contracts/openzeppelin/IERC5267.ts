@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,10 +39,12 @@ export class IERC5267 extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/IERC5267.ts"
+}
 
     // 0x84b0196e
-    async eip712Domain (): Promise<{ fields: TBufferLike, name: string, version: string, chainId: bigint, verifyingContract: TAddress, salt: TBufferLike, extensions: bigint[] }> {
+    async eip712Domain (): Promise<{ fields: TEth.Hex, name: string, version: string, chainId: bigint, verifyingContract: TAddress, salt: TEth.Hex, extensions: bigint[] }> {
         return this.$read(this.$getAbiItem('function', 'eip712Domain'));
     }
 

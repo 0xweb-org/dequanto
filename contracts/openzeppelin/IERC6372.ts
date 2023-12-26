@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,7 +39,9 @@ export class IERC6372 extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/IERC6372.ts"
+}
 
     // 0x4bf5d7e9
     async CLOCK_MODE (): Promise<string> {

@@ -51,8 +51,8 @@ class WsTransportSingleton extends MessageBasedTransport {
 
     @memd.deco.memoize({ perInstance: true })
     private async connect() {
-        const { url } = this.options
-        const ws = new WebSocket(url);
+        const { url, clientConfig } = this.options
+        const ws = new WebSocket(url, clientConfig ?? {});
 
         const onMessage = ({ data }) => {
             this.onMessage(data);

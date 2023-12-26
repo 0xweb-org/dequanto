@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -52,10 +52,12 @@ export class ERC20Permit extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/ERC20Permit.ts"
+}
 
     // 0x3644e515
-    async DOMAIN_SEPARATOR (): Promise<TBufferLike> {
+    async DOMAIN_SEPARATOR (): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'DOMAIN_SEPARATOR'));
     }
 
@@ -85,7 +87,7 @@ export class ERC20Permit extends ContractBase {
     }
 
     // 0x84b0196e
-    async eip712Domain (): Promise<{ fields: TBufferLike, name: string, version: string, chainId: bigint, verifyingContract: TAddress, salt: TBufferLike, extensions: bigint[] }> {
+    async eip712Domain (): Promise<{ fields: TEth.Hex, name: string, version: string, chainId: bigint, verifyingContract: TAddress, salt: TEth.Hex, extensions: bigint[] }> {
         return this.$read(this.$getAbiItem('function', 'eip712Domain'));
     }
 
@@ -105,7 +107,7 @@ export class ERC20Permit extends ContractBase {
     }
 
     // 0xd505accf
-    async permit (sender: TSender, owner: TAddress, spender: TAddress, value: bigint, deadline: bigint, v: number, r: TBufferLike, s: TBufferLike): Promise<TxWriter> {
+    async permit (sender: TSender, owner: TAddress, spender: TAddress, value: bigint, deadline: bigint, v: number, r: TEth.Hex, s: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'permit'), sender, owner, spender, value, deadline, v, r, s);
     }
 
@@ -291,7 +293,7 @@ interface IMethodNonces {
 
 interface IMethodPermit {
   method: "permit"
-  arguments: [ owner: TAddress, spender: TAddress, value: bigint, deadline: bigint, v: number, r: TBufferLike, s: TBufferLike ]
+  arguments: [ owner: TAddress, spender: TAddress, value: bigint, deadline: bigint, v: number, r: TEth.Hex, s: TEth.Hex ]
 }
 
 interface IMethodSymbol {
@@ -342,7 +344,7 @@ interface IERC20PermitTxCaller {
     approve (sender: TSender, spender: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     decreaseAllowance (sender: TSender, spender: TAddress, subtractedValue: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     increaseAllowance (sender: TSender, spender: TAddress, addedValue: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    permit (sender: TSender, owner: TAddress, spender: TAddress, value: bigint, deadline: bigint, v: number, r: TBufferLike, s: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    permit (sender: TSender, owner: TAddress, spender: TAddress, value: bigint, deadline: bigint, v: number, r: TEth.Hex, s: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     transfer (sender: TSender, to: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     transferFrom (sender: TSender, from: TAddress, to: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
@@ -352,7 +354,7 @@ interface IERC20PermitTxData {
     approve (sender: TSender, spender: TAddress, amount: bigint): Promise<TEth.TxLike>
     decreaseAllowance (sender: TSender, spender: TAddress, subtractedValue: bigint): Promise<TEth.TxLike>
     increaseAllowance (sender: TSender, spender: TAddress, addedValue: bigint): Promise<TEth.TxLike>
-    permit (sender: TSender, owner: TAddress, spender: TAddress, value: bigint, deadline: bigint, v: number, r: TBufferLike, s: TBufferLike): Promise<TEth.TxLike>
+    permit (sender: TSender, owner: TAddress, spender: TAddress, value: bigint, deadline: bigint, v: number, r: TEth.Hex, s: TEth.Hex): Promise<TEth.TxLike>
     transfer (sender: TSender, to: TAddress, amount: bigint): Promise<TEth.TxLike>
     transferFrom (sender: TSender, from: TAddress, to: TAddress, amount: bigint): Promise<TEth.TxLike>
 }

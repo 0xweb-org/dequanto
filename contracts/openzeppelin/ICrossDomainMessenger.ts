@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,10 +39,12 @@ export class ICrossDomainMessenger extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/ICrossDomainMessenger.ts"
+}
 
     // 0x3dbb202b
-    async sendMessage (sender: TSender, _target: TAddress, _message: TBufferLike, _gasLimit: number): Promise<TxWriter> {
+    async sendMessage (sender: TSender, _target: TAddress, _message: TEth.Hex, _gasLimit: number): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'sendMessage'), sender, _target, _message, _gasLimit);
     }
 
@@ -109,7 +111,7 @@ export class ICrossDomainMessenger extends ContractBase {
     async getPastLogsFailedRelayedMessage (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { msgHash?: TBufferLike }
+        params?: { msgHash?: TEth.Hex }
     }): Promise<ITxLogItem<TLogFailedRelayedMessage>[]> {
         return await this.$getPastLogsParsed('FailedRelayedMessage', options) as any;
     }
@@ -117,7 +119,7 @@ export class ICrossDomainMessenger extends ContractBase {
     async getPastLogsRelayedMessage (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { msgHash?: TBufferLike }
+        params?: { msgHash?: TEth.Hex }
     }): Promise<ITxLogItem<TLogRelayedMessage>[]> {
         return await this.$getPastLogsParsed('RelayedMessage', options) as any;
     }
@@ -140,17 +142,17 @@ type TSender = TAccount & {
 }
 
     type TLogFailedRelayedMessage = {
-        msgHash: TBufferLike
+        msgHash: TEth.Hex
     };
-    type TLogFailedRelayedMessageParameters = [ msgHash: TBufferLike ];
+    type TLogFailedRelayedMessageParameters = [ msgHash: TEth.Hex ];
     type TLogRelayedMessage = {
-        msgHash: TBufferLike
+        msgHash: TEth.Hex
     };
-    type TLogRelayedMessageParameters = [ msgHash: TBufferLike ];
+    type TLogRelayedMessageParameters = [ msgHash: TEth.Hex ];
     type TLogSentMessage = {
-        target: TAddress, _sender: TAddress, message: TBufferLike, messageNonce: bigint, gasLimit: bigint
+        target: TAddress, _sender: TAddress, message: TEth.Hex, messageNonce: bigint, gasLimit: bigint
     };
-    type TLogSentMessageParameters = [ target: TAddress, _sender: TAddress, message: TBufferLike, messageNonce: bigint, gasLimit: bigint ];
+    type TLogSentMessageParameters = [ target: TAddress, _sender: TAddress, message: TEth.Hex, messageNonce: bigint, gasLimit: bigint ];
 
 interface IEvents {
   FailedRelayedMessage: TLogFailedRelayedMessageParameters
@@ -163,7 +165,7 @@ interface IEvents {
 
 interface IMethodSendMessage {
   method: "sendMessage"
-  arguments: [ _target: TAddress, _message: TBufferLike, _gasLimit: number ]
+  arguments: [ _target: TAddress, _message: TEth.Hex, _gasLimit: number ]
 }
 
 interface IMethodXDomainMessageSender {
@@ -183,12 +185,12 @@ interface IMethods {
 
 
 interface IICrossDomainMessengerTxCaller {
-    sendMessage (sender: TSender, _target: TAddress, _message: TBufferLike, _gasLimit: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    sendMessage (sender: TSender, _target: TAddress, _message: TEth.Hex, _gasLimit: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IICrossDomainMessengerTxData {
-    sendMessage (sender: TSender, _target: TAddress, _message: TBufferLike, _gasLimit: number): Promise<TEth.TxLike>
+    sendMessage (sender: TSender, _target: TAddress, _message: TEth.Hex, _gasLimit: number): Promise<TEth.TxLike>
 }
 
 

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://bscscan.com/address/0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73#code
  */
 import di from 'a-di';
@@ -39,14 +39,16 @@ export class AmmFactoryV2Contract extends ContractBase {
         this.storage = new AmmFactoryV2ContractStorageReader(this.address, this.client, this.explorer);
     }
 
-    
+    $meta = {
+    "class": "./contracts/amm/AmmFactoryV2Contract/AmmFactoryV2Contract.ts"
+}
 
     async $constructor (deployer: TSender, _feeToSetter: TAddress): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
     }
 
     // 0x5855a25a
-    async INIT_CODE_PAIR_HASH (): Promise<TBufferLike> {
+    async INIT_CODE_PAIR_HASH (): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'INIT_CODE_PAIR_HASH'));
     }
 
@@ -137,7 +139,7 @@ export class AmmFactoryV2Contract extends ContractBase {
 
     abi: TAbiItem[] = [{"inputs":[{"internalType":"address","name":"_feeToSetter","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"token0","type":"address"},{"indexed":true,"internalType":"address","name":"token1","type":"address"},{"indexed":false,"internalType":"address","name":"pair","type":"address"},{"indexed":false,"internalType":"uint256","name":"","type":"uint256"}],"name":"PairCreated","type":"event"},{"constant":true,"inputs":[],"name":"INIT_CODE_PAIR_HASH","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"allPairs","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"allPairsLength","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"}],"name":"createPair","outputs":[{"internalType":"address","name":"pair","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"feeTo","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"feeToSetter","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"}],"name":"getPair","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"_feeTo","type":"address"}],"name":"setFeeTo","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"_feeToSetter","type":"address"}],"name":"setFeeToSetter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}]
 
-    storage: AmmFactoryV2ContractStorageReader
+    declare storage: AmmFactoryV2ContractStorageReader
 }
 
 type TSender = TAccount & {
@@ -237,7 +239,7 @@ class AmmFactoryV2ContractStorageReader extends ContractStorageReaderBase {
         return this.$storage.get(['feeToSetter', ]);
     }
 
-    async getPair(key: TAddress): Promise<Record<TAddress, TAddress>> {
+    async getPair(key: TAddress): Promise<Record<string | number, TAddress>> {
         return this.$storage.get(['getPair', key]);
     }
 

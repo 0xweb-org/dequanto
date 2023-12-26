@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,7 +39,9 @@ export class ERC1155URIStorage extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/ERC1155URIStorage.ts"
+}
 
     // 0x00fdd58e
     async balanceOf (account: TAddress, id: bigint): Promise<bigint> {
@@ -57,12 +59,12 @@ export class ERC1155URIStorage extends ContractBase {
     }
 
     // 0x2eb2c2d6
-    async safeBatchTransferFrom (sender: TSender, from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TBufferLike): Promise<TxWriter> {
+    async safeBatchTransferFrom (sender: TSender, from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'safeBatchTransferFrom'), sender, from, to, ids, amounts, data);
     }
 
     // 0xf242432a
-    async safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TBufferLike): Promise<TxWriter> {
+    async safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'safeTransferFrom'), sender, from, to, id, amount, data);
     }
 
@@ -72,7 +74,7 @@ export class ERC1155URIStorage extends ContractBase {
     }
 
     // 0x01ffc9a7
-    async supportsInterface (interfaceId: TBufferLike): Promise<boolean> {
+    async supportsInterface (interfaceId: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'supportsInterface'), interfaceId);
     }
 
@@ -230,12 +232,12 @@ interface IMethodIsApprovedForAll {
 
 interface IMethodSafeBatchTransferFrom {
   method: "safeBatchTransferFrom"
-  arguments: [ from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TBufferLike ]
+  arguments: [ from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex ]
 }
 
 interface IMethodSafeTransferFrom {
   method: "safeTransferFrom"
-  arguments: [ from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TBufferLike ]
+  arguments: [ from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex ]
 }
 
 interface IMethodSetApprovalForAll {
@@ -245,7 +247,7 @@ interface IMethodSetApprovalForAll {
 
 interface IMethodSupportsInterface {
   method: "supportsInterface"
-  arguments: [ interfaceId: TBufferLike ]
+  arguments: [ interfaceId: TEth.Hex ]
 }
 
 interface IMethodUri {
@@ -271,15 +273,15 @@ interface IMethods {
 
 
 interface IERC1155URIStorageTxCaller {
-    safeBatchTransferFrom (sender: TSender, from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    safeBatchTransferFrom (sender: TSender, from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setApprovalForAll (sender: TSender, operator: TAddress, approved: boolean): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IERC1155URIStorageTxData {
-    safeBatchTransferFrom (sender: TSender, from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TBufferLike): Promise<TEth.TxLike>
-    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    safeBatchTransferFrom (sender: TSender, from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex): Promise<TEth.TxLike>
+    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex): Promise<TEth.TxLike>
     setApprovalForAll (sender: TSender, operator: TAddress, approved: boolean): Promise<TEth.TxLike>
 }
 

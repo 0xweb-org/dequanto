@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,7 +39,9 @@ export class ProxyAdmin extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/ProxyAdmin.ts"
+}
 
     // 0x7eff275e
     async changeProxyAdmin (sender: TSender, proxy: TAddress, newAdmin: TAddress): Promise<TxWriter> {
@@ -77,7 +79,7 @@ export class ProxyAdmin extends ContractBase {
     }
 
     // 0x9623609d
-    async upgradeAndCall (sender: TSender, proxy: TAddress, implementation: TAddress, data: TBufferLike): Promise<TxWriter> {
+    async upgradeAndCall (sender: TSender, proxy: TAddress, implementation: TAddress, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'upgradeAndCall'), sender, proxy, implementation, data);
     }
 
@@ -184,7 +186,7 @@ interface IMethodUpgrade {
 
 interface IMethodUpgradeAndCall {
   method: "upgradeAndCall"
-  arguments: [ proxy: TAddress, implementation: TAddress, data: TBufferLike ]
+  arguments: [ proxy: TAddress, implementation: TAddress, data: TEth.Hex ]
 }
 
 interface IMethods {
@@ -209,7 +211,7 @@ interface IProxyAdminTxCaller {
     renounceOwnership (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     transferOwnership (sender: TSender, newOwner: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     upgrade (sender: TSender, proxy: TAddress, implementation: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    upgradeAndCall (sender: TSender, proxy: TAddress, implementation: TAddress, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    upgradeAndCall (sender: TSender, proxy: TAddress, implementation: TAddress, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
@@ -218,7 +220,7 @@ interface IProxyAdminTxData {
     renounceOwnership (sender: TSender, ): Promise<TEth.TxLike>
     transferOwnership (sender: TSender, newOwner: TAddress): Promise<TEth.TxLike>
     upgrade (sender: TSender, proxy: TAddress, implementation: TAddress): Promise<TEth.TxLike>
-    upgradeAndCall (sender: TSender, proxy: TAddress, implementation: TAddress, data: TBufferLike): Promise<TEth.TxLike>
+    upgradeAndCall (sender: TSender, proxy: TAddress, implementation: TAddress, data: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

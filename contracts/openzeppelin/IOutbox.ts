@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,7 +39,9 @@ export class IOutbox extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/IOutbox.ts"
+}
 
     // 0xc75184df
     async OUTBOX_VERSION (): Promise<bigint> {
@@ -52,22 +54,22 @@ export class IOutbox extends ContractBase {
     }
 
     // 0x9f0c04bf
-    async calculateItemHash (l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TBufferLike): Promise<TBufferLike> {
+    async calculateItemHash (l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TEth.Hex): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'calculateItemHash'), l2Sender, to, l2Block, l1Block, l2Timestamp, value, data);
     }
 
     // 0x007436d3
-    async calculateMerkleRoot (proof: TBufferLike[], path: bigint, item: TBufferLike): Promise<TBufferLike> {
+    async calculateMerkleRoot (proof: TEth.Hex[], path: bigint, item: TEth.Hex): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'calculateMerkleRoot'), proof, path, item);
     }
 
     // 0x08635a95
-    async executeTransaction (sender: TSender, proof: TBufferLike[], index: bigint, l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TBufferLike): Promise<TxWriter> {
+    async executeTransaction (sender: TSender, proof: TEth.Hex[], index: bigint, l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'executeTransaction'), sender, proof, index, l2Sender, to, l2Block, l1Block, l2Timestamp, value, data);
     }
 
     // 0x288e5b10
-    async executeTransactionSimulation (sender: TSender, index: bigint, l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TBufferLike): Promise<TxWriter> {
+    async executeTransactionSimulation (sender: TSender, index: bigint, l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'executeTransactionSimulation'), sender, index, l2Sender, to, l2Block, l1Block, l2Timestamp, value, data);
     }
 
@@ -87,7 +89,7 @@ export class IOutbox extends ContractBase {
     }
 
     // 0x72f2a8c7
-    async l2ToL1OutputId (): Promise<TBufferLike> {
+    async l2ToL1OutputId (): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'l2ToL1OutputId'));
     }
 
@@ -107,17 +109,17 @@ export class IOutbox extends ContractBase {
     }
 
     // 0xae6dead7
-    async roots (input0: TBufferLike): Promise<TBufferLike> {
+    async roots (input0: TEth.Hex): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'roots'), input0);
     }
 
     // 0xd5b5cc23
-    async spent (input0: bigint): Promise<TBufferLike> {
+    async spent (input0: bigint): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'spent'), input0);
     }
 
     // 0xa04cee60
-    async updateSendRoot (sender: TSender, sendRoot: TBufferLike, l2BlockHash: TBufferLike): Promise<TxWriter> {
+    async updateSendRoot (sender: TSender, sendRoot: TEth.Hex, l2BlockHash: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'updateSendRoot'), sender, sendRoot, l2BlockHash);
     }
 
@@ -178,7 +180,7 @@ export class IOutbox extends ContractBase {
     async getPastLogsSendRootUpdated (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { blockHash?: TBufferLike,outputRoot?: TBufferLike }
+        params?: { blockHash?: TEth.Hex,outputRoot?: TEth.Hex }
     }): Promise<ITxLogItem<TLogSendRootUpdated>[]> {
         return await this.$getPastLogsParsed('SendRootUpdated', options) as any;
     }
@@ -197,9 +199,9 @@ type TSender = TAccount & {
     };
     type TLogOutBoxTransactionExecutedParameters = [ to: TAddress, l2Sender: TAddress, zero: bigint, transactionIndex: bigint ];
     type TLogSendRootUpdated = {
-        blockHash: TBufferLike, outputRoot: TBufferLike
+        blockHash: TEth.Hex, outputRoot: TEth.Hex
     };
-    type TLogSendRootUpdatedParameters = [ blockHash: TBufferLike, outputRoot: TBufferLike ];
+    type TLogSendRootUpdatedParameters = [ blockHash: TEth.Hex, outputRoot: TEth.Hex ];
 
 interface IEvents {
   OutBoxTransactionExecuted: TLogOutBoxTransactionExecutedParameters
@@ -221,22 +223,22 @@ interface IMethodBridge {
 
 interface IMethodCalculateItemHash {
   method: "calculateItemHash"
-  arguments: [ l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TBufferLike ]
+  arguments: [ l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TEth.Hex ]
 }
 
 interface IMethodCalculateMerkleRoot {
   method: "calculateMerkleRoot"
-  arguments: [ proof: TBufferLike[], path: bigint, item: TBufferLike ]
+  arguments: [ proof: TEth.Hex[], path: bigint, item: TEth.Hex ]
 }
 
 interface IMethodExecuteTransaction {
   method: "executeTransaction"
-  arguments: [ proof: TBufferLike[], index: bigint, l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TBufferLike ]
+  arguments: [ proof: TEth.Hex[], index: bigint, l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TEth.Hex ]
 }
 
 interface IMethodExecuteTransactionSimulation {
   method: "executeTransactionSimulation"
-  arguments: [ index: bigint, l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TBufferLike ]
+  arguments: [ index: bigint, l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TEth.Hex ]
 }
 
 interface IMethodIsSpent {
@@ -276,7 +278,7 @@ interface IMethodRollup {
 
 interface IMethodRoots {
   method: "roots"
-  arguments: [ input0: TBufferLike ]
+  arguments: [ input0: TEth.Hex ]
 }
 
 interface IMethodSpent {
@@ -286,7 +288,7 @@ interface IMethodSpent {
 
 interface IMethodUpdateSendRoot {
   method: "updateSendRoot"
-  arguments: [ sendRoot: TBufferLike, l2BlockHash: TBufferLike ]
+  arguments: [ sendRoot: TEth.Hex, l2BlockHash: TEth.Hex ]
 }
 
 interface IMethods {
@@ -315,16 +317,16 @@ interface IMethods {
 
 
 interface IIOutboxTxCaller {
-    executeTransaction (sender: TSender, proof: TBufferLike[], index: bigint, l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    executeTransactionSimulation (sender: TSender, index: bigint, l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    updateSendRoot (sender: TSender, sendRoot: TBufferLike, l2BlockHash: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    executeTransaction (sender: TSender, proof: TEth.Hex[], index: bigint, l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    executeTransactionSimulation (sender: TSender, index: bigint, l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    updateSendRoot (sender: TSender, sendRoot: TEth.Hex, l2BlockHash: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IIOutboxTxData {
-    executeTransaction (sender: TSender, proof: TBufferLike[], index: bigint, l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TBufferLike): Promise<TEth.TxLike>
-    executeTransactionSimulation (sender: TSender, index: bigint, l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TBufferLike): Promise<TEth.TxLike>
-    updateSendRoot (sender: TSender, sendRoot: TBufferLike, l2BlockHash: TBufferLike): Promise<TEth.TxLike>
+    executeTransaction (sender: TSender, proof: TEth.Hex[], index: bigint, l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TEth.Hex): Promise<TEth.TxLike>
+    executeTransactionSimulation (sender: TSender, index: bigint, l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TEth.Hex): Promise<TEth.TxLike>
+    updateSendRoot (sender: TSender, sendRoot: TEth.Hex, l2BlockHash: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

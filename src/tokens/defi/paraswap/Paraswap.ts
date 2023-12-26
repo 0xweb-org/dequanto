@@ -11,7 +11,6 @@ import { EoAccount } from "@dequanto/models/TAccount";
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client';
-import { TokensServicePolygon } from '@dequanto/tokens/TokensServicePolygon';
 import { TokensService } from '@dequanto/tokens/TokensService';
 import { ISwapService } from '../ISwapService';
 import { Web3Client } from '@dequanto/clients/Web3Client';
@@ -30,10 +29,10 @@ interface TransactionParams {
 
 export class Paraswap implements ISwapService {
 
-    private tokensProvider = TokensServiceFactory.get(this.platform);
+    private tokensProvider: TokensService;
 
     constructor(public platform: TPlatform, public client: Web3Client = di.resolve(PolyWeb3Client)) {
-
+        this.tokensProvider = TokensServiceFactory.get(this.platform);
     }
 
     async balanceOf(address: TAddress, token: string): Promise<bigint> {
@@ -178,13 +177,12 @@ const NETWORK_IDS = {
 
 
 class Swapper {
-    paraswap = new ParaSwap(
-        NETWORK_IDS[this.platform],
-        //apiURL,
-        //web3ProividersURLs[networkID]
-    );
+    protected paraswap: ParaSwap;
 
     constructor(public platform: TPlatform) {
+        this.paraswap  = new ParaSwap(
+            NETWORK_IDS[this.platform],
+        );
     }
 
     async getRate(params: {

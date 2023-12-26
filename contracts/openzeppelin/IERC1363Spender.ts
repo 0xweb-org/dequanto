@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,10 +39,12 @@ export class IERC1363Spender extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/IERC1363Spender.ts"
+}
 
     // 0x7b04a2d0
-    async onApprovalReceived (sender: TSender, owner: TAddress, amount: bigint, data: TBufferLike): Promise<TxWriter> {
+    async onApprovalReceived (sender: TSender, owner: TAddress, amount: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'onApprovalReceived'), sender, owner, amount, data);
     }
 
@@ -99,7 +101,7 @@ interface IEvents {
 
 interface IMethodOnApprovalReceived {
   method: "onApprovalReceived"
-  arguments: [ owner: TAddress, amount: bigint, data: TBufferLike ]
+  arguments: [ owner: TAddress, amount: bigint, data: TEth.Hex ]
 }
 
 interface IMethods {
@@ -113,12 +115,12 @@ interface IMethods {
 
 
 interface IIERC1363SpenderTxCaller {
-    onApprovalReceived (sender: TSender, owner: TAddress, amount: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    onApprovalReceived (sender: TSender, owner: TAddress, amount: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IIERC1363SpenderTxData {
-    onApprovalReceived (sender: TSender, owner: TAddress, amount: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    onApprovalReceived (sender: TSender, owner: TAddress, amount: bigint, data: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

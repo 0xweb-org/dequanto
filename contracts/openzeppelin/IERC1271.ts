@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,10 +39,12 @@ export class IERC1271 extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/IERC1271.ts"
+}
 
     // 0x1626ba7e
-    async isValidSignature (hash: TBufferLike, signature: TBufferLike): Promise<TBufferLike> {
+    async isValidSignature (hash: TEth.Hex, signature: TEth.Hex): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'isValidSignature'), hash, signature);
     }
 
@@ -99,7 +101,7 @@ interface IEvents {
 
 interface IMethodIsValidSignature {
   method: "isValidSignature"
-  arguments: [ hash: TBufferLike, signature: TBufferLike ]
+  arguments: [ hash: TEth.Hex, signature: TEth.Hex ]
 }
 
 interface IMethods {

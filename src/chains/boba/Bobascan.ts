@@ -15,10 +15,7 @@ export class Bobascan extends BlockChainExplorerFactory.create({
     },
     getConfig () {
         const config = $config.get('blockchainExplorer.boba');
-        return {
-            key: config?.key,
-            host: config?.host,
-        };
+        return config;
     }
 }) {
 

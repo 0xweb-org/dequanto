@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,15 +39,17 @@ export class CreateCall extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/safe/CreateCall.ts"
+}
 
     // 0x4c8c9ea1
-    async performCreate (sender: TSender, value: bigint, deploymentData: TBufferLike): Promise<TxWriter> {
+    async performCreate (sender: TSender, value: bigint, deploymentData: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'performCreate'), sender, value, deploymentData);
     }
 
     // 0x4847be6f
-    async performCreate2 (sender: TSender, value: bigint, deploymentData: TBufferLike, salt: TBufferLike): Promise<TxWriter> {
+    async performCreate2 (sender: TSender, value: bigint, deploymentData: TEth.Hex, salt: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'performCreate2'), sender, value, deploymentData, salt);
     }
 
@@ -119,12 +121,12 @@ interface IEvents {
 
 interface IMethodPerformCreate {
   method: "performCreate"
-  arguments: [ value: bigint, deploymentData: TBufferLike ]
+  arguments: [ value: bigint, deploymentData: TEth.Hex ]
 }
 
 interface IMethodPerformCreate2 {
   method: "performCreate2"
-  arguments: [ value: bigint, deploymentData: TBufferLike, salt: TBufferLike ]
+  arguments: [ value: bigint, deploymentData: TEth.Hex, salt: TEth.Hex ]
 }
 
 interface IMethods {
@@ -139,14 +141,14 @@ interface IMethods {
 
 
 interface ICreateCallTxCaller {
-    performCreate (sender: TSender, value: bigint, deploymentData: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    performCreate2 (sender: TSender, value: bigint, deploymentData: TBufferLike, salt: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    performCreate (sender: TSender, value: bigint, deploymentData: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    performCreate2 (sender: TSender, value: bigint, deploymentData: TEth.Hex, salt: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface ICreateCallTxData {
-    performCreate (sender: TSender, value: bigint, deploymentData: TBufferLike): Promise<TEth.TxLike>
-    performCreate2 (sender: TSender, value: bigint, deploymentData: TBufferLike, salt: TBufferLike): Promise<TEth.TxLike>
+    performCreate (sender: TSender, value: bigint, deploymentData: TEth.Hex): Promise<TEth.TxLike>
+    performCreate2 (sender: TSender, value: bigint, deploymentData: TEth.Hex, salt: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

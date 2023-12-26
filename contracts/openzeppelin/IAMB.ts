@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,7 +39,9 @@ export class IAMB extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/IAMB.ts"
+}
 
     // 0xb0750611
     async destinationChainId (): Promise<bigint> {
@@ -47,17 +49,17 @@ export class IAMB extends ContractBase {
     }
 
     // 0xe37c3289
-    async failedMessageDataHash (_messageId: TBufferLike): Promise<TBufferLike> {
+    async failedMessageDataHash (_messageId: TEth.Hex): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'failedMessageDataHash'), _messageId);
     }
 
     // 0x3f9a8e7e
-    async failedMessageReceiver (_messageId: TBufferLike): Promise<TAddress> {
+    async failedMessageReceiver (_messageId: TEth.Hex): Promise<TAddress> {
         return this.$read(this.$getAbiItem('function', 'failedMessageReceiver'), _messageId);
     }
 
     // 0x4a610b04
-    async failedMessageSender (_messageId: TBufferLike): Promise<TAddress> {
+    async failedMessageSender (_messageId: TEth.Hex): Promise<TAddress> {
         return this.$read(this.$getAbiItem('function', 'failedMessageSender'), _messageId);
     }
 
@@ -67,12 +69,12 @@ export class IAMB extends ContractBase {
     }
 
     // 0xcb08a10c
-    async messageCallStatus (_messageId: TBufferLike): Promise<boolean> {
+    async messageCallStatus (_messageId: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'messageCallStatus'), _messageId);
     }
 
     // 0x669f618b
-    async messageId (): Promise<TBufferLike> {
+    async messageId (): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'messageId'));
     }
 
@@ -82,17 +84,17 @@ export class IAMB extends ContractBase {
     }
 
     // 0x9e307dff
-    async messageSourceChainId (): Promise<TBufferLike> {
+    async messageSourceChainId (): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'messageSourceChainId'));
     }
 
     // 0x94643f71
-    async requireToConfirmMessage (sender: TSender, _contract: TAddress, _data: TBufferLike, _gas: bigint): Promise<TxWriter> {
+    async requireToConfirmMessage (sender: TSender, _contract: TAddress, _data: TEth.Hex, _gas: bigint): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'requireToConfirmMessage'), sender, _contract, _data, _gas);
     }
 
     // 0xdc8601b3
-    async requireToPassMessage (sender: TSender, _contract: TAddress, _data: TBufferLike, _gas: bigint): Promise<TxWriter> {
+    async requireToPassMessage (sender: TSender, _contract: TAddress, _data: TEth.Hex, _gas: bigint): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'requireToPassMessage'), sender, _contract, _data, _gas);
     }
 
@@ -102,7 +104,7 @@ export class IAMB extends ContractBase {
     }
 
     // 0x0ac1c313
-    async transactionHash (): Promise<TBufferLike> {
+    async transactionHash (): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'transactionHash'));
     }
 
@@ -173,7 +175,7 @@ export class IAMB extends ContractBase {
     async getPastLogsAffirmationCompleted (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { sender?: TAddress,executor?: TAddress,messageId?: TBufferLike }
+        params?: { sender?: TAddress,executor?: TAddress,messageId?: TEth.Hex }
     }): Promise<ITxLogItem<TLogAffirmationCompleted>[]> {
         return await this.$getPastLogsParsed('AffirmationCompleted', options) as any;
     }
@@ -181,7 +183,7 @@ export class IAMB extends ContractBase {
     async getPastLogsRelayedMessage (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { sender?: TAddress,executor?: TAddress,messageId?: TBufferLike }
+        params?: { sender?: TAddress,executor?: TAddress,messageId?: TEth.Hex }
     }): Promise<ITxLogItem<TLogRelayedMessage>[]> {
         return await this.$getPastLogsParsed('RelayedMessage', options) as any;
     }
@@ -189,7 +191,7 @@ export class IAMB extends ContractBase {
     async getPastLogsUserRequestForAffirmation (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { messageId?: TBufferLike }
+        params?: { messageId?: TEth.Hex }
     }): Promise<ITxLogItem<TLogUserRequestForAffirmation>[]> {
         return await this.$getPastLogsParsed('UserRequestForAffirmation', options) as any;
     }
@@ -197,7 +199,7 @@ export class IAMB extends ContractBase {
     async getPastLogsUserRequestForSignature (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { messageId?: TBufferLike }
+        params?: { messageId?: TEth.Hex }
     }): Promise<ITxLogItem<TLogUserRequestForSignature>[]> {
         return await this.$getPastLogsParsed('UserRequestForSignature', options) as any;
     }
@@ -212,21 +214,21 @@ type TSender = TAccount & {
 }
 
     type TLogAffirmationCompleted = {
-        _sender: TAddress, executor: TAddress, messageId: TBufferLike, status: boolean
+        _sender: TAddress, executor: TAddress, messageId: TEth.Hex, status: boolean
     };
-    type TLogAffirmationCompletedParameters = [ _sender: TAddress, executor: TAddress, messageId: TBufferLike, status: boolean ];
+    type TLogAffirmationCompletedParameters = [ _sender: TAddress, executor: TAddress, messageId: TEth.Hex, status: boolean ];
     type TLogRelayedMessage = {
-        _sender: TAddress, executor: TAddress, messageId: TBufferLike, status: boolean
+        _sender: TAddress, executor: TAddress, messageId: TEth.Hex, status: boolean
     };
-    type TLogRelayedMessageParameters = [ _sender: TAddress, executor: TAddress, messageId: TBufferLike, status: boolean ];
+    type TLogRelayedMessageParameters = [ _sender: TAddress, executor: TAddress, messageId: TEth.Hex, status: boolean ];
     type TLogUserRequestForAffirmation = {
-        messageId: TBufferLike, encodedData: TBufferLike
+        messageId: TEth.Hex, encodedData: TEth.Hex
     };
-    type TLogUserRequestForAffirmationParameters = [ messageId: TBufferLike, encodedData: TBufferLike ];
+    type TLogUserRequestForAffirmationParameters = [ messageId: TEth.Hex, encodedData: TEth.Hex ];
     type TLogUserRequestForSignature = {
-        messageId: TBufferLike, encodedData: TBufferLike
+        messageId: TEth.Hex, encodedData: TEth.Hex
     };
-    type TLogUserRequestForSignatureParameters = [ messageId: TBufferLike, encodedData: TBufferLike ];
+    type TLogUserRequestForSignatureParameters = [ messageId: TEth.Hex, encodedData: TEth.Hex ];
 
 interface IEvents {
   AffirmationCompleted: TLogAffirmationCompletedParameters
@@ -245,17 +247,17 @@ interface IMethodDestinationChainId {
 
 interface IMethodFailedMessageDataHash {
   method: "failedMessageDataHash"
-  arguments: [ _messageId: TBufferLike ]
+  arguments: [ _messageId: TEth.Hex ]
 }
 
 interface IMethodFailedMessageReceiver {
   method: "failedMessageReceiver"
-  arguments: [ _messageId: TBufferLike ]
+  arguments: [ _messageId: TEth.Hex ]
 }
 
 interface IMethodFailedMessageSender {
   method: "failedMessageSender"
-  arguments: [ _messageId: TBufferLike ]
+  arguments: [ _messageId: TEth.Hex ]
 }
 
 interface IMethodMaxGasPerTx {
@@ -265,7 +267,7 @@ interface IMethodMaxGasPerTx {
 
 interface IMethodMessageCallStatus {
   method: "messageCallStatus"
-  arguments: [ _messageId: TBufferLike ]
+  arguments: [ _messageId: TEth.Hex ]
 }
 
 interface IMethodMessageId {
@@ -285,12 +287,12 @@ interface IMethodMessageSourceChainId {
 
 interface IMethodRequireToConfirmMessage {
   method: "requireToConfirmMessage"
-  arguments: [ _contract: TAddress, _data: TBufferLike, _gas: bigint ]
+  arguments: [ _contract: TAddress, _data: TEth.Hex, _gas: bigint ]
 }
 
 interface IMethodRequireToPassMessage {
   method: "requireToPassMessage"
-  arguments: [ _contract: TAddress, _data: TBufferLike, _gas: bigint ]
+  arguments: [ _contract: TAddress, _data: TEth.Hex, _gas: bigint ]
 }
 
 interface IMethodSourceChainId {
@@ -326,14 +328,14 @@ interface IMethods {
 
 
 interface IIAMBTxCaller {
-    requireToConfirmMessage (sender: TSender, _contract: TAddress, _data: TBufferLike, _gas: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    requireToPassMessage (sender: TSender, _contract: TAddress, _data: TBufferLike, _gas: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    requireToConfirmMessage (sender: TSender, _contract: TAddress, _data: TEth.Hex, _gas: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    requireToPassMessage (sender: TSender, _contract: TAddress, _data: TEth.Hex, _gas: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IIAMBTxData {
-    requireToConfirmMessage (sender: TSender, _contract: TAddress, _data: TBufferLike, _gas: bigint): Promise<TEth.TxLike>
-    requireToPassMessage (sender: TSender, _contract: TAddress, _data: TBufferLike, _gas: bigint): Promise<TEth.TxLike>
+    requireToConfirmMessage (sender: TSender, _contract: TAddress, _data: TEth.Hex, _gas: bigint): Promise<TEth.TxLike>
+    requireToPassMessage (sender: TSender, _contract: TAddress, _data: TEth.Hex, _gas: bigint): Promise<TEth.TxLike>
 }
 
 

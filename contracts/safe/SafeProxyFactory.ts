@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,20 +39,22 @@ export class SafeProxyFactory extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/safe/SafeProxyFactory.ts"
+}
 
     // 0xec9e80bb
-    async createChainSpecificProxyWithNonce (sender: TSender, _singleton: TAddress, initializer: TBufferLike, saltNonce: bigint): Promise<TxWriter> {
+    async createChainSpecificProxyWithNonce (sender: TSender, _singleton: TAddress, initializer: TEth.Hex, saltNonce: bigint): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'createChainSpecificProxyWithNonce'), sender, _singleton, initializer, saltNonce);
     }
 
     // 0xd18af54d
-    async createProxyWithCallback (sender: TSender, _singleton: TAddress, initializer: TBufferLike, saltNonce: bigint, callback: TAddress): Promise<TxWriter> {
+    async createProxyWithCallback (sender: TSender, _singleton: TAddress, initializer: TEth.Hex, saltNonce: bigint, callback: TAddress): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'createProxyWithCallback'), sender, _singleton, initializer, saltNonce, callback);
     }
 
     // 0x1688f0b9
-    async createProxyWithNonce (sender: TSender, _singleton: TAddress, initializer: TBufferLike, saltNonce: bigint): Promise<TxWriter> {
+    async createProxyWithNonce (sender: TSender, _singleton: TAddress, initializer: TEth.Hex, saltNonce: bigint): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'createProxyWithNonce'), sender, _singleton, initializer, saltNonce);
     }
 
@@ -62,7 +64,7 @@ export class SafeProxyFactory extends ContractBase {
     }
 
     // 0x53e5d935
-    async proxyCreationCode (): Promise<TBufferLike> {
+    async proxyCreationCode (): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'proxyCreationCode'));
     }
 
@@ -134,17 +136,17 @@ interface IEvents {
 
 interface IMethodCreateChainSpecificProxyWithNonce {
   method: "createChainSpecificProxyWithNonce"
-  arguments: [ _singleton: TAddress, initializer: TBufferLike, saltNonce: bigint ]
+  arguments: [ _singleton: TAddress, initializer: TEth.Hex, saltNonce: bigint ]
 }
 
 interface IMethodCreateProxyWithCallback {
   method: "createProxyWithCallback"
-  arguments: [ _singleton: TAddress, initializer: TBufferLike, saltNonce: bigint, callback: TAddress ]
+  arguments: [ _singleton: TAddress, initializer: TEth.Hex, saltNonce: bigint, callback: TAddress ]
 }
 
 interface IMethodCreateProxyWithNonce {
   method: "createProxyWithNonce"
-  arguments: [ _singleton: TAddress, initializer: TBufferLike, saltNonce: bigint ]
+  arguments: [ _singleton: TAddress, initializer: TEth.Hex, saltNonce: bigint ]
 }
 
 interface IMethodGetChainId {
@@ -172,16 +174,16 @@ interface IMethods {
 
 
 interface ISafeProxyFactoryTxCaller {
-    createChainSpecificProxyWithNonce (sender: TSender, _singleton: TAddress, initializer: TBufferLike, saltNonce: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    createProxyWithCallback (sender: TSender, _singleton: TAddress, initializer: TBufferLike, saltNonce: bigint, callback: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    createProxyWithNonce (sender: TSender, _singleton: TAddress, initializer: TBufferLike, saltNonce: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    createChainSpecificProxyWithNonce (sender: TSender, _singleton: TAddress, initializer: TEth.Hex, saltNonce: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    createProxyWithCallback (sender: TSender, _singleton: TAddress, initializer: TEth.Hex, saltNonce: bigint, callback: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    createProxyWithNonce (sender: TSender, _singleton: TAddress, initializer: TEth.Hex, saltNonce: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface ISafeProxyFactoryTxData {
-    createChainSpecificProxyWithNonce (sender: TSender, _singleton: TAddress, initializer: TBufferLike, saltNonce: bigint): Promise<TEth.TxLike>
-    createProxyWithCallback (sender: TSender, _singleton: TAddress, initializer: TBufferLike, saltNonce: bigint, callback: TAddress): Promise<TEth.TxLike>
-    createProxyWithNonce (sender: TSender, _singleton: TAddress, initializer: TBufferLike, saltNonce: bigint): Promise<TEth.TxLike>
+    createChainSpecificProxyWithNonce (sender: TSender, _singleton: TAddress, initializer: TEth.Hex, saltNonce: bigint): Promise<TEth.TxLike>
+    createProxyWithCallback (sender: TSender, _singleton: TAddress, initializer: TEth.Hex, saltNonce: bigint, callback: TAddress): Promise<TEth.TxLike>
+    createProxyWithNonce (sender: TSender, _singleton: TAddress, initializer: TEth.Hex, saltNonce: bigint): Promise<TEth.TxLike>
 }
 
 

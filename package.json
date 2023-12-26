@@ -5,7 +5,8 @@
     "hardhat": "node --openssl-legacy-provider ./node_modules/hardhat/internal/cli/cli.js node --hostname 127.0.0.1 --verbose",
     "build": "tsc -p tsconfig-src.json",
     "test": "atma --openssl-legacy-provider test --config='settings.base=./'",
-    "contracts": "atma act ./actions/contracts.act.ts"
+    "contracts": "atma act ./actions/contracts.act.ts",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@0xweb/hardhat": "^0.1.15",
@@ -32,10 +33,11 @@
     "atma": "^0.15.20",
     "atma-io": "^1.2.67",
     "atma-utils": "^0.2.51",
-    "everlog": "^1.0.10",
+    "everlog": "^1.0.11",
     "includejs": "^0.16.9",
     "isomorphic-ws": "^5.0.0",
-    "memd": "^0.3.12"
+    "memd": "^0.3.12",
+    "typescript": "^5.3.3"
   },
   "atma": {
     "configs": "./configs/**.yml",

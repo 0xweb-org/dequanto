@@ -16,13 +16,14 @@ type GasWatcherTxJson = {
 }
 
 export class GasWatcherStore implements IGasWatcherStore {
-    constructor (public name = '') {
+    protected jsonStore: JsonObjectStore<GasWatcherTxJson[]>
 
+    constructor (public name = '') {
+        this.jsonStore =  new JsonObjectStore<GasWatcherTxJson[]>({
+            path: `./db/gaswatcher/txs${this.name}.json`,
+            format: true,
+        })
     }
-    jsonStore = new JsonObjectStore<GasWatcherTxJson[]>({
-        path: `./db/gaswatcher/txs${this.name}.json`,
-        format: true,
-    })
 
     async savePrice(enty: { date: Date; price: bigint; }): Promise<any> {
 

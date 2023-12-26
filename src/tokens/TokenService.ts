@@ -8,8 +8,8 @@ import { $bigint } from '@dequanto/utils/$bigint';
 import { TokensServiceFactory } from './TokensServiceFactory';
 import { $require } from '@dequanto/utils/$require';
 import { TokensService } from './TokensService';
-import { RpcTypes } from '@dequanto/rpc/Rpc';
 import { WETH } from '@dequanto-contracts/weth/WETH/WETH';
+import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
 
 
 export class TokenService {
@@ -21,16 +21,18 @@ export class TokenService {
     }
 
     async balanceOf(address: TAddress, token: string | IToken, params?: {
-        forBlock?: RpcTypes.BlockNumberOrTagOrHash
+        forBlock?: number | bigint | Date
     }): Promise<bigint> {
         token = await this.getToken(token);
+
+        let forBlock = await this.getBlock(params?.forBlock);
         let isNative = this.tokensProvider.isNative(token.address);
         if (isNative) {
-            return this.client.getBalance(address, params?.forBlock);
+            return this.client.getBalance(address, forBlock);
         }
         let erc20 = await this.tokensProvider.erc20(token);
-        if (params?.forBlock != null) {
-            erc20 = erc20.forBlock(params.forBlock);
+        if (forBlock != null) {
+            erc20 = erc20.forBlock(forBlock);
         }
         let balance = await erc20.balanceOf(address);
         return balance;
@@ -131,5 +133,17 @@ export class TokenService {
             throw new Error(`Address undefined: ${token}`);
         }
         return token;
+    }
+
+    protected async getBlock (block: undefined | number | bigint | Date): Promise<number | bigint> {
+        if (block == null) {
+            // default
+            return null;
+        }
+        if (block instanceof Date) {
+            let resolver = di.resolve(BlockDateResolver, this.client);
+            return await resolver.getBlockNumberFor(block);
+        }
+        return block;
     }
 }

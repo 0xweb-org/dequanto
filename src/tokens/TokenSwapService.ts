@@ -5,6 +5,7 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IToken } from '@dequanto/models/IToken';
 import { ISwapService } from './defi/ISwapService';
 import { Paraswap } from './defi/paraswap/Paraswap';
+import { $require } from '@dequanto/utils/$require';
 
 
 export class TokenSwapService {
@@ -21,18 +22,19 @@ export class TokenSwapService {
         to: string | IToken
         amount: number | bigint
     }) {
+        let $account: EoAccount;
+
         if (typeof account === 'string') {
             let accountsService = di.resolve(ChainAccountService);
-            let acc = await accountsService.get(account, this.client.platform);
-            if (acc == null) {
-                throw new Error(`Account ${account} not found`);
-            }
-            account = acc;
+            let acc = await accountsService.get(account, { platform: this.client.platform });
+            $account = $require.notNull(acc as EoAccount, `Account ${account} not found`);
+        } else {
+            $account = account;
         }
 
         let { from, to, amount } = params;
 
-        let tx = await this.provider.swap(account, {
+        let tx = await this.provider.swap($account, {
             from:  from,
             to: to,
             fromAmount: amount,

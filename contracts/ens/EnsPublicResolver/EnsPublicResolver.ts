@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63#code
  */
 import di from 'a-di';
@@ -39,58 +39,60 @@ export class EnsPublicResolver extends ContractBase {
         this.storage = new EnsPublicResolverStorageReader(this.address, this.client, this.explorer);
     }
 
-    
+    $meta = {
+    "class": "./contracts/ens/EnsPublicResolver/EnsPublicResolver.ts"
+}
 
     async $constructor (deployer: TSender, _ens: TAddress, wrapperAddress: TAddress, _trustedETHController: TAddress, _trustedReverseRegistrar: TAddress): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
     }
 
     // 0x2203ab56
-    async ABI (node: TBufferLike, contentTypes: bigint): Promise<[ bigint, TBufferLike ]> {
+    async ABI (node: TEth.Hex, contentTypes: bigint): Promise<[ bigint, TEth.Hex ]> {
         return this.$read(this.$getAbiItem('function', 'ABI'), node, contentTypes);
     }
 
     // 0x3b3b57de
-    async addr (node: TBufferLike): Promise<TAddress>
+    async addr (node: TEth.Hex): Promise<TAddress>
     // 0xf1cb7e06
-    async addr (node: TBufferLike, coinType: bigint): Promise<TBufferLike>
+    async addr (node: TEth.Hex, coinType: bigint): Promise<TEth.Hex>
     async addr (...args): Promise<TAddress> {
         let abi = this.$getAbiItemOverload([ 'function addr(bytes32) returns address', 'function addr(bytes32, uint256) returns bytes' ], args);
         return this.$read(abi, ...args);
     }
 
     // 0xa4b91a01
-    async approve (sender: TSender, node: TBufferLike, delegate: TAddress, approved: boolean): Promise<TxWriter> {
+    async approve (sender: TSender, node: TEth.Hex, delegate: TAddress, approved: boolean): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'approve'), sender, node, delegate, approved);
     }
 
     // 0x3603d758
-    async clearRecords (sender: TSender, node: TBufferLike): Promise<TxWriter> {
+    async clearRecords (sender: TSender, node: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'clearRecords'), sender, node);
     }
 
     // 0xbc1c58d1
-    async contenthash (node: TBufferLike): Promise<TBufferLike> {
+    async contenthash (node: TEth.Hex): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'contenthash'), node);
     }
 
     // 0xa8fa5682
-    async dnsRecord (node: TBufferLike, name: TBufferLike, resource: number): Promise<TBufferLike> {
+    async dnsRecord (node: TEth.Hex, name: TEth.Hex, resource: number): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'dnsRecord'), node, name, resource);
     }
 
     // 0x4cbf6ba4
-    async hasDNSRecords (node: TBufferLike, name: TBufferLike): Promise<boolean> {
+    async hasDNSRecords (node: TEth.Hex, name: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'hasDNSRecords'), node, name);
     }
 
     // 0x124a319c
-    async interfaceImplementer (node: TBufferLike, interfaceID: TBufferLike): Promise<TAddress> {
+    async interfaceImplementer (node: TEth.Hex, interfaceID: TEth.Hex): Promise<TAddress> {
         return this.$read(this.$getAbiItem('function', 'interfaceImplementer'), node, interfaceID);
     }
 
     // 0xa9784b3e
-    async isApprovedFor (owner: TAddress, node: TBufferLike, delegate: TAddress): Promise<boolean> {
+    async isApprovedFor (owner: TAddress, node: TEth.Hex, delegate: TAddress): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'isApprovedFor'), owner, node, delegate);
     }
 
@@ -100,39 +102,39 @@ export class EnsPublicResolver extends ContractBase {
     }
 
     // 0xac9650d8
-    async multicall (sender: TSender, data: TBufferLike[]): Promise<TxWriter> {
+    async multicall (sender: TSender, data: TEth.Hex[]): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'multicall'), sender, data);
     }
 
     // 0xe32954eb
-    async multicallWithNodeCheck (sender: TSender, nodehash: TBufferLike, data: TBufferLike[]): Promise<TxWriter> {
+    async multicallWithNodeCheck (sender: TSender, nodehash: TEth.Hex, data: TEth.Hex[]): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'multicallWithNodeCheck'), sender, nodehash, data);
     }
 
     // 0x691f3431
-    async name (node: TBufferLike): Promise<string> {
+    async name (node: TEth.Hex): Promise<string> {
         return this.$read(this.$getAbiItem('function', 'name'), node);
     }
 
     // 0xc8690233
-    async pubkey (node: TBufferLike): Promise<{ x: TBufferLike, y: TBufferLike }> {
+    async pubkey (node: TEth.Hex): Promise<{ x: TEth.Hex, y: TEth.Hex }> {
         return this.$read(this.$getAbiItem('function', 'pubkey'), node);
     }
 
     // 0xd700ff33
-    async recordVersions (input0: TBufferLike): Promise<number> {
+    async recordVersions (input0: TEth.Hex): Promise<number> {
         return this.$read(this.$getAbiItem('function', 'recordVersions'), input0);
     }
 
     // 0x623195b0
-    async setABI (sender: TSender, node: TBufferLike, contentType: bigint, data: TBufferLike): Promise<TxWriter> {
+    async setABI (sender: TSender, node: TEth.Hex, contentType: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'setABI'), sender, node, contentType, data);
     }
 
     // 0x8b95dd71
-    async setAddr (sender: TSender, node: TBufferLike, coinType: bigint, a: TBufferLike): Promise<TxWriter>
+    async setAddr (sender: TSender, node: TEth.Hex, coinType: bigint, a: TEth.Hex): Promise<TxWriter>
     // 0xd5fa2b00
-    async setAddr (sender: TSender, node: TBufferLike, a: TAddress): Promise<TxWriter>
+    async setAddr (sender: TSender, node: TEth.Hex, a: TAddress): Promise<TxWriter>
     async setAddr (sender: TSender, ...args): Promise<TxWriter> {
         let abi = this.$getAbiItemOverload([ 'function setAddr(bytes32, uint256, bytes)', 'function setAddr(bytes32, address)' ], args);
         return this.$write(abi, sender, ...args);
@@ -144,52 +146,52 @@ export class EnsPublicResolver extends ContractBase {
     }
 
     // 0x304e6ade
-    async setContenthash (sender: TSender, node: TBufferLike, hash: TBufferLike): Promise<TxWriter> {
+    async setContenthash (sender: TSender, node: TEth.Hex, hash: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'setContenthash'), sender, node, hash);
     }
 
     // 0x0af179d7
-    async setDNSRecords (sender: TSender, node: TBufferLike, data: TBufferLike): Promise<TxWriter> {
+    async setDNSRecords (sender: TSender, node: TEth.Hex, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'setDNSRecords'), sender, node, data);
     }
 
     // 0xe59d895d
-    async setInterface (sender: TSender, node: TBufferLike, interfaceID: TBufferLike, implementer: TAddress): Promise<TxWriter> {
+    async setInterface (sender: TSender, node: TEth.Hex, interfaceID: TEth.Hex, implementer: TAddress): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'setInterface'), sender, node, interfaceID, implementer);
     }
 
     // 0x77372213
-    async setName (sender: TSender, node: TBufferLike, newName: string): Promise<TxWriter> {
+    async setName (sender: TSender, node: TEth.Hex, newName: string): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'setName'), sender, node, newName);
     }
 
     // 0x29cd62ea
-    async setPubkey (sender: TSender, node: TBufferLike, x: TBufferLike, y: TBufferLike): Promise<TxWriter> {
+    async setPubkey (sender: TSender, node: TEth.Hex, x: TEth.Hex, y: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'setPubkey'), sender, node, x, y);
     }
 
     // 0x10f13a8c
-    async setText (sender: TSender, node: TBufferLike, key: string, value: string): Promise<TxWriter> {
+    async setText (sender: TSender, node: TEth.Hex, key: string, value: string): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'setText'), sender, node, key, value);
     }
 
     // 0xce3decdc
-    async setZonehash (sender: TSender, node: TBufferLike, hash: TBufferLike): Promise<TxWriter> {
+    async setZonehash (sender: TSender, node: TEth.Hex, hash: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'setZonehash'), sender, node, hash);
     }
 
     // 0x01ffc9a7
-    async supportsInterface (interfaceID: TBufferLike): Promise<boolean> {
+    async supportsInterface (interfaceID: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'supportsInterface'), interfaceID);
     }
 
     // 0x59d1d43c
-    async text (node: TBufferLike, key: string): Promise<string> {
+    async text (node: TEth.Hex, key: string): Promise<string> {
         return this.$read(this.$getAbiItem('function', 'text'), node, key);
     }
 
     // 0x5c98042b
-    async zonehash (node: TBufferLike): Promise<TBufferLike> {
+    async zonehash (node: TEth.Hex): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'zonehash'), node);
     }
 
@@ -350,7 +352,7 @@ export class EnsPublicResolver extends ContractBase {
     async getPastLogsABIChanged (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { node?: TBufferLike,contentType?: bigint }
+        params?: { node?: TEth.Hex,contentType?: bigint }
     }): Promise<ITxLogItem<TLogABIChanged>[]> {
         return await this.$getPastLogsParsed('ABIChanged', options) as any;
     }
@@ -358,7 +360,7 @@ export class EnsPublicResolver extends ContractBase {
     async getPastLogsAddrChanged (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { node?: TBufferLike }
+        params?: { node?: TEth.Hex }
     }): Promise<ITxLogItem<TLogAddrChanged>[]> {
         return await this.$getPastLogsParsed('AddrChanged', options) as any;
     }
@@ -366,7 +368,7 @@ export class EnsPublicResolver extends ContractBase {
     async getPastLogsAddressChanged (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { node?: TBufferLike }
+        params?: { node?: TEth.Hex }
     }): Promise<ITxLogItem<TLogAddressChanged>[]> {
         return await this.$getPastLogsParsed('AddressChanged', options) as any;
     }
@@ -390,7 +392,7 @@ export class EnsPublicResolver extends ContractBase {
     async getPastLogsContenthashChanged (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { node?: TBufferLike }
+        params?: { node?: TEth.Hex }
     }): Promise<ITxLogItem<TLogContenthashChanged>[]> {
         return await this.$getPastLogsParsed('ContenthashChanged', options) as any;
     }
@@ -398,7 +400,7 @@ export class EnsPublicResolver extends ContractBase {
     async getPastLogsDNSRecordChanged (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { node?: TBufferLike }
+        params?: { node?: TEth.Hex }
     }): Promise<ITxLogItem<TLogDNSRecordChanged>[]> {
         return await this.$getPastLogsParsed('DNSRecordChanged', options) as any;
     }
@@ -406,7 +408,7 @@ export class EnsPublicResolver extends ContractBase {
     async getPastLogsDNSRecordDeleted (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { node?: TBufferLike }
+        params?: { node?: TEth.Hex }
     }): Promise<ITxLogItem<TLogDNSRecordDeleted>[]> {
         return await this.$getPastLogsParsed('DNSRecordDeleted', options) as any;
     }
@@ -414,7 +416,7 @@ export class EnsPublicResolver extends ContractBase {
     async getPastLogsDNSZonehashChanged (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { node?: TBufferLike }
+        params?: { node?: TEth.Hex }
     }): Promise<ITxLogItem<TLogDNSZonehashChanged>[]> {
         return await this.$getPastLogsParsed('DNSZonehashChanged', options) as any;
     }
@@ -422,7 +424,7 @@ export class EnsPublicResolver extends ContractBase {
     async getPastLogsInterfaceChanged (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { node?: TBufferLike,interfaceID?: TBufferLike }
+        params?: { node?: TEth.Hex,interfaceID?: TEth.Hex }
     }): Promise<ITxLogItem<TLogInterfaceChanged>[]> {
         return await this.$getPastLogsParsed('InterfaceChanged', options) as any;
     }
@@ -430,7 +432,7 @@ export class EnsPublicResolver extends ContractBase {
     async getPastLogsNameChanged (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { node?: TBufferLike }
+        params?: { node?: TEth.Hex }
     }): Promise<ITxLogItem<TLogNameChanged>[]> {
         return await this.$getPastLogsParsed('NameChanged', options) as any;
     }
@@ -438,7 +440,7 @@ export class EnsPublicResolver extends ContractBase {
     async getPastLogsPubkeyChanged (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { node?: TBufferLike }
+        params?: { node?: TEth.Hex }
     }): Promise<ITxLogItem<TLogPubkeyChanged>[]> {
         return await this.$getPastLogsParsed('PubkeyChanged', options) as any;
     }
@@ -446,7 +448,7 @@ export class EnsPublicResolver extends ContractBase {
     async getPastLogsTextChanged (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { node?: TBufferLike,indexedKey?: string }
+        params?: { node?: TEth.Hex,indexedKey?: string }
     }): Promise<ITxLogItem<TLogTextChanged>[]> {
         return await this.$getPastLogsParsed('TextChanged', options) as any;
     }
@@ -454,14 +456,14 @@ export class EnsPublicResolver extends ContractBase {
     async getPastLogsVersionChanged (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { node?: TBufferLike }
+        params?: { node?: TEth.Hex }
     }): Promise<ITxLogItem<TLogVersionChanged>[]> {
         return await this.$getPastLogsParsed('VersionChanged', options) as any;
     }
 
     abi: TAbiItem[] = [{"inputs":[{"internalType":"contract ENS","name":"_ens","type":"address"},{"internalType":"contract INameWrapper","name":"wrapperAddress","type":"address"},{"internalType":"address","name":"_trustedETHController","type":"address"},{"internalType":"address","name":"_trustedReverseRegistrar","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"node","type":"bytes32"},{"indexed":true,"internalType":"uint256","name":"contentType","type":"uint256"}],"name":"ABIChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"node","type":"bytes32"},{"indexed":false,"internalType":"address","name":"a","type":"address"}],"name":"AddrChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"node","type":"bytes32"},{"indexed":false,"internalType":"uint256","name":"coinType","type":"uint256"},{"indexed":false,"internalType":"bytes","name":"newAddress","type":"bytes"}],"name":"AddressChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"bytes32","name":"node","type":"bytes32"},{"indexed":true,"internalType":"address","name":"delegate","type":"address"},{"indexed":true,"internalType":"bool","name":"approved","type":"bool"}],"name":"Approved","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"node","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"hash","type":"bytes"}],"name":"ContenthashChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"node","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"name","type":"bytes"},{"indexed":false,"internalType":"uint16","name":"resource","type":"uint16"},{"indexed":false,"internalType":"bytes","name":"record","type":"bytes"}],"name":"DNSRecordChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"node","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"name","type":"bytes"},{"indexed":false,"internalType":"uint16","name":"resource","type":"uint16"}],"name":"DNSRecordDeleted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"node","type":"bytes32"},{"indexed":false,"internalType":"bytes","name":"lastzonehash","type":"bytes"},{"indexed":false,"internalType":"bytes","name":"zonehash","type":"bytes"}],"name":"DNSZonehashChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"node","type":"bytes32"},{"indexed":true,"internalType":"bytes4","name":"interfaceID","type":"bytes4"},{"indexed":false,"internalType":"address","name":"implementer","type":"address"}],"name":"InterfaceChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"node","type":"bytes32"},{"indexed":false,"internalType":"string","name":"name","type":"string"}],"name":"NameChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"node","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"x","type":"bytes32"},{"indexed":false,"internalType":"bytes32","name":"y","type":"bytes32"}],"name":"PubkeyChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"node","type":"bytes32"},{"indexed":true,"internalType":"string","name":"indexedKey","type":"string"},{"indexed":false,"internalType":"string","name":"key","type":"string"},{"indexed":false,"internalType":"string","name":"value","type":"string"}],"name":"TextChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"node","type":"bytes32"},{"indexed":false,"internalType":"uint64","name":"newVersion","type":"uint64"}],"name":"VersionChanged","type":"event"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"uint256","name":"contentTypes","type":"uint256"}],"name":"ABI","outputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"}],"name":"addr","outputs":[{"internalType":"address payable","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"uint256","name":"coinType","type":"uint256"}],"name":"addr","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"address","name":"delegate","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"}],"name":"clearRecords","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"}],"name":"contenthash","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"bytes32","name":"name","type":"bytes32"},{"internalType":"uint16","name":"resource","type":"uint16"}],"name":"dnsRecord","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"bytes32","name":"name","type":"bytes32"}],"name":"hasDNSRecords","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"bytes4","name":"interfaceID","type":"bytes4"}],"name":"interfaceImplementer","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"address","name":"delegate","type":"address"}],"name":"isApprovedFor","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes[]","name":"data","type":"bytes[]"}],"name":"multicall","outputs":[{"internalType":"bytes[]","name":"results","type":"bytes[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"nodehash","type":"bytes32"},{"internalType":"bytes[]","name":"data","type":"bytes[]"}],"name":"multicallWithNodeCheck","outputs":[{"internalType":"bytes[]","name":"results","type":"bytes[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"}],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"}],"name":"pubkey","outputs":[{"internalType":"bytes32","name":"x","type":"bytes32"},{"internalType":"bytes32","name":"y","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"name":"recordVersions","outputs":[{"internalType":"uint64","name":"","type":"uint64"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"uint256","name":"contentType","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"setABI","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"uint256","name":"coinType","type":"uint256"},{"internalType":"bytes","name":"a","type":"bytes"}],"name":"setAddr","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"address","name":"a","type":"address"}],"name":"setAddr","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"bytes","name":"hash","type":"bytes"}],"name":"setContenthash","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"setDNSRecords","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"bytes4","name":"interfaceID","type":"bytes4"},{"internalType":"address","name":"implementer","type":"address"}],"name":"setInterface","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"string","name":"newName","type":"string"}],"name":"setName","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"bytes32","name":"x","type":"bytes32"},{"internalType":"bytes32","name":"y","type":"bytes32"}],"name":"setPubkey","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"string","name":"key","type":"string"},{"internalType":"string","name":"value","type":"string"}],"name":"setText","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"bytes","name":"hash","type":"bytes"}],"name":"setZonehash","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceID","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"},{"internalType":"string","name":"key","type":"string"}],"name":"text","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"node","type":"bytes32"}],"name":"zonehash","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"}]
 
-    storage: EnsPublicResolverStorageReader
+    declare storage: EnsPublicResolverStorageReader
 }
 
 type TSender = TAccount & {
@@ -469,61 +471,61 @@ type TSender = TAccount & {
 }
 
     type TLogABIChanged = {
-        node: TBufferLike, contentType: bigint
+        node: TEth.Hex, contentType: bigint
     };
-    type TLogABIChangedParameters = [ node: TBufferLike, contentType: bigint ];
+    type TLogABIChangedParameters = [ node: TEth.Hex, contentType: bigint ];
     type TLogAddrChanged = {
-        node: TBufferLike, a: TAddress
+        node: TEth.Hex, a: TAddress
     };
-    type TLogAddrChangedParameters = [ node: TBufferLike, a: TAddress ];
+    type TLogAddrChangedParameters = [ node: TEth.Hex, a: TAddress ];
     type TLogAddressChanged = {
-        node: TBufferLike, coinType: bigint, newAddress: TBufferLike
+        node: TEth.Hex, coinType: bigint, newAddress: TEth.Hex
     };
-    type TLogAddressChangedParameters = [ node: TBufferLike, coinType: bigint, newAddress: TBufferLike ];
+    type TLogAddressChangedParameters = [ node: TEth.Hex, coinType: bigint, newAddress: TEth.Hex ];
     type TLogApprovalForAll = {
         owner: TAddress, operator: TAddress, approved: boolean
     };
     type TLogApprovalForAllParameters = [ owner: TAddress, operator: TAddress, approved: boolean ];
     type TLogApproved = {
-        owner: TAddress, node: TBufferLike, delegate: TAddress, approved: boolean
+        owner: TAddress, node: TEth.Hex, delegate: TAddress, approved: boolean
     };
-    type TLogApprovedParameters = [ owner: TAddress, node: TBufferLike, delegate: TAddress, approved: boolean ];
+    type TLogApprovedParameters = [ owner: TAddress, node: TEth.Hex, delegate: TAddress, approved: boolean ];
     type TLogContenthashChanged = {
-        node: TBufferLike, hash: TBufferLike
+        node: TEth.Hex, hash: TEth.Hex
     };
-    type TLogContenthashChangedParameters = [ node: TBufferLike, hash: TBufferLike ];
+    type TLogContenthashChangedParameters = [ node: TEth.Hex, hash: TEth.Hex ];
     type TLogDNSRecordChanged = {
-        node: TBufferLike, name: TBufferLike, resource: number, record: TBufferLike
+        node: TEth.Hex, name: TEth.Hex, resource: number, record: TEth.Hex
     };
-    type TLogDNSRecordChangedParameters = [ node: TBufferLike, name: TBufferLike, resource: number, record: TBufferLike ];
+    type TLogDNSRecordChangedParameters = [ node: TEth.Hex, name: TEth.Hex, resource: number, record: TEth.Hex ];
     type TLogDNSRecordDeleted = {
-        node: TBufferLike, name: TBufferLike, resource: number
+        node: TEth.Hex, name: TEth.Hex, resource: number
     };
-    type TLogDNSRecordDeletedParameters = [ node: TBufferLike, name: TBufferLike, resource: number ];
+    type TLogDNSRecordDeletedParameters = [ node: TEth.Hex, name: TEth.Hex, resource: number ];
     type TLogDNSZonehashChanged = {
-        node: TBufferLike, lastzonehash: TBufferLike, zonehash: TBufferLike
+        node: TEth.Hex, lastzonehash: TEth.Hex, zonehash: TEth.Hex
     };
-    type TLogDNSZonehashChangedParameters = [ node: TBufferLike, lastzonehash: TBufferLike, zonehash: TBufferLike ];
+    type TLogDNSZonehashChangedParameters = [ node: TEth.Hex, lastzonehash: TEth.Hex, zonehash: TEth.Hex ];
     type TLogInterfaceChanged = {
-        node: TBufferLike, interfaceID: TBufferLike, implementer: TAddress
+        node: TEth.Hex, interfaceID: TEth.Hex, implementer: TAddress
     };
-    type TLogInterfaceChangedParameters = [ node: TBufferLike, interfaceID: TBufferLike, implementer: TAddress ];
+    type TLogInterfaceChangedParameters = [ node: TEth.Hex, interfaceID: TEth.Hex, implementer: TAddress ];
     type TLogNameChanged = {
-        node: TBufferLike, name: string
+        node: TEth.Hex, name: string
     };
-    type TLogNameChangedParameters = [ node: TBufferLike, name: string ];
+    type TLogNameChangedParameters = [ node: TEth.Hex, name: string ];
     type TLogPubkeyChanged = {
-        node: TBufferLike, x: TBufferLike, y: TBufferLike
+        node: TEth.Hex, x: TEth.Hex, y: TEth.Hex
     };
-    type TLogPubkeyChangedParameters = [ node: TBufferLike, x: TBufferLike, y: TBufferLike ];
+    type TLogPubkeyChangedParameters = [ node: TEth.Hex, x: TEth.Hex, y: TEth.Hex ];
     type TLogTextChanged = {
-        node: TBufferLike, indexedKey: string, key: string, value: string
+        node: TEth.Hex, indexedKey: string, key: string, value: string
     };
-    type TLogTextChangedParameters = [ node: TBufferLike, indexedKey: string, key: string, value: string ];
+    type TLogTextChangedParameters = [ node: TEth.Hex, indexedKey: string, key: string, value: string ];
     type TLogVersionChanged = {
-        node: TBufferLike, newVersion: number
+        node: TEth.Hex, newVersion: number
     };
-    type TLogVersionChangedParameters = [ node: TBufferLike, newVersion: number ];
+    type TLogVersionChangedParameters = [ node: TEth.Hex, newVersion: number ];
 
 interface IEvents {
   ABIChanged: TLogABIChangedParameters
@@ -547,47 +549,47 @@ interface IEvents {
 
 interface IMethodABI {
   method: "ABI"
-  arguments: [ node: TBufferLike, contentTypes: bigint ]
+  arguments: [ node: TEth.Hex, contentTypes: bigint ]
 }
 
 interface IMethodAddr {
   method: "addr"
-  arguments: [ node: TBufferLike ] | [ node: TBufferLike, coinType: bigint ]
+  arguments: [ node: TEth.Hex ] | [ node: TEth.Hex, coinType: bigint ]
 }
 
 interface IMethodApprove {
   method: "approve"
-  arguments: [ node: TBufferLike, delegate: TAddress, approved: boolean ]
+  arguments: [ node: TEth.Hex, delegate: TAddress, approved: boolean ]
 }
 
 interface IMethodClearRecords {
   method: "clearRecords"
-  arguments: [ node: TBufferLike ]
+  arguments: [ node: TEth.Hex ]
 }
 
 interface IMethodContenthash {
   method: "contenthash"
-  arguments: [ node: TBufferLike ]
+  arguments: [ node: TEth.Hex ]
 }
 
 interface IMethodDnsRecord {
   method: "dnsRecord"
-  arguments: [ node: TBufferLike, name: TBufferLike, resource: number ]
+  arguments: [ node: TEth.Hex, name: TEth.Hex, resource: number ]
 }
 
 interface IMethodHasDNSRecords {
   method: "hasDNSRecords"
-  arguments: [ node: TBufferLike, name: TBufferLike ]
+  arguments: [ node: TEth.Hex, name: TEth.Hex ]
 }
 
 interface IMethodInterfaceImplementer {
   method: "interfaceImplementer"
-  arguments: [ node: TBufferLike, interfaceID: TBufferLike ]
+  arguments: [ node: TEth.Hex, interfaceID: TEth.Hex ]
 }
 
 interface IMethodIsApprovedFor {
   method: "isApprovedFor"
-  arguments: [ owner: TAddress, node: TBufferLike, delegate: TAddress ]
+  arguments: [ owner: TAddress, node: TEth.Hex, delegate: TAddress ]
 }
 
 interface IMethodIsApprovedForAll {
@@ -597,37 +599,37 @@ interface IMethodIsApprovedForAll {
 
 interface IMethodMulticall {
   method: "multicall"
-  arguments: [ data: TBufferLike[] ]
+  arguments: [ data: TEth.Hex[] ]
 }
 
 interface IMethodMulticallWithNodeCheck {
   method: "multicallWithNodeCheck"
-  arguments: [ nodehash: TBufferLike, data: TBufferLike[] ]
+  arguments: [ nodehash: TEth.Hex, data: TEth.Hex[] ]
 }
 
 interface IMethodName {
   method: "name"
-  arguments: [ node: TBufferLike ]
+  arguments: [ node: TEth.Hex ]
 }
 
 interface IMethodPubkey {
   method: "pubkey"
-  arguments: [ node: TBufferLike ]
+  arguments: [ node: TEth.Hex ]
 }
 
 interface IMethodRecordVersions {
   method: "recordVersions"
-  arguments: [ input0: TBufferLike ]
+  arguments: [ input0: TEth.Hex ]
 }
 
 interface IMethodSetABI {
   method: "setABI"
-  arguments: [ node: TBufferLike, contentType: bigint, data: TBufferLike ]
+  arguments: [ node: TEth.Hex, contentType: bigint, data: TEth.Hex ]
 }
 
 interface IMethodSetAddr {
   method: "setAddr"
-  arguments: [ node: TBufferLike, coinType: bigint, a: TBufferLike ] | [ node: TBufferLike, a: TAddress ]
+  arguments: [ node: TEth.Hex, coinType: bigint, a: TEth.Hex ] | [ node: TEth.Hex, a: TAddress ]
 }
 
 interface IMethodSetApprovalForAll {
@@ -637,52 +639,52 @@ interface IMethodSetApprovalForAll {
 
 interface IMethodSetContenthash {
   method: "setContenthash"
-  arguments: [ node: TBufferLike, hash: TBufferLike ]
+  arguments: [ node: TEth.Hex, hash: TEth.Hex ]
 }
 
 interface IMethodSetDNSRecords {
   method: "setDNSRecords"
-  arguments: [ node: TBufferLike, data: TBufferLike ]
+  arguments: [ node: TEth.Hex, data: TEth.Hex ]
 }
 
 interface IMethodSetInterface {
   method: "setInterface"
-  arguments: [ node: TBufferLike, interfaceID: TBufferLike, implementer: TAddress ]
+  arguments: [ node: TEth.Hex, interfaceID: TEth.Hex, implementer: TAddress ]
 }
 
 interface IMethodSetName {
   method: "setName"
-  arguments: [ node: TBufferLike, newName: string ]
+  arguments: [ node: TEth.Hex, newName: string ]
 }
 
 interface IMethodSetPubkey {
   method: "setPubkey"
-  arguments: [ node: TBufferLike, x: TBufferLike, y: TBufferLike ]
+  arguments: [ node: TEth.Hex, x: TEth.Hex, y: TEth.Hex ]
 }
 
 interface IMethodSetText {
   method: "setText"
-  arguments: [ node: TBufferLike, key: string, value: string ]
+  arguments: [ node: TEth.Hex, key: string, value: string ]
 }
 
 interface IMethodSetZonehash {
   method: "setZonehash"
-  arguments: [ node: TBufferLike, hash: TBufferLike ]
+  arguments: [ node: TEth.Hex, hash: TEth.Hex ]
 }
 
 interface IMethodSupportsInterface {
   method: "supportsInterface"
-  arguments: [ interfaceID: TBufferLike ]
+  arguments: [ interfaceID: TEth.Hex ]
 }
 
 interface IMethodText {
   method: "text"
-  arguments: [ node: TBufferLike, key: string ]
+  arguments: [ node: TEth.Hex, key: string ]
 }
 
 interface IMethodZonehash {
   method: "zonehash"
-  arguments: [ node: TBufferLike ]
+  arguments: [ node: TEth.Hex ]
 }
 
 interface IMethods {
@@ -732,55 +734,55 @@ class EnsPublicResolverStorageReader extends ContractStorageReaderBase {
         this.$createHandler(this.$slots);
     }
 
-    async recordVersions(key: TBufferLike): Promise<number> {
+    async recordVersions(key: TEth.Hex): Promise<number> {
         return this.$storage.get(['recordVersions', key]);
     }
 
-    async versionable_abis(key: number): Promise<Record<TBufferLike, Record<bigint, TBufferLike>>> {
+    async versionable_abis(key: number): Promise<Record<string | number, Record<string | number, TEth.Hex>>> {
         return this.$storage.get(['versionable_abis', key]);
     }
 
-    async versionable_addresses(key: number): Promise<Record<TBufferLike, Record<bigint, TBufferLike>>> {
+    async versionable_addresses(key: number): Promise<Record<string | number, Record<string | number, TEth.Hex>>> {
         return this.$storage.get(['versionable_addresses', key]);
     }
 
-    async versionable_hashes(key: number): Promise<Record<TBufferLike, TBufferLike>> {
+    async versionable_hashes(key: number): Promise<Record<string | number, TEth.Hex>> {
         return this.$storage.get(['versionable_hashes', key]);
     }
 
-    async versionable_zonehashes(key: number): Promise<Record<TBufferLike, TBufferLike>> {
+    async versionable_zonehashes(key: number): Promise<Record<string | number, TEth.Hex>> {
         return this.$storage.get(['versionable_zonehashes', key]);
     }
 
-    async versionable_records(key: number): Promise<Record<TBufferLike, Record<TBufferLike, Record<number, TBufferLike>>>> {
+    async versionable_records(key: number): Promise<Record<string | number, Record<string | number, Record<string | number, TEth.Hex>>>> {
         return this.$storage.get(['versionable_records', key]);
     }
 
-    async versionable_nameEntriesCount(key: number): Promise<Record<TBufferLike, Record<TBufferLike, number>>> {
+    async versionable_nameEntriesCount(key: number): Promise<Record<string | number, Record<string | number, number>>> {
         return this.$storage.get(['versionable_nameEntriesCount', key]);
     }
 
-    async versionable_interfaces(key: number): Promise<Record<TBufferLike, Record<TBufferLike, TAddress>>> {
+    async versionable_interfaces(key: number): Promise<Record<string | number, Record<string | number, TAddress>>> {
         return this.$storage.get(['versionable_interfaces', key]);
     }
 
-    async versionable_names(key: number): Promise<Record<TBufferLike, string>> {
+    async versionable_names(key: number): Promise<Record<string | number, string>> {
         return this.$storage.get(['versionable_names', key]);
     }
 
-    async versionable_pubkeys(key: number): Promise<Record<TBufferLike, { x: TBufferLike, y: TBufferLike }>> {
+    async versionable_pubkeys(key: number): Promise<Record<string | number, { x: TEth.Hex, y: TEth.Hex }>> {
         return this.$storage.get(['versionable_pubkeys', key]);
     }
 
-    async versionable_texts(key: number): Promise<Record<TBufferLike, Record<string, string>>> {
+    async versionable_texts(key: number): Promise<Record<string | number, Record<string | number, string>>> {
         return this.$storage.get(['versionable_texts', key]);
     }
 
-    async _operatorApprovals(key: TAddress): Promise<Record<TAddress, boolean>> {
+    async _operatorApprovals(key: TAddress): Promise<Record<string | number, boolean>> {
         return this.$storage.get(['_operatorApprovals', key]);
     }
 
-    async _tokenApprovals(key: TAddress): Promise<Record<TBufferLike, Record<TAddress, boolean>>> {
+    async _tokenApprovals(key: TAddress): Promise<Record<string | number, Record<string | number, boolean>>> {
         return this.$storage.get(['_tokenApprovals', key]);
     }
 
@@ -883,40 +885,40 @@ class EnsPublicResolverStorageReader extends ContractStorageReaderBase {
 
 
 interface IEnsPublicResolverTxCaller {
-    approve (sender: TSender, node: TBufferLike, delegate: TAddress, approved: boolean): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    clearRecords (sender: TSender, node: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    multicall (sender: TSender, data: TBufferLike[]): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    multicallWithNodeCheck (sender: TSender, nodehash: TBufferLike, data: TBufferLike[]): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    setABI (sender: TSender, node: TBufferLike, contentType: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    setAddr (sender: TSender, node: TBufferLike, coinType: bigint, a: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    setAddr (sender: TSender, node: TBufferLike, a: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    approve (sender: TSender, node: TEth.Hex, delegate: TAddress, approved: boolean): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    clearRecords (sender: TSender, node: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    multicall (sender: TSender, data: TEth.Hex[]): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    multicallWithNodeCheck (sender: TSender, nodehash: TEth.Hex, data: TEth.Hex[]): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setABI (sender: TSender, node: TEth.Hex, contentType: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setAddr (sender: TSender, node: TEth.Hex, coinType: bigint, a: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setAddr (sender: TSender, node: TEth.Hex, a: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setApprovalForAll (sender: TSender, operator: TAddress, approved: boolean): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    setContenthash (sender: TSender, node: TBufferLike, hash: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    setDNSRecords (sender: TSender, node: TBufferLike, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    setInterface (sender: TSender, node: TBufferLike, interfaceID: TBufferLike, implementer: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    setName (sender: TSender, node: TBufferLike, newName: string): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    setPubkey (sender: TSender, node: TBufferLike, x: TBufferLike, y: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    setText (sender: TSender, node: TBufferLike, key: string, value: string): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    setZonehash (sender: TSender, node: TBufferLike, hash: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setContenthash (sender: TSender, node: TEth.Hex, hash: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setDNSRecords (sender: TSender, node: TEth.Hex, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setInterface (sender: TSender, node: TEth.Hex, interfaceID: TEth.Hex, implementer: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setName (sender: TSender, node: TEth.Hex, newName: string): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setPubkey (sender: TSender, node: TEth.Hex, x: TEth.Hex, y: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setText (sender: TSender, node: TEth.Hex, key: string, value: string): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setZonehash (sender: TSender, node: TEth.Hex, hash: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IEnsPublicResolverTxData {
-    approve (sender: TSender, node: TBufferLike, delegate: TAddress, approved: boolean): Promise<TEth.TxLike>
-    clearRecords (sender: TSender, node: TBufferLike): Promise<TEth.TxLike>
-    multicall (sender: TSender, data: TBufferLike[]): Promise<TEth.TxLike>
-    multicallWithNodeCheck (sender: TSender, nodehash: TBufferLike, data: TBufferLike[]): Promise<TEth.TxLike>
-    setABI (sender: TSender, node: TBufferLike, contentType: bigint, data: TBufferLike): Promise<TEth.TxLike>
-    setAddr (sender: TSender, node: TBufferLike, coinType: bigint, a: TBufferLike): Promise<TEth.TxLike>
-    setAddr (sender: TSender, node: TBufferLike, a: TAddress): Promise<TEth.TxLike>
+    approve (sender: TSender, node: TEth.Hex, delegate: TAddress, approved: boolean): Promise<TEth.TxLike>
+    clearRecords (sender: TSender, node: TEth.Hex): Promise<TEth.TxLike>
+    multicall (sender: TSender, data: TEth.Hex[]): Promise<TEth.TxLike>
+    multicallWithNodeCheck (sender: TSender, nodehash: TEth.Hex, data: TEth.Hex[]): Promise<TEth.TxLike>
+    setABI (sender: TSender, node: TEth.Hex, contentType: bigint, data: TEth.Hex): Promise<TEth.TxLike>
+    setAddr (sender: TSender, node: TEth.Hex, coinType: bigint, a: TEth.Hex): Promise<TEth.TxLike>
+    setAddr (sender: TSender, node: TEth.Hex, a: TAddress): Promise<TEth.TxLike>
     setApprovalForAll (sender: TSender, operator: TAddress, approved: boolean): Promise<TEth.TxLike>
-    setContenthash (sender: TSender, node: TBufferLike, hash: TBufferLike): Promise<TEth.TxLike>
-    setDNSRecords (sender: TSender, node: TBufferLike, data: TBufferLike): Promise<TEth.TxLike>
-    setInterface (sender: TSender, node: TBufferLike, interfaceID: TBufferLike, implementer: TAddress): Promise<TEth.TxLike>
-    setName (sender: TSender, node: TBufferLike, newName: string): Promise<TEth.TxLike>
-    setPubkey (sender: TSender, node: TBufferLike, x: TBufferLike, y: TBufferLike): Promise<TEth.TxLike>
-    setText (sender: TSender, node: TBufferLike, key: string, value: string): Promise<TEth.TxLike>
-    setZonehash (sender: TSender, node: TBufferLike, hash: TBufferLike): Promise<TEth.TxLike>
+    setContenthash (sender: TSender, node: TEth.Hex, hash: TEth.Hex): Promise<TEth.TxLike>
+    setDNSRecords (sender: TSender, node: TEth.Hex, data: TEth.Hex): Promise<TEth.TxLike>
+    setInterface (sender: TSender, node: TEth.Hex, interfaceID: TEth.Hex, implementer: TAddress): Promise<TEth.TxLike>
+    setName (sender: TSender, node: TEth.Hex, newName: string): Promise<TEth.TxLike>
+    setPubkey (sender: TSender, node: TEth.Hex, x: TEth.Hex, y: TEth.Hex): Promise<TEth.TxLike>
+    setText (sender: TSender, node: TEth.Hex, key: string, value: string): Promise<TEth.TxLike>
+    setZonehash (sender: TSender, node: TEth.Hex, hash: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

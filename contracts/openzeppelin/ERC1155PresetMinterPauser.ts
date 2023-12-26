@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,24 +39,26 @@ export class ERC1155PresetMinterPauser extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/ERC1155PresetMinterPauser.ts"
+}
 
     async $constructor (deployer: TSender, uri: string): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
     }
 
     // 0xa217fddf
-    async DEFAULT_ADMIN_ROLE (): Promise<TBufferLike> {
+    async DEFAULT_ADMIN_ROLE (): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'DEFAULT_ADMIN_ROLE'));
     }
 
     // 0xd5391393
-    async MINTER_ROLE (): Promise<TBufferLike> {
+    async MINTER_ROLE (): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'MINTER_ROLE'));
     }
 
     // 0xe63ab1e9
-    async PAUSER_ROLE (): Promise<TBufferLike> {
+    async PAUSER_ROLE (): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'PAUSER_ROLE'));
     }
 
@@ -81,27 +83,27 @@ export class ERC1155PresetMinterPauser extends ContractBase {
     }
 
     // 0x248a9ca3
-    async getRoleAdmin (role: TBufferLike): Promise<TBufferLike> {
+    async getRoleAdmin (role: TEth.Hex): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'getRoleAdmin'), role);
     }
 
     // 0x9010d07c
-    async getRoleMember (role: TBufferLike, index: bigint): Promise<TAddress> {
+    async getRoleMember (role: TEth.Hex, index: bigint): Promise<TAddress> {
         return this.$read(this.$getAbiItem('function', 'getRoleMember'), role, index);
     }
 
     // 0xca15c873
-    async getRoleMemberCount (role: TBufferLike): Promise<bigint> {
+    async getRoleMemberCount (role: TEth.Hex): Promise<bigint> {
         return this.$read(this.$getAbiItem('function', 'getRoleMemberCount'), role);
     }
 
     // 0x2f2ff15d
-    async grantRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TxWriter> {
+    async grantRole (sender: TSender, role: TEth.Hex, account: TAddress): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'grantRole'), sender, role, account);
     }
 
     // 0x91d14854
-    async hasRole (role: TBufferLike, account: TAddress): Promise<boolean> {
+    async hasRole (role: TEth.Hex, account: TAddress): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'hasRole'), role, account);
     }
 
@@ -111,12 +113,12 @@ export class ERC1155PresetMinterPauser extends ContractBase {
     }
 
     // 0x731133e9
-    async mint (sender: TSender, to: TAddress, id: bigint, amount: bigint, data: TBufferLike): Promise<TxWriter> {
+    async mint (sender: TSender, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'mint'), sender, to, id, amount, data);
     }
 
     // 0x1f7fdffa
-    async mintBatch (sender: TSender, to: TAddress, ids: bigint[], amounts: bigint[], data: TBufferLike): Promise<TxWriter> {
+    async mintBatch (sender: TSender, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'mintBatch'), sender, to, ids, amounts, data);
     }
 
@@ -131,22 +133,22 @@ export class ERC1155PresetMinterPauser extends ContractBase {
     }
 
     // 0x36568abe
-    async renounceRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TxWriter> {
+    async renounceRole (sender: TSender, role: TEth.Hex, account: TAddress): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'renounceRole'), sender, role, account);
     }
 
     // 0xd547741f
-    async revokeRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TxWriter> {
+    async revokeRole (sender: TSender, role: TEth.Hex, account: TAddress): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'revokeRole'), sender, role, account);
     }
 
     // 0x2eb2c2d6
-    async safeBatchTransferFrom (sender: TSender, from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TBufferLike): Promise<TxWriter> {
+    async safeBatchTransferFrom (sender: TSender, from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'safeBatchTransferFrom'), sender, from, to, ids, amounts, data);
     }
 
     // 0xf242432a
-    async safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TBufferLike): Promise<TxWriter> {
+    async safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'safeTransferFrom'), sender, from, to, id, amount, data);
     }
 
@@ -156,7 +158,7 @@ export class ERC1155PresetMinterPauser extends ContractBase {
     }
 
     // 0x01ffc9a7
-    async supportsInterface (interfaceId: TBufferLike): Promise<boolean> {
+    async supportsInterface (interfaceId: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'supportsInterface'), interfaceId);
     }
 
@@ -298,7 +300,7 @@ export class ERC1155PresetMinterPauser extends ContractBase {
     async getPastLogsRoleAdminChanged (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { role?: TBufferLike,previousAdminRole?: TBufferLike,newAdminRole?: TBufferLike }
+        params?: { role?: TEth.Hex,previousAdminRole?: TEth.Hex,newAdminRole?: TEth.Hex }
     }): Promise<ITxLogItem<TLogRoleAdminChanged>[]> {
         return await this.$getPastLogsParsed('RoleAdminChanged', options) as any;
     }
@@ -306,7 +308,7 @@ export class ERC1155PresetMinterPauser extends ContractBase {
     async getPastLogsRoleGranted (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { role?: TBufferLike,account?: TAddress,sender?: TAddress }
+        params?: { role?: TEth.Hex,account?: TAddress,sender?: TAddress }
     }): Promise<ITxLogItem<TLogRoleGranted>[]> {
         return await this.$getPastLogsParsed('RoleGranted', options) as any;
     }
@@ -314,7 +316,7 @@ export class ERC1155PresetMinterPauser extends ContractBase {
     async getPastLogsRoleRevoked (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { role?: TBufferLike,account?: TAddress,sender?: TAddress }
+        params?: { role?: TEth.Hex,account?: TAddress,sender?: TAddress }
     }): Promise<ITxLogItem<TLogRoleRevoked>[]> {
         return await this.$getPastLogsParsed('RoleRevoked', options) as any;
     }
@@ -369,17 +371,17 @@ type TSender = TAccount & {
     };
     type TLogPausedParameters = [ account: TAddress ];
     type TLogRoleAdminChanged = {
-        role: TBufferLike, previousAdminRole: TBufferLike, newAdminRole: TBufferLike
+        role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex
     };
-    type TLogRoleAdminChangedParameters = [ role: TBufferLike, previousAdminRole: TBufferLike, newAdminRole: TBufferLike ];
+    type TLogRoleAdminChangedParameters = [ role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex ];
     type TLogRoleGranted = {
-        role: TBufferLike, account: TAddress, _sender: TAddress
+        role: TEth.Hex, account: TAddress, _sender: TAddress
     };
-    type TLogRoleGrantedParameters = [ role: TBufferLike, account: TAddress, _sender: TAddress ];
+    type TLogRoleGrantedParameters = [ role: TEth.Hex, account: TAddress, _sender: TAddress ];
     type TLogRoleRevoked = {
-        role: TBufferLike, account: TAddress, _sender: TAddress
+        role: TEth.Hex, account: TAddress, _sender: TAddress
     };
-    type TLogRoleRevokedParameters = [ role: TBufferLike, account: TAddress, _sender: TAddress ];
+    type TLogRoleRevokedParameters = [ role: TEth.Hex, account: TAddress, _sender: TAddress ];
     type TLogTransferBatch = {
         operator: TAddress, from: TAddress, to: TAddress, ids: bigint[], values: bigint[]
     };
@@ -449,27 +451,27 @@ interface IMethodBurnBatch {
 
 interface IMethodGetRoleAdmin {
   method: "getRoleAdmin"
-  arguments: [ role: TBufferLike ]
+  arguments: [ role: TEth.Hex ]
 }
 
 interface IMethodGetRoleMember {
   method: "getRoleMember"
-  arguments: [ role: TBufferLike, index: bigint ]
+  arguments: [ role: TEth.Hex, index: bigint ]
 }
 
 interface IMethodGetRoleMemberCount {
   method: "getRoleMemberCount"
-  arguments: [ role: TBufferLike ]
+  arguments: [ role: TEth.Hex ]
 }
 
 interface IMethodGrantRole {
   method: "grantRole"
-  arguments: [ role: TBufferLike, account: TAddress ]
+  arguments: [ role: TEth.Hex, account: TAddress ]
 }
 
 interface IMethodHasRole {
   method: "hasRole"
-  arguments: [ role: TBufferLike, account: TAddress ]
+  arguments: [ role: TEth.Hex, account: TAddress ]
 }
 
 interface IMethodIsApprovedForAll {
@@ -479,12 +481,12 @@ interface IMethodIsApprovedForAll {
 
 interface IMethodMint {
   method: "mint"
-  arguments: [ to: TAddress, id: bigint, amount: bigint, data: TBufferLike ]
+  arguments: [ to: TAddress, id: bigint, amount: bigint, data: TEth.Hex ]
 }
 
 interface IMethodMintBatch {
   method: "mintBatch"
-  arguments: [ to: TAddress, ids: bigint[], amounts: bigint[], data: TBufferLike ]
+  arguments: [ to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex ]
 }
 
 interface IMethodPause {
@@ -499,22 +501,22 @@ interface IMethodPaused {
 
 interface IMethodRenounceRole {
   method: "renounceRole"
-  arguments: [ role: TBufferLike, account: TAddress ]
+  arguments: [ role: TEth.Hex, account: TAddress ]
 }
 
 interface IMethodRevokeRole {
   method: "revokeRole"
-  arguments: [ role: TBufferLike, account: TAddress ]
+  arguments: [ role: TEth.Hex, account: TAddress ]
 }
 
 interface IMethodSafeBatchTransferFrom {
   method: "safeBatchTransferFrom"
-  arguments: [ from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TBufferLike ]
+  arguments: [ from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex ]
 }
 
 interface IMethodSafeTransferFrom {
   method: "safeTransferFrom"
-  arguments: [ from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TBufferLike ]
+  arguments: [ from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex ]
 }
 
 interface IMethodSetApprovalForAll {
@@ -524,7 +526,7 @@ interface IMethodSetApprovalForAll {
 
 interface IMethodSupportsInterface {
   method: "supportsInterface"
-  arguments: [ interfaceId: TBufferLike ]
+  arguments: [ interfaceId: TEth.Hex ]
 }
 
 interface IMethodUnpause {
@@ -574,14 +576,14 @@ interface IMethods {
 interface IERC1155PresetMinterPauserTxCaller {
     burn (sender: TSender, account: TAddress, id: bigint, value: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     burnBatch (sender: TSender, account: TAddress, ids: bigint[], values: bigint[]): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    grantRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    mint (sender: TSender, to: TAddress, id: bigint, amount: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    mintBatch (sender: TSender, to: TAddress, ids: bigint[], amounts: bigint[], data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    grantRole (sender: TSender, role: TEth.Hex, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    mint (sender: TSender, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    mintBatch (sender: TSender, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     pause (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    renounceRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    revokeRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    safeBatchTransferFrom (sender: TSender, from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    renounceRole (sender: TSender, role: TEth.Hex, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    revokeRole (sender: TSender, role: TEth.Hex, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    safeBatchTransferFrom (sender: TSender, from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setApprovalForAll (sender: TSender, operator: TAddress, approved: boolean): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     unpause (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
@@ -590,14 +592,14 @@ interface IERC1155PresetMinterPauserTxCaller {
 interface IERC1155PresetMinterPauserTxData {
     burn (sender: TSender, account: TAddress, id: bigint, value: bigint): Promise<TEth.TxLike>
     burnBatch (sender: TSender, account: TAddress, ids: bigint[], values: bigint[]): Promise<TEth.TxLike>
-    grantRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TEth.TxLike>
-    mint (sender: TSender, to: TAddress, id: bigint, amount: bigint, data: TBufferLike): Promise<TEth.TxLike>
-    mintBatch (sender: TSender, to: TAddress, ids: bigint[], amounts: bigint[], data: TBufferLike): Promise<TEth.TxLike>
+    grantRole (sender: TSender, role: TEth.Hex, account: TAddress): Promise<TEth.TxLike>
+    mint (sender: TSender, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex): Promise<TEth.TxLike>
+    mintBatch (sender: TSender, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex): Promise<TEth.TxLike>
     pause (sender: TSender, ): Promise<TEth.TxLike>
-    renounceRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TEth.TxLike>
-    revokeRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TEth.TxLike>
-    safeBatchTransferFrom (sender: TSender, from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TBufferLike): Promise<TEth.TxLike>
-    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    renounceRole (sender: TSender, role: TEth.Hex, account: TAddress): Promise<TEth.TxLike>
+    revokeRole (sender: TSender, role: TEth.Hex, account: TAddress): Promise<TEth.TxLike>
+    safeBatchTransferFrom (sender: TSender, from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex): Promise<TEth.TxLike>
+    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex): Promise<TEth.TxLike>
     setApprovalForAll (sender: TSender, operator: TAddress, approved: boolean): Promise<TEth.TxLike>
     unpause (sender: TSender, ): Promise<TEth.TxLike>
 }

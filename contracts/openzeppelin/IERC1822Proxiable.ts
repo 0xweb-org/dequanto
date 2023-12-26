@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,10 +39,12 @@ export class IERC1822Proxiable extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/IERC1822Proxiable.ts"
+}
 
     // 0x52d1902d
-    async proxiableUUID (): Promise<TBufferLike> {
+    async proxiableUUID (): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'proxiableUUID'));
     }
 

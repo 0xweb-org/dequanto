@@ -26,13 +26,13 @@ export class TokenPriceStore {
         }
     }
 
-    private store =  new JsonArrayStore<[number, number]>({
-        path: $cache.file(`tokens/${this.token}.json`),
-        key: x => String(x[0])
-    });
+    private store: JsonArrayStore<[number, number]>;
 
     constructor (public token: TAddress) {
-
+        this.store =  new JsonArrayStore<[number, number]>({
+            path: $cache.file(`tokens/${this.token}.json`),
+            key: x => String(x[0])
+        });
     }
 
     async getPrice (date = Date.now()) {

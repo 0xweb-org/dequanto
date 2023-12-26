@@ -14,10 +14,7 @@ export class Arbiscan extends BlockChainExplorerFactory.create({
     },
     getConfig () {
         const config = $config.get('blockchainExplorer.arbitrum');
-        return {
-            key: config?.key,
-            host: config?.host,
-        };
+        return config;
     }
 }) {
 

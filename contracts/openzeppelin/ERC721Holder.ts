@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,10 +39,12 @@ export class ERC721Holder extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/ERC721Holder.ts"
+}
 
     // 0x150b7a02
-    async onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TBufferLike): Promise<TxWriter> {
+    async onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'onERC721Received'), sender, input0, input1, input2, input3);
     }
 
@@ -99,7 +101,7 @@ interface IEvents {
 
 interface IMethodOnERC721Received {
   method: "onERC721Received"
-  arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: TBufferLike ]
+  arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: TEth.Hex ]
 }
 
 interface IMethods {
@@ -113,12 +115,12 @@ interface IMethods {
 
 
 interface IERC721HolderTxCaller {
-    onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IERC721HolderTxData {
-    onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TBufferLike): Promise<TEth.TxLike>
+    onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

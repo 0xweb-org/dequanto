@@ -8,7 +8,7 @@ import { RpcSubscription, RpcLogFilterOptions } from '@dequanto/rpc/RpcSubscript
 export class Rpc extends RpcBase {
 
 /**
- * Subscribes to specific Ethereum events, returning a subscription ID used to receive notifications. <metamask> 
+ * Subscribes to specific Ethereum events, returning a subscription ID used to receive notifications. <metamask>
  * The eth_subscribe method allows clients to subscribe to specific events on the Ethereum network, such as new blocks, new pending transactions, or changes in the state of an account. When an event occurs, a notification is sent to the client with the corresponding data. To stop receiving notifications, the client can unsubscribe using the eth_unsubscribe method.
  * @param subscriptionType - The type of subscription to create. Must be one of:`newHeads`: new block headers - `logs`: logs matching a filter object - `newPendingTransactions`: new pending transactions - `syncing`: changes in syncing status
  * @param filterOptions - An optional object containing filter options specific to the subscription type. Only applicable for 'logs' subscription type.
@@ -22,7 +22,7 @@ eth_subscribe(type: any, options?): Promise<RpcSubscription<any>> {
 }
 
 /**
- * Unsubscribes from a specific Ethereum event, using the subscription ID provided by eth_subscribe. <metamask> 
+ * Unsubscribes from a specific Ethereum event, using the subscription ID provided by eth_subscribe. <metamask>
  * The eth_unsubscribe method allows clients to unsubscribe from specific events on the Ethereum network, to which they have previously subscribed using the eth_subscribe method. The client needs to provide the subscription ID obtained from eth_subscribe to stop receiving notifications for the corresponding event.
  * @param subscriptionId - The unique subscription ID obtained from the eth_subscribe method, used to identify the subscription to be unsubscribed.
  * @returns unsubscribed - A boolean value indicating whether the unsubscription was successful.
@@ -32,20 +32,20 @@ eth_unsubscribe(subscriptionId: string): Promise<boolean> {
 }
 
 /**
- * Adds an Ethereum chain to the wallet. <metamask> 
+ * Adds an Ethereum chain to the wallet. <metamask>
  * Creates a confirmation asking the user to add the specified chain to the wallet application. The caller must specify a chain ID and some chain metadata. The wallet application may refuse or accept the request. `null` is returned if the chain is added, and an error otherwise. Introduced by [EIP 3085](https://eips.ethereum.org/EIPS/eip-3085).
- * @param addEthereumChainParameter - 
- * @returns AddEthereumChainResult - 
+ * @param addEthereumChainParameter -
+ * @returns AddEthereumChainResult -
  */
 wallet_addEthereumChain(addEthereumChainParameter?: DataLike<RpcTypes.AddEthereumChainParameter>): Promise<undefined> {
     return this.request({ method: 'wallet_addEthereumChain', params: Array.from(arguments) })
 }
 
 /**
- * Switches the wallet's active Ethereum chain. <metamask> 
+ * Switches the wallet's active Ethereum chain. <metamask>
  * Requests that the wallet switches its active Ethereum chain. Introduced by [EIP 3326](https://ethereum-magicians.org/t/eip-3326-wallet-switchethereumchain).
- * @param switchEthereumChainParameter - 
- * @returns SwitchEthereumChainResult - 
+ * @param switchEthereumChainParameter -
+ * @returns SwitchEthereumChainResult -
  */
 wallet_switchEthereumChain(switchEthereumChainParameter?: {
     chainId: string;
@@ -54,10 +54,10 @@ wallet_switchEthereumChain(switchEthereumChainParameter?: {
 }
 
 /**
- * Requests additional permissions. <metamask> 
+ * Requests additional permissions. <metamask>
  * Requests additional permissions from the user. Introduced by [EIP-2255](https://eips.ethereum.org/EIPS/eip-2255).
- * @param requestPermissionsObject - 
- * @returns PermissionsList - 
+ * @param requestPermissionsObject -
+ * @returns PermissionsList -
  */
 wallet_requestPermissions(requestPermissionsObject: {
     eth_accounts: {
@@ -71,16 +71,16 @@ wallet_requestPermissions(requestPermissionsObject: {
 }
 
 /**
- * Gets the user's permissions. <metamask> 
+ * Gets the user's permissions. <metamask>
  * Gets the user's permissions. Introduced by [EIP-2255](https://eips.ethereum.org/EIPS/eip-2255).
- * @returns PermissionsList - 
+ * @returns PermissionsList -
  */
 wallet_getPermissions(): Promise<RpcTypes.Permission[]> {
     return this.request({ method: 'wallet_getPermissions', params: Array.from(arguments) })
 }
 
 /**
- * Redirects the user back to the site after onboarding. <metamask> 
+ * Redirects the user back to the site after onboarding. <metamask>
  * Registers the requesting site with MetaMask as the initiator of onboarding, enabling MetaMask to redirect the user back to the site after onboarding. Returns a promise that resolves to `true`, or rejects if there's an error. Instead of calling this method directly, you should use the [`@metamask/onboarding`](https://github.com/MetaMask/metamask-onboarding) library.
  * @returns RegisterOnboardingResult - `true` if the request was successful, `false` otherwise.
  */
@@ -89,10 +89,10 @@ wallet_registerOnboarding(): Promise<boolean> {
 }
 
 /**
- * Tracks a token in MetaMask. <metamask> 
+ * Tracks a token in MetaMask. <metamask>
  * Requests that the user track the specified token in MetaMask. Returns a boolean indicating if the token was successfully added. Once added, the token is indistinguishable from those added using legacy methods, such as a centralized registry. Introduced by [EIP-747](https://eips.ethereum.org/EIPS/eip-747). Currently support for ERC721 and ERC1155 tokens is limited to the extension (not on mobile) and is considered experimental. See [MIP-1](https://github.com/MetaMask/metamask-improvement-proposals/blob/main/MIPs/mip-1.md) and [MIP proposal lifecycle](https://github.com/MetaMask/metamask-improvement-proposals/blob/main/PROCESS-GUIDE.md#proposal-lifecycle) for more information.
  * @param type - Supports ERC-20, ERC-721, and ERC-1155 tokens. Currently support for ERC721 and ERC1155 tokens is limited to the extension (not on mobile) and is considered experimental. See [MIP-1](https://github.com/MetaMask/metamask-improvement-proposals/blob/main/MIPs/mip-1.md) and [MIP proposal lifecycle](https://github.com/MetaMask/metamask-improvement-proposals/blob/main/PROCESS-GUIDE.md#proposal-lifecycle) for more information.
- * @param options - 
+ * @param options -
  * @returns WatchAssetResult - `true` if the token was added, `false` otherwise.
  */
 wallet_watchAsset(type: 'ERC20' | 'ERC721' | 'ERC1155', options?: {
@@ -106,57 +106,57 @@ wallet_watchAsset(type: 'ERC20' | 'ERC721' | 'ERC1155', options?: {
 }
 
 /**
- * Decrypts an encrypted message. <metamask> 
+ * Decrypts an encrypted message. <metamask>
  * Requests that MetaMask decrypt the specified encrypted message. The message must have been encrypted using the public encryption key of the specified Ethereum address. Returns a promise that resolves to the decrypted message, or rejects if the decryption attempt fails.
  * @param encryptedMessage - The encrypted message to decrypt.
  * @param address - The address of the Ethereum account that can decrypt the message.
- * @returns PermissionsList - 
+ * @returns PermissionsList -
  */
 eth_decrypt(encryptedMessage: string, address: TEth.Address): Promise<RpcTypes.Permission[]> {
     return this.request({ method: 'eth_decrypt', params: Array.from(arguments) })
 }
 
 /**
- * Gets a public key used for encryption. <metamask> 
+ * Gets a public key used for encryption. <metamask>
  * Requests that the user share their public encryption key. Returns a public encryption key, or rejects if the user denies the request. The public key is computed from entropy associated with the specified user account, using the NaCl implementation of the `X25519_XSalsa20_Poly1305` algorithm.
  * @param address - The address of the Ethereum account that can decrypt the message.
- * @returns EncryptionKey - 
+ * @returns EncryptionKey -
  */
 eth_getEncryptionPublicKey(address: TEth.Address): Promise<string> {
     return this.request({ method: 'eth_getEncryptionPublicKey', params: Array.from(arguments) })
 }
 
 /**
- * Requests that the user provide an Ethereum address. <metamask> 
+ * Requests that the user provide an Ethereum address. <metamask>
  * Requests that the user provide an Ethereum address to be identified by. This method is specified by [EIP-1102](https://eips.ethereum.org/EIPS/eip-1102). Internally, this method calls `wallet_requestPermissions` for permission to call `eth_accounts`.
- * @returns AddressList - 
+ * @returns AddressList -
  */
 eth_requestAccounts(): Promise<TEth.Address[]> {
     return this.request({ method: 'eth_requestAccounts', params: Array.from(arguments) })
 }
 
 /**
- * Gets a list of addresses for the user's accounts. <metamask | eth> 
+ * Gets a list of addresses for the user's accounts. <metamask | eth>
  * Returns a list of addresses for the accounts owned by the user.
- * @returns AddressList - 
+ * @returns AddressList -
  */
 eth_accounts(): Promise<TEth.Address[]> {
     return this.request({ method: 'eth_accounts', params: Array.from(arguments) })
 }
 
 /**
- * Presents a structured data message for the user to sign. <metamask> 
+ * Presents a structured data message for the user to sign. <metamask>
  * Presents a data message for the user to sign in a structured and readable format and returns the signed response. Introduced By [EIP-712](https://eips.ethereum.org/EIPS/eip-712).
  * @param address - The address of the requested signing account.
- * @param typedData - 
- * @returns Signature - 
+ * @param typedData -
+ * @returns Signature -
  */
 eth_signTypedData_v4(address: TEth.Address, typedData: DataLike<RpcTypes.TypedData>): Promise<TEth.Hex> {
     return this.request({ method: 'eth_signTypedData_v4', params: Array.from(arguments) })
 }
 
 /**
- * Presents a plain text signature challenge to the user. <metamask> 
+ * Presents a plain text signature challenge to the user. <metamask>
  * Presents a plain text signature challenge to the user and returns the signed response. Equivalent to `eth_sign` on some other wallets, and prepends a safe prefix to the signed message to prevent the challenge tricking users into signing a financial transaction. This method requires that the user has granted permission to interact with their account first, so make sure to call `eth_requestAccounts` first.
  * @param challenge - A hex-encoded UTF-8 string to present to the user. See how to encode a string like this in the [`browser-string-hexer`](https://github.com/danfinlay/browser-string-hexer) module.
  * @param address - The address of the requested signing account.
@@ -167,7 +167,7 @@ personal_sign(challenge: string, address: TEth.Address): Promise<TEth.Hex> {
 }
 
 /**
- * Initiates a new transaction. <metamask | eth> 
+ * Initiates a new transaction. <metamask | eth>
  * Creates a new wallet confirmation to make an ethereum transaction from the user's account. This method requires that the user has granted permission to interact with their account first, so make sure to call `eth_requestAccounts` or `wallet_requestPermissions` first.
  * @param transaction - The transaction object to sign and send.
  * @returns TransactionHash - The transaction hash of the sent transaction.
@@ -186,56 +186,56 @@ eth_sendTransaction(transaction: {
 }
 
 /**
- * Returns the number of most recent block. <metamask | coregeth | eth> 
- * 
- * @returns Block number - 
+ * Returns the number of most recent block. <metamask | coregeth | eth>
+ *
+ * @returns Block number -
  */
 eth_blockNumber(): Promise<number> {
     return this.request({ method: 'eth_blockNumber', params: Array.from(arguments) })
 }
 
 /**
- * Executes a new message call immediately without creating a transaction on the block chain. <metamask | coregeth | eth> 
- * 
- * @param transaction - 
- * @param block - 
- * @returns Return data - 
+ * Executes a new message call immediately without creating a transaction on the block chain. <metamask | coregeth | eth>
+ *
+ * @param transaction -
+ * @param block -
+ * @returns Return data -
  */
 eth_call(transaction: DataLike<RpcTypes.GenericTransaction>, block?: DataLike<RpcTypes.BlockNumberOrTagOrHash>): Promise<TEth.Hex> {
     return this.request({ method: 'eth_call', params: Array.from(arguments) })
 }
 
 /**
- * Returns the chain ID of the current network. <metamask | coregeth | eth> 
- * 
- * @returns Chain ID - 
+ * Returns the chain ID of the current network. <metamask | coregeth | eth>
+ *
+ * @returns Chain ID -
  */
 eth_chainId(): Promise<number> {
     return this.request({ method: 'eth_chainId', params: Array.from(arguments) })
 }
 
 /**
- * Returns the client coinbase address. <metamask | coregeth | eth> 
- * 
- * @returns Coinbase address - 
+ * Returns the client coinbase address. <metamask | coregeth | eth>
+ *
+ * @returns Coinbase address -
  */
 eth_coinbase(): Promise<TEth.Address> {
     return this.request({ method: 'eth_coinbase', params: Array.from(arguments) })
 }
 
 /**
- * Generates and returns an estimate of how much gas is necessary to allow the transaction to complete. <metamask | coregeth | eth> 
- * 
- * @param transaction - 
- * @param block - 
- * @returns Gas used - 
+ * Generates and returns an estimate of how much gas is necessary to allow the transaction to complete. <metamask | coregeth | eth>
+ *
+ * @param transaction -
+ * @param block -
+ * @returns Gas used -
  */
 eth_estimateGas(transaction: DataLike<RpcTypes.GenericTransaction>, block?: DataLike<RpcTypes.BlockNumberOrTag>): Promise<bigint> {
     return this.request({ method: 'eth_estimateGas', params: Array.from(arguments) })
 }
 
 /**
- * Transaction fee history <metamask | eth> 
+ * Transaction fee history <metamask | eth>
  * Returns transaction base fee per gas and effective priority fee per gas for the requested/supported block range.
  * @param blockCount - Requested range of blocks. Clients will return less than the requested range if not all blocks are available.
  * @param newestBlock - Highest block of the requested range.
@@ -255,273 +255,273 @@ eth_feeHistory(blockCount: bigint, newestBlock: DataLike<RpcTypes.BlockNumberOrT
 }
 
 /**
- * Returns the current price per gas in wei. <metamask | coregeth | eth> 
- * 
- * @returns Gas price - 
+ * Returns the current price per gas in wei. <metamask | coregeth | eth>
+ *
+ * @returns Gas price -
  */
 eth_gasPrice(): Promise<bigint> {
     return this.request({ method: 'eth_gasPrice', params: Array.from(arguments) })
 }
 
 /**
- * Returns the balance of the account of given address. <metamask | coregeth | eth> 
- * 
- * @param address - 
- * @param block - 
- * @returns Balance - 
+ * Returns the balance of the account of given address. <metamask | coregeth | eth>
+ *
+ * @param address -
+ * @param block -
+ * @returns Balance -
  */
 eth_getBalance(address: TEth.Address, block?: DataLike<RpcTypes.BlockNumberOrTagOrHash>): Promise<bigint> {
     return this.request({ method: 'eth_getBalance', params: Array.from(arguments) })
 }
 
 /**
- * Returns information about a block by hash. <metamask | coregeth | eth> 
- * 
- * @param blockHash - 
- * @param hydratedTransactions - 
- * @returns Block information - 
+ * Returns information about a block by hash. <metamask | coregeth | eth>
+ *
+ * @param blockHash -
+ * @param hydratedTransactions -
+ * @returns Block information -
  */
 eth_getBlockByHash(blockHash: TEth.Hex, hydratedTransactions: boolean): Promise<RpcTypes.Block> {
     return this.request({ method: 'eth_getBlockByHash', params: Array.from(arguments) })
 }
 
 /**
- * Returns information about a block by number. <metamask | coregeth | eth> 
- * 
- * @param block - 
- * @param hydratedTransactions - 
- * @returns Block information - 
+ * Returns information about a block by number. <metamask | coregeth | eth>
+ *
+ * @param block -
+ * @param hydratedTransactions -
+ * @returns Block information -
  */
 eth_getBlockByNumber(block: DataLike<RpcTypes.BlockNumberOrTag>, hydratedTransactions: boolean): Promise<RpcTypes.Block> {
     return this.request({ method: 'eth_getBlockByNumber', params: Array.from(arguments) })
 }
 
 /**
- * Returns the number of transactions in a block from a block matching the given block hash. <metamask | coregeth | eth> 
- * 
- * @param blockHash - 
- * @returns Transaction count - 
+ * Returns the number of transactions in a block from a block matching the given block hash. <metamask | coregeth | eth>
+ *
+ * @param blockHash -
+ * @returns Transaction count -
  */
 eth_getBlockTransactionCountByHash(blockHash?: TEth.Hex): Promise<bigint> {
     return this.request({ method: 'eth_getBlockTransactionCountByHash', params: Array.from(arguments) })
 }
 
 /**
- * Returns the number of transactions in a block matching the given block number. <metamask | coregeth | eth> 
- * 
- * @param block - 
- * @returns Transaction count - 
+ * Returns the number of transactions in a block matching the given block number. <metamask | coregeth | eth>
+ *
+ * @param block -
+ * @returns Transaction count -
  */
 eth_getBlockTransactionCountByNumber(block?: DataLike<RpcTypes.BlockNumberOrTag>): Promise<bigint> {
     return this.request({ method: 'eth_getBlockTransactionCountByNumber', params: Array.from(arguments) })
 }
 
 /**
- * Returns code at a given address. <metamask | coregeth | eth> 
- * 
- * @param address - 
- * @param block - 
- * @returns Bytecode - 
+ * Returns code at a given address. <metamask | coregeth | eth>
+ *
+ * @param address -
+ * @param block -
+ * @returns Bytecode -
  */
 eth_getCode(address: TEth.Address, block: DataLike<RpcTypes.BlockNumberOrTagOrHash>): Promise<TEth.Hex> {
     return this.request({ method: 'eth_getCode', params: Array.from(arguments) })
 }
 
 /**
- * Polling method for a filter, which returns an array of logs which occurred since last poll. <metamask | coregeth | eth> 
- * 
- * @param filterIdentifier - 
- * @returns Log objects - 
+ * Polling method for a filter, which returns an array of logs which occurred since last poll. <metamask | coregeth | eth>
+ *
+ * @param filterIdentifier -
+ * @returns Log objects -
  */
 eth_getFilterChanges(filterIdentifier?: bigint): Promise<RpcTypes.FilterResults> {
     return this.request({ method: 'eth_getFilterChanges', params: Array.from(arguments) })
 }
 
 /**
- * Returns an array of all logs matching filter with given id. <metamask | coregeth | eth> 
- * 
- * @param filterIdentifier - 
- * @returns Log objects - 
+ * Returns an array of all logs matching filter with given id. <metamask | coregeth | eth>
+ *
+ * @param filterIdentifier -
+ * @returns Log objects -
  */
 eth_getFilterLogs(filterIdentifier?: bigint): Promise<RpcTypes.FilterResults> {
     return this.request({ method: 'eth_getFilterLogs', params: Array.from(arguments) })
 }
 
 /**
- * Returns an array of all logs matching filter with given id. <metamask | coregeth | eth> 
- * 
- * @param filter - 
- * @returns Log objects - 
+ * Returns an array of all logs matching filter with given id. <metamask | coregeth | eth>
+ *
+ * @param filter -
+ * @returns Log objects -
  */
 eth_getLogs(filter?: DataLike<RpcTypes.Filter>): Promise<RpcTypes.FilterResults> {
     return this.request({ method: 'eth_getLogs', params: Array.from(arguments) })
 }
 
 /**
- * Returns the merkle proof for a given account and optionally some storage keys. <metamask | coregeth | eth> 
- * 
- * @param address - 
- * @param storageKeys - 
- * @param block - 
- * @returns Account - 
+ * Returns the merkle proof for a given account and optionally some storage keys. <metamask | coregeth | eth>
+ *
+ * @param address -
+ * @param storageKeys -
+ * @param block -
+ * @returns Account -
  */
 eth_getProof(address: TEth.Address, storageKeys: TEth.Hex[], block: DataLike<RpcTypes.BlockNumberOrTagOrHash>): Promise<RpcTypes.AccountProof> {
     return this.request({ method: 'eth_getProof', params: Array.from(arguments) })
 }
 
 /**
- * Returns the value from a storage position at a given address. <metamask | coregeth | eth> 
- * 
- * @param address - 
- * @param storageSlot - 
- * @param block - 
- * @returns Value - 
+ * Returns the value from a storage position at a given address. <metamask | coregeth | eth>
+ *
+ * @param address -
+ * @param storageSlot -
+ * @param block -
+ * @returns Value -
  */
 eth_getStorageAt(address: TEth.Address, storageSlot: bigint, block?: DataLike<RpcTypes.BlockNumberOrTagOrHash>): Promise<TEth.Hex> {
     return this.request({ method: 'eth_getStorageAt', params: Array.from(arguments) })
 }
 
 /**
- * Returns information about a transaction by block hash and transaction index position. <metamask | coregeth | eth> 
- * 
- * @param blockHash - 
- * @param transactionIndex - 
- * @returns Transaction information - 
+ * Returns information about a transaction by block hash and transaction index position. <metamask | coregeth | eth>
+ *
+ * @param blockHash -
+ * @param transactionIndex -
+ * @returns Transaction information -
  */
 eth_getTransactionByBlockHashAndIndex(blockHash: TEth.Hex, transactionIndex: bigint): Promise<RpcTypes.TransactionInfo> {
     return this.request({ method: 'eth_getTransactionByBlockHashAndIndex', params: Array.from(arguments) })
 }
 
 /**
- * Returns information about a transaction by block number and transaction index position. <metamask | coregeth | eth> 
- * 
- * @param block - 
- * @param transactionIndex - 
- * @returns Transaction information - 
+ * Returns information about a transaction by block number and transaction index position. <metamask | coregeth | eth>
+ *
+ * @param block -
+ * @param transactionIndex -
+ * @returns Transaction information -
  */
 eth_getTransactionByBlockNumberAndIndex(block: DataLike<RpcTypes.BlockNumberOrTag>, transactionIndex: bigint): Promise<RpcTypes.TransactionInfo> {
     return this.request({ method: 'eth_getTransactionByBlockNumberAndIndex', params: Array.from(arguments) })
 }
 
 /**
- * Returns the information about a transaction requested by transaction hash. <metamask | coregeth | eth> 
- * 
- * @param transactionHash - 
- * @returns Transaction information - 
+ * Returns the information about a transaction requested by transaction hash. <metamask | coregeth | eth>
+ *
+ * @param transactionHash -
+ * @returns Transaction information -
  */
 eth_getTransactionByHash(transactionHash: TEth.Hex): Promise<RpcTypes.TransactionInfo> {
     return this.request({ method: 'eth_getTransactionByHash', params: Array.from(arguments) })
 }
 
 /**
- * Returns the number of transactions sent from an address. <metamask | coregeth | eth> 
- * 
- * @param address - 
- * @param block - 
- * @returns Transaction count - 
+ * Returns the number of transactions sent from an address. <metamask | coregeth | eth>
+ *
+ * @param address -
+ * @param block -
+ * @returns Transaction count -
  */
 eth_getTransactionCount(address: TEth.Address, block?: DataLike<RpcTypes.BlockNumberOrTagOrHash>): Promise<bigint> {
     return this.request({ method: 'eth_getTransactionCount', params: Array.from(arguments) })
 }
 
 /**
- * Returns the receipt of a transaction by transaction hash. <metamask | coregeth | eth> 
- * 
- * @param transactionHash - 
- * @returns Receipt information - 
+ * Returns the receipt of a transaction by transaction hash. <metamask | coregeth | eth>
+ *
+ * @param transactionHash -
+ * @returns Receipt information -
  */
 eth_getTransactionReceipt(transactionHash: TEth.Hex): Promise<RpcTypes.ReceiptInfo> {
     return this.request({ method: 'eth_getTransactionReceipt', params: Array.from(arguments) })
 }
 
 /**
- * Returns the number of uncles in a block from a block matching the given block hash. <metamask | coregeth | eth> 
- * 
- * @param blockHash - 
- * @returns Uncle count - 
+ * Returns the number of uncles in a block from a block matching the given block hash. <metamask | coregeth | eth>
+ *
+ * @param blockHash -
+ * @returns Uncle count -
  */
 eth_getUncleCountByBlockHash(blockHash?: TEth.Hex): Promise<bigint> {
     return this.request({ method: 'eth_getUncleCountByBlockHash', params: Array.from(arguments) })
 }
 
 /**
- * Returns the number of transactions in a block matching the given block number. <metamask | coregeth | eth> 
- * 
- * @param block - 
- * @returns Uncle count - 
+ * Returns the number of transactions in a block matching the given block number. <metamask | coregeth | eth>
+ *
+ * @param block -
+ * @returns Uncle count -
  */
 eth_getUncleCountByBlockNumber(block?: DataLike<RpcTypes.BlockNumberOrTag>): Promise<bigint> {
     return this.request({ method: 'eth_getUncleCountByBlockNumber', params: Array.from(arguments) })
 }
 
 /**
- * Returns the current maxPriorityFeePerGas per gas in wei. <metamask | eth> 
- * 
- * @returns Max priority fee per gas - 
+ * Returns the current maxPriorityFeePerGas per gas in wei. <metamask | eth>
+ *
+ * @returns Max priority fee per gas -
  */
 eth_maxPriorityFeePerGas(): Promise<bigint> {
     return this.request({ method: 'eth_maxPriorityFeePerGas', params: Array.from(arguments) })
 }
 
 /**
- * Creates a filter in the node, to notify when a new block arrives. <metamask | coregeth | eth> 
- * 
- * @returns Filter Identifier - 
+ * Creates a filter in the node, to notify when a new block arrives. <metamask | coregeth | eth>
+ *
+ * @returns Filter Identifier -
  */
 eth_newBlockFilter(): Promise<bigint> {
     return this.request({ method: 'eth_newBlockFilter', params: Array.from(arguments) })
 }
 
 /**
- * Creates a filter object, based on filter options, to notify when the state changes (logs). <metamask | coregeth | eth> 
- * 
- * @param filter - 
- * @returns Filter Identifier - 
+ * Creates a filter object, based on filter options, to notify when the state changes (logs). <metamask | coregeth | eth>
+ *
+ * @param filter -
+ * @returns Filter Identifier -
  */
 eth_newFilter(filter?: DataLike<RpcTypes.Filter>): Promise<bigint> {
     return this.request({ method: 'eth_newFilter', params: Array.from(arguments) })
 }
 
 /**
- * Creates a filter in the node, to notify when new pending transactions arrive. <metamask | coregeth | eth> 
- * 
- * @returns Filter Identifier - 
+ * Creates a filter in the node, to notify when new pending transactions arrive. <metamask | coregeth | eth>
+ *
+ * @returns Filter Identifier -
  */
 eth_newPendingTransactionFilter(): Promise<bigint> {
     return this.request({ method: 'eth_newPendingTransactionFilter', params: Array.from(arguments) })
 }
 
 /**
- * Submits a raw transaction. <metamask | coregeth | eth> 
- * 
- * @param transaction - 
- * @returns Transaction hash - 
+ * Submits a raw transaction. <metamask | coregeth | eth>
+ *
+ * @param transaction -
+ * @returns Transaction hash -
  */
 eth_sendRawTransaction(transaction: TEth.Hex): Promise<TEth.Hex> {
     return this.request({ method: 'eth_sendRawTransaction', params: Array.from(arguments) })
 }
 
 /**
- * Returns an object with data about the sync status or false. <metamask | coregeth | eth> 
- * 
- * @returns Syncing status - 
+ * Returns an object with data about the sync status or false. <metamask | coregeth | eth>
+ *
+ * @returns Syncing status -
  */
 eth_syncing(): Promise<RpcTypes.SyncingStatus> {
     return this.request({ method: 'eth_syncing', params: Array.from(arguments) })
 }
 
 /**
- * Uninstalls a filter with given id. <metamask | coregeth | eth> 
- * 
- * @param filterIdentifier - 
- * @returns Success - 
+ * Uninstalls a filter with given id. <metamask | coregeth | eth>
+ *
+ * @param filterIdentifier -
+ * @returns Success -
  */
 eth_uninstallFilter(filterIdentifier?: bigint): Promise<boolean> {
     return this.request({ method: 'eth_uninstallFilter', params: Array.from(arguments) })
 }
 
 /**
- * current client version <coregeth> 
+ * current client version <coregeth>
  * Returns the version of the current client
  * @returns clientVersion - client version
  */
@@ -530,7 +530,7 @@ web3_clientVersion(): Promise<string> {
 }
 
 /**
- * Hashes data <coregeth> 
+ * Hashes data <coregeth>
  * Hashes data using the Keccak-256 algorithm
  * @param data - data to hash using the Keccak-256 algorithm
  * @returns hashedData - Keccak-256 hash of the given data
@@ -540,7 +540,7 @@ web3_sha3(data?: string): Promise<string> {
 }
 
 /**
- * returns listening status <coregeth> 
+ * returns listening status <coregeth>
  * Determines if this client is listening for new network connections.
  * @returns netListeningResult - `true` if listening is active or `false` if listening is not active
  */
@@ -549,7 +549,7 @@ net_listening(): Promise<boolean> {
 }
 
 /**
- * number of peers <coregeth> 
+ * number of peers <coregeth>
  * Returns the number of peers currently connected to this client.
  * @returns quantity - number of connected peers.
  */
@@ -558,7 +558,7 @@ net_peerCount(): Promise<string> {
 }
 
 /**
- * Network identifier associated with network <coregeth> 
+ * Network identifier associated with network <coregeth>
  * Returns the network ID associated with the current network.
  * @returns networkId - Network ID associated with the current network
  */
@@ -567,8 +567,8 @@ net_version(): Promise<string> {
 }
 
 /**
- * Returns raw transaction data of a transaction with the given hash. <coregeth> 
- * 
+ * Returns raw transaction data of a transaction with the given hash. <coregeth>
+ *
  * @param transactionHash - Hex representation of a Keccak 256 hash
  * @returns rawTransactionByHash - The raw transaction data
  */
@@ -577,8 +577,8 @@ eth_getRawTransactionByHash(transactionHash?: string): Promise<TEth.Hex> {
 }
 
 /**
- * Returns raw transaction data of a transaction with the block hash and index of which it was mined. <coregeth> 
- * 
+ * Returns raw transaction data of a transaction with the block hash and index of which it was mined. <coregeth>
+ *
  * @param blockHash - The hex representation of the Keccak 256 of the RLP encoded block
  * @param index - The ordering in which a transaction is mined within its block.
  * @returns rawTransaction - The raw transaction data
@@ -588,9 +588,9 @@ eth_getRawTransactionByBlockHashAndIndex(blockHash?: string, index?: bigint): Pr
 }
 
 /**
- * Returns raw transaction data of a transaction with the block number and index of which it was mined. <coregeth> 
- * 
- * @param blockNumber - 
+ * Returns raw transaction data of a transaction with the block number and index of which it was mined. <coregeth>
+ *
+ * @param blockNumber -
  * @param index - The ordering in which a transaction is mined within its block.
  * @returns rawTransaction - The raw transaction data
  */
@@ -599,19 +599,19 @@ eth_getRawTransactionByBlockNumberAndIndex(blockNumber?: bigint, index?: bigint)
 }
 
 /**
- * Returns information about a uncle of a block by hash and uncle index position. <coregeth> 
- * 
+ * Returns information about a uncle of a block by hash and uncle index position. <coregeth>
+ *
  * @param blockHash - The hex representation of the Keccak 256 of the RLP encoded block
  * @param index - The ordering in which a uncle is included within its block.
- * @returns uncle - 
+ * @returns uncle -
  */
 eth_getUncleByBlockHashAndIndex(blockHash?: string, index?: bigint): Promise<undefined> {
     return this.request({ method: 'eth_getUncleByBlockHashAndIndex', params: Array.from(arguments) })
 }
 
 /**
- * Returns information about a uncle of a block by hash and uncle index position. <coregeth> 
- * 
+ * Returns information about a uncle of a block by hash and uncle index position. <coregeth>
+ *
  * @param uncleBlockNumber - The block in which the uncle was included
  * @param index - The ordering in which a uncle is included within its block.
  * @returns uncleResult - returns an uncle block or null
@@ -621,17 +621,17 @@ eth_getUncleByBlockNumberAndIndex(uncleBlockNumber: bigint, index: bigint): Prom
 }
 
 /**
- * Returns the hash of the current block, the seedHash, and the boundary condition to be met ('target'). <coregeth | eth> 
- * 
- * @returns work - 
+ * Returns the hash of the current block, the seedHash, and the boundary condition to be met ('target'). <coregeth | eth>
+ *
+ * @returns work -
  */
 eth_getWork(): Promise<any[]> {
     return this.request({ method: 'eth_getWork', params: Array.from(arguments) })
 }
 
 /**
- * Returns the number of hashes per second that the node is mining with. <coregeth | eth> 
- * 
+ * Returns the number of hashes per second that the node is mining with. <coregeth | eth>
+ *
  * @returns hashesPerSecond - Integer of the number of hashes per second
  */
 eth_hashrate(): Promise<bigint> {
@@ -639,8 +639,8 @@ eth_hashrate(): Promise<bigint> {
 }
 
 /**
- * Returns true if client is actively mining new blocks. <coregeth | eth> 
- * 
+ * Returns true if client is actively mining new blocks. <coregeth | eth>
+ *
  * @returns mining - Whether or not the client is mining
  */
 eth_mining(): Promise<boolean> {
@@ -648,17 +648,17 @@ eth_mining(): Promise<boolean> {
 }
 
 /**
- * Returns the transactions that are pending in the transaction pool and have a from address that is one of the accounts this node manages. <coregeth> 
- * 
- * @returns pendingTransactions - 
+ * Returns the transactions that are pending in the transaction pool and have a from address that is one of the accounts this node manages. <coregeth>
+ *
+ * @returns pendingTransactions -
  */
 eth_pendingTransactions(): Promise<RpcTypes.Transaction[]> {
     return this.request({ method: 'eth_pendingTransactions', params: Array.from(arguments) })
 }
 
 /**
- * Returns the current ethereum protocol version. <coregeth> 
- * 
+ * Returns the current ethereum protocol version. <coregeth>
+ *
  * @returns protocolVersion - The current ethereum protocol version
  */
 eth_protocolVersion(): Promise<bigint> {
@@ -666,8 +666,8 @@ eth_protocolVersion(): Promise<bigint> {
 }
 
 /**
- * Used for submitting mining hashrate. <coregeth | eth> 
- * 
+ * Used for submitting mining hashrate. <coregeth | eth>
+ *
  * @param hashRate - Hex representation of a 256 bit unit of data
  * @param id - String identifying the client
  * @returns submitHashRateSuccess - whether of not submitting went through successfully
@@ -677,9 +677,9 @@ eth_submitHashrate(hashRate: string, id: string): Promise<boolean> {
 }
 
 /**
- * Used for submitting a proof-of-work solution. <coregeth | eth> 
- * 
- * @param nonce - 
+ * Used for submitting a proof-of-work solution. <coregeth | eth>
+ *
+ * @param nonce -
  * @param powHash - Hex representation of a 256 bit unit of data
  * @param mixHash - Hex representation of a 256 bit unit of data
  * @returns solutionValid - returns true if the provided solution is valid, otherwise false.
@@ -689,11 +689,11 @@ eth_submitWork(nonce?: bigint, powHash?: string, mixHash?: string): Promise<bool
 }
 
 /**
- * Generates an access list for a transaction. <eth> 
- * 
- * @param transaction - 
- * @param block - 
- * @returns Gas used - 
+ * Generates an access list for a transaction. <eth>
+ *
+ * @param transaction -
+ * @param block -
+ * @returns Gas used -
  */
 eth_createAccessList(transaction: {
     /* type */
@@ -740,21 +740,21 @@ eth_createAccessList(transaction: {
 }
 
 /**
- * Returns an EIP-191 signature over the provided data. <eth> 
- * 
- * @param address - 
- * @param message - 
- * @returns Signature - 
+ * Returns an EIP-191 signature over the provided data. <eth>
+ *
+ * @param address -
+ * @param message -
+ * @returns Signature -
  */
 eth_sign(address: string, message: string): Promise<string> {
     return this.request({ method: 'eth_sign', params: Array.from(arguments) })
 }
 
 /**
- * Returns an RLP encoded transaction signed by the specified account. <eth> 
- * 
- * @param transaction - 
- * @returns Encoded transaction - 
+ * Returns an RLP encoded transaction signed by the specified account. <eth>
+ *
+ * @param transaction -
+ * @returns Encoded transaction -
  */
 eth_signTransaction(transaction: {
     /* type */
@@ -790,49 +790,49 @@ eth_signTransaction(transaction: {
 }
 
 /**
- * Returns an RLP-encoded header. <eth> 
- * 
- * @param block - 
- * @returns Header RLP - 
+ * Returns an RLP-encoded header. <eth>
+ *
+ * @param block -
+ * @returns Header RLP -
  */
 debug_getRawHeader(block: string | 'earliest' | 'finalized' | 'safe' | 'latest' | 'pending'): Promise<string> {
     return this.request({ method: 'debug_getRawHeader', params: Array.from(arguments) })
 }
 
 /**
- * Returns an RLP-encoded block. <eth> 
- * 
- * @param block - 
- * @returns Block RLP - 
+ * Returns an RLP-encoded block. <eth>
+ *
+ * @param block -
+ * @returns Block RLP -
  */
 debug_getRawBlock(block: string | 'earliest' | 'finalized' | 'safe' | 'latest' | 'pending'): Promise<string> {
     return this.request({ method: 'debug_getRawBlock', params: Array.from(arguments) })
 }
 
 /**
- * Returns an array of EIP-2718 binary-encoded transactions. <eth> 
- * 
- * @param transactionHash - 
- * @returns EIP-2718 binary-encoded transaction - 
+ * Returns an array of EIP-2718 binary-encoded transactions. <eth>
+ *
+ * @param transactionHash -
+ * @returns EIP-2718 binary-encoded transaction -
  */
 debug_getRawTransaction(transactionHash: string): Promise<string> {
     return this.request({ method: 'debug_getRawTransaction', params: Array.from(arguments) })
 }
 
 /**
- * Returns an array of EIP-2718 binary-encoded receipts. <eth> 
- * 
- * @param block - 
- * @returns Receipts - 
+ * Returns an array of EIP-2718 binary-encoded receipts. <eth>
+ *
+ * @param block -
+ * @returns Receipts -
  */
 debug_getRawReceipts(block: string | 'earliest' | 'finalized' | 'safe' | 'latest' | 'pending'): Promise<string[]> {
     return this.request({ method: 'debug_getRawReceipts', params: Array.from(arguments) })
 }
 
 /**
- * Returns an array of recent bad blocks that the client has seen on the network. <eth> 
- * 
- * @returns Blocks - 
+ * Returns an array of recent bad blocks that the client has seen on the network. <eth>
+ *
+ * @returns Blocks -
  */
 debug_getBadBlocks(): Promise<{
         /* Block */
@@ -846,21 +846,21 @@ debug_getBadBlocks(): Promise<{
 }
 
 /**
- * Exchanges list of supported Engine API methods <eth> 
- * 
- * @param consensusClientMethods - 
- * @returns Execution client methods - 
+ * Exchanges list of supported Engine API methods <eth>
+ *
+ * @param consensusClientMethods -
+ * @returns Execution client methods -
  */
 engine_exchangeCapabilities(consensusClientMethods: string[]): Promise<string[]> {
     return this.request({ method: 'engine_exchangeCapabilities', params: Array.from(arguments) })
 }
 
 /**
- * Updates the forkchoice state <eth> 
- * 
- * @param forkchoiceState - 
- * @param payloadAttributes - 
- * @returns Response object - 
+ * Updates the forkchoice state <eth>
+ *
+ * @param forkchoiceState -
+ * @param payloadAttributes -
+ * @returns Response object -
  */
 engine_forkchoiceUpdatedV1(forkchoiceState: {
     /* Head block hash */
@@ -893,11 +893,11 @@ engine_forkchoiceUpdatedV1(forkchoiceState: {
 }
 
 /**
- * Updates the forkchoice state <eth> 
- * 
- * @param forkchoiceState - 
- * @param payloadAttributes - 
- * @returns Response object - 
+ * Updates the forkchoice state <eth>
+ *
+ * @param forkchoiceState -
+ * @param payloadAttributes -
+ * @returns Response object -
  */
 engine_forkchoiceUpdatedV2(forkchoiceState: {
     /* Head block hash */
@@ -941,10 +941,10 @@ engine_forkchoiceUpdatedV2(forkchoiceState: {
 }
 
 /**
- * Runs execution payload validation <eth> 
- * 
- * @param executionPayload - 
- * @returns Payload status - 
+ * Runs execution payload validation <eth>
+ *
+ * @param executionPayload -
+ * @returns Payload status -
  */
 engine_newPayloadV1(executionPayload: {
     /* Parent block hash */
@@ -987,10 +987,10 @@ engine_newPayloadV1(executionPayload: {
 }
 
 /**
- * Runs execution payload validation <eth> 
- * 
- * @param executionPayload - 
- * @returns Payload status - 
+ * Runs execution payload validation <eth>
+ *
+ * @param executionPayload -
+ * @returns Payload status -
  */
 engine_newPayloadV2(executionPayload: {
     /* Parent block hash */
@@ -1073,10 +1073,10 @@ engine_newPayloadV2(executionPayload: {
 }
 
 /**
- * Obtains execution payload from payload build process <eth> 
- * 
- * @param payloadId - 
- * @returns Execution payload - 
+ * Obtains execution payload from payload build process <eth>
+ *
+ * @param payloadId -
+ * @returns Execution payload -
  */
 engine_getPayloadV1(payloadId: string): Promise<{
     /* Parent block hash */
@@ -1112,10 +1112,10 @@ engine_getPayloadV1(payloadId: string): Promise<{
 }
 
 /**
- * Obtains execution payload from payload build process <eth> 
- * 
- * @param payloadId - 
- * @returns Response object - 
+ * Obtains execution payload from payload build process <eth>
+ *
+ * @param payloadId -
+ * @returns Response object -
  */
 engine_getPayloadV2(payloadId: string): Promise<{
     /* Execution payload */
@@ -1196,10 +1196,10 @@ engine_getPayloadV2(payloadId: string): Promise<{
 }
 
 /**
- * Given block hashes returns bodies of the corresponding execution payloads <eth> 
- * 
- * @param arrayOfBlockHashes - 
- * @returns Execution payload bodies - 
+ * Given block hashes returns bodies of the corresponding execution payloads <eth>
+ *
+ * @param arrayOfBlockHashes -
+ * @returns Execution payload bodies -
  */
 engine_getPayloadBodiesByHashV1(arrayOfBlockHashes: string[]): Promise<{
         /* Transactions */
@@ -1220,11 +1220,11 @@ engine_getPayloadBodiesByHashV1(arrayOfBlockHashes: string[]): Promise<{
 }
 
 /**
- * Given a range of block numbers returns bodies of the corresponding execution payloads <eth> 
- * 
- * @param startingBlockNumber - 
- * @param numberOfBlocksToReturn - 
- * @returns Execution payload bodies - 
+ * Given a range of block numbers returns bodies of the corresponding execution payloads <eth>
+ *
+ * @param startingBlockNumber -
+ * @param numberOfBlocksToReturn -
+ * @returns Execution payload bodies -
  */
 engine_getPayloadBodiesByRangeV1(startingBlockNumber: string, numberOfBlocksToReturn: string): Promise<{
         /* Transactions */
@@ -1245,10 +1245,10 @@ engine_getPayloadBodiesByRangeV1(startingBlockNumber: string, numberOfBlocksToRe
 }
 
 /**
- * Exchanges transition configuration <eth> 
- * 
- * @param consensusClientConfiguration - 
- * @returns Execution client configuration - 
+ * Exchanges transition configuration <eth>
+ *
+ * @param consensusClientConfiguration -
+ * @returns Execution client configuration -
  */
 engine_exchangeTransitionConfigurationV1(consensusClientConfiguration: {
     /* Terminal total difficulty */
@@ -1269,50 +1269,50 @@ engine_exchangeTransitionConfigurationV1(consensusClientConfiguration: {
 }
 
 /**
- * Submits the Bundle <flashbots> 
- * 
- * @param flashbotsBundleRequest - 
- * @returns FlashbotsBundleResponse - 
+ * Submits the Bundle <flashbots>
+ *
+ * @param flashbotsBundleRequest -
+ * @returns FlashbotsBundleResponse -
  */
 eth_sendBundle(flashbotsBundleRequest: DataLike<RpcTypes.FlashbotsBundleRequest>): Promise<RpcTypes.FlashbotsBundleResponse> {
     return this.request({ method: 'eth_sendBundle', params: Array.from(arguments) })
 }
 
 /**
- * Simulates the Bundle <flashbots> 
- * 
- * @param flashbotsBundleRequest - 
- * @returns FlashbotsBundleResult - 
+ * Simulates the Bundle <flashbots>
+ *
+ * @param flashbotsBundleRequest -
+ * @returns FlashbotsBundleResult -
  */
 eth_callBundle(flashbotsBundleRequest: DataLike<RpcTypes.FlashbotsBundleRequest>): Promise<RpcTypes.FlashbotsBundleResponse> {
     return this.request({ method: 'eth_callBundle', params: Array.from(arguments) })
 }
 
 /**
- * Submits the Bundle in new format <flashbots> 
- * 
- * @param flashbotsMevBundleRequest - 
- * @returns FlashbotsMevBundleResult - 
+ * Submits the Bundle in new format <flashbots>
+ *
+ * @param flashbotsMevBundleRequest -
+ * @returns FlashbotsMevBundleResult -
  */
 mev_sendBundle(flashbotsMevBundleRequest: DataLike<RpcTypes.FlashbotsMevBundleRequest>): Promise<RpcTypes.FlashbotsMevBundleResult> {
     return this.request({ method: 'mev_sendBundle', params: Array.from(arguments) })
 }
 
 /**
- * Simulates the Bundle in new format <flashbots> 
- * 
- * @param flashbotsMevBundleRequest - 
- * @returns FlashbotsMevBundleSimulationResponse - 
+ * Simulates the Bundle in new format <flashbots>
+ *
+ * @param flashbotsMevBundleRequest -
+ * @returns FlashbotsMevBundleSimulationResponse -
  */
 mev_simBundle(flashbotsMevBundleRequest: DataLike<RpcTypes.FlashbotsMevBundleRequest>): Promise<RpcTypes.FlashbotsMevBundleSimulationResponse> {
     return this.request({ method: 'mev_simBundle', params: Array.from(arguments) })
 }
 
 /**
- * Prevents a submitted bundle from being included on-chain <flashbots> 
- * 
- * @param bundleToBeCanceled - 
- * @returns bundleCancelationResult - 
+ * Prevents a submitted bundle from being included on-chain <flashbots>
+ *
+ * @param bundleToBeCanceled -
+ * @returns bundleCancelationResult -
  */
 eth_cancelBundle(bundleToBeCanceled: {
     [key: string]: any
@@ -1321,21 +1321,21 @@ eth_cancelBundle(bundleToBeCanceled: {
 }
 
 /**
- * Send a single transaction to Flashbots <flashbots> 
- * 
- * @param flashbotsSingleBundleReq - 
- * @returns flashbotsSingleBundleRes - 
+ * Send a single transaction to Flashbots <flashbots>
+ *
+ * @param flashbotsSingleBundleReq -
+ * @returns flashbotsSingleBundleRes -
  */
 eth_sendPrivateTransaction(flashbotsSingleBundleReq: DataLike<RpcTypes.FlashbotsSingleBundleReq>): Promise<string> {
     return this.request({ method: 'eth_sendPrivateTransaction', params: Array.from(arguments) })
 }
 
 /**
- * Behaves like eth_sendPrivateTransaction but its format is similar to that of eth_sendRawTransaction <flashbots> 
- * 
- * @param flashbotsRawTransactionHex - 
- * @param flashbotsRawTransactionPreferences - 
- * @returns bundleHash - 
+ * Behaves like eth_sendPrivateTransaction but its format is similar to that of eth_sendRawTransaction <flashbots>
+ *
+ * @param flashbotsRawTransactionHex -
+ * @param flashbotsRawTransactionPreferences -
+ * @returns bundleHash -
  */
 eth_sendPrivateRawTransaction(flashbotsRawTransactionHex: string[], flashbotsRawTransactionPreferences?: {
     hints: any[];
@@ -1345,20 +1345,20 @@ eth_sendPrivateRawTransaction(flashbotsRawTransactionHex: string[], flashbotsRaw
 }
 
 /**
- * Stops private transactions from being submitted for future blocks <flashbots> 
- * 
- * @param txHashe - 
- * @returns Tx result - 
+ * Stops private transactions from being submitted for future blocks <flashbots>
+ *
+ * @param txHashe -
+ * @returns Tx result -
  */
 eth_cancelPrivateTransaction(txHashe: TEth.Hex): Promise<string> {
     return this.request({ method: 'eth_cancelPrivateTransaction', params: Array.from(arguments) })
 }
 
 /**
- * Returns a quick summary of how a searcher is performing in the Flashbots ecosystem <flashbots> 
- * 
+ * Returns a quick summary of how a searcher is performing in the Flashbots ecosystem <flashbots>
+ *
  * @param userStatsRequest - String, a hex encoded recent block number, in order to prevent replay attacks. Must be within 20 blocks of the current chain tip
- * @returns UserStatsResponse - 
+ * @returns UserStatsResponse -
  */
 flashbots_getUserStats(userStatsRequest: string): Promise<{
     is_high_priority: boolean;
@@ -1373,10 +1373,10 @@ flashbots_getUserStats(userStatsRequest: string): Promise<{
 }
 
 /**
- * Returns stats for a single bundle. <flashbots> 
- * 
- * @param bundleId - 
- * @returns Bundle information - 
+ * Returns stats for a single bundle. <flashbots>
+ *
+ * @param bundleId -
+ * @returns Bundle information -
  */
 flashbots_getBundleStatsV2(bundleId: {
     bundleHash: TEth.Hex;

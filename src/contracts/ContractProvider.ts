@@ -45,7 +45,7 @@ export class ContractProvider implements IContractProvider {
         };
     }
 
-    async getAbi (address: string): Promise<string> {
+    async getAbi (address: TAddress): Promise<string> {
         let { abi } = await this.api.getContractAbi(address);
         return abi;
     }

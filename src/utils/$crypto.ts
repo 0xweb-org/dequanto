@@ -5,7 +5,7 @@ import { $is } from './$is';
 
 interface ICrypto {
     randomBytes(size: number): Uint8Array;
-    randomUUID(): string;
+    randomUUID(): `${string}-${string}-${string}-${string}-${string}`;
     createECDH(curve: string)
 
     sha256 (mix: string | TEth.Hex | Uint8Array): Promise<Uint8Array>;
@@ -107,7 +107,7 @@ namespace WebCryptoImpl {
             return rnd;
         }
         randomUUID() {
-            return this.crypto.randomUUID();
+            return this.crypto.randomUUID() as `${string}-${string}-${string}-${string}-${string}`;
         }
         createECDH(curve: string) {
             /** use this.crypto.subtle.importKey */

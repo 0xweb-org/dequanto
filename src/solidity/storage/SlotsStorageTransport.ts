@@ -10,6 +10,8 @@ import { $is } from '@dequanto/utils/$is';
 import { $require } from '@dequanto/utils/$require';
 import { ISlotVarDefinition } from '../SlotsParser/models';
 import { TEth } from '@dequanto/models/TEth';
+import { RpcTypes } from '@dequanto/rpc/Rpc';
+import { DataLike } from '@dequanto/utils/types';
 
 export interface ISlotsStorageTransport {
     getStorageAt (slot: string | number | bigint, position: number, size: number): Promise<string>
@@ -62,7 +64,7 @@ export class SlotsCursorTransport implements ISlotsStorageTransport {
 export class SlotsStorageTransport implements ISlotsStorageTransport {
 
     constructor (public client: Web3Client, public address: TAddress, public params?: {
-        blockNumber?: number
+        blockNumber?: DataLike<RpcTypes.BlockNumberOrTagOrHash>
     }) {
 
     }

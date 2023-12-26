@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,7 +39,9 @@ export class IERC2981 extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/IERC2981.ts"
+}
 
     // 0x2a55205a
     async royaltyInfo (tokenId: bigint, salePrice: bigint): Promise<{ receiver: TAddress, royaltyAmount: bigint }> {
@@ -47,7 +49,7 @@ export class IERC2981 extends ContractBase {
     }
 
     // 0x01ffc9a7
-    async supportsInterface (interfaceId: TBufferLike): Promise<boolean> {
+    async supportsInterface (interfaceId: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'supportsInterface'), interfaceId);
     }
 
@@ -109,7 +111,7 @@ interface IMethodRoyaltyInfo {
 
 interface IMethodSupportsInterface {
   method: "supportsInterface"
-  arguments: [ interfaceId: TBufferLike ]
+  arguments: [ interfaceId: TEth.Hex ]
 }
 
 interface IMethods {

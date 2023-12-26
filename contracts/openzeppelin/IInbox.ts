@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,7 +39,9 @@ export class IInbox extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/IInbox.ts"
+}
 
     // 0xe78cea92
     async bridge (): Promise<TAddress> {
@@ -52,7 +54,7 @@ export class IInbox extends ContractBase {
     }
 
     // 0x679b6ded
-    async createRetryableTicket (sender: TSender, to: TAddress, l2CallValue: bigint, maxSubmissionCost: bigint, excessFeeRefundAddress: TAddress, callValueRefundAddress: TAddress, gasLimit: bigint, maxFeePerGas: bigint, data: TBufferLike): Promise<TxWriter> {
+    async createRetryableTicket (sender: TSender, to: TAddress, l2CallValue: bigint, maxSubmissionCost: bigint, excessFeeRefundAddress: TAddress, callValueRefundAddress: TAddress, gasLimit: bigint, maxFeePerGas: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'createRetryableTicket'), sender, to, l2CallValue, maxSubmissionCost, excessFeeRefundAddress, callValueRefundAddress, gasLimit, maxFeePerGas, data);
     }
 
@@ -77,32 +79,32 @@ export class IInbox extends ContractBase {
     }
 
     // 0x8a631aa6
-    async sendContractTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, to: TAddress, value: bigint, data: TBufferLike): Promise<TxWriter> {
+    async sendContractTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, to: TAddress, value: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'sendContractTransaction'), sender, gasLimit, maxFeePerGas, to, value, data);
     }
 
     // 0x5e916758
-    async sendL1FundedContractTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, to: TAddress, data: TBufferLike): Promise<TxWriter> {
+    async sendL1FundedContractTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, to: TAddress, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'sendL1FundedContractTransaction'), sender, gasLimit, maxFeePerGas, to, data);
     }
 
     // 0x67ef3ab8
-    async sendL1FundedUnsignedTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, nonce: bigint, to: TAddress, data: TBufferLike): Promise<TxWriter> {
+    async sendL1FundedUnsignedTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, nonce: bigint, to: TAddress, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'sendL1FundedUnsignedTransaction'), sender, gasLimit, maxFeePerGas, nonce, to, data);
     }
 
     // 0xb75436bb
-    async sendL2Message (sender: TSender, messageData: TBufferLike): Promise<TxWriter> {
+    async sendL2Message (sender: TSender, messageData: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'sendL2Message'), sender, messageData);
     }
 
     // 0x1fe927cf
-    async sendL2MessageFromOrigin (sender: TSender, messageData: TBufferLike): Promise<TxWriter> {
+    async sendL2MessageFromOrigin (sender: TSender, messageData: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'sendL2MessageFromOrigin'), sender, messageData);
     }
 
     // 0x5075788b
-    async sendUnsignedTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, nonce: bigint, to: TAddress, value: bigint, data: TBufferLike): Promise<TxWriter> {
+    async sendUnsignedTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, nonce: bigint, to: TAddress, value: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'sendUnsignedTransaction'), sender, gasLimit, maxFeePerGas, nonce, to, value, data);
     }
 
@@ -117,7 +119,7 @@ export class IInbox extends ContractBase {
     }
 
     // 0x6e6e8a6a
-    async unsafeCreateRetryableTicket (sender: TSender, to: TAddress, l2CallValue: bigint, maxSubmissionCost: bigint, excessFeeRefundAddress: TAddress, callValueRefundAddress: TAddress, gasLimit: bigint, maxFeePerGas: bigint, data: TBufferLike): Promise<TxWriter> {
+    async unsafeCreateRetryableTicket (sender: TSender, to: TAddress, l2CallValue: bigint, maxSubmissionCost: bigint, excessFeeRefundAddress: TAddress, callValueRefundAddress: TAddress, gasLimit: bigint, maxFeePerGas: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'unsafeCreateRetryableTicket'), sender, to, l2CallValue, maxSubmissionCost, excessFeeRefundAddress, callValueRefundAddress, gasLimit, maxFeePerGas, data);
     }
 
@@ -193,9 +195,9 @@ type TSender = TAccount & {
 }
 
     type TLogInboxMessageDelivered = {
-        messageNum: bigint, data: TBufferLike
+        messageNum: bigint, data: TEth.Hex
     };
-    type TLogInboxMessageDeliveredParameters = [ messageNum: bigint, data: TBufferLike ];
+    type TLogInboxMessageDeliveredParameters = [ messageNum: bigint, data: TEth.Hex ];
     type TLogInboxMessageDeliveredFromOrigin = {
         messageNum: bigint
     };
@@ -221,7 +223,7 @@ interface IMethodCalculateRetryableSubmissionFee {
 
 interface IMethodCreateRetryableTicket {
   method: "createRetryableTicket"
-  arguments: [ to: TAddress, l2CallValue: bigint, maxSubmissionCost: bigint, excessFeeRefundAddress: TAddress, callValueRefundAddress: TAddress, gasLimit: bigint, maxFeePerGas: bigint, data: TBufferLike ]
+  arguments: [ to: TAddress, l2CallValue: bigint, maxSubmissionCost: bigint, excessFeeRefundAddress: TAddress, callValueRefundAddress: TAddress, gasLimit: bigint, maxFeePerGas: bigint, data: TEth.Hex ]
 }
 
 interface IMethodDepositEth {
@@ -246,32 +248,32 @@ interface IMethodPostUpgradeInit {
 
 interface IMethodSendContractTransaction {
   method: "sendContractTransaction"
-  arguments: [ gasLimit: bigint, maxFeePerGas: bigint, to: TAddress, value: bigint, data: TBufferLike ]
+  arguments: [ gasLimit: bigint, maxFeePerGas: bigint, to: TAddress, value: bigint, data: TEth.Hex ]
 }
 
 interface IMethodSendL1FundedContractTransaction {
   method: "sendL1FundedContractTransaction"
-  arguments: [ gasLimit: bigint, maxFeePerGas: bigint, to: TAddress, data: TBufferLike ]
+  arguments: [ gasLimit: bigint, maxFeePerGas: bigint, to: TAddress, data: TEth.Hex ]
 }
 
 interface IMethodSendL1FundedUnsignedTransaction {
   method: "sendL1FundedUnsignedTransaction"
-  arguments: [ gasLimit: bigint, maxFeePerGas: bigint, nonce: bigint, to: TAddress, data: TBufferLike ]
+  arguments: [ gasLimit: bigint, maxFeePerGas: bigint, nonce: bigint, to: TAddress, data: TEth.Hex ]
 }
 
 interface IMethodSendL2Message {
   method: "sendL2Message"
-  arguments: [ messageData: TBufferLike ]
+  arguments: [ messageData: TEth.Hex ]
 }
 
 interface IMethodSendL2MessageFromOrigin {
   method: "sendL2MessageFromOrigin"
-  arguments: [ messageData: TBufferLike ]
+  arguments: [ messageData: TEth.Hex ]
 }
 
 interface IMethodSendUnsignedTransaction {
   method: "sendUnsignedTransaction"
-  arguments: [ gasLimit: bigint, maxFeePerGas: bigint, nonce: bigint, to: TAddress, value: bigint, data: TBufferLike ]
+  arguments: [ gasLimit: bigint, maxFeePerGas: bigint, nonce: bigint, to: TAddress, value: bigint, data: TEth.Hex ]
 }
 
 interface IMethodSequencerInbox {
@@ -286,7 +288,7 @@ interface IMethodUnpause {
 
 interface IMethodUnsafeCreateRetryableTicket {
   method: "unsafeCreateRetryableTicket"
-  arguments: [ to: TAddress, l2CallValue: bigint, maxSubmissionCost: bigint, excessFeeRefundAddress: TAddress, callValueRefundAddress: TAddress, gasLimit: bigint, maxFeePerGas: bigint, data: TBufferLike ]
+  arguments: [ to: TAddress, l2CallValue: bigint, maxSubmissionCost: bigint, excessFeeRefundAddress: TAddress, callValueRefundAddress: TAddress, gasLimit: bigint, maxFeePerGas: bigint, data: TEth.Hex ]
 }
 
 interface IMethods {
@@ -315,36 +317,36 @@ interface IMethods {
 
 
 interface IIInboxTxCaller {
-    createRetryableTicket (sender: TSender, to: TAddress, l2CallValue: bigint, maxSubmissionCost: bigint, excessFeeRefundAddress: TAddress, callValueRefundAddress: TAddress, gasLimit: bigint, maxFeePerGas: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    createRetryableTicket (sender: TSender, to: TAddress, l2CallValue: bigint, maxSubmissionCost: bigint, excessFeeRefundAddress: TAddress, callValueRefundAddress: TAddress, gasLimit: bigint, maxFeePerGas: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     depositEth (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     initialize (sender: TSender, _bridge: TAddress, _sequencerInbox: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     pause (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     postUpgradeInit (sender: TSender, _bridge: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    sendContractTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, to: TAddress, value: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    sendL1FundedContractTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, to: TAddress, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    sendL1FundedUnsignedTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, nonce: bigint, to: TAddress, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    sendL2Message (sender: TSender, messageData: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    sendL2MessageFromOrigin (sender: TSender, messageData: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    sendUnsignedTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, nonce: bigint, to: TAddress, value: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    sendContractTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, to: TAddress, value: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    sendL1FundedContractTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, to: TAddress, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    sendL1FundedUnsignedTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, nonce: bigint, to: TAddress, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    sendL2Message (sender: TSender, messageData: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    sendL2MessageFromOrigin (sender: TSender, messageData: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    sendUnsignedTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, nonce: bigint, to: TAddress, value: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     unpause (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    unsafeCreateRetryableTicket (sender: TSender, to: TAddress, l2CallValue: bigint, maxSubmissionCost: bigint, excessFeeRefundAddress: TAddress, callValueRefundAddress: TAddress, gasLimit: bigint, maxFeePerGas: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    unsafeCreateRetryableTicket (sender: TSender, to: TAddress, l2CallValue: bigint, maxSubmissionCost: bigint, excessFeeRefundAddress: TAddress, callValueRefundAddress: TAddress, gasLimit: bigint, maxFeePerGas: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IIInboxTxData {
-    createRetryableTicket (sender: TSender, to: TAddress, l2CallValue: bigint, maxSubmissionCost: bigint, excessFeeRefundAddress: TAddress, callValueRefundAddress: TAddress, gasLimit: bigint, maxFeePerGas: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    createRetryableTicket (sender: TSender, to: TAddress, l2CallValue: bigint, maxSubmissionCost: bigint, excessFeeRefundAddress: TAddress, callValueRefundAddress: TAddress, gasLimit: bigint, maxFeePerGas: bigint, data: TEth.Hex): Promise<TEth.TxLike>
     depositEth (sender: TSender, ): Promise<TEth.TxLike>
     initialize (sender: TSender, _bridge: TAddress, _sequencerInbox: TAddress): Promise<TEth.TxLike>
     pause (sender: TSender, ): Promise<TEth.TxLike>
     postUpgradeInit (sender: TSender, _bridge: TAddress): Promise<TEth.TxLike>
-    sendContractTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, to: TAddress, value: bigint, data: TBufferLike): Promise<TEth.TxLike>
-    sendL1FundedContractTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, to: TAddress, data: TBufferLike): Promise<TEth.TxLike>
-    sendL1FundedUnsignedTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, nonce: bigint, to: TAddress, data: TBufferLike): Promise<TEth.TxLike>
-    sendL2Message (sender: TSender, messageData: TBufferLike): Promise<TEth.TxLike>
-    sendL2MessageFromOrigin (sender: TSender, messageData: TBufferLike): Promise<TEth.TxLike>
-    sendUnsignedTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, nonce: bigint, to: TAddress, value: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    sendContractTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, to: TAddress, value: bigint, data: TEth.Hex): Promise<TEth.TxLike>
+    sendL1FundedContractTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, to: TAddress, data: TEth.Hex): Promise<TEth.TxLike>
+    sendL1FundedUnsignedTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, nonce: bigint, to: TAddress, data: TEth.Hex): Promise<TEth.TxLike>
+    sendL2Message (sender: TSender, messageData: TEth.Hex): Promise<TEth.TxLike>
+    sendL2MessageFromOrigin (sender: TSender, messageData: TEth.Hex): Promise<TEth.TxLike>
+    sendUnsignedTransaction (sender: TSender, gasLimit: bigint, maxFeePerGas: bigint, nonce: bigint, to: TAddress, value: bigint, data: TEth.Hex): Promise<TEth.TxLike>
     unpause (sender: TSender, ): Promise<TEth.TxLike>
-    unsafeCreateRetryableTicket (sender: TSender, to: TAddress, l2CallValue: bigint, maxSubmissionCost: bigint, excessFeeRefundAddress: TAddress, callValueRefundAddress: TAddress, gasLimit: bigint, maxFeePerGas: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    unsafeCreateRetryableTicket (sender: TSender, to: TAddress, l2CallValue: bigint, maxSubmissionCost: bigint, excessFeeRefundAddress: TAddress, callValueRefundAddress: TAddress, gasLimit: bigint, maxFeePerGas: bigint, data: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

@@ -111,9 +111,15 @@ export namespace MappingSettersResolver {
         methods?: TMappingSetterMethod[],
     }> {
 
-        let allEvents = Ast.getEventDefinitions(sourceContract.contract, inheritance?.map(x => x.contract));
-        let allMethods = Ast.getFunctionDeclarations(sourceContract.contract, inheritance?.map(x => x.contract));
-        let allModifiers = Ast.getModifierDefinitions(sourceContract.contract, inheritance?.map(x => x.contract));
+        let allEvents = [] as EventDefinition[];
+        let allMethods = [] as FunctionDefinition[];
+        let allModifiers = [] as ModifierDefinition[];
+
+        if (Ast.isContractDefinition(sourceContract.contract)) {
+            allEvents = Ast.getEventDefinitions(sourceContract.contract, inheritance?.map(x => x.contract as ContractDefinition));
+            allMethods = Ast.getFunctionDeclarations(sourceContract.contract, inheritance?.map(x => x.contract as ContractDefinition));
+            allModifiers = Ast.getModifierDefinitions(sourceContract.contract, inheritance?.map(x => x.contract as ContractDefinition));
+        }
 
         let arr = await alot(allMethods)
             .mapManyAsync(async method => {

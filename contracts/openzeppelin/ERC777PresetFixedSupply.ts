@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,7 +39,9 @@ export class ERC777PresetFixedSupply extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/ERC777PresetFixedSupply.ts"
+}
 
     async $constructor (deployer: TSender, name: string, symbol: string, defaultOperators: TAddress[], initialSupply: bigint, owner: TAddress): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -66,7 +68,7 @@ export class ERC777PresetFixedSupply extends ContractBase {
     }
 
     // 0xfe9d9303
-    async burn (sender: TSender, amount: bigint, data: TBufferLike): Promise<TxWriter> {
+    async burn (sender: TSender, amount: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'burn'), sender, amount, data);
     }
 
@@ -96,12 +98,12 @@ export class ERC777PresetFixedSupply extends ContractBase {
     }
 
     // 0xfc673c4f
-    async operatorBurn (sender: TSender, account: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike): Promise<TxWriter> {
+    async operatorBurn (sender: TSender, account: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'operatorBurn'), sender, account, amount, data, operatorData);
     }
 
     // 0x62ad1b83
-    async operatorSend (sender: TSender, _sender: TAddress, recipient: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike): Promise<TxWriter> {
+    async operatorSend (sender: TSender, _sender: TAddress, recipient: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'operatorSend'), sender, _sender, recipient, amount, data, operatorData);
     }
 
@@ -111,7 +113,7 @@ export class ERC777PresetFixedSupply extends ContractBase {
     }
 
     // 0x9bd9bbc6
-    async send (sender: TSender, recipient: TAddress, amount: bigint, data: TBufferLike): Promise<TxWriter> {
+    async send (sender: TSender, recipient: TAddress, amount: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'send'), sender, recipient, amount, data);
     }
 
@@ -300,21 +302,21 @@ type TSender = TAccount & {
     };
     type TLogAuthorizedOperatorParameters = [ operator: TAddress, tokenHolder: TAddress ];
     type TLogBurned = {
-        operator: TAddress, from: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike
+        operator: TAddress, from: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex
     };
-    type TLogBurnedParameters = [ operator: TAddress, from: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike ];
+    type TLogBurnedParameters = [ operator: TAddress, from: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex ];
     type TLogMinted = {
-        operator: TAddress, to: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike
+        operator: TAddress, to: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex
     };
-    type TLogMintedParameters = [ operator: TAddress, to: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike ];
+    type TLogMintedParameters = [ operator: TAddress, to: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex ];
     type TLogRevokedOperator = {
         operator: TAddress, tokenHolder: TAddress
     };
     type TLogRevokedOperatorParameters = [ operator: TAddress, tokenHolder: TAddress ];
     type TLogSent = {
-        operator: TAddress, from: TAddress, to: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike
+        operator: TAddress, from: TAddress, to: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex
     };
-    type TLogSentParameters = [ operator: TAddress, from: TAddress, to: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike ];
+    type TLogSentParameters = [ operator: TAddress, from: TAddress, to: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex ];
     type TLogTransfer = {
         from: TAddress, to: TAddress, value: bigint
     };
@@ -355,7 +357,7 @@ interface IMethodBalanceOf {
 
 interface IMethodBurn {
   method: "burn"
-  arguments: [ amount: bigint, data: TBufferLike ]
+  arguments: [ amount: bigint, data: TEth.Hex ]
 }
 
 interface IMethodDecimals {
@@ -385,12 +387,12 @@ interface IMethodName {
 
 interface IMethodOperatorBurn {
   method: "operatorBurn"
-  arguments: [ account: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike ]
+  arguments: [ account: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex ]
 }
 
 interface IMethodOperatorSend {
   method: "operatorSend"
-  arguments: [ _sender: TAddress, recipient: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike ]
+  arguments: [ _sender: TAddress, recipient: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex ]
 }
 
 interface IMethodRevokeOperator {
@@ -400,7 +402,7 @@ interface IMethodRevokeOperator {
 
 interface IMethodSend {
   method: "send"
-  arguments: [ recipient: TAddress, amount: bigint, data: TBufferLike ]
+  arguments: [ recipient: TAddress, amount: bigint, data: TEth.Hex ]
 }
 
 interface IMethodSymbol {
@@ -453,11 +455,11 @@ interface IMethods {
 interface IERC777PresetFixedSupplyTxCaller {
     approve (sender: TSender, spender: TAddress, value: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     authorizeOperator (sender: TSender, operator: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    burn (sender: TSender, amount: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    operatorBurn (sender: TSender, account: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    operatorSend (sender: TSender, _sender: TAddress, recipient: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    burn (sender: TSender, amount: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    operatorBurn (sender: TSender, account: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    operatorSend (sender: TSender, _sender: TAddress, recipient: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     revokeOperator (sender: TSender, operator: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    send (sender: TSender, recipient: TAddress, amount: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    send (sender: TSender, recipient: TAddress, amount: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     transfer (sender: TSender, recipient: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     transferFrom (sender: TSender, holder: TAddress, recipient: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
@@ -466,11 +468,11 @@ interface IERC777PresetFixedSupplyTxCaller {
 interface IERC777PresetFixedSupplyTxData {
     approve (sender: TSender, spender: TAddress, value: bigint): Promise<TEth.TxLike>
     authorizeOperator (sender: TSender, operator: TAddress): Promise<TEth.TxLike>
-    burn (sender: TSender, amount: bigint, data: TBufferLike): Promise<TEth.TxLike>
-    operatorBurn (sender: TSender, account: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike): Promise<TEth.TxLike>
-    operatorSend (sender: TSender, _sender: TAddress, recipient: TAddress, amount: bigint, data: TBufferLike, operatorData: TBufferLike): Promise<TEth.TxLike>
+    burn (sender: TSender, amount: bigint, data: TEth.Hex): Promise<TEth.TxLike>
+    operatorBurn (sender: TSender, account: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex): Promise<TEth.TxLike>
+    operatorSend (sender: TSender, _sender: TAddress, recipient: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex): Promise<TEth.TxLike>
     revokeOperator (sender: TSender, operator: TAddress): Promise<TEth.TxLike>
-    send (sender: TSender, recipient: TAddress, amount: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    send (sender: TSender, recipient: TAddress, amount: bigint, data: TEth.Hex): Promise<TEth.TxLike>
     transfer (sender: TSender, recipient: TAddress, amount: bigint): Promise<TEth.TxLike>
     transferFrom (sender: TSender, holder: TAddress, recipient: TAddress, amount: bigint): Promise<TEth.TxLike>
 }

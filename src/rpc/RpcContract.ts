@@ -13,7 +13,7 @@ import { TEth } from '@dequanto/models/TEth';
 import { DataLike } from '@dequanto/utils/types';
 import { $web3Abi } from '@dequanto/clients/utils/$web3Abi';
 import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
-import { Web3Client } from '@dequanto/clients/Web3Client';
+import type { Web3Client } from '@dequanto/clients/Web3Client';
 
 
 type TRpcContract = {

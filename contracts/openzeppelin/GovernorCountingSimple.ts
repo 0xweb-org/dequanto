@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -57,10 +57,12 @@ export class GovernorCountingSimple extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/GovernorCountingSimple.ts"
+}
 
     // 0xdeaaa7cc
-    async BALLOT_TYPEHASH (): Promise<TBufferLike> {
+    async BALLOT_TYPEHASH (): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'BALLOT_TYPEHASH'));
     }
 
@@ -75,12 +77,12 @@ export class GovernorCountingSimple extends ContractBase {
     }
 
     // 0x2fe3e261
-    async EXTENDED_BALLOT_TYPEHASH (): Promise<TBufferLike> {
+    async EXTENDED_BALLOT_TYPEHASH (): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'EXTENDED_BALLOT_TYPEHASH'));
     }
 
     // 0x452115d6
-    async cancel (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TBufferLike[], descriptionHash: TBufferLike): Promise<TxWriter> {
+    async cancel (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], descriptionHash: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'cancel'), sender, targets, values, calldatas, descriptionHash);
     }
 
@@ -90,7 +92,7 @@ export class GovernorCountingSimple extends ContractBase {
     }
 
     // 0x3bccf4fd
-    async castVoteBySig (sender: TSender, proposalId: bigint, support: number, v: number, r: TBufferLike, s: TBufferLike): Promise<TxWriter> {
+    async castVoteBySig (sender: TSender, proposalId: bigint, support: number, v: number, r: TEth.Hex, s: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'castVoteBySig'), sender, proposalId, support, v, r, s);
     }
 
@@ -100,12 +102,12 @@ export class GovernorCountingSimple extends ContractBase {
     }
 
     // 0x5f398a14
-    async castVoteWithReasonAndParams (sender: TSender, proposalId: bigint, support: number, reason: string, params: TBufferLike): Promise<TxWriter> {
+    async castVoteWithReasonAndParams (sender: TSender, proposalId: bigint, support: number, reason: string, params: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'castVoteWithReasonAndParams'), sender, proposalId, support, reason, params);
     }
 
     // 0x03420181
-    async castVoteWithReasonAndParamsBySig (sender: TSender, proposalId: bigint, support: number, reason: string, params: TBufferLike, v: number, r: TBufferLike, s: TBufferLike): Promise<TxWriter> {
+    async castVoteWithReasonAndParamsBySig (sender: TSender, proposalId: bigint, support: number, reason: string, params: TEth.Hex, v: number, r: TEth.Hex, s: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'castVoteWithReasonAndParamsBySig'), sender, proposalId, support, reason, params, v, r, s);
     }
 
@@ -115,12 +117,12 @@ export class GovernorCountingSimple extends ContractBase {
     }
 
     // 0x84b0196e
-    async eip712Domain (): Promise<{ fields: TBufferLike, name: string, version: string, chainId: bigint, verifyingContract: TAddress, salt: TBufferLike, extensions: bigint[] }> {
+    async eip712Domain (): Promise<{ fields: TEth.Hex, name: string, version: string, chainId: bigint, verifyingContract: TAddress, salt: TEth.Hex, extensions: bigint[] }> {
         return this.$read(this.$getAbiItem('function', 'eip712Domain'));
     }
 
     // 0x2656227d
-    async execute (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TBufferLike[], descriptionHash: TBufferLike): Promise<TxWriter> {
+    async execute (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], descriptionHash: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'execute'), sender, targets, values, calldatas, descriptionHash);
     }
 
@@ -130,7 +132,7 @@ export class GovernorCountingSimple extends ContractBase {
     }
 
     // 0x9a802a6d
-    async getVotesWithParams (account: TAddress, timepoint: bigint, params: TBufferLike): Promise<bigint> {
+    async getVotesWithParams (account: TAddress, timepoint: bigint, params: TEth.Hex): Promise<bigint> {
         return this.$read(this.$getAbiItem('function', 'getVotesWithParams'), account, timepoint, params);
     }
 
@@ -140,7 +142,7 @@ export class GovernorCountingSimple extends ContractBase {
     }
 
     // 0xc59057e4
-    async hashProposal (targets: TAddress[], values: bigint[], calldatas: TBufferLike[], descriptionHash: TBufferLike): Promise<bigint> {
+    async hashProposal (targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], descriptionHash: TEth.Hex): Promise<bigint> {
         return this.$read(this.$getAbiItem('function', 'hashProposal'), targets, values, calldatas, descriptionHash);
     }
 
@@ -150,17 +152,17 @@ export class GovernorCountingSimple extends ContractBase {
     }
 
     // 0xbc197c81
-    async onERC1155BatchReceived (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TBufferLike): Promise<TxWriter> {
+    async onERC1155BatchReceived (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'onERC1155BatchReceived'), sender, input0, input1, input2, input3, input4);
     }
 
     // 0xf23a6e61
-    async onERC1155Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TBufferLike): Promise<TxWriter> {
+    async onERC1155Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'onERC1155Received'), sender, input0, input1, input2, input3, input4);
     }
 
     // 0x150b7a02
-    async onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TBufferLike): Promise<TxWriter> {
+    async onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'onERC721Received'), sender, input0, input1, input2, input3);
     }
 
@@ -190,7 +192,7 @@ export class GovernorCountingSimple extends ContractBase {
     }
 
     // 0x7d5e81e2
-    async propose (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TBufferLike[], description: string): Promise<TxWriter> {
+    async propose (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], description: string): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'propose'), sender, targets, values, calldatas, description);
     }
 
@@ -200,7 +202,7 @@ export class GovernorCountingSimple extends ContractBase {
     }
 
     // 0xc28bc2fa
-    async relay (sender: TSender, target: TAddress, value: bigint, data: TBufferLike): Promise<TxWriter> {
+    async relay (sender: TSender, target: TAddress, value: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'relay'), sender, target, value, data);
     }
 
@@ -210,7 +212,7 @@ export class GovernorCountingSimple extends ContractBase {
     }
 
     // 0x01ffc9a7
-    async supportsInterface (interfaceId: TBufferLike): Promise<boolean> {
+    async supportsInterface (interfaceId: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'supportsInterface'), interfaceId);
     }
 
@@ -377,9 +379,9 @@ type TSender = TAccount & {
     };
     type TLogProposalCanceledParameters = [ proposalId: bigint ];
     type TLogProposalCreated = {
-        proposalId: bigint, proposer: TAddress, targets: TAddress[], values: bigint[], signatures: string[], calldatas: TBufferLike[], voteStart: bigint, voteEnd: bigint, description: string
+        proposalId: bigint, proposer: TAddress, targets: TAddress[], values: bigint[], signatures: string[], calldatas: TEth.Hex[], voteStart: bigint, voteEnd: bigint, description: string
     };
-    type TLogProposalCreatedParameters = [ proposalId: bigint, proposer: TAddress, targets: TAddress[], values: bigint[], signatures: string[], calldatas: TBufferLike[], voteStart: bigint, voteEnd: bigint, description: string ];
+    type TLogProposalCreatedParameters = [ proposalId: bigint, proposer: TAddress, targets: TAddress[], values: bigint[], signatures: string[], calldatas: TEth.Hex[], voteStart: bigint, voteEnd: bigint, description: string ];
     type TLogProposalExecuted = {
         proposalId: bigint
     };
@@ -389,9 +391,9 @@ type TSender = TAccount & {
     };
     type TLogVoteCastParameters = [ voter: TAddress, proposalId: bigint, support: number, weight: bigint, reason: string ];
     type TLogVoteCastWithParams = {
-        voter: TAddress, proposalId: bigint, support: number, weight: bigint, reason: string, params: TBufferLike
+        voter: TAddress, proposalId: bigint, support: number, weight: bigint, reason: string, params: TEth.Hex
     };
-    type TLogVoteCastWithParamsParameters = [ voter: TAddress, proposalId: bigint, support: number, weight: bigint, reason: string, params: TBufferLike ];
+    type TLogVoteCastWithParamsParameters = [ voter: TAddress, proposalId: bigint, support: number, weight: bigint, reason: string, params: TEth.Hex ];
 
 interface IEvents {
   EIP712DomainChanged: TLogEIP712DomainChangedParameters
@@ -427,7 +429,7 @@ interface IMethodEXTENDED_BALLOT_TYPEHASH {
 
 interface IMethodCancel {
   method: "cancel"
-  arguments: [ targets: TAddress[], values: bigint[], calldatas: TBufferLike[], descriptionHash: TBufferLike ]
+  arguments: [ targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], descriptionHash: TEth.Hex ]
 }
 
 interface IMethodCastVote {
@@ -437,7 +439,7 @@ interface IMethodCastVote {
 
 interface IMethodCastVoteBySig {
   method: "castVoteBySig"
-  arguments: [ proposalId: bigint, support: number, v: number, r: TBufferLike, s: TBufferLike ]
+  arguments: [ proposalId: bigint, support: number, v: number, r: TEth.Hex, s: TEth.Hex ]
 }
 
 interface IMethodCastVoteWithReason {
@@ -447,12 +449,12 @@ interface IMethodCastVoteWithReason {
 
 interface IMethodCastVoteWithReasonAndParams {
   method: "castVoteWithReasonAndParams"
-  arguments: [ proposalId: bigint, support: number, reason: string, params: TBufferLike ]
+  arguments: [ proposalId: bigint, support: number, reason: string, params: TEth.Hex ]
 }
 
 interface IMethodCastVoteWithReasonAndParamsBySig {
   method: "castVoteWithReasonAndParamsBySig"
-  arguments: [ proposalId: bigint, support: number, reason: string, params: TBufferLike, v: number, r: TBufferLike, s: TBufferLike ]
+  arguments: [ proposalId: bigint, support: number, reason: string, params: TEth.Hex, v: number, r: TEth.Hex, s: TEth.Hex ]
 }
 
 interface IMethodClock {
@@ -467,7 +469,7 @@ interface IMethodEip712Domain {
 
 interface IMethodExecute {
   method: "execute"
-  arguments: [ targets: TAddress[], values: bigint[], calldatas: TBufferLike[], descriptionHash: TBufferLike ]
+  arguments: [ targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], descriptionHash: TEth.Hex ]
 }
 
 interface IMethodGetVotes {
@@ -477,7 +479,7 @@ interface IMethodGetVotes {
 
 interface IMethodGetVotesWithParams {
   method: "getVotesWithParams"
-  arguments: [ account: TAddress, timepoint: bigint, params: TBufferLike ]
+  arguments: [ account: TAddress, timepoint: bigint, params: TEth.Hex ]
 }
 
 interface IMethodHasVoted {
@@ -487,7 +489,7 @@ interface IMethodHasVoted {
 
 interface IMethodHashProposal {
   method: "hashProposal"
-  arguments: [ targets: TAddress[], values: bigint[], calldatas: TBufferLike[], descriptionHash: TBufferLike ]
+  arguments: [ targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], descriptionHash: TEth.Hex ]
 }
 
 interface IMethodName {
@@ -497,17 +499,17 @@ interface IMethodName {
 
 interface IMethodOnERC1155BatchReceived {
   method: "onERC1155BatchReceived"
-  arguments: [ input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TBufferLike ]
+  arguments: [ input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TEth.Hex ]
 }
 
 interface IMethodOnERC1155Received {
   method: "onERC1155Received"
-  arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TBufferLike ]
+  arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TEth.Hex ]
 }
 
 interface IMethodOnERC721Received {
   method: "onERC721Received"
-  arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: TBufferLike ]
+  arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: TEth.Hex ]
 }
 
 interface IMethodProposalDeadline {
@@ -537,7 +539,7 @@ interface IMethodProposalVotes {
 
 interface IMethodPropose {
   method: "propose"
-  arguments: [ targets: TAddress[], values: bigint[], calldatas: TBufferLike[], description: string ]
+  arguments: [ targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], description: string ]
 }
 
 interface IMethodQuorum {
@@ -547,7 +549,7 @@ interface IMethodQuorum {
 
 interface IMethodRelay {
   method: "relay"
-  arguments: [ target: TAddress, value: bigint, data: TBufferLike ]
+  arguments: [ target: TAddress, value: bigint, data: TEth.Hex ]
 }
 
 interface IMethodState {
@@ -557,7 +559,7 @@ interface IMethodState {
 
 interface IMethodSupportsInterface {
   method: "supportsInterface"
-  arguments: [ interfaceId: TBufferLike ]
+  arguments: [ interfaceId: TEth.Hex ]
 }
 
 interface IMethodVersion {
@@ -619,34 +621,34 @@ interface IMethods {
 
 
 interface IGovernorCountingSimpleTxCaller {
-    cancel (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TBufferLike[], descriptionHash: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    cancel (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], descriptionHash: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     castVote (sender: TSender, proposalId: bigint, support: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    castVoteBySig (sender: TSender, proposalId: bigint, support: number, v: number, r: TBufferLike, s: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    castVoteBySig (sender: TSender, proposalId: bigint, support: number, v: number, r: TEth.Hex, s: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     castVoteWithReason (sender: TSender, proposalId: bigint, support: number, reason: string): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    castVoteWithReasonAndParams (sender: TSender, proposalId: bigint, support: number, reason: string, params: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    castVoteWithReasonAndParamsBySig (sender: TSender, proposalId: bigint, support: number, reason: string, params: TBufferLike, v: number, r: TBufferLike, s: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    execute (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TBufferLike[], descriptionHash: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    onERC1155BatchReceived (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    onERC1155Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    propose (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TBufferLike[], description: string): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    relay (sender: TSender, target: TAddress, value: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    castVoteWithReasonAndParams (sender: TSender, proposalId: bigint, support: number, reason: string, params: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    castVoteWithReasonAndParamsBySig (sender: TSender, proposalId: bigint, support: number, reason: string, params: TEth.Hex, v: number, r: TEth.Hex, s: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    execute (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], descriptionHash: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    onERC1155BatchReceived (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    onERC1155Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    propose (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], description: string): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    relay (sender: TSender, target: TAddress, value: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IGovernorCountingSimpleTxData {
-    cancel (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TBufferLike[], descriptionHash: TBufferLike): Promise<TEth.TxLike>
+    cancel (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], descriptionHash: TEth.Hex): Promise<TEth.TxLike>
     castVote (sender: TSender, proposalId: bigint, support: number): Promise<TEth.TxLike>
-    castVoteBySig (sender: TSender, proposalId: bigint, support: number, v: number, r: TBufferLike, s: TBufferLike): Promise<TEth.TxLike>
+    castVoteBySig (sender: TSender, proposalId: bigint, support: number, v: number, r: TEth.Hex, s: TEth.Hex): Promise<TEth.TxLike>
     castVoteWithReason (sender: TSender, proposalId: bigint, support: number, reason: string): Promise<TEth.TxLike>
-    castVoteWithReasonAndParams (sender: TSender, proposalId: bigint, support: number, reason: string, params: TBufferLike): Promise<TEth.TxLike>
-    castVoteWithReasonAndParamsBySig (sender: TSender, proposalId: bigint, support: number, reason: string, params: TBufferLike, v: number, r: TBufferLike, s: TBufferLike): Promise<TEth.TxLike>
-    execute (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TBufferLike[], descriptionHash: TBufferLike): Promise<TEth.TxLike>
-    onERC1155BatchReceived (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TBufferLike): Promise<TEth.TxLike>
-    onERC1155Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TBufferLike): Promise<TEth.TxLike>
-    onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TBufferLike): Promise<TEth.TxLike>
-    propose (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TBufferLike[], description: string): Promise<TEth.TxLike>
-    relay (sender: TSender, target: TAddress, value: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    castVoteWithReasonAndParams (sender: TSender, proposalId: bigint, support: number, reason: string, params: TEth.Hex): Promise<TEth.TxLike>
+    castVoteWithReasonAndParamsBySig (sender: TSender, proposalId: bigint, support: number, reason: string, params: TEth.Hex, v: number, r: TEth.Hex, s: TEth.Hex): Promise<TEth.TxLike>
+    execute (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], descriptionHash: TEth.Hex): Promise<TEth.TxLike>
+    onERC1155BatchReceived (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TEth.Hex): Promise<TEth.TxLike>
+    onERC1155Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TEth.Hex): Promise<TEth.TxLike>
+    onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TEth.Hex): Promise<TEth.TxLike>
+    propose (sender: TSender, targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], description: string): Promise<TEth.TxLike>
+    relay (sender: TSender, target: TAddress, value: bigint, data: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

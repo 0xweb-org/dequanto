@@ -14,10 +14,7 @@ export class XDaiscan extends BlockChainExplorerFactory.create({
     },
     getConfig () {
         const config = $config.get('blockchainExplorer.xdai');
-        return {
-            key: config?.key,
-            host: config?.host,
-        };
+        return config;
     }
 }) {
 

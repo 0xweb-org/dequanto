@@ -9,10 +9,10 @@ import { $abiUtils } from '@dequanto/utils/$abiUtils';
 
 export class TxContract {
 
-    private provider = di.resolve(ContractProvider, this.explorer);
+    private provider: ContractProvider;
 
     constructor (private explorer: IBlockChainExplorer = di.resolve(Etherscan)) {
-
+        this.provider = di.resolve(ContractProvider, this.explorer);
     }
 
     async parseTransaction (tx: TEth.TxLike)  {

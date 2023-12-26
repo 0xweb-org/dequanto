@@ -66,7 +66,7 @@ export class ContractReader implements IContractReader {
         return this;
     }
 
-    async getStorageAt(address: TAddress, position: string | number | bigint) {
+    async getStorageAt(address: TAddress, position: TEth.Hex | number | bigint) {
         let blockNumber: number = void 0;
         if (this.blockNumberTask != null) {
             blockNumber = await this.blockNumberTask;

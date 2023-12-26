@@ -7,7 +7,7 @@ export class SubscriptionWrap extends mixin(class_Dfr, class_EventEmitter) {
     private $source
     private $wrapped = [] as [string, Function][]
 
-    _listeners: { [event: string]: Function[] }
+    declare _listeners: { [event: string]: Function[] }
 
 
 

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,10 +39,12 @@ export class IFxMessageProcessor extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/IFxMessageProcessor.ts"
+}
 
     // 0x9a7c4b71
-    async processMessageFromRoot (sender: TSender, stateId: bigint, rootMessageSender: TAddress, data: TBufferLike): Promise<TxWriter> {
+    async processMessageFromRoot (sender: TSender, stateId: bigint, rootMessageSender: TAddress, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'processMessageFromRoot'), sender, stateId, rootMessageSender, data);
     }
 
@@ -99,7 +101,7 @@ interface IEvents {
 
 interface IMethodProcessMessageFromRoot {
   method: "processMessageFromRoot"
-  arguments: [ stateId: bigint, rootMessageSender: TAddress, data: TBufferLike ]
+  arguments: [ stateId: bigint, rootMessageSender: TAddress, data: TEth.Hex ]
 }
 
 interface IMethods {
@@ -113,12 +115,12 @@ interface IMethods {
 
 
 interface IIFxMessageProcessorTxCaller {
-    processMessageFromRoot (sender: TSender, stateId: bigint, rootMessageSender: TAddress, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    processMessageFromRoot (sender: TSender, stateId: bigint, rootMessageSender: TAddress, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IIFxMessageProcessorTxData {
-    processMessageFromRoot (sender: TSender, stateId: bigint, rootMessageSender: TAddress, data: TBufferLike): Promise<TEth.TxLike>
+    processMessageFromRoot (sender: TSender, stateId: bigint, rootMessageSender: TAddress, data: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

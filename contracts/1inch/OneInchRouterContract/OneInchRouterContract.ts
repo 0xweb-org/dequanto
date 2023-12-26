@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://bscscan.com/address/0x11111112542d85b3ef69ae05771c2dccff4faa26#code
  */
 import di from 'a-di';
@@ -39,7 +39,9 @@ export class OneInchRouterContract extends ContractBase {
         this.storage = new OneInchRouterContractStorageReader(this.address, this.client, this.explorer);
     }
 
-    
+    $meta = {
+    "class": "./contracts/1inch/OneInchRouterContract/OneInchRouterContract.ts"
+}
 
     // 0x83197ef0
     async destroy (sender: TSender, ): Promise<TxWriter> {
@@ -47,7 +49,7 @@ export class OneInchRouterContract extends ContractBase {
     }
 
     // 0x6c4a483e
-    async discountedSwap (sender: TSender, caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TBufferLike }, data: TBufferLike): Promise<TxWriter> {
+    async discountedSwap (sender: TSender, caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TEth.Hex }, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'discountedSwap'), sender, caller, desc, data);
     }
 
@@ -67,7 +69,7 @@ export class OneInchRouterContract extends ContractBase {
     }
 
     // 0x7c025200
-    async swap (sender: TSender, caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TBufferLike }, data: TBufferLike): Promise<TxWriter> {
+    async swap (sender: TSender, caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TEth.Hex }, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'swap'), sender, caller, desc, data);
     }
 
@@ -77,12 +79,12 @@ export class OneInchRouterContract extends ContractBase {
     }
 
     // 0x2e95b6c8
-    async unoswap (sender: TSender, srcToken: TAddress, amount: bigint, minReturn: bigint, input3: TBufferLike[]): Promise<TxWriter> {
+    async unoswap (sender: TSender, srcToken: TAddress, amount: bigint, minReturn: bigint, input3: TEth.Hex[]): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'unoswap'), sender, srcToken, amount, minReturn, input3);
     }
 
     // 0xa1251d75
-    async unoswapWithPermit (sender: TSender, srcToken: TAddress, amount: bigint, minReturn: bigint, pools: TBufferLike[], permit: TBufferLike): Promise<TxWriter> {
+    async unoswapWithPermit (sender: TSender, srcToken: TAddress, amount: bigint, minReturn: bigint, pools: TEth.Hex[], permit: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'unoswapWithPermit'), sender, srcToken, amount, minReturn, pools, permit);
     }
 
@@ -167,7 +169,7 @@ export class OneInchRouterContract extends ContractBase {
 
     abi: TAbiItem[] = [{"anonymous":false,"inputs":[{"indexed":false,"internalType":"string","name":"reason","type":"string"}],"name":"Error","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"contract IERC20","name":"srcToken","type":"address"},{"indexed":false,"internalType":"contract IERC20","name":"dstToken","type":"address"},{"indexed":false,"internalType":"address","name":"dstReceiver","type":"address"},{"indexed":false,"internalType":"uint256","name":"spentAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"returnAmount","type":"uint256"}],"name":"Swapped","type":"event"},{"inputs":[],"name":"destroy","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"contract IAggregationExecutor","name":"caller","type":"address"},{"components":[{"internalType":"contract IERC20","name":"srcToken","type":"address"},{"internalType":"contract IERC20","name":"dstToken","type":"address"},{"internalType":"address","name":"srcReceiver","type":"address"},{"internalType":"address","name":"dstReceiver","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"minReturnAmount","type":"uint256"},{"internalType":"uint256","name":"flags","type":"uint256"},{"internalType":"bytes","name":"permit","type":"bytes"}],"internalType":"struct AggregationRouterV3.SwapDescription","name":"desc","type":"tuple"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"discountedSwap","outputs":[{"internalType":"uint256","name":"returnAmount","type":"uint256"},{"internalType":"uint256","name":"gasLeft","type":"uint256"},{"internalType":"uint256","name":"chiSpent","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"contract IERC20","name":"token","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"rescueFunds","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"contract IAggregationExecutor","name":"caller","type":"address"},{"components":[{"internalType":"contract IERC20","name":"srcToken","type":"address"},{"internalType":"contract IERC20","name":"dstToken","type":"address"},{"internalType":"address","name":"srcReceiver","type":"address"},{"internalType":"address","name":"dstReceiver","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"minReturnAmount","type":"uint256"},{"internalType":"uint256","name":"flags","type":"uint256"},{"internalType":"bytes","name":"permit","type":"bytes"}],"internalType":"struct AggregationRouterV3.SwapDescription","name":"desc","type":"tuple"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"swap","outputs":[{"internalType":"uint256","name":"returnAmount","type":"uint256"},{"internalType":"uint256","name":"gasLeft","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"contract IERC20","name":"srcToken","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"minReturn","type":"uint256"},{"internalType":"bytes32[]","name":"","type":"bytes32[]"}],"name":"unoswap","outputs":[{"internalType":"uint256","name":"returnAmount","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"contract IERC20","name":"srcToken","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"minReturn","type":"uint256"},{"internalType":"bytes32[]","name":"pools","type":"bytes32[]"},{"internalType":"bytes","name":"permit","type":"bytes"}],"name":"unoswapWithPermit","outputs":[{"internalType":"uint256","name":"returnAmount","type":"uint256"}],"stateMutability":"payable","type":"function"},{"stateMutability":"payable","type":"receive"}]
 
-    storage: OneInchRouterContractStorageReader
+    declare storage: OneInchRouterContractStorageReader
 }
 
 type TSender = TAccount & {
@@ -203,7 +205,7 @@ interface IMethodDestroy {
 
 interface IMethodDiscountedSwap {
   method: "discountedSwap"
-  arguments: [ caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TBufferLike }, data: TBufferLike ]
+  arguments: [ caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TEth.Hex }, data: TEth.Hex ]
 }
 
 interface IMethodOwner {
@@ -223,7 +225,7 @@ interface IMethodRescueFunds {
 
 interface IMethodSwap {
   method: "swap"
-  arguments: [ caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TBufferLike }, data: TBufferLike ]
+  arguments: [ caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TEth.Hex }, data: TEth.Hex ]
 }
 
 interface IMethodTransferOwnership {
@@ -233,12 +235,12 @@ interface IMethodTransferOwnership {
 
 interface IMethodUnoswap {
   method: "unoswap"
-  arguments: [ srcToken: TAddress, amount: bigint, minReturn: bigint, input3: TBufferLike[] ]
+  arguments: [ srcToken: TAddress, amount: bigint, minReturn: bigint, input3: TEth.Hex[] ]
 }
 
 interface IMethodUnoswapWithPermit {
   method: "unoswapWithPermit"
-  arguments: [ srcToken: TAddress, amount: bigint, minReturn: bigint, pools: TBufferLike[], permit: TBufferLike ]
+  arguments: [ srcToken: TAddress, amount: bigint, minReturn: bigint, pools: TEth.Hex[], permit: TEth.Hex ]
 }
 
 interface IMethods {
@@ -289,25 +291,25 @@ class OneInchRouterContractStorageReader extends ContractStorageReaderBase {
 
 interface IOneInchRouterContractTxCaller {
     destroy (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    discountedSwap (sender: TSender, caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TBufferLike }, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    discountedSwap (sender: TSender, caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TEth.Hex }, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     renounceOwnership (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     rescueFunds (sender: TSender, token: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    swap (sender: TSender, caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TBufferLike }, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    swap (sender: TSender, caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TEth.Hex }, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     transferOwnership (sender: TSender, newOwner: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    unoswap (sender: TSender, srcToken: TAddress, amount: bigint, minReturn: bigint, input3: TBufferLike[]): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    unoswapWithPermit (sender: TSender, srcToken: TAddress, amount: bigint, minReturn: bigint, pools: TBufferLike[], permit: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    unoswap (sender: TSender, srcToken: TAddress, amount: bigint, minReturn: bigint, input3: TEth.Hex[]): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    unoswapWithPermit (sender: TSender, srcToken: TAddress, amount: bigint, minReturn: bigint, pools: TEth.Hex[], permit: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IOneInchRouterContractTxData {
     destroy (sender: TSender, ): Promise<TEth.TxLike>
-    discountedSwap (sender: TSender, caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TBufferLike }, data: TBufferLike): Promise<TEth.TxLike>
+    discountedSwap (sender: TSender, caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TEth.Hex }, data: TEth.Hex): Promise<TEth.TxLike>
     renounceOwnership (sender: TSender, ): Promise<TEth.TxLike>
     rescueFunds (sender: TSender, token: TAddress, amount: bigint): Promise<TEth.TxLike>
-    swap (sender: TSender, caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TBufferLike }, data: TBufferLike): Promise<TEth.TxLike>
+    swap (sender: TSender, caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TEth.Hex }, data: TEth.Hex): Promise<TEth.TxLike>
     transferOwnership (sender: TSender, newOwner: TAddress): Promise<TEth.TxLike>
-    unoswap (sender: TSender, srcToken: TAddress, amount: bigint, minReturn: bigint, input3: TBufferLike[]): Promise<TEth.TxLike>
-    unoswapWithPermit (sender: TSender, srcToken: TAddress, amount: bigint, minReturn: bigint, pools: TBufferLike[], permit: TBufferLike): Promise<TEth.TxLike>
+    unoswap (sender: TSender, srcToken: TAddress, amount: bigint, minReturn: bigint, input3: TEth.Hex[]): Promise<TEth.TxLike>
+    unoswapWithPermit (sender: TSender, srcToken: TAddress, amount: bigint, minReturn: bigint, pools: TEth.Hex[], permit: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

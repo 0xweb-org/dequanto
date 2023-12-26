@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,10 +39,12 @@ export class Multicall extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/Multicall.ts"
+}
 
     // 0xac9650d8
-    async multicall (sender: TSender, data: TBufferLike[]): Promise<TxWriter> {
+    async multicall (sender: TSender, data: TEth.Hex[]): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'multicall'), sender, data);
     }
 
@@ -99,7 +101,7 @@ interface IEvents {
 
 interface IMethodMulticall {
   method: "multicall"
-  arguments: [ data: TBufferLike[] ]
+  arguments: [ data: TEth.Hex[] ]
 }
 
 interface IMethods {
@@ -113,12 +115,12 @@ interface IMethods {
 
 
 interface IMulticallTxCaller {
-    multicall (sender: TSender, data: TBufferLike[]): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    multicall (sender: TSender, data: TEth.Hex[]): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IMulticallTxData {
-    multicall (sender: TSender, data: TBufferLike[]): Promise<TEth.TxLike>
+    multicall (sender: TSender, data: TEth.Hex[]): Promise<TEth.TxLike>
 }
 
 

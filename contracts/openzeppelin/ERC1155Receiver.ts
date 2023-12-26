@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,20 +39,22 @@ export class ERC1155Receiver extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/ERC1155Receiver.ts"
+}
 
     // 0xbc197c81
-    async onERC1155BatchReceived (sender: TSender, operator: TAddress, from: TAddress, ids: bigint[], values: bigint[], data: TBufferLike): Promise<TxWriter> {
+    async onERC1155BatchReceived (sender: TSender, operator: TAddress, from: TAddress, ids: bigint[], values: bigint[], data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'onERC1155BatchReceived'), sender, operator, from, ids, values, data);
     }
 
     // 0xf23a6e61
-    async onERC1155Received (sender: TSender, operator: TAddress, from: TAddress, id: bigint, value: bigint, data: TBufferLike): Promise<TxWriter> {
+    async onERC1155Received (sender: TSender, operator: TAddress, from: TAddress, id: bigint, value: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'onERC1155Received'), sender, operator, from, id, value, data);
     }
 
     // 0x01ffc9a7
-    async supportsInterface (interfaceId: TBufferLike): Promise<boolean> {
+    async supportsInterface (interfaceId: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'supportsInterface'), interfaceId);
     }
 
@@ -109,17 +111,17 @@ interface IEvents {
 
 interface IMethodOnERC1155BatchReceived {
   method: "onERC1155BatchReceived"
-  arguments: [ operator: TAddress, from: TAddress, ids: bigint[], values: bigint[], data: TBufferLike ]
+  arguments: [ operator: TAddress, from: TAddress, ids: bigint[], values: bigint[], data: TEth.Hex ]
 }
 
 interface IMethodOnERC1155Received {
   method: "onERC1155Received"
-  arguments: [ operator: TAddress, from: TAddress, id: bigint, value: bigint, data: TBufferLike ]
+  arguments: [ operator: TAddress, from: TAddress, id: bigint, value: bigint, data: TEth.Hex ]
 }
 
 interface IMethodSupportsInterface {
   method: "supportsInterface"
-  arguments: [ interfaceId: TBufferLike ]
+  arguments: [ interfaceId: TEth.Hex ]
 }
 
 interface IMethods {
@@ -135,14 +137,14 @@ interface IMethods {
 
 
 interface IERC1155ReceiverTxCaller {
-    onERC1155BatchReceived (sender: TSender, operator: TAddress, from: TAddress, ids: bigint[], values: bigint[], data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    onERC1155Received (sender: TSender, operator: TAddress, from: TAddress, id: bigint, value: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    onERC1155BatchReceived (sender: TSender, operator: TAddress, from: TAddress, ids: bigint[], values: bigint[], data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    onERC1155Received (sender: TSender, operator: TAddress, from: TAddress, id: bigint, value: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IERC1155ReceiverTxData {
-    onERC1155BatchReceived (sender: TSender, operator: TAddress, from: TAddress, ids: bigint[], values: bigint[], data: TBufferLike): Promise<TEth.TxLike>
-    onERC1155Received (sender: TSender, operator: TAddress, from: TAddress, id: bigint, value: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    onERC1155BatchReceived (sender: TSender, operator: TAddress, from: TAddress, ids: bigint[], values: bigint[], data: TEth.Hex): Promise<TEth.TxLike>
+    onERC1155Received (sender: TSender, operator: TAddress, from: TAddress, id: bigint, value: bigint, data: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

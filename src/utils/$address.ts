@@ -43,7 +43,7 @@ export namespace $address {
     /** Supports https://eips.ethereum.org/EIPS/eip-1191 */
     export function toChecksum(address_: TEth.Address, chainId?: number): TEth.Address {
 
-        let addressHex = $hex.padBytes(address_.toLowerCase(), 20);
+        let addressHex: string = $hex.padBytes(address_.toLowerCase() as TEth.Hex, 20);
         let addressRaw = addressHex.substring(2);
 
         if (chainId != null) {

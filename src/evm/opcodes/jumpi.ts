@@ -304,7 +304,7 @@ export default (opcode: Opcode, state: EvmBytecode): void => {
                 const trueCloneTree = trueClone.parse();
                 const falseClone = state.clone();
                 falseClone.pc = state.pc + 1;
-                const falseCloneTree = falseClone.parse();
+                const falseCloneTree = falseClone.getInstructions();
                 if (
                     trueCloneTree.length > 0 &&
                     trueCloneTree.length === falseCloneTree.length &&
@@ -341,7 +341,7 @@ export default (opcode: Opcode, state: EvmBytecode): void => {
                 const trueCloneTree = trueClone.parse();
                 const falseClone = state.clone();
                 falseClone.pc = state.pc + 1;
-                const falseCloneTree: any = falseClone.parse();
+                const falseCloneTree: any = falseClone.getInstructions();
                 if (
                     (falseCloneTree.length === 1 &&
                         'name' in falseCloneTree[0] &&

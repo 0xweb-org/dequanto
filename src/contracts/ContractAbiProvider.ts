@@ -9,6 +9,7 @@ import { class_Uri } from 'atma-utils';
 import { $path } from '@dequanto/utils/$path';
 import { $logger } from '@dequanto/utils/$logger';
 import { Web3Client } from '@dequanto/clients/Web3Client';
+import { $is } from '@dequanto/utils/$is';
 
 
 export class ContractAbiProvider {
@@ -23,7 +24,7 @@ export class ContractAbiProvider {
 
         let abiJson: TAbiItem[]
         let implementation: TAddress;
-        if (abi.startsWith('0x')) {
+        if ($is.Address(abi)) {
             let { abi: abiResult, implementation: impl } = await this.getAbiByAddress(abi, opts);
             abiJson = abiResult;
             implementation= impl;

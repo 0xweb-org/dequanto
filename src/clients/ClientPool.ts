@@ -30,6 +30,7 @@ import { TTransport } from '@dequanto/rpc/transports/ITransport';
 import { TRpc } from '@dequanto/rpc/RpcBase';
 import { TEth } from '@dequanto/models/TEth';
 import { $rpc } from '@dequanto/rpc/$rpc';
+import { Web3 } from './compatibility/Web3';
 
 export interface IPoolClientConfig {
     url?: string
@@ -197,10 +198,6 @@ export class ClientPool {
 
             // if not the CallError, process the while loop to check another NodeProvider
         }
-    }
-    async getWeb3(options?: IPoolWeb3Request) {
-        let wClient = await this.getWrappedWeb3(options);
-        return wClient?.web3;
     }
     async getRpc(options?: IPoolWeb3Request) {
         let wClient = await this.getWrappedWeb3(options);
@@ -744,23 +741,19 @@ export class WClient {
                     });
                 } else {
                     throw new Error(`Unsupported transport url ${url}`);
-                    //this.web3 = new Web3(mix.url);
                 }
-            } else if ((mix.web3 as any).eth != null) {
+            } else if (mix.web3 != null && 'currentProvider' in mix.web3 && 'eth' in mix.web3) {
                 transport = new Web3Transport(mix.web3);
             } else {
                 // provider
-                //this.web3 = new Web3(<provider>mix.web3);
                 transport = mix.web3 as any as TTransport.Transport;
             }
 
             this.rpc = new Rpc(transport);
-            //this.web3 = new Web3(this.rpc);
         } else {
             throw new Error(`Neither Node URL nor Web3 Instance in argument`);
         }
-        // this.web3.eth.handleRevert = true;
-        // this.eth = this.web3.eth;
+
         this.blockRangeLimits = { blocks: Infinity };
 
         if (mix.rateLimit) {
@@ -780,20 +773,17 @@ export class WClient {
         }
     }
 
-    private websocket = {
-        code: WS_STATE.NOTSET
-    }
 
     @memd.deco.memoize()
     private createWebSocketClient(url: string) {
         let { options } = this.config;
 
-        options = obj_extendDefaults(options ?? {}, { clientConfig: {} });
-        obj_extendDefaults((options as WebsocketProviderOptions).clientConfig, {
-            // default frame size is too small
-            maxReceivedFrameSize: 50_000_000,
-            maxReceivedMessageSize: 50_000_000,
-        });
+        // options = obj_extendDefaults(options ?? {}, { clientConfig: {} });
+        // obj_extendDefaults((options as TTransport.Options.Ws).clientConfig, {
+        //     // default frame size is too small
+        //     maxReceivedFrameSize: 50_000_000,
+        //     maxReceivedMessageSize: 50_000_000,
+        // });
 
         let transport = new WsTransport({ url, ...options });
 

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,7 +39,9 @@ export class IERC1363 extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/IERC1363.ts"
+}
 
     // 0xdd62ed3e
     async allowance (owner: TAddress, spender: TAddress): Promise<bigint> {
@@ -54,7 +56,7 @@ export class IERC1363 extends ContractBase {
     // 0x3177029f
     async approveAndCall (sender: TSender, spender: TAddress, amount: bigint): Promise<TxWriter>
     // 0xcae9ca51
-    async approveAndCall (sender: TSender, spender: TAddress, amount: bigint, data: TBufferLike): Promise<TxWriter>
+    async approveAndCall (sender: TSender, spender: TAddress, amount: bigint, data: TEth.Hex): Promise<TxWriter>
     async approveAndCall (sender: TSender, ...args): Promise<TxWriter> {
         let abi = this.$getAbiItemOverload([ 'function approveAndCall(address, uint256) returns bool', 'function approveAndCall(address, uint256, bytes) returns bool' ], args);
         return this.$write(abi, sender, ...args);
@@ -66,7 +68,7 @@ export class IERC1363 extends ContractBase {
     }
 
     // 0x01ffc9a7
-    async supportsInterface (interfaceId: TBufferLike): Promise<boolean> {
+    async supportsInterface (interfaceId: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'supportsInterface'), interfaceId);
     }
 
@@ -83,7 +85,7 @@ export class IERC1363 extends ContractBase {
     // 0x1296ee62
     async transferAndCall (sender: TSender, to: TAddress, amount: bigint): Promise<TxWriter>
     // 0x4000aea0
-    async transferAndCall (sender: TSender, to: TAddress, amount: bigint, data: TBufferLike): Promise<TxWriter>
+    async transferAndCall (sender: TSender, to: TAddress, amount: bigint, data: TEth.Hex): Promise<TxWriter>
     async transferAndCall (sender: TSender, ...args): Promise<TxWriter> {
         let abi = this.$getAbiItemOverload([ 'function transferAndCall(address, uint256) returns bool', 'function transferAndCall(address, uint256, bytes) returns bool' ], args);
         return this.$write(abi, sender, ...args);
@@ -95,7 +97,7 @@ export class IERC1363 extends ContractBase {
     }
 
     // 0xc1d34b89
-    async transferFromAndCall (sender: TSender, from: TAddress, to: TAddress, amount: bigint, data: TBufferLike): Promise<TxWriter>
+    async transferFromAndCall (sender: TSender, from: TAddress, to: TAddress, amount: bigint, data: TEth.Hex): Promise<TxWriter>
     // 0xd8fbe994
     async transferFromAndCall (sender: TSender, from: TAddress, to: TAddress, amount: bigint): Promise<TxWriter>
     async transferFromAndCall (sender: TSender, ...args): Promise<TxWriter> {
@@ -203,7 +205,7 @@ interface IMethodApprove {
 
 interface IMethodApproveAndCall {
   method: "approveAndCall"
-  arguments: [ spender: TAddress, amount: bigint ] | [ spender: TAddress, amount: bigint, data: TBufferLike ]
+  arguments: [ spender: TAddress, amount: bigint ] | [ spender: TAddress, amount: bigint, data: TEth.Hex ]
 }
 
 interface IMethodBalanceOf {
@@ -213,7 +215,7 @@ interface IMethodBalanceOf {
 
 interface IMethodSupportsInterface {
   method: "supportsInterface"
-  arguments: [ interfaceId: TBufferLike ]
+  arguments: [ interfaceId: TEth.Hex ]
 }
 
 interface IMethodTotalSupply {
@@ -228,7 +230,7 @@ interface IMethodTransfer {
 
 interface IMethodTransferAndCall {
   method: "transferAndCall"
-  arguments: [ to: TAddress, amount: bigint ] | [ to: TAddress, amount: bigint, data: TBufferLike ]
+  arguments: [ to: TAddress, amount: bigint ] | [ to: TAddress, amount: bigint, data: TEth.Hex ]
 }
 
 interface IMethodTransferFrom {
@@ -238,7 +240,7 @@ interface IMethodTransferFrom {
 
 interface IMethodTransferFromAndCall {
   method: "transferFromAndCall"
-  arguments: [ from: TAddress, to: TAddress, amount: bigint, data: TBufferLike ] | [ from: TAddress, to: TAddress, amount: bigint ]
+  arguments: [ from: TAddress, to: TAddress, amount: bigint, data: TEth.Hex ] | [ from: TAddress, to: TAddress, amount: bigint ]
 }
 
 interface IMethods {
@@ -263,12 +265,12 @@ interface IMethods {
 interface IIERC1363TxCaller {
     approve (sender: TSender, spender: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     approveAndCall (sender: TSender, spender: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    approveAndCall (sender: TSender, spender: TAddress, amount: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    approveAndCall (sender: TSender, spender: TAddress, amount: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     transfer (sender: TSender, to: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     transferAndCall (sender: TSender, to: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    transferAndCall (sender: TSender, to: TAddress, amount: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    transferAndCall (sender: TSender, to: TAddress, amount: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     transferFrom (sender: TSender, from: TAddress, to: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    transferFromAndCall (sender: TSender, from: TAddress, to: TAddress, amount: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    transferFromAndCall (sender: TSender, from: TAddress, to: TAddress, amount: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     transferFromAndCall (sender: TSender, from: TAddress, to: TAddress, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
@@ -276,12 +278,12 @@ interface IIERC1363TxCaller {
 interface IIERC1363TxData {
     approve (sender: TSender, spender: TAddress, amount: bigint): Promise<TEth.TxLike>
     approveAndCall (sender: TSender, spender: TAddress, amount: bigint): Promise<TEth.TxLike>
-    approveAndCall (sender: TSender, spender: TAddress, amount: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    approveAndCall (sender: TSender, spender: TAddress, amount: bigint, data: TEth.Hex): Promise<TEth.TxLike>
     transfer (sender: TSender, to: TAddress, amount: bigint): Promise<TEth.TxLike>
     transferAndCall (sender: TSender, to: TAddress, amount: bigint): Promise<TEth.TxLike>
-    transferAndCall (sender: TSender, to: TAddress, amount: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    transferAndCall (sender: TSender, to: TAddress, amount: bigint, data: TEth.Hex): Promise<TEth.TxLike>
     transferFrom (sender: TSender, from: TAddress, to: TAddress, amount: bigint): Promise<TEth.TxLike>
-    transferFromAndCall (sender: TSender, from: TAddress, to: TAddress, amount: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    transferFromAndCall (sender: TSender, from: TAddress, to: TAddress, amount: bigint, data: TEth.Hex): Promise<TEth.TxLike>
     transferFromAndCall (sender: TSender, from: TAddress, to: TAddress, amount: bigint): Promise<TEth.TxLike>
 }
 

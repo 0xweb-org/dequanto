@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,7 +39,9 @@ export class ERC721Royalty extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/ERC721Royalty.ts"
+}
 
     // 0x095ea7b3
     async approve (sender: TSender, to: TAddress, tokenId: bigint): Promise<TxWriter> {
@@ -79,7 +81,7 @@ export class ERC721Royalty extends ContractBase {
     // 0x42842e0e
     async safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint): Promise<TxWriter>
     // 0xb88d4fde
-    async safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint, data: TBufferLike): Promise<TxWriter>
+    async safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint, data: TEth.Hex): Promise<TxWriter>
     async safeTransferFrom (sender: TSender, ...args): Promise<TxWriter> {
         let abi = this.$getAbiItemOverload([ 'function safeTransferFrom(address, address, uint256)', 'function safeTransferFrom(address, address, uint256, bytes)' ], args);
         return this.$write(abi, sender, ...args);
@@ -91,7 +93,7 @@ export class ERC721Royalty extends ContractBase {
     }
 
     // 0x01ffc9a7
-    async supportsInterface (interfaceId: TBufferLike): Promise<boolean> {
+    async supportsInterface (interfaceId: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'supportsInterface'), interfaceId);
     }
 
@@ -257,7 +259,7 @@ interface IMethodRoyaltyInfo {
 
 interface IMethodSafeTransferFrom {
   method: "safeTransferFrom"
-  arguments: [ from: TAddress, to: TAddress, tokenId: bigint ] | [ from: TAddress, to: TAddress, tokenId: bigint, data: TBufferLike ]
+  arguments: [ from: TAddress, to: TAddress, tokenId: bigint ] | [ from: TAddress, to: TAddress, tokenId: bigint, data: TEth.Hex ]
 }
 
 interface IMethodSetApprovalForAll {
@@ -267,7 +269,7 @@ interface IMethodSetApprovalForAll {
 
 interface IMethodSupportsInterface {
   method: "supportsInterface"
-  arguments: [ interfaceId: TBufferLike ]
+  arguments: [ interfaceId: TEth.Hex ]
 }
 
 interface IMethodSymbol {
@@ -310,7 +312,7 @@ interface IMethods {
 interface IERC721RoyaltyTxCaller {
     approve (sender: TSender, to: TAddress, tokenId: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setApprovalForAll (sender: TSender, operator: TAddress, approved: boolean): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     transferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
@@ -319,7 +321,7 @@ interface IERC721RoyaltyTxCaller {
 interface IERC721RoyaltyTxData {
     approve (sender: TSender, to: TAddress, tokenId: bigint): Promise<TEth.TxLike>
     safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint): Promise<TEth.TxLike>
-    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    safeTransferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint, data: TEth.Hex): Promise<TEth.TxLike>
     setApprovalForAll (sender: TSender, operator: TAddress, approved: boolean): Promise<TEth.TxLike>
     transferFrom (sender: TSender, from: TAddress, to: TAddress, tokenId: bigint): Promise<TEth.TxLike>
 }

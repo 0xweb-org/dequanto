@@ -60,24 +60,12 @@ export abstract class ContractBase {
 
     }
 
-    public async getStorageAt (position: string | number | bigint)  {
+    public async $getStorageAt (position: number | bigint | TEth.Hex)  {
         let reader = await this.getContractReader();
         return reader.getStorageAt(this.address, position);
     }
-    public parseInputData (buffer: TEth.BufferLike, value?: string) {
-
+    public $parseInputData (buffer: TEth.BufferLike, value?: string) {
         return $abiUtils.parseMethodCallData(this.abi, buffer);
-
-        // const iface = new utils.Interface(this.abi as any);
-        // const decodedInput = iface.parseTransaction({
-        //     data: buffer as string,
-        //     value: value,
-        // });
-        // return {
-        //     name: decodedInput.name,
-        //     args: $contract.normalizeArgs(Array.from(decodedInput.args)),
-        //     params: $contract.parseInputData(buffer as string, this.abi)?.params
-        // };
     }
     public async $executeBatch <T extends readonly unknown[] | []>(values: T): Promise<{ -readonly [P in keyof T]: Awaited<T[P]> }> {
 
@@ -296,7 +284,7 @@ export abstract class ContractBase {
 
             txs.forEach(tx => {
                 try {
-                    let calldata = this.parseInputData(tx.input);
+                    let calldata = this.$parseInputData(tx.input);
 
                     let method = options.filter?.method;
                     if (method != null && method !== '*') {
@@ -390,7 +378,7 @@ export abstract class ContractBase {
         let logs = await this.$getPastLogs(filters);
         return logs.map(log => this.$extractLog(log, mix)) as any;
     }
-    protected async $getPastLogsFilters(mix: string | TAbiItem | TAbiItem[], options: {
+    protected async $getPastLogsFilters(mix: string | TAbiItem, options: {
         topic?: string
         fromBlock?: number | Date
         toBlock?: number | Date
@@ -398,7 +386,7 @@ export abstract class ContractBase {
             [key: string]: any
         }
     }): Promise<RpcTypes.Filter> {
-        let abi: TAbiItem | TAbiItem[] | '*';
+        let abi: TAbiItem | '*';
         if (typeof mix === 'string') {
             if (mix === '*') {
                 abi = '*'

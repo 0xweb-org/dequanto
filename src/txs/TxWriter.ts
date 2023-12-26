@@ -33,9 +33,10 @@ import { TEth } from '@dequanto/models/TEth';
 import { SafeServiceTypes } from '@dequanto/safe/types/SafeServiceTypes';
 import { ChainAccountService } from '@dequanto/ChainAccountService';
 import { TxNonceManager } from './TxNonceManager';
+import { $is } from '@dequanto/utils/$is';
 
 interface ITxWriterEvents {
-    transactionHash (hash: string)
+    transactionHash (hash: TEth.Hex)
     receipt (receipt: TEth.TxReceipt)
     confirmation (confNumber: number, receipt: TEth.TxReceipt)
     error (error: Error)
@@ -109,7 +110,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     tx: {
         timestamp: number
         confirmations: number,
-        hash?: string
+        hash?: TEth.Hex
         timeout?: NodeJS.Timer
         receipt?: TEth.TxReceipt
         error?: Error
@@ -126,7 +127,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     protected constructor (
         public client: Web3Client,
         public builder: TxDataBuilder,
-        public account: IAccount
+        public account: TAccount
     ) {
         super();
         this.logger = new TxLogger(this.id, this.getSenderName(), this.builder);
@@ -456,7 +457,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     }
     private clearTimer (tx: TxWriter['tx']) {
         if (tx.timeout) {
-            clearTimeout(tx.timeout);
+            clearTimeout(tx.timeout as any);
             tx.timeout = null;
         }
     }
@@ -563,7 +564,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     static create (
         client: Web3Client,
         builder: TxDataBuilder,
-        account: IAccount,
+        account: TAccount,
         options?: ITxWriterOptions
     ): TxWriter {
         return new TxWriter(client, builder, account);
@@ -572,10 +573,11 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     static async writeTxData (
         client: Web3Client,
         data: Partial<TEth.TxLike>,
-        account: IAccount,
+        accountMix: TAccount,
         options?: ITxWriterOptions
     ): Promise<TxWriter> {
-        let txBuilder = new TxDataBuilder(client, account as IAccount, data);
+        let account = await TxWriter.prepareAccount(accountMix);
+        let txBuilder = new TxDataBuilder(client, account, data);
 
         await Promise.all([
             txBuilder.ensureGas(),
@@ -585,6 +587,23 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         let w = new TxWriter(client, txBuilder, account);
         w.send(options);
         return w;
+    }
+
+    static async prepareAccount (account: TAccount): Promise<IAccount> {
+        if (typeof account !== 'string') {
+            return account;
+        }
+        let service = di.resolve(ChainAccountService);
+        let stored = await service.get(account);
+        if (stored != null) {
+            return stored;
+        }
+        if ($is.Address(account)) {
+            return {
+                address: account
+            };
+        }
+        throw new Error(`Account ${account} not found`);
     }
 }
 
@@ -596,4 +615,3 @@ export type TTxWriterJson = {
     txs: TxWriter['txs']
     builder: ReturnType<TxDataBuilder['toJSON']>
 };
-

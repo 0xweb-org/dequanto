@@ -1,5 +1,5 @@
 import { TEth } from '@dequanto/models/TEth';
-import { RpcSubscription } from '../RpcSubscription';
+import type { ClientOptions } from 'ws'
 
 export namespace TTransport {
 
@@ -48,6 +48,7 @@ export namespace TTransport {
 
         export type Ws = {
             url: string
+            clientConfig?: ClientOptions
         }
 
         export type Wrapped = {

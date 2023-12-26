@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,10 +39,12 @@ export class IERC1820Registry extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/IERC1820Registry.ts"
+}
 
     // 0xaabbb8ca
-    async getInterfaceImplementer (account: TAddress, _interfaceHash: TBufferLike): Promise<TAddress> {
+    async getInterfaceImplementer (account: TAddress, _interfaceHash: TEth.Hex): Promise<TAddress> {
         return this.$read(this.$getAbiItem('function', 'getInterfaceImplementer'), account, _interfaceHash);
     }
 
@@ -52,22 +54,22 @@ export class IERC1820Registry extends ContractBase {
     }
 
     // 0xf712f3e8
-    async implementsERC165Interface (account: TAddress, interfaceId: TBufferLike): Promise<boolean> {
+    async implementsERC165Interface (account: TAddress, interfaceId: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'implementsERC165Interface'), account, interfaceId);
     }
 
     // 0xb7056765
-    async implementsERC165InterfaceNoCache (account: TAddress, interfaceId: TBufferLike): Promise<boolean> {
+    async implementsERC165InterfaceNoCache (account: TAddress, interfaceId: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'implementsERC165InterfaceNoCache'), account, interfaceId);
     }
 
     // 0x65ba36c1
-    async interfaceHash (interfaceName: string): Promise<TBufferLike> {
+    async interfaceHash (interfaceName: string): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'interfaceHash'), interfaceName);
     }
 
     // 0x29965a1d
-    async setInterfaceImplementer (sender: TSender, account: TAddress, _interfaceHash: TBufferLike, implementer: TAddress): Promise<TxWriter> {
+    async setInterfaceImplementer (sender: TSender, account: TAddress, _interfaceHash: TEth.Hex, implementer: TAddress): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'setInterfaceImplementer'), sender, account, _interfaceHash, implementer);
     }
 
@@ -77,7 +79,7 @@ export class IERC1820Registry extends ContractBase {
     }
 
     // 0xa41e7d51
-    async updateERC165Cache (sender: TSender, account: TAddress, interfaceId: TBufferLike): Promise<TxWriter> {
+    async updateERC165Cache (sender: TSender, account: TAddress, interfaceId: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'updateERC165Cache'), sender, account, interfaceId);
     }
 
@@ -130,7 +132,7 @@ export class IERC1820Registry extends ContractBase {
     async getPastLogsInterfaceImplementerSet (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { account?: TAddress,interfaceHash?: TBufferLike,implementer?: TAddress }
+        params?: { account?: TAddress,interfaceHash?: TEth.Hex,implementer?: TAddress }
     }): Promise<ITxLogItem<TLogInterfaceImplementerSet>[]> {
         return await this.$getPastLogsParsed('InterfaceImplementerSet', options) as any;
     }
@@ -153,9 +155,9 @@ type TSender = TAccount & {
 }
 
     type TLogInterfaceImplementerSet = {
-        account: TAddress, interfaceHash: TBufferLike, implementer: TAddress
+        account: TAddress, interfaceHash: TEth.Hex, implementer: TAddress
     };
-    type TLogInterfaceImplementerSetParameters = [ account: TAddress, interfaceHash: TBufferLike, implementer: TAddress ];
+    type TLogInterfaceImplementerSetParameters = [ account: TAddress, interfaceHash: TEth.Hex, implementer: TAddress ];
     type TLogManagerChanged = {
         account: TAddress, newManager: TAddress
     };
@@ -171,7 +173,7 @@ interface IEvents {
 
 interface IMethodGetInterfaceImplementer {
   method: "getInterfaceImplementer"
-  arguments: [ account: TAddress, _interfaceHash: TBufferLike ]
+  arguments: [ account: TAddress, _interfaceHash: TEth.Hex ]
 }
 
 interface IMethodGetManager {
@@ -181,12 +183,12 @@ interface IMethodGetManager {
 
 interface IMethodImplementsERC165Interface {
   method: "implementsERC165Interface"
-  arguments: [ account: TAddress, interfaceId: TBufferLike ]
+  arguments: [ account: TAddress, interfaceId: TEth.Hex ]
 }
 
 interface IMethodImplementsERC165InterfaceNoCache {
   method: "implementsERC165InterfaceNoCache"
-  arguments: [ account: TAddress, interfaceId: TBufferLike ]
+  arguments: [ account: TAddress, interfaceId: TEth.Hex ]
 }
 
 interface IMethodInterfaceHash {
@@ -196,7 +198,7 @@ interface IMethodInterfaceHash {
 
 interface IMethodSetInterfaceImplementer {
   method: "setInterfaceImplementer"
-  arguments: [ account: TAddress, _interfaceHash: TBufferLike, implementer: TAddress ]
+  arguments: [ account: TAddress, _interfaceHash: TEth.Hex, implementer: TAddress ]
 }
 
 interface IMethodSetManager {
@@ -206,7 +208,7 @@ interface IMethodSetManager {
 
 interface IMethodUpdateERC165Cache {
   method: "updateERC165Cache"
-  arguments: [ account: TAddress, interfaceId: TBufferLike ]
+  arguments: [ account: TAddress, interfaceId: TEth.Hex ]
 }
 
 interface IMethods {
@@ -227,16 +229,16 @@ interface IMethods {
 
 
 interface IIERC1820RegistryTxCaller {
-    setInterfaceImplementer (sender: TSender, account: TAddress, _interfaceHash: TBufferLike, implementer: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setInterfaceImplementer (sender: TSender, account: TAddress, _interfaceHash: TEth.Hex, implementer: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setManager (sender: TSender, account: TAddress, newManager: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    updateERC165Cache (sender: TSender, account: TAddress, interfaceId: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    updateERC165Cache (sender: TSender, account: TAddress, interfaceId: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IIERC1820RegistryTxData {
-    setInterfaceImplementer (sender: TSender, account: TAddress, _interfaceHash: TBufferLike, implementer: TAddress): Promise<TEth.TxLike>
+    setInterfaceImplementer (sender: TSender, account: TAddress, _interfaceHash: TEth.Hex, implementer: TAddress): Promise<TEth.TxLike>
     setManager (sender: TSender, account: TAddress, newManager: TAddress): Promise<TEth.TxLike>
-    updateERC165Cache (sender: TSender, account: TAddress, interfaceId: TBufferLike): Promise<TEth.TxLike>
+    updateERC165Cache (sender: TSender, account: TAddress, interfaceId: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

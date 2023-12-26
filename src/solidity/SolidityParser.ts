@@ -64,7 +64,7 @@ export namespace SolidityParser {
     }, inheritanceChainIndex?: number) {
         let contract = ctx.contract as ContractDefinition;
         if (Ast.isContractDefinition(contract) === false) {
-            throw new Error(`Contract expected, got ${contract?.constructor.name} for ${ctx.contract.name}`);
+            throw new Error(`Contract expected for ${ctx.contract.name}`);
         }
 
         let abiFns = await alot(Ast.getFunctionDeclarations(contract))

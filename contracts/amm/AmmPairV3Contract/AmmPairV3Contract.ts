@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/0x8f8ef111b67c04eb1641f5ff19ee54cda062f163#code
  */
 import di from 'a-di';
@@ -39,7 +39,9 @@ export class AmmPairV3Contract extends ContractBase {
         this.storage = new AmmPairV3ContractStorageReader(this.address, this.client, this.explorer);
     }
 
-    
+    $meta = {
+    "class": "./contracts/amm/AmmPairV3Contract/AmmPairV3Contract.ts"
+}
 
     async $constructor (deployer: TSender, ): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -81,7 +83,7 @@ export class AmmPairV3Contract extends ContractBase {
     }
 
     // 0x490e6cbc
-    async flash (sender: TSender, recipient: TAddress, amount0: bigint, amount1: bigint, data: TBufferLike): Promise<TxWriter> {
+    async flash (sender: TSender, recipient: TAddress, amount0: bigint, amount1: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'flash'), sender, recipient, amount0, amount1, data);
     }
 
@@ -106,7 +108,7 @@ export class AmmPairV3Contract extends ContractBase {
     }
 
     // 0x3c8a7d8d
-    async mint (sender: TSender, recipient: TAddress, tickLower: number, tickUpper: number, amount: bigint, data: TBufferLike): Promise<TxWriter> {
+    async mint (sender: TSender, recipient: TAddress, tickLower: number, tickUpper: number, amount: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'mint'), sender, recipient, tickLower, tickUpper, amount, data);
     }
 
@@ -121,7 +123,7 @@ export class AmmPairV3Contract extends ContractBase {
     }
 
     // 0x514ea4bf
-    async positions (input0: TBufferLike): Promise<{ liquidity: bigint, feeGrowthInside0LastX128: bigint, feeGrowthInside1LastX128: bigint, tokensOwed0: bigint, tokensOwed1: bigint }> {
+    async positions (input0: TEth.Hex): Promise<{ liquidity: bigint, feeGrowthInside0LastX128: bigint, feeGrowthInside1LastX128: bigint, tokensOwed0: bigint, tokensOwed1: bigint }> {
         return this.$read(this.$getAbiItem('function', 'positions'), input0);
     }
 
@@ -146,7 +148,7 @@ export class AmmPairV3Contract extends ContractBase {
     }
 
     // 0x128acb08
-    async swap (sender: TSender, recipient: TAddress, zeroForOne: boolean, amountSpecified: bigint, sqrtPriceLimitX96: bigint, data: TBufferLike): Promise<TxWriter> {
+    async swap (sender: TSender, recipient: TAddress, zeroForOne: boolean, amountSpecified: bigint, sqrtPriceLimitX96: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'swap'), sender, recipient, zeroForOne, amountSpecified, sqrtPriceLimitX96, data);
     }
 
@@ -358,7 +360,7 @@ export class AmmPairV3Contract extends ContractBase {
 
     abi: TAbiItem[] = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"int24","name":"tickLower","type":"int24"},{"indexed":true,"internalType":"int24","name":"tickUpper","type":"int24"},{"indexed":false,"internalType":"uint128","name":"amount","type":"uint128"},{"indexed":false,"internalType":"uint256","name":"amount0","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1","type":"uint256"}],"name":"Burn","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":false,"internalType":"address","name":"recipient","type":"address"},{"indexed":true,"internalType":"int24","name":"tickLower","type":"int24"},{"indexed":true,"internalType":"int24","name":"tickUpper","type":"int24"},{"indexed":false,"internalType":"uint128","name":"amount0","type":"uint128"},{"indexed":false,"internalType":"uint128","name":"amount1","type":"uint128"}],"name":"Collect","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":true,"internalType":"address","name":"recipient","type":"address"},{"indexed":false,"internalType":"uint128","name":"amount0","type":"uint128"},{"indexed":false,"internalType":"uint128","name":"amount1","type":"uint128"}],"name":"CollectProtocol","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":true,"internalType":"address","name":"recipient","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount0","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"paid0","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"paid1","type":"uint256"}],"name":"Flash","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint16","name":"observationCardinalityNextOld","type":"uint16"},{"indexed":false,"internalType":"uint16","name":"observationCardinalityNextNew","type":"uint16"}],"name":"IncreaseObservationCardinalityNext","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint160","name":"sqrtPriceX96","type":"uint160"},{"indexed":false,"internalType":"int24","name":"tick","type":"int24"}],"name":"Initialize","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"sender","type":"address"},{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"int24","name":"tickLower","type":"int24"},{"indexed":true,"internalType":"int24","name":"tickUpper","type":"int24"},{"indexed":false,"internalType":"uint128","name":"amount","type":"uint128"},{"indexed":false,"internalType":"uint256","name":"amount0","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1","type":"uint256"}],"name":"Mint","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint8","name":"feeProtocol0Old","type":"uint8"},{"indexed":false,"internalType":"uint8","name":"feeProtocol1Old","type":"uint8"},{"indexed":false,"internalType":"uint8","name":"feeProtocol0New","type":"uint8"},{"indexed":false,"internalType":"uint8","name":"feeProtocol1New","type":"uint8"}],"name":"SetFeeProtocol","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":true,"internalType":"address","name":"recipient","type":"address"},{"indexed":false,"internalType":"int256","name":"amount0","type":"int256"},{"indexed":false,"internalType":"int256","name":"amount1","type":"int256"},{"indexed":false,"internalType":"uint160","name":"sqrtPriceX96","type":"uint160"},{"indexed":false,"internalType":"uint128","name":"liquidity","type":"uint128"},{"indexed":false,"internalType":"int24","name":"tick","type":"int24"}],"name":"Swap","type":"event"},{"inputs":[{"internalType":"int24","name":"tickLower","type":"int24"},{"internalType":"int24","name":"tickUpper","type":"int24"},{"internalType":"uint128","name":"amount","type":"uint128"}],"name":"burn","outputs":[{"internalType":"uint256","name":"amount0","type":"uint256"},{"internalType":"uint256","name":"amount1","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"recipient","type":"address"},{"internalType":"int24","name":"tickLower","type":"int24"},{"internalType":"int24","name":"tickUpper","type":"int24"},{"internalType":"uint128","name":"amount0Requested","type":"uint128"},{"internalType":"uint128","name":"amount1Requested","type":"uint128"}],"name":"collect","outputs":[{"internalType":"uint128","name":"amount0","type":"uint128"},{"internalType":"uint128","name":"amount1","type":"uint128"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint128","name":"amount0Requested","type":"uint128"},{"internalType":"uint128","name":"amount1Requested","type":"uint128"}],"name":"collectProtocol","outputs":[{"internalType":"uint128","name":"amount0","type":"uint128"},{"internalType":"uint128","name":"amount1","type":"uint128"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"factory","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"fee","outputs":[{"internalType":"uint24","name":"","type":"uint24"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"feeGrowthGlobal0X128","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"feeGrowthGlobal1X128","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount0","type":"uint256"},{"internalType":"uint256","name":"amount1","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"flash","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint16","name":"observationCardinalityNext","type":"uint16"}],"name":"increaseObservationCardinalityNext","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint160","name":"sqrtPriceX96","type":"uint160"}],"name":"initialize","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"liquidity","outputs":[{"internalType":"uint128","name":"","type":"uint128"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"maxLiquidityPerTick","outputs":[{"internalType":"uint128","name":"","type":"uint128"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"recipient","type":"address"},{"internalType":"int24","name":"tickLower","type":"int24"},{"internalType":"int24","name":"tickUpper","type":"int24"},{"internalType":"uint128","name":"amount","type":"uint128"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"mint","outputs":[{"internalType":"uint256","name":"amount0","type":"uint256"},{"internalType":"uint256","name":"amount1","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"observations","outputs":[{"internalType":"uint32","name":"blockTimestamp","type":"uint32"},{"internalType":"int56","name":"tickCumulative","type":"int56"},{"internalType":"uint160","name":"secondsPerLiquidityCumulativeX128","type":"uint160"},{"internalType":"bool","name":"initialized","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint32[]","name":"secondsAgos","type":"uint32[]"}],"name":"observe","outputs":[{"internalType":"int56[]","name":"tickCumulatives","type":"int56[]"},{"internalType":"uint160[]","name":"secondsPerLiquidityCumulativeX128s","type":"uint160[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"name":"positions","outputs":[{"internalType":"uint128","name":"liquidity","type":"uint128"},{"internalType":"uint256","name":"feeGrowthInside0LastX128","type":"uint256"},{"internalType":"uint256","name":"feeGrowthInside1LastX128","type":"uint256"},{"internalType":"uint128","name":"tokensOwed0","type":"uint128"},{"internalType":"uint128","name":"tokensOwed1","type":"uint128"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"protocolFees","outputs":[{"internalType":"uint128","name":"token0","type":"uint128"},{"internalType":"uint128","name":"token1","type":"uint128"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint8","name":"feeProtocol0","type":"uint8"},{"internalType":"uint8","name":"feeProtocol1","type":"uint8"}],"name":"setFeeProtocol","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"slot0","outputs":[{"internalType":"uint160","name":"sqrtPriceX96","type":"uint160"},{"internalType":"int24","name":"tick","type":"int24"},{"internalType":"uint16","name":"observationIndex","type":"uint16"},{"internalType":"uint16","name":"observationCardinality","type":"uint16"},{"internalType":"uint16","name":"observationCardinalityNext","type":"uint16"},{"internalType":"uint8","name":"feeProtocol","type":"uint8"},{"internalType":"bool","name":"unlocked","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"int24","name":"tickLower","type":"int24"},{"internalType":"int24","name":"tickUpper","type":"int24"}],"name":"snapshotCumulativesInside","outputs":[{"internalType":"int56","name":"tickCumulativeInside","type":"int56"},{"internalType":"uint160","name":"secondsPerLiquidityInsideX128","type":"uint160"},{"internalType":"uint32","name":"secondsInside","type":"uint32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"recipient","type":"address"},{"internalType":"bool","name":"zeroForOne","type":"bool"},{"internalType":"int256","name":"amountSpecified","type":"int256"},{"internalType":"uint160","name":"sqrtPriceLimitX96","type":"uint160"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"swap","outputs":[{"internalType":"int256","name":"amount0","type":"int256"},{"internalType":"int256","name":"amount1","type":"int256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"int16","name":"","type":"int16"}],"name":"tickBitmap","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"tickSpacing","outputs":[{"internalType":"int24","name":"","type":"int24"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"int24","name":"","type":"int24"}],"name":"ticks","outputs":[{"internalType":"uint128","name":"liquidityGross","type":"uint128"},{"internalType":"int128","name":"liquidityNet","type":"int128"},{"internalType":"uint256","name":"feeGrowthOutside0X128","type":"uint256"},{"internalType":"uint256","name":"feeGrowthOutside1X128","type":"uint256"},{"internalType":"int56","name":"tickCumulativeOutside","type":"int56"},{"internalType":"uint160","name":"secondsPerLiquidityOutsideX128","type":"uint160"},{"internalType":"uint32","name":"secondsOutside","type":"uint32"},{"internalType":"bool","name":"initialized","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"token0","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"token1","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"}]
 
-    storage: AmmPairV3ContractStorageReader
+    declare storage: AmmPairV3ContractStorageReader
 }
 
 type TSender = TAccount & {
@@ -454,7 +456,7 @@ interface IMethodFeeGrowthGlobal1X128 {
 
 interface IMethodFlash {
   method: "flash"
-  arguments: [ recipient: TAddress, amount0: bigint, amount1: bigint, data: TBufferLike ]
+  arguments: [ recipient: TAddress, amount0: bigint, amount1: bigint, data: TEth.Hex ]
 }
 
 interface IMethodIncreaseObservationCardinalityNext {
@@ -479,7 +481,7 @@ interface IMethodMaxLiquidityPerTick {
 
 interface IMethodMint {
   method: "mint"
-  arguments: [ recipient: TAddress, tickLower: number, tickUpper: number, amount: bigint, data: TBufferLike ]
+  arguments: [ recipient: TAddress, tickLower: number, tickUpper: number, amount: bigint, data: TEth.Hex ]
 }
 
 interface IMethodObservations {
@@ -494,7 +496,7 @@ interface IMethodObserve {
 
 interface IMethodPositions {
   method: "positions"
-  arguments: [ input0: TBufferLike ]
+  arguments: [ input0: TEth.Hex ]
 }
 
 interface IMethodProtocolFees {
@@ -519,7 +521,7 @@ interface IMethodSnapshotCumulativesInside {
 
 interface IMethodSwap {
   method: "swap"
-  arguments: [ recipient: TAddress, zeroForOne: boolean, amountSpecified: bigint, sqrtPriceLimitX96: bigint, data: TBufferLike ]
+  arguments: [ recipient: TAddress, zeroForOne: boolean, amountSpecified: bigint, sqrtPriceLimitX96: bigint, data: TEth.Hex ]
 }
 
 interface IMethodTickBitmap {
@@ -620,7 +622,7 @@ class AmmPairV3ContractStorageReader extends ContractStorageReaderBase {
         return this.$storage.get(['tickBitmap', key]);
     }
 
-    async positions(key: TBufferLike): Promise<{ liquidity: bigint, feeGrowthInside0LastX128: bigint, feeGrowthInside1LastX128: bigint, tokensOwed0: bigint, tokensOwed1: bigint }> {
+    async positions(key: TEth.Hex): Promise<{ liquidity: bigint, feeGrowthInside0LastX128: bigint, feeGrowthInside1LastX128: bigint, tokensOwed0: bigint, tokensOwed1: bigint }> {
         return this.$storage.get(['positions', key]);
     }
 
@@ -702,12 +704,12 @@ interface IAmmPairV3ContractTxCaller {
     burn (sender: TSender, tickLower: number, tickUpper: number, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     collect (sender: TSender, recipient: TAddress, tickLower: number, tickUpper: number, amount0Requested: bigint, amount1Requested: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     collectProtocol (sender: TSender, recipient: TAddress, amount0Requested: bigint, amount1Requested: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    flash (sender: TSender, recipient: TAddress, amount0: bigint, amount1: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    flash (sender: TSender, recipient: TAddress, amount0: bigint, amount1: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     increaseObservationCardinalityNext (sender: TSender, observationCardinalityNext: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     initialize (sender: TSender, sqrtPriceX96: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    mint (sender: TSender, recipient: TAddress, tickLower: number, tickUpper: number, amount: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    mint (sender: TSender, recipient: TAddress, tickLower: number, tickUpper: number, amount: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setFeeProtocol (sender: TSender, feeProtocol0: number, feeProtocol1: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    swap (sender: TSender, recipient: TAddress, zeroForOne: boolean, amountSpecified: bigint, sqrtPriceLimitX96: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    swap (sender: TSender, recipient: TAddress, zeroForOne: boolean, amountSpecified: bigint, sqrtPriceLimitX96: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
@@ -715,12 +717,12 @@ interface IAmmPairV3ContractTxData {
     burn (sender: TSender, tickLower: number, tickUpper: number, amount: bigint): Promise<TEth.TxLike>
     collect (sender: TSender, recipient: TAddress, tickLower: number, tickUpper: number, amount0Requested: bigint, amount1Requested: bigint): Promise<TEth.TxLike>
     collectProtocol (sender: TSender, recipient: TAddress, amount0Requested: bigint, amount1Requested: bigint): Promise<TEth.TxLike>
-    flash (sender: TSender, recipient: TAddress, amount0: bigint, amount1: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    flash (sender: TSender, recipient: TAddress, amount0: bigint, amount1: bigint, data: TEth.Hex): Promise<TEth.TxLike>
     increaseObservationCardinalityNext (sender: TSender, observationCardinalityNext: number): Promise<TEth.TxLike>
     initialize (sender: TSender, sqrtPriceX96: bigint): Promise<TEth.TxLike>
-    mint (sender: TSender, recipient: TAddress, tickLower: number, tickUpper: number, amount: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    mint (sender: TSender, recipient: TAddress, tickLower: number, tickUpper: number, amount: bigint, data: TEth.Hex): Promise<TEth.TxLike>
     setFeeProtocol (sender: TSender, feeProtocol0: number, feeProtocol1: number): Promise<TEth.TxLike>
-    swap (sender: TSender, recipient: TAddress, zeroForOne: boolean, amountSpecified: bigint, sqrtPriceLimitX96: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    swap (sender: TSender, recipient: TAddress, zeroForOne: boolean, amountSpecified: bigint, sqrtPriceLimitX96: bigint, data: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

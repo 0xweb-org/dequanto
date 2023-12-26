@@ -216,7 +216,7 @@ export class GeneratorFromAbi {
             }
             if (reader.className) {
                 storageReaderClass = reader.code;
-                storageReaderProperty = `storage: ${reader.className}`;
+                storageReaderProperty = `declare storage: ${reader.className}`;
                 storageReaderInitializer = `this.storage = new ${reader.className}(this.address, this.client, this.explorer);`;
                 $logger.log(`green<StorageReader> was generated`);
             } else {

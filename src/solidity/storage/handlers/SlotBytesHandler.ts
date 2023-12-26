@@ -66,7 +66,10 @@ export class SlotBytesHandler extends ASlotsStorageHandler {
             return;
         }
 
-        hex = $hex.padBytes(hex, 31, { padEnd: true }) + $hex.raw($hex.toHexBuffer(length));
+        hex = $hex.concat([
+            $hex.padBytes(hex, 31, { padEnd: true }),
+            $hex.toHexBuffer(length)
+        ]);
         await this.transport.setStorageAt(slot.slot, 0, 256, hex);
     }
 
@@ -124,7 +127,7 @@ export class SlotBytesHandler extends ASlotsStorageHandler {
 
     protected getSlot (idx: number) {
         let slotArrNr = this.slot.slot;
-        let x = BigInt($contract.keccak256($abiUtils.encodePacked(slotArrNr)));
+        let x = BigInt($contract.keccak256($abiUtils.encodePacked(['uint256'], [slotArrNr])));
         let uint = x + BigInt(idx);
         return $bigint.toHex(uint);
     }

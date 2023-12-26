@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,10 +39,12 @@ export class IArbSys extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/IArbSys.ts"
+}
 
     // 0x2b407a82
-    async arbBlockHash (arbBlockNum: bigint): Promise<TBufferLike> {
+    async arbBlockHash (arbBlockNum: bigint): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'arbBlockHash'), arbBlockNum);
     }
 
@@ -82,12 +84,12 @@ export class IArbSys extends ContractBase {
     }
 
     // 0x7aeecd2a
-    async sendMerkleTreeState (): Promise<{ size: bigint, root: TBufferLike, partials: TBufferLike[] }> {
+    async sendMerkleTreeState (): Promise<{ size: bigint, root: TEth.Hex, partials: TEth.Hex[] }> {
         return this.$read(this.$getAbiItem('function', 'sendMerkleTreeState'));
     }
 
     // 0x928c169a
-    async sendTxToL1 (sender: TSender, destination: TAddress, data: TBufferLike): Promise<TxWriter> {
+    async sendTxToL1 (sender: TSender, destination: TAddress, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'sendTxToL1'), sender, destination, data);
     }
 
@@ -175,7 +177,7 @@ export class IArbSys extends ContractBase {
     async getPastLogsSendMerkleUpdate (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { reserved?: bigint,hash?: TBufferLike,position?: bigint }
+        params?: { reserved?: bigint,hash?: TEth.Hex,position?: bigint }
     }): Promise<ITxLogItem<TLogSendMerkleUpdate>[]> {
         return await this.$getPastLogsParsed('SendMerkleUpdate', options) as any;
     }
@@ -190,17 +192,17 @@ type TSender = TAccount & {
 }
 
     type TLogL2ToL1Transaction = {
-        caller: TAddress, destination: TAddress, uniqueId: bigint, batchNumber: bigint, indexInBatch: bigint, arbBlockNum: bigint, ethBlockNum: bigint, timestamp: bigint, callvalue: bigint, data: TBufferLike
+        caller: TAddress, destination: TAddress, uniqueId: bigint, batchNumber: bigint, indexInBatch: bigint, arbBlockNum: bigint, ethBlockNum: bigint, timestamp: bigint, callvalue: bigint, data: TEth.Hex
     };
-    type TLogL2ToL1TransactionParameters = [ caller: TAddress, destination: TAddress, uniqueId: bigint, batchNumber: bigint, indexInBatch: bigint, arbBlockNum: bigint, ethBlockNum: bigint, timestamp: bigint, callvalue: bigint, data: TBufferLike ];
+    type TLogL2ToL1TransactionParameters = [ caller: TAddress, destination: TAddress, uniqueId: bigint, batchNumber: bigint, indexInBatch: bigint, arbBlockNum: bigint, ethBlockNum: bigint, timestamp: bigint, callvalue: bigint, data: TEth.Hex ];
     type TLogL2ToL1Tx = {
-        caller: TAddress, destination: TAddress, hash: bigint, position: bigint, arbBlockNum: bigint, ethBlockNum: bigint, timestamp: bigint, callvalue: bigint, data: TBufferLike
+        caller: TAddress, destination: TAddress, hash: bigint, position: bigint, arbBlockNum: bigint, ethBlockNum: bigint, timestamp: bigint, callvalue: bigint, data: TEth.Hex
     };
-    type TLogL2ToL1TxParameters = [ caller: TAddress, destination: TAddress, hash: bigint, position: bigint, arbBlockNum: bigint, ethBlockNum: bigint, timestamp: bigint, callvalue: bigint, data: TBufferLike ];
+    type TLogL2ToL1TxParameters = [ caller: TAddress, destination: TAddress, hash: bigint, position: bigint, arbBlockNum: bigint, ethBlockNum: bigint, timestamp: bigint, callvalue: bigint, data: TEth.Hex ];
     type TLogSendMerkleUpdate = {
-        reserved: bigint, hash: TBufferLike, position: bigint
+        reserved: bigint, hash: TEth.Hex, position: bigint
     };
-    type TLogSendMerkleUpdateParameters = [ reserved: bigint, hash: TBufferLike, position: bigint ];
+    type TLogSendMerkleUpdateParameters = [ reserved: bigint, hash: TEth.Hex, position: bigint ];
 
 interface IEvents {
   L2ToL1Transaction: TLogL2ToL1TransactionParameters
@@ -258,7 +260,7 @@ interface IMethodSendMerkleTreeState {
 
 interface IMethodSendTxToL1 {
   method: "sendTxToL1"
-  arguments: [ destination: TAddress, data: TBufferLike ]
+  arguments: [ destination: TAddress, data: TEth.Hex ]
 }
 
 interface IMethodWasMyCallersAddressAliased {
@@ -293,13 +295,13 @@ interface IMethods {
 
 
 interface IIArbSysTxCaller {
-    sendTxToL1 (sender: TSender, destination: TAddress, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    sendTxToL1 (sender: TSender, destination: TAddress, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     withdrawEth (sender: TSender, destination: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IIArbSysTxData {
-    sendTxToL1 (sender: TSender, destination: TAddress, data: TBufferLike): Promise<TEth.TxLike>
+    sendTxToL1 (sender: TSender, destination: TAddress, data: TEth.Hex): Promise<TEth.TxLike>
     withdrawEth (sender: TSender, destination: TAddress): Promise<TEth.TxLike>
 }
 

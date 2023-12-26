@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,7 +39,9 @@ export class ICompoundTimelock extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/ICompoundTimelock.ts"
+}
 
     // 0xc1a287e2
     async GRACE_PERIOD (): Promise<bigint> {
@@ -67,7 +69,7 @@ export class ICompoundTimelock extends ContractBase {
     }
 
     // 0x591fcdfe
-    async cancelTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint): Promise<TxWriter> {
+    async cancelTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'cancelTransaction'), sender, target, value, signature, data, eta);
     }
 
@@ -77,7 +79,7 @@ export class ICompoundTimelock extends ContractBase {
     }
 
     // 0x0825f38f
-    async executeTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint): Promise<TxWriter> {
+    async executeTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'executeTransaction'), sender, target, value, signature, data, eta);
     }
 
@@ -87,12 +89,12 @@ export class ICompoundTimelock extends ContractBase {
     }
 
     // 0x3a66f901
-    async queueTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint): Promise<TxWriter> {
+    async queueTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'queueTransaction'), sender, target, value, signature, data, eta);
     }
 
     // 0xf2b06537
-    async queuedTransactions (input0: TBufferLike): Promise<boolean> {
+    async queuedTransactions (input0: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'queuedTransactions'), input0);
     }
 
@@ -191,7 +193,7 @@ export class ICompoundTimelock extends ContractBase {
     async getPastLogsCancelTransaction (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { txHash?: TBufferLike,target?: TAddress }
+        params?: { txHash?: TEth.Hex,target?: TAddress }
     }): Promise<ITxLogItem<TLogCancelTransaction>[]> {
         return await this.$getPastLogsParsed('CancelTransaction', options) as any;
     }
@@ -199,7 +201,7 @@ export class ICompoundTimelock extends ContractBase {
     async getPastLogsExecuteTransaction (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { txHash?: TBufferLike,target?: TAddress }
+        params?: { txHash?: TEth.Hex,target?: TAddress }
     }): Promise<ITxLogItem<TLogExecuteTransaction>[]> {
         return await this.$getPastLogsParsed('ExecuteTransaction', options) as any;
     }
@@ -231,7 +233,7 @@ export class ICompoundTimelock extends ContractBase {
     async getPastLogsQueueTransaction (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { txHash?: TBufferLike,target?: TAddress }
+        params?: { txHash?: TEth.Hex,target?: TAddress }
     }): Promise<ITxLogItem<TLogQueueTransaction>[]> {
         return await this.$getPastLogsParsed('QueueTransaction', options) as any;
     }
@@ -246,13 +248,13 @@ type TSender = TAccount & {
 }
 
     type TLogCancelTransaction = {
-        txHash: TBufferLike, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint
+        txHash: TEth.Hex, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint
     };
-    type TLogCancelTransactionParameters = [ txHash: TBufferLike, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint ];
+    type TLogCancelTransactionParameters = [ txHash: TEth.Hex, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint ];
     type TLogExecuteTransaction = {
-        txHash: TBufferLike, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint
+        txHash: TEth.Hex, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint
     };
-    type TLogExecuteTransactionParameters = [ txHash: TBufferLike, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint ];
+    type TLogExecuteTransactionParameters = [ txHash: TEth.Hex, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint ];
     type TLogNewAdmin = {
         newAdmin: TAddress
     };
@@ -266,9 +268,9 @@ type TSender = TAccount & {
     };
     type TLogNewPendingAdminParameters = [ newPendingAdmin: TAddress ];
     type TLogQueueTransaction = {
-        txHash: TBufferLike, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint
+        txHash: TEth.Hex, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint
     };
-    type TLogQueueTransactionParameters = [ txHash: TBufferLike, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint ];
+    type TLogQueueTransactionParameters = [ txHash: TEth.Hex, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint ];
 
 interface IEvents {
   CancelTransaction: TLogCancelTransactionParameters
@@ -309,7 +311,7 @@ interface IMethodAdmin {
 
 interface IMethodCancelTransaction {
   method: "cancelTransaction"
-  arguments: [ target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint ]
+  arguments: [ target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint ]
 }
 
 interface IMethodDelay {
@@ -319,7 +321,7 @@ interface IMethodDelay {
 
 interface IMethodExecuteTransaction {
   method: "executeTransaction"
-  arguments: [ target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint ]
+  arguments: [ target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint ]
 }
 
 interface IMethodPendingAdmin {
@@ -329,12 +331,12 @@ interface IMethodPendingAdmin {
 
 interface IMethodQueueTransaction {
   method: "queueTransaction"
-  arguments: [ target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint ]
+  arguments: [ target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint ]
 }
 
 interface IMethodQueuedTransactions {
   method: "queuedTransactions"
-  arguments: [ input0: TBufferLike ]
+  arguments: [ input0: TEth.Hex ]
 }
 
 interface IMethodSetDelay {
@@ -371,9 +373,9 @@ interface IMethods {
 
 interface IICompoundTimelockTxCaller {
     acceptAdmin (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    cancelTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    executeTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    queueTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    cancelTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    executeTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    queueTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setDelay (sender: TSender, input0: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setPendingAdmin (sender: TSender, input0: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
@@ -381,9 +383,9 @@ interface IICompoundTimelockTxCaller {
 
 interface IICompoundTimelockTxData {
     acceptAdmin (sender: TSender, ): Promise<TEth.TxLike>
-    cancelTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint): Promise<TEth.TxLike>
-    executeTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint): Promise<TEth.TxLike>
-    queueTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TBufferLike, eta: bigint): Promise<TEth.TxLike>
+    cancelTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint): Promise<TEth.TxLike>
+    executeTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint): Promise<TEth.TxLike>
+    queueTransaction (sender: TSender, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint): Promise<TEth.TxLike>
     setDelay (sender: TSender, input0: bigint): Promise<TEth.TxLike>
     setPendingAdmin (sender: TSender, input0: TAddress): Promise<TEth.TxLike>
 }

@@ -96,9 +96,9 @@ export class SlotsDump {
             .toArrayAsync({ threads: 2 });
     }
 
-    async restoreStorageFromTable (csv: [string, string][]) {
+    async restoreStorageFromTable (csv: [string, TEth.Hex][]) {
         await alot(csv)
-            .forEachAsync(async (entry: [string, string]) => {
+            .forEachAsync(async (entry: [string, TEth.Hex]) => {
                 let [ location, buffer ] = entry;
                 await this.client.debug.setStorageAt(this.address, location, buffer);
             })
@@ -146,12 +146,16 @@ export class SlotsDump {
 
 class MockedStorageTransport extends SlotsStorageTransport {
 
-    private loader = new BatchLoader(this.address, this.client, this.params)
+    private loader: BatchLoader
 
     memory = [] as [string, string][];
 
-    constructor ( public keysLoader: MappingKeysLoader, client: Web3Client, address: TAddress, params?: { blockNumber: number }) {
+    constructor ( public keysLoader: MappingKeysLoader, client: Web3Client, address: TAddress, params?: {
+        blockNumber: RpcTypes.BlockNumberOrTagOrHash
+    }) {
         super(client, address, params)
+
+        this.loader = new BatchLoader(address, client, params);
     }
 
     protected async getStorageAtInner(slot: TEth.Hex): Promise<TEth.Hex> {

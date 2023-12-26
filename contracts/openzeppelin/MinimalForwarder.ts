@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -52,19 +52,21 @@ export class MinimalForwarder extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/MinimalForwarder.ts"
+}
 
     async $constructor (deployer: TSender, ): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
     }
 
     // 0x84b0196e
-    async eip712Domain (): Promise<{ fields: TBufferLike, name: string, version: string, chainId: bigint, verifyingContract: TAddress, salt: TBufferLike, extensions: bigint[] }> {
+    async eip712Domain (): Promise<{ fields: TEth.Hex, name: string, version: string, chainId: bigint, verifyingContract: TAddress, salt: TEth.Hex, extensions: bigint[] }> {
         return this.$read(this.$getAbiItem('function', 'eip712Domain'));
     }
 
     // 0x47153f82
-    async execute (sender: TSender, req: { from: TAddress, to: TAddress, value: bigint, gas: bigint, nonce: bigint, data: TBufferLike }, signature: TBufferLike): Promise<TxWriter> {
+    async execute (sender: TSender, req: { from: TAddress, to: TAddress, value: bigint, gas: bigint, nonce: bigint, data: TEth.Hex }, signature: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'execute'), sender, req, signature);
     }
 
@@ -74,7 +76,7 @@ export class MinimalForwarder extends ContractBase {
     }
 
     // 0xbf5d3bdb
-    async verify (req: { from: TAddress, to: TAddress, value: bigint, gas: bigint, nonce: bigint, data: TBufferLike }, signature: TBufferLike): Promise<boolean> {
+    async verify (req: { from: TAddress, to: TAddress, value: bigint, gas: bigint, nonce: bigint, data: TEth.Hex }, signature: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'verify'), req, signature);
     }
 
@@ -151,7 +153,7 @@ interface IMethodEip712Domain {
 
 interface IMethodExecute {
   method: "execute"
-  arguments: [ req: { from: TAddress, to: TAddress, value: bigint, gas: bigint, nonce: bigint, data: TBufferLike }, signature: TBufferLike ]
+  arguments: [ req: { from: TAddress, to: TAddress, value: bigint, gas: bigint, nonce: bigint, data: TEth.Hex }, signature: TEth.Hex ]
 }
 
 interface IMethodGetNonce {
@@ -161,7 +163,7 @@ interface IMethodGetNonce {
 
 interface IMethodVerify {
   method: "verify"
-  arguments: [ req: { from: TAddress, to: TAddress, value: bigint, gas: bigint, nonce: bigint, data: TBufferLike }, signature: TBufferLike ]
+  arguments: [ req: { from: TAddress, to: TAddress, value: bigint, gas: bigint, nonce: bigint, data: TEth.Hex }, signature: TEth.Hex ]
 }
 
 interface IMethods {
@@ -178,12 +180,12 @@ interface IMethods {
 
 
 interface IMinimalForwarderTxCaller {
-    execute (sender: TSender, req: { from: TAddress, to: TAddress, value: bigint, gas: bigint, nonce: bigint, data: TBufferLike }, signature: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    execute (sender: TSender, req: { from: TAddress, to: TAddress, value: bigint, gas: bigint, nonce: bigint, data: TEth.Hex }, signature: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IMinimalForwarderTxData {
-    execute (sender: TSender, req: { from: TAddress, to: TAddress, value: bigint, gas: bigint, nonce: bigint, data: TBufferLike }, signature: TBufferLike): Promise<TEth.TxLike>
+    execute (sender: TSender, req: { from: TAddress, to: TAddress, value: bigint, gas: bigint, nonce: bigint, data: TEth.Hex }, signature: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

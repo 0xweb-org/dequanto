@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,49 +39,51 @@ export class TimelockController extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/TimelockController.ts"
+}
 
     async $constructor (deployer: TSender, minDelay: bigint, proposers: TAddress[], executors: TAddress[], admin: TAddress): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
     }
 
     // 0xb08e51c0
-    async CANCELLER_ROLE (): Promise<TBufferLike> {
+    async CANCELLER_ROLE (): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'CANCELLER_ROLE'));
     }
 
     // 0xa217fddf
-    async DEFAULT_ADMIN_ROLE (): Promise<TBufferLike> {
+    async DEFAULT_ADMIN_ROLE (): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'DEFAULT_ADMIN_ROLE'));
     }
 
     // 0x07bd0265
-    async EXECUTOR_ROLE (): Promise<TBufferLike> {
+    async EXECUTOR_ROLE (): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'EXECUTOR_ROLE'));
     }
 
     // 0x8f61f4f5
-    async PROPOSER_ROLE (): Promise<TBufferLike> {
+    async PROPOSER_ROLE (): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'PROPOSER_ROLE'));
     }
 
     // 0x0d3cf6fc
-    async TIMELOCK_ADMIN_ROLE (): Promise<TBufferLike> {
+    async TIMELOCK_ADMIN_ROLE (): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'TIMELOCK_ADMIN_ROLE'));
     }
 
     // 0xc4d252f5
-    async cancel (sender: TSender, id: TBufferLike): Promise<TxWriter> {
+    async cancel (sender: TSender, id: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'cancel'), sender, id);
     }
 
     // 0x134008d3
-    async execute (sender: TSender, target: TAddress, value: bigint, payload: TBufferLike, predecessor: TBufferLike, salt: TBufferLike): Promise<TxWriter> {
+    async execute (sender: TSender, target: TAddress, value: bigint, payload: TEth.Hex, predecessor: TEth.Hex, salt: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'execute'), sender, target, value, payload, predecessor, salt);
     }
 
     // 0xe38335e5
-    async executeBatch (sender: TSender, targets: TAddress[], values: bigint[], payloads: TBufferLike[], predecessor: TBufferLike, salt: TBufferLike): Promise<TxWriter> {
+    async executeBatch (sender: TSender, targets: TAddress[], values: bigint[], payloads: TEth.Hex[], predecessor: TEth.Hex, salt: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'executeBatch'), sender, targets, values, payloads, predecessor, salt);
     }
 
@@ -91,92 +93,92 @@ export class TimelockController extends ContractBase {
     }
 
     // 0x248a9ca3
-    async getRoleAdmin (role: TBufferLike): Promise<TBufferLike> {
+    async getRoleAdmin (role: TEth.Hex): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'getRoleAdmin'), role);
     }
 
     // 0xd45c4435
-    async getTimestamp (id: TBufferLike): Promise<bigint> {
+    async getTimestamp (id: TEth.Hex): Promise<bigint> {
         return this.$read(this.$getAbiItem('function', 'getTimestamp'), id);
     }
 
     // 0x2f2ff15d
-    async grantRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TxWriter> {
+    async grantRole (sender: TSender, role: TEth.Hex, account: TAddress): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'grantRole'), sender, role, account);
     }
 
     // 0x91d14854
-    async hasRole (role: TBufferLike, account: TAddress): Promise<boolean> {
+    async hasRole (role: TEth.Hex, account: TAddress): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'hasRole'), role, account);
     }
 
     // 0x8065657f
-    async hashOperation (target: TAddress, value: bigint, data: TBufferLike, predecessor: TBufferLike, salt: TBufferLike): Promise<TBufferLike> {
+    async hashOperation (target: TAddress, value: bigint, data: TEth.Hex, predecessor: TEth.Hex, salt: TEth.Hex): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'hashOperation'), target, value, data, predecessor, salt);
     }
 
     // 0xb1c5f427
-    async hashOperationBatch (targets: TAddress[], values: bigint[], payloads: TBufferLike[], predecessor: TBufferLike, salt: TBufferLike): Promise<TBufferLike> {
+    async hashOperationBatch (targets: TAddress[], values: bigint[], payloads: TEth.Hex[], predecessor: TEth.Hex, salt: TEth.Hex): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'hashOperationBatch'), targets, values, payloads, predecessor, salt);
     }
 
     // 0x31d50750
-    async isOperation (id: TBufferLike): Promise<boolean> {
+    async isOperation (id: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'isOperation'), id);
     }
 
     // 0x2ab0f529
-    async isOperationDone (id: TBufferLike): Promise<boolean> {
+    async isOperationDone (id: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'isOperationDone'), id);
     }
 
     // 0x584b153e
-    async isOperationPending (id: TBufferLike): Promise<boolean> {
+    async isOperationPending (id: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'isOperationPending'), id);
     }
 
     // 0x13bc9f20
-    async isOperationReady (id: TBufferLike): Promise<boolean> {
+    async isOperationReady (id: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'isOperationReady'), id);
     }
 
     // 0xbc197c81
-    async onERC1155BatchReceived (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TBufferLike): Promise<TxWriter> {
+    async onERC1155BatchReceived (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'onERC1155BatchReceived'), sender, input0, input1, input2, input3, input4);
     }
 
     // 0xf23a6e61
-    async onERC1155Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TBufferLike): Promise<TxWriter> {
+    async onERC1155Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'onERC1155Received'), sender, input0, input1, input2, input3, input4);
     }
 
     // 0x150b7a02
-    async onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TBufferLike): Promise<TxWriter> {
+    async onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'onERC721Received'), sender, input0, input1, input2, input3);
     }
 
     // 0x36568abe
-    async renounceRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TxWriter> {
+    async renounceRole (sender: TSender, role: TEth.Hex, account: TAddress): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'renounceRole'), sender, role, account);
     }
 
     // 0xd547741f
-    async revokeRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TxWriter> {
+    async revokeRole (sender: TSender, role: TEth.Hex, account: TAddress): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'revokeRole'), sender, role, account);
     }
 
     // 0x01d5062a
-    async schedule (sender: TSender, target: TAddress, value: bigint, data: TBufferLike, predecessor: TBufferLike, salt: TBufferLike, delay: bigint): Promise<TxWriter> {
+    async schedule (sender: TSender, target: TAddress, value: bigint, data: TEth.Hex, predecessor: TEth.Hex, salt: TEth.Hex, delay: bigint): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'schedule'), sender, target, value, data, predecessor, salt, delay);
     }
 
     // 0x8f2a0bb0
-    async scheduleBatch (sender: TSender, targets: TAddress[], values: bigint[], payloads: TBufferLike[], predecessor: TBufferLike, salt: TBufferLike, delay: bigint): Promise<TxWriter> {
+    async scheduleBatch (sender: TSender, targets: TAddress[], values: bigint[], payloads: TEth.Hex[], predecessor: TEth.Hex, salt: TEth.Hex, delay: bigint): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'scheduleBatch'), sender, targets, values, payloads, predecessor, salt, delay);
     }
 
     // 0x01ffc9a7
-    async supportsInterface (interfaceId: TBufferLike): Promise<boolean> {
+    async supportsInterface (interfaceId: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'supportsInterface'), interfaceId);
     }
 
@@ -288,7 +290,7 @@ export class TimelockController extends ContractBase {
     async getPastLogsCallExecuted (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { id?: TBufferLike,index?: bigint }
+        params?: { id?: TEth.Hex,index?: bigint }
     }): Promise<ITxLogItem<TLogCallExecuted>[]> {
         return await this.$getPastLogsParsed('CallExecuted', options) as any;
     }
@@ -296,7 +298,7 @@ export class TimelockController extends ContractBase {
     async getPastLogsCallSalt (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { id?: TBufferLike }
+        params?: { id?: TEth.Hex }
     }): Promise<ITxLogItem<TLogCallSalt>[]> {
         return await this.$getPastLogsParsed('CallSalt', options) as any;
     }
@@ -304,7 +306,7 @@ export class TimelockController extends ContractBase {
     async getPastLogsCallScheduled (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { id?: TBufferLike,index?: bigint }
+        params?: { id?: TEth.Hex,index?: bigint }
     }): Promise<ITxLogItem<TLogCallScheduled>[]> {
         return await this.$getPastLogsParsed('CallScheduled', options) as any;
     }
@@ -312,7 +314,7 @@ export class TimelockController extends ContractBase {
     async getPastLogsCancelled (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { id?: TBufferLike }
+        params?: { id?: TEth.Hex }
     }): Promise<ITxLogItem<TLogCancelled>[]> {
         return await this.$getPastLogsParsed('Cancelled', options) as any;
     }
@@ -328,7 +330,7 @@ export class TimelockController extends ContractBase {
     async getPastLogsRoleAdminChanged (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { role?: TBufferLike,previousAdminRole?: TBufferLike,newAdminRole?: TBufferLike }
+        params?: { role?: TEth.Hex,previousAdminRole?: TEth.Hex,newAdminRole?: TEth.Hex }
     }): Promise<ITxLogItem<TLogRoleAdminChanged>[]> {
         return await this.$getPastLogsParsed('RoleAdminChanged', options) as any;
     }
@@ -336,7 +338,7 @@ export class TimelockController extends ContractBase {
     async getPastLogsRoleGranted (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { role?: TBufferLike,account?: TAddress,sender?: TAddress }
+        params?: { role?: TEth.Hex,account?: TAddress,sender?: TAddress }
     }): Promise<ITxLogItem<TLogRoleGranted>[]> {
         return await this.$getPastLogsParsed('RoleGranted', options) as any;
     }
@@ -344,7 +346,7 @@ export class TimelockController extends ContractBase {
     async getPastLogsRoleRevoked (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { role?: TBufferLike,account?: TAddress,sender?: TAddress }
+        params?: { role?: TEth.Hex,account?: TAddress,sender?: TAddress }
     }): Promise<ITxLogItem<TLogRoleRevoked>[]> {
         return await this.$getPastLogsParsed('RoleRevoked', options) as any;
     }
@@ -359,37 +361,37 @@ type TSender = TAccount & {
 }
 
     type TLogCallExecuted = {
-        id: TBufferLike, index: bigint, target: TAddress, value: bigint, data: TBufferLike
+        id: TEth.Hex, index: bigint, target: TAddress, value: bigint, data: TEth.Hex
     };
-    type TLogCallExecutedParameters = [ id: TBufferLike, index: bigint, target: TAddress, value: bigint, data: TBufferLike ];
+    type TLogCallExecutedParameters = [ id: TEth.Hex, index: bigint, target: TAddress, value: bigint, data: TEth.Hex ];
     type TLogCallSalt = {
-        id: TBufferLike, salt: TBufferLike
+        id: TEth.Hex, salt: TEth.Hex
     };
-    type TLogCallSaltParameters = [ id: TBufferLike, salt: TBufferLike ];
+    type TLogCallSaltParameters = [ id: TEth.Hex, salt: TEth.Hex ];
     type TLogCallScheduled = {
-        id: TBufferLike, index: bigint, target: TAddress, value: bigint, data: TBufferLike, predecessor: TBufferLike, delay: bigint
+        id: TEth.Hex, index: bigint, target: TAddress, value: bigint, data: TEth.Hex, predecessor: TEth.Hex, delay: bigint
     };
-    type TLogCallScheduledParameters = [ id: TBufferLike, index: bigint, target: TAddress, value: bigint, data: TBufferLike, predecessor: TBufferLike, delay: bigint ];
+    type TLogCallScheduledParameters = [ id: TEth.Hex, index: bigint, target: TAddress, value: bigint, data: TEth.Hex, predecessor: TEth.Hex, delay: bigint ];
     type TLogCancelled = {
-        id: TBufferLike
+        id: TEth.Hex
     };
-    type TLogCancelledParameters = [ id: TBufferLike ];
+    type TLogCancelledParameters = [ id: TEth.Hex ];
     type TLogMinDelayChange = {
         oldDuration: bigint, newDuration: bigint
     };
     type TLogMinDelayChangeParameters = [ oldDuration: bigint, newDuration: bigint ];
     type TLogRoleAdminChanged = {
-        role: TBufferLike, previousAdminRole: TBufferLike, newAdminRole: TBufferLike
+        role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex
     };
-    type TLogRoleAdminChangedParameters = [ role: TBufferLike, previousAdminRole: TBufferLike, newAdminRole: TBufferLike ];
+    type TLogRoleAdminChangedParameters = [ role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex ];
     type TLogRoleGranted = {
-        role: TBufferLike, account: TAddress, _sender: TAddress
+        role: TEth.Hex, account: TAddress, _sender: TAddress
     };
-    type TLogRoleGrantedParameters = [ role: TBufferLike, account: TAddress, _sender: TAddress ];
+    type TLogRoleGrantedParameters = [ role: TEth.Hex, account: TAddress, _sender: TAddress ];
     type TLogRoleRevoked = {
-        role: TBufferLike, account: TAddress, _sender: TAddress
+        role: TEth.Hex, account: TAddress, _sender: TAddress
     };
-    type TLogRoleRevokedParameters = [ role: TBufferLike, account: TAddress, _sender: TAddress ];
+    type TLogRoleRevokedParameters = [ role: TEth.Hex, account: TAddress, _sender: TAddress ];
 
 interface IEvents {
   CallExecuted: TLogCallExecutedParameters
@@ -432,17 +434,17 @@ interface IMethodTIMELOCK_ADMIN_ROLE {
 
 interface IMethodCancel {
   method: "cancel"
-  arguments: [ id: TBufferLike ]
+  arguments: [ id: TEth.Hex ]
 }
 
 interface IMethodExecute {
   method: "execute"
-  arguments: [ target: TAddress, value: bigint, payload: TBufferLike, predecessor: TBufferLike, salt: TBufferLike ]
+  arguments: [ target: TAddress, value: bigint, payload: TEth.Hex, predecessor: TEth.Hex, salt: TEth.Hex ]
 }
 
 interface IMethodExecuteBatch {
   method: "executeBatch"
-  arguments: [ targets: TAddress[], values: bigint[], payloads: TBufferLike[], predecessor: TBufferLike, salt: TBufferLike ]
+  arguments: [ targets: TAddress[], values: bigint[], payloads: TEth.Hex[], predecessor: TEth.Hex, salt: TEth.Hex ]
 }
 
 interface IMethodGetMinDelay {
@@ -452,92 +454,92 @@ interface IMethodGetMinDelay {
 
 interface IMethodGetRoleAdmin {
   method: "getRoleAdmin"
-  arguments: [ role: TBufferLike ]
+  arguments: [ role: TEth.Hex ]
 }
 
 interface IMethodGetTimestamp {
   method: "getTimestamp"
-  arguments: [ id: TBufferLike ]
+  arguments: [ id: TEth.Hex ]
 }
 
 interface IMethodGrantRole {
   method: "grantRole"
-  arguments: [ role: TBufferLike, account: TAddress ]
+  arguments: [ role: TEth.Hex, account: TAddress ]
 }
 
 interface IMethodHasRole {
   method: "hasRole"
-  arguments: [ role: TBufferLike, account: TAddress ]
+  arguments: [ role: TEth.Hex, account: TAddress ]
 }
 
 interface IMethodHashOperation {
   method: "hashOperation"
-  arguments: [ target: TAddress, value: bigint, data: TBufferLike, predecessor: TBufferLike, salt: TBufferLike ]
+  arguments: [ target: TAddress, value: bigint, data: TEth.Hex, predecessor: TEth.Hex, salt: TEth.Hex ]
 }
 
 interface IMethodHashOperationBatch {
   method: "hashOperationBatch"
-  arguments: [ targets: TAddress[], values: bigint[], payloads: TBufferLike[], predecessor: TBufferLike, salt: TBufferLike ]
+  arguments: [ targets: TAddress[], values: bigint[], payloads: TEth.Hex[], predecessor: TEth.Hex, salt: TEth.Hex ]
 }
 
 interface IMethodIsOperation {
   method: "isOperation"
-  arguments: [ id: TBufferLike ]
+  arguments: [ id: TEth.Hex ]
 }
 
 interface IMethodIsOperationDone {
   method: "isOperationDone"
-  arguments: [ id: TBufferLike ]
+  arguments: [ id: TEth.Hex ]
 }
 
 interface IMethodIsOperationPending {
   method: "isOperationPending"
-  arguments: [ id: TBufferLike ]
+  arguments: [ id: TEth.Hex ]
 }
 
 interface IMethodIsOperationReady {
   method: "isOperationReady"
-  arguments: [ id: TBufferLike ]
+  arguments: [ id: TEth.Hex ]
 }
 
 interface IMethodOnERC1155BatchReceived {
   method: "onERC1155BatchReceived"
-  arguments: [ input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TBufferLike ]
+  arguments: [ input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TEth.Hex ]
 }
 
 interface IMethodOnERC1155Received {
   method: "onERC1155Received"
-  arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TBufferLike ]
+  arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TEth.Hex ]
 }
 
 interface IMethodOnERC721Received {
   method: "onERC721Received"
-  arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: TBufferLike ]
+  arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: TEth.Hex ]
 }
 
 interface IMethodRenounceRole {
   method: "renounceRole"
-  arguments: [ role: TBufferLike, account: TAddress ]
+  arguments: [ role: TEth.Hex, account: TAddress ]
 }
 
 interface IMethodRevokeRole {
   method: "revokeRole"
-  arguments: [ role: TBufferLike, account: TAddress ]
+  arguments: [ role: TEth.Hex, account: TAddress ]
 }
 
 interface IMethodSchedule {
   method: "schedule"
-  arguments: [ target: TAddress, value: bigint, data: TBufferLike, predecessor: TBufferLike, salt: TBufferLike, delay: bigint ]
+  arguments: [ target: TAddress, value: bigint, data: TEth.Hex, predecessor: TEth.Hex, salt: TEth.Hex, delay: bigint ]
 }
 
 interface IMethodScheduleBatch {
   method: "scheduleBatch"
-  arguments: [ targets: TAddress[], values: bigint[], payloads: TBufferLike[], predecessor: TBufferLike, salt: TBufferLike, delay: bigint ]
+  arguments: [ targets: TAddress[], values: bigint[], payloads: TEth.Hex[], predecessor: TEth.Hex, salt: TEth.Hex, delay: bigint ]
 }
 
 interface IMethodSupportsInterface {
   method: "supportsInterface"
-  arguments: [ interfaceId: TBufferLike ]
+  arguments: [ interfaceId: TEth.Hex ]
 }
 
 interface IMethodUpdateDelay {
@@ -583,33 +585,33 @@ interface IMethods {
 
 
 interface ITimelockControllerTxCaller {
-    cancel (sender: TSender, id: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    execute (sender: TSender, target: TAddress, value: bigint, payload: TBufferLike, predecessor: TBufferLike, salt: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    executeBatch (sender: TSender, targets: TAddress[], values: bigint[], payloads: TBufferLike[], predecessor: TBufferLike, salt: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    grantRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    onERC1155BatchReceived (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    onERC1155Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    renounceRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    revokeRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    schedule (sender: TSender, target: TAddress, value: bigint, data: TBufferLike, predecessor: TBufferLike, salt: TBufferLike, delay: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    scheduleBatch (sender: TSender, targets: TAddress[], values: bigint[], payloads: TBufferLike[], predecessor: TBufferLike, salt: TBufferLike, delay: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    cancel (sender: TSender, id: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    execute (sender: TSender, target: TAddress, value: bigint, payload: TEth.Hex, predecessor: TEth.Hex, salt: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    executeBatch (sender: TSender, targets: TAddress[], values: bigint[], payloads: TEth.Hex[], predecessor: TEth.Hex, salt: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    grantRole (sender: TSender, role: TEth.Hex, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    onERC1155BatchReceived (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    onERC1155Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    renounceRole (sender: TSender, role: TEth.Hex, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    revokeRole (sender: TSender, role: TEth.Hex, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    schedule (sender: TSender, target: TAddress, value: bigint, data: TEth.Hex, predecessor: TEth.Hex, salt: TEth.Hex, delay: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    scheduleBatch (sender: TSender, targets: TAddress[], values: bigint[], payloads: TEth.Hex[], predecessor: TEth.Hex, salt: TEth.Hex, delay: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     updateDelay (sender: TSender, newDelay: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface ITimelockControllerTxData {
-    cancel (sender: TSender, id: TBufferLike): Promise<TEth.TxLike>
-    execute (sender: TSender, target: TAddress, value: bigint, payload: TBufferLike, predecessor: TBufferLike, salt: TBufferLike): Promise<TEth.TxLike>
-    executeBatch (sender: TSender, targets: TAddress[], values: bigint[], payloads: TBufferLike[], predecessor: TBufferLike, salt: TBufferLike): Promise<TEth.TxLike>
-    grantRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TEth.TxLike>
-    onERC1155BatchReceived (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TBufferLike): Promise<TEth.TxLike>
-    onERC1155Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TBufferLike): Promise<TEth.TxLike>
-    onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TBufferLike): Promise<TEth.TxLike>
-    renounceRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TEth.TxLike>
-    revokeRole (sender: TSender, role: TBufferLike, account: TAddress): Promise<TEth.TxLike>
-    schedule (sender: TSender, target: TAddress, value: bigint, data: TBufferLike, predecessor: TBufferLike, salt: TBufferLike, delay: bigint): Promise<TEth.TxLike>
-    scheduleBatch (sender: TSender, targets: TAddress[], values: bigint[], payloads: TBufferLike[], predecessor: TBufferLike, salt: TBufferLike, delay: bigint): Promise<TEth.TxLike>
+    cancel (sender: TSender, id: TEth.Hex): Promise<TEth.TxLike>
+    execute (sender: TSender, target: TAddress, value: bigint, payload: TEth.Hex, predecessor: TEth.Hex, salt: TEth.Hex): Promise<TEth.TxLike>
+    executeBatch (sender: TSender, targets: TAddress[], values: bigint[], payloads: TEth.Hex[], predecessor: TEth.Hex, salt: TEth.Hex): Promise<TEth.TxLike>
+    grantRole (sender: TSender, role: TEth.Hex, account: TAddress): Promise<TEth.TxLike>
+    onERC1155BatchReceived (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TEth.Hex): Promise<TEth.TxLike>
+    onERC1155Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TEth.Hex): Promise<TEth.TxLike>
+    onERC721Received (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint, input3: TEth.Hex): Promise<TEth.TxLike>
+    renounceRole (sender: TSender, role: TEth.Hex, account: TAddress): Promise<TEth.TxLike>
+    revokeRole (sender: TSender, role: TEth.Hex, account: TAddress): Promise<TEth.TxLike>
+    schedule (sender: TSender, target: TAddress, value: bigint, data: TEth.Hex, predecessor: TEth.Hex, salt: TEth.Hex, delay: bigint): Promise<TEth.TxLike>
+    scheduleBatch (sender: TSender, targets: TAddress[], values: bigint[], payloads: TEth.Hex[], predecessor: TEth.Hex, salt: TEth.Hex, delay: bigint): Promise<TEth.TxLike>
     updateDelay (sender: TSender, newDelay: bigint): Promise<TEth.TxLike>
 }
 

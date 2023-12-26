@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/0x58774Bb8acD458A640aF0B88238369A167546ef2#code
  */
 import di from 'a-di';
@@ -39,14 +39,16 @@ export class EnsDnsRegistrar extends ContractBase {
         this.storage = new EnsDnsRegistrarStorageReader(this.address, this.client, this.explorer);
     }
 
-    
+    $meta = {
+    "class": "./contracts/ens/EnsDnsRegistrar/EnsDnsRegistrar.ts"
+}
 
     async $constructor (deployer: TSender, _dnssec: TAddress, _suffixes: TAddress, _ens: TAddress): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
     }
 
     // 0xbe27b22c
-    async claim (sender: TSender, name: TBufferLike, proof: TBufferLike): Promise<TxWriter> {
+    async claim (sender: TSender, name: TEth.Hex, proof: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'claim'), sender, name, proof);
     }
 
@@ -61,12 +63,12 @@ export class EnsDnsRegistrar extends ContractBase {
     }
 
     // 0x8bbedf75
-    async proveAndClaim (sender: TSender, name: TBufferLike, input: { rrset: TBufferLike, sig: TBufferLike }[], proof: TBufferLike): Promise<TxWriter> {
+    async proveAndClaim (sender: TSender, name: TEth.Hex, input: { rrset: TEth.Hex, sig: TEth.Hex }[], proof: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'proveAndClaim'), sender, name, input, proof);
     }
 
     // 0x224199c2
-    async proveAndClaimWithResolver (sender: TSender, name: TBufferLike, input: { rrset: TBufferLike, sig: TBufferLike }[], proof: TBufferLike, resolver: TAddress, addr: TAddress): Promise<TxWriter> {
+    async proveAndClaimWithResolver (sender: TSender, name: TEth.Hex, input: { rrset: TEth.Hex, sig: TEth.Hex }[], proof: TEth.Hex, resolver: TAddress, addr: TAddress): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'proveAndClaimWithResolver'), sender, name, input, proof, resolver, addr);
     }
 
@@ -86,7 +88,7 @@ export class EnsDnsRegistrar extends ContractBase {
     }
 
     // 0x01ffc9a7
-    async supportsInterface (interfaceID: TBufferLike): Promise<boolean> {
+    async supportsInterface (interfaceID: TEth.Hex): Promise<boolean> {
         return this.$read(this.$getAbiItem('function', 'supportsInterface'), interfaceID);
     }
 
@@ -148,7 +150,7 @@ export class EnsDnsRegistrar extends ContractBase {
     async getPastLogsClaim (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { node?: TBufferLike,owner?: TAddress }
+        params?: { node?: TEth.Hex,owner?: TAddress }
     }): Promise<ITxLogItem<TLogClaim>[]> {
         return await this.$getPastLogsParsed('Claim', options) as any;
     }
@@ -171,7 +173,7 @@ export class EnsDnsRegistrar extends ContractBase {
 
     abi: TAbiItem[] = [{"inputs":[{"internalType":"contract DNSSEC","name":"_dnssec","type":"address"},{"internalType":"contract PublicSuffixList","name":"_suffixes","type":"address"},{"internalType":"contract ENS","name":"_ens","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"node","type":"bytes32"},{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":false,"internalType":"bytes","name":"dnsname","type":"bytes"}],"name":"Claim","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"oracle","type":"address"}],"name":"NewOracle","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"suffixes","type":"address"}],"name":"NewPublicSuffixList","type":"event"},{"inputs":[{"internalType":"bytes","name":"name","type":"bytes"},{"internalType":"bytes","name":"proof","type":"bytes"}],"name":"claim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"ens","outputs":[{"internalType":"contract ENS","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"oracle","outputs":[{"internalType":"contract DNSSEC","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes","name":"name","type":"bytes"},{"components":[{"internalType":"bytes","name":"rrset","type":"bytes"},{"internalType":"bytes","name":"sig","type":"bytes"}],"internalType":"struct DNSSEC.RRSetWithSignature[]","name":"input","type":"tuple[]"},{"internalType":"bytes","name":"proof","type":"bytes"}],"name":"proveAndClaim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes","name":"name","type":"bytes"},{"components":[{"internalType":"bytes","name":"rrset","type":"bytes"},{"internalType":"bytes","name":"sig","type":"bytes"}],"internalType":"struct DNSSEC.RRSetWithSignature[]","name":"input","type":"tuple[]"},{"internalType":"bytes","name":"proof","type":"bytes"},{"internalType":"address","name":"resolver","type":"address"},{"internalType":"address","name":"addr","type":"address"}],"name":"proveAndClaimWithResolver","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"contract DNSSEC","name":"_dnssec","type":"address"}],"name":"setOracle","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"contract PublicSuffixList","name":"_suffixes","type":"address"}],"name":"setPublicSuffixList","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"suffixes","outputs":[{"internalType":"contract PublicSuffixList","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceID","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"pure","type":"function"}]
 
-    storage: EnsDnsRegistrarStorageReader
+    declare storage: EnsDnsRegistrarStorageReader
 }
 
 type TSender = TAccount & {
@@ -179,9 +181,9 @@ type TSender = TAccount & {
 }
 
     type TLogClaim = {
-        node: TBufferLike, owner: TAddress, dnsname: TBufferLike
+        node: TEth.Hex, owner: TAddress, dnsname: TEth.Hex
     };
-    type TLogClaimParameters = [ node: TBufferLike, owner: TAddress, dnsname: TBufferLike ];
+    type TLogClaimParameters = [ node: TEth.Hex, owner: TAddress, dnsname: TEth.Hex ];
     type TLogNewOracle = {
         oracle: TAddress
     };
@@ -202,7 +204,7 @@ interface IEvents {
 
 interface IMethodClaim {
   method: "claim"
-  arguments: [ name: TBufferLike, proof: TBufferLike ]
+  arguments: [ name: TEth.Hex, proof: TEth.Hex ]
 }
 
 interface IMethodEns {
@@ -217,12 +219,12 @@ interface IMethodOracle {
 
 interface IMethodProveAndClaim {
   method: "proveAndClaim"
-  arguments: [ name: TBufferLike, input: { rrset: TBufferLike, sig: TBufferLike }[], proof: TBufferLike ]
+  arguments: [ name: TEth.Hex, input: { rrset: TEth.Hex, sig: TEth.Hex }[], proof: TEth.Hex ]
 }
 
 interface IMethodProveAndClaimWithResolver {
   method: "proveAndClaimWithResolver"
-  arguments: [ name: TBufferLike, input: { rrset: TBufferLike, sig: TBufferLike }[], proof: TBufferLike, resolver: TAddress, addr: TAddress ]
+  arguments: [ name: TEth.Hex, input: { rrset: TEth.Hex, sig: TEth.Hex }[], proof: TEth.Hex, resolver: TAddress, addr: TAddress ]
 }
 
 interface IMethodSetOracle {
@@ -242,7 +244,7 @@ interface IMethodSuffixes {
 
 interface IMethodSupportsInterface {
   method: "supportsInterface"
-  arguments: [ interfaceID: TBufferLike ]
+  arguments: [ interfaceID: TEth.Hex ]
 }
 
 interface IMethods {
@@ -314,18 +316,18 @@ class EnsDnsRegistrarStorageReader extends ContractStorageReaderBase {
 
 
 interface IEnsDnsRegistrarTxCaller {
-    claim (sender: TSender, name: TBufferLike, proof: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    proveAndClaim (sender: TSender, name: TBufferLike, input: { rrset: TBufferLike, sig: TBufferLike }[], proof: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    proveAndClaimWithResolver (sender: TSender, name: TBufferLike, input: { rrset: TBufferLike, sig: TBufferLike }[], proof: TBufferLike, resolver: TAddress, addr: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    claim (sender: TSender, name: TEth.Hex, proof: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    proveAndClaim (sender: TSender, name: TEth.Hex, input: { rrset: TEth.Hex, sig: TEth.Hex }[], proof: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    proveAndClaimWithResolver (sender: TSender, name: TEth.Hex, input: { rrset: TEth.Hex, sig: TEth.Hex }[], proof: TEth.Hex, resolver: TAddress, addr: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setOracle (sender: TSender, _dnssec: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setPublicSuffixList (sender: TSender, _suffixes: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IEnsDnsRegistrarTxData {
-    claim (sender: TSender, name: TBufferLike, proof: TBufferLike): Promise<TEth.TxLike>
-    proveAndClaim (sender: TSender, name: TBufferLike, input: { rrset: TBufferLike, sig: TBufferLike }[], proof: TBufferLike): Promise<TEth.TxLike>
-    proveAndClaimWithResolver (sender: TSender, name: TBufferLike, input: { rrset: TBufferLike, sig: TBufferLike }[], proof: TBufferLike, resolver: TAddress, addr: TAddress): Promise<TEth.TxLike>
+    claim (sender: TSender, name: TEth.Hex, proof: TEth.Hex): Promise<TEth.TxLike>
+    proveAndClaim (sender: TSender, name: TEth.Hex, input: { rrset: TEth.Hex, sig: TEth.Hex }[], proof: TEth.Hex): Promise<TEth.TxLike>
+    proveAndClaimWithResolver (sender: TSender, name: TEth.Hex, input: { rrset: TEth.Hex, sig: TEth.Hex }[], proof: TEth.Hex, resolver: TAddress, addr: TAddress): Promise<TEth.TxLike>
     setOracle (sender: TSender, _dnssec: TAddress): Promise<TEth.TxLike>
     setPublicSuffixList (sender: TSender, _suffixes: TAddress): Promise<TEth.TxLike>
 }

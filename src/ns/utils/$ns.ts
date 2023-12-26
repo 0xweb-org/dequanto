@@ -1,3 +1,4 @@
+import { TEth } from '@dequanto/models/TEth';
 import { $contract } from '@dequanto/utils/$contract';
 
 export namespace $ns {
@@ -5,7 +6,7 @@ export namespace $ns {
         return /^[\w._-](?<tld>\.\w{1,4})(\/.+)?$/.test(name);
     }
 
-    export function namehash(domain: string) {
+    export function namehash(domain: string): TEth.Hex {
         let labels = domain.toLowerCase().split('.');
         let node = '0x' + ''.padStart(64,'0');
         for(let i = labels.length - 1; i >= 0; i--) {
@@ -13,7 +14,7 @@ export namespace $ns {
 
             node = $contract.keccak256(`${node}${labelSha}`);
         }
-        return node;
+        return node as TEth.Hex;
     }
 
     export function getRoot (uri: string) {

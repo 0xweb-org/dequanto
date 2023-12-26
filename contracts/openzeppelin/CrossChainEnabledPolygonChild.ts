@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -46,10 +46,12 @@ export class CrossChainEnabledPolygonChild extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/CrossChainEnabledPolygonChild.ts"
+}
 
     // 0x9a7c4b71
-    async processMessageFromRoot (sender: TSender, input0: bigint, rootMessageSender: TAddress, data: TBufferLike): Promise<TxWriter> {
+    async processMessageFromRoot (sender: TSender, input0: bigint, rootMessageSender: TAddress, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'processMessageFromRoot'), sender, input0, rootMessageSender, data);
     }
 
@@ -106,7 +108,7 @@ interface IEvents {
 
 interface IMethodProcessMessageFromRoot {
   method: "processMessageFromRoot"
-  arguments: [ input0: bigint, rootMessageSender: TAddress, data: TBufferLike ]
+  arguments: [ input0: bigint, rootMessageSender: TAddress, data: TEth.Hex ]
 }
 
 interface IMethods {
@@ -120,12 +122,12 @@ interface IMethods {
 
 
 interface ICrossChainEnabledPolygonChildTxCaller {
-    processMessageFromRoot (sender: TSender, input0: bigint, rootMessageSender: TAddress, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    processMessageFromRoot (sender: TSender, input0: bigint, rootMessageSender: TAddress, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface ICrossChainEnabledPolygonChildTxData {
-    processMessageFromRoot (sender: TSender, input0: bigint, rootMessageSender: TAddress, data: TBufferLike): Promise<TEth.TxLike>
+    processMessageFromRoot (sender: TSender, input0: bigint, rootMessageSender: TAddress, data: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

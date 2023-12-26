@@ -85,8 +85,8 @@ export namespace $abiType {
 
             let keyTsType = getTsTypeFromDefinition(keyType);
             let valueTsType = getTsTypeFromDefinition(valueType);
-
-            return `Record<${keyTsType}, ${valueTsType}>`;
+            // keyTsType could be bigint, Buffer, etc, lets use the string or number only
+            return `Record<string | number, ${valueTsType}>`;
         }
         return getTsType(type);
     }
@@ -190,12 +190,12 @@ export namespace $abiType {
 
         'bool': 'boolean',
 
-        'bytes': 'TBufferLike',
-        'bytes4': 'TBufferLike',
-        'bytes32': 'TBufferLike',
-        'bytes64': 'TBufferLike',
-        'bytes128': 'TBufferLike',
-        'bytes256': 'TBufferLike',
+        'bytes': 'TEth.Hex',
+        'bytes4': 'TEth.Hex',
+        'bytes32': 'TEth.Hex',
+        'bytes64': 'TEth.Hex',
+        'bytes128': 'TEth.Hex',
+        'bytes256': 'TEth.Hex',
 
         'address': 'TAddress',
         'string': 'string',
@@ -216,7 +216,7 @@ export namespace $abiType {
         {
             rgx: /bytes(?<bits>\d+)?/,
             fromMatch (match: RegExpMatchArray) {
-                return 'TBufferLike';
+                return 'TEth.Hex';
             },
             type: null,
         },

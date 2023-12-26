@@ -4,6 +4,7 @@ import { RpcSubscription } from '@dequanto/rpc/RpcSubscription';
 
 interface Web3 {
     currentProvider
+    eth
 }
 
 

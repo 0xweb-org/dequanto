@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,7 +39,9 @@ export class IBridge extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/IBridge.ts"
+}
 
     // 0xab5d8943
     async activeOutbox (): Promise<TAddress> {
@@ -67,7 +69,7 @@ export class IBridge extends ContractBase {
     }
 
     // 0xd5719dc2
-    async delayedInboxAccs (input0: bigint): Promise<TBufferLike> {
+    async delayedInboxAccs (input0: bigint): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'delayedInboxAccs'), input0);
     }
 
@@ -77,17 +79,17 @@ export class IBridge extends ContractBase {
     }
 
     // 0x8db5993b
-    async enqueueDelayedMessage (sender: TSender, kind: number, _sender: TAddress, messageDataHash: TBufferLike): Promise<TxWriter> {
+    async enqueueDelayedMessage (sender: TSender, kind: number, _sender: TAddress, messageDataHash: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'enqueueDelayedMessage'), sender, kind, _sender, messageDataHash);
     }
 
     // 0x86598a56
-    async enqueueSequencerMessage (sender: TSender, dataHash: TBufferLike, afterDelayedMessagesRead: bigint, prevMessageCount: bigint, newMessageCount: bigint): Promise<TxWriter> {
+    async enqueueSequencerMessage (sender: TSender, dataHash: TEth.Hex, afterDelayedMessagesRead: bigint, prevMessageCount: bigint, newMessageCount: bigint): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'enqueueSequencerMessage'), sender, dataHash, afterDelayedMessagesRead, prevMessageCount, newMessageCount);
     }
 
     // 0x9e5d4c49
-    async executeCall (sender: TSender, to: TAddress, value: bigint, data: TBufferLike): Promise<TxWriter> {
+    async executeCall (sender: TSender, to: TAddress, value: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'executeCall'), sender, to, value, data);
     }
 
@@ -107,7 +109,7 @@ export class IBridge extends ContractBase {
     }
 
     // 0x16bf5579
-    async sequencerInboxAccs (input0: bigint): Promise<TBufferLike> {
+    async sequencerInboxAccs (input0: bigint): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'sequencerInboxAccs'), input0);
     }
 
@@ -137,7 +139,7 @@ export class IBridge extends ContractBase {
     }
 
     // 0x7a88b107
-    async submitBatchSpendingReport (sender: TSender, batchPoster: TAddress, dataHash: TBufferLike): Promise<TxWriter> {
+    async submitBatchSpendingReport (sender: TSender, batchPoster: TAddress, dataHash: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'submitBatchSpendingReport'), sender, batchPoster, dataHash);
     }
 
@@ -233,7 +235,7 @@ export class IBridge extends ContractBase {
     async getPastLogsMessageDelivered (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { messageIndex?: bigint,beforeInboxAcc?: TBufferLike }
+        params?: { messageIndex?: bigint,beforeInboxAcc?: TEth.Hex }
     }): Promise<ITxLogItem<TLogMessageDelivered>[]> {
         return await this.$getPastLogsParsed('MessageDelivered', options) as any;
     }
@@ -264,17 +266,17 @@ type TSender = TAccount & {
 }
 
     type TLogBridgeCallTriggered = {
-        outbox: TAddress, to: TAddress, value: bigint, data: TBufferLike
+        outbox: TAddress, to: TAddress, value: bigint, data: TEth.Hex
     };
-    type TLogBridgeCallTriggeredParameters = [ outbox: TAddress, to: TAddress, value: bigint, data: TBufferLike ];
+    type TLogBridgeCallTriggeredParameters = [ outbox: TAddress, to: TAddress, value: bigint, data: TEth.Hex ];
     type TLogInboxToggle = {
         inbox: TAddress, enabled: boolean
     };
     type TLogInboxToggleParameters = [ inbox: TAddress, enabled: boolean ];
     type TLogMessageDelivered = {
-        messageIndex: bigint, beforeInboxAcc: TBufferLike, inbox: TAddress, kind: number, _sender: TAddress, messageDataHash: TBufferLike, baseFeeL1: bigint, timestamp: number
+        messageIndex: bigint, beforeInboxAcc: TEth.Hex, inbox: TAddress, kind: number, _sender: TAddress, messageDataHash: TEth.Hex, baseFeeL1: bigint, timestamp: number
     };
-    type TLogMessageDeliveredParameters = [ messageIndex: bigint, beforeInboxAcc: TBufferLike, inbox: TAddress, kind: number, _sender: TAddress, messageDataHash: TBufferLike, baseFeeL1: bigint, timestamp: number ];
+    type TLogMessageDeliveredParameters = [ messageIndex: bigint, beforeInboxAcc: TEth.Hex, inbox: TAddress, kind: number, _sender: TAddress, messageDataHash: TEth.Hex, baseFeeL1: bigint, timestamp: number ];
     type TLogOutboxToggle = {
         outbox: TAddress, enabled: boolean
     };
@@ -332,17 +334,17 @@ interface IMethodDelayedMessageCount {
 
 interface IMethodEnqueueDelayedMessage {
   method: "enqueueDelayedMessage"
-  arguments: [ kind: number, _sender: TAddress, messageDataHash: TBufferLike ]
+  arguments: [ kind: number, _sender: TAddress, messageDataHash: TEth.Hex ]
 }
 
 interface IMethodEnqueueSequencerMessage {
   method: "enqueueSequencerMessage"
-  arguments: [ dataHash: TBufferLike, afterDelayedMessagesRead: bigint, prevMessageCount: bigint, newMessageCount: bigint ]
+  arguments: [ dataHash: TEth.Hex, afterDelayedMessagesRead: bigint, prevMessageCount: bigint, newMessageCount: bigint ]
 }
 
 interface IMethodExecuteCall {
   method: "executeCall"
-  arguments: [ to: TAddress, value: bigint, data: TBufferLike ]
+  arguments: [ to: TAddress, value: bigint, data: TEth.Hex ]
 }
 
 interface IMethodInitialize {
@@ -392,7 +394,7 @@ interface IMethodSetSequencerInbox {
 
 interface IMethodSubmitBatchSpendingReport {
   method: "submitBatchSpendingReport"
-  arguments: [ batchPoster: TAddress, dataHash: TBufferLike ]
+  arguments: [ batchPoster: TAddress, dataHash: TEth.Hex ]
 }
 
 interface IMethods {
@@ -427,28 +429,28 @@ interface IMethods {
 interface IIBridgeTxCaller {
     allowedDelayedInboxList (sender: TSender, input0: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     allowedOutboxList (sender: TSender, input0: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    enqueueDelayedMessage (sender: TSender, kind: number, _sender: TAddress, messageDataHash: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    enqueueSequencerMessage (sender: TSender, dataHash: TBufferLike, afterDelayedMessagesRead: bigint, prevMessageCount: bigint, newMessageCount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    executeCall (sender: TSender, to: TAddress, value: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    enqueueDelayedMessage (sender: TSender, kind: number, _sender: TAddress, messageDataHash: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    enqueueSequencerMessage (sender: TSender, dataHash: TEth.Hex, afterDelayedMessagesRead: bigint, prevMessageCount: bigint, newMessageCount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    executeCall (sender: TSender, to: TAddress, value: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     initialize (sender: TSender, rollup_: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setDelayedInbox (sender: TSender, inbox: TAddress, enabled: boolean): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setOutbox (sender: TSender, inbox: TAddress, enabled: boolean): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setSequencerInbox (sender: TSender, _sequencerInbox: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    submitBatchSpendingReport (sender: TSender, batchPoster: TAddress, dataHash: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    submitBatchSpendingReport (sender: TSender, batchPoster: TAddress, dataHash: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IIBridgeTxData {
     allowedDelayedInboxList (sender: TSender, input0: bigint): Promise<TEth.TxLike>
     allowedOutboxList (sender: TSender, input0: bigint): Promise<TEth.TxLike>
-    enqueueDelayedMessage (sender: TSender, kind: number, _sender: TAddress, messageDataHash: TBufferLike): Promise<TEth.TxLike>
-    enqueueSequencerMessage (sender: TSender, dataHash: TBufferLike, afterDelayedMessagesRead: bigint, prevMessageCount: bigint, newMessageCount: bigint): Promise<TEth.TxLike>
-    executeCall (sender: TSender, to: TAddress, value: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    enqueueDelayedMessage (sender: TSender, kind: number, _sender: TAddress, messageDataHash: TEth.Hex): Promise<TEth.TxLike>
+    enqueueSequencerMessage (sender: TSender, dataHash: TEth.Hex, afterDelayedMessagesRead: bigint, prevMessageCount: bigint, newMessageCount: bigint): Promise<TEth.TxLike>
+    executeCall (sender: TSender, to: TAddress, value: bigint, data: TEth.Hex): Promise<TEth.TxLike>
     initialize (sender: TSender, rollup_: TAddress): Promise<TEth.TxLike>
     setDelayedInbox (sender: TSender, inbox: TAddress, enabled: boolean): Promise<TEth.TxLike>
     setOutbox (sender: TSender, inbox: TAddress, enabled: boolean): Promise<TEth.TxLike>
     setSequencerInbox (sender: TSender, _sequencerInbox: TAddress): Promise<TEth.TxLike>
-    submitBatchSpendingReport (sender: TSender, batchPoster: TAddress, dataHash: TBufferLike): Promise<TEth.TxLike>
+    submitBatchSpendingReport (sender: TSender, batchPoster: TAddress, dataHash: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,7 +39,9 @@ export class IERC3156FlashLender extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/IERC3156FlashLender.ts"
+}
 
     // 0xd9d98ce4
     async flashFee (token: TAddress, amount: bigint): Promise<bigint> {
@@ -47,7 +49,7 @@ export class IERC3156FlashLender extends ContractBase {
     }
 
     // 0x5cffe9de
-    async flashLoan (sender: TSender, receiver: TAddress, token: TAddress, amount: bigint, data: TBufferLike): Promise<TxWriter> {
+    async flashLoan (sender: TSender, receiver: TAddress, token: TAddress, amount: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'flashLoan'), sender, receiver, token, amount, data);
     }
 
@@ -114,7 +116,7 @@ interface IMethodFlashFee {
 
 interface IMethodFlashLoan {
   method: "flashLoan"
-  arguments: [ receiver: TAddress, token: TAddress, amount: bigint, data: TBufferLike ]
+  arguments: [ receiver: TAddress, token: TAddress, amount: bigint, data: TEth.Hex ]
 }
 
 interface IMethodMaxFlashLoan {
@@ -135,12 +137,12 @@ interface IMethods {
 
 
 interface IIERC3156FlashLenderTxCaller {
-    flashLoan (sender: TSender, receiver: TAddress, token: TAddress, amount: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    flashLoan (sender: TSender, receiver: TAddress, token: TAddress, amount: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IIERC3156FlashLenderTxData {
-    flashLoan (sender: TSender, receiver: TAddress, token: TAddress, amount: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    flashLoan (sender: TSender, receiver: TAddress, token: TAddress, amount: bigint, data: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

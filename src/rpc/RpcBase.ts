@@ -44,7 +44,7 @@ export abstract class RpcBase {
         let resp = await this._transport.request(body);
         if (Array.isArray(resp) === false) {
             if ('error' in resp) {
-                let error = resp.error as any;
+                let error = (resp as any).error;
                 throw new RpcError(error);
             }
             throw new Error(`Invalid response, though no error is returned`);

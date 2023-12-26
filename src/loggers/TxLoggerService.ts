@@ -6,9 +6,10 @@ import { TxWriter } from '@dequanto/txs/TxWriter';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $logger } from '@dequanto/utils/$logger';
 import { Everlog } from 'everlog';
-import { ILogger } from 'everlog/fs/LoggerFile';
+import { ILogger } from 'everlog/interfaces/ILogger';
 import { ICsvColumnValue } from 'everlog/model/ICsvColumn';
 import { TEth } from '@dequanto/models/TEth';
+import { $account } from '@dequanto/utils/$account';
 
 
 export class TxLoggerService {
@@ -107,10 +108,11 @@ export class TxLoggerService {
             $logger.log(`Tx ${tx.client.platform}:`, message);
         });
 
+        let account = $account.getSender(tx.account);
         this.logs.writeRow([
             new Date(),
             action,
-            tx.account.name ?? tx.account.address,
+            account.name ?? account.address,
             '',
             '',
             '',
@@ -121,11 +123,10 @@ export class TxLoggerService {
         let started = Date.now();
         let receipt = await tx.onCompleted;
         let params = onReceipt ? await onReceipt(receipt) : [];
-
         this.logs.writeRow([
             new Date(),
             action,
-            tx.account.address,
+            account.name ?? account.address,
             tx.builder.data.to,
             receipt.transactionHash,
             receipt.status,

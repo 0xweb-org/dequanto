@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,7 +39,9 @@ export class Safe extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/safe/Safe.ts"
+}
 
     async $constructor (deployer: TSender, ): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -56,12 +58,12 @@ export class Safe extends ContractBase {
     }
 
     // 0xd4d9bdcd
-    async approveHash (sender: TSender, hashToApprove: TBufferLike): Promise<TxWriter> {
+    async approveHash (sender: TSender, hashToApprove: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'approveHash'), sender, hashToApprove);
     }
 
     // 0x7d832974
-    async approvedHashes (input0: TAddress, input1: TBufferLike): Promise<bigint> {
+    async approvedHashes (input0: TAddress, input1: TEth.Hex): Promise<bigint> {
         return this.$read(this.$getAbiItem('function', 'approvedHashes'), input0, input1);
     }
 
@@ -71,12 +73,12 @@ export class Safe extends ContractBase {
     }
 
     // 0x12fb68e0
-    async checkNSignatures (dataHash: TBufferLike, data: TBufferLike, signatures: TBufferLike, requiredSignatures: bigint): Promise<bigint> {
+    async checkNSignatures (dataHash: TEth.Hex, data: TEth.Hex, signatures: TEth.Hex, requiredSignatures: bigint): Promise<bigint> {
         return this.$read(this.$getAbiItem('function', 'checkNSignatures'), dataHash, data, signatures, requiredSignatures);
     }
 
     // 0x934f3a11
-    async checkSignatures (dataHash: TBufferLike, data: TBufferLike, signatures: TBufferLike): Promise<bigint> {
+    async checkSignatures (dataHash: TEth.Hex, data: TEth.Hex, signatures: TEth.Hex): Promise<bigint> {
         return this.$read(this.$getAbiItem('function', 'checkSignatures'), dataHash, data, signatures);
     }
 
@@ -86,7 +88,7 @@ export class Safe extends ContractBase {
     }
 
     // 0xf698da25
-    async domainSeparator (): Promise<TBufferLike> {
+    async domainSeparator (): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'domainSeparator'));
     }
 
@@ -96,22 +98,22 @@ export class Safe extends ContractBase {
     }
 
     // 0xe86637db
-    async encodeTransactionData (to: TAddress, value: bigint, data: TBufferLike, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, _nonce: bigint): Promise<TBufferLike> {
+    async encodeTransactionData (to: TAddress, value: bigint, data: TEth.Hex, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, _nonce: bigint): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'encodeTransactionData'), to, value, data, operation, safeTxGas, baseGas, gasPrice, gasToken, refundReceiver, _nonce);
     }
 
     // 0x6a761202
-    async execTransaction (sender: TSender, to: TAddress, value: bigint, data: TBufferLike, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, signatures: TBufferLike): Promise<TxWriter> {
+    async execTransaction (sender: TSender, to: TAddress, value: bigint, data: TEth.Hex, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, signatures: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'execTransaction'), sender, to, value, data, operation, safeTxGas, baseGas, gasPrice, gasToken, refundReceiver, signatures);
     }
 
     // 0x468721a7
-    async execTransactionFromModule (sender: TSender, to: TAddress, value: bigint, data: TBufferLike, operation: number): Promise<TxWriter> {
+    async execTransactionFromModule (sender: TSender, to: TAddress, value: bigint, data: TEth.Hex, operation: number): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'execTransactionFromModule'), sender, to, value, data, operation);
     }
 
     // 0x5229073f
-    async execTransactionFromModuleReturnData (sender: TSender, to: TAddress, value: bigint, data: TBufferLike, operation: number): Promise<TxWriter> {
+    async execTransactionFromModuleReturnData (sender: TSender, to: TAddress, value: bigint, data: TEth.Hex, operation: number): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'execTransactionFromModuleReturnData'), sender, to, value, data, operation);
     }
 
@@ -131,7 +133,7 @@ export class Safe extends ContractBase {
     }
 
     // 0x5624b25b
-    async getStorageAt (offset: bigint, length: bigint): Promise<TBufferLike> {
+    async getStorageAt (offset: bigint, length: bigint): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'getStorageAt'), offset, length);
     }
 
@@ -141,7 +143,7 @@ export class Safe extends ContractBase {
     }
 
     // 0xd8d11f78
-    async getTransactionHash (to: TAddress, value: bigint, data: TBufferLike, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, _nonce: bigint): Promise<TBufferLike> {
+    async getTransactionHash (to: TAddress, value: bigint, data: TEth.Hex, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, _nonce: bigint): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'getTransactionHash'), to, value, data, operation, safeTxGas, baseGas, gasPrice, gasToken, refundReceiver, _nonce);
     }
 
@@ -176,17 +178,17 @@ export class Safe extends ContractBase {
     }
 
     // 0xb63e800d
-    async setup (sender: TSender, _owners: TAddress[], _threshold: bigint, to: TAddress, data: TBufferLike, fallbackHandler: TAddress, paymentToken: TAddress, payment: bigint, paymentReceiver: TAddress): Promise<TxWriter> {
+    async setup (sender: TSender, _owners: TAddress[], _threshold: bigint, to: TAddress, data: TEth.Hex, fallbackHandler: TAddress, paymentToken: TAddress, payment: bigint, paymentReceiver: TAddress): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'setup'), sender, _owners, _threshold, to, data, fallbackHandler, paymentToken, payment, paymentReceiver);
     }
 
     // 0x5ae6bd37
-    async signedMessages (input0: TBufferLike): Promise<bigint> {
+    async signedMessages (input0: TEth.Hex): Promise<bigint> {
         return this.$read(this.$getAbiItem('function', 'signedMessages'), input0);
     }
 
     // 0xb4faba09
-    async simulateAndRevert (sender: TSender, targetContract: TAddress, calldataPayload: TBufferLike): Promise<TxWriter> {
+    async simulateAndRevert (sender: TSender, targetContract: TAddress, calldataPayload: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'simulateAndRevert'), sender, targetContract, calldataPayload);
     }
 
@@ -369,7 +371,7 @@ export class Safe extends ContractBase {
     async getPastLogsApproveHash (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { approvedHash?: TBufferLike,owner?: TAddress }
+        params?: { approvedHash?: TEth.Hex,owner?: TAddress }
     }): Promise<ITxLogItem<TLogApproveHash>[]> {
         return await this.$getPastLogsParsed('ApproveHash', options) as any;
     }
@@ -417,7 +419,7 @@ export class Safe extends ContractBase {
     async getPastLogsExecutionFailure (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { txHash?: TBufferLike }
+        params?: { txHash?: TEth.Hex }
     }): Promise<ITxLogItem<TLogExecutionFailure>[]> {
         return await this.$getPastLogsParsed('ExecutionFailure', options) as any;
     }
@@ -441,7 +443,7 @@ export class Safe extends ContractBase {
     async getPastLogsExecutionSuccess (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { txHash?: TBufferLike }
+        params?: { txHash?: TEth.Hex }
     }): Promise<ITxLogItem<TLogExecutionSuccess>[]> {
         return await this.$getPastLogsParsed('ExecutionSuccess', options) as any;
     }
@@ -473,7 +475,7 @@ export class Safe extends ContractBase {
     async getPastLogsSignMsg (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
-        params?: { msgHash?: TBufferLike }
+        params?: { msgHash?: TEth.Hex }
     }): Promise<ITxLogItem<TLogSignMsg>[]> {
         return await this.$getPastLogsParsed('SignMsg', options) as any;
     }
@@ -492,9 +494,9 @@ type TSender = TAccount & {
     };
     type TLogAddedOwnerParameters = [ owner: TAddress ];
     type TLogApproveHash = {
-        approvedHash: TBufferLike, owner: TAddress
+        approvedHash: TEth.Hex, owner: TAddress
     };
-    type TLogApproveHashParameters = [ approvedHash: TBufferLike, owner: TAddress ];
+    type TLogApproveHashParameters = [ approvedHash: TEth.Hex, owner: TAddress ];
     type TLogChangedFallbackHandler = {
         handler: TAddress
     };
@@ -516,9 +518,9 @@ type TSender = TAccount & {
     };
     type TLogEnabledModuleParameters = [ module: TAddress ];
     type TLogExecutionFailure = {
-        txHash: TBufferLike, payment: bigint
+        txHash: TEth.Hex, payment: bigint
     };
-    type TLogExecutionFailureParameters = [ txHash: TBufferLike, payment: bigint ];
+    type TLogExecutionFailureParameters = [ txHash: TEth.Hex, payment: bigint ];
     type TLogExecutionFromModuleFailure = {
         module: TAddress
     };
@@ -528,9 +530,9 @@ type TSender = TAccount & {
     };
     type TLogExecutionFromModuleSuccessParameters = [ module: TAddress ];
     type TLogExecutionSuccess = {
-        txHash: TBufferLike, payment: bigint
+        txHash: TEth.Hex, payment: bigint
     };
-    type TLogExecutionSuccessParameters = [ txHash: TBufferLike, payment: bigint ];
+    type TLogExecutionSuccessParameters = [ txHash: TEth.Hex, payment: bigint ];
     type TLogRemovedOwner = {
         owner: TAddress
     };
@@ -544,9 +546,9 @@ type TSender = TAccount & {
     };
     type TLogSafeSetupParameters = [ initiator: TAddress, owners: TAddress[], threshold: bigint, initializer: TAddress, fallbackHandler: TAddress ];
     type TLogSignMsg = {
-        msgHash: TBufferLike
+        msgHash: TEth.Hex
     };
-    type TLogSignMsgParameters = [ msgHash: TBufferLike ];
+    type TLogSignMsgParameters = [ msgHash: TEth.Hex ];
 
 interface IEvents {
   AddedOwner: TLogAddedOwnerParameters
@@ -581,12 +583,12 @@ interface IMethodAddOwnerWithThreshold {
 
 interface IMethodApproveHash {
   method: "approveHash"
-  arguments: [ hashToApprove: TBufferLike ]
+  arguments: [ hashToApprove: TEth.Hex ]
 }
 
 interface IMethodApprovedHashes {
   method: "approvedHashes"
-  arguments: [ input0: TAddress, input1: TBufferLike ]
+  arguments: [ input0: TAddress, input1: TEth.Hex ]
 }
 
 interface IMethodChangeThreshold {
@@ -596,12 +598,12 @@ interface IMethodChangeThreshold {
 
 interface IMethodCheckNSignatures {
   method: "checkNSignatures"
-  arguments: [ dataHash: TBufferLike, data: TBufferLike, signatures: TBufferLike, requiredSignatures: bigint ]
+  arguments: [ dataHash: TEth.Hex, data: TEth.Hex, signatures: TEth.Hex, requiredSignatures: bigint ]
 }
 
 interface IMethodCheckSignatures {
   method: "checkSignatures"
-  arguments: [ dataHash: TBufferLike, data: TBufferLike, signatures: TBufferLike ]
+  arguments: [ dataHash: TEth.Hex, data: TEth.Hex, signatures: TEth.Hex ]
 }
 
 interface IMethodDisableModule {
@@ -621,22 +623,22 @@ interface IMethodEnableModule {
 
 interface IMethodEncodeTransactionData {
   method: "encodeTransactionData"
-  arguments: [ to: TAddress, value: bigint, data: TBufferLike, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, _nonce: bigint ]
+  arguments: [ to: TAddress, value: bigint, data: TEth.Hex, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, _nonce: bigint ]
 }
 
 interface IMethodExecTransaction {
   method: "execTransaction"
-  arguments: [ to: TAddress, value: bigint, data: TBufferLike, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, signatures: TBufferLike ]
+  arguments: [ to: TAddress, value: bigint, data: TEth.Hex, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, signatures: TEth.Hex ]
 }
 
 interface IMethodExecTransactionFromModule {
   method: "execTransactionFromModule"
-  arguments: [ to: TAddress, value: bigint, data: TBufferLike, operation: number ]
+  arguments: [ to: TAddress, value: bigint, data: TEth.Hex, operation: number ]
 }
 
 interface IMethodExecTransactionFromModuleReturnData {
   method: "execTransactionFromModuleReturnData"
-  arguments: [ to: TAddress, value: bigint, data: TBufferLike, operation: number ]
+  arguments: [ to: TAddress, value: bigint, data: TEth.Hex, operation: number ]
 }
 
 interface IMethodGetChainId {
@@ -666,7 +668,7 @@ interface IMethodGetThreshold {
 
 interface IMethodGetTransactionHash {
   method: "getTransactionHash"
-  arguments: [ to: TAddress, value: bigint, data: TBufferLike, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, _nonce: bigint ]
+  arguments: [ to: TAddress, value: bigint, data: TEth.Hex, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, _nonce: bigint ]
 }
 
 interface IMethodIsModuleEnabled {
@@ -701,17 +703,17 @@ interface IMethodSetGuard {
 
 interface IMethodSetup {
   method: "setup"
-  arguments: [ _owners: TAddress[], _threshold: bigint, to: TAddress, data: TBufferLike, fallbackHandler: TAddress, paymentToken: TAddress, payment: bigint, paymentReceiver: TAddress ]
+  arguments: [ _owners: TAddress[], _threshold: bigint, to: TAddress, data: TEth.Hex, fallbackHandler: TAddress, paymentToken: TAddress, payment: bigint, paymentReceiver: TAddress ]
 }
 
 interface IMethodSignedMessages {
   method: "signedMessages"
-  arguments: [ input0: TBufferLike ]
+  arguments: [ input0: TEth.Hex ]
 }
 
 interface IMethodSimulateAndRevert {
   method: "simulateAndRevert"
-  arguments: [ targetContract: TAddress, calldataPayload: TBufferLike ]
+  arguments: [ targetContract: TAddress, calldataPayload: TEth.Hex ]
 }
 
 interface IMethodSwapOwner {
@@ -760,36 +762,36 @@ interface IMethods {
 
 interface ISafeTxCaller {
     addOwnerWithThreshold (sender: TSender, owner: TAddress, _threshold: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    approveHash (sender: TSender, hashToApprove: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    approveHash (sender: TSender, hashToApprove: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     changeThreshold (sender: TSender, _threshold: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     disableModule (sender: TSender, prevModule: TAddress, module: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     enableModule (sender: TSender, module: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    execTransaction (sender: TSender, to: TAddress, value: bigint, data: TBufferLike, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, signatures: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    execTransactionFromModule (sender: TSender, to: TAddress, value: bigint, data: TBufferLike, operation: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    execTransactionFromModuleReturnData (sender: TSender, to: TAddress, value: bigint, data: TBufferLike, operation: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    execTransaction (sender: TSender, to: TAddress, value: bigint, data: TEth.Hex, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, signatures: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    execTransactionFromModule (sender: TSender, to: TAddress, value: bigint, data: TEth.Hex, operation: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    execTransactionFromModuleReturnData (sender: TSender, to: TAddress, value: bigint, data: TEth.Hex, operation: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     removeOwner (sender: TSender, prevOwner: TAddress, owner: TAddress, _threshold: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setFallbackHandler (sender: TSender, handler: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setGuard (sender: TSender, guard: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    setup (sender: TSender, _owners: TAddress[], _threshold: bigint, to: TAddress, data: TBufferLike, fallbackHandler: TAddress, paymentToken: TAddress, payment: bigint, paymentReceiver: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    simulateAndRevert (sender: TSender, targetContract: TAddress, calldataPayload: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    setup (sender: TSender, _owners: TAddress[], _threshold: bigint, to: TAddress, data: TEth.Hex, fallbackHandler: TAddress, paymentToken: TAddress, payment: bigint, paymentReceiver: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    simulateAndRevert (sender: TSender, targetContract: TAddress, calldataPayload: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     swapOwner (sender: TSender, prevOwner: TAddress, oldOwner: TAddress, newOwner: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface ISafeTxData {
     addOwnerWithThreshold (sender: TSender, owner: TAddress, _threshold: bigint): Promise<TEth.TxLike>
-    approveHash (sender: TSender, hashToApprove: TBufferLike): Promise<TEth.TxLike>
+    approveHash (sender: TSender, hashToApprove: TEth.Hex): Promise<TEth.TxLike>
     changeThreshold (sender: TSender, _threshold: bigint): Promise<TEth.TxLike>
     disableModule (sender: TSender, prevModule: TAddress, module: TAddress): Promise<TEth.TxLike>
     enableModule (sender: TSender, module: TAddress): Promise<TEth.TxLike>
-    execTransaction (sender: TSender, to: TAddress, value: bigint, data: TBufferLike, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, signatures: TBufferLike): Promise<TEth.TxLike>
-    execTransactionFromModule (sender: TSender, to: TAddress, value: bigint, data: TBufferLike, operation: number): Promise<TEth.TxLike>
-    execTransactionFromModuleReturnData (sender: TSender, to: TAddress, value: bigint, data: TBufferLike, operation: number): Promise<TEth.TxLike>
+    execTransaction (sender: TSender, to: TAddress, value: bigint, data: TEth.Hex, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, signatures: TEth.Hex): Promise<TEth.TxLike>
+    execTransactionFromModule (sender: TSender, to: TAddress, value: bigint, data: TEth.Hex, operation: number): Promise<TEth.TxLike>
+    execTransactionFromModuleReturnData (sender: TSender, to: TAddress, value: bigint, data: TEth.Hex, operation: number): Promise<TEth.TxLike>
     removeOwner (sender: TSender, prevOwner: TAddress, owner: TAddress, _threshold: bigint): Promise<TEth.TxLike>
     setFallbackHandler (sender: TSender, handler: TAddress): Promise<TEth.TxLike>
     setGuard (sender: TSender, guard: TAddress): Promise<TEth.TxLike>
-    setup (sender: TSender, _owners: TAddress[], _threshold: bigint, to: TAddress, data: TBufferLike, fallbackHandler: TAddress, paymentToken: TAddress, payment: bigint, paymentReceiver: TAddress): Promise<TEth.TxLike>
-    simulateAndRevert (sender: TSender, targetContract: TAddress, calldataPayload: TBufferLike): Promise<TEth.TxLike>
+    setup (sender: TSender, _owners: TAddress[], _threshold: bigint, to: TAddress, data: TEth.Hex, fallbackHandler: TAddress, paymentToken: TAddress, payment: bigint, paymentReceiver: TAddress): Promise<TEth.TxLike>
+    simulateAndRevert (sender: TSender, targetContract: TAddress, calldataPayload: TEth.Hex): Promise<TEth.TxLike>
     swapOwner (sender: TSender, prevOwner: TAddress, oldOwner: TAddress, newOwner: TAddress): Promise<TEth.TxLike>
 }
 

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,14 +39,16 @@ export class MultiSend extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/safe/MultiSend.ts"
+}
 
     async $constructor (deployer: TSender, ): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
     }
 
     // 0x8d80ff0a
-    async multiSend (sender: TSender, transactions: TBufferLike): Promise<TxWriter> {
+    async multiSend (sender: TSender, transactions: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'multiSend'), sender, transactions);
     }
 
@@ -103,7 +105,7 @@ interface IEvents {
 
 interface IMethodMultiSend {
   method: "multiSend"
-  arguments: [ transactions: TBufferLike ]
+  arguments: [ transactions: TEth.Hex ]
 }
 
 interface IMethods {
@@ -117,12 +119,12 @@ interface IMethods {
 
 
 interface IMultiSendTxCaller {
-    multiSend (sender: TSender, transactions: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    multiSend (sender: TSender, transactions: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IMultiSendTxData {
-    multiSend (sender: TSender, transactions: TBufferLike): Promise<TEth.TxLike>
+    multiSend (sender: TSender, transactions: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

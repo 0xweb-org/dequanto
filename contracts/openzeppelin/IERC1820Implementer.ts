@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,10 +39,12 @@ export class IERC1820Implementer extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/IERC1820Implementer.ts"
+}
 
     // 0x249cb3fa
-    async canImplementInterfaceForAddress (interfaceHash: TBufferLike, account: TAddress): Promise<TBufferLike> {
+    async canImplementInterfaceForAddress (interfaceHash: TEth.Hex, account: TAddress): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'canImplementInterfaceForAddress'), interfaceHash, account);
     }
 
@@ -99,7 +101,7 @@ interface IEvents {
 
 interface IMethodCanImplementInterfaceForAddress {
   method: "canImplementInterfaceForAddress"
-  arguments: [ interfaceHash: TBufferLike, account: TAddress ]
+  arguments: [ interfaceHash: TEth.Hex, account: TAddress ]
 }
 
 interface IMethods {

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,10 +39,12 @@ export class IERC1363Receiver extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/IERC1363Receiver.ts"
+}
 
     // 0x88a7ca5c
-    async onTransferReceived (sender: TSender, operator: TAddress, from: TAddress, amount: bigint, data: TBufferLike): Promise<TxWriter> {
+    async onTransferReceived (sender: TSender, operator: TAddress, from: TAddress, amount: bigint, data: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'onTransferReceived'), sender, operator, from, amount, data);
     }
 
@@ -99,7 +101,7 @@ interface IEvents {
 
 interface IMethodOnTransferReceived {
   method: "onTransferReceived"
-  arguments: [ operator: TAddress, from: TAddress, amount: bigint, data: TBufferLike ]
+  arguments: [ operator: TAddress, from: TAddress, amount: bigint, data: TEth.Hex ]
 }
 
 interface IMethods {
@@ -113,12 +115,12 @@ interface IMethods {
 
 
 interface IIERC1363ReceiverTxCaller {
-    onTransferReceived (sender: TSender, operator: TAddress, from: TAddress, amount: bigint, data: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    onTransferReceived (sender: TSender, operator: TAddress, from: TAddress, amount: bigint, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IIERC1363ReceiverTxData {
-    onTransferReceived (sender: TSender, operator: TAddress, from: TAddress, amount: bigint, data: TBufferLike): Promise<TEth.TxLike>
+    onTransferReceived (sender: TSender, operator: TAddress, from: TAddress, amount: bigint, data: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

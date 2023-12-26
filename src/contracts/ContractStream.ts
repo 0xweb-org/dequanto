@@ -1,4 +1,3 @@
-import di from 'a-di';
 import { ClientEventsStream } from '@dequanto/clients/ClientEventsStream';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -17,8 +16,7 @@ export class ContractStream  {
             this
                 .client
                 .subscribe('logs', {
-                    address: this.address,
-                    fromBlock: 'latest'
+                    address: this.address
                 })
                 .then(subscription => {
                     stream.fromSubscription(subscription);

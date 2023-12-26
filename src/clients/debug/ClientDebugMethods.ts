@@ -5,6 +5,7 @@ import { TAddress } from '@dequanto/models/TAddress'
 import { TBufferLike } from '@dequanto/models/TBufferLike'
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $hex } from '@dequanto/utils/$hex';
+import { TEth } from '@dequanto/models/TEth';
 
 
 export class ClientDebugMethods {
@@ -15,24 +16,6 @@ export class ClientDebugMethods {
 
     getTransactionTrace (hash: string) {
         return this.client.pool.call(async web3 => {
-            // let eth = web3.eth as (typeof web3.eth & { traceTransaction });
-
-            // if (typeof eth.traceTransaction !== 'function') {
-            //     web3.eth.extend({
-            //         methods: [
-            //             {
-            //                 name: 'traceTransaction',
-            //                 call: 'debug_traceTransaction',
-            //                 params: 2,
-            //             }
-            //         ]
-            //     })
-            // }
-
-            // let result = await eth.traceTransaction(hash, {
-            //     tracer: 'callTracer'
-            // });
-            // return result;
             return web3.rpc.request({
                 method: 'debug_traceTransaction',
                 params: [ hash, { tracer: 'callTracer' }]
@@ -44,14 +27,14 @@ export class ClientDebugMethods {
         });
     }
 
-    setStorageAt (address: TAddress, location: string | number | bigint, buffer: string) {
+    setStorageAt (address: TAddress, location: string | number | bigint, buffer: TEth.Hex) {
         buffer = $hex.padBytes(buffer, 32);
         location = $hex.toHex(location);
         location = $hex.trimLeadingZerosFromNumber(location);
         return this.call('setStorageAt', address, location, buffer);
     }
 
-    setCode (address: TAddress, buffer: string) {
+    setCode (address: TAddress, buffer: TEth.Hex) {
         buffer = $bytecode.trimConstructorCode(buffer);
         return this.call('setCode', address, buffer);
     }

@@ -13,7 +13,7 @@ import { $require } from '@dequanto/utils/$require';
 
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TEth } from '@dequanto/models/TEth';
-import { ILogger } from 'everlog/fs/LoggerFile';
+import { ILogger } from 'everlog/interfaces/ILogger';
 
 interface IBlockIndexer {
     name: string

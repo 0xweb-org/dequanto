@@ -68,7 +68,7 @@ export class EnsProvider implements INsProvider {
         return hex;
     }
 
-    private async getResolver(hash: TBufferLike): Promise<Pick<EnsPublicResolver, 'addr' | 'contenthash' | 'text'>> {
+    private async getResolver(hash: TEth.Hex): Promise<Pick<EnsPublicResolver, 'addr' | 'contenthash' | 'text'>> {
         let registry = await this.getRegistry();
         let address = await registry.resolver(hash);
         $require.Address(address, `Resolver address is empty for ${hash} in registry ${this.client.platform}:${registry.address}`);

@@ -15,8 +15,10 @@ export class FlashbotWeb3Client extends Web3Client {
     TIMEOUT: number = 5 * 60 * 1000;
     defaultGasLimit = 2_000_000
 
-    constructor (private innerClient: Web3Client) {
+    constructor (opts) {
+        super(opts);
 
+        throw new Error('Not Implemented. Use generic Web3Clients and submit transactions via FlashbotsProvider ');
     }
 
 }

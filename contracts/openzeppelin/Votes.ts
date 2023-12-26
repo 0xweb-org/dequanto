@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -52,7 +52,9 @@ export class Votes extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/Votes.ts"
+}
 
     // 0x4bf5d7e9
     async CLOCK_MODE (): Promise<string> {
@@ -60,7 +62,7 @@ export class Votes extends ContractBase {
     }
 
     // 0x3644e515
-    async DOMAIN_SEPARATOR (): Promise<TBufferLike> {
+    async DOMAIN_SEPARATOR (): Promise<TEth.Hex> {
         return this.$read(this.$getAbiItem('function', 'DOMAIN_SEPARATOR'));
     }
 
@@ -75,7 +77,7 @@ export class Votes extends ContractBase {
     }
 
     // 0xc3cda520
-    async delegateBySig (sender: TSender, delegatee: TAddress, nonce: bigint, expiry: bigint, v: number, r: TBufferLike, s: TBufferLike): Promise<TxWriter> {
+    async delegateBySig (sender: TSender, delegatee: TAddress, nonce: bigint, expiry: bigint, v: number, r: TEth.Hex, s: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'delegateBySig'), sender, delegatee, nonce, expiry, v, r, s);
     }
 
@@ -85,7 +87,7 @@ export class Votes extends ContractBase {
     }
 
     // 0x84b0196e
-    async eip712Domain (): Promise<{ fields: TBufferLike, name: string, version: string, chainId: bigint, verifyingContract: TAddress, salt: TBufferLike, extensions: bigint[] }> {
+    async eip712Domain (): Promise<{ fields: TEth.Hex, name: string, version: string, chainId: bigint, verifyingContract: TAddress, salt: TEth.Hex, extensions: bigint[] }> {
         return this.$read(this.$getAbiItem('function', 'eip712Domain'));
     }
 
@@ -241,7 +243,7 @@ interface IMethodDelegate {
 
 interface IMethodDelegateBySig {
   method: "delegateBySig"
-  arguments: [ delegatee: TAddress, nonce: bigint, expiry: bigint, v: number, r: TBufferLike, s: TBufferLike ]
+  arguments: [ delegatee: TAddress, nonce: bigint, expiry: bigint, v: number, r: TEth.Hex, s: TEth.Hex ]
 }
 
 interface IMethodDelegates {
@@ -296,13 +298,13 @@ interface IMethods {
 
 interface IVotesTxCaller {
     delegate (sender: TSender, delegatee: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    delegateBySig (sender: TSender, delegatee: TAddress, nonce: bigint, expiry: bigint, v: number, r: TBufferLike, s: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    delegateBySig (sender: TSender, delegatee: TAddress, nonce: bigint, expiry: bigint, v: number, r: TEth.Hex, s: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IVotesTxData {
     delegate (sender: TSender, delegatee: TAddress): Promise<TEth.TxLike>
-    delegateBySig (sender: TSender, delegatee: TAddress, nonce: bigint, expiry: bigint, v: number, r: TBufferLike, s: TBufferLike): Promise<TEth.TxLike>
+    delegateBySig (sender: TSender, delegatee: TAddress, nonce: bigint, expiry: bigint, v: number, r: TEth.Hex, s: TEth.Hex): Promise<TEth.TxLike>
 }
 
 

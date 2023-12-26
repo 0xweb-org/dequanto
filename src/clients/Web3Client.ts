@@ -28,8 +28,7 @@ import { PromiseEvent } from '@dequanto/class/PromiseEvent';
 import { RpcTypes } from '@dequanto/rpc/Rpc';
 import { TRpc } from '@dequanto/rpc/RpcBase';
 import { $sig } from '@dequanto/utils/$sig';
-import { $bytecode } from '@dequanto/evm/utils/$bytecode';
-import { $contract } from '@dequanto/utils/$contract';
+import { DataLike } from '@dequanto/utils/types';
 
 export abstract class Web3Client implements IWeb3Client {
 
@@ -188,13 +187,13 @@ export abstract class Web3Client implements IWeb3Client {
     }
 
 
-    getBalance(address: TEth.Address, blockNumber: RpcTypes.BlockNumberOrTagOrHash = 'latest'): Promise<bigint> {
+    getBalance(address: TEth.Address, blockNumber: DataLike<RpcTypes.BlockNumberOrTagOrHash> = 'latest'): Promise<bigint> {
         return this.pool.call(async web3 => {
             let wei = await web3.rpc.eth_getBalance(address, blockNumber);
             return wei;
         });
     }
-    getBalances(addresses: TEth.Address[], blockNumber: RpcTypes.BlockNumberOrTagOrHash = 'latest'): Promise<bigint[]> {
+    getBalances(addresses: TEth.Address[], blockNumber: DataLike<RpcTypes.BlockNumberOrTagOrHash> = 'latest'): Promise<bigint[]> {
         return this.pool.call(async web3 => {
             let rpc = web3.rpc;
             let requests = addresses.map(address => {
@@ -204,7 +203,7 @@ export abstract class Web3Client implements IWeb3Client {
 
         }, { batchRequestCount: addresses.length });
     }
-    getTransactionCount(address: TEth.Address, blockNumber: RpcTypes.BlockNumberOrTagOrHash = 'latest') {
+    getTransactionCount(address: TEth.Address, blockNumber: DataLike<RpcTypes.BlockNumberOrTagOrHash> = 'latest') {
         return this.pool.call(wClient => {
             return wClient.rpc.eth_getTransactionCount(address, blockNumber ?? 'latest');
         });
@@ -318,12 +317,12 @@ export abstract class Web3Client implements IWeb3Client {
             }
         });
     }
-    getStorageAt(address: TEth.Address, position: number | bigint | TEth.Hex, blockNumber: RpcTypes.BlockNumberOrTagOrHash = 'latest') {
+    getStorageAt(address: TEth.Address, position: number | bigint | TEth.Hex, blockNumber: DataLike<RpcTypes.BlockNumberOrTagOrHash> = 'latest') {
         return this.pool.call(web3 => {
             return web3.rpc.eth_getStorageAt(address, <any>position, blockNumber);
         });
     }
-    getStorageAtBatched(address: TEth.Address, slots: (string | number | bigint)[], blockNumber: RpcTypes.BlockNumberOrTagOrHash = 'latest') {
+    getStorageAtBatched(address: TEth.Address, slots: (string | number | bigint)[], blockNumber: DataLike<RpcTypes.BlockNumberOrTagOrHash> = 'latest') {
         return this.pool.callBatched({
             async requests(rpc) {
                 return slots.map(storageSlot => ({

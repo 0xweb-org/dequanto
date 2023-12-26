@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-22 01:26
+ *  AUTO-Generated Class: 2023-12-26 12:42
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -39,7 +39,9 @@ export class ITransparentUpgradeableProxy extends ContractBase {
         
     }
 
-    
+    $meta = {
+    "class": "./contracts/openzeppelin/ITransparentUpgradeableProxy.ts"
+}
 
     // 0xf851a440
     async admin (): Promise<TAddress> {
@@ -62,7 +64,7 @@ export class ITransparentUpgradeableProxy extends ContractBase {
     }
 
     // 0x4f1ef286
-    async upgradeToAndCall (sender: TSender, input0: TAddress, input1: TBufferLike): Promise<TxWriter> {
+    async upgradeToAndCall (sender: TSender, input0: TAddress, input1: TEth.Hex): Promise<TxWriter> {
         return this.$write(this.$getAbiItem('function', 'upgradeToAndCall'), sender, input0, input1);
     }
 
@@ -198,7 +200,7 @@ interface IMethodUpgradeTo {
 
 interface IMethodUpgradeToAndCall {
   method: "upgradeToAndCall"
-  arguments: [ input0: TAddress, input1: TBufferLike ]
+  arguments: [ input0: TAddress, input1: TEth.Hex ]
 }
 
 interface IMethods {
@@ -218,14 +220,14 @@ interface IMethods {
 interface IITransparentUpgradeableProxyTxCaller {
     changeAdmin (sender: TSender, input0: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     upgradeTo (sender: TSender, input0: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
-    upgradeToAndCall (sender: TSender, input0: TAddress, input1: TBufferLike): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
+    upgradeToAndCall (sender: TSender, input0: TAddress, input1: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
 
 
 interface IITransparentUpgradeableProxyTxData {
     changeAdmin (sender: TSender, input0: TAddress): Promise<TEth.TxLike>
     upgradeTo (sender: TSender, input0: TAddress): Promise<TEth.TxLike>
-    upgradeToAndCall (sender: TSender, input0: TAddress, input1: TBufferLike): Promise<TEth.TxLike>
+    upgradeToAndCall (sender: TSender, input0: TAddress, input1: TEth.Hex): Promise<TEth.TxLike>
 }
 
 
