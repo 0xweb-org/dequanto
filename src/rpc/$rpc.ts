@@ -33,7 +33,7 @@ export namespace $rpc {
     export async function waitForReceipt (rpc: Rpc, hash: TEth.Hex): Promise<TEth.TxReceipt> {
         let knownTx = false;
         let startedAt = Date.now();
-        let MEM_POOL_TIMEOUT = 10_000;
+        let MEM_POOL_TIMEOUT = 30_000;
         let TX_TIMEOUT = Infinity;
         let receipt = await $promise.waitForObject(async () => {
             if (knownTx === false) {

@@ -107,6 +107,12 @@ export class Deployments {
         return contract;
     }
 
+    async getIfExists<T extends ContractBase>(Ctor: Constructor<T>, opts: {
+        id?: string;
+    }): Promise<T> {
+        return this.getOrNull(Ctor, opts);
+    }
+
     private async getOrNull<T extends ContractBase>(Ctor: Constructor<T>, opts: {
         id?: string;
     }): Promise<T> {
@@ -189,7 +195,6 @@ export class Deployments {
                 }
             }
         }
-
 
         // Lets deploy the contract, new, forced, or latest
 

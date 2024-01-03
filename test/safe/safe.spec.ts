@@ -301,15 +301,6 @@ class SafeTestableFactory {
                     MultiSend: multiSendContract.address,
                     Safe: safeContract.address,
                     SafeProxyFactory: proxyFactoryContract.address
-
-                    // multiSendAddress: multiSendContract.address,
-                    // multiSendAbi: multiSendAbi,
-
-                    // safeMasterCopyAddress: safeContract.address,
-                    // safeMasterCopyAbi: safeAbi,
-
-                    // safeProxyFactoryAbi: proxyFactoryAbi,
-                    // safeProxyFactoryAddress: proxyFactoryContract.address
                 }
             }
         });

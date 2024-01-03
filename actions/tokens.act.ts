@@ -23,7 +23,7 @@ UAction.create({
         l`Chainlink Feeds fetchs: ${r.length}`;
     },
 
-    '//fetch single providers': {
+    '!fetch single providers': {
         async 'coingecko' () {
             let p = new TPCoingecko();
             let tokens = await p.redownloadTokens();

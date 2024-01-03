@@ -52,7 +52,7 @@ export abstract class GnosisSafeFactory {
         let tx = await safeFactoryContract.createProxyWithNonce(owner,
             safeContract.address, // _singleton,
             setupData.data, // initializer,
-            BigInt(params.saltNonce ?? PREDETERMINED_SALT_NONCE)
+            BigInt(params.saltNonce ?? (BigInt(PREDETERMINED_SALT_NONCE) + BigInt(Date.now())))
         );
         let receipt = await tx.wait();
 

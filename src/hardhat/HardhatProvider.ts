@@ -27,6 +27,9 @@ import { ContractDeployment } from '@dequanto/contracts/deploy/ContractDeploymen
 import { ContractDeployer } from '@dequanto/contracts/deploy/ContractDeployer';
 import { $sig } from '@dequanto/utils/$sig';
 import { $address } from '@dequanto/utils/$address';
+import { $promise } from '@dequanto/utils/$promise';
+import { $date } from '@dequanto/utils/$date';
+import { $hex } from '@dequanto/utils/$hex';
 
 export class HardhatProvider {
 
@@ -152,6 +155,19 @@ export class HardhatProvider {
 
         let address = $address.toChecksum(receipt.contractAddress);
         $logger.log(`${receipt.status ? '✅' : '⛔' } Contract bold<${Ctor.name}> deployed to bold<${address}> in tx:${receipt.transactionHash}`);
+
+        await $promise.waitForTrue(async () => {
+            let code = await client.getCode(address);
+            if ($hex.isEmpty(code)) {
+                $logger.log(`⏳ Waiting for the contract data to be indexed...`);
+                return false;
+            }
+            return true;
+        }, {
+            timeoutMessage: `${receipt.transactionHash} did not deploy in 30s`,
+            timeoutMs: $date.parseTimespan('30s')
+        });
+
         let contract = new Ctor(address, client);
         return {
             contract,
