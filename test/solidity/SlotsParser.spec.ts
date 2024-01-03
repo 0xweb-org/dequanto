@@ -308,10 +308,12 @@ UTest({
         let totalSupply = await client.getStorageAt(contract.address, 2);
         eq_(Number(totalSupply), 4)
     },
-    async 'should parse sol versions lower then 0.5.0'() {
+    async 'should parse sol versions lower then 0.4.17'() {
 
         return new UTest({
             async 'parse enjtoken'() {
+                // https://etherscan.io/bytecode-decompiler?a=0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c
+
                 const slots = await SlotsParser.slots({
                     path: './test/fixtures/parser/v04/ENJToken.sol'
                 }, 'ENJToken');
@@ -448,6 +450,36 @@ UTest({
             let slot = slots.find(x => x.name === name);
             $require.notNull(slot, nr + ': ' + name);
             eq_(slot.slot, nr);
+        }
+    },
+    async 'should parse USDT.sol'() {
+        // https://etherscan.io/bytecode-decompiler?a=0xdac17f958d2ee523a2206206994597c13d831ec7
+
+        let slots = await SlotsParser.slots({
+            path: './test/fixtures/parser/TetherToken.sol'
+        });
+
+        expectSlot(0, 'owner', { position: 0});
+        expectSlot(0, 'paused', { position: 160 });
+        expectSlot(1, '_totalSupply');
+        expectSlot(2, 'balances');
+        expectSlot(3, 'basisPointsRate');
+        expectSlot(4, 'maximumFee');
+        expectSlot(5, 'allowed');
+        expectSlot(6, 'isBlackListed');
+        expectSlot(7, 'name');
+        expectSlot(8, 'symbol');
+        expectSlot(9, 'decimals');
+        expectSlot(10, 'upgradedAddress');
+        expectSlot(10, 'deprecated', { position: 160 });
+
+        function expectSlot(nr: number, name: string, mix?: { position?: number}) {
+            let slot = slots.find(x => x.name === name);
+            $require.notNull(slot, nr + ': ' + name);
+            eq_(slot.slot, nr, nr + ': ' + name);
+            if (mix?.position != null) {
+                eq_(slot.position, mix.position, `Invalid position ${nr}: ${name}`);
+            }
         }
     },
 })

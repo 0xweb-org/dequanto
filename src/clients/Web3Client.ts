@@ -48,6 +48,10 @@ export abstract class Web3Client implements IWeb3Client {
 
     defaultTxType: 0 | 1 | 2 = 2;
 
+    get network (): TPlatform {
+        return this.forked?.platform ?? this.platform;
+    }
+
     async sign(txData: TEth.TxLike, privateKey: TEth.Hex): Promise<string> {
         let rpc = await this.getRpc();
         let sig = await $sig.signTx( txData, { key: privateKey }, rpc);

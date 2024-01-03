@@ -124,7 +124,8 @@ export class SourceFile {
         if (contract.baseContracts?.length > 0) {
 
             let baseContracts = [...contract.baseContracts]
-            if ($semver.compare(this.version, '<', '0.5.0')) {
+
+            if ($semver.compare(this.version, '<', '0.4.17')) {
                 baseContracts.reverse();
             }
 
