@@ -49,6 +49,10 @@ export class HardhatWeb3Client extends Web3Client {
         });
     }
 
+    async getGasPriorityFee(): Promise<bigint> {
+        return 10n**9n;
+    }
+
     configureFork (fork: TPlatform) {
         this.forked = {
             platform: fork,

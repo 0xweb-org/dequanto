@@ -51,5 +51,9 @@ export interface IWeb3ClientOptions {
             call: 'hardhat_reset' | string,
             params: 1 | number
         }
+        mine?: {
+            call: 'hardhat_mine' | string,
+            params: 1 | number
+        }
     }
 }

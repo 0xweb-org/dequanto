@@ -303,10 +303,9 @@ export namespace BlockChainExplorerFactory {
                         // etherscan returns code wrapped into {{}}
                     }
                     str = str
-                        .replace(/\{\{/g, '{')
-                        .replace(/\}\}/g, '}')
+                        .replace(/^\s*\{\{/g, '{')
+                        .replace(/\}\}\s*$/g, '}');
                         // @TODO check etherscan serialized jsons. Does it always has "{{...}}" wrappings
-
 
                     return JSON.parse(str)
                 }

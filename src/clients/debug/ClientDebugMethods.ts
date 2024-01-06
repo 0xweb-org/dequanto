@@ -6,6 +6,7 @@ import { TBufferLike } from '@dequanto/models/TBufferLike'
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $hex } from '@dequanto/utils/$hex';
 import { TEth } from '@dequanto/models/TEth';
+import { $array } from '@dequanto/utils/$array';
 
 
 export class ClientDebugMethods {
@@ -37,6 +38,12 @@ export class ClientDebugMethods {
     setCode (address: TAddress, buffer: TEth.Hex) {
         buffer = $bytecode.trimConstructorCode(buffer);
         return this.call('setCode', address, buffer);
+    }
+
+    /** Mines a specified number of blocks at a given interval. */
+    mine (blocks?: number | bigint, intervalSeconds?: number | bigint) {
+        let args = $array.trimEnd([ blocks, intervalSeconds ]);
+        return this.call('mine', ...args);
     }
 
     setBalance (address: TAddress, amount: bigint | string) {
