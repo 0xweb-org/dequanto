@@ -12,7 +12,7 @@ import { $bigint } from '@dequanto/utils/$bigint';
 import { PromiseEventWrap } from './model/PromiEventWrap';
 import { IWeb3ClientStatus } from './interfaces/IWeb3ClientStatus';
 import { ClientStatus } from './model/ClientStatus';
-import { ClientPoolTrace, ClientPoolTraceError } from './ClientPoolStats';
+import { ClientPoolTrace, ClientPoolTraceError, ErrorCode } from './ClientPoolStats';
 import { class_Dfr, obj_extendDefaults } from 'atma-utils';
 import { ClientErrorUtil } from './utils/ClientErrorUtil';
 import { IWeb3ClientOptions } from './interfaces/IWeb3Client';
@@ -157,7 +157,7 @@ export class ClientPool {
 
                     error = new Error(`Live clients not found in \n${urls}`);
                 }
-                throw ClientPoolTraceError.create(error, opts?.trace);
+                throw ClientPoolTraceError.create(error, opts?.trace, ErrorCode.NO_LIVE_CLIENT);
             }
 
             let wClientUsage = used.get(wClient);
@@ -191,7 +191,7 @@ export class ClientPool {
                 }
             }
             if (status === ClientStatus.CallError) {
-                let error = ClientPoolTraceError.create(errors.pop(), opts?.trace);
+                let error = ClientPoolTraceError.create(errors.pop(), opts?.trace, ErrorCode.CALL);
                 throw error;
                 return result;
             }
@@ -497,8 +497,21 @@ export class ClientPool {
             : available;
 
         if (opts?.blockRangeCount != null) {
-            let upperThreshold = alot(arr).max(x => x.blockRangeLimits.blocks) * .8;
-            arr = arr.filter(x => x.blockRangeLimits.blocks >= upperThreshold)
+            let upperThreshold = alot(arr).max(x => x.blockRangeLimits.blocks) * .5;
+            arr = arr.filter(x => {
+                let blocks = x.blockRangeLimits.blocks;
+                if (blocks == null) {
+                    // Block limit is unknown yet
+                    return true;
+                }
+                const MINIMUM_BLOCK_RANGE = 200;
+                if (blocks < MINIMUM_BLOCK_RANGE) {
+                    // Was not possible to load a minimum amount of blocks
+                    return false;
+                }
+                // Get if higher than 50% of max supported limit
+                return x.blockRangeLimits.blocks >= upperThreshold
+            });
         }
         return await this.getClientWithLowestWaitTime(arr);
     }

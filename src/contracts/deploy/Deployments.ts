@@ -107,7 +107,7 @@ export class Deployments {
         return contract;
     }
 
-    async getIfExists<T extends ContractBase>(Ctor: Constructor<T>, opts: {
+    async getIfExists<T extends ContractBase>(Ctor: Constructor<T>, opts?: {
         id?: string;
     }): Promise<T> {
         return this.getOrNull(Ctor, opts);

@@ -10,6 +10,10 @@ interface IClientCallLog {
     status: ClientStatus
 }
 
+export enum ErrorCode {
+    NO_LIVE_CLIENT = 'NO_LIVE_CLIENT',
+    CALL = 'CALL'
+}
 
 class ClientPoolStatsHandler {
     calls: IClientCallLog[] = []
@@ -23,9 +27,10 @@ class ClientPoolStatsHandler {
 }
 export class ClientPoolTraceError extends Error {
 
-    static create ($error: Error, trace: ClientPoolTrace) {
+    static create ($error: Error, trace: ClientPoolTrace, code: ErrorCode) {
         let traceLog = trace?.toString() ?? '';
         return {
+            code: code,
             name: $error.name,
             stack: $error.stack,
             message:  (traceLog + '\n' + $error.message).trim(),

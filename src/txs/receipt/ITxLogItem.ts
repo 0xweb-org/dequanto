@@ -4,6 +4,7 @@ import { type TAbiItem } from '@dequanto/types/TAbi';
 
 export interface ITxLogItem<TParams = { [name: string]: any }> {
     blockNumber: number
+    logIndex: number
     transactionHash: string
     address: TAddress
     event: string

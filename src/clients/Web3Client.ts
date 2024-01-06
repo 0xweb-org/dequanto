@@ -29,6 +29,8 @@ import { RpcTypes } from '@dequanto/rpc/Rpc';
 import { TRpc } from '@dequanto/rpc/RpcBase';
 import { $sig } from '@dequanto/utils/$sig';
 import { DataLike } from '@dequanto/utils/types';
+import { ErrorCode } from './ClientPoolStats';
+import { $date } from '@dequanto/utils/$date';
 
 export abstract class Web3Client implements IWeb3Client {
 
@@ -47,6 +49,7 @@ export abstract class Web3Client implements IWeb3Client {
     }
 
     defaultTxType: 0 | 1 | 2 = 2;
+    defaultGasPriceRatio = 1.4;
 
     get network (): TPlatform {
         return this.forked?.platform ?? this.platform;
@@ -342,6 +345,12 @@ export abstract class Web3Client implements IWeb3Client {
             return { price };
         });
     }
+    getGasPriorityFee(): Promise<bigint> {
+        return this.pool.call(async wClient => {
+            let priority = await wClient.rpc.eth_maxPriorityFeePerGas();
+            return priority;
+        });
+    }
     getGasEstimation(from: TEth.Address, tx: TEth.TxLike) {
         let data = $hex.ensure(tx.data ?? tx.input);
         $require.notNull(data, `Expects the bytecode to estimate the gas for`, tx);
@@ -424,9 +433,6 @@ export abstract class Web3Client implements IWeb3Client {
 
     async getPastLogs(options: RpcTypes.Filter): Promise<TEth.Log[]> {
 
-        options.fromBlock = await Blocks.getBlock(this, options.fromBlock, 0);
-        options.toBlock = await Blocks.getBlock(this, options.toBlock, 'latest');
-
         // ensure numbers, bigints, bools are in HEX
         options.topics = options.topics.map(mix => {
             if (mix != null && Array.isArray(mix) === false) {
@@ -445,9 +451,10 @@ export abstract class Web3Client implements IWeb3Client {
 
         let MAX = this.pool.getOptionForFetchableRange();
         let [fromBlock, toBlock] = await Promise.all([
-            Blocks.getBlockNumber(this, options.fromBlock as any),
-            Blocks.getBlockNumber(this, options.toBlock as any),
+            Blocks.getBlock(this, options.fromBlock, 0),
+            Blocks.getBlock(this, options.toBlock, 'latest'),
         ]);
+
         return await RangeWorker.fetchWithLimits(this, options, {
             maxBlockRange: MAX,
             maxResultCount: null,
@@ -502,133 +509,126 @@ namespace RangeWorker {
         $require.Number(fromBlock, `FromBlock must be a number`);
         $require.Number(toBlock, `ToBlock must be a number`);
 
-
-        let { maxBlockRange } = limits;
         let range = toBlock - fromBlock;
-
-        if (maxBlockRange == null || range <= maxBlockRange) {
-            return fetch(client, options, ranges, limits);
-        }
-
-        $require.Number(maxBlockRange, `MaxBlockRange (${maxBlockRange}) must be a number`);
-        $require.gt(maxBlockRange, 0, `MaxBlockRange (${maxBlockRange}) must be > 0`);
-
         let logs = [];
         let cursor = fromBlock;
-        let pages = Math.ceil(range / maxBlockRange);
-        let page = 0;
-        let complete = false;
-        while (complete === false) {
-            ++page;
-            let end = cursor + maxBlockRange;
-            if (end > toBlock) {
-                end = toBlock as number;
-                complete = true;
+        let perf = {
+            start: Date.now(),
+            blocks: {
+                total: range,
+                loaded: 0,
             }
-            $logger.log(`Get past logs paged: ${page}/${pages} (Block start: ${cursor}). Loaded ${logs.length}`);
-            let paged = await fetch(client, options, {
+        };
+
+        while (cursor < toBlock) {
+            let paged = await fetchPaged(client, options, {
                 fromBlock: cursor,
-                toBlock: end ?? undefined,
+                toBlock: toBlock,
             }, limits);
-            logs.push(...paged);
-            cursor += maxBlockRange + 1;
+
+            logs.push(...paged.result);
+            cursor += paged.range.count + 1;
+
+            perf.blocks.loaded += paged.range.count;
+            let now = Date.now();
+            let blocksPerSec = perf.blocks.loaded / ((now - perf.start) / 1000);
+            let blocksPerSecFormatted = blocksPerSec.toFixed(2);
+            let leftSeconds = (toBlock - cursor) / blocksPerSec;
+            let leftTimeFormatted = $date.formatTimespan(leftSeconds * 1000);
+
+            $logger.log(`Blocks walked: ${perf.blocks.loaded}/${perf.blocks.total}. Latest range: ${paged.range.count}. BPS: ${blocksPerSecFormatted}. Estimated: ${leftTimeFormatted}. Loaded ${logs.length}`);
         }
         return logs;
 
     };
 
 
-    async function fetch(
+    async function fetchPaged(
         client: Web3Client,
         options: RpcTypes.Filter,
         range: { fromBlock: number, toBlock: number },
         knownLimits: { maxBlockRange?: number, maxResultCount?: number },
-    ) {
+    ): Promise<{
+        result: RpcTypes.FilterResults
+        range: {
+            fromBlock: number
+            toBlock: number
+            count: number
+        }
+    }> {
 
         let currentWClient: WClient;
+        let blockRange = range.toBlock - range.fromBlock;
         try {
-            let blockRange = range.toBlock - range.fromBlock;
+
             let paged = await client.pool.call((wClient) => {
                 currentWClient = wClient;
+                blockRange = Math.min(
+                    blockRange,
+                    currentWClient.blockRangeLimits.blocks ?? Infinity
+                );
                 return wClient.rpc.eth_getLogs({
                     ...options,
                     fromBlock: $hex.ensure(range.fromBlock),
-                    toBlock: $hex.ensure(range.toBlock ?? undefined),
+                    toBlock: $hex.ensure(range.fromBlock + blockRange),
                 });
             }, {
                 blockRangeCount: blockRange
             });
-            return paged;
+            return {
+                result: paged,
+                range: {
+                    fromBlock: range.fromBlock,
+                    toBlock: range.fromBlock + blockRange,
+                    count: blockRange
+                }
+            };
         } catch (error) {
+            if (error.code === ErrorCode.NO_LIVE_CLIENT) {
+                throw error;
+            }
+
             /**
              * query returned more than 10000 results
              */
-            $logger.log(`Range worker request: ${range.fromBlock}-${range.toBlock}. ${error.message.trim()}. Splitting range.`);
-
-            if ($is.Number(options.fromBlock) === false || $is.Number(options.toBlock) === false) {
-                let [fromBlock, toBlock] = await Promise.all([
-                    Blocks.getBlock(client, options.fromBlock, 0),
-                    Blocks.getBlock(client, options.toBlock, 'latest'),
-                ]);
-                let [fromBlockNr, toBlockNr] = await Promise.all([
-                    Blocks.getBlockNumber(client, fromBlock),
-                    Blocks.getBlockNumber(client, toBlock),
-                ]);
-
-                options.fromBlock = fromBlockNr;
-                options.toBlock = toBlockNr;
-            }
+            $logger.log(`Range worker request: ${range.fromBlock}-${range.toBlock}. ${error.message.trim()}. Current range: ${ blockRange }`);
 
             let matchCountLimit = /(?<count>\d+) results/.exec(error.message);
             if (matchCountLimit) {
                 let count = Number(matchCountLimit.groups.count);
-
-                let half = Math.floor((range.toBlock - range.fromBlock) / 2);
-                let rangeA = {
-                    fromBlock: range.fromBlock,
-                    toBlock: range.fromBlock + half
-                };
-                let arr1 = await fetchWithLimits(client, options, {
-                    ...knownLimits,
-                    maxResultCount: count
-                }, rangeA);
-
-                let rangeB = {
-                    fromBlock: range.fromBlock + half,
-                    toBlock: range.toBlock
-                };
-                let arr2 = await fetchWithLimits(client, options, {
-                    ...knownLimits,
-                    maxResultCount: count
-                }, rangeB);
-
-                return [...(arr1 ?? []), ...(arr2 ?? [])]
+                let newRange = Math.floor(blockRange * 0.8);
+                currentWClient.updateBlockRangeInfo({
+                    blocks: newRange,
+                    results: count,
+                });
+                return fetchPaged(client, options, range, knownLimits);
             }
 
-            let maxRangeMatch = /\b(?<maxRange>\d+)\b/.exec(error.message)?.groups?.maxRange;
+            let maxRangeMatch = /\b(?<maxRange>\d{2,})\b/.exec(error.message)?.groups?.maxRange;
             if (maxRangeMatch && knownLimits.maxBlockRange == null) {
                 // handle unknown range, otherwise throw
                 let rangeLimit = Number(maxRangeMatch);
-                currentWClient.updateBlockRangeInfo({ blocks: rangeLimit });
-                return await fetchWithLimits(client, options, {
-                    ...knownLimits,
-                    maxBlockRange: rangeLimit
-                }, range);
-            }
-            if (/\brange\b/.test(error.message)) {
-                // Generic "block range is too wide"
-                let rangeLimit = Math.round((knownLimits.maxBlockRange ?? 100000) * .8);
-                if (rangeLimit > 100) {
-                    // otherwise too small range
-                    currentWClient.updateBlockRangeInfo({ blocks: rangeLimit });
-                    return await fetchWithLimits(client, options, {
-                        ...knownLimits,
-                        maxBlockRange: rangeLimit
-                    }, range);
+                let currentRangeLimit = currentWClient.blockRangeLimits.blocks;
+                if (currentRangeLimit <= rangeLimit) {
+                    rangeLimit = Math.floor(currentRangeLimit * .9);
                 }
+
+                currentWClient.updateBlockRangeInfo({ blocks: rangeLimit });
+                return fetchPaged(client, options, range, knownLimits);
+            }
+            if (/\b(range|limit)\b/.test(error.message)) {
+                // Generic "block range is too wide", "limit exceeded",
+                let newRange = Math.floor(blockRange * 0.8);
+                currentWClient.updateBlockRangeInfo({
+                    blocks: newRange
+                });
+                return fetchPaged(client, options, range, knownLimits);
             }
 
-            throw error;
+            currentWClient.updateBlockRangeInfo({
+                blocks: 0
+            });
+            return fetchPaged(client, options, range, knownLimits);
         }
     }
 }

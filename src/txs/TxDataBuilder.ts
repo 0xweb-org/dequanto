@@ -148,7 +148,7 @@ export class TxDataBuilder {
         if (hasPriceRatio) {
             $priceRatio = priceRatio;
         } else if (hasPriceFixed === false) {
-            $priceRatio = 1.4;
+            $priceRatio = this.client.defaultGasPriceRatio;
         }
 
         type ??= this.client.defaultTxType;
@@ -159,7 +159,11 @@ export class TxDataBuilder {
             this.data.type = type;
         } else {
             let $baseFee = $bigint.multWithFloat(gasPrice.base ?? gasPrice.price, $priceRatio);
-            let $priorityFee = gasPrice.priority ?? 10n**9n;
+            let $priorityFee = gasPrice.priority;
+            if ($priorityFee == null) {
+                $priorityFee = await this.client.getGasPriorityFee();
+                $priorityFee = $bigint.multWithFloat($priorityFee, $priceRatio);
+            }
 
             this.data.maxFeePerGas = $bigint.toHex($baseFee + $priorityFee);
             this.data.maxPriorityFeePerGas = $bigint.toHex($priorityFee);

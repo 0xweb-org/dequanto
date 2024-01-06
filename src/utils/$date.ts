@@ -476,6 +476,9 @@ export namespace $date {
     export function toUnixTimestamp(date: Date): number {
         return Math.floor(date.getTime() / 1000);
     }
+    export function fromUnixTimestamp(seconds: number): Date {
+        return new Date(seconds * 1000);
+    }
 
 
     namespace Formatter {
