@@ -66,7 +66,7 @@ class Logger {
         this.print(row, { method: 'log' });
     }
 
-    table(arr: (string | number)[][]) {
+    table(arr: (string | number | bigint)[][]) {
 
         arr = arr.filter(x => x != null && x.length > 0);
 

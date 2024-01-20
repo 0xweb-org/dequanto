@@ -112,7 +112,7 @@ UTest({
 
         let handler = new GnosisSafeHandler({
             safeAddress: safe.safeAddress,
-            owner: owner1,
+            owners: [ owner1 ],
             client: client,
             transport: new InMemoryServiceTransport(client, owner1)
         });
@@ -245,7 +245,7 @@ UTest({
             async 'propose transaction' () {
                 let safe = new GnosisSafeHandler({
                     safeAddress: '0xBD0D7FF18CE61f21E0b9553f1e42A6A34f9D463A',
-                    owner: owner1,
+                    owners: [ owner1 ],
                     client: client
                 })
 

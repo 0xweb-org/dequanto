@@ -63,7 +63,7 @@ export abstract class GnosisSafeFactory {
 
         const safe = new GnosisSafeHandler({
             safeAddress: log.params.proxy,
-            owner: owner,
+            owners: [ owner ],
             client: client,
         });
         return safe;

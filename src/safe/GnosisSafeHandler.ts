@@ -187,7 +187,7 @@ export class GnosisSafeHandler {
         };
     }
 
-    private async createTxSignature(safeTxHash: string, owner: EoAccount) {
+    async createTxSignature(safeTxHash: string, owner: EoAccount) {
         return {
             signature: {
                 signer: $address.toChecksum(owner.address),

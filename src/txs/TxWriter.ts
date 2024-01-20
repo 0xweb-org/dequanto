@@ -81,7 +81,7 @@ export interface ITxWriterOptions {
 
 export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
-    onSent = new class_Dfr<string>();
+    onSent = new class_Dfr<string | TEth.Hex>();
     onCompleted = new class_Dfr<TEth.TxReceipt>();
     onSaved = new class_Dfr<string>();
 
