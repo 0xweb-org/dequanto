@@ -19,6 +19,8 @@ import { $is } from '@dequanto/utils/$is';
 import { IBeacon, IBeaconProxy, IProxy, IProxyAdmin, ProxyDeployment } from './proxy/ProxyDeployment';
 import { DeploymentsStorage, IDeployment } from './storage/DeploymentsStorage';
 import { TAddress } from '@dequanto/models/TAddress';
+import { $promise } from '@dequanto/utils/$promise';
+import { l } from '@dequanto/utils/$logger';
 
 
 type TDeploymentOptions = {
@@ -175,7 +177,11 @@ export class Deployments {
         if (contract != null) {
             await this.ensureVerification(Ctor, currentDeployment, opts);
 
-            if (opts.force !== true && opts.latest !== true) {
+            let requireLatest = opts.latest == null
+                ? (this.client.platform === 'hardhat')
+                : (opts.latest ?? false);
+
+            if (opts.force !== true && requireLatest !== true) {
                 // return already deployed contract
                 $contract.store.register(contract as any);
                 return {
@@ -183,7 +189,7 @@ export class Deployments {
                     deployment: currentDeployment,
                 };
             }
-            if (opts.latest === true) {
+            if (requireLatest === true && opts.force !== true) {
                 // was already deployed. Check new bytecode hash
                 let isSame = await this.isSameBytecode(Ctor, currentDeployment);
                 if (isSame) {
@@ -413,8 +419,15 @@ export class Deployments {
 
         let explorer = await BlockChainExplorerProvider.get(this.client.platform);
         let verifier = new ContractVerifier(this, explorer);
-        if (deployment.verified != null) {
+        if (deployment.verified != null && /Unable to locate/.test(deployment.verified) === false) {
             return;
+        }
+
+        let diff = (Date.now() / 1000 | 0) - deployment.timestamp;
+        l`Time passed since deployment: bold<${diff}ms>`;
+        if (diff < 5000) {
+            this._logger.log(`Wait to be indexed by explorer: ${diff}ms passed`);
+            await $promise.wait(5000);
         }
 
         let waitConfirmation = opts?.verification !== 'silent';
@@ -465,10 +478,15 @@ export class Deployments {
     public async configure<T extends TContract, TValue>(Ctor: Constructor<T> | T, opts: {
         id?: string;
 
+        // Latest value, if differs from current, the updater will be executed
         value?: TValue
+        // Current value.
         current?: TValue | Promise<TValue> | ((x: T) => Promise<TValue>);
-        shouldUpdate?: () => Promise<boolean>
-        updater: (x: T, value: TValue) => Promise<any>;
+        shouldUpdate?: boolean | (() => boolean | Promise<boolean>)
+        updater: (x: T, value: TValue) => Promise<any>
+
+        // Will be logged with old and new value
+        title?: string
     }) {
         let x: T;
         if (typeof Ctor === 'function') {
@@ -479,6 +497,7 @@ export class Deployments {
             x = Ctor;
         }
 
+        let currentVal;
         if ('current' in opts) {
             let currentMix = opts.current;
             let current = typeof currentMix === 'function'
@@ -488,12 +507,21 @@ export class Deployments {
             if (isEqual(current, opts.value)) {
                 return;
             }
+            currentVal = current;
         }
-        if (opts.shouldUpdate != null) {
-            let shouldUpdate = await opts.shouldUpdate();
+        if ('shouldUpdate' in opts && opts.shouldUpdate != null) {
+            let shouldUpdate = typeof opts.shouldUpdate === 'boolean'
+                ? opts.shouldUpdate
+                : await opts.shouldUpdate();
             if (!shouldUpdate) {
                 return;
             }
+        }
+        if (opts.title!= null) {
+            let currentStr = currentVal == null || typeof currentVal === 'object'
+                ? ''
+                : ` from ${currentVal}`;
+            this._logger.log(`Update bold<cyan<${opts.title}>> to ${opts.value}${currentStr}`);
         }
         await opts.updater(x, opts.value);
     }

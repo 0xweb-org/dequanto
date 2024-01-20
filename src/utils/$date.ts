@@ -21,8 +21,7 @@ export class DateTool {
         return new DateTool();
     }
     clone() {
-        this.date = new Date(this.date);
-        return this;
+        return new DateTool(new Date(this.date));
     }
     add(x: string | number) {
         this.date = $date.additive(this.date, x)
@@ -317,6 +316,13 @@ export namespace $date {
             str = str.substring(1);
         }
 
+        if (/\s+/.test(str)) {
+            let value = str.split(/\s+/).reduce((agr, x ) => {
+                return agr + parseTimespan(x, opts);
+            }, 0);
+            return value * direction;
+        }
+
         let rgx = /^(?<value>[\d\.]+)?(ms|s|sec|seconds|m|mins?|h|hours?|d|days?|w|weeks?|months?|y|years?)$/
         let match = rgx.exec(str);
         if (match == null) {
@@ -476,8 +482,8 @@ export namespace $date {
     export function toUnixTimestamp(date: Date): number {
         return Math.floor(date.getTime() / 1000);
     }
-    export function fromUnixTimestamp(seconds: number): Date {
-        return new Date(seconds * 1000);
+    export function fromUnixTimestamp(seconds: number | bigint): Date {
+        return new Date(Number(seconds) * 1000);
     }
 
 

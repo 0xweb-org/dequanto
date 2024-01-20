@@ -115,7 +115,7 @@ export class EvmBytecode {
         return this.instructions;
     }
 
-    async getAbi(): Promise<TAbiItem[]> {
+    async getAbi(opts?: { parseStateMutability?: boolean }): Promise<TAbiItem[]> {
         await this.prepare();
 
         let [functions, events] = await Promise.all([
@@ -128,10 +128,12 @@ export class EvmBytecode {
             let abi = $abiParser.parseMethod(str);
 
             try {
-                let { opcodes } = this.getMethodOpcodes({ sig: entry.signature })
-                let isReadOnly = $opcodes.isReadOnly(opcodes);
-                if (isReadOnly) {
-                    abi.stateMutability = 'view';
+                if (opts?.parseStateMutability !== false) {
+                    let { opcodes } = this.getMethodOpcodes({ sig: entry.signature })
+                    let isReadOnly = $opcodes.isReadOnly(opcodes);
+                    if (isReadOnly) {
+                        abi.stateMutability = 'view';
+                    }
                 }
             } catch (error) {
                 $logger.error(`Getting method ${str} opcodes failed: ${error.message}`);
@@ -163,10 +165,10 @@ export class EvmBytecode {
         /** Select PUSH4 opcodes in first calldataload block to filter any other method calls within the bytecode */
         let opcodeCalldataLoadIdx = $array.findIndex(opcodes, x => x.name === 'CALLDATALOAD');
         let opcodeCalldataLoad = opcodes[opcodeCalldataLoadIdx];
-        let jumpDestIdx = $array.findIndex(opcodes, x => x.name === 'JUMPDEST', opcodeCalldataLoadIdx);
+        let jumpDestIdx = $array.findIndex(opcodes, x => x?.name === 'JUMPDEST', opcodeCalldataLoadIdx);
         let jumpDest = opcodes[jumpDestIdx];
         let rangeStart = opcodeCalldataLoadIdx === -1 ? 0 : opcodeCalldataLoad.pc;
-        let rangeEnd = opcodeCalldataLoadIdx === -1 ? Infinity : jumpDest.pc;
+        let rangeEnd = opcodeCalldataLoadIdx === -1 ? Infinity : (jumpDest?.pc ?? Infinity);
 
         let hashes = opcodes
             .filter(opcode => opcode.name === 'PUSH4')

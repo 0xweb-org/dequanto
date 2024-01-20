@@ -24,24 +24,28 @@ import type { TAbiItem } from '@dequanto/types/TAbi';
 import { $sig } from '@dequanto/utils/$sig';
 import { TEth } from '@dequanto/models/TEth';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { $require } from '@dequanto/utils/$require';
 
 export class GnosisSafeHandler {
 
     public safeAddress: TAddress
-    public owner: EoAccount
+    public owners: EoAccount[]
     public client: Web3Client
     public transport: ISafeServiceTransport
 
     constructor(config: {
         safeAddress: TAddress
-        owner: EoAccount
+        owners: EoAccount[]
         client: Web3Client
         transport?: ISafeServiceTransport
     }) {
         this.safeAddress = config.safeAddress;
-        this.owner = config.owner;
+        this.owners = config.owners;
         this.client = config.client ?? di.resolve(EthWeb3Client);
-        this.transport = config.transport ?? new SafeServiceTransport(this.client, this.owner)
+        this.transport = config.transport ?? new SafeServiceTransport(this.client, this.owners);
+
+        $require.Address(this.safeAddress, `Safe address ${this.safeAddress} is not valid`);
+        $require.True(this.owners != null && this.owners.length > 0, `At least one owner is required`);
     }
 
     async getTx(safeTxHash: string) {
@@ -52,7 +56,7 @@ export class GnosisSafeHandler {
     }
     async confirmTx(safeTxHash: string, owner?: EoAccount): Promise<SafeServiceTypes.SignatureResponse> {
 
-        let acc = owner ?? this.owner;
+        let acc = owner ?? this.owners[0];
         let signature = await $sig.sign(safeTxHash, acc);
 
         return this.transport.confirmTx(safeTxHash, {
@@ -98,7 +102,7 @@ export class GnosisSafeHandler {
         ];
 
         let txWriter = await writer.writeAsync(
-            this.owner,
+            this.owners[0],
             SafeAbi.execTransaction,
             args
         );
@@ -160,8 +164,6 @@ export class GnosisSafeHandler {
 
         let safeInfo = await this.transport.getSafeInfo(this.safeAddress);
 
-        // let estimated = await this.transport.estimateSafeTransaction(this.safeAddress, safeTxEstimation);
-
         let safeTxData: SafeServiceTypes.SafeTransactionData = {
             ...safeTxEstimation,
 
@@ -185,11 +187,11 @@ export class GnosisSafeHandler {
         };
     }
 
-    async createTxSignature(safeTxHash: string) {
+    private async createTxSignature(safeTxHash: string, owner: EoAccount) {
         return {
             signature: {
-                signer: $address.toChecksum(this.owner.address),
-                data: (await $sig.sign(safeTxHash, this.owner)).signature
+                signer: $address.toChecksum(owner.address),
+                data: (await $sig.sign(safeTxHash, owner)).signature
             }
         };
     }
@@ -205,17 +207,30 @@ export class GnosisSafeHandler {
             safeInfo,
         } = await this.createTxHash(builder, value, safeTxParams);
 
-        let {
-            signature,
-        } = await this.createTxSignature(safeTxHash);
+        console.log(`Owners`, this.owners);
+        let sigArr = await alot(this.owners).mapAsync(async owner => {
+            let {
+                signature,
+            } = await this.createTxSignature(safeTxHash, owner);
+
+            return {
+                address: owner.address.toLowerCase(),
+                signature: signature
+            }
+        }).toArrayAsync();
+
 
         let signatures = new Map();
-        signatures.set(this.owner.address.toLowerCase(), signature);
+        sigArr.forEach(sig => {
+            signatures.set(sig.address, sig.signature);
+        })
+
 
         // https://docs.gnosis-safe.io/tutorials/tutorial_tx_service_initiate_sign
+        let owner = this.owners[0];
         let txProps: SafeServiceTypes.ProposeTransactionProps = {
             safeAddress: $address.toChecksum(this.safeAddress),
-            senderAddress: $address.toChecksum(this.owner.address),
+            senderAddress: $address.toChecksum(owner.address),
             safeTransaction: <SafeServiceTypes.SafeTransaction> {
                 data: safeTxData,
                 signatures: signatures,

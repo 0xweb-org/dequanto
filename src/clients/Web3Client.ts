@@ -520,6 +520,7 @@ namespace RangeWorker {
             }
         };
 
+        let nodeStats = Date.now();
         while (cursor < toBlock) {
             let paged = await fetchPaged(client, options, {
                 fromBlock: cursor,
@@ -537,6 +538,16 @@ namespace RangeWorker {
             let leftTimeFormatted = $date.formatTimespan(leftSeconds * 1000);
 
             $logger.log(`Blocks walked: ${perf.blocks.loaded}/${perf.blocks.total}. Latest range: ${paged.range.count}. BPS: ${blocksPerSecFormatted}. Estimated: ${leftTimeFormatted}. Loaded ${logs.length}`);
+
+            let lastNodeStats = Date.now() - nodeStats;
+            if (lastNodeStats > 30 * 1000) {
+                nodeStats = Date.now();
+
+                let stats = client.getNodeStats();
+                stats.forEach(stat => {
+                    $logger.log(`bold<${stat.url}> green<${stat.success}> red<${stat.fail}> cyan<${Math.ceil(stat.ping)}ms>`);
+                });
+            }
         }
         return logs;
 

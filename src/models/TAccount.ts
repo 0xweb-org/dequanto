@@ -35,6 +35,9 @@ export interface SafeAccount extends IAccount {
     safeAddress?: TAddress
 
     operator: EoAccount
+
+    owners?: string[]
+    threshold?: number
 }
 
 export interface Erc4337Account extends IAccount {

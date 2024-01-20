@@ -52,9 +52,9 @@ export namespace $abiUtils {
         return $abiCoder.encodePacked(types, values);
     }
 
-    export function encode(typeValues: [string, any][])
-    export function encode(types: ReadonlyArray<string | TAbiInput>, values: any[])
-    export function encode(mix: [string, any][] | ReadonlyArray<string | TAbiInput>, values?: any[]) {
+    export function encode(typeValues: [string, any][]): TEth.Hex
+    export function encode(types: ReadonlyArray<string | TAbiInput>, values: any[]): TEth.Hex
+    export function encode(mix: [string, any][] | ReadonlyArray<string | TAbiInput>, values?: any[]): TEth.Hex {
         let types: (string | ParamType)[];
         if (Array.isArray(mix) && mix.length > 0 && mix[0].length === 2 && typeof mix[0][0] === 'string') {
             types = mix.map(x => x[0]);
@@ -63,7 +63,7 @@ export namespace $abiUtils {
             types = mix as any;
         }
         if (types.length === 0) {
-            return '0x';
+            return '0x' as TEth.Hex;
         }
 
         return $abiCoder.encode(types, values)

@@ -4,6 +4,7 @@ import { $contract } from '@dequanto/utils/$contract';
 import { TxTopicProvider } from './TxTopicProvider';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { TEth } from '@dequanto/models/TEth';
+import { $require } from '@dequanto/utils/$require';
 
 export class TxLogParser {
 
@@ -18,7 +19,13 @@ export class TxLogParser {
      *  Sparse arrays will contain NULLs for unparsed log items.
      *  Per default dense arrays - only with known logs - are returned
      */
-    async parse (receipt: TEth.TxReceipt, opts?: { sparse?: boolean, platform?: TPlatform, abi?: TAbiItem | TAbiItem[] }) {
+    async parse (receipt: TEth.TxReceipt, opts?: {
+        sparse?: boolean,
+        platform?: TPlatform,
+        abi?: string | string[] | TAbiItem | TAbiItem[]
+    }) {
+        $require.notNull(receipt, `Receipt is undefined to parse logs from`);
+
         if (opts?.abi != null) {
             this.topics.register(opts.abi);
         }
@@ -40,5 +47,9 @@ export class TxLogParser {
         }
 
         return logs;
+    }
+
+    static parse (...params: Parameters<TxLogParser['parse']>) {
+        return new TxLogParser().parse(...params);
     }
 }

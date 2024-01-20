@@ -146,13 +146,23 @@ export namespace $require {
     }
 
     /**
-     * throws when a <= b
+     * must be a > b, throws when a <= b
      */
     export function gt<T = number | bigint> (a: T, b: T, message: string = '') {
         Numeric(a);
         Numeric(b);
+        if (a < b) {
+            throw new Error(`Expected a(${a}) > b(${b}). ${message}`);
+        }
+    }
 
-        if (a <= b) {
+    /**
+     * must be a < b, throws when a >= b
+     */
+    export function lt<T = number | bigint> (a: T, b: T, message: string = '') {
+        Numeric(a);
+        Numeric(b);
+        if (a >= b) {
             throw new Error(`Expected a(${a}) > b(${b}). ${message}`);
         }
     }

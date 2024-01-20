@@ -207,6 +207,8 @@ export class  DeploymentsStorage {
                     // 1. Check if the original(upstream) network has more recent deployments
                     let hasNewDeployments = upstreamDeployments.some(x => x.block > blockNumber);
                     shouldCopy = hasNewDeployments;
+                } else {
+                    shouldCopy = false;
                 }
 
                 if (shouldCopy === false) {
@@ -214,7 +216,6 @@ export class  DeploymentsStorage {
                     // 2. Just-in-case, check if there are deployments with higher block number, as the current HEAD
                     let hasNewDeployments = deployments.some(x => x.block > blockNumber);
                     shouldCopy = hasNewDeployments;
-
                     if (shouldCopy === false) {
                         // 3. Check if the latest deployments transaction exists in current forked network
                         let latestDeployment = alot(deployments).maxItem(x => x.block);
@@ -229,7 +230,6 @@ export class  DeploymentsStorage {
                     }
                 }
             }
-
             if (shouldCopy) {
                 // current forked deployments are stale, copy the upstream deployments or clean
                 if (upstreamDeploymentExists) {
@@ -256,11 +256,30 @@ export class  DeploymentsStorage {
         if (this.client.platform !== 'hardhat') {
             return;
         }
-        let block = await this.client.getBlock(0);
-        let store = await this.getDeploymentsStore();
+        let [
+            blockNumberHead,
+            block0,
+            store
+        ] = await Promise.all([
+            this.client.getBlockNumber(),
+            this.client.getBlock(0),
+            this.getDeploymentsStore()
+        ]);
         let deployments = await store.getAll();
-        let stale = deployments.filter(x => x.timestamp == null || x.timestamp < block.timestamp);
-        await store.removeMany(stale.map(x => x.id));
+        if (deployments.length === 0) {
+            // Nothing to remove: No deployments
+            return;
+        }
+        let stale = deployments.filter(x => {
+            return x.timestamp == null
+                // was deployed earlier as current genesis block
+                || x.timestamp < block0.timestamp
+                // was deployed in the later block as current block
+                || x.block > blockNumberHead;
+        });
+        if (stale.length > 0) {
+            await store.removeMany(stale.map(x => x.id));
+        }
     }
 
     @memd.deco.memoize({ perInstance: true })

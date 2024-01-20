@@ -13,7 +13,7 @@ enum EBigFloatType {
 }
 
 
-class BigFloat {
+export class BigFloat {
 
 
     constructor(public value: bigint, public mantissa: bigint = 1n) {

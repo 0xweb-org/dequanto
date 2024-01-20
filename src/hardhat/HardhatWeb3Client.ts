@@ -44,6 +44,10 @@ export class HardhatWeb3Client extends Web3Client {
                 reset: {
                     call: 'hardhat_reset',
                     params: 1
+                },
+                mine: {
+                    call: 'hardhat_mine',
+                    params: 2
                 }
             }
         });

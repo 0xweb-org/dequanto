@@ -16,7 +16,7 @@ import { $bigint } from '@dequanto/utils/$bigint';
 export class SafeServiceTransport implements ISafeServiceTransport {
 
 
-    constructor(public client: Web3Client, public owner: EoAccount) {
+    constructor(public client: Web3Client, public owners: EoAccount[]) {
 
     }
 
