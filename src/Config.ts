@@ -8,6 +8,7 @@ import { class_Dfr, obj_extend } from 'atma-utils';
 import { Directory, File } from 'atma-io';
 import { ITokenGlob } from './models/ITokenGlob';
 import { TAddress } from './models/TAddress';
+import { $logger } from './utils/$logger';
 
 export interface IProviderEndpoint {
     url: string
@@ -120,9 +121,10 @@ export class Config {
             }
         }
 
+        let dequantoDefaultPath = `${pfx}${dequantoConfigs}dequanto.yml`;
         let cfg = await AppConfig.fetch<Config>([
             {
-                path: `${pfx}${dequantoConfigs}dequanto.yml`,
+                path: dequantoDefaultPath,
                 optional: true,
             },
             {
@@ -157,6 +159,15 @@ export class Config {
         ]);
 
         obj_extend(config, cfg.toJSON());
+        if (config.web3 == null) {
+            let defaultExists = await File.existsAsync(dequantoDefaultPath);
+            let message = `Default config path not exists: ${dequantoDefaultPath} (${ defaultExists });`;
+            message += ` cwd: ${process.cwd()} inCwd: ${inCwd}; inNodeModules: ${inNodeModules}; inCwdAsConfig: ${inCwdAsConfig}`;
+
+            $logger.log(message);
+            singleton.reject(new Error(message));
+            return;
+        }
         singleton.resolve(cfg);
         return cfg;
     }
