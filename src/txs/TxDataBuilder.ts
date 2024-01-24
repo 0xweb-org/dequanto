@@ -32,7 +32,7 @@ export class TxDataBuilder {
 
     setInputDataWithABI(abi: string | TAbiItem, ...params): this {
         try {
-            this.data.data = $abiUtils.serializeMethodCallData(abi, params);;
+            this.data.data = $abiUtils.serializeMethodCallData(abi, params);
         } catch (error) {
             error.message = `${JSON.stringify(abi)}\n${error.message}`;
             throw error;

@@ -207,7 +207,6 @@ export class GnosisSafeHandler {
             safeInfo,
         } = await this.createTxHash(builder, value, safeTxParams);
 
-        console.log(`Owners`, this.owners);
         let sigArr = await alot(this.owners).mapAsync(async owner => {
             let {
                 signature,

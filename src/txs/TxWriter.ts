@@ -1,6 +1,6 @@
 import '../env/BigIntSerializer'
 import di from 'a-di';
-import { class_Dfr, class_EventEmitter } from 'atma-utils';
+import { class_Dfr, class_EventEmitter, obj_extend } from 'atma-utils';
 
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $txData } from '@dequanto/utils/$txData';
@@ -79,6 +79,8 @@ export interface ITxWriterOptions {
     silent?: boolean
 }
 
+const DEFAULTS: ITxWriterOptions = {};
+
 export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
     onSent = new class_Dfr<string | TEth.Hex>();
@@ -130,6 +132,8 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         public account: TAccount
     ) {
         super();
+
+        this.options = obj_extend({}, DEFAULTS);
         this.logger = new TxLogger(this.id, this.getSenderName(), this.builder);
     }
 
@@ -141,7 +145,9 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
             this.onSent.defer();
 
             // was not sent
-            this.options = options;
+            if (options) {
+                this.options = obj_extend(this.options, options);
+            }
             this.sendTxInner();
         }
         return this;
@@ -407,6 +413,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     private async extractLogs(receipt: TEth.TxReceipt, tx: TxWriter['tx']) {
         let parser = di.resolve(TxLogParser);
         let logs = await parser.parse(receipt, {
+            platform: this.client.network,
             abi: this.builder.abi,
         });
         tx.knownLogs = logs.filter(x => x != null);
@@ -604,6 +611,10 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
             };
         }
         throw new Error(`Account ${account} not found`);
+    }
+
+    static defaultOptions (options: ITxWriterOptions) {
+        obj_extend(DEFAULTS, options);
     }
 }
 

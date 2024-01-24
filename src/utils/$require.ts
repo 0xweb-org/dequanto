@@ -1,6 +1,7 @@
 import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $is } from './$is';
+import { $address } from './$address';
 
 export namespace $require {
     export function Number <T> (val: T, message: string = '', opts?: { min?: T, max?: T}): T {
@@ -114,6 +115,14 @@ export namespace $require {
     export function Address (val: TAddress, message: string = ''): TAddress {
         if ($is.Address(val) === false) {
             throw new Error(`Value ${val} is not a valid address. ${message}`);
+        }
+        return val;
+    }
+    export function AddressChecked (val: TAddress, message: string = ''): TAddress {
+        $require.Address(val, message);
+        let checkSum = $address.toChecksum(val.toLowerCase() as TAddress);
+        if (checkSum !== val) {
+            throw new Error(`Checksum address ${checkSum} !== ${val} ${message}`);
         }
         return val;
     }

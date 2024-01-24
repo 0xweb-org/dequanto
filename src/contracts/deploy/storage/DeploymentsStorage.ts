@@ -59,16 +59,32 @@ export class  DeploymentsStorage {
 
     }
 
-    async getDeploymentInfo (Ctor: Constructor<any>, opts?: { id?: string }): Promise<IDeployment>
-    async getDeploymentInfo (name: string, opts?: { id?: string }): Promise<IDeployment>
+    async getDeploymentInfo (Ctor: Constructor<any>, opts?: {
+        id?: string
+        address?: TAddress
+    }): Promise<IDeployment>
+    async getDeploymentInfo (name: string, opts?: {
+        id?: string
+        address?: TAddress
+    }): Promise<IDeployment>
     async getDeploymentInfo (address: TAddress): Promise<IDeployment>
-    async getDeploymentInfo (contractInfo: Constructor<any> | string, opts?: { id?: string }): Promise<IDeployment>
-    async getDeploymentInfo (mix: Constructor<any> | string | TAddress, opts?: { id?: string }): Promise<IDeployment> {
+    async getDeploymentInfo (contractInfo: Constructor<any> | string, opts?: {
+        id?: string
+        address?: TAddress
+    }): Promise<IDeployment>
+    async getDeploymentInfo (mix: Constructor<any> | string | TAddress, opts?: {
+        id?: string,
+        address?: TAddress
+    }): Promise<IDeployment> {
         await this.cleanTestDeploymentsIfAny();
-        if (typeof mix ==='string' && $is.Address(mix)) {
+
+        let byAddress = typeof mix ==='string' && $is.Address(mix)
+            ? mix
+            : ($is.Address(opts?.address) ? opts.address : null)
+        if (byAddress != null) {
             let store = await this.getDeploymentsStore();
             let deployments = await store.getAll();
-            let deployment = deployments.find(x => $address.eq(x.address, mix));
+            let deployment = deployments.find(x => $address.eq(x.address, byAddress));
             return deployment;
         }
 

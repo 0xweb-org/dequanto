@@ -109,7 +109,7 @@ UTest({
             $config: {
                 timeout: $date.parseTimespan('1min'),
             },
-            async '!deploy to localhost to listen for WS events' () {
+            async 'deploy to localhost to listen for WS events' () {
                 let provider = new HardhatProvider();
                 let client = await provider.client('localhost');
                 let { contract: foo }= await provider.deployClass<any>(Foo.Foo, {

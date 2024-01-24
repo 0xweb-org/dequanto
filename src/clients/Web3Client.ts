@@ -62,7 +62,6 @@ export abstract class Web3Client implements IWeb3Client {
         return tx;
     }
 
-
     public options: IWeb3ClientOptions;
     public pool: ClientPool;
     public debug: ClientDebugMethods;

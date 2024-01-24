@@ -352,15 +352,15 @@ export namespace $sig {
                 $to.hex(tx.gas ?? (tx as any).gasLimit /** alias */),
                 $to.hex(tx.to),
                 $to.hex(tx.value),
-                $to.hex(tx.data ?? tx.input),
+                $to.hexNoTrim(tx.data ?? tx.input),
                 serializedAccessList,
             ];
 
             if (sig) {
                 serializedTransaction.push(
-                    $to.hex(utils.toYParity(sig.v) === 1 ? 1 : null), // yParity
-                    $to.hex(sig.r),
-                    $to.hex(sig.s),
+                    $to.hexTrimmed(utils.toYParity(sig.v) === 1 ? 1 : null), // yParity
+                    $to.hexTrimmed(sig.r),
+                    $to.hexTrimmed(sig.s),
                 );
             }
             return $hex.concat([
@@ -380,15 +380,15 @@ export namespace $sig {
                 $to.hex(tx.gas ?? (tx as any).gasLimit /** alias */),
                 $to.hex(tx.to),
                 $to.hex(tx.value),
-                $to.hex(tx.data ?? tx.input),
+                $to.hexNoTrim(tx.data ?? tx.input),
                 serializedAccessList,
             ]
 
             if (sig) {
                 serializedTransaction.push(
-                    $to.hex(utils.toYParity(sig.v) === 1 ? 1 : null), // yParity
-                    $to.hex(sig.r),
-                    $to.hex(sig.s),
+                    $to.hexTrimmed(utils.toYParity(sig.v) === 1 ? 1 : null), // yParity
+                    $to.hexTrimmed(sig.r),
+                    $to.hexTrimmed(sig.s),
                 )
             }
 
@@ -405,7 +405,7 @@ export namespace $sig {
                 $to.hex(tx.gas ?? (tx as any).gasLimit /** alias */),
                 $to.hex(tx.to),
                 $to.hex(tx.value),
-                $to.hex(tx.data ?? tx.input),
+                $to.hexNoTrim(tx.data ?? tx.input),
             ];
             let v = tx.chainId;
             if (sig?.v != null) {
@@ -415,9 +415,9 @@ export namespace $sig {
             }
 
             serializedTransaction.push(...[
-                $to.hex(v),
-                $to.hex(sig?.r),
-                $to.hex(sig?.s),
+                $to.hexTrimmed(v),
+                $to.hexTrimmed(sig?.r),
+                $to.hexTrimmed(sig?.s),
             ]);
 
             return $rlp.encode(serializedTransaction);
@@ -453,8 +453,28 @@ export namespace $sig {
                 if (hex === '0x0') {
                     return '0x';
                 }
+                return hex;
+            }
+            export function hexTrimmed (mix) {
+                if (mix == null || (typeof mix === 'number' && mix === 0) || (typeof mix === 'bigint' && mix === 0n)) {
+                    return '0x';
+                }
+                let hex = $hex.ensure(mix);
+                if (hex === '0x0') {
+                    return '0x';
+                }
                 if (hex.startsWith('0x00')) {
                     hex = $hex.trimBytes(hex);
+                }
+                return hex;
+            }
+            export function hexNoTrim (mix) {
+                if (mix == null || (typeof mix === 'number' && mix === 0) || (typeof mix === 'bigint' && mix === 0n)) {
+                    return '0x';
+                }
+                let hex = $hex.ensure(mix);
+                if (hex === '0x0') {
+                    return '0x';
                 }
                 return hex;
             }
