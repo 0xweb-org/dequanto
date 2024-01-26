@@ -32,11 +32,11 @@ export namespace $hex {
         return hex === ''? '0x0' : `0x${hex}`;
     }
 
-    export function getBytes (hex: string, offset: number, length: number) {
+    export function getBytes (hex: string, offset: number, length: number): TEth.Hex {
         let start = hex.startsWith('0x') ? 2 : 0;
         let offsetChars = offset * 2;
         let lengthChars = length * 2;
-        return `0x` + hex.substring(start + offsetChars, start + offsetChars + lengthChars);
+        return (`0x` + hex.substring(start + offsetChars, start + offsetChars + lengthChars)) as TEth.Hex;
     }
     export function getBytesLength (hex: string) {
         let pfx = hex.startsWith('0x') ? 2 : 0;

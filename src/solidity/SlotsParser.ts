@@ -19,10 +19,15 @@ import { Ast } from './SlotsParser/Ast';
 import { ISlotsParserOption, ISlotVarDefinition } from './SlotsParser/models';
 
 import type { TAbiInput } from '@dequanto/types/TAbi';
+import { $regexp } from '@dequanto/utils/$regexp';
 export namespace SlotsParser {
 
-    export async function slotsFromAbi (abiDef: string): Promise<ISlotVarDefinition[]> {
-        let inputs = $abiParser.parseArguments(abiDef);
+    export async function slotsFromAbi (abiDef: string | TAbiInput[]): Promise<ISlotVarDefinition[]> {
+        let inputs = typeof abiDef === 'string'
+            ? $abiParser.parseArguments(abiDef)
+            : abiDef;
+
+
         let slotsDef = await alot(inputs)
             .mapAsync(async input => {
                 let util = TypeAbiUtil.get(input)
@@ -362,11 +367,9 @@ namespace TypeAbiUtil {
         if (/tuple|mapping|(\]$)/.test(input.type) === false) {
             return new ElementaryTypeNameUtil(input);
         }
-
         if (/tuple/.test(input.type)) {
             return new UserDefinedTypeNameUtil(input)
         }
-
         if (/mapping/.test(input.type)) {
             return new MappingUtil(input)
         }
@@ -407,6 +410,16 @@ namespace TypeAbiUtil {
             return single * length;
         }
         async serialize () {
+            if (this.input.components?.length > 0) {
+                let struct = new UserDefinedTypeNameUtil(this.input);
+                let str = await struct.serialize();
+                if (str.startsWith('(') === false) {
+                    str = `(${str})`;
+                }
+                let arrSfx = /\[.+$/.exec(this.input.type)[0];
+                let serialized = str + arrSfx
+                return serialized;
+            }
             return this.input.type;
         }
         private length () {

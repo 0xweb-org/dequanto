@@ -131,7 +131,10 @@ export class ProxyDeployment {
                 implAddress, deployer.address, initData
             ]
         };
-        let v = 'upgradeAndCall' in new Proxy() ? 'V5' : 'V4';
+        let v = 'upgradeToAndCall' in new Proxy() ? 'V4' : 'V5';
+        /** OpenZeppelin V5 hides admin/upgrade public methods */
+
+
 
         let hasProxy = await deployments.has(Proxy, proxyOpts);
         let {

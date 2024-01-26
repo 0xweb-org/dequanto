@@ -21,6 +21,7 @@ import { DeploymentsStorage, IDeployment } from './storage/DeploymentsStorage';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $promise } from '@dequanto/utils/$promise';
 import { l } from '@dequanto/utils/$logger';
+import { $bytecode } from '@dequanto/evm/utils/$bytecode';
 
 
 type TDeploymentOptions = {
@@ -224,7 +225,7 @@ export class Deployments {
         let deployment = await this.store.saveDeployment(deployedContract, {
             id,
             name: Ctor.name,
-            bytecodeHash: $contract.keccak256(deployedBytecode)
+            bytecodeHash: this.getBytecodeHash(deployedBytecode)
         }, receipt);
 
         await this.ensureVerification(Ctor, deployment, {
@@ -400,14 +401,26 @@ export class Deployments {
             let address = deployment.implementation ?? deployment.address;
             let bytecode = await this.client.getCode(address);
             $require.True($is.Hex(bytecode), `Bytecode not resolved for ${address}`);
-            bytecodeHash = $contract.keccak256(bytecode);
+            bytecodeHash = this.getBytecodeHash(bytecode);
         }
 
         let { deployedBytecode } = await this._hh.getFactoryForClass(Ctor);
-        let newBytecode = $contract.keccak256(deployedBytecode);
-        if (newBytecode === bytecodeHash) {
+        let newBytecodeHash = this.getBytecodeHash(deployedBytecode);
+        if (newBytecodeHash === bytecodeHash) {
             this._logger.log(`${deployment.id} bytecode has not changed`);
             return true;
+        }
+
+        // recheck v1
+        if (deployment.bytecodeHash != null) {
+            let address = deployment.implementation ?? deployment.address;
+            let bytecode = await this.client.getCode(address);
+            $require.True($is.Hex(bytecode), `Bytecode not resolved for ${address}`);
+            let currentHash = this.getBytecodeHash(bytecode);
+            if (currentHash == newBytecodeHash) {
+                this._logger.log(`${deployment.id} bytecode has not changed. yellow<v0 bytecode check>`);
+                return true;
+            }
         }
 
         this._logger.log(`yellow<${deployment.id} bytecode has changed. Redeploying...>`);
@@ -455,8 +468,6 @@ export class Deployments {
     }
 
 
-
-
     public async fixBytecodeHashesByReread() {
         let deployments = await this.store.getDeployments();
         await alot(deployments).forEachAsync(async (deployment, i) => {
@@ -465,13 +476,18 @@ export class Deployments {
             let address = deployment.implementation ?? deployment.address;
             let bytecode = await this.client.getCode(address);
             $require.True($is.Hex(bytecode), `Bytecode not resolved for ${address}`);
-            let bytecodeHash = $contract.keccak256(bytecode);
+            let bytecodeHash = this.getBytecodeHash(bytecode);
 
             deployment.bytecodeHash = bytecodeHash;
         }).toArrayAsync({ threads: 4 });
 
 
         await this.store.saveAll(deployments);
+    }
+
+    private getBytecodeHash(bytecode: TEth.Hex) {
+        let { bytecode: bytecodeRaw } = $bytecode.splitToMetadata(bytecode);
+        return $contract.keccak256(bytecodeRaw);
     }
 
 

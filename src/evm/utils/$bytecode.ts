@@ -3,6 +3,7 @@ import IOpcode from '../interfaces/IOpcode';
 import { EvmBytecode } from '../EvmBytecode';
 import { $require } from '@dequanto/utils/$require';
 import { $buffer } from '@dequanto/utils/$buffer';
+import { $hex } from '@dequanto/utils/$hex';
 
 export namespace $bytecode {
 
@@ -15,6 +16,18 @@ export namespace $bytecode {
             code = `0x${code.substring(initCode)}`;
         }
         return code;
+    }
+
+    export function splitToMetadata (code: TEth.Hex) {
+        let totalSize = $hex.getBytesLength(code);
+        let metadataSizeOffset = totalSize - 2;
+        let metadataSize = $hex.getNumber(code, metadataSizeOffset, 2);
+        let bytecodeHex = $hex.getBytes(code, 0, metadataSizeOffset - metadataSize);
+        let metadataHex = $hex.getBytes(code, metadataSizeOffset - metadataSize, metadataSize);
+        return {
+            bytecode: bytecodeHex,
+            metadata: metadataHex
+        };
     }
 
     export function parseContractCreation(input: TEth.Hex) {

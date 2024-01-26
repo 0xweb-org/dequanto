@@ -15,7 +15,7 @@ import { SlotStructHandler } from './storage/handlers/SlotStructHandler';
 import { ISlotVarDefinition } from './SlotsParser/models';
 import { $types } from './utils/$types';
 import { SlotBytesHandler } from './storage/handlers/SlotBytesHandler';
-import { SlotValueConstantHandler } from './storage/handlers/SlotValueContantHandler';
+import { SlotValueConstantHandler } from './storage/handlers/SlotValueConstantHandler';
 import { SlotValueImmutableHandler } from './storage/handlers/SlotValueImmutableHandler';
 import { TEth } from '@dequanto/models/TEth';
 
@@ -148,7 +148,6 @@ export class SlotsStorage {
                     slot = null;
                 }
             }
-
             $require.notNull(slot, `StateVariable ${key.key} not found. Available: ${this.slots.map(x => x.name).join(', ')}`);
         } else {
             if (this.slots.length !== 1) {

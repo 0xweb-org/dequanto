@@ -252,6 +252,7 @@ export class  DeploymentsStorage {
                     await File.copyToAsync(upstreamDeploymentsPath, path, {
                         silent: true
                     });
+                    File.clearCache();
                 } else {
                     // clear
                     await File.writeAsync(path, []);

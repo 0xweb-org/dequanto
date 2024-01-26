@@ -13,7 +13,6 @@ export abstract class ASlotDynamicArray extends ASlotsStorageHandler {
 
     async length () {
         let { slot } = this;
-
         let arrLengthHex = await this.transport.getStorageAt(slot.slot, 0, 256);
         let arrLength = Number(arrLengthHex);
         return arrLength;
