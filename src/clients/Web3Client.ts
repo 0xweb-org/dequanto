@@ -170,7 +170,6 @@ export abstract class Web3Client implements IWeb3Client {
         }
 
         let subscription = await wClient.rpc.eth_subscribe(type, ...(params as []));
-
         if (cb != null) {
             subscription.subscribe(
                 (value) => cb(null, value),
@@ -431,7 +430,6 @@ export abstract class Web3Client implements IWeb3Client {
     }
 
     async getPastLogs(options: RpcTypes.Filter): Promise<TEth.Log[]> {
-
         // ensure numbers, bigints, bools are in HEX
         options.topics = options.topics.map(mix => {
             if (mix != null && Array.isArray(mix) === false) {
@@ -518,9 +516,8 @@ namespace RangeWorker {
                 loaded: 0,
             }
         };
-
         let nodeStats = Date.now();
-        while (cursor < toBlock) {
+        while (cursor <= toBlock) {
             let paged = await fetchPaged(client, options, {
                 fromBlock: cursor,
                 toBlock: toBlock,
