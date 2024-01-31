@@ -35,7 +35,12 @@ export namespace $bytecode {
         let evm = new EvmBytecode(input, { withConstructorCode: true });
         let opcodes = evm.getOpcodes();
 
-        // match 60806040
+        /**
+         * bytecode: constructor code | contract code | constructor parameters
+         * CODESIZE OPCODE must be within the constructor code
+         */
+
+        // match 60806040 the beginning of the contract code
         let ctorCodeIdx = indexOf(opcodes, [
             (op) => op.opcode === 0x60 && op.pushData[0] === 0x80,
             (op) => op.opcode === 0x60 && op.pushData[0] === 0x40,
@@ -43,6 +48,7 @@ export namespace $bytecode {
 
         let codeSizeIdx = opcodes.findIndex(x => x.name === 'CODESIZE');
         if (codeSizeIdx === -1 || codeSizeIdx > ctorCodeIdx) {
+            // CODESIZE if found in contract code, so it is something different
             return { arguments: null }
         }
 

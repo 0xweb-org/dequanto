@@ -28,7 +28,7 @@ UTest({
             eq_(urlRecord, 'https://vitalik.ca');
 
             let contentHash = await ns.getContent('vitalik.eth');
-            eq_(contentHash, `ipfs://QmSJUUQucb2k1XyujefZehKNk6gnk4wdSxwgFGjyJ7fBCT`);
+            eq_(contentHash, `ipfs://QmTyjfQ25izbmsu7JVLSpqqgpNzGrzTxYJ7nZhkhjM3XL1`);
         }
     },
     'ud': {
