@@ -78,18 +78,23 @@ export class  DeploymentsStorage {
     }): Promise<IDeployment> {
         await this.cleanTestDeploymentsIfAny();
 
+        let store = await this.getDeploymentsStore();
+
+        if (opts?.id != null) {
+            return await store.getSingle(opts.id);
+        }
+
         let byAddress = typeof mix ==='string' && $is.Address(mix)
             ? mix
             : ($is.Address(opts?.address) ? opts.address : null)
         if (byAddress != null) {
-            let store = await this.getDeploymentsStore();
             let deployments = await store.getAll();
-            let deployment = deployments.find(x => $address.eq(x.address, byAddress));
-            return deployment;
+            let deploymentsByAddress = deployments.filter(x => $address.eq(x.address, byAddress));
+            $require.eq(deploymentsByAddress.length, 1, 'Expects only 1 deployment per Address. Has Proxies?');
+            return deploymentsByAddress[0];
         }
 
-        let id = opts?.id ?? (typeof mix === 'string' ? mix : mix.name);
-        let store = await this.getDeploymentsStore();
+        let id = typeof mix === 'string' ? mix : mix.name;
         let deployment = await store.getSingle(id);
         return deployment;
     }

@@ -11,6 +11,7 @@ export class BlockDateResolver {
 
     private closestTime: number;
     private closestIdx: number;
+    private maxBlock: number;
 
     private known = [] as IKnownBlock[]
     private q: Date;
@@ -30,6 +31,7 @@ export class BlockDateResolver {
             avg,
         };
 
+        this.maxBlock = topBlock.blockNumber;
         this.known.push(topBlock);
         return await this.moveNext(date);
     }
@@ -78,7 +80,7 @@ export class BlockDateResolver {
         if (diffCount === 0) {
             return null;
         }
-        let blockNumber = anchor.blockNumber + diffCount;
+        let blockNumber = Math.max(this.maxBlock, anchor.blockNumber + diffCount);
         if (blockNumber < 0) {
             throw new Error(`Date Out of range: ${ this.q.toISOString() }. Based on the AVG block time, the blockchain was not active on that date`);
         }

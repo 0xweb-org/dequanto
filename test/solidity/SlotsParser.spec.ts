@@ -232,6 +232,33 @@ UTest({
             type: 'uint256'
         });
     },
+    async 'should extract slots from multi inheritance'() {
+        const input = `
+            contract Foo1 {
+                uint a;
+                uint b;
+            }
+            contract Foo2 {
+                uint c;
+            }
+            contract Test is Foo1, Foo2 {
+                uint d;
+            }
+        `;
+
+        const slots = await SlotsParser.slots({
+            code: input,
+            path: './test/solidity/Parser.sol'
+        }, 'Test');
+
+        let names = slots.map(s => s.name);
+        deepEq_(names, [
+            'a',
+            'b',
+            'c',
+            'd'
+        ]);
+    },
     async 'should parse weth.sol'() {
         let slots = await SlotsParser.slots({ path: './test/fixtures/scan/WETH.sol' }, 'MaticWETH');
 

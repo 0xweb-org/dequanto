@@ -225,12 +225,14 @@ export namespace BlockChainExplorerFactory {
                 expectedImplementation?: TEth.Address
             }): Promise<string> {
                 let url = `${this.config.host}/api`;
-                let guid = await client.get<string>(url, {
-                    apikey: this.config.key,
-                    module: "contract",
-                    action: "verifyproxycontract",
-                    address: contractData.address,
-                    expectedimplementation: contractData.expectedImplementation ?? void 0
+                let guid = await client.post(url, {
+                    body: {
+                        apikey: this.config.key,
+                        module: "contract",
+                        action: "verifyproxycontract",
+                        address: contractData.address,
+                        expectedimplementation: contractData.expectedImplementation ?? void 0
+                    }
                 });
                 return guid;
             }

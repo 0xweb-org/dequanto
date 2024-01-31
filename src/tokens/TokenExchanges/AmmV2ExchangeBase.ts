@@ -120,7 +120,6 @@ export abstract class AmmV2ExchangeBase {
 
         let amountActual = reserveTo - reserveToAfter;
 
-
         let priceImpactPercents = (1 - $bigint.divToFloat(amountActual, amountIdeal)) * 100;
 
         return {

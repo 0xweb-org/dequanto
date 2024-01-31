@@ -255,10 +255,10 @@ export class ContractVerifier {
             try {
                 let result = await this.explorer.checkContractProxyVerificationSubmission({ guid });
                 this.logger.log(`Proxy verification result: ${result}`);
-                return /verified/i.test(result);
+                return /(verified|success)/i.test(result);
             } catch (e) {
                 let message = e.message;
-                if (/verified/i.test(message)) {
+                if (/verified|success/i.test(message)) {
                     // was already verified
                     return true;
                 }

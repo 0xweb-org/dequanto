@@ -155,7 +155,8 @@ export class Deployments {
         $require.notNull(deployment, `Deployment for ${params.id} not found`);
         await this.ensureVerification(params.Ctor, deployment, {
             id: params.id,
-            constructorParams: params.constructorParams
+            constructorParams: params.constructorParams,
+            proxyFor: deployment.proxyFor,
         });
 
     }

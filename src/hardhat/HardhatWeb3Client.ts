@@ -11,6 +11,7 @@ import { ClientEndpoints } from '../clients/utils/ClientEndpoints';
 export class HardhatWeb3Client extends Web3Client {
 
     platform: TPlatform = 'hardhat'
+    // https://github.com/MetaMask/metamask-extension/issues/10290
     chainId: number = this.options.chainId ?? 1337
     chainToken = 'ETH';
     TIMEOUT: number = 5 * 60 * 1000;
