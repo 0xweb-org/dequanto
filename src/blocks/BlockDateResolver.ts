@@ -80,7 +80,7 @@ export class BlockDateResolver {
         if (diffCount === 0) {
             return null;
         }
-        let blockNumber = Math.max(this.maxBlock, anchor.blockNumber + diffCount);
+        let blockNumber = anchor.blockNumber + diffCount;
         if (blockNumber < 0) {
             throw new Error(`Date Out of range: ${ this.q.toISOString() }. Based on the AVG block time, the blockchain was not active on that date`);
         }
