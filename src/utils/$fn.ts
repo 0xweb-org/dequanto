@@ -122,9 +122,9 @@ export namespace $fn {
                 }
                 if (onError) {
                     error.message += ` Will be re-executed ${this._retries}/${retries}`;
-                    let overridenArgs = await onError(error);
-                    if (Array.isArray(overridenArgs)) {
-                        args = overridenArgs;
+                    let overriddenArgs = await onError(error);
+                    if (Array.isArray(overriddenArgs)) {
+                        args = overriddenArgs;
                     }
                 }
                 return this.tick(...args);

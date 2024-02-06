@@ -476,8 +476,14 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     }
     private pipeInnerWriter (innerWriter: TxWriter) {
         innerWriter.onCompleted.then(
-            (receipt) => this.onCompleted.resolve(receipt),
-            (error) => this.onCompleted.reject(error)
+            (receipt) => {
+                this.tx = innerWriter.tx;
+                this.receipt = receipt;
+                this.onCompleted.resolve(receipt);
+            },
+            (error) => {
+                this.onCompleted.reject(error);
+            }
         );
         innerWriter.onSent.then(
             (hash) => this.onSent.resolve(hash),

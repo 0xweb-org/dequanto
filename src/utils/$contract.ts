@@ -1,7 +1,7 @@
 import alot from 'alot';
 import { keccak_256 } from '@noble/hashes/sha3';
 
-import type { TAbiItem } from '@dequanto/types/TAbi';
+import type { TAbiInput, TAbiItem } from '@dequanto/types/TAbi';
 
 
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
@@ -18,6 +18,7 @@ import { $logger } from './$logger';
 import { EvmBytecode } from '@dequanto/evm/EvmBytecode';
 import { $bytecode } from '@dequanto/evm/utils/$bytecode';
 import { $hex } from './$hex';
+import { $is } from './$is';
 
 export namespace $contract {
 
@@ -29,7 +30,7 @@ export namespace $contract {
         }
         let input;
         if (typeof str === 'string') {
-            input = str.startsWith('0x')
+            input = $is.Hex(str)
                 ? $buffer.fromHex(str)
                 : $buffer.fromString(str);
         } else {
@@ -264,6 +265,26 @@ export namespace $contract {
                 paramsStr = arr.join(', ');
             }
         }
+        return `${method}(${paramsStr})`;
+    }
+    export function formatCallFromAbi(abi: TAbiItem, params: any[]) {
+        let method = abi.name;
+        let paramsItems = [];
+        let count = Math.max(abi.inputs.length, params.length);
+        for (let i = 0; i < count; i++) {
+            let key = abi.inputs[i]?.name;
+            let value = params[i];
+            let valueStr = value != null && typeof value === 'object'
+                ? formatJson(value)
+                : String(value);
+
+            if (key == null) {
+                paramsItems.push(valueStr);
+                continue;
+            }
+            paramsItems.push(`${key}=${valueStr}`);
+        }
+        let paramsStr = paramsItems.join(', ');
         return `${method}(${paramsStr})`;
     }
 

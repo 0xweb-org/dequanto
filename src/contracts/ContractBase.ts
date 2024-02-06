@@ -203,7 +203,9 @@ export abstract class ContractBase {
             return {
                 name: abiMethod.name,
                 async fn (sender: IAccount,...args: any[]) {
-                    return await (await ($top[abiMethod.name](sender, ...args))).wait();
+                    let tx: TxWriter = await $top[abiMethod.name](sender, ...args);
+                    let receipt = await tx.wait();
+                    return tx;
                 }
             }
         }).toDictionary(x => x.name, x => x.fn);

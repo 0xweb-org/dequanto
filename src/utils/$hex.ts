@@ -3,6 +3,8 @@ import { $buffer } from './$buffer';
 import { $require } from './$require';
 export namespace $hex {
 
+    export const ZERO = '0x'
+
     /**
      * Adds '00' bytes to the hex string.
      * @param hex

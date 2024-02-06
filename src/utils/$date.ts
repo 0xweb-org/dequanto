@@ -479,7 +479,7 @@ export namespace $date {
         return true;
     }
 
-    export function toUnixTimestamp(date: Date): number {
+    export function toUnixTimestamp(date: Date = new Date()): number {
         return Math.floor(date.getTime() / 1000);
     }
     export function fromUnixTimestamp(seconds: number | bigint): Date {

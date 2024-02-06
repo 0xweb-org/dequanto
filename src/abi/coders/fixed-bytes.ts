@@ -21,6 +21,9 @@ export class FixedBytesCoder extends Coder {
 
     encode(writer: Writer, value: Uint8Array | string): number {
         let data = $buffer.ensure(value);
+        if (data.length === 0) {
+            data = $buffer.ensure(this.defaultValue());
+        }
         if (data.length !== this.size) {
             this._throwError(`incorrect data length ${data.length} !== ${this.size}`, data);
         }
