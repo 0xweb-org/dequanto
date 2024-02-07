@@ -129,7 +129,9 @@ export class TimelockService {
         let salt = this.getOperationSalt(txParams);
         let key = this.getOperationKey(txParams);
         let pendingTx = await this.getPendingByKey(key);
-        $require.eq(pendingTx?.key, null, `Operation is already scheduled`);
+        if (pendingTx?.txSchedule != null) {
+            return pendingTx;
+        }
 
         let delay = params.delay ?? await this.getMinDelay();
         let timelock = this.timelock;
@@ -146,7 +148,7 @@ export class TimelockService {
 
         let block = await this.timelock.client.getBlock(tx.receipt.blockNumber);
 
-        await this.store.upsert({
+        let timelockTx = await this.store.upsert({
             id: salt,
             key: key,
             salt: salt,
@@ -161,7 +163,7 @@ export class TimelockService {
             status: 'pending',
             txSchedule: tx.receipt.transactionHash
         });
-        return tx;
+        return timelockTx;
     }
 
     async execute (params: ITimelockTxParams) {
@@ -173,7 +175,7 @@ export class TimelockService {
         $require.gt(
             $date.toUnixTimestamp()
             , pendingTx.validAt
-            , `Tx not valid yet. Scheduled for ${ $date.fromUnixTimestamp(pendingTx.validAt).toISOString() }`
+            , `Tx not ready yet. Scheduled for ${ $date.fromUnixTimestamp(pendingTx.validAt).toISOString() }`
         );
         let timelock = this.timelock;
         let salt = pendingTx.salt;
@@ -195,8 +197,12 @@ export class TimelockService {
         return tx;
     }
 
-    public async clearStorage () {
+    public async clearSchedules () {
         await this.store.saveAll([]);
+    }
+    public async updateSchedule(txInfo: Partial<ITimelockTx>) {
+        $require.notNull(txInfo.id, `ID is required`);
+        await this.store.upsert(txInfo);
     }
 
     @memd.deco.memoize({ perInstance: true })

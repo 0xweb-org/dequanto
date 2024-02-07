@@ -187,6 +187,7 @@ export class HardhatProvider {
             artifacts?: string
         },
         contractName?: string
+        tmpDir?: string
     }): Promise<{
         contract: TReturn
         ContractCtor: Constructor<TReturn>,
@@ -381,7 +382,10 @@ export class HardhatProvider {
         };
     }
 
-    async deployCode <TReturn extends ContractBase = IContractWrapped>  (solidityCode: string, options: Parameters<HardhatProvider['deploySol']>[1] = {}) {
+    async deployCode <TReturn extends ContractBase = IContractWrapped> (
+        solidityCode: string,
+        options: Parameters<HardhatProvider['deploySol']>[1] = {}
+    ) {
 
         let { tmpFile,  tmpDir, options: optionsNormalized } = await this.createTmpFile(solidityCode, options);
 
@@ -414,7 +418,9 @@ export class HardhatProvider {
         }
         $require.notNull(contractName, `Contract name not resolved from the code`);
         let rnd = $number.randomInt(0, 10**10);
-        let tmp = env.getTmpPath(`hardhat/contracts/${contractName}_${rnd}.sol`);
+
+        let path = `hardhat/contracts/${contractName}_${rnd}.sol`;
+        let tmp = options?.tmpDir ? class_Uri.combine(options.tmpDir, `tmp${rnd}`, path) :  env.getTmpPath(path);
         let root = tmp.replace(/contracts\/[^/]+$/, '');
 
         options.paths = {

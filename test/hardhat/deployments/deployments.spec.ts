@@ -79,9 +79,9 @@ export default UTest({
                 //
                 eq_(await File.existsAsync(deploymentsProxyOutput), false);
             },
-            async '!with proxy' () {
+            async 'with proxy' () {
                 return UTest({
-                    async '!initial deploy'() {
+                    async 'initial deploy'() {
                         let { contract, deployment } = await deployments.ensureWithProxy<IContractWrapped, any>(FooContract, {
                             id: 'DeploymentsFooWithProxy',
                             initialize: []
@@ -104,7 +104,7 @@ export default UTest({
                         eq_(layout[0].type, 'uint256');
 
                         // Will set externally the new Value
-                        let receipt = await contract.$receipt().setValue(deployer, 5n);
+                        let { receipt } = await contract.$receipt().setValue(deployer, 5n);
                         eq_(receipt.status, 1);
                     },
                     async 'compile and deploy new version' () {
