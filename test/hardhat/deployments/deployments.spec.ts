@@ -45,7 +45,6 @@ export default UTest({
             }
         });
 
-
         await hh.compileSol(paths.DeploymentsFoo);
         await hh.compileSol(paths.DeploymentsFooV2);
 

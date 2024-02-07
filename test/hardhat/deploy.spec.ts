@@ -534,7 +534,7 @@ UTest({
         });
         let { receipt: r1 } = await contract.$receipt().foo(provider.deployer());
         eq_(r1.logs[0].topics[2], '0x0000000000000000000000000000000000000000000000000000000000000000');
-        let r2 = await contract.$receipt().bar(provider.deployer(), 1n, 2n);
+        let { receipt: r2 } = await contract.$receipt().bar(provider.deployer(), 1n, 2n);
         eq_(r2.logs[0].topics[2], '0x0000000000000000000000000000000000000000000000000000000000000001');
     },
 

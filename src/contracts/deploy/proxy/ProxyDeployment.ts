@@ -131,8 +131,10 @@ export class ProxyDeployment {
                 implAddress, deployer.address, initData
             ]
         };
-        let v = 'upgradeToAndCall' in new Proxy() ? 'V4' : 'V5';
-        /** OpenZeppelin V5 hides admin/upgrade public methods */
+
+        let proxyAbi = new Proxy().abi;
+        let v = proxyAbi.some(x => x.name === 'upgradeToAndCall') || !proxyAbi.some(x => x.type === 'error') ? 'V4' : 'V5';
+        /** OpenZeppelin V5 hides admin/upgrade public methods and introduces "error" types*/
 
 
 
