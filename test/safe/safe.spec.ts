@@ -19,6 +19,7 @@ import { Config } from '@dequanto/Config';
 import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
 import { $http } from '@dequanto/utils/$http';
 import { TEth } from '@dequanto/models/TEth';
+import { SafeTx } from '@dequanto/safe/SafeTx';
 
 const provider = new HardhatProvider();
 const client = provider.client();
@@ -148,13 +149,16 @@ UTest({
         eq_(Number(nonce), 1);
     },
 
-    async 'create file safe and manually receive tokens ' () {
+    async '!create file safe and manually receive tokens ' () {
         let provider = new HardhatProvider();
         let client = provider.client();
         let owner1 = provider.deployer(0);
         let owner2 = provider.deployer(1);
 
-        let { safe, freeTokenContract } = await SafeTestableFactory.prepare();
+        let { safe, freeTokenContract, contracts } = await SafeTestableFactory.prepare();
+
+        console.log(`Safe`, safe.safeAddress);
+        console.log(`FREE_TOKEN`, freeTokenContract.address);
 
         eq_($address.isValid(safe.safeAddress), true, `Invalid address ${safe.safeAddress}`);
 
@@ -174,39 +178,70 @@ UTest({
             operator: owner1,
         };
 
-        let confirmationsFile = './test/tmp/safe-tx.json';
-        let txWriter = await writer.writeAsync(safeAccount, 'airdrop()', [], {
-            writerConfig: {
-                safeTransport: new FileServiceTransport(client, owner1, confirmationsFile)
+        return UTest({
+            async 'execute single tx' () {
+                let confirmationsFile = './test/tmp/safe-tx.json';
+                let txWriter = await writer.writeAsync(safeAccount, 'airdrop()', [], {
+                    writerConfig: {
+                        safeTransport: new FileServiceTransport(client, owner1, confirmationsFile)
+                    }
+                });
+
+                let safeTx = await $promise.fromEvent(txWriter, 'safeTxProposed');
+
+                let arr = await File.readAsync<any>(confirmationsFile);
+                let json = arr.find(x => x.safeTxHash === safeTx.safeTxHash);
+
+                eq_(json.safeTxHash, safeTx.safeTxHash);
+
+                let sig1 = await $sig.sign(safeTx.safeTxHash, owner1);
+                let sig2 = await $sig.sign(safeTx.safeTxHash, owner2);
+                json.confirmations = [
+                    { owner: owner1.address, signature: sig1.signature },
+                    { owner: owner2.address, signature: sig2.signature },
+                ];
+
+                await File.writeAsync(confirmationsFile, arr);
+
+
+                let receipt = await txWriter.wait();
+                eq_(receipt.status, true);
+
+                let balance = await freeTokenContract.balanceOf(safe.safeAddress);
+                let eth = $bigint.toEther(balance, 18);
+                eq_(eth, 10);
+
+                nonce = await contract.nonce();
+                eq_(Number(nonce), 1);
+            },
+            async 'execute multisend tx' () {
+                let safeAccount = <SafeAccount>{
+                    type: 'safe',
+                    address: safe.safeAddress,
+                    operator: owner1,
+                    owners: [
+                        owner1,
+                        owner2
+                    ]
+                };
+                let safeTx = new SafeTx(safeAccount, client, {
+                    safeTransport: new InMemoryServiceTransport(client, owner1),
+                    contracts: contracts
+                });
+
+                let tx = await safeTx.executeBatch(
+                    await freeTokenContract.$data().airdrop(safeAccount),
+                    await freeTokenContract.$data().transfer(safeAccount, owner2.address, 42n),
+                );
+                await tx.wait();
+
+                let safeBalance = await freeTokenContract.balanceOf(safeAccount.address);
+                let owner1Balance = await freeTokenContract.balanceOf(owner1.address);
+
+                let owner2Balance = await freeTokenContract.balanceOf(owner2.address);
+                eq_(owner2Balance, 42n);
             }
         });
-
-        let safeTx = await $promise.fromEvent(txWriter, 'safeTxProposed');
-
-        let arr = await File.readAsync<any>(confirmationsFile);
-        let json = arr.find(x => x.safeTxHash === safeTx.safeTxHash);
-
-        eq_(json.safeTxHash, safeTx.safeTxHash);
-
-        let sig1 = await $sig.sign(safeTx.safeTxHash, owner1);
-        let sig2 = await $sig.sign(safeTx.safeTxHash, owner2);
-        json.confirmations = [
-            { owner: owner1.address, signature: sig1.signature },
-            { owner: owner2.address, signature: sig2.signature },
-        ];
-
-        await File.writeAsync(confirmationsFile, arr);
-
-
-        let receipt = await txWriter.wait();
-        eq_(receipt.status, true);
-
-        let balance = await freeTokenContract.balanceOf(safe.safeAddress);
-        let eth = $bigint.toEther(balance, 18);
-        eq_(eth, 10);
-
-        nonce = await contract.nonce();
-        eq_(Number(nonce), 1);
     },
 
     async 'integration test with opBNB' () {
@@ -291,18 +326,19 @@ class SafeTestableFactory {
         l`SafeMasterCopy: ${safeContract.address}`;
 
         l`Deploy safe instance`;
+        let contracts = {
+            [client.platform]: {
+                MultiSend: multiSendContract.address,
+                Safe: safeContract.address,
+                SafeProxyFactory: proxyFactoryContract.address
+            }
+        }
         let safe = await GnosisSafeFactory.create(owner1, client, {
             owners: [
                 owner1.address,
                 owner2.address
             ],
-            contracts: {
-                [client.platform]: {
-                    MultiSend: multiSendContract.address,
-                    Safe: safeContract.address,
-                    SafeProxyFactory: proxyFactoryContract.address
-                }
-            }
+            contracts
         });
         l`Deploy FreeToken`;
         const { contract: freeTokenContract, abi: freeTokenAbi } = await provider.deploySol('/test/fixtures/contracts/FreeToken.sol', {
@@ -310,7 +346,7 @@ class SafeTestableFactory {
             deployer: owner1
         });
         return {
-            safe, freeTokenContract
+            safe, freeTokenContract, contracts
         }
     }
 }

@@ -27,9 +27,9 @@ interface ITimelockTx {
     title?: string
     sender: string | TAddress
 
-    to: TAddress
-    data: TEth.Hex
-    value?: TEth.Hex
+    to: TAddress | TAddress[]
+    data: TEth.Hex | TEth.Hex[]
+    value?: TEth.Hex | TEth.Hex[]
     createdAt: number
     validAt: number
 
@@ -40,27 +40,36 @@ interface ITimelockTx {
 
 interface ITimelockTxParams {
     sender: IAccount
-    to: TAddress
-    data: TEth.Hex
+    to: TAddress | TAddress[]
+    data: TEth.Hex | TEth.Hex[]
 
     title?: string
-    value?: bigint
+    value?: bigint | bigint[]
     predecessor?: TEth.Hex
     delay?: bigint
 }
 
 interface ITimelockTxParamsNormalized {
     sender: IAccount
-    to: TAddress
-    data: TEth.Hex
+    to: TAddress | TAddress[]
+    data: TEth.Hex | TEth.Hex[]
 
     title: string
-    value: bigint
+    value: bigint | bigint[]
     predecessor: TEth.Hex
     delay: bigint
 }
 
-type TTimelockController = ContractBase & Pick<TimelockController, 'schedule' | 'execute' | 'getMinDelay'>;
+enum ETimelockTxStatus {
+    None = 'none',
+    Pending = 'pending',
+    Ready = 'ready',
+    Executed = 'completed',
+}
+
+type TTimelockController = ContractBase & Pick<TimelockController,
+    'schedule' | 'scheduleBatch' | 'execute' | 'executeBatch' | 'getMinDelay'
+>;
 
 export class TimelockService {
 
@@ -70,9 +79,96 @@ export class TimelockService {
         private timelock: TTimelockController,
     ) {
         this.store = new JsonArrayStore<ITimelockTx>({
-            path: `/cache/${ $platform.toPath(timelock.client.platform) }/timelock-tx.json`,
+            path: `/data/0x/timelocks-${ $platform.toPath(timelock.client.platform) }.json`,
             key: x => x.id
         });
+    }
+
+    /** Schedules-Wait-Execute a task distinguished by the unique task name
+     *
+     * 1. if schedule doesn't exist, create it
+     * 2. if schedule date NOT yet ready, exit
+     * 3. if schedule date IS ready, execute it
+     * 4. if executed, exit
+    */
+    async process <
+        T extends ContractBase,
+        TMethodName extends WriteMethodKeys<T>,
+    > (
+        uniqueTaskName: string,
+        sender: IAccount,
+        contract: T,
+        method: TMethodName,
+        ...params: T[TMethodName] extends (sender: IAccount, ...args: infer A) => any ? A : never
+    ): Promise<{
+        prevStatus: ETimelockTxStatus
+        status: ETimelockTxStatus
+        schedule: ITimelockTx
+        tx?: TEth.Hex
+    }> {
+
+        let txParams = await this.getTxParamsNormalizedFromContract(uniqueTaskName, sender, contract, method, ...params);
+        return await this.processTxParams(txParams);
+    }
+
+    /** Schedules-Wait-Execute a task distinguished by the unique task name
+     *
+     * 1. if schedule doesn't exist, create it
+     * 2. if schedule date NOT yet ready, exit
+     * 3. if schedule date IS ready, execute it
+     * 4. if executed, exit
+    */
+    async processBatch <
+        T extends ContractBase,
+        TMethodName extends WriteMethodKeys<T>,
+    > (
+        uniqueTaskName: string,
+        sender: IAccount,
+        batch: Pick<TEth.TxLike, 'to' | 'data' | 'value'>[],
+    ): Promise<{
+        prevStatus: ETimelockTxStatus
+        status: ETimelockTxStatus
+        schedule: ITimelockTx
+        tx?: TEth.Hex
+    }> {
+
+        let txParams = await this.getTxParamsNormalizedFromContractBatch(uniqueTaskName, sender, batch);
+        return await this.processTxParams(txParams);
+    }
+
+    private async processTxParams (txParams: ITimelockTxParamsNormalized): Promise<{
+        prevStatus: ETimelockTxStatus
+        status: ETimelockTxStatus
+        schedule: ITimelockTx
+        tx?: TEth.Hex
+    }>  {
+        let key = await this.getOperationKey(txParams);
+        let schedule = await this.getUniqueByKey(key);
+        let status = this.getScheduleStatus(schedule);
+        if (status == ETimelockTxStatus.None) {
+            let result = await this.schedule(txParams);
+            return {
+                prevStatus: status,
+                status: ETimelockTxStatus.Pending,
+                schedule: result,
+                tx: result.txSchedule
+            };
+        }
+        if (status == ETimelockTxStatus.Ready) {
+            let result = await this.execute(txParams);
+            return {
+                prevStatus: status,
+                status: ETimelockTxStatus.Pending,
+                schedule: result.schedule,
+                tx: result.tx.tx?.hash
+            };
+        }
+        // No status change
+        return {
+            prevStatus: status,
+            status: status,
+            schedule
+        };
     }
 
     async scheduleCall <
@@ -84,21 +180,25 @@ export class TimelockService {
         method: TMethodName,
         ...params: T[TMethodName] extends (sender: IAccount, ...args: infer A) => any ? A : never
     ) {
-
-        let txData = await contract.$data()[method](sender, ...params);
-
-        let abi = contract.abi?.find(x => x.name === method);
-        let methodCallStr = $contract.formatCallFromAbi(abi, params);
-        let title = `${contract.constructor.name}.${methodCallStr}`
-
-        let tx = await this.schedule({
-            title,
-            sender,
-            to: txData.to,
-            data: txData.data,
-        });
+        let txParams = await this.getTxParamsNormalizedFromContract('', sender, contract, method, ...params);
+        let tx = await this.schedule(txParams);
         return tx;
     }
+
+    /**
+     *  E.g. `.scheduleCallBatch(title, sender, [ c1.$data().foo(sender), c2.$data().bar(sender, param1) ])`
+     */
+    async scheduleCallBatch(
+        title: string,
+        sender: IAccount,
+        batch: Pick<TEth.TxLike, 'to' | 'data' | 'value'>[],
+    ) {
+        let txParams = await this.getTxParamsNormalizedFromContractBatch(title, sender, batch);
+        let tx = await this.schedule(txParams);
+        return tx;
+    }
+
+
     async executeCall <
         T extends ContractBase,
         TMethodName extends WriteMethodKeys<T>,
@@ -108,23 +208,26 @@ export class TimelockService {
         method: TMethodName,
         ...params: T[TMethodName] extends (sender: IAccount, ...args: infer A) => any ? A : never
     ) {
-        let txData = await contract.$data()[method](sender, ...params);
-        let abi = contract.abi?.find(x => x.name === method);
-        let methodCallStr = $contract.formatCallFromAbi(abi, params);
-        let title = `${contract.constructor.name}.${methodCallStr}`
+        let txParams = await this.getTxParamsNormalizedFromContract('', sender, contract, method, ...params);
+        let tx = await this.execute(txParams);
+        return tx;
+    }
 
-        let tx = await this.execute({
-            title,
-            sender,
-            to: txData.to,
-            data: txData.data,
-        });
+    /**
+     *  E.g. `.scheduleCallBatch(title, sender, [ c1.$data().foo(sender), c2.$data().bar(sender, param1) ])`
+     */
+    async executeCallBatch(
+        title: string,
+        sender: IAccount,
+        batch: Pick<TEth.TxLike, 'to' | 'data' | 'value'>[],
+    ) {
+        let txParams = await this.getTxParamsNormalizedFromContractBatch(title, sender, batch);
+        let tx = await this.execute(txParams);
         return tx;
     }
 
     @memd.deco.queued()
-    async schedule (params: ITimelockTxParams) {
-
+    async schedule (params: ITimelockTxParams): Promise<ITimelockTx> {
         let txParams = await this.getTxParamsNormalized(params);
         let salt = this.getOperationSalt(txParams);
         let key = this.getOperationKey(txParams);
@@ -136,11 +239,22 @@ export class TimelockService {
         let delay = params.delay ?? await this.getMinDelay();
         let timelock = this.timelock;
 
-        let tx  = await timelock.$receipt().schedule(
+        let isBatch = Array.isArray(txParams.to);
+        let tx  = isBatch
+        ? await timelock.$receipt().scheduleBatch(
             txParams.sender,
-            txParams.to,
-            txParams.value,
-            txParams.data,
+            txParams.to as TAddress[],
+            txParams.value as bigint[],
+            txParams.data as TEth.Hex[],
+            txParams.predecessor,
+            salt,
+            txParams.delay,
+        )
+        : await timelock.$receipt().schedule(
+            txParams.sender,
+            txParams.to as TAddress,
+            txParams.value as bigint,
+            txParams.data as TEth.Hex,
             txParams.predecessor,
             salt,
             txParams.delay,
@@ -155,7 +269,7 @@ export class TimelockService {
             title: txParams.title,
             to: txParams.to,
             data: txParams.data,
-            value: $hex.ensure(txParams.value),
+            value: isBatch ? (txParams.value as bigint[] ?? []).map($hex.ensure) : $hex.ensure(txParams.value as bigint),
 
             createdAt: block.timestamp,
             validAt: block.timestamp + Number(delay),
@@ -166,35 +280,49 @@ export class TimelockService {
         return timelockTx;
     }
 
-    async execute (params: ITimelockTxParams) {
+    async execute (params: ITimelockTxParams): Promise<{
+        tx: TxWriter
+        schedule: ITimelockTx
+    }> {
         let txParams = await this.getTxParamsNormalized(params);
         let key = this.getOperationKey(txParams);
         let pendingTx = await this.getPendingByKey(key);
         $require.notNull(pendingTx, `Tx not scheduled: ${ params.to } ${ params.data }`);
 
-        $require.gt(
-            $date.toUnixTimestamp()
-            , pendingTx.validAt
-            , `Tx not ready yet. Scheduled for ${ $date.fromUnixTimestamp(pendingTx.validAt).toISOString() }`
-        );
+        let status = this.getScheduleStatus(pendingTx);
+        $require.eq(status, ETimelockTxStatus.Ready, `Tx not ready to execute: ${status}`)
+
         let timelock = this.timelock;
         let salt = pendingTx.salt;
         let id = this.getOperationHash({ ...txParams, salt });
 
-        let tx = await timelock.$receipt().execute(
+        let isBatch = Array.isArray(txParams.to);
+        let tx = isBatch
+        ? await timelock.$receipt().executeBatch(
             txParams.sender,
-            txParams.to,
-            txParams.value,
-            txParams.data,
+            txParams.to as TAddress[],
+            txParams.value as bigint[],
+            txParams.data as TEth.Hex[],
+            txParams.predecessor,
+            salt
+        )
+        : await timelock.$receipt().execute(
+            txParams.sender,
+            txParams.to as TAddress,
+            txParams.value as bigint,
+            txParams.data as TEth.Hex,
             txParams.predecessor,
             salt
         );
-        await this.store.upsert({
+        let result = await this.store.upsert({
             id,
             status: 'completed',
             txExecute: tx.receipt.transactionHash,
         });
-        return tx;
+        return {
+            tx,
+            schedule: result,
+        };
     }
 
     public async clearSchedules () {
@@ -203,6 +331,17 @@ export class TimelockService {
     public async updateSchedule(txInfo: Partial<ITimelockTx>) {
         $require.notNull(txInfo.id, `ID is required`);
         await this.store.upsert(txInfo);
+    }
+
+    public async debugMoveToSchedule (txInfo: ITimelockTx) {
+        $require.eq(this.timelock.client.platform, 'hardhat');
+
+        let seconds = txInfo.validAt - txInfo.createdAt;
+        await this.timelock.client.debug.mine(seconds + 1);
+        await this.updateSchedule({
+            ...txInfo,
+            validAt: $date.toUnixTimestamp()
+        });
     }
 
     @memd.deco.memoize({ perInstance: true })
@@ -215,12 +354,22 @@ export class TimelockService {
      * Gets the operation ID (same as the contract's method)
      */
     private getOperationHash (params: {
-        to: TAddress,
-        value: bigint,
-        data: TEth.Hex,
-        predecessor: TEth.Hex,
-        salt: TEth.Hex,
+        to: TAddress | TAddress[]
+        value: bigint | bigint[]
+        data: TEth.Hex | TEth.Hex[]
+        predecessor: TEth.Hex
+        salt: TEth.Hex
     }): TEth.Hex{
+        let isBatch = Array.isArray(params.to);
+        if (isBatch) {
+            return $contract.keccak256($abiUtils.encode([
+                ['address[]', params.to ],
+                ['uint256[]', params.value ],
+                ['bytes[]', params.data ],
+                ['bytes32', params.predecessor ],
+                ['bytes32', params.salt]
+            ]));
+        }
         return $contract.keccak256($abiUtils.encode([
             ['address', params.to ],
             ['uint256', params.value ],
@@ -235,9 +384,9 @@ export class TimelockService {
      */
     private getOperationKey (params: {
         title: string
-        to: TAddress,
-        value: bigint,
-        data: TEth.Hex,
+        to: TAddress | TAddress[]
+        value: bigint | bigint[]
+        data: TEth.Hex | TEth.Hex[]
         predecessor: TEth.Hex
     }): TEth.Hex{
         return $contract.keccak256([
@@ -253,9 +402,9 @@ export class TimelockService {
      * Create operations SALT: overall unique ID
      */
     private getOperationSalt (params: {
-        to: TAddress
-        value: bigint
-        data: TEth.Hex
+        to: TAddress | TAddress[]
+        value: bigint | bigint[]
+        data: TEth.Hex | TEth.Hex[]
         predecessor: TEth.Hex
     }): TEth.Hex{
         return $contract.keccak256([
@@ -271,6 +420,29 @@ export class TimelockService {
     private async getPendingByKey (key: TEth.Hex): Promise<ITimelockTx> {
         let all = await this.store.getAll();
         return all.find(x => x.key === key && x.status === 'pending');
+    }
+
+    private async getUniqueByKey (key: TEth.Hex): Promise<ITimelockTx> {
+        let all = await this.store.getAll();
+        let arr = all.filter(x => x.key === key);
+        $require.lt(arr.length, 2, `Timelock service expects ${key} to be unique. Found ${arr.length}`);
+        return arr.length === 1 ? arr[0] : null;
+    }
+
+    private getScheduleStatus (schedule: ITimelockTx): ETimelockTxStatus {
+        if (schedule == null || schedule.txSchedule == null) {
+            return ETimelockTxStatus.None;
+        }
+        if (schedule.txExecute != null) {
+            return ETimelockTxStatus.Executed;
+        }
+        $require.Number(schedule.validAt, `Unknown valid time: ${ schedule.validAt }`);
+
+        let now = $date.toUnixTimestamp();
+        if (now < schedule.validAt) {
+            return ETimelockTxStatus.Pending;
+        }
+        return ETimelockTxStatus.Ready;
     }
 
 
@@ -291,6 +463,47 @@ export class TimelockService {
             predecessor,
             delay
         };
+    }
+    async getTxParamsNormalizedFromContract <
+        T extends ContractBase,
+        TMethodName extends WriteMethodKeys<T>,
+    > (
+        title: string | '' | null,
+        sender: IAccount,
+        contract: T,
+        method: TMethodName,
+        ...params: T[TMethodName] extends (sender: IAccount, ...args: infer A) => any ? A : never
+    ): Promise<ITimelockTxParamsNormalized> {
+
+        let txData = await contract.$data()[method](sender, ...params);
+        let abi = contract.abi?.find(x => x.name === method);
+        let methodCallStr = $contract.formatCallFromAbi(abi, params);
+
+        title ??= `${contract.constructor.name}.${methodCallStr}`;
+
+        let tx = await this.getTxParamsNormalized({
+            title,
+            sender,
+            to: txData.to,
+            data: txData.data,
+        })
+        return tx;
+    }
+    async getTxParamsNormalizedFromContractBatch(
+        title: string | '' | null,
+        sender: IAccount,
+        batch: Pick<TEth.TxLike, 'to' | 'data' | 'value'>[],
+    ): Promise<ITimelockTxParamsNormalized> {
+
+
+        let tx = await this.getTxParamsNormalized({
+            title,
+            sender,
+            to: batch.map(x => x.to),
+            data: batch.map(x => x.data),
+            value: batch.map(x => BigInt(x.value)),
+        })
+        return tx;
     }
 }
 

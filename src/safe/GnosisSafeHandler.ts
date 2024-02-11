@@ -2,7 +2,7 @@ import di from 'a-di';
 import memd from 'memd';
 import alot from 'alot';
 
-import { EoAccount } from "@dequanto/models/TAccount";
+import { EoAccount, SafeAccount } from "@dequanto/models/TAccount";
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -25,6 +25,8 @@ import { $sig } from '@dequanto/utils/$sig';
 import { TEth } from '@dequanto/models/TEth';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $require } from '@dequanto/utils/$require';
+import { ChainAccountService } from '@dequanto/ChainAccountService';
+import { config } from '@dequanto/Config';
 
 export class GnosisSafeHandler {
 
@@ -284,6 +286,40 @@ export class GnosisSafeHandler {
 
     static parseSafeTx(buffer: TEth.Hex, value?): { name, args: any[]} {
         return $abiUtils.parseMethodCallData([ SafeAbi.execTransaction ], { input: buffer, value });
+    }
+
+    static async getInstance (senderMix: string | EoAccount, safeAccount: SafeAccount, client: Web3Client, options: {
+        transport?: ISafeServiceTransport
+        contracts?: typeof config.safe.contracts
+    }): Promise<GnosisSafeHandler> {
+        let sender = typeof senderMix === 'string'
+            ? await ChainAccountService.get(senderMix) as EoAccount
+            : senderMix;
+
+        let owners = [ sender ];
+
+        if (safeAccount.owners) {
+            let others = await alot(safeAccount.owners)
+                .mapAsync(async mix => {
+                    if (typeof mix === 'object') {
+                        return mix;
+                    }
+                    return await ChainAccountService.get(mix)
+                })
+                .toArrayAsync();
+
+            others
+                .filter(other => $address.eq(sender.address, other.address) === false)
+                .forEach(other => owners.push(other as EoAccount))
+        }
+
+        let safe = new GnosisSafeHandler({
+            safeAddress: safeAccount.address ?? safeAccount.safeAddress,
+            owners: owners,
+            client: client,
+            transport: options?.transport
+        });
+        return safe;
     }
 }
 

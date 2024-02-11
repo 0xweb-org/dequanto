@@ -4,6 +4,9 @@ import { $contract } from './$contract';
 import { $buffer } from './$buffer';
 
 export namespace $address {
+
+    export const ZERO: TEth.Address = `0x0000000000000000000000000000000000000000`
+
     export function eq(a1: string, a2: string) {
         return a1?.toUpperCase() === a2?.toUpperCase();
     }
@@ -65,6 +68,4 @@ export namespace $address {
 
         return `0x${address.join('')}`
     }
-
-    export const ZERO: TEth.Address = `0x0000000000000000000000000000000000000000`
 }

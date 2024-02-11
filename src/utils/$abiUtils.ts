@@ -14,11 +14,12 @@ import alot from 'alot';
 
 export namespace $abiUtils {
 
-    export function encodePacked(types: string[], values: any[])
-    export function encodePacked(typeValues: [string, any][])
-    export function encodePacked(types: ReadonlyArray<string | ParamType>, values: ReadonlyArray<any>)
-    export function encodePacked(...typeValues: { type: string, value: any }[])
-    export function encodePacked(...mix) {
+    export function encodePacked(types: string[], values: any[]): TEth.Hex
+    export function encodePacked(typeValues: [string, any][]): TEth.Hex
+    export function encodePacked(types: ReadonlyArray<string | ParamType>, values: ReadonlyArray<any>): TEth.Hex
+    export function encodePacked(...typeValues: { type: string, value: any }[]): TEth.Hex
+    export function encodePacked(...typeValues: [string, any][]): TEth.Hex
+    export function encodePacked(...mix): TEth.Hex {
 
         let val: {type, value}[];
         if (arguments.length === 1) {
@@ -41,6 +42,13 @@ export namespace $abiUtils {
             let [types, values] = mix;
             val = types.map((type, i) => {
                 return { type, value: values[i] };
+            });
+        }
+
+        // [type, value], [type, value], ....
+        if (val == null && arguments.length > 0 && Array.isArray(arguments[0]) && arguments[0].length === 2 && typeof arguments[0][0] ==='string') {
+            val = Array.from(arguments).map(([type, value]) => {
+                return { type, value };
             });
         }
         if (val == null) {

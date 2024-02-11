@@ -36,7 +36,7 @@ export interface SafeAccount extends IAccount {
 
     operator: EoAccount
 
-    owners?: string[]
+    owners?: (string | EoAccount)[]
     threshold?: number
 }
 

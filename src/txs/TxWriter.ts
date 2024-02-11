@@ -622,6 +622,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     static defaultOptions (options: ITxWriterOptions) {
         obj_extend(DEFAULTS, options);
     }
+    static DEFAULTS = DEFAULTS
 }
 
 export type TTxWriterJson = {
