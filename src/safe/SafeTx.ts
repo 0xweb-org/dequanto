@@ -55,10 +55,10 @@ export class SafeTx {
 
         let transactionsHex = $hex.concat(transactionsHexArr);
 
-        const multiSendAddress = this.options.contracts?.[this.client.platform]?.MultiSend
-            ?? config.safe?.contracts?.[this.client.platform]?.MultiSend;
+        const multiSendAddress = this.options?.contracts?.[this.client.network]?.MultiSend
+            ?? config.safe?.contracts?.[this.client.network]?.MultiSend;
 
-        $require.Address(multiSendAddress, `MultiSend contract for ${this.client.platform}`);
+        $require.Address(multiSendAddress, `MultiSend contract for ${this.client.network}`);
         const safeMultiSendContract = new MultiSend(multiSendAddress, this.client);
 
         const data = await safeMultiSendContract.$data().multiSend(sender, transactionsHex)

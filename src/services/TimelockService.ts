@@ -5,14 +5,17 @@ import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
 import { IAccount } from '@dequanto/models/TAccount';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TEth } from '@dequanto/models/TEth';
+import { TPlatform } from '@dequanto/models/TPlatform';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $contract } from '@dequanto/utils/$contract';
 import { $date } from '@dequanto/utils/$date';
 import { $hex } from '@dequanto/utils/$hex';
+import { l } from '@dequanto/utils/$logger';
 import { $number } from '@dequanto/utils/$number';
 import { $platform } from '@dequanto/utils/$platform';
 import { $require } from '@dequanto/utils/$require';
+import { File } from 'atma-io';
 import memd from 'memd';
 
 
@@ -60,7 +63,7 @@ interface ITimelockTxParamsNormalized {
     delay: bigint
 }
 
-enum ETimelockTxStatus {
+export enum ETimelockTxStatus {
     None = 'none',
     Pending = 'pending',
     Ready = 'ready',
@@ -73,15 +76,11 @@ type TTimelockController = ContractBase & Pick<TimelockController,
 
 export class TimelockService {
 
-    public store: JsonArrayStore<ITimelockTx>;
 
     constructor(
         private timelock: TTimelockController,
     ) {
-        this.store = new JsonArrayStore<ITimelockTx>({
-            path: `/data/0x/timelocks-${ $platform.toPath(timelock.client.platform) }.json`,
-            key: x => x.id
-        });
+
     }
 
     /** Schedules-Wait-Execute a task distinguished by the unique task name
@@ -145,6 +144,8 @@ export class TimelockService {
         let key = await this.getOperationKey(txParams);
         let schedule = await this.getUniqueByKey(key);
         let status = this.getScheduleStatus(schedule);
+        l`Current schedule status: ${status}`;
+
         if (status == ETimelockTxStatus.None) {
             let result = await this.schedule(txParams);
             return {
@@ -158,7 +159,7 @@ export class TimelockService {
             let result = await this.execute(txParams);
             return {
                 prevStatus: status,
-                status: ETimelockTxStatus.Pending,
+                status: ETimelockTxStatus.Executed,
                 schedule: result.schedule,
                 tx: result.tx.tx?.hash
             };
@@ -261,8 +262,8 @@ export class TimelockService {
         );
 
         let block = await this.timelock.client.getBlock(tx.receipt.blockNumber);
-
-        let timelockTx = await this.store.upsert({
+        let store = await this.getStore();
+        let timelockTx = await store.upsert({
             id: salt,
             key: key,
             salt: salt,
@@ -293,10 +294,12 @@ export class TimelockService {
         $require.eq(status, ETimelockTxStatus.Ready, `Tx not ready to execute: ${status}`)
 
         let timelock = this.timelock;
+        let store = await this.getStore();
         let salt = pendingTx.salt;
         let id = this.getOperationHash({ ...txParams, salt });
 
         let isBatch = Array.isArray(txParams.to);
+
         let tx = isBatch
         ? await timelock.$receipt().executeBatch(
             txParams.sender,
@@ -314,7 +317,7 @@ export class TimelockService {
             txParams.predecessor,
             salt
         );
-        let result = await this.store.upsert({
+        let result = await store.upsert({
             id,
             status: 'completed',
             txExecute: tx.receipt.transactionHash,
@@ -326,11 +329,13 @@ export class TimelockService {
     }
 
     public async clearSchedules () {
-        await this.store.saveAll([]);
+        let store = await this.getStore();
+        await store.saveAll([]);
     }
     public async updateSchedule(txInfo: Partial<ITimelockTx>) {
         $require.notNull(txInfo.id, `ID is required`);
-        await this.store.upsert(txInfo);
+        let store = await this.getStore();
+        await store.upsert(txInfo);
     }
 
     public async debugMoveToSchedule (txInfo: ITimelockTx) {
@@ -418,12 +423,14 @@ export class TimelockService {
     }
 
     private async getPendingByKey (key: TEth.Hex): Promise<ITimelockTx> {
-        let all = await this.store.getAll();
+        let store = await this.getStore();
+        let all = await store.getAll();
         return all.find(x => x.key === key && x.status === 'pending');
     }
 
     private async getUniqueByKey (key: TEth.Hex): Promise<ITimelockTx> {
-        let all = await this.store.getAll();
+        let store = await this.getStore();
+        let all = await store.getAll();
         let arr = all.filter(x => x.key === key);
         $require.lt(arr.length, 2, `Timelock service expects ${key} to be unique. Found ${arr.length}`);
         return arr.length === 1 ? arr[0] : null;
@@ -464,7 +471,7 @@ export class TimelockService {
             delay
         };
     }
-    async getTxParamsNormalizedFromContract <
+    private async getTxParamsNormalizedFromContract <
         T extends ContractBase,
         TMethodName extends WriteMethodKeys<T>,
     > (
@@ -489,7 +496,7 @@ export class TimelockService {
         })
         return tx;
     }
-    async getTxParamsNormalizedFromContractBatch(
+    private async getTxParamsNormalizedFromContractBatch(
         title: string | '' | null,
         sender: IAccount,
         batch: Pick<TEth.TxLike, 'to' | 'data' | 'value'>[],
@@ -504,6 +511,26 @@ export class TimelockService {
             value: batch.map(x => BigInt(x.value)),
         })
         return tx;
+    }
+
+    @memd.deco.memoize({ perInstance: true })
+    private async getStore () {
+        let { platform, network } = this.timelock.client;
+        let path = getPath(platform);
+        if (platform === 'hardhat' && network !== platform) {
+            // forked chain
+            let sourcePath = getPath(network);
+            if (await File.existsAsync(sourcePath)) {
+                await File.copyToAsync(sourcePath, path, { silent: true })
+            }
+        }
+        function getPath (p: TPlatform) {
+            return `/data/0x/timelocks-${ $platform.toPath(p) }.json`
+        }
+        return new JsonArrayStore<ITimelockTx>({
+            path,
+            key: x => x.id
+        });
     }
 }
 

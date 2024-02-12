@@ -72,8 +72,8 @@ UTest({
         }
 
         l`Should execute after delay.`;
-        let executed = await service.executeCall(account, counter, 'update', 10);
-        has_(executed.tx.hash, /0x\w+/);
+        let { tx } = await service.executeCall(account, counter, 'update', 10);
+        has_(tx.receipt.transactionHash, /0x\w+/);
         eq_(Number(await counter.count()), 10);
 
         try {
