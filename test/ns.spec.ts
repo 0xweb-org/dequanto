@@ -3,8 +3,6 @@ import { NameService } from '@dequanto/ns/NameService';
 import { $ns } from '@dequanto/ns/utils/$ns';
 
 UTest({
-
-
     'ens': {
         async 'tld' () {
             let hash = $ns.namehash('eth');
@@ -16,19 +14,24 @@ UTest({
         },
         async 'address' () {
             let ns = new NameService(Web3ClientFactory.get('eth'));
-            let addr = await ns.getAddress('alice.eth');
+            let { address: addr } = await ns.getAddress('alice.eth');
             eq_(addr, `0xcd2E72aEBe2A203b84f46DEEC948E6465dB51c75`);
         },
         async 'content and records' () {
             let ns = new NameService(Web3ClientFactory.get('eth'));
-            let addr = await ns.getAddress('vitalik.eth');
+            let { address: addr } = await ns.getAddress('vitalik.eth');
             eq_(addr, `0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045`);
 
-            let urlRecord = await ns.getContent('vitalik.eth/url');
+            let { value: urlRecord } = await ns.getContent('vitalik.eth/url');
             eq_(urlRecord, 'https://vitalik.ca');
 
-            let contentHash = await ns.getContent('vitalik.eth');
+            let { value: contentHash } = await ns.getContent('vitalik.eth');
             eq_(contentHash, `ipfs://QmPrbqiw6XpWQDgR8uAGPM1tVV8xqRYJZa3WC8Yi3NjcCu`);
+        },
+        async 'reverse registrar' () {
+            let ns = new NameService(Web3ClientFactory.get('eth'));
+            let { name } = await ns.getReverseName(`0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045`);
+            eq_(name, 'vitalik.eth');
         }
     },
     'ud': {
@@ -38,14 +41,20 @@ UTest({
         },
         async 'address' () {
             let ns = new NameService(Web3ClientFactory.get('eth'));
-            let addr = await ns.getAddress('brad.crypto');
+            let { address: addr } = await ns.getAddress('brad.crypto');
             eq_(addr?.toLowerCase(), `0x8aad44321a86b170879d7a244c1e8d360c99dda8`);
+        },
+        async 'reverse registrar' () {
+            let ns = new NameService(Web3ClientFactory.get('eth'));
+            let { name, platform } = await ns.getReverseName(`0x8aad44321a86b170879d7a244c1e8d360c99dda8`);
+            eq_(platform, 'polygon');
+            eq_(name, 'brad.x');
         }
     },
     'spaceId': {
         async 'address' () {
             let ns = new NameService(Web3ClientFactory.get('bsc'));
-            let addr = await ns.getAddress('fr.boracle.bnb');
+            let { address: addr } = await ns.getAddress('fr.boracle.bnb');
             eq_(addr?.toLowerCase(), `0x55328A2dF78C5E379a3FeE693F47E6d4279C2193`.toLowerCase());
         }
     }

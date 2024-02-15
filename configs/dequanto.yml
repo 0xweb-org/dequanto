@@ -222,10 +222,13 @@ ns:
       registry: '0xfFB52185b56603e0fd71De9de4F6f902f05EEA23'
   ud:
     # https://docs.unstoppabledomains.com/send-and-receive-crypto-payments/direct-blockchain-calls/resolve-unstoppable-domain-names
+    # https://docs.unstoppabledomains.com/smart-contracts/contract-reference/uns-smart-contracts/
     eth:
-      registry: '0xfee4d4f0adff8d84c12170306507554bc7045878'
+      resolver: '0x049aba7510f45BA5b64ea9E658E342F904DB358D'
+      registry: '0x58034A288D2E56B661c9056A0C27273E5460B63c'
     polygon:
-      registry: '0xa3f32c8cd786dc089bd1fc175f2707223aee5d00'
+      resolver: '0xa9a6A3626993D487d2Dbda3173cf58cA1a9D9e9f'
+      registry: '0x423F2531bd5d3C3D4EF7C318c2D1d9BEDE67c680'
 
 
 oracles:

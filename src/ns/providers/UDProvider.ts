@@ -8,49 +8,70 @@ import { $config } from '@dequanto/utils/$config';
 import { $require } from '@dequanto/utils/$require';
 import { INsProvider } from './INsProvider';
 import { $ns } from '../utils/$ns';
+import { TPlatform } from '@dequanto/models/TPlatform';
+import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
+import { Web3Client } from '@dequanto/clients/Web3Client';
+import { ANsProvider } from './ANsProvider';
 
-export class UDProvider implements INsProvider {
+export class UDProvider extends ANsProvider {
 
-    constructor (public client = di.resolve(EthWeb3Client)) {
-
+    constructor (client: Web3Client) {
+        super(client);
+        this.configField = 'ud';
     }
-
 
     supports (domain: string) {
         return /\.(x|crypto|coin|wallet|bitcoin|888|nft|dao|zil|blockchain)([/|?]|$)/.test(domain);
     }
 
-    async getAddress(domain: string): Promise<TAddress> {
+    protected async getAddressInner(client: Web3Client, domain: string): Promise<{ platform: TPlatform, address: TAddress }> {
         let hash = $ns.namehash(domain);
-        let resolverAddr = await this.getResolverAddress(hash);
-        let address = await this.getData(hash, resolverAddr);
-        return address;
+        let resolverAddr = await this.getNsAddress(client.network, 'registry');
+        let address = await this.getData(client, hash, resolverAddr);
+        return {
+            platform: client.network,
+            address
+        };
     }
 
-    async getContent(uri: string): Promise<string> {
+    protected async getContentInner(client: Web3Client, uri: string): Promise<{ platform: TPlatform, value: string }> {
         let root = $ns.getRoot(uri);
         let path = $ns.getPath(uri);
         let hash = $ns.namehash(root);
-        let resolverAddr = await this.getResolverAddress(hash);
-        let x = await this.getData(hash, resolverAddr, path);
-        return x;
+        let registryAddr = await this.getNsAddress(client.network, 'registry');
+        let x = await this.getData(client, hash, registryAddr, path);
+        return {
+            platform: client.network,
+            value: x
+        };
     }
 
-    private async getData (hash: TBufferLike, resolverAddr: TAddress, key: string = 'crypto.ETH.address') {
-        let reader = new ContractReader(this.client);
-        let data = await reader.readAsync(
+    protected async getReversedInner(client: Web3Client, address: TAddress): Promise<{ platform: TPlatform, name: string }> {
+        let resolverAddr = await this.getNsAddress(client.network, 'resolver');
+        let reader = new ContractReader(client);
+        let name = await reader.readAsync(
             resolverAddr,
+            `reverseNameOf(address address): string`,
+            address
+        );
+        return {
+            platform: client.network,
+            name: name
+        };
+    }
+
+    private async getData (client: Web3Client, hash: TBufferLike, registryAddr: TAddress, key: string = 'crypto.ETH.address') {
+        let reader = new ContractReader(client);
+        let data = await reader.readAsync(
+            registryAddr,
             `getData(string[] keys, uint256 tokenId):(address,address,string[])`,
             [ key ],
             hash
         );
+        if (data == null || data.length === 0) {
+            return null;
+        }
         let info = data[2];
-        return info[0];
-    }
-    private async getResolverAddress (hash: TBufferLike): Promise<TAddress> {
-        let platform = this.client.platform;
-        let registryAddr = $config.get(`ns.ud.${platform}.registry`);
-        $require.Address(registryAddr);
-        return registryAddr;
+        return info?.[0];
     }
 }

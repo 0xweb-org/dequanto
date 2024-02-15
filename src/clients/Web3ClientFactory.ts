@@ -7,7 +7,7 @@ import { PolyWeb3Client } from './PolyWeb3Client';
 import { ArbWeb3Client } from '@dequanto/chains/arbitrum/ArbWeb3Client';
 import { XDaiWeb3Client } from '@dequanto/chains/xdai/XDaiWeb3Client';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { config } from '@dequanto/Config';
+import { Config, config } from '@dequanto/Config';
 import { EvmWeb3Client } from './EvmWeb3Client';
 
 export namespace Web3ClientFactory {
@@ -39,5 +39,11 @@ export namespace Web3ClientFactory {
                 }
                 throw new Error(`Unsupported platform ${platform} for web3 client`);
         }
+    }
+
+    /** Same as sync variation, but ensures the config is being fetched */
+    export async function getAsync (platform: TPlatform | string, opts?: IWeb3EndpointOptions) {
+        let cfg = await Config.get();
+        return get(platform, opts);
     }
 }

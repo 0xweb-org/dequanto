@@ -112,7 +112,7 @@ export namespace $require {
         }
     }
 
-    export function Address (val: TAddress, message: string = ''): TAddress {
+    export function Address (val: TAddress | string, message: string = ''): TAddress {
         if ($is.Address(val) === false) {
             throw new Error(`Value ${val} is not a valid address. ${message}`);
         }
