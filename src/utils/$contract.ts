@@ -237,6 +237,7 @@ export namespace $contract {
         }, {});
 
         return {
+            id: `${log.blockNumber}-${log.logIndex}`,
             blockNumber: log.blockNumber,
             logIndex: log.logIndex,
             transactionHash: log.transactionHash,

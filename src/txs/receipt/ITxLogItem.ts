@@ -3,6 +3,7 @@ import { TPlatform } from '@dequanto/models/TPlatform';
 import { type TAbiItem } from '@dequanto/types/TAbi';
 
 export interface ITxLogItem<TParams = { [name: string]: any }> {
+    id: string
     blockNumber: number
     logIndex: number
     transactionHash: string

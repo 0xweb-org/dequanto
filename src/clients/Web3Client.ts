@@ -429,9 +429,11 @@ export abstract class Web3Client implements IWeb3Client {
         });
     }
 
-    async getPastLogs(options: RpcTypes.Filter): Promise<TEth.Log[]> {
+    async getPastLogs(filter: RpcTypes.Filter, options?: {
+        onProgress? (info: TLogsRangeProgress): void
+    }): Promise<TEth.Log[]> {
         // ensure numbers, bigints, bools are in HEX
-        options.topics = options.topics.map(mix => {
+        filter.topics = filter.topics.map(mix => {
             if (mix != null && Array.isArray(mix) === false) {
                 return $hex.ensure(mix as any)
             }
@@ -439,7 +441,7 @@ export abstract class Web3Client implements IWeb3Client {
         });
 
         // ensure all topics are in 32-byte
-        options.topics = options.topics?.map(topic => {
+        filter.topics = filter.topics?.map(topic => {
             if (typeof topic === 'string' && topic.startsWith('0x')) {
                 return $hex.padBytes(topic, 32); // `0x${topic.substring(2).padStart(64, '0')}`;
             }
@@ -448,17 +450,26 @@ export abstract class Web3Client implements IWeb3Client {
 
         let MAX = this.pool.getOptionForFetchableRange();
         let [fromBlock, toBlock] = await Promise.all([
-            Blocks.getBlock(this, options.fromBlock, 0),
-            Blocks.getBlock(this, options.toBlock, 'latest'),
+            Blocks.getBlock(this, filter.fromBlock, 0),
+            Blocks.getBlock(this, filter.toBlock, 'latest'),
         ]);
 
-        return await RangeWorker.fetchWithLimits(this, options, {
+        let logs = await RangeWorker.fetchWithLimits(this, filter, {
             maxBlockRange: MAX,
             maxResultCount: null,
         }, {
             fromBlock,
             toBlock
+        }, {
+            onProgress: options?.onProgress
         });
+
+        let removedLogs = logs.filter(x => x.removed === true);
+        if (removedLogs.length > 0) {
+            console.error(`Caution: There are ${removedLogs.length} removed Logs. But @dequanto didn't handle this as they are not expected to be present in past logs.`);
+        }
+
+        return logs;
     }
 
     getNodeInfos(options?: {
@@ -492,14 +503,29 @@ export abstract class Web3Client implements IWeb3Client {
     }
 }
 
+export type TLogsRangeProgress = {
+    logs: TEth.Log[]
+    paged: TEth.Log[]
+    blocks: {
+        total: number
+        loaded: number
+    }
+    blocksPerSecond: number
+    timeLeftSeconds: number
+}
 
 namespace RangeWorker {
 
+
+
     export async function fetchWithLimits(
         client: Web3Client,
-        options: RpcTypes.Filter,
+        filter: RpcTypes.Filter,
         limits: { maxBlockRange?: number, maxResultCount?: number },
-        ranges: { fromBlock: number, toBlock: number }
+        ranges: { fromBlock: number, toBlock: number },
+        options?: {
+            onProgress? (info: TLogsRangeProgress)
+        }
     ) {
         let { fromBlock, toBlock } = ranges;
 
@@ -518,7 +544,7 @@ namespace RangeWorker {
         };
         let nodeStats = Date.now();
         while (cursor <= toBlock) {
-            let paged = await fetchPaged(client, options, {
+            let paged = await fetchPaged(client, filter, {
                 fromBlock: cursor,
                 toBlock: toBlock,
             }, limits);
@@ -534,6 +560,14 @@ namespace RangeWorker {
             let leftTimeFormatted = $date.formatTimespan(leftSeconds * 1000);
 
             $logger.log(`Blocks walked: ${perf.blocks.loaded}/${perf.blocks.total}. Latest range: ${paged.range.count}. BPS: ${blocksPerSecFormatted}. Estimated: ${leftTimeFormatted}. Loaded ${logs.length}`);
+
+            options.onProgress({
+                logs: logs,
+                paged: paged.result as RpcTypes.Log[],
+                blocks: perf.blocks,
+                blocksPerSecond: Number(blocksPerSecFormatted),
+                timeLeftSeconds: leftSeconds,
+            })
 
             let lastNodeStats = Date.now() - nodeStats;
             if (lastNodeStats > 30 * 1000) {
@@ -552,9 +586,9 @@ namespace RangeWorker {
 
     async function fetchPaged(
         client: Web3Client,
-        options: RpcTypes.Filter,
+        filter: RpcTypes.Filter,
         range: { fromBlock: number, toBlock: number },
-        knownLimits: { maxBlockRange?: number, maxResultCount?: number },
+        knownLimits: { maxBlockRange?: number, maxResultCount?: number }
     ): Promise<{
         result: RpcTypes.FilterResults
         range: {
@@ -575,7 +609,7 @@ namespace RangeWorker {
                     currentWClient.blockRangeLimits.blocks ?? Infinity
                 );
                 return wClient.rpc.eth_getLogs({
-                    ...options,
+                    ...filter,
                     fromBlock: $hex.ensure(range.fromBlock),
                     toBlock: $hex.ensure(range.fromBlock + blockRange),
                 });
@@ -608,7 +642,7 @@ namespace RangeWorker {
                     blocks: newRange,
                     results: count,
                 });
-                return fetchPaged(client, options, range, knownLimits);
+                return fetchPaged(client, filter, range, knownLimits);
             }
 
             let maxRangeMatch = /\b(?<maxRange>\d{2,})\b/.exec(error.message)?.groups?.maxRange;
@@ -621,7 +655,7 @@ namespace RangeWorker {
                 }
 
                 currentWClient.updateBlockRangeInfo({ blocks: rangeLimit });
-                return fetchPaged(client, options, range, knownLimits);
+                return fetchPaged(client, filter, range, knownLimits);
             }
             if (/\b(range|limit)\b/.test(error.message)) {
                 // Generic "block range is too wide", "limit exceeded",
@@ -629,13 +663,13 @@ namespace RangeWorker {
                 currentWClient.updateBlockRangeInfo({
                     blocks: newRange
                 });
-                return fetchPaged(client, options, range, knownLimits);
+                return fetchPaged(client, filter, range, knownLimits);
             }
 
             currentWClient.updateBlockRangeInfo({
                 blocks: 0
             });
-            return fetchPaged(client, options, range, knownLimits);
+            return fetchPaged(client, filter, range, knownLimits);
         }
     }
 }

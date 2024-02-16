@@ -534,29 +534,6 @@ export class TimelockService {
     }
 }
 
-
-// type TWriteMethods<T extends ContractBase> = {
-//     [P in keyof T]: T[P] extends ((sender: IAccount, ...args) => (Promise<TxWriter>)) ? P : never;
-// };
-
-// type NoneMethodKeys<T> = {
-//     [P in keyof T]: T[P] extends ((sender: IAccount, ...args) => (Promise<TxWriter>)) ? P : never;
-// }[keyof T];
-//type TWriteMethods<T> = Omit<T, Exclude<keyof T, NoneMethodKeys<T>>>;
-
-// type MethodKeys<T> = {
-//     [P in keyof T]: T[P] extends ((sender: IAccount, ...args) => (Promise<TxWriter>)) ? P : never;
-// };
-// type TWriteMethods<T> = Omit<T, Exclude<keyof T, keyof MethodKeys<T>>>;
-
-let foo = {
-    name () {
-        return 1;
-    },
-    bob: 1
-};
-
-
 type WriteMethodKeys<T> = {
     [P in keyof T]: T[P] extends ((sender: IAccount, ...args) => (Promise<TxWriter>)) ? P : never;
 }[keyof T];

@@ -2,7 +2,7 @@ import di from 'a-di';
 import alot from 'alot';
 import { class_Dfr } from 'atma-utils';
 import type { TAbiItem } from '@dequanto/types/TAbi';
-import type { Web3Client } from '@dequanto/clients/Web3Client';
+import type { TLogsRangeProgress, Web3Client } from '@dequanto/clients/Web3Client';
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
 import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -146,8 +146,10 @@ export class ContractReader implements IContractReader {
         return logs.map(log => $contract.parseLogWithAbi(log, abi));
     }
 
-    async getLogs (filters: RpcTypes.Filter) {
-        return this.client.getPastLogs(filters);
+    async getLogs (filters: RpcTypes.Filter, options?: {
+        onProgress? (info: TLogsRangeProgress)
+    }) {
+        return this.client.getPastLogs(filters, options);
     }
 
     async getLogsFilter(abi: TAbiItem | string | '*', options: {

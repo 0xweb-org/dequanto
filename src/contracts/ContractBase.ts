@@ -1,7 +1,7 @@
 import di from 'a-di';
 import memd from 'memd';
 import alot from 'alot';
-import type { Web3Client } from '@dequanto/clients/Web3Client';
+import type { TLogsRangeProgress, Web3Client } from '@dequanto/clients/Web3Client';
 import type { ITxWriterOptions, TxWriter } from '@dequanto/txs/TxWriter';
 
 import type { IAccount, TAccount } from "@dequanto/models/TAccount";
@@ -27,6 +27,7 @@ import { RpcTypes } from '@dequanto/rpc/Rpc';
 import { ContractStorageReaderBase } from './ContractStorageReaderBase';
 import { ContractBaseUtils } from './utils/ContractBaseUtils';
 import { FnSignedWrapper } from './wrappers/FnSignedWrapper';
+import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 
 
 export abstract class ContractBase {
@@ -364,8 +365,10 @@ export abstract class ContractBase {
         let parsed = $contract.parseLogWithAbi(log, abi);
         return parsed;
     }
-    protected async $getPastLogs(filters: RpcTypes.Filter) {
-        return this.getContractReader().getLogs(filters);
+    protected async $getPastLogs(filters: RpcTypes.Filter, options?: {
+        onProgress? (info: TLogsRangeProgress)
+    }) {
+        return this.getContractReader().getLogs(filters, options);
     }
     public async $getPastLogsParsed (mix: string | TAbiItem, options?: {
         fromBlock?: number | Date
@@ -373,11 +376,23 @@ export abstract class ContractBase {
         params?: {
             [key: string]: any
         }
+        onProgress? (info: Omit<TLogsRangeProgress, 'paged'> & { paged: ITxLogItem[] })
     }) {
         let filters = await this.$getPastLogsFilters(mix, {
             ...options
         });
-        let logs = await this.$getPastLogs(filters);
+        let logs = await this.$getPastLogs(filters, {
+            onProgress: (info) => {
+                if (options?.onProgress == null) {
+                    return;
+                }
+                let paged = info.paged.map(log => this.$extractLog(log, mix));
+                options.onProgress({
+                    ...info,
+                    paged
+                });
+            }
+        });
         return logs.map(log => this.$extractLog(log, mix)) as any;
     }
     protected async $getPastLogsFilters(mix: string | TAbiItem, options: {
