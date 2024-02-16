@@ -561,13 +561,13 @@ namespace RangeWorker {
 
             $logger.log(`Blocks walked: ${perf.blocks.loaded}/${perf.blocks.total}. Latest range: ${paged.range.count}. BPS: ${blocksPerSecFormatted}. Estimated: ${leftTimeFormatted}. Loaded ${logs.length}`);
 
-            options.onProgress({
+            options?.onProgress?.({
                 logs: logs,
                 paged: paged.result as RpcTypes.Log[],
                 blocks: perf.blocks,
                 blocksPerSecond: Number(blocksPerSecFormatted),
                 timeLeftSeconds: leftSeconds,
-            })
+            });
 
             let lastNodeStats = Date.now() - nodeStats;
             if (lastNodeStats > 30 * 1000) {
