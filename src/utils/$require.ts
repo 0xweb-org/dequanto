@@ -3,6 +3,7 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { $is } from './$is';
 import { $address } from './$address';
 
+const $Array = Array;
 export namespace $require {
     export function Number <T> (val: T, message: string = '', opts?: { min?: T, max?: T}): T {
         if (typeof val !== 'number') {
@@ -47,6 +48,12 @@ export namespace $require {
         }
         return val;
     }
+    export function Array<T>(val: T, message: string): T {
+        if ($Array.isArray(val) === false) {
+            throw new Error(`Value is not a function ${message}`);
+        }
+        return val;
+    }
     export function String<T>(val: T, message): T {
         if (typeof val !== 'string') {
             throw new Error(`Value ${val} is not a string ${message}`);
@@ -66,7 +73,7 @@ export namespace $require {
         }
         if (typeof val === 'string' && val.trim().length === 0) {
             throw new Error(`Value is empty string. ${message}`);
-        } else if (Array.isArray(val) && val.length === 0) {
+        } else if ($Array.isArray(val) && val.length === 0) {
             throw new Error(`Value is empty array. ${message}`);
         }
         return val;

@@ -152,7 +152,7 @@ export class ContractReader implements IContractReader {
         return this.client.getPastLogs(filters, options);
     }
 
-    async getLogsFilter(abi: TAbiItem | string | '*', options: {
+    async getLogsFilter(abi: TAbiItem | string | '*' | TAbiItem[], options: {
         /** Can be UNDEFINED, then the logs will be searched globally */
         address?: TAddress
         /**
@@ -192,26 +192,59 @@ export class ContractReader implements IContractReader {
             if (typeof abi === 'string') {
                 abi = $abiParser.parseMethod(abi);
             }
-            let topic = $abiUtils.getTopicSignature(abi);
-            let topics = [ topic ];
-            if (options.params != null) {
-                alot(abi.inputs)
-                    .filter(x => x.indexed)
-                    .forEach((arg, i) => {
-                        let param = Array.isArray(options.params)
-                            ? options.params[i]
-                            : options.params?.[arg.name];
-                        if (param == null) {
-                            topics.push(undefined);
-                            return;
-                        }
-                        topics.push(param);
-                    })
-                    .toArray();
+            if (Array.isArray(abi) === false) {
+                let topic = $abiUtils.getTopicSignature(abi);
+                let topics = [ topic ];
+                if (options.params != null) {
+                    alot(abi.inputs)
+                        .filter(x => x.indexed)
+                        .forEach((arg, i) => {
+                            let param = Array.isArray(options.params)
+                                ? options.params[i]
+                                : options.params?.[arg.name];
+                            if (param == null) {
+                                topics.push(undefined);
+                                return;
+                            }
+                            topics.push(param);
+                        })
+                        .toArray();
 
-                topics = $array.trimEnd(topics);
+                    topics = $array.trimEnd(topics);
+                }
+                filters.topics = topics;
+            } else {
+                // is Array: query multiple events
+                let topics = [
+                    abi.map($abiUtils.getTopicSignature)
+                ];
+                if (options.params != null) {
+                    let paramsArr = $require.Array(options.params, `Multiple Logs are being requested. The params should be an array. `);
+                    let abiInputsArr = abi.map(x => x.inputs.filter(i => i.indexed));
+                    let inputsMax = alot(abiInputsArr).max(x => x.length);
+                    for (let i = 0; i < inputsMax; i++) {
+                        let options = [];
+                        for (let j = 0; j < abiInputsArr.length; j++) {
+                            let inputAbi = abiInputsArr[j]?.[i];
+                            let params = paramsArr[j];
+                            if (inputAbi == null || params == null) {
+                                continue;
+                            }
+                            let inputParam = Array.isArray(params)
+                                ? params[i]
+                                : params?.[inputAbi.name];
+
+                            if (inputParam) {
+                                options.push(inputParam);
+                            }
+                        }
+                        topics.push(
+                            options.length === 0 ? null : options
+                        );
+                    }
+                    topics = $array.trimEnd(topics);
+                }
             }
-            filters.topics = topics;
         }
 
         return filters as RpcTypes.Filter;

@@ -370,7 +370,7 @@ export abstract class ContractBase {
     }) {
         return this.getContractReader().getLogs(filters, options);
     }
-    public async $getPastLogsParsed (mix: string | TAbiItem, options?: {
+    public async $getPastLogsParsed (mix: string | TAbiItem | string[] | TAbiItem[], options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {
@@ -395,7 +395,7 @@ export abstract class ContractBase {
         });
         return logs.map(log => this.$extractLog(log, mix)) as any;
     }
-    protected async $getPastLogsFilters(mix: string | TAbiItem, options: {
+    protected async $getPastLogsFilters(mix: string | TAbiItem | string[] | TAbiItem[], options: {
         topic?: string
         fromBlock?: number | Date
         toBlock?: number | Date
@@ -403,18 +403,21 @@ export abstract class ContractBase {
             [key: string]: any
         }
     }): Promise<RpcTypes.Filter> {
-        let abi: TAbiItem | '*';
-        if (typeof mix === 'string') {
-            if (mix === '*') {
-                abi = '*'
-            } else {
-                abi = this.$getAbiItem('event', mix);
-            }
-        } else {
+        let abi: TAbiItem | '*' | TAbiItem[];
+        if (mix === '*') {
+            abi = '*'
+        } else if (typeof mix === 'string') {
+            abi = this.$getAbiItem('event', mix);
+        } else if (Array.isArray(mix) === false) {
             abi = mix;
+        } else {
+            abi = mix.map(x => {
+                if (typeof x === 'string') {
+                    return this.$getAbiItem('event', x);
+                }
+                return x;
+            });
         }
-
-
         return this.getContractReader().getLogsFilter(
             abi,
             {

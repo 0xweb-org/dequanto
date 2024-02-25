@@ -60,7 +60,7 @@ export class EventsIndexer <T extends ContractBase> {
         // Fetch all logs and filter later if needed
         //- params?: T[TMethodName] extends (options: { params?: infer TParams }) => any ? TParams : never
     ): Promise<{
-        logs: T[TMethodName] extends (options: { params?: any }) => Promise<infer TReturn> ? (TReturn extends unknown ? TItem[] : TReturn) : never
+        logs: T[TMethodName] extends (options?: { params?: any }) => Promise<infer TReturn> ? TReturn : never
     }> {
         let contract = this.contract;
         let client = contract.client;
