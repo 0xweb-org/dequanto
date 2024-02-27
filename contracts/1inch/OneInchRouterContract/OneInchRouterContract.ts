@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://bscscan.com/address/0x11111112542d85b3ef69ae05771c2dccff4faa26#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class OneInchRouterContract extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/1inch/OneInchRouterContract/OneInchRouterContract.ts"
-}
+        "class": "./contracts/1inch/OneInchRouterContract/OneInchRouterContract.ts"
+    }
 
     // 0x83197ef0
     async destroy (sender: TSender, ): Promise<TxWriter> {
@@ -101,10 +101,13 @@ export class OneInchRouterContract extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TOneInchRouterContractTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TOneInchRouterContractTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -112,8 +115,20 @@ export class OneInchRouterContract extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onError (fn?: (event: TClientEventsStreamData<TLogErrorParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogErrorParameters>> {
@@ -128,26 +143,26 @@ export class OneInchRouterContract extends ContractBase {
         return this.$onLog('Swapped', fn);
     }
 
-    extractLogsError (tx: TEth.TxReceipt): ITxLogItem<TLogError>[] {
+    extractLogsError (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Error'>>[] {
         let abi = this.$getAbiItem('event', 'Error');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogError>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Error'>>[];
     }
 
-    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TLogOwnershipTransferred>[] {
+    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'OwnershipTransferred'>>[] {
         let abi = this.$getAbiItem('event', 'OwnershipTransferred');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogOwnershipTransferred>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'OwnershipTransferred'>>[];
     }
 
-    extractLogsSwapped (tx: TEth.TxReceipt): ITxLogItem<TLogSwapped>[] {
+    extractLogsSwapped (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Swapped'>>[] {
         let abi = this.$getAbiItem('event', 'Swapped');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogSwapped>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Swapped'>>[];
     }
 
     async getPastLogsError (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogError>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Error'>>[]> {
         return await this.$getPastLogsParsed('Error', options) as any;
     }
 
@@ -155,7 +170,7 @@ export class OneInchRouterContract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { previousOwner?: TAddress,newOwner?: TAddress }
-    }): Promise<ITxLogItem<TLogOwnershipTransferred>[]> {
+    }): Promise<ITxLogItem<TEventParams<'OwnershipTransferred'>>[]> {
         return await this.$getPastLogsParsed('OwnershipTransferred', options) as any;
     }
 
@@ -163,7 +178,7 @@ export class OneInchRouterContract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogSwapped>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Swapped'>>[]> {
         return await this.$getPastLogsParsed('Swapped', options) as any;
     }
 
@@ -176,87 +191,66 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogError = {
-        reason: string
-    };
-    type TLogErrorParameters = [ reason: string ];
-    type TLogOwnershipTransferred = {
-        previousOwner: TAddress, newOwner: TAddress
-    };
-    type TLogOwnershipTransferredParameters = [ previousOwner: TAddress, newOwner: TAddress ];
-    type TLogSwapped = {
-        _sender: TAddress, srcToken: TAddress, dstToken: TAddress, dstReceiver: TAddress, spentAmount: bigint, returnAmount: bigint
-    };
-    type TLogSwappedParameters = [ _sender: TAddress, srcToken: TAddress, dstToken: TAddress, dstReceiver: TAddress, spentAmount: bigint, returnAmount: bigint ];
-
-interface IEvents {
-  Error: TLogErrorParameters
-  OwnershipTransferred: TLogOwnershipTransferredParameters
-  Swapped: TLogSwappedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodDestroy {
-  method: "destroy"
-  arguments: [  ]
+export type TOneInchRouterContractTypes = {
+    Events: {
+        Error: {
+            outputParams: { reason: string },
+            outputArgs:   [ reason: string ],
+        }
+        OwnershipTransferred: {
+            outputParams: { previousOwner: TAddress, newOwner: TAddress },
+            outputArgs:   [ previousOwner: TAddress, newOwner: TAddress ],
+        }
+        Swapped: {
+            outputParams: { _sender: TAddress, srcToken: TAddress, dstToken: TAddress, dstReceiver: TAddress, spentAmount: bigint, returnAmount: bigint },
+            outputArgs:   [ _sender: TAddress, srcToken: TAddress, dstToken: TAddress, dstReceiver: TAddress, spentAmount: bigint, returnAmount: bigint ],
+        }
+    },
+    Methods: {
+        destroy: {
+          method: "destroy"
+          arguments: [  ]
+        }
+        discountedSwap: {
+          method: "discountedSwap"
+          arguments: [ caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TEth.Hex }, data: TEth.Hex ]
+        }
+        owner: {
+          method: "owner"
+          arguments: [  ]
+        }
+        renounceOwnership: {
+          method: "renounceOwnership"
+          arguments: [  ]
+        }
+        rescueFunds: {
+          method: "rescueFunds"
+          arguments: [ token: TAddress, amount: bigint ]
+        }
+        swap: {
+          method: "swap"
+          arguments: [ caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TEth.Hex }, data: TEth.Hex ]
+        }
+        transferOwnership: {
+          method: "transferOwnership"
+          arguments: [ newOwner: TAddress ]
+        }
+        unoswap: {
+          method: "unoswap"
+          arguments: [ srcToken: TAddress, amount: bigint, minReturn: bigint, input3: TEth.Hex[] ]
+        }
+        unoswapWithPermit: {
+          method: "unoswapWithPermit"
+          arguments: [ srcToken: TAddress, amount: bigint, minReturn: bigint, pools: TEth.Hex[], permit: TEth.Hex ]
+        }
+    }
 }
-
-interface IMethodDiscountedSwap {
-  method: "discountedSwap"
-  arguments: [ caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TEth.Hex }, data: TEth.Hex ]
-}
-
-interface IMethodOwner {
-  method: "owner"
-  arguments: [  ]
-}
-
-interface IMethodRenounceOwnership {
-  method: "renounceOwnership"
-  arguments: [  ]
-}
-
-interface IMethodRescueFunds {
-  method: "rescueFunds"
-  arguments: [ token: TAddress, amount: bigint ]
-}
-
-interface IMethodSwap {
-  method: "swap"
-  arguments: [ caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TEth.Hex }, data: TEth.Hex ]
-}
-
-interface IMethodTransferOwnership {
-  method: "transferOwnership"
-  arguments: [ newOwner: TAddress ]
-}
-
-interface IMethodUnoswap {
-  method: "unoswap"
-  arguments: [ srcToken: TAddress, amount: bigint, minReturn: bigint, input3: TEth.Hex[] ]
-}
-
-interface IMethodUnoswapWithPermit {
-  method: "unoswapWithPermit"
-  arguments: [ srcToken: TAddress, amount: bigint, minReturn: bigint, pools: TEth.Hex[], permit: TEth.Hex ]
-}
-
-interface IMethods {
-  destroy: IMethodDestroy
-  discountedSwap: IMethodDiscountedSwap
-  owner: IMethodOwner
-  renounceOwnership: IMethodRenounceOwnership
-  rescueFunds: IMethodRescueFunds
-  swap: IMethodSwap
-  transferOwnership: IMethodTransferOwnership
-  unoswap: IMethodUnoswap
-  unoswapWithPermit: IMethodUnoswapWithPermit
-  '*': { method: string, arguments: any[] } 
-}
-
-
 
 
 
@@ -288,7 +282,6 @@ class OneInchRouterContractStorageReader extends ContractStorageReaderBase {
 }
 
 
-
 interface IOneInchRouterContractTxCaller {
     destroy (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     discountedSwap (sender: TSender, caller: TAddress, desc: { srcToken: TAddress, dstToken: TAddress, srcReceiver: TAddress, dstReceiver: TAddress, amount: bigint, minReturnAmount: bigint, flags: bigint, permit: TEth.Hex }, data: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
@@ -313,3 +306,5 @@ interface IOneInchRouterContractTxData {
 }
 
 
+type TEvents = TOneInchRouterContractTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

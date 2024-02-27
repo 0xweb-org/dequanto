@@ -244,6 +244,7 @@ export class ContractReader implements IContractReader {
                     }
                     topics = $array.trimEnd(topics);
                 }
+                filters.topics = topics;
             }
         }
 

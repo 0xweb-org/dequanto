@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: ./node_modules/@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol
  */
 import di from 'a-di';
@@ -40,9 +40,9 @@ export class TransparentUpgradeableProxy extends ContractBase {
     }
 
     $meta = {
-    "source": "./node_modules/@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol",
-    "class": "./contracts/openzeppelin/compiled/TransparentUpgradeableProxy/TransparentUpgradeableProxy.ts"
-}
+        "source": "./node_modules/@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol",
+        "class": "./contracts/openzeppelin/compiled/TransparentUpgradeableProxy/TransparentUpgradeableProxy.ts"
+    }
 
     async $constructor (deployer: TSender, _logic: TAddress, admin_: TAddress, _data: TEth.Hex): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -61,10 +61,13 @@ export class TransparentUpgradeableProxy extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TTransparentUpgradeableProxyTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TTransparentUpgradeableProxyTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -72,8 +75,20 @@ export class TransparentUpgradeableProxy extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onUpgraded (fn?: (event: TClientEventsStreamData<TLogUpgradedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogUpgradedParameters>> {
@@ -88,26 +103,26 @@ export class TransparentUpgradeableProxy extends ContractBase {
         return this.$onLog('BeaconUpgraded', fn);
     }
 
-    extractLogsUpgraded (tx: TEth.TxReceipt): ITxLogItem<TLogUpgraded>[] {
+    extractLogsUpgraded (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Upgraded'>>[] {
         let abi = this.$getAbiItem('event', 'Upgraded');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogUpgraded>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Upgraded'>>[];
     }
 
-    extractLogsAdminChanged (tx: TEth.TxReceipt): ITxLogItem<TLogAdminChanged>[] {
+    extractLogsAdminChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'AdminChanged'>>[] {
         let abi = this.$getAbiItem('event', 'AdminChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogAdminChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'AdminChanged'>>[];
     }
 
-    extractLogsBeaconUpgraded (tx: TEth.TxReceipt): ITxLogItem<TLogBeaconUpgraded>[] {
+    extractLogsBeaconUpgraded (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'BeaconUpgraded'>>[] {
         let abi = this.$getAbiItem('event', 'BeaconUpgraded');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogBeaconUpgraded>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'BeaconUpgraded'>>[];
     }
 
     async getPastLogsUpgraded (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { implementation?: TAddress }
-    }): Promise<ITxLogItem<TLogUpgraded>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Upgraded'>>[]> {
         return await this.$getPastLogsParsed('Upgraded', options) as any;
     }
 
@@ -115,7 +130,7 @@ export class TransparentUpgradeableProxy extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogAdminChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'AdminChanged'>>[]> {
         return await this.$getPastLogsParsed('AdminChanged', options) as any;
     }
 
@@ -123,7 +138,7 @@ export class TransparentUpgradeableProxy extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { beacon?: TAddress }
-    }): Promise<ITxLogItem<TLogBeaconUpgraded>[]> {
+    }): Promise<ITxLogItem<TEventParams<'BeaconUpgraded'>>[]> {
         return await this.$getPastLogsParsed('BeaconUpgraded', options) as any;
     }
 
@@ -136,35 +151,31 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogUpgraded = {
-        implementation: TAddress
-    };
-    type TLogUpgradedParameters = [ implementation: TAddress ];
-    type TLogAdminChanged = {
-        previousAdmin: TAddress, newAdmin: TAddress
-    };
-    type TLogAdminChangedParameters = [ previousAdmin: TAddress, newAdmin: TAddress ];
-    type TLogBeaconUpgraded = {
-        beacon: TAddress
-    };
-    type TLogBeaconUpgradedParameters = [ beacon: TAddress ];
-
-interface IEvents {
-  Upgraded: TLogUpgradedParameters
-  AdminChanged: TLogAdminChangedParameters
-  BeaconUpgraded: TLogBeaconUpgradedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-
-
-interface IMethods {
-  '*': { method: string, arguments: any[] } 
+export type TTransparentUpgradeableProxyTypes = {
+    Events: {
+        Upgraded: {
+            outputParams: { implementation: TAddress },
+            outputArgs:   [ implementation: TAddress ],
+        }
+        AdminChanged: {
+            outputParams: { previousAdmin: TAddress, newAdmin: TAddress },
+            outputArgs:   [ previousAdmin: TAddress, newAdmin: TAddress ],
+        }
+        BeaconUpgraded: {
+            outputParams: { beacon: TAddress },
+            outputArgs:   [ beacon: TAddress ],
+        }
+    },
+    Methods: {
+        
+    }
 }
-
-
 
 
 
@@ -186,7 +197,6 @@ class TransparentUpgradeableProxyStorageReader extends ContractStorageReaderBase
 }
 
 
-
 interface ITransparentUpgradeableProxyTxCaller {
 
 }
@@ -197,3 +207,5 @@ interface ITransparentUpgradeableProxyTxData {
 }
 
 
+type TEvents = TTransparentUpgradeableProxyTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/0x8f8ef111b67c04eb1641f5ff19ee54cda062f163#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class AmmPairV3Contract extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/amm/AmmPairV3Contract/AmmPairV3Contract.ts"
-}
+        "class": "./contracts/amm/AmmPairV3Contract/AmmPairV3Contract.ts"
+    }
 
     async $constructor (deployer: TSender, ): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -190,10 +190,13 @@ export class AmmPairV3Contract extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TAmmPairV3ContractTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TAmmPairV3ContractTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -201,8 +204,20 @@ export class AmmPairV3Contract extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onBurn (fn?: (event: TClientEventsStreamData<TLogBurnParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogBurnParameters>> {
@@ -241,56 +256,56 @@ export class AmmPairV3Contract extends ContractBase {
         return this.$onLog('Swap', fn);
     }
 
-    extractLogsBurn (tx: TEth.TxReceipt): ITxLogItem<TLogBurn>[] {
+    extractLogsBurn (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Burn'>>[] {
         let abi = this.$getAbiItem('event', 'Burn');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogBurn>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Burn'>>[];
     }
 
-    extractLogsCollect (tx: TEth.TxReceipt): ITxLogItem<TLogCollect>[] {
+    extractLogsCollect (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Collect'>>[] {
         let abi = this.$getAbiItem('event', 'Collect');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogCollect>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Collect'>>[];
     }
 
-    extractLogsCollectProtocol (tx: TEth.TxReceipt): ITxLogItem<TLogCollectProtocol>[] {
+    extractLogsCollectProtocol (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'CollectProtocol'>>[] {
         let abi = this.$getAbiItem('event', 'CollectProtocol');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogCollectProtocol>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'CollectProtocol'>>[];
     }
 
-    extractLogsFlash (tx: TEth.TxReceipt): ITxLogItem<TLogFlash>[] {
+    extractLogsFlash (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Flash'>>[] {
         let abi = this.$getAbiItem('event', 'Flash');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogFlash>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Flash'>>[];
     }
 
-    extractLogsIncreaseObservationCardinalityNext (tx: TEth.TxReceipt): ITxLogItem<TLogIncreaseObservationCardinalityNext>[] {
+    extractLogsIncreaseObservationCardinalityNext (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'IncreaseObservationCardinalityNext'>>[] {
         let abi = this.$getAbiItem('event', 'IncreaseObservationCardinalityNext');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogIncreaseObservationCardinalityNext>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'IncreaseObservationCardinalityNext'>>[];
     }
 
-    extractLogsInitialize (tx: TEth.TxReceipt): ITxLogItem<TLogInitialize>[] {
+    extractLogsInitialize (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Initialize'>>[] {
         let abi = this.$getAbiItem('event', 'Initialize');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogInitialize>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Initialize'>>[];
     }
 
-    extractLogsMint (tx: TEth.TxReceipt): ITxLogItem<TLogMint>[] {
+    extractLogsMint (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Mint'>>[] {
         let abi = this.$getAbiItem('event', 'Mint');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogMint>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Mint'>>[];
     }
 
-    extractLogsSetFeeProtocol (tx: TEth.TxReceipt): ITxLogItem<TLogSetFeeProtocol>[] {
+    extractLogsSetFeeProtocol (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'SetFeeProtocol'>>[] {
         let abi = this.$getAbiItem('event', 'SetFeeProtocol');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogSetFeeProtocol>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'SetFeeProtocol'>>[];
     }
 
-    extractLogsSwap (tx: TEth.TxReceipt): ITxLogItem<TLogSwap>[] {
+    extractLogsSwap (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Swap'>>[] {
         let abi = this.$getAbiItem('event', 'Swap');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogSwap>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Swap'>>[];
     }
 
     async getPastLogsBurn (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { owner?: TAddress,tickLower?: number,tickUpper?: number }
-    }): Promise<ITxLogItem<TLogBurn>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Burn'>>[]> {
         return await this.$getPastLogsParsed('Burn', options) as any;
     }
 
@@ -298,7 +313,7 @@ export class AmmPairV3Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { owner?: TAddress }
-    }): Promise<ITxLogItem<TLogCollect>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Collect'>>[]> {
         return await this.$getPastLogsParsed('Collect', options) as any;
     }
 
@@ -306,7 +321,7 @@ export class AmmPairV3Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { sender?: TAddress,recipient?: TAddress }
-    }): Promise<ITxLogItem<TLogCollectProtocol>[]> {
+    }): Promise<ITxLogItem<TEventParams<'CollectProtocol'>>[]> {
         return await this.$getPastLogsParsed('CollectProtocol', options) as any;
     }
 
@@ -314,7 +329,7 @@ export class AmmPairV3Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { sender?: TAddress,recipient?: TAddress }
-    }): Promise<ITxLogItem<TLogFlash>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Flash'>>[]> {
         return await this.$getPastLogsParsed('Flash', options) as any;
     }
 
@@ -322,7 +337,7 @@ export class AmmPairV3Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogIncreaseObservationCardinalityNext>[]> {
+    }): Promise<ITxLogItem<TEventParams<'IncreaseObservationCardinalityNext'>>[]> {
         return await this.$getPastLogsParsed('IncreaseObservationCardinalityNext', options) as any;
     }
 
@@ -330,7 +345,7 @@ export class AmmPairV3Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogInitialize>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Initialize'>>[]> {
         return await this.$getPastLogsParsed('Initialize', options) as any;
     }
 
@@ -338,7 +353,7 @@ export class AmmPairV3Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogMint>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Mint'>>[]> {
         return await this.$getPastLogsParsed('Mint', options) as any;
     }
 
@@ -346,7 +361,7 @@ export class AmmPairV3Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogSetFeeProtocol>[]> {
+    }): Promise<ITxLogItem<TEventParams<'SetFeeProtocol'>>[]> {
         return await this.$getPastLogsParsed('SetFeeProtocol', options) as any;
     }
 
@@ -354,7 +369,7 @@ export class AmmPairV3Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { sender?: TAddress,recipient?: TAddress }
-    }): Promise<ITxLogItem<TLogSwap>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Swap'>>[]> {
         return await this.$getPastLogsParsed('Swap', options) as any;
     }
 
@@ -367,219 +382,158 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogBurn = {
-        owner: TAddress, tickLower: number, tickUpper: number, amount: bigint, amount0: bigint, amount1: bigint
-    };
-    type TLogBurnParameters = [ owner: TAddress, tickLower: number, tickUpper: number, amount: bigint, amount0: bigint, amount1: bigint ];
-    type TLogCollect = {
-        owner: TAddress, recipient: TAddress, tickLower: number, tickUpper: number, amount0: bigint, amount1: bigint
-    };
-    type TLogCollectParameters = [ owner: TAddress, recipient: TAddress, tickLower: number, tickUpper: number, amount0: bigint, amount1: bigint ];
-    type TLogCollectProtocol = {
-        _sender: TAddress, recipient: TAddress, amount0: bigint, amount1: bigint
-    };
-    type TLogCollectProtocolParameters = [ _sender: TAddress, recipient: TAddress, amount0: bigint, amount1: bigint ];
-    type TLogFlash = {
-        _sender: TAddress, recipient: TAddress, amount0: bigint, amount1: bigint, paid0: bigint, paid1: bigint
-    };
-    type TLogFlashParameters = [ _sender: TAddress, recipient: TAddress, amount0: bigint, amount1: bigint, paid0: bigint, paid1: bigint ];
-    type TLogIncreaseObservationCardinalityNext = {
-        observationCardinalityNextOld: number, observationCardinalityNextNew: number
-    };
-    type TLogIncreaseObservationCardinalityNextParameters = [ observationCardinalityNextOld: number, observationCardinalityNextNew: number ];
-    type TLogInitialize = {
-        sqrtPriceX96: bigint, tick: number
-    };
-    type TLogInitializeParameters = [ sqrtPriceX96: bigint, tick: number ];
-    type TLogMint = {
-        _sender: TAddress, owner: TAddress, tickLower: number, tickUpper: number, amount: bigint, amount0: bigint, amount1: bigint
-    };
-    type TLogMintParameters = [ _sender: TAddress, owner: TAddress, tickLower: number, tickUpper: number, amount: bigint, amount0: bigint, amount1: bigint ];
-    type TLogSetFeeProtocol = {
-        feeProtocol0Old: number, feeProtocol1Old: number, feeProtocol0New: number, feeProtocol1New: number
-    };
-    type TLogSetFeeProtocolParameters = [ feeProtocol0Old: number, feeProtocol1Old: number, feeProtocol0New: number, feeProtocol1New: number ];
-    type TLogSwap = {
-        _sender: TAddress, recipient: TAddress, amount0: bigint, amount1: bigint, sqrtPriceX96: bigint, liquidity: bigint, tick: number
-    };
-    type TLogSwapParameters = [ _sender: TAddress, recipient: TAddress, amount0: bigint, amount1: bigint, sqrtPriceX96: bigint, liquidity: bigint, tick: number ];
-
-interface IEvents {
-  Burn: TLogBurnParameters
-  Collect: TLogCollectParameters
-  CollectProtocol: TLogCollectProtocolParameters
-  Flash: TLogFlashParameters
-  IncreaseObservationCardinalityNext: TLogIncreaseObservationCardinalityNextParameters
-  Initialize: TLogInitializeParameters
-  Mint: TLogMintParameters
-  SetFeeProtocol: TLogSetFeeProtocolParameters
-  Swap: TLogSwapParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodBurn {
-  method: "burn"
-  arguments: [ tickLower: number, tickUpper: number, amount: bigint ]
+export type TAmmPairV3ContractTypes = {
+    Events: {
+        Burn: {
+            outputParams: { owner: TAddress, tickLower: number, tickUpper: number, amount: bigint, amount0: bigint, amount1: bigint },
+            outputArgs:   [ owner: TAddress, tickLower: number, tickUpper: number, amount: bigint, amount0: bigint, amount1: bigint ],
+        }
+        Collect: {
+            outputParams: { owner: TAddress, recipient: TAddress, tickLower: number, tickUpper: number, amount0: bigint, amount1: bigint },
+            outputArgs:   [ owner: TAddress, recipient: TAddress, tickLower: number, tickUpper: number, amount0: bigint, amount1: bigint ],
+        }
+        CollectProtocol: {
+            outputParams: { _sender: TAddress, recipient: TAddress, amount0: bigint, amount1: bigint },
+            outputArgs:   [ _sender: TAddress, recipient: TAddress, amount0: bigint, amount1: bigint ],
+        }
+        Flash: {
+            outputParams: { _sender: TAddress, recipient: TAddress, amount0: bigint, amount1: bigint, paid0: bigint, paid1: bigint },
+            outputArgs:   [ _sender: TAddress, recipient: TAddress, amount0: bigint, amount1: bigint, paid0: bigint, paid1: bigint ],
+        }
+        IncreaseObservationCardinalityNext: {
+            outputParams: { observationCardinalityNextOld: number, observationCardinalityNextNew: number },
+            outputArgs:   [ observationCardinalityNextOld: number, observationCardinalityNextNew: number ],
+        }
+        Initialize: {
+            outputParams: { sqrtPriceX96: bigint, tick: number },
+            outputArgs:   [ sqrtPriceX96: bigint, tick: number ],
+        }
+        Mint: {
+            outputParams: { _sender: TAddress, owner: TAddress, tickLower: number, tickUpper: number, amount: bigint, amount0: bigint, amount1: bigint },
+            outputArgs:   [ _sender: TAddress, owner: TAddress, tickLower: number, tickUpper: number, amount: bigint, amount0: bigint, amount1: bigint ],
+        }
+        SetFeeProtocol: {
+            outputParams: { feeProtocol0Old: number, feeProtocol1Old: number, feeProtocol0New: number, feeProtocol1New: number },
+            outputArgs:   [ feeProtocol0Old: number, feeProtocol1Old: number, feeProtocol0New: number, feeProtocol1New: number ],
+        }
+        Swap: {
+            outputParams: { _sender: TAddress, recipient: TAddress, amount0: bigint, amount1: bigint, sqrtPriceX96: bigint, liquidity: bigint, tick: number },
+            outputArgs:   [ _sender: TAddress, recipient: TAddress, amount0: bigint, amount1: bigint, sqrtPriceX96: bigint, liquidity: bigint, tick: number ],
+        }
+    },
+    Methods: {
+        burn: {
+          method: "burn"
+          arguments: [ tickLower: number, tickUpper: number, amount: bigint ]
+        }
+        collect: {
+          method: "collect"
+          arguments: [ recipient: TAddress, tickLower: number, tickUpper: number, amount0Requested: bigint, amount1Requested: bigint ]
+        }
+        collectProtocol: {
+          method: "collectProtocol"
+          arguments: [ recipient: TAddress, amount0Requested: bigint, amount1Requested: bigint ]
+        }
+        factory: {
+          method: "factory"
+          arguments: [  ]
+        }
+        fee: {
+          method: "fee"
+          arguments: [  ]
+        }
+        feeGrowthGlobal0X128: {
+          method: "feeGrowthGlobal0X128"
+          arguments: [  ]
+        }
+        feeGrowthGlobal1X128: {
+          method: "feeGrowthGlobal1X128"
+          arguments: [  ]
+        }
+        flash: {
+          method: "flash"
+          arguments: [ recipient: TAddress, amount0: bigint, amount1: bigint, data: TEth.Hex ]
+        }
+        increaseObservationCardinalityNext: {
+          method: "increaseObservationCardinalityNext"
+          arguments: [ observationCardinalityNext: number ]
+        }
+        initialize: {
+          method: "initialize"
+          arguments: [ sqrtPriceX96: bigint ]
+        }
+        liquidity: {
+          method: "liquidity"
+          arguments: [  ]
+        }
+        maxLiquidityPerTick: {
+          method: "maxLiquidityPerTick"
+          arguments: [  ]
+        }
+        mint: {
+          method: "mint"
+          arguments: [ recipient: TAddress, tickLower: number, tickUpper: number, amount: bigint, data: TEth.Hex ]
+        }
+        observations: {
+          method: "observations"
+          arguments: [ input0: bigint ]
+        }
+        observe: {
+          method: "observe"
+          arguments: [ secondsAgos: number[] ]
+        }
+        positions: {
+          method: "positions"
+          arguments: [ input0: TEth.Hex ]
+        }
+        protocolFees: {
+          method: "protocolFees"
+          arguments: [  ]
+        }
+        setFeeProtocol: {
+          method: "setFeeProtocol"
+          arguments: [ feeProtocol0: number, feeProtocol1: number ]
+        }
+        slot0: {
+          method: "slot0"
+          arguments: [  ]
+        }
+        snapshotCumulativesInside: {
+          method: "snapshotCumulativesInside"
+          arguments: [ tickLower: number, tickUpper: number ]
+        }
+        swap: {
+          method: "swap"
+          arguments: [ recipient: TAddress, zeroForOne: boolean, amountSpecified: bigint, sqrtPriceLimitX96: bigint, data: TEth.Hex ]
+        }
+        tickBitmap: {
+          method: "tickBitmap"
+          arguments: [ input0: number ]
+        }
+        tickSpacing: {
+          method: "tickSpacing"
+          arguments: [  ]
+        }
+        ticks: {
+          method: "ticks"
+          arguments: [ input0: number ]
+        }
+        token0: {
+          method: "token0"
+          arguments: [  ]
+        }
+        token1: {
+          method: "token1"
+          arguments: [  ]
+        }
+    }
 }
-
-interface IMethodCollect {
-  method: "collect"
-  arguments: [ recipient: TAddress, tickLower: number, tickUpper: number, amount0Requested: bigint, amount1Requested: bigint ]
-}
-
-interface IMethodCollectProtocol {
-  method: "collectProtocol"
-  arguments: [ recipient: TAddress, amount0Requested: bigint, amount1Requested: bigint ]
-}
-
-interface IMethodFactory {
-  method: "factory"
-  arguments: [  ]
-}
-
-interface IMethodFee {
-  method: "fee"
-  arguments: [  ]
-}
-
-interface IMethodFeeGrowthGlobal0X128 {
-  method: "feeGrowthGlobal0X128"
-  arguments: [  ]
-}
-
-interface IMethodFeeGrowthGlobal1X128 {
-  method: "feeGrowthGlobal1X128"
-  arguments: [  ]
-}
-
-interface IMethodFlash {
-  method: "flash"
-  arguments: [ recipient: TAddress, amount0: bigint, amount1: bigint, data: TEth.Hex ]
-}
-
-interface IMethodIncreaseObservationCardinalityNext {
-  method: "increaseObservationCardinalityNext"
-  arguments: [ observationCardinalityNext: number ]
-}
-
-interface IMethodInitialize {
-  method: "initialize"
-  arguments: [ sqrtPriceX96: bigint ]
-}
-
-interface IMethodLiquidity {
-  method: "liquidity"
-  arguments: [  ]
-}
-
-interface IMethodMaxLiquidityPerTick {
-  method: "maxLiquidityPerTick"
-  arguments: [  ]
-}
-
-interface IMethodMint {
-  method: "mint"
-  arguments: [ recipient: TAddress, tickLower: number, tickUpper: number, amount: bigint, data: TEth.Hex ]
-}
-
-interface IMethodObservations {
-  method: "observations"
-  arguments: [ input0: bigint ]
-}
-
-interface IMethodObserve {
-  method: "observe"
-  arguments: [ secondsAgos: number[] ]
-}
-
-interface IMethodPositions {
-  method: "positions"
-  arguments: [ input0: TEth.Hex ]
-}
-
-interface IMethodProtocolFees {
-  method: "protocolFees"
-  arguments: [  ]
-}
-
-interface IMethodSetFeeProtocol {
-  method: "setFeeProtocol"
-  arguments: [ feeProtocol0: number, feeProtocol1: number ]
-}
-
-interface IMethodSlot0 {
-  method: "slot0"
-  arguments: [  ]
-}
-
-interface IMethodSnapshotCumulativesInside {
-  method: "snapshotCumulativesInside"
-  arguments: [ tickLower: number, tickUpper: number ]
-}
-
-interface IMethodSwap {
-  method: "swap"
-  arguments: [ recipient: TAddress, zeroForOne: boolean, amountSpecified: bigint, sqrtPriceLimitX96: bigint, data: TEth.Hex ]
-}
-
-interface IMethodTickBitmap {
-  method: "tickBitmap"
-  arguments: [ input0: number ]
-}
-
-interface IMethodTickSpacing {
-  method: "tickSpacing"
-  arguments: [  ]
-}
-
-interface IMethodTicks {
-  method: "ticks"
-  arguments: [ input0: number ]
-}
-
-interface IMethodToken0 {
-  method: "token0"
-  arguments: [  ]
-}
-
-interface IMethodToken1 {
-  method: "token1"
-  arguments: [  ]
-}
-
-interface IMethods {
-  burn: IMethodBurn
-  collect: IMethodCollect
-  collectProtocol: IMethodCollectProtocol
-  factory: IMethodFactory
-  fee: IMethodFee
-  feeGrowthGlobal0X128: IMethodFeeGrowthGlobal0X128
-  feeGrowthGlobal1X128: IMethodFeeGrowthGlobal1X128
-  flash: IMethodFlash
-  increaseObservationCardinalityNext: IMethodIncreaseObservationCardinalityNext
-  initialize: IMethodInitialize
-  liquidity: IMethodLiquidity
-  maxLiquidityPerTick: IMethodMaxLiquidityPerTick
-  mint: IMethodMint
-  observations: IMethodObservations
-  observe: IMethodObserve
-  positions: IMethodPositions
-  protocolFees: IMethodProtocolFees
-  setFeeProtocol: IMethodSetFeeProtocol
-  slot0: IMethodSlot0
-  snapshotCumulativesInside: IMethodSnapshotCumulativesInside
-  swap: IMethodSwap
-  tickBitmap: IMethodTickBitmap
-  tickSpacing: IMethodTickSpacing
-  ticks: IMethodTicks
-  token0: IMethodToken0
-  token1: IMethodToken1
-  '*': { method: string, arguments: any[] } 
-}
-
-
 
 
 
@@ -699,7 +653,6 @@ class AmmPairV3ContractStorageReader extends ContractStorageReaderBase {
 }
 
 
-
 interface IAmmPairV3ContractTxCaller {
     burn (sender: TSender, tickLower: number, tickUpper: number, amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     collect (sender: TSender, recipient: TAddress, tickLower: number, tickUpper: number, amount0Requested: bigint, amount1Requested: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
@@ -726,3 +679,5 @@ interface IAmmPairV3ContractTxData {
 }
 
 
+type TEvents = TAmmPairV3ContractTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

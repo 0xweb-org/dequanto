@@ -28,6 +28,7 @@ import { ContractStorageReaderBase } from './ContractStorageReaderBase';
 import { ContractBaseUtils } from './utils/ContractBaseUtils';
 import { FnSignedWrapper } from './wrappers/FnSignedWrapper';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
+import { $is } from '@dequanto/utils/$is';
 
 
 export abstract class ContractBase {
@@ -355,12 +356,16 @@ export abstract class ContractBase {
         let logs = $contract.extractLogsForAbi(tx, abiItem);
         return logs;
     }
-    protected $extractLog (log: TEth.Log, mix: string | TAbiItem | TAbiItem[] | '*') {
+    protected $extractLog (log: TEth.Log, mix: string | string[] | TAbiItem | TAbiItem[] | '*') {
         let abi: TAbiItem | TAbiItem[];
         if (typeof mix === 'string') {
             abi = mix === '*' ? this.abi : this.$getAbiItem('event', mix)
         } else {
-            abi = mix;
+            if ($is.ArrayOfStrings(mix)) {
+                abi = mix.map(x => this.$getAbiItem('event', x));
+            } else {
+                abi = mix;
+            }
         }
         let parsed = $contract.parseLogWithAbi(log, abi);
         return parsed;

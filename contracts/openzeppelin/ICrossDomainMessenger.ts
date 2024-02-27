@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class ICrossDomainMessenger extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/ICrossDomainMessenger.ts"
-}
+        "class": "./contracts/openzeppelin/ICrossDomainMessenger.ts"
+    }
 
     // 0x3dbb202b
     async sendMessage (sender: TSender, _target: TAddress, _message: TEth.Hex, _gasLimit: number): Promise<TxWriter> {
@@ -66,10 +66,13 @@ export class ICrossDomainMessenger extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TICrossDomainMessengerTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TICrossDomainMessengerTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -77,8 +80,20 @@ export class ICrossDomainMessenger extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onFailedRelayedMessage (fn?: (event: TClientEventsStreamData<TLogFailedRelayedMessageParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogFailedRelayedMessageParameters>> {
@@ -93,26 +108,26 @@ export class ICrossDomainMessenger extends ContractBase {
         return this.$onLog('SentMessage', fn);
     }
 
-    extractLogsFailedRelayedMessage (tx: TEth.TxReceipt): ITxLogItem<TLogFailedRelayedMessage>[] {
+    extractLogsFailedRelayedMessage (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'FailedRelayedMessage'>>[] {
         let abi = this.$getAbiItem('event', 'FailedRelayedMessage');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogFailedRelayedMessage>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'FailedRelayedMessage'>>[];
     }
 
-    extractLogsRelayedMessage (tx: TEth.TxReceipt): ITxLogItem<TLogRelayedMessage>[] {
+    extractLogsRelayedMessage (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RelayedMessage'>>[] {
         let abi = this.$getAbiItem('event', 'RelayedMessage');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRelayedMessage>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RelayedMessage'>>[];
     }
 
-    extractLogsSentMessage (tx: TEth.TxReceipt): ITxLogItem<TLogSentMessage>[] {
+    extractLogsSentMessage (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'SentMessage'>>[] {
         let abi = this.$getAbiItem('event', 'SentMessage');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogSentMessage>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'SentMessage'>>[];
     }
 
     async getPastLogsFailedRelayedMessage (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { msgHash?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogFailedRelayedMessage>[]> {
+    }): Promise<ITxLogItem<TEventParams<'FailedRelayedMessage'>>[]> {
         return await this.$getPastLogsParsed('FailedRelayedMessage', options) as any;
     }
 
@@ -120,7 +135,7 @@ export class ICrossDomainMessenger extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { msgHash?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogRelayedMessage>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RelayedMessage'>>[]> {
         return await this.$getPastLogsParsed('RelayedMessage', options) as any;
     }
 
@@ -128,7 +143,7 @@ export class ICrossDomainMessenger extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { target?: TAddress }
-    }): Promise<ITxLogItem<TLogSentMessage>[]> {
+    }): Promise<ITxLogItem<TEventParams<'SentMessage'>>[]> {
         return await this.$getPastLogsParsed('SentMessage', options) as any;
     }
 
@@ -141,46 +156,38 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogFailedRelayedMessage = {
-        msgHash: TEth.Hex
-    };
-    type TLogFailedRelayedMessageParameters = [ msgHash: TEth.Hex ];
-    type TLogRelayedMessage = {
-        msgHash: TEth.Hex
-    };
-    type TLogRelayedMessageParameters = [ msgHash: TEth.Hex ];
-    type TLogSentMessage = {
-        target: TAddress, _sender: TAddress, message: TEth.Hex, messageNonce: bigint, gasLimit: bigint
-    };
-    type TLogSentMessageParameters = [ target: TAddress, _sender: TAddress, message: TEth.Hex, messageNonce: bigint, gasLimit: bigint ];
-
-interface IEvents {
-  FailedRelayedMessage: TLogFailedRelayedMessageParameters
-  RelayedMessage: TLogRelayedMessageParameters
-  SentMessage: TLogSentMessageParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodSendMessage {
-  method: "sendMessage"
-  arguments: [ _target: TAddress, _message: TEth.Hex, _gasLimit: number ]
+export type TICrossDomainMessengerTypes = {
+    Events: {
+        FailedRelayedMessage: {
+            outputParams: { msgHash: TEth.Hex },
+            outputArgs:   [ msgHash: TEth.Hex ],
+        }
+        RelayedMessage: {
+            outputParams: { msgHash: TEth.Hex },
+            outputArgs:   [ msgHash: TEth.Hex ],
+        }
+        SentMessage: {
+            outputParams: { target: TAddress, _sender: TAddress, message: TEth.Hex, messageNonce: bigint, gasLimit: bigint },
+            outputArgs:   [ target: TAddress, _sender: TAddress, message: TEth.Hex, messageNonce: bigint, gasLimit: bigint ],
+        }
+    },
+    Methods: {
+        sendMessage: {
+          method: "sendMessage"
+          arguments: [ _target: TAddress, _message: TEth.Hex, _gasLimit: number ]
+        }
+        xDomainMessageSender: {
+          method: "xDomainMessageSender"
+          arguments: [  ]
+        }
+    }
 }
-
-interface IMethodXDomainMessageSender {
-  method: "xDomainMessageSender"
-  arguments: [  ]
-}
-
-interface IMethods {
-  sendMessage: IMethodSendMessage
-  xDomainMessageSender: IMethodXDomainMessageSender
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -194,3 +201,5 @@ interface IICrossDomainMessengerTxData {
 }
 
 
+type TEvents = TICrossDomainMessengerTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

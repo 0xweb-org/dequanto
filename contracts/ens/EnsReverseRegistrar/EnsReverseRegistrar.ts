@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/0xa58E81fe9b61B5c3fE2AFD33CF304c454AbFc7Cb#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class EnsReverseRegistrar extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/ens/EnsReverseRegistrar/EnsReverseRegistrar.ts"
-}
+        "class": "./contracts/ens/EnsReverseRegistrar/EnsReverseRegistrar.ts"
+    }
 
     async $constructor (deployer: TSender, ensAddr: TAddress): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -130,10 +130,13 @@ export class EnsReverseRegistrar extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TEnsReverseRegistrarTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TEnsReverseRegistrarTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -141,8 +144,20 @@ export class EnsReverseRegistrar extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onControllerChanged (fn?: (event: TClientEventsStreamData<TLogControllerChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogControllerChangedParameters>> {
@@ -161,31 +176,31 @@ export class EnsReverseRegistrar extends ContractBase {
         return this.$onLog('ReverseClaimed', fn);
     }
 
-    extractLogsControllerChanged (tx: TEth.TxReceipt): ITxLogItem<TLogControllerChanged>[] {
+    extractLogsControllerChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ControllerChanged'>>[] {
         let abi = this.$getAbiItem('event', 'ControllerChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogControllerChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ControllerChanged'>>[];
     }
 
-    extractLogsDefaultResolverChanged (tx: TEth.TxReceipt): ITxLogItem<TLogDefaultResolverChanged>[] {
+    extractLogsDefaultResolverChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'DefaultResolverChanged'>>[] {
         let abi = this.$getAbiItem('event', 'DefaultResolverChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogDefaultResolverChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'DefaultResolverChanged'>>[];
     }
 
-    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TLogOwnershipTransferred>[] {
+    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'OwnershipTransferred'>>[] {
         let abi = this.$getAbiItem('event', 'OwnershipTransferred');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogOwnershipTransferred>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'OwnershipTransferred'>>[];
     }
 
-    extractLogsReverseClaimed (tx: TEth.TxReceipt): ITxLogItem<TLogReverseClaimed>[] {
+    extractLogsReverseClaimed (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ReverseClaimed'>>[] {
         let abi = this.$getAbiItem('event', 'ReverseClaimed');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogReverseClaimed>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ReverseClaimed'>>[];
     }
 
     async getPastLogsControllerChanged (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { controller?: TAddress }
-    }): Promise<ITxLogItem<TLogControllerChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ControllerChanged'>>[]> {
         return await this.$getPastLogsParsed('ControllerChanged', options) as any;
     }
 
@@ -193,7 +208,7 @@ export class EnsReverseRegistrar extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { resolver?: TAddress }
-    }): Promise<ITxLogItem<TLogDefaultResolverChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'DefaultResolverChanged'>>[]> {
         return await this.$getPastLogsParsed('DefaultResolverChanged', options) as any;
     }
 
@@ -201,7 +216,7 @@ export class EnsReverseRegistrar extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { previousOwner?: TAddress,newOwner?: TAddress }
-    }): Promise<ITxLogItem<TLogOwnershipTransferred>[]> {
+    }): Promise<ITxLogItem<TEventParams<'OwnershipTransferred'>>[]> {
         return await this.$getPastLogsParsed('OwnershipTransferred', options) as any;
     }
 
@@ -209,7 +224,7 @@ export class EnsReverseRegistrar extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { addr?: TAddress,node?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogReverseClaimed>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ReverseClaimed'>>[]> {
         return await this.$getPastLogsParsed('ReverseClaimed', options) as any;
     }
 
@@ -222,122 +237,90 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogControllerChanged = {
-        controller: TAddress, enabled: boolean
-    };
-    type TLogControllerChangedParameters = [ controller: TAddress, enabled: boolean ];
-    type TLogDefaultResolverChanged = {
-        resolver: TAddress
-    };
-    type TLogDefaultResolverChangedParameters = [ resolver: TAddress ];
-    type TLogOwnershipTransferred = {
-        previousOwner: TAddress, newOwner: TAddress
-    };
-    type TLogOwnershipTransferredParameters = [ previousOwner: TAddress, newOwner: TAddress ];
-    type TLogReverseClaimed = {
-        addr: TAddress, node: TEth.Hex
-    };
-    type TLogReverseClaimedParameters = [ addr: TAddress, node: TEth.Hex ];
-
-interface IEvents {
-  ControllerChanged: TLogControllerChangedParameters
-  DefaultResolverChanged: TLogDefaultResolverChangedParameters
-  OwnershipTransferred: TLogOwnershipTransferredParameters
-  ReverseClaimed: TLogReverseClaimedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodClaim {
-  method: "claim"
-  arguments: [ owner: TAddress ]
+export type TEnsReverseRegistrarTypes = {
+    Events: {
+        ControllerChanged: {
+            outputParams: { controller: TAddress, enabled: boolean },
+            outputArgs:   [ controller: TAddress, enabled: boolean ],
+        }
+        DefaultResolverChanged: {
+            outputParams: { resolver: TAddress },
+            outputArgs:   [ resolver: TAddress ],
+        }
+        OwnershipTransferred: {
+            outputParams: { previousOwner: TAddress, newOwner: TAddress },
+            outputArgs:   [ previousOwner: TAddress, newOwner: TAddress ],
+        }
+        ReverseClaimed: {
+            outputParams: { addr: TAddress, node: TEth.Hex },
+            outputArgs:   [ addr: TAddress, node: TEth.Hex ],
+        }
+    },
+    Methods: {
+        claim: {
+          method: "claim"
+          arguments: [ owner: TAddress ]
+        }
+        claimForAddr: {
+          method: "claimForAddr"
+          arguments: [ addr: TAddress, owner: TAddress, resolver: TAddress ]
+        }
+        claimWithResolver: {
+          method: "claimWithResolver"
+          arguments: [ owner: TAddress, resolver: TAddress ]
+        }
+        controllers: {
+          method: "controllers"
+          arguments: [ input0: TAddress ]
+        }
+        defaultResolver: {
+          method: "defaultResolver"
+          arguments: [  ]
+        }
+        ens: {
+          method: "ens"
+          arguments: [  ]
+        }
+        node: {
+          method: "node"
+          arguments: [ addr: TAddress ]
+        }
+        owner: {
+          method: "owner"
+          arguments: [  ]
+        }
+        renounceOwnership: {
+          method: "renounceOwnership"
+          arguments: [  ]
+        }
+        setController: {
+          method: "setController"
+          arguments: [ controller: TAddress, enabled: boolean ]
+        }
+        setDefaultResolver: {
+          method: "setDefaultResolver"
+          arguments: [ resolver: TAddress ]
+        }
+        setName: {
+          method: "setName"
+          arguments: [ name: string ]
+        }
+        setNameForAddr: {
+          method: "setNameForAddr"
+          arguments: [ addr: TAddress, owner: TAddress, resolver: TAddress, name: string ]
+        }
+        transferOwnership: {
+          method: "transferOwnership"
+          arguments: [ newOwner: TAddress ]
+        }
+    }
 }
-
-interface IMethodClaimForAddr {
-  method: "claimForAddr"
-  arguments: [ addr: TAddress, owner: TAddress, resolver: TAddress ]
-}
-
-interface IMethodClaimWithResolver {
-  method: "claimWithResolver"
-  arguments: [ owner: TAddress, resolver: TAddress ]
-}
-
-interface IMethodControllers {
-  method: "controllers"
-  arguments: [ input0: TAddress ]
-}
-
-interface IMethodDefaultResolver {
-  method: "defaultResolver"
-  arguments: [  ]
-}
-
-interface IMethodEns {
-  method: "ens"
-  arguments: [  ]
-}
-
-interface IMethodNode {
-  method: "node"
-  arguments: [ addr: TAddress ]
-}
-
-interface IMethodOwner {
-  method: "owner"
-  arguments: [  ]
-}
-
-interface IMethodRenounceOwnership {
-  method: "renounceOwnership"
-  arguments: [  ]
-}
-
-interface IMethodSetController {
-  method: "setController"
-  arguments: [ controller: TAddress, enabled: boolean ]
-}
-
-interface IMethodSetDefaultResolver {
-  method: "setDefaultResolver"
-  arguments: [ resolver: TAddress ]
-}
-
-interface IMethodSetName {
-  method: "setName"
-  arguments: [ name: string ]
-}
-
-interface IMethodSetNameForAddr {
-  method: "setNameForAddr"
-  arguments: [ addr: TAddress, owner: TAddress, resolver: TAddress, name: string ]
-}
-
-interface IMethodTransferOwnership {
-  method: "transferOwnership"
-  arguments: [ newOwner: TAddress ]
-}
-
-interface IMethods {
-  claim: IMethodClaim
-  claimForAddr: IMethodClaimForAddr
-  claimWithResolver: IMethodClaimWithResolver
-  controllers: IMethodControllers
-  defaultResolver: IMethodDefaultResolver
-  ens: IMethodEns
-  node: IMethodNode
-  owner: IMethodOwner
-  renounceOwnership: IMethodRenounceOwnership
-  setController: IMethodSetController
-  setDefaultResolver: IMethodSetDefaultResolver
-  setName: IMethodSetName
-  setNameForAddr: IMethodSetNameForAddr
-  transferOwnership: IMethodTransferOwnership
-  '*': { method: string, arguments: any[] } 
-}
-
-
 
 
 
@@ -391,7 +374,6 @@ class EnsReverseRegistrarStorageReader extends ContractStorageReaderBase {
 }
 
 
-
 interface IEnsReverseRegistrarTxCaller {
     claim (sender: TSender, owner: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     claimForAddr (sender: TSender, addr: TAddress, owner: TAddress, resolver: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
@@ -418,3 +400,5 @@ interface IEnsReverseRegistrarTxData {
 }
 
 
+type TEvents = TEnsReverseRegistrarTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

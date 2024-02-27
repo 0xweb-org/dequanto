@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class IBridge extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/IBridge.ts"
-}
+        "class": "./contracts/openzeppelin/IBridge.ts"
+    }
 
     // 0xab5d8943
     async activeOutbox (): Promise<TAddress> {
@@ -156,10 +156,13 @@ export class IBridge extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TIBridgeTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TIBridgeTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -167,8 +170,20 @@ export class IBridge extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onBridgeCallTriggered (fn?: (event: TClientEventsStreamData<TLogBridgeCallTriggeredParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogBridgeCallTriggeredParameters>> {
@@ -191,36 +206,36 @@ export class IBridge extends ContractBase {
         return this.$onLog('SequencerInboxUpdated', fn);
     }
 
-    extractLogsBridgeCallTriggered (tx: TEth.TxReceipt): ITxLogItem<TLogBridgeCallTriggered>[] {
+    extractLogsBridgeCallTriggered (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'BridgeCallTriggered'>>[] {
         let abi = this.$getAbiItem('event', 'BridgeCallTriggered');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogBridgeCallTriggered>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'BridgeCallTriggered'>>[];
     }
 
-    extractLogsInboxToggle (tx: TEth.TxReceipt): ITxLogItem<TLogInboxToggle>[] {
+    extractLogsInboxToggle (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'InboxToggle'>>[] {
         let abi = this.$getAbiItem('event', 'InboxToggle');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogInboxToggle>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'InboxToggle'>>[];
     }
 
-    extractLogsMessageDelivered (tx: TEth.TxReceipt): ITxLogItem<TLogMessageDelivered>[] {
+    extractLogsMessageDelivered (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'MessageDelivered'>>[] {
         let abi = this.$getAbiItem('event', 'MessageDelivered');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogMessageDelivered>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'MessageDelivered'>>[];
     }
 
-    extractLogsOutboxToggle (tx: TEth.TxReceipt): ITxLogItem<TLogOutboxToggle>[] {
+    extractLogsOutboxToggle (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'OutboxToggle'>>[] {
         let abi = this.$getAbiItem('event', 'OutboxToggle');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogOutboxToggle>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'OutboxToggle'>>[];
     }
 
-    extractLogsSequencerInboxUpdated (tx: TEth.TxReceipt): ITxLogItem<TLogSequencerInboxUpdated>[] {
+    extractLogsSequencerInboxUpdated (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'SequencerInboxUpdated'>>[] {
         let abi = this.$getAbiItem('event', 'SequencerInboxUpdated');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogSequencerInboxUpdated>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'SequencerInboxUpdated'>>[];
     }
 
     async getPastLogsBridgeCallTriggered (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { outbox?: TAddress,to?: TAddress }
-    }): Promise<ITxLogItem<TLogBridgeCallTriggered>[]> {
+    }): Promise<ITxLogItem<TEventParams<'BridgeCallTriggered'>>[]> {
         return await this.$getPastLogsParsed('BridgeCallTriggered', options) as any;
     }
 
@@ -228,7 +243,7 @@ export class IBridge extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { inbox?: TAddress }
-    }): Promise<ITxLogItem<TLogInboxToggle>[]> {
+    }): Promise<ITxLogItem<TEventParams<'InboxToggle'>>[]> {
         return await this.$getPastLogsParsed('InboxToggle', options) as any;
     }
 
@@ -236,7 +251,7 @@ export class IBridge extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { messageIndex?: bigint,beforeInboxAcc?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogMessageDelivered>[]> {
+    }): Promise<ITxLogItem<TEventParams<'MessageDelivered'>>[]> {
         return await this.$getPastLogsParsed('MessageDelivered', options) as any;
     }
 
@@ -244,7 +259,7 @@ export class IBridge extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { outbox?: TAddress }
-    }): Promise<ITxLogItem<TLogOutboxToggle>[]> {
+    }): Promise<ITxLogItem<TEventParams<'OutboxToggle'>>[]> {
         return await this.$getPastLogsParsed('OutboxToggle', options) as any;
     }
 
@@ -252,7 +267,7 @@ export class IBridge extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogSequencerInboxUpdated>[]> {
+    }): Promise<ITxLogItem<TEventParams<'SequencerInboxUpdated'>>[]> {
         return await this.$getPastLogsParsed('SequencerInboxUpdated', options) as any;
     }
 
@@ -265,164 +280,118 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogBridgeCallTriggered = {
-        outbox: TAddress, to: TAddress, value: bigint, data: TEth.Hex
-    };
-    type TLogBridgeCallTriggeredParameters = [ outbox: TAddress, to: TAddress, value: bigint, data: TEth.Hex ];
-    type TLogInboxToggle = {
-        inbox: TAddress, enabled: boolean
-    };
-    type TLogInboxToggleParameters = [ inbox: TAddress, enabled: boolean ];
-    type TLogMessageDelivered = {
-        messageIndex: bigint, beforeInboxAcc: TEth.Hex, inbox: TAddress, kind: number, _sender: TAddress, messageDataHash: TEth.Hex, baseFeeL1: bigint, timestamp: number
-    };
-    type TLogMessageDeliveredParameters = [ messageIndex: bigint, beforeInboxAcc: TEth.Hex, inbox: TAddress, kind: number, _sender: TAddress, messageDataHash: TEth.Hex, baseFeeL1: bigint, timestamp: number ];
-    type TLogOutboxToggle = {
-        outbox: TAddress, enabled: boolean
-    };
-    type TLogOutboxToggleParameters = [ outbox: TAddress, enabled: boolean ];
-    type TLogSequencerInboxUpdated = {
-        newSequencerInbox: TAddress
-    };
-    type TLogSequencerInboxUpdatedParameters = [ newSequencerInbox: TAddress ];
-
-interface IEvents {
-  BridgeCallTriggered: TLogBridgeCallTriggeredParameters
-  InboxToggle: TLogInboxToggleParameters
-  MessageDelivered: TLogMessageDeliveredParameters
-  OutboxToggle: TLogOutboxToggleParameters
-  SequencerInboxUpdated: TLogSequencerInboxUpdatedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodActiveOutbox {
-  method: "activeOutbox"
-  arguments: [  ]
+export type TIBridgeTypes = {
+    Events: {
+        BridgeCallTriggered: {
+            outputParams: { outbox: TAddress, to: TAddress, value: bigint, data: TEth.Hex },
+            outputArgs:   [ outbox: TAddress, to: TAddress, value: bigint, data: TEth.Hex ],
+        }
+        InboxToggle: {
+            outputParams: { inbox: TAddress, enabled: boolean },
+            outputArgs:   [ inbox: TAddress, enabled: boolean ],
+        }
+        MessageDelivered: {
+            outputParams: { messageIndex: bigint, beforeInboxAcc: TEth.Hex, inbox: TAddress, kind: number, _sender: TAddress, messageDataHash: TEth.Hex, baseFeeL1: bigint, timestamp: number },
+            outputArgs:   [ messageIndex: bigint, beforeInboxAcc: TEth.Hex, inbox: TAddress, kind: number, _sender: TAddress, messageDataHash: TEth.Hex, baseFeeL1: bigint, timestamp: number ],
+        }
+        OutboxToggle: {
+            outputParams: { outbox: TAddress, enabled: boolean },
+            outputArgs:   [ outbox: TAddress, enabled: boolean ],
+        }
+        SequencerInboxUpdated: {
+            outputParams: { newSequencerInbox: TAddress },
+            outputArgs:   [ newSequencerInbox: TAddress ],
+        }
+    },
+    Methods: {
+        activeOutbox: {
+          method: "activeOutbox"
+          arguments: [  ]
+        }
+        allowedDelayedInboxList: {
+          method: "allowedDelayedInboxList"
+          arguments: [ input0: bigint ]
+        }
+        allowedDelayedInboxes: {
+          method: "allowedDelayedInboxes"
+          arguments: [ inbox: TAddress ]
+        }
+        allowedOutboxList: {
+          method: "allowedOutboxList"
+          arguments: [ input0: bigint ]
+        }
+        allowedOutboxes: {
+          method: "allowedOutboxes"
+          arguments: [ outbox: TAddress ]
+        }
+        delayedInboxAccs: {
+          method: "delayedInboxAccs"
+          arguments: [ input0: bigint ]
+        }
+        delayedMessageCount: {
+          method: "delayedMessageCount"
+          arguments: [  ]
+        }
+        enqueueDelayedMessage: {
+          method: "enqueueDelayedMessage"
+          arguments: [ kind: number, _sender: TAddress, messageDataHash: TEth.Hex ]
+        }
+        enqueueSequencerMessage: {
+          method: "enqueueSequencerMessage"
+          arguments: [ dataHash: TEth.Hex, afterDelayedMessagesRead: bigint, prevMessageCount: bigint, newMessageCount: bigint ]
+        }
+        executeCall: {
+          method: "executeCall"
+          arguments: [ to: TAddress, value: bigint, data: TEth.Hex ]
+        }
+        initialize: {
+          method: "initialize"
+          arguments: [ rollup_: TAddress ]
+        }
+        rollup: {
+          method: "rollup"
+          arguments: [  ]
+        }
+        sequencerInbox: {
+          method: "sequencerInbox"
+          arguments: [  ]
+        }
+        sequencerInboxAccs: {
+          method: "sequencerInboxAccs"
+          arguments: [ input0: bigint ]
+        }
+        sequencerMessageCount: {
+          method: "sequencerMessageCount"
+          arguments: [  ]
+        }
+        sequencerReportedSubMessageCount: {
+          method: "sequencerReportedSubMessageCount"
+          arguments: [  ]
+        }
+        setDelayedInbox: {
+          method: "setDelayedInbox"
+          arguments: [ inbox: TAddress, enabled: boolean ]
+        }
+        setOutbox: {
+          method: "setOutbox"
+          arguments: [ inbox: TAddress, enabled: boolean ]
+        }
+        setSequencerInbox: {
+          method: "setSequencerInbox"
+          arguments: [ _sequencerInbox: TAddress ]
+        }
+        submitBatchSpendingReport: {
+          method: "submitBatchSpendingReport"
+          arguments: [ batchPoster: TAddress, dataHash: TEth.Hex ]
+        }
+    }
 }
-
-interface IMethodAllowedDelayedInboxList {
-  method: "allowedDelayedInboxList"
-  arguments: [ input0: bigint ]
-}
-
-interface IMethodAllowedDelayedInboxes {
-  method: "allowedDelayedInboxes"
-  arguments: [ inbox: TAddress ]
-}
-
-interface IMethodAllowedOutboxList {
-  method: "allowedOutboxList"
-  arguments: [ input0: bigint ]
-}
-
-interface IMethodAllowedOutboxes {
-  method: "allowedOutboxes"
-  arguments: [ outbox: TAddress ]
-}
-
-interface IMethodDelayedInboxAccs {
-  method: "delayedInboxAccs"
-  arguments: [ input0: bigint ]
-}
-
-interface IMethodDelayedMessageCount {
-  method: "delayedMessageCount"
-  arguments: [  ]
-}
-
-interface IMethodEnqueueDelayedMessage {
-  method: "enqueueDelayedMessage"
-  arguments: [ kind: number, _sender: TAddress, messageDataHash: TEth.Hex ]
-}
-
-interface IMethodEnqueueSequencerMessage {
-  method: "enqueueSequencerMessage"
-  arguments: [ dataHash: TEth.Hex, afterDelayedMessagesRead: bigint, prevMessageCount: bigint, newMessageCount: bigint ]
-}
-
-interface IMethodExecuteCall {
-  method: "executeCall"
-  arguments: [ to: TAddress, value: bigint, data: TEth.Hex ]
-}
-
-interface IMethodInitialize {
-  method: "initialize"
-  arguments: [ rollup_: TAddress ]
-}
-
-interface IMethodRollup {
-  method: "rollup"
-  arguments: [  ]
-}
-
-interface IMethodSequencerInbox {
-  method: "sequencerInbox"
-  arguments: [  ]
-}
-
-interface IMethodSequencerInboxAccs {
-  method: "sequencerInboxAccs"
-  arguments: [ input0: bigint ]
-}
-
-interface IMethodSequencerMessageCount {
-  method: "sequencerMessageCount"
-  arguments: [  ]
-}
-
-interface IMethodSequencerReportedSubMessageCount {
-  method: "sequencerReportedSubMessageCount"
-  arguments: [  ]
-}
-
-interface IMethodSetDelayedInbox {
-  method: "setDelayedInbox"
-  arguments: [ inbox: TAddress, enabled: boolean ]
-}
-
-interface IMethodSetOutbox {
-  method: "setOutbox"
-  arguments: [ inbox: TAddress, enabled: boolean ]
-}
-
-interface IMethodSetSequencerInbox {
-  method: "setSequencerInbox"
-  arguments: [ _sequencerInbox: TAddress ]
-}
-
-interface IMethodSubmitBatchSpendingReport {
-  method: "submitBatchSpendingReport"
-  arguments: [ batchPoster: TAddress, dataHash: TEth.Hex ]
-}
-
-interface IMethods {
-  activeOutbox: IMethodActiveOutbox
-  allowedDelayedInboxList: IMethodAllowedDelayedInboxList
-  allowedDelayedInboxes: IMethodAllowedDelayedInboxes
-  allowedOutboxList: IMethodAllowedOutboxList
-  allowedOutboxes: IMethodAllowedOutboxes
-  delayedInboxAccs: IMethodDelayedInboxAccs
-  delayedMessageCount: IMethodDelayedMessageCount
-  enqueueDelayedMessage: IMethodEnqueueDelayedMessage
-  enqueueSequencerMessage: IMethodEnqueueSequencerMessage
-  executeCall: IMethodExecuteCall
-  initialize: IMethodInitialize
-  rollup: IMethodRollup
-  sequencerInbox: IMethodSequencerInbox
-  sequencerInboxAccs: IMethodSequencerInboxAccs
-  sequencerMessageCount: IMethodSequencerMessageCount
-  sequencerReportedSubMessageCount: IMethodSequencerReportedSubMessageCount
-  setDelayedInbox: IMethodSetDelayedInbox
-  setOutbox: IMethodSetOutbox
-  setSequencerInbox: IMethodSetSequencerInbox
-  submitBatchSpendingReport: IMethodSubmitBatchSpendingReport
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -454,3 +423,5 @@ interface IIBridgeTxData {
 }
 
 
+type TEvents = TIBridgeTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

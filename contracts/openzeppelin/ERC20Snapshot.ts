@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class ERC20Snapshot extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/ERC20Snapshot.ts"
-}
+        "class": "./contracts/openzeppelin/ERC20Snapshot.ts"
+    }
 
     // 0xdd62ed3e
     async allowance (owner: TAddress, spender: TAddress): Promise<bigint> {
@@ -121,10 +121,13 @@ export class ERC20Snapshot extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TERC20SnapshotTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TERC20SnapshotTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -132,8 +135,20 @@ export class ERC20Snapshot extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onApproval (fn?: (event: TClientEventsStreamData<TLogApprovalParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalParameters>> {
@@ -148,26 +163,26 @@ export class ERC20Snapshot extends ContractBase {
         return this.$onLog('Transfer', fn);
     }
 
-    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TLogApproval>[] {
+    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Approval'>>[] {
         let abi = this.$getAbiItem('event', 'Approval');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApproval>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Approval'>>[];
     }
 
-    extractLogsSnapshot (tx: TEth.TxReceipt): ITxLogItem<TLogSnapshot>[] {
+    extractLogsSnapshot (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Snapshot'>>[] {
         let abi = this.$getAbiItem('event', 'Snapshot');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogSnapshot>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Snapshot'>>[];
     }
 
-    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TLogTransfer>[] {
+    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Transfer'>>[] {
         let abi = this.$getAbiItem('event', 'Transfer');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogTransfer>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Transfer'>>[];
     }
 
     async getPastLogsApproval (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { owner?: TAddress,spender?: TAddress }
-    }): Promise<ITxLogItem<TLogApproval>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Approval'>>[]> {
         return await this.$getPastLogsParsed('Approval', options) as any;
     }
 
@@ -175,7 +190,7 @@ export class ERC20Snapshot extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogSnapshot>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Snapshot'>>[]> {
         return await this.$getPastLogsParsed('Snapshot', options) as any;
     }
 
@@ -183,7 +198,7 @@ export class ERC20Snapshot extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { from?: TAddress,to?: TAddress }
-    }): Promise<ITxLogItem<TLogTransfer>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Transfer'>>[]> {
         return await this.$getPastLogsParsed('Transfer', options) as any;
     }
 
@@ -196,112 +211,82 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogApproval = {
-        owner: TAddress, spender: TAddress, value: bigint
-    };
-    type TLogApprovalParameters = [ owner: TAddress, spender: TAddress, value: bigint ];
-    type TLogSnapshot = {
-        id: bigint
-    };
-    type TLogSnapshotParameters = [ id: bigint ];
-    type TLogTransfer = {
-        from: TAddress, to: TAddress, value: bigint
-    };
-    type TLogTransferParameters = [ from: TAddress, to: TAddress, value: bigint ];
-
-interface IEvents {
-  Approval: TLogApprovalParameters
-  Snapshot: TLogSnapshotParameters
-  Transfer: TLogTransferParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodAllowance {
-  method: "allowance"
-  arguments: [ owner: TAddress, spender: TAddress ]
+export type TERC20SnapshotTypes = {
+    Events: {
+        Approval: {
+            outputParams: { owner: TAddress, spender: TAddress, value: bigint },
+            outputArgs:   [ owner: TAddress, spender: TAddress, value: bigint ],
+        }
+        Snapshot: {
+            outputParams: { id: bigint },
+            outputArgs:   [ id: bigint ],
+        }
+        Transfer: {
+            outputParams: { from: TAddress, to: TAddress, value: bigint },
+            outputArgs:   [ from: TAddress, to: TAddress, value: bigint ],
+        }
+    },
+    Methods: {
+        allowance: {
+          method: "allowance"
+          arguments: [ owner: TAddress, spender: TAddress ]
+        }
+        approve: {
+          method: "approve"
+          arguments: [ spender: TAddress, amount: bigint ]
+        }
+        balanceOf: {
+          method: "balanceOf"
+          arguments: [ account: TAddress ]
+        }
+        balanceOfAt: {
+          method: "balanceOfAt"
+          arguments: [ account: TAddress, snapshotId: bigint ]
+        }
+        decimals: {
+          method: "decimals"
+          arguments: [  ]
+        }
+        decreaseAllowance: {
+          method: "decreaseAllowance"
+          arguments: [ spender: TAddress, subtractedValue: bigint ]
+        }
+        increaseAllowance: {
+          method: "increaseAllowance"
+          arguments: [ spender: TAddress, addedValue: bigint ]
+        }
+        name: {
+          method: "name"
+          arguments: [  ]
+        }
+        symbol: {
+          method: "symbol"
+          arguments: [  ]
+        }
+        totalSupply: {
+          method: "totalSupply"
+          arguments: [  ]
+        }
+        totalSupplyAt: {
+          method: "totalSupplyAt"
+          arguments: [ snapshotId: bigint ]
+        }
+        transfer: {
+          method: "transfer"
+          arguments: [ to: TAddress, amount: bigint ]
+        }
+        transferFrom: {
+          method: "transferFrom"
+          arguments: [ from: TAddress, to: TAddress, amount: bigint ]
+        }
+    }
 }
-
-interface IMethodApprove {
-  method: "approve"
-  arguments: [ spender: TAddress, amount: bigint ]
-}
-
-interface IMethodBalanceOf {
-  method: "balanceOf"
-  arguments: [ account: TAddress ]
-}
-
-interface IMethodBalanceOfAt {
-  method: "balanceOfAt"
-  arguments: [ account: TAddress, snapshotId: bigint ]
-}
-
-interface IMethodDecimals {
-  method: "decimals"
-  arguments: [  ]
-}
-
-interface IMethodDecreaseAllowance {
-  method: "decreaseAllowance"
-  arguments: [ spender: TAddress, subtractedValue: bigint ]
-}
-
-interface IMethodIncreaseAllowance {
-  method: "increaseAllowance"
-  arguments: [ spender: TAddress, addedValue: bigint ]
-}
-
-interface IMethodName {
-  method: "name"
-  arguments: [  ]
-}
-
-interface IMethodSymbol {
-  method: "symbol"
-  arguments: [  ]
-}
-
-interface IMethodTotalSupply {
-  method: "totalSupply"
-  arguments: [  ]
-}
-
-interface IMethodTotalSupplyAt {
-  method: "totalSupplyAt"
-  arguments: [ snapshotId: bigint ]
-}
-
-interface IMethodTransfer {
-  method: "transfer"
-  arguments: [ to: TAddress, amount: bigint ]
-}
-
-interface IMethodTransferFrom {
-  method: "transferFrom"
-  arguments: [ from: TAddress, to: TAddress, amount: bigint ]
-}
-
-interface IMethods {
-  allowance: IMethodAllowance
-  approve: IMethodApprove
-  balanceOf: IMethodBalanceOf
-  balanceOfAt: IMethodBalanceOfAt
-  decimals: IMethodDecimals
-  decreaseAllowance: IMethodDecreaseAllowance
-  increaseAllowance: IMethodIncreaseAllowance
-  name: IMethodName
-  symbol: IMethodSymbol
-  totalSupply: IMethodTotalSupply
-  totalSupplyAt: IMethodTotalSupplyAt
-  transfer: IMethodTransfer
-  transferFrom: IMethodTransferFrom
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -323,3 +308,5 @@ interface IERC20SnapshotTxData {
 }
 
 
+type TEvents = TERC20SnapshotTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

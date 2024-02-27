@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class RefundEscrow extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/RefundEscrow.ts"
-}
+        "class": "./contracts/openzeppelin/RefundEscrow.ts"
+    }
 
     async $constructor (deployer: TSender, beneficiary_: TAddress): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -120,10 +120,13 @@ export class RefundEscrow extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TRefundEscrowTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TRefundEscrowTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -131,8 +134,20 @@ export class RefundEscrow extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onDeposited (fn?: (event: TClientEventsStreamData<TLogDepositedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDepositedParameters>> {
@@ -155,36 +170,36 @@ export class RefundEscrow extends ContractBase {
         return this.$onLog('Withdrawn', fn);
     }
 
-    extractLogsDeposited (tx: TEth.TxReceipt): ITxLogItem<TLogDeposited>[] {
+    extractLogsDeposited (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Deposited'>>[] {
         let abi = this.$getAbiItem('event', 'Deposited');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogDeposited>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Deposited'>>[];
     }
 
-    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TLogOwnershipTransferred>[] {
+    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'OwnershipTransferred'>>[] {
         let abi = this.$getAbiItem('event', 'OwnershipTransferred');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogOwnershipTransferred>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'OwnershipTransferred'>>[];
     }
 
-    extractLogsRefundsClosed (tx: TEth.TxReceipt): ITxLogItem<TLogRefundsClosed>[] {
+    extractLogsRefundsClosed (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RefundsClosed'>>[] {
         let abi = this.$getAbiItem('event', 'RefundsClosed');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRefundsClosed>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RefundsClosed'>>[];
     }
 
-    extractLogsRefundsEnabled (tx: TEth.TxReceipt): ITxLogItem<TLogRefundsEnabled>[] {
+    extractLogsRefundsEnabled (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RefundsEnabled'>>[] {
         let abi = this.$getAbiItem('event', 'RefundsEnabled');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRefundsEnabled>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RefundsEnabled'>>[];
     }
 
-    extractLogsWithdrawn (tx: TEth.TxReceipt): ITxLogItem<TLogWithdrawn>[] {
+    extractLogsWithdrawn (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Withdrawn'>>[] {
         let abi = this.$getAbiItem('event', 'Withdrawn');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogWithdrawn>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Withdrawn'>>[];
     }
 
     async getPastLogsDeposited (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { payee?: TAddress }
-    }): Promise<ITxLogItem<TLogDeposited>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Deposited'>>[]> {
         return await this.$getPastLogsParsed('Deposited', options) as any;
     }
 
@@ -192,7 +207,7 @@ export class RefundEscrow extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { previousOwner?: TAddress,newOwner?: TAddress }
-    }): Promise<ITxLogItem<TLogOwnershipTransferred>[]> {
+    }): Promise<ITxLogItem<TEventParams<'OwnershipTransferred'>>[]> {
         return await this.$getPastLogsParsed('OwnershipTransferred', options) as any;
     }
 
@@ -200,7 +215,7 @@ export class RefundEscrow extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogRefundsClosed>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RefundsClosed'>>[]> {
         return await this.$getPastLogsParsed('RefundsClosed', options) as any;
     }
 
@@ -208,7 +223,7 @@ export class RefundEscrow extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogRefundsEnabled>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RefundsEnabled'>>[]> {
         return await this.$getPastLogsParsed('RefundsEnabled', options) as any;
     }
 
@@ -216,7 +231,7 @@ export class RefundEscrow extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { payee?: TAddress }
-    }): Promise<ITxLogItem<TLogWithdrawn>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Withdrawn'>>[]> {
         return await this.$getPastLogsParsed('Withdrawn', options) as any;
     }
 
@@ -229,116 +244,86 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogDeposited = {
-        payee: TAddress, weiAmount: bigint
-    };
-    type TLogDepositedParameters = [ payee: TAddress, weiAmount: bigint ];
-    type TLogOwnershipTransferred = {
-        previousOwner: TAddress, newOwner: TAddress
-    };
-    type TLogOwnershipTransferredParameters = [ previousOwner: TAddress, newOwner: TAddress ];
-    type TLogRefundsClosed = {
-        
-    };
-    type TLogRefundsClosedParameters = [  ];
-    type TLogRefundsEnabled = {
-        
-    };
-    type TLogRefundsEnabledParameters = [  ];
-    type TLogWithdrawn = {
-        payee: TAddress, weiAmount: bigint
-    };
-    type TLogWithdrawnParameters = [ payee: TAddress, weiAmount: bigint ];
-
-interface IEvents {
-  Deposited: TLogDepositedParameters
-  OwnershipTransferred: TLogOwnershipTransferredParameters
-  RefundsClosed: TLogRefundsClosedParameters
-  RefundsEnabled: TLogRefundsEnabledParameters
-  Withdrawn: TLogWithdrawnParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodBeneficiary {
-  method: "beneficiary"
-  arguments: [  ]
+export type TRefundEscrowTypes = {
+    Events: {
+        Deposited: {
+            outputParams: { payee: TAddress, weiAmount: bigint },
+            outputArgs:   [ payee: TAddress, weiAmount: bigint ],
+        }
+        OwnershipTransferred: {
+            outputParams: { previousOwner: TAddress, newOwner: TAddress },
+            outputArgs:   [ previousOwner: TAddress, newOwner: TAddress ],
+        }
+        RefundsClosed: {
+            outputParams: {  },
+            outputArgs:   [  ],
+        }
+        RefundsEnabled: {
+            outputParams: {  },
+            outputArgs:   [  ],
+        }
+        Withdrawn: {
+            outputParams: { payee: TAddress, weiAmount: bigint },
+            outputArgs:   [ payee: TAddress, weiAmount: bigint ],
+        }
+    },
+    Methods: {
+        beneficiary: {
+          method: "beneficiary"
+          arguments: [  ]
+        }
+        beneficiaryWithdraw: {
+          method: "beneficiaryWithdraw"
+          arguments: [  ]
+        }
+        close: {
+          method: "close"
+          arguments: [  ]
+        }
+        deposit: {
+          method: "deposit"
+          arguments: [ refundee: TAddress ]
+        }
+        depositsOf: {
+          method: "depositsOf"
+          arguments: [ payee: TAddress ]
+        }
+        enableRefunds: {
+          method: "enableRefunds"
+          arguments: [  ]
+        }
+        owner: {
+          method: "owner"
+          arguments: [  ]
+        }
+        renounceOwnership: {
+          method: "renounceOwnership"
+          arguments: [  ]
+        }
+        state: {
+          method: "state"
+          arguments: [  ]
+        }
+        transferOwnership: {
+          method: "transferOwnership"
+          arguments: [ newOwner: TAddress ]
+        }
+        withdraw: {
+          method: "withdraw"
+          arguments: [ payee: TAddress ]
+        }
+        withdrawalAllowed: {
+          method: "withdrawalAllowed"
+          arguments: [ input0: TAddress ]
+        }
+    }
 }
-
-interface IMethodBeneficiaryWithdraw {
-  method: "beneficiaryWithdraw"
-  arguments: [  ]
-}
-
-interface IMethodClose {
-  method: "close"
-  arguments: [  ]
-}
-
-interface IMethodDeposit {
-  method: "deposit"
-  arguments: [ refundee: TAddress ]
-}
-
-interface IMethodDepositsOf {
-  method: "depositsOf"
-  arguments: [ payee: TAddress ]
-}
-
-interface IMethodEnableRefunds {
-  method: "enableRefunds"
-  arguments: [  ]
-}
-
-interface IMethodOwner {
-  method: "owner"
-  arguments: [  ]
-}
-
-interface IMethodRenounceOwnership {
-  method: "renounceOwnership"
-  arguments: [  ]
-}
-
-interface IMethodState {
-  method: "state"
-  arguments: [  ]
-}
-
-interface IMethodTransferOwnership {
-  method: "transferOwnership"
-  arguments: [ newOwner: TAddress ]
-}
-
-interface IMethodWithdraw {
-  method: "withdraw"
-  arguments: [ payee: TAddress ]
-}
-
-interface IMethodWithdrawalAllowed {
-  method: "withdrawalAllowed"
-  arguments: [ input0: TAddress ]
-}
-
-interface IMethods {
-  beneficiary: IMethodBeneficiary
-  beneficiaryWithdraw: IMethodBeneficiaryWithdraw
-  close: IMethodClose
-  deposit: IMethodDeposit
-  depositsOf: IMethodDepositsOf
-  enableRefunds: IMethodEnableRefunds
-  owner: IMethodOwner
-  renounceOwnership: IMethodRenounceOwnership
-  state: IMethodState
-  transferOwnership: IMethodTransferOwnership
-  withdraw: IMethodWithdraw
-  withdrawalAllowed: IMethodWithdrawalAllowed
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -364,3 +349,5 @@ interface IRefundEscrowTxData {
 }
 
 
+type TEvents = TRefundEscrowTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

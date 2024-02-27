@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://bscscan.com/address/0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class AmmFactoryV2Contract extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/amm/AmmFactoryV2Contract/AmmFactoryV2Contract.ts"
-}
+        "class": "./contracts/amm/AmmFactoryV2Contract/AmmFactoryV2Contract.ts"
+    }
 
     async $constructor (deployer: TSender, _feeToSetter: TAddress): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -105,10 +105,13 @@ export class AmmFactoryV2Contract extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TAmmFactoryV2ContractTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TAmmFactoryV2ContractTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -116,24 +119,36 @@ export class AmmFactoryV2Contract extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onPairCreated (fn?: (event: TClientEventsStreamData<TLogPairCreatedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogPairCreatedParameters>> {
         return this.$onLog('PairCreated', fn);
     }
 
-    extractLogsPairCreated (tx: TEth.TxReceipt): ITxLogItem<TLogPairCreated>[] {
+    extractLogsPairCreated (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'PairCreated'>>[] {
         let abi = this.$getAbiItem('event', 'PairCreated');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogPairCreated>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'PairCreated'>>[];
     }
 
     async getPastLogsPairCreated (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { token0?: TAddress,token1?: TAddress }
-    }): Promise<ITxLogItem<TLogPairCreated>[]> {
+    }): Promise<ITxLogItem<TEventParams<'PairCreated'>>[]> {
         return await this.$getPastLogsParsed('PairCreated', options) as any;
     }
 
@@ -146,77 +161,58 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogPairCreated = {
-        token0: TAddress, token1: TAddress, pair: TAddress, input3: bigint
-    };
-    type TLogPairCreatedParameters = [ token0: TAddress, token1: TAddress, pair: TAddress, input3: bigint ];
-
-interface IEvents {
-  PairCreated: TLogPairCreatedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodINIT_CODE_PAIR_HASH {
-  method: "INIT_CODE_PAIR_HASH"
-  arguments: [  ]
+export type TAmmFactoryV2ContractTypes = {
+    Events: {
+        PairCreated: {
+            outputParams: { token0: TAddress, token1: TAddress, pair: TAddress, input3: bigint },
+            outputArgs:   [ token0: TAddress, token1: TAddress, pair: TAddress, input3: bigint ],
+        }
+    },
+    Methods: {
+        INIT_CODE_PAIR_HASH: {
+          method: "INIT_CODE_PAIR_HASH"
+          arguments: [  ]
+        }
+        allPairs: {
+          method: "allPairs"
+          arguments: [ input0: bigint ]
+        }
+        allPairsLength: {
+          method: "allPairsLength"
+          arguments: [  ]
+        }
+        createPair: {
+          method: "createPair"
+          arguments: [ tokenA: TAddress, tokenB: TAddress ]
+        }
+        feeTo: {
+          method: "feeTo"
+          arguments: [  ]
+        }
+        feeToSetter: {
+          method: "feeToSetter"
+          arguments: [  ]
+        }
+        getPair: {
+          method: "getPair"
+          arguments: [ input0: TAddress, input1: TAddress ]
+        }
+        setFeeTo: {
+          method: "setFeeTo"
+          arguments: [ _feeTo: TAddress ]
+        }
+        setFeeToSetter: {
+          method: "setFeeToSetter"
+          arguments: [ _feeToSetter: TAddress ]
+        }
+    }
 }
-
-interface IMethodAllPairs {
-  method: "allPairs"
-  arguments: [ input0: bigint ]
-}
-
-interface IMethodAllPairsLength {
-  method: "allPairsLength"
-  arguments: [  ]
-}
-
-interface IMethodCreatePair {
-  method: "createPair"
-  arguments: [ tokenA: TAddress, tokenB: TAddress ]
-}
-
-interface IMethodFeeTo {
-  method: "feeTo"
-  arguments: [  ]
-}
-
-interface IMethodFeeToSetter {
-  method: "feeToSetter"
-  arguments: [  ]
-}
-
-interface IMethodGetPair {
-  method: "getPair"
-  arguments: [ input0: TAddress, input1: TAddress ]
-}
-
-interface IMethodSetFeeTo {
-  method: "setFeeTo"
-  arguments: [ _feeTo: TAddress ]
-}
-
-interface IMethodSetFeeToSetter {
-  method: "setFeeToSetter"
-  arguments: [ _feeToSetter: TAddress ]
-}
-
-interface IMethods {
-  INIT_CODE_PAIR_HASH: IMethodINIT_CODE_PAIR_HASH
-  allPairs: IMethodAllPairs
-  allPairsLength: IMethodAllPairsLength
-  createPair: IMethodCreatePair
-  feeTo: IMethodFeeTo
-  feeToSetter: IMethodFeeToSetter
-  getPair: IMethodGetPair
-  setFeeTo: IMethodSetFeeTo
-  setFeeToSetter: IMethodSetFeeToSetter
-  '*': { method: string, arguments: any[] } 
-}
-
-
 
 
 
@@ -281,7 +277,6 @@ class AmmFactoryV2ContractStorageReader extends ContractStorageReaderBase {
 }
 
 
-
 interface IAmmFactoryV2ContractTxCaller {
     createPair (sender: TSender, tokenA: TAddress, tokenB: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setFeeTo (sender: TSender, _feeTo: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
@@ -296,3 +291,5 @@ interface IAmmFactoryV2ContractTxData {
 }
 
 
+type TEvents = TAmmFactoryV2ContractTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

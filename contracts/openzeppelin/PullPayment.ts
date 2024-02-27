@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class PullPayment extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/PullPayment.ts"
-}
+        "class": "./contracts/openzeppelin/PullPayment.ts"
+    }
 
     // 0xe2982c21
     async payments (dest: TAddress): Promise<bigint> {
@@ -66,10 +66,13 @@ export class PullPayment extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TPullPaymentTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TPullPaymentTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -77,8 +80,20 @@ export class PullPayment extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
 
@@ -96,32 +111,27 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-
-
-interface IEvents {
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodPayments {
-  method: "payments"
-  arguments: [ dest: TAddress ]
+export type TPullPaymentTypes = {
+    Events: {
+        
+    },
+    Methods: {
+        payments: {
+          method: "payments"
+          arguments: [ dest: TAddress ]
+        }
+        withdrawPayments: {
+          method: "withdrawPayments"
+          arguments: [ payee: TAddress ]
+        }
+    }
 }
-
-interface IMethodWithdrawPayments {
-  method: "withdrawPayments"
-  arguments: [ payee: TAddress ]
-}
-
-interface IMethods {
-  payments: IMethodPayments
-  withdrawPayments: IMethodWithdrawPayments
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -135,3 +145,5 @@ interface IPullPaymentTxData {
 }
 
 
+type TEvents = TPullPaymentTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

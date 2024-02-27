@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class EnsRegistry extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/ens/EnsRegistry/EnsRegistry.ts"
-}
+        "class": "./contracts/ens/EnsRegistry/EnsRegistry.ts"
+    }
 
     async $constructor (deployer: TSender, _old: TAddress): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -125,10 +125,13 @@ export class EnsRegistry extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TEnsRegistryTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TEnsRegistryTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -136,8 +139,20 @@ export class EnsRegistry extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onApprovalForAll (fn?: (event: TClientEventsStreamData<TLogApprovalForAllParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalForAllParameters>> {
@@ -160,36 +175,36 @@ export class EnsRegistry extends ContractBase {
         return this.$onLog('Transfer', fn);
     }
 
-    extractLogsApprovalForAll (tx: TEth.TxReceipt): ITxLogItem<TLogApprovalForAll>[] {
+    extractLogsApprovalForAll (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ApprovalForAll'>>[] {
         let abi = this.$getAbiItem('event', 'ApprovalForAll');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApprovalForAll>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ApprovalForAll'>>[];
     }
 
-    extractLogsNewOwner (tx: TEth.TxReceipt): ITxLogItem<TLogNewOwner>[] {
+    extractLogsNewOwner (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'NewOwner'>>[] {
         let abi = this.$getAbiItem('event', 'NewOwner');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogNewOwner>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'NewOwner'>>[];
     }
 
-    extractLogsNewResolver (tx: TEth.TxReceipt): ITxLogItem<TLogNewResolver>[] {
+    extractLogsNewResolver (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'NewResolver'>>[] {
         let abi = this.$getAbiItem('event', 'NewResolver');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogNewResolver>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'NewResolver'>>[];
     }
 
-    extractLogsNewTTL (tx: TEth.TxReceipt): ITxLogItem<TLogNewTTL>[] {
+    extractLogsNewTTL (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'NewTTL'>>[] {
         let abi = this.$getAbiItem('event', 'NewTTL');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogNewTTL>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'NewTTL'>>[];
     }
 
-    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TLogTransfer>[] {
+    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Transfer'>>[] {
         let abi = this.$getAbiItem('event', 'Transfer');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogTransfer>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Transfer'>>[];
     }
 
     async getPastLogsApprovalForAll (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { owner?: TAddress,operator?: TAddress }
-    }): Promise<ITxLogItem<TLogApprovalForAll>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ApprovalForAll'>>[]> {
         return await this.$getPastLogsParsed('ApprovalForAll', options) as any;
     }
 
@@ -197,7 +212,7 @@ export class EnsRegistry extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex,label?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogNewOwner>[]> {
+    }): Promise<ITxLogItem<TEventParams<'NewOwner'>>[]> {
         return await this.$getPastLogsParsed('NewOwner', options) as any;
     }
 
@@ -205,7 +220,7 @@ export class EnsRegistry extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogNewResolver>[]> {
+    }): Promise<ITxLogItem<TEventParams<'NewResolver'>>[]> {
         return await this.$getPastLogsParsed('NewResolver', options) as any;
     }
 
@@ -213,7 +228,7 @@ export class EnsRegistry extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogNewTTL>[]> {
+    }): Promise<ITxLogItem<TEventParams<'NewTTL'>>[]> {
         return await this.$getPastLogsParsed('NewTTL', options) as any;
     }
 
@@ -221,7 +236,7 @@ export class EnsRegistry extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogTransfer>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Transfer'>>[]> {
         return await this.$getPastLogsParsed('Transfer', options) as any;
     }
 
@@ -234,121 +249,90 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogApprovalForAll = {
-        owner: TAddress, operator: TAddress, approved: boolean
-    };
-    type TLogApprovalForAllParameters = [ owner: TAddress, operator: TAddress, approved: boolean ];
-    type TLogNewOwner = {
-        node: TEth.Hex, label: TEth.Hex, owner: TAddress
-    };
-    type TLogNewOwnerParameters = [ node: TEth.Hex, label: TEth.Hex, owner: TAddress ];
-    type TLogNewResolver = {
-        node: TEth.Hex, resolver: TAddress
-    };
-    type TLogNewResolverParameters = [ node: TEth.Hex, resolver: TAddress ];
-    type TLogNewTTL = {
-        node: TEth.Hex, ttl: number
-    };
-    type TLogNewTTLParameters = [ node: TEth.Hex, ttl: number ];
-    type TLogTransfer = {
-        node: TEth.Hex, owner: TAddress
-    };
-    type TLogTransferParameters = [ node: TEth.Hex, owner: TAddress ];
-
-interface IEvents {
-  ApprovalForAll: TLogApprovalForAllParameters
-  NewOwner: TLogNewOwnerParameters
-  NewResolver: TLogNewResolverParameters
-  NewTTL: TLogNewTTLParameters
-  Transfer: TLogTransferParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodIsApprovedForAll {
-  method: "isApprovedForAll"
-  arguments: [ owner: TAddress, operator: TAddress ]
+export type TEnsRegistryTypes = {
+    Events: {
+        ApprovalForAll: {
+            outputParams: { owner: TAddress, operator: TAddress, approved: boolean },
+            outputArgs:   [ owner: TAddress, operator: TAddress, approved: boolean ],
+        }
+        NewOwner: {
+            outputParams: { node: TEth.Hex, label: TEth.Hex, owner: TAddress },
+            outputArgs:   [ node: TEth.Hex, label: TEth.Hex, owner: TAddress ],
+        }
+        NewResolver: {
+            outputParams: { node: TEth.Hex, resolver: TAddress },
+            outputArgs:   [ node: TEth.Hex, resolver: TAddress ],
+        }
+        NewTTL: {
+            outputParams: { node: TEth.Hex, ttl: number },
+            outputArgs:   [ node: TEth.Hex, ttl: number ],
+        }
+        Transfer: {
+            outputParams: { node: TEth.Hex, owner: TAddress },
+            outputArgs:   [ node: TEth.Hex, owner: TAddress ],
+        }
+    },
+    Methods: {
+        isApprovedForAll: {
+          method: "isApprovedForAll"
+          arguments: [ owner: TAddress, operator: TAddress ]
+        }
+        old: {
+          method: "old"
+          arguments: [  ]
+        }
+        owner: {
+          method: "owner"
+          arguments: [ node: TEth.Hex ]
+        }
+        recordExists: {
+          method: "recordExists"
+          arguments: [ node: TEth.Hex ]
+        }
+        resolver: {
+          method: "resolver"
+          arguments: [ node: TEth.Hex ]
+        }
+        setApprovalForAll: {
+          method: "setApprovalForAll"
+          arguments: [ operator: TAddress, approved: boolean ]
+        }
+        setOwner: {
+          method: "setOwner"
+          arguments: [ node: TEth.Hex, owner: TAddress ]
+        }
+        setRecord: {
+          method: "setRecord"
+          arguments: [ node: TEth.Hex, owner: TAddress, resolver: TAddress, ttl: number ]
+        }
+        setResolver: {
+          method: "setResolver"
+          arguments: [ node: TEth.Hex, resolver: TAddress ]
+        }
+        setSubnodeOwner: {
+          method: "setSubnodeOwner"
+          arguments: [ node: TEth.Hex, label: TEth.Hex, owner: TAddress ]
+        }
+        setSubnodeRecord: {
+          method: "setSubnodeRecord"
+          arguments: [ node: TEth.Hex, label: TEth.Hex, owner: TAddress, resolver: TAddress, ttl: number ]
+        }
+        setTTL: {
+          method: "setTTL"
+          arguments: [ node: TEth.Hex, ttl: number ]
+        }
+        ttl: {
+          method: "ttl"
+          arguments: [ node: TEth.Hex ]
+        }
+    }
 }
-
-interface IMethodOld {
-  method: "old"
-  arguments: [  ]
-}
-
-interface IMethodOwner {
-  method: "owner"
-  arguments: [ node: TEth.Hex ]
-}
-
-interface IMethodRecordExists {
-  method: "recordExists"
-  arguments: [ node: TEth.Hex ]
-}
-
-interface IMethodResolver {
-  method: "resolver"
-  arguments: [ node: TEth.Hex ]
-}
-
-interface IMethodSetApprovalForAll {
-  method: "setApprovalForAll"
-  arguments: [ operator: TAddress, approved: boolean ]
-}
-
-interface IMethodSetOwner {
-  method: "setOwner"
-  arguments: [ node: TEth.Hex, owner: TAddress ]
-}
-
-interface IMethodSetRecord {
-  method: "setRecord"
-  arguments: [ node: TEth.Hex, owner: TAddress, resolver: TAddress, ttl: number ]
-}
-
-interface IMethodSetResolver {
-  method: "setResolver"
-  arguments: [ node: TEth.Hex, resolver: TAddress ]
-}
-
-interface IMethodSetSubnodeOwner {
-  method: "setSubnodeOwner"
-  arguments: [ node: TEth.Hex, label: TEth.Hex, owner: TAddress ]
-}
-
-interface IMethodSetSubnodeRecord {
-  method: "setSubnodeRecord"
-  arguments: [ node: TEth.Hex, label: TEth.Hex, owner: TAddress, resolver: TAddress, ttl: number ]
-}
-
-interface IMethodSetTTL {
-  method: "setTTL"
-  arguments: [ node: TEth.Hex, ttl: number ]
-}
-
-interface IMethodTtl {
-  method: "ttl"
-  arguments: [ node: TEth.Hex ]
-}
-
-interface IMethods {
-  isApprovedForAll: IMethodIsApprovedForAll
-  old: IMethodOld
-  owner: IMethodOwner
-  recordExists: IMethodRecordExists
-  resolver: IMethodResolver
-  setApprovalForAll: IMethodSetApprovalForAll
-  setOwner: IMethodSetOwner
-  setRecord: IMethodSetRecord
-  setResolver: IMethodSetResolver
-  setSubnodeOwner: IMethodSetSubnodeOwner
-  setSubnodeRecord: IMethodSetSubnodeRecord
-  setTTL: IMethodSetTTL
-  ttl: IMethodTtl
-  '*': { method: string, arguments: any[] } 
-}
-
-
 
 
 
@@ -402,7 +386,6 @@ class EnsRegistryStorageReader extends ContractStorageReaderBase {
 }
 
 
-
 interface IEnsRegistryTxCaller {
     setApprovalForAll (sender: TSender, operator: TAddress, approved: boolean): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     setOwner (sender: TSender, node: TEth.Hex, owner: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
@@ -425,3 +408,5 @@ interface IEnsRegistryTxData {
 }
 
 
+type TEvents = TEnsRegistryTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

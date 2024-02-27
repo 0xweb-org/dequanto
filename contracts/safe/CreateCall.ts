@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class CreateCall extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/safe/CreateCall.ts"
-}
+        "class": "./contracts/safe/CreateCall.ts"
+    }
 
     // 0x4c8c9ea1
     async performCreate (sender: TSender, value: bigint, deploymentData: TEth.Hex): Promise<TxWriter> {
@@ -66,10 +66,13 @@ export class CreateCall extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TCreateCallTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TCreateCallTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -77,24 +80,36 @@ export class CreateCall extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onContractCreation (fn?: (event: TClientEventsStreamData<TLogContractCreationParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogContractCreationParameters>> {
         return this.$onLog('ContractCreation', fn);
     }
 
-    extractLogsContractCreation (tx: TEth.TxReceipt): ITxLogItem<TLogContractCreation>[] {
+    extractLogsContractCreation (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ContractCreation'>>[] {
         let abi = this.$getAbiItem('event', 'ContractCreation');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogContractCreation>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ContractCreation'>>[];
     }
 
     async getPastLogsContractCreation (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { newContract?: TAddress }
-    }): Promise<ITxLogItem<TLogContractCreation>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ContractCreation'>>[]> {
         return await this.$getPastLogsParsed('ContractCreation', options) as any;
     }
 
@@ -107,36 +122,30 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogContractCreation = {
-        newContract: TAddress
-    };
-    type TLogContractCreationParameters = [ newContract: TAddress ];
-
-interface IEvents {
-  ContractCreation: TLogContractCreationParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodPerformCreate {
-  method: "performCreate"
-  arguments: [ value: bigint, deploymentData: TEth.Hex ]
+export type TCreateCallTypes = {
+    Events: {
+        ContractCreation: {
+            outputParams: { newContract: TAddress },
+            outputArgs:   [ newContract: TAddress ],
+        }
+    },
+    Methods: {
+        performCreate: {
+          method: "performCreate"
+          arguments: [ value: bigint, deploymentData: TEth.Hex ]
+        }
+        performCreate2: {
+          method: "performCreate2"
+          arguments: [ value: bigint, deploymentData: TEth.Hex, salt: TEth.Hex ]
+        }
+    }
 }
-
-interface IMethodPerformCreate2 {
-  method: "performCreate2"
-  arguments: [ value: bigint, deploymentData: TEth.Hex, salt: TEth.Hex ]
-}
-
-interface IMethods {
-  performCreate: IMethodPerformCreate
-  performCreate2: IMethodPerformCreate2
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -152,3 +161,5 @@ interface ICreateCallTxData {
 }
 
 
+type TEvents = TCreateCallTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

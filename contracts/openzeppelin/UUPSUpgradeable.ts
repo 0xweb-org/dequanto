@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class UUPSUpgradeable extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/UUPSUpgradeable.ts"
-}
+        "class": "./contracts/openzeppelin/UUPSUpgradeable.ts"
+    }
 
     // 0x52d1902d
     async proxiableUUID (): Promise<TEth.Hex> {
@@ -71,10 +71,13 @@ export class UUPSUpgradeable extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TUUPSUpgradeableTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TUUPSUpgradeableTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -82,8 +85,20 @@ export class UUPSUpgradeable extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onAdminChanged (fn?: (event: TClientEventsStreamData<TLogAdminChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogAdminChangedParameters>> {
@@ -98,26 +113,26 @@ export class UUPSUpgradeable extends ContractBase {
         return this.$onLog('Upgraded', fn);
     }
 
-    extractLogsAdminChanged (tx: TEth.TxReceipt): ITxLogItem<TLogAdminChanged>[] {
+    extractLogsAdminChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'AdminChanged'>>[] {
         let abi = this.$getAbiItem('event', 'AdminChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogAdminChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'AdminChanged'>>[];
     }
 
-    extractLogsBeaconUpgraded (tx: TEth.TxReceipt): ITxLogItem<TLogBeaconUpgraded>[] {
+    extractLogsBeaconUpgraded (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'BeaconUpgraded'>>[] {
         let abi = this.$getAbiItem('event', 'BeaconUpgraded');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogBeaconUpgraded>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'BeaconUpgraded'>>[];
     }
 
-    extractLogsUpgraded (tx: TEth.TxReceipt): ITxLogItem<TLogUpgraded>[] {
+    extractLogsUpgraded (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Upgraded'>>[] {
         let abi = this.$getAbiItem('event', 'Upgraded');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogUpgraded>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Upgraded'>>[];
     }
 
     async getPastLogsAdminChanged (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogAdminChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'AdminChanged'>>[]> {
         return await this.$getPastLogsParsed('AdminChanged', options) as any;
     }
 
@@ -125,7 +140,7 @@ export class UUPSUpgradeable extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { beacon?: TAddress }
-    }): Promise<ITxLogItem<TLogBeaconUpgraded>[]> {
+    }): Promise<ITxLogItem<TEventParams<'BeaconUpgraded'>>[]> {
         return await this.$getPastLogsParsed('BeaconUpgraded', options) as any;
     }
 
@@ -133,7 +148,7 @@ export class UUPSUpgradeable extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { implementation?: TAddress }
-    }): Promise<ITxLogItem<TLogUpgraded>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Upgraded'>>[]> {
         return await this.$getPastLogsParsed('Upgraded', options) as any;
     }
 
@@ -146,52 +161,42 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogAdminChanged = {
-        previousAdmin: TAddress, newAdmin: TAddress
-    };
-    type TLogAdminChangedParameters = [ previousAdmin: TAddress, newAdmin: TAddress ];
-    type TLogBeaconUpgraded = {
-        beacon: TAddress
-    };
-    type TLogBeaconUpgradedParameters = [ beacon: TAddress ];
-    type TLogUpgraded = {
-        implementation: TAddress
-    };
-    type TLogUpgradedParameters = [ implementation: TAddress ];
-
-interface IEvents {
-  AdminChanged: TLogAdminChangedParameters
-  BeaconUpgraded: TLogBeaconUpgradedParameters
-  Upgraded: TLogUpgradedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodProxiableUUID {
-  method: "proxiableUUID"
-  arguments: [  ]
+export type TUUPSUpgradeableTypes = {
+    Events: {
+        AdminChanged: {
+            outputParams: { previousAdmin: TAddress, newAdmin: TAddress },
+            outputArgs:   [ previousAdmin: TAddress, newAdmin: TAddress ],
+        }
+        BeaconUpgraded: {
+            outputParams: { beacon: TAddress },
+            outputArgs:   [ beacon: TAddress ],
+        }
+        Upgraded: {
+            outputParams: { implementation: TAddress },
+            outputArgs:   [ implementation: TAddress ],
+        }
+    },
+    Methods: {
+        proxiableUUID: {
+          method: "proxiableUUID"
+          arguments: [  ]
+        }
+        upgradeTo: {
+          method: "upgradeTo"
+          arguments: [ newImplementation: TAddress ]
+        }
+        upgradeToAndCall: {
+          method: "upgradeToAndCall"
+          arguments: [ newImplementation: TAddress, data: TEth.Hex ]
+        }
+    }
 }
-
-interface IMethodUpgradeTo {
-  method: "upgradeTo"
-  arguments: [ newImplementation: TAddress ]
-}
-
-interface IMethodUpgradeToAndCall {
-  method: "upgradeToAndCall"
-  arguments: [ newImplementation: TAddress, data: TEth.Hex ]
-}
-
-interface IMethods {
-  proxiableUUID: IMethodProxiableUUID
-  upgradeTo: IMethodUpgradeTo
-  upgradeToAndCall: IMethodUpgradeToAndCall
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -207,3 +212,5 @@ interface IUUPSUpgradeableTxData {
 }
 
 
+type TEvents = TUUPSUpgradeableTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

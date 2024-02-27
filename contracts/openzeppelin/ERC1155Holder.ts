@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class ERC1155Holder extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/ERC1155Holder.ts"
-}
+        "class": "./contracts/openzeppelin/ERC1155Holder.ts"
+    }
 
     // 0xbc197c81
     async onERC1155BatchReceived (sender: TSender, input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TEth.Hex): Promise<TxWriter> {
@@ -71,10 +71,13 @@ export class ERC1155Holder extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TERC1155HolderTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TERC1155HolderTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -82,8 +85,20 @@ export class ERC1155Holder extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
 
@@ -101,38 +116,31 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-
-
-interface IEvents {
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodOnERC1155BatchReceived {
-  method: "onERC1155BatchReceived"
-  arguments: [ input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TEth.Hex ]
+export type TERC1155HolderTypes = {
+    Events: {
+        
+    },
+    Methods: {
+        onERC1155BatchReceived: {
+          method: "onERC1155BatchReceived"
+          arguments: [ input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TEth.Hex ]
+        }
+        onERC1155Received: {
+          method: "onERC1155Received"
+          arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TEth.Hex ]
+        }
+        supportsInterface: {
+          method: "supportsInterface"
+          arguments: [ interfaceId: TEth.Hex ]
+        }
+    }
 }
-
-interface IMethodOnERC1155Received {
-  method: "onERC1155Received"
-  arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TEth.Hex ]
-}
-
-interface IMethodSupportsInterface {
-  method: "supportsInterface"
-  arguments: [ interfaceId: TEth.Hex ]
-}
-
-interface IMethods {
-  onERC1155BatchReceived: IMethodOnERC1155BatchReceived
-  onERC1155Received: IMethodOnERC1155Received
-  supportsInterface: IMethodSupportsInterface
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -148,3 +156,5 @@ interface IERC1155HolderTxData {
 }
 
 
+type TEvents = TERC1155HolderTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

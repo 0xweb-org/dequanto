@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class ERC2771Context extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/ERC2771Context.ts"
-}
+        "class": "./contracts/openzeppelin/ERC2771Context.ts"
+    }
 
     // 0x572b6c05
     async isTrustedForwarder (forwarder: TAddress): Promise<boolean> {
@@ -61,10 +61,13 @@ export class ERC2771Context extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TERC2771ContextTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TERC2771ContextTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -72,8 +75,20 @@ export class ERC2771Context extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
 
@@ -91,26 +106,23 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-
-
-interface IEvents {
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodIsTrustedForwarder {
-  method: "isTrustedForwarder"
-  arguments: [ forwarder: TAddress ]
+export type TERC2771ContextTypes = {
+    Events: {
+        
+    },
+    Methods: {
+        isTrustedForwarder: {
+          method: "isTrustedForwarder"
+          arguments: [ forwarder: TAddress ]
+        }
+    }
 }
-
-interface IMethods {
-  isTrustedForwarder: IMethodIsTrustedForwarder
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -124,3 +136,5 @@ interface IERC2771ContextTxData {
 }
 
 
+type TEvents = TERC2771ContextTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class IOutbox extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/IOutbox.ts"
-}
+        "class": "./contracts/openzeppelin/IOutbox.ts"
+    }
 
     // 0xc75184df
     async OUTBOX_VERSION (): Promise<bigint> {
@@ -136,10 +136,13 @@ export class IOutbox extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TIOutboxTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TIOutboxTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -147,8 +150,20 @@ export class IOutbox extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onOutBoxTransactionExecuted (fn?: (event: TClientEventsStreamData<TLogOutBoxTransactionExecutedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogOutBoxTransactionExecutedParameters>> {
@@ -159,21 +174,21 @@ export class IOutbox extends ContractBase {
         return this.$onLog('SendRootUpdated', fn);
     }
 
-    extractLogsOutBoxTransactionExecuted (tx: TEth.TxReceipt): ITxLogItem<TLogOutBoxTransactionExecuted>[] {
+    extractLogsOutBoxTransactionExecuted (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'OutBoxTransactionExecuted'>>[] {
         let abi = this.$getAbiItem('event', 'OutBoxTransactionExecuted');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogOutBoxTransactionExecuted>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'OutBoxTransactionExecuted'>>[];
     }
 
-    extractLogsSendRootUpdated (tx: TEth.TxReceipt): ITxLogItem<TLogSendRootUpdated>[] {
+    extractLogsSendRootUpdated (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'SendRootUpdated'>>[] {
         let abi = this.$getAbiItem('event', 'SendRootUpdated');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogSendRootUpdated>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'SendRootUpdated'>>[];
     }
 
     async getPastLogsOutBoxTransactionExecuted (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { to?: TAddress,l2Sender?: TAddress,zero?: bigint }
-    }): Promise<ITxLogItem<TLogOutBoxTransactionExecuted>[]> {
+    }): Promise<ITxLogItem<TEventParams<'OutBoxTransactionExecuted'>>[]> {
         return await this.$getPastLogsParsed('OutBoxTransactionExecuted', options) as any;
     }
 
@@ -181,7 +196,7 @@ export class IOutbox extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { blockHash?: TEth.Hex,outputRoot?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogSendRootUpdated>[]> {
+    }): Promise<ITxLogItem<TEventParams<'SendRootUpdated'>>[]> {
         return await this.$getPastLogsParsed('SendRootUpdated', options) as any;
     }
 
@@ -194,125 +209,90 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogOutBoxTransactionExecuted = {
-        to: TAddress, l2Sender: TAddress, zero: bigint, transactionIndex: bigint
-    };
-    type TLogOutBoxTransactionExecutedParameters = [ to: TAddress, l2Sender: TAddress, zero: bigint, transactionIndex: bigint ];
-    type TLogSendRootUpdated = {
-        blockHash: TEth.Hex, outputRoot: TEth.Hex
-    };
-    type TLogSendRootUpdatedParameters = [ blockHash: TEth.Hex, outputRoot: TEth.Hex ];
-
-interface IEvents {
-  OutBoxTransactionExecuted: TLogOutBoxTransactionExecutedParameters
-  SendRootUpdated: TLogSendRootUpdatedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodOUTBOX_VERSION {
-  method: "OUTBOX_VERSION"
-  arguments: [  ]
+export type TIOutboxTypes = {
+    Events: {
+        OutBoxTransactionExecuted: {
+            outputParams: { to: TAddress, l2Sender: TAddress, zero: bigint, transactionIndex: bigint },
+            outputArgs:   [ to: TAddress, l2Sender: TAddress, zero: bigint, transactionIndex: bigint ],
+        }
+        SendRootUpdated: {
+            outputParams: { blockHash: TEth.Hex, outputRoot: TEth.Hex },
+            outputArgs:   [ blockHash: TEth.Hex, outputRoot: TEth.Hex ],
+        }
+    },
+    Methods: {
+        OUTBOX_VERSION: {
+          method: "OUTBOX_VERSION"
+          arguments: [  ]
+        }
+        bridge: {
+          method: "bridge"
+          arguments: [  ]
+        }
+        calculateItemHash: {
+          method: "calculateItemHash"
+          arguments: [ l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TEth.Hex ]
+        }
+        calculateMerkleRoot: {
+          method: "calculateMerkleRoot"
+          arguments: [ proof: TEth.Hex[], path: bigint, item: TEth.Hex ]
+        }
+        executeTransaction: {
+          method: "executeTransaction"
+          arguments: [ proof: TEth.Hex[], index: bigint, l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TEth.Hex ]
+        }
+        executeTransactionSimulation: {
+          method: "executeTransactionSimulation"
+          arguments: [ index: bigint, l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TEth.Hex ]
+        }
+        isSpent: {
+          method: "isSpent"
+          arguments: [ index: bigint ]
+        }
+        l2ToL1Block: {
+          method: "l2ToL1Block"
+          arguments: [  ]
+        }
+        l2ToL1EthBlock: {
+          method: "l2ToL1EthBlock"
+          arguments: [  ]
+        }
+        l2ToL1OutputId: {
+          method: "l2ToL1OutputId"
+          arguments: [  ]
+        }
+        l2ToL1Sender: {
+          method: "l2ToL1Sender"
+          arguments: [  ]
+        }
+        l2ToL1Timestamp: {
+          method: "l2ToL1Timestamp"
+          arguments: [  ]
+        }
+        rollup: {
+          method: "rollup"
+          arguments: [  ]
+        }
+        roots: {
+          method: "roots"
+          arguments: [ input0: TEth.Hex ]
+        }
+        spent: {
+          method: "spent"
+          arguments: [ input0: bigint ]
+        }
+        updateSendRoot: {
+          method: "updateSendRoot"
+          arguments: [ sendRoot: TEth.Hex, l2BlockHash: TEth.Hex ]
+        }
+    }
 }
-
-interface IMethodBridge {
-  method: "bridge"
-  arguments: [  ]
-}
-
-interface IMethodCalculateItemHash {
-  method: "calculateItemHash"
-  arguments: [ l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TEth.Hex ]
-}
-
-interface IMethodCalculateMerkleRoot {
-  method: "calculateMerkleRoot"
-  arguments: [ proof: TEth.Hex[], path: bigint, item: TEth.Hex ]
-}
-
-interface IMethodExecuteTransaction {
-  method: "executeTransaction"
-  arguments: [ proof: TEth.Hex[], index: bigint, l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TEth.Hex ]
-}
-
-interface IMethodExecuteTransactionSimulation {
-  method: "executeTransactionSimulation"
-  arguments: [ index: bigint, l2Sender: TAddress, to: TAddress, l2Block: bigint, l1Block: bigint, l2Timestamp: bigint, value: bigint, data: TEth.Hex ]
-}
-
-interface IMethodIsSpent {
-  method: "isSpent"
-  arguments: [ index: bigint ]
-}
-
-interface IMethodL2ToL1Block {
-  method: "l2ToL1Block"
-  arguments: [  ]
-}
-
-interface IMethodL2ToL1EthBlock {
-  method: "l2ToL1EthBlock"
-  arguments: [  ]
-}
-
-interface IMethodL2ToL1OutputId {
-  method: "l2ToL1OutputId"
-  arguments: [  ]
-}
-
-interface IMethodL2ToL1Sender {
-  method: "l2ToL1Sender"
-  arguments: [  ]
-}
-
-interface IMethodL2ToL1Timestamp {
-  method: "l2ToL1Timestamp"
-  arguments: [  ]
-}
-
-interface IMethodRollup {
-  method: "rollup"
-  arguments: [  ]
-}
-
-interface IMethodRoots {
-  method: "roots"
-  arguments: [ input0: TEth.Hex ]
-}
-
-interface IMethodSpent {
-  method: "spent"
-  arguments: [ input0: bigint ]
-}
-
-interface IMethodUpdateSendRoot {
-  method: "updateSendRoot"
-  arguments: [ sendRoot: TEth.Hex, l2BlockHash: TEth.Hex ]
-}
-
-interface IMethods {
-  OUTBOX_VERSION: IMethodOUTBOX_VERSION
-  bridge: IMethodBridge
-  calculateItemHash: IMethodCalculateItemHash
-  calculateMerkleRoot: IMethodCalculateMerkleRoot
-  executeTransaction: IMethodExecuteTransaction
-  executeTransactionSimulation: IMethodExecuteTransactionSimulation
-  isSpent: IMethodIsSpent
-  l2ToL1Block: IMethodL2ToL1Block
-  l2ToL1EthBlock: IMethodL2ToL1EthBlock
-  l2ToL1OutputId: IMethodL2ToL1OutputId
-  l2ToL1Sender: IMethodL2ToL1Sender
-  l2ToL1Timestamp: IMethodL2ToL1Timestamp
-  rollup: IMethodRollup
-  roots: IMethodRoots
-  spent: IMethodSpent
-  updateSendRoot: IMethodUpdateSendRoot
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -330,3 +310,5 @@ interface IIOutboxTxData {
 }
 
 
+type TEvents = TIOutboxTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

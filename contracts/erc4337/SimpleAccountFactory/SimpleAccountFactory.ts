@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: ./test/fixtures/erc4337/samples/SimpleAccountFactory.sol
  */
 import di from 'a-di';
@@ -40,9 +40,9 @@ export class SimpleAccountFactory extends ContractBase {
     }
 
     $meta = {
-    "source": "./test/fixtures/erc4337/samples/SimpleAccountFactory.sol",
-    "class": "./contracts/erc4337/SimpleAccountFactory/SimpleAccountFactory.ts"
-}
+        "source": "./test/fixtures/erc4337/samples/SimpleAccountFactory.sol",
+        "class": "./contracts/erc4337/SimpleAccountFactory/SimpleAccountFactory.ts"
+    }
 
     async $constructor (deployer: TSender, _entryPoint: TAddress): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -76,10 +76,13 @@ export class SimpleAccountFactory extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TSimpleAccountFactoryTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TSimpleAccountFactoryTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -87,8 +90,20 @@ export class SimpleAccountFactory extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
 
@@ -106,37 +121,31 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-
-
-interface IEvents {
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodCreateAccount {
-  method: "createAccount"
-  arguments: [ owner: TAddress, salt: bigint ]
+export type TSimpleAccountFactoryTypes = {
+    Events: {
+        
+    },
+    Methods: {
+        createAccount: {
+          method: "createAccount"
+          arguments: [ owner: TAddress, salt: bigint ]
+        }
+        getAddress: {
+          method: "getAddress"
+          arguments: [ owner: TAddress, salt: bigint ]
+        }
+        accountImplementation: {
+          method: "accountImplementation"
+          arguments: [  ]
+        }
+    }
 }
-
-interface IMethodGetAddress {
-  method: "getAddress"
-  arguments: [ owner: TAddress, salt: bigint ]
-}
-
-interface IMethodAccountImplementation {
-  method: "accountImplementation"
-  arguments: [  ]
-}
-
-interface IMethods {
-  createAccount: IMethodCreateAccount
-  getAddress: IMethodGetAddress
-  accountImplementation: IMethodAccountImplementation
-  '*': { method: string, arguments: any[] } 
-}
-
-
 
 
 
@@ -158,7 +167,6 @@ class SimpleAccountFactoryStorageReader extends ContractStorageReaderBase {
 }
 
 
-
 interface ISimpleAccountFactoryTxCaller {
     createAccount (sender: TSender, owner: TAddress, salt: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
 }
@@ -169,3 +177,5 @@ interface ISimpleAccountFactoryTxData {
 }
 
 
+type TEvents = TSimpleAccountFactoryTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

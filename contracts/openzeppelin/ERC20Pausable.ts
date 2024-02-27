@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class ERC20Pausable extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/ERC20Pausable.ts"
-}
+        "class": "./contracts/openzeppelin/ERC20Pausable.ts"
+    }
 
     // 0xdd62ed3e
     async allowance (owner: TAddress, spender: TAddress): Promise<bigint> {
@@ -116,10 +116,13 @@ export class ERC20Pausable extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TERC20PausableTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TERC20PausableTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -127,8 +130,20 @@ export class ERC20Pausable extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onApproval (fn?: (event: TClientEventsStreamData<TLogApprovalParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalParameters>> {
@@ -147,31 +162,31 @@ export class ERC20Pausable extends ContractBase {
         return this.$onLog('Unpaused', fn);
     }
 
-    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TLogApproval>[] {
+    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Approval'>>[] {
         let abi = this.$getAbiItem('event', 'Approval');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApproval>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Approval'>>[];
     }
 
-    extractLogsPaused (tx: TEth.TxReceipt): ITxLogItem<TLogPaused>[] {
+    extractLogsPaused (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Paused'>>[] {
         let abi = this.$getAbiItem('event', 'Paused');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogPaused>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Paused'>>[];
     }
 
-    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TLogTransfer>[] {
+    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Transfer'>>[] {
         let abi = this.$getAbiItem('event', 'Transfer');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogTransfer>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Transfer'>>[];
     }
 
-    extractLogsUnpaused (tx: TEth.TxReceipt): ITxLogItem<TLogUnpaused>[] {
+    extractLogsUnpaused (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Unpaused'>>[] {
         let abi = this.$getAbiItem('event', 'Unpaused');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogUnpaused>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Unpaused'>>[];
     }
 
     async getPastLogsApproval (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { owner?: TAddress,spender?: TAddress }
-    }): Promise<ITxLogItem<TLogApproval>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Approval'>>[]> {
         return await this.$getPastLogsParsed('Approval', options) as any;
     }
 
@@ -179,7 +194,7 @@ export class ERC20Pausable extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogPaused>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Paused'>>[]> {
         return await this.$getPastLogsParsed('Paused', options) as any;
     }
 
@@ -187,7 +202,7 @@ export class ERC20Pausable extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { from?: TAddress,to?: TAddress }
-    }): Promise<ITxLogItem<TLogTransfer>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Transfer'>>[]> {
         return await this.$getPastLogsParsed('Transfer', options) as any;
     }
 
@@ -195,7 +210,7 @@ export class ERC20Pausable extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogUnpaused>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Unpaused'>>[]> {
         return await this.$getPastLogsParsed('Unpaused', options) as any;
     }
 
@@ -208,111 +223,82 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogApproval = {
-        owner: TAddress, spender: TAddress, value: bigint
-    };
-    type TLogApprovalParameters = [ owner: TAddress, spender: TAddress, value: bigint ];
-    type TLogPaused = {
-        account: TAddress
-    };
-    type TLogPausedParameters = [ account: TAddress ];
-    type TLogTransfer = {
-        from: TAddress, to: TAddress, value: bigint
-    };
-    type TLogTransferParameters = [ from: TAddress, to: TAddress, value: bigint ];
-    type TLogUnpaused = {
-        account: TAddress
-    };
-    type TLogUnpausedParameters = [ account: TAddress ];
-
-interface IEvents {
-  Approval: TLogApprovalParameters
-  Paused: TLogPausedParameters
-  Transfer: TLogTransferParameters
-  Unpaused: TLogUnpausedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodAllowance {
-  method: "allowance"
-  arguments: [ owner: TAddress, spender: TAddress ]
+export type TERC20PausableTypes = {
+    Events: {
+        Approval: {
+            outputParams: { owner: TAddress, spender: TAddress, value: bigint },
+            outputArgs:   [ owner: TAddress, spender: TAddress, value: bigint ],
+        }
+        Paused: {
+            outputParams: { account: TAddress },
+            outputArgs:   [ account: TAddress ],
+        }
+        Transfer: {
+            outputParams: { from: TAddress, to: TAddress, value: bigint },
+            outputArgs:   [ from: TAddress, to: TAddress, value: bigint ],
+        }
+        Unpaused: {
+            outputParams: { account: TAddress },
+            outputArgs:   [ account: TAddress ],
+        }
+    },
+    Methods: {
+        allowance: {
+          method: "allowance"
+          arguments: [ owner: TAddress, spender: TAddress ]
+        }
+        approve: {
+          method: "approve"
+          arguments: [ spender: TAddress, amount: bigint ]
+        }
+        balanceOf: {
+          method: "balanceOf"
+          arguments: [ account: TAddress ]
+        }
+        decimals: {
+          method: "decimals"
+          arguments: [  ]
+        }
+        decreaseAllowance: {
+          method: "decreaseAllowance"
+          arguments: [ spender: TAddress, subtractedValue: bigint ]
+        }
+        increaseAllowance: {
+          method: "increaseAllowance"
+          arguments: [ spender: TAddress, addedValue: bigint ]
+        }
+        name: {
+          method: "name"
+          arguments: [  ]
+        }
+        paused: {
+          method: "paused"
+          arguments: [  ]
+        }
+        symbol: {
+          method: "symbol"
+          arguments: [  ]
+        }
+        totalSupply: {
+          method: "totalSupply"
+          arguments: [  ]
+        }
+        transfer: {
+          method: "transfer"
+          arguments: [ to: TAddress, amount: bigint ]
+        }
+        transferFrom: {
+          method: "transferFrom"
+          arguments: [ from: TAddress, to: TAddress, amount: bigint ]
+        }
+    }
 }
-
-interface IMethodApprove {
-  method: "approve"
-  arguments: [ spender: TAddress, amount: bigint ]
-}
-
-interface IMethodBalanceOf {
-  method: "balanceOf"
-  arguments: [ account: TAddress ]
-}
-
-interface IMethodDecimals {
-  method: "decimals"
-  arguments: [  ]
-}
-
-interface IMethodDecreaseAllowance {
-  method: "decreaseAllowance"
-  arguments: [ spender: TAddress, subtractedValue: bigint ]
-}
-
-interface IMethodIncreaseAllowance {
-  method: "increaseAllowance"
-  arguments: [ spender: TAddress, addedValue: bigint ]
-}
-
-interface IMethodName {
-  method: "name"
-  arguments: [  ]
-}
-
-interface IMethodPaused {
-  method: "paused"
-  arguments: [  ]
-}
-
-interface IMethodSymbol {
-  method: "symbol"
-  arguments: [  ]
-}
-
-interface IMethodTotalSupply {
-  method: "totalSupply"
-  arguments: [  ]
-}
-
-interface IMethodTransfer {
-  method: "transfer"
-  arguments: [ to: TAddress, amount: bigint ]
-}
-
-interface IMethodTransferFrom {
-  method: "transferFrom"
-  arguments: [ from: TAddress, to: TAddress, amount: bigint ]
-}
-
-interface IMethods {
-  allowance: IMethodAllowance
-  approve: IMethodApprove
-  balanceOf: IMethodBalanceOf
-  decimals: IMethodDecimals
-  decreaseAllowance: IMethodDecreaseAllowance
-  increaseAllowance: IMethodIncreaseAllowance
-  name: IMethodName
-  paused: IMethodPaused
-  symbol: IMethodSymbol
-  totalSupply: IMethodTotalSupply
-  transfer: IMethodTransfer
-  transferFrom: IMethodTransferFrom
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -334,3 +320,5 @@ interface IERC20PausableTxData {
 }
 
 
+type TEvents = TERC20PausableTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

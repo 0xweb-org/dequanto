@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class SafeProxyFactory extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/safe/SafeProxyFactory.ts"
-}
+        "class": "./contracts/safe/SafeProxyFactory.ts"
+    }
 
     // 0xec9e80bb
     async createChainSpecificProxyWithNonce (sender: TSender, _singleton: TAddress, initializer: TEth.Hex, saltNonce: bigint): Promise<TxWriter> {
@@ -81,10 +81,13 @@ export class SafeProxyFactory extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TSafeProxyFactoryTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TSafeProxyFactoryTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -92,24 +95,36 @@ export class SafeProxyFactory extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onProxyCreation (fn?: (event: TClientEventsStreamData<TLogProxyCreationParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogProxyCreationParameters>> {
         return this.$onLog('ProxyCreation', fn);
     }
 
-    extractLogsProxyCreation (tx: TEth.TxReceipt): ITxLogItem<TLogProxyCreation>[] {
+    extractLogsProxyCreation (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ProxyCreation'>>[] {
         let abi = this.$getAbiItem('event', 'ProxyCreation');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogProxyCreation>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ProxyCreation'>>[];
     }
 
     async getPastLogsProxyCreation (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { proxy?: TAddress }
-    }): Promise<ITxLogItem<TLogProxyCreation>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ProxyCreation'>>[]> {
         return await this.$getPastLogsParsed('ProxyCreation', options) as any;
     }
 
@@ -122,54 +137,42 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogProxyCreation = {
-        proxy: TAddress, singleton: TAddress
-    };
-    type TLogProxyCreationParameters = [ proxy: TAddress, singleton: TAddress ];
-
-interface IEvents {
-  ProxyCreation: TLogProxyCreationParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodCreateChainSpecificProxyWithNonce {
-  method: "createChainSpecificProxyWithNonce"
-  arguments: [ _singleton: TAddress, initializer: TEth.Hex, saltNonce: bigint ]
+export type TSafeProxyFactoryTypes = {
+    Events: {
+        ProxyCreation: {
+            outputParams: { proxy: TAddress, singleton: TAddress },
+            outputArgs:   [ proxy: TAddress, singleton: TAddress ],
+        }
+    },
+    Methods: {
+        createChainSpecificProxyWithNonce: {
+          method: "createChainSpecificProxyWithNonce"
+          arguments: [ _singleton: TAddress, initializer: TEth.Hex, saltNonce: bigint ]
+        }
+        createProxyWithCallback: {
+          method: "createProxyWithCallback"
+          arguments: [ _singleton: TAddress, initializer: TEth.Hex, saltNonce: bigint, callback: TAddress ]
+        }
+        createProxyWithNonce: {
+          method: "createProxyWithNonce"
+          arguments: [ _singleton: TAddress, initializer: TEth.Hex, saltNonce: bigint ]
+        }
+        getChainId: {
+          method: "getChainId"
+          arguments: [  ]
+        }
+        proxyCreationCode: {
+          method: "proxyCreationCode"
+          arguments: [  ]
+        }
+    }
 }
-
-interface IMethodCreateProxyWithCallback {
-  method: "createProxyWithCallback"
-  arguments: [ _singleton: TAddress, initializer: TEth.Hex, saltNonce: bigint, callback: TAddress ]
-}
-
-interface IMethodCreateProxyWithNonce {
-  method: "createProxyWithNonce"
-  arguments: [ _singleton: TAddress, initializer: TEth.Hex, saltNonce: bigint ]
-}
-
-interface IMethodGetChainId {
-  method: "getChainId"
-  arguments: [  ]
-}
-
-interface IMethodProxyCreationCode {
-  method: "proxyCreationCode"
-  arguments: [  ]
-}
-
-interface IMethods {
-  createChainSpecificProxyWithNonce: IMethodCreateChainSpecificProxyWithNonce
-  createProxyWithCallback: IMethodCreateProxyWithCallback
-  createProxyWithNonce: IMethodCreateProxyWithNonce
-  getChainId: IMethodGetChainId
-  proxyCreationCode: IMethodProxyCreationCode
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -187,3 +190,5 @@ interface ISafeProxyFactoryTxData {
 }
 
 
+type TEvents = TSafeProxyFactoryTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

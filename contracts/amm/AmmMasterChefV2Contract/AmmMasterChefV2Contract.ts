@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://bscscan.com/address/0x73feaa1eE314F8c655E354234017bE2193C9E24E#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class AmmMasterChefV2Contract extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/amm/AmmMasterChefV2Contract/AmmMasterChefV2Contract.ts"
-}
+        "class": "./contracts/amm/AmmMasterChefV2Contract/AmmMasterChefV2Contract.ts"
+    }
 
     async $constructor (deployer: TSender, _cake: TAddress, _syrup: TAddress, _devaddr: TAddress, _cakePerBlock: bigint, _startBlock: bigint): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -205,10 +205,13 @@ export class AmmMasterChefV2Contract extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TAmmMasterChefV2ContractTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TAmmMasterChefV2ContractTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -216,8 +219,20 @@ export class AmmMasterChefV2Contract extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onDeposit (fn?: (event: TClientEventsStreamData<TLogDepositParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDepositParameters>> {
@@ -236,31 +251,31 @@ export class AmmMasterChefV2Contract extends ContractBase {
         return this.$onLog('Withdraw', fn);
     }
 
-    extractLogsDeposit (tx: TEth.TxReceipt): ITxLogItem<TLogDeposit>[] {
+    extractLogsDeposit (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Deposit'>>[] {
         let abi = this.$getAbiItem('event', 'Deposit');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogDeposit>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Deposit'>>[];
     }
 
-    extractLogsEmergencyWithdraw (tx: TEth.TxReceipt): ITxLogItem<TLogEmergencyWithdraw>[] {
+    extractLogsEmergencyWithdraw (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'EmergencyWithdraw'>>[] {
         let abi = this.$getAbiItem('event', 'EmergencyWithdraw');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogEmergencyWithdraw>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'EmergencyWithdraw'>>[];
     }
 
-    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TLogOwnershipTransferred>[] {
+    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'OwnershipTransferred'>>[] {
         let abi = this.$getAbiItem('event', 'OwnershipTransferred');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogOwnershipTransferred>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'OwnershipTransferred'>>[];
     }
 
-    extractLogsWithdraw (tx: TEth.TxReceipt): ITxLogItem<TLogWithdraw>[] {
+    extractLogsWithdraw (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Withdraw'>>[] {
         let abi = this.$getAbiItem('event', 'Withdraw');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogWithdraw>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Withdraw'>>[];
     }
 
     async getPastLogsDeposit (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { user?: TAddress,pid?: bigint }
-    }): Promise<ITxLogItem<TLogDeposit>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Deposit'>>[]> {
         return await this.$getPastLogsParsed('Deposit', options) as any;
     }
 
@@ -268,7 +283,7 @@ export class AmmMasterChefV2Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { user?: TAddress,pid?: bigint }
-    }): Promise<ITxLogItem<TLogEmergencyWithdraw>[]> {
+    }): Promise<ITxLogItem<TEventParams<'EmergencyWithdraw'>>[]> {
         return await this.$getPastLogsParsed('EmergencyWithdraw', options) as any;
     }
 
@@ -276,7 +291,7 @@ export class AmmMasterChefV2Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { previousOwner?: TAddress,newOwner?: TAddress }
-    }): Promise<ITxLogItem<TLogOwnershipTransferred>[]> {
+    }): Promise<ITxLogItem<TEventParams<'OwnershipTransferred'>>[]> {
         return await this.$getPastLogsParsed('OwnershipTransferred', options) as any;
     }
 
@@ -284,7 +299,7 @@ export class AmmMasterChefV2Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { user?: TAddress,pid?: bigint }
-    }): Promise<ITxLogItem<TLogWithdraw>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Withdraw'>>[]> {
         return await this.$getPastLogsParsed('Withdraw', options) as any;
     }
 
@@ -297,212 +312,150 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogDeposit = {
-        user: TAddress, pid: bigint, amount: bigint
-    };
-    type TLogDepositParameters = [ user: TAddress, pid: bigint, amount: bigint ];
-    type TLogEmergencyWithdraw = {
-        user: TAddress, pid: bigint, amount: bigint
-    };
-    type TLogEmergencyWithdrawParameters = [ user: TAddress, pid: bigint, amount: bigint ];
-    type TLogOwnershipTransferred = {
-        previousOwner: TAddress, newOwner: TAddress
-    };
-    type TLogOwnershipTransferredParameters = [ previousOwner: TAddress, newOwner: TAddress ];
-    type TLogWithdraw = {
-        user: TAddress, pid: bigint, amount: bigint
-    };
-    type TLogWithdrawParameters = [ user: TAddress, pid: bigint, amount: bigint ];
-
-interface IEvents {
-  Deposit: TLogDepositParameters
-  EmergencyWithdraw: TLogEmergencyWithdrawParameters
-  OwnershipTransferred: TLogOwnershipTransferredParameters
-  Withdraw: TLogWithdrawParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodBONUS_MULTIPLIER {
-  method: "BONUS_MULTIPLIER"
-  arguments: [  ]
+export type TAmmMasterChefV2ContractTypes = {
+    Events: {
+        Deposit: {
+            outputParams: { user: TAddress, pid: bigint, amount: bigint },
+            outputArgs:   [ user: TAddress, pid: bigint, amount: bigint ],
+        }
+        EmergencyWithdraw: {
+            outputParams: { user: TAddress, pid: bigint, amount: bigint },
+            outputArgs:   [ user: TAddress, pid: bigint, amount: bigint ],
+        }
+        OwnershipTransferred: {
+            outputParams: { previousOwner: TAddress, newOwner: TAddress },
+            outputArgs:   [ previousOwner: TAddress, newOwner: TAddress ],
+        }
+        Withdraw: {
+            outputParams: { user: TAddress, pid: bigint, amount: bigint },
+            outputArgs:   [ user: TAddress, pid: bigint, amount: bigint ],
+        }
+    },
+    Methods: {
+        BONUS_MULTIPLIER: {
+          method: "BONUS_MULTIPLIER"
+          arguments: [  ]
+        }
+        add: {
+          method: "add"
+          arguments: [ _allocPoint: bigint, _lpToken: TAddress, _withUpdate: boolean ]
+        }
+        cake: {
+          method: "cake"
+          arguments: [  ]
+        }
+        cakePerBlock: {
+          method: "cakePerBlock"
+          arguments: [  ]
+        }
+        deposit: {
+          method: "deposit"
+          arguments: [ _pid: bigint, _amount: bigint ]
+        }
+        dev: {
+          method: "dev"
+          arguments: [ _devaddr: TAddress ]
+        }
+        devaddr: {
+          method: "devaddr"
+          arguments: [  ]
+        }
+        emergencyWithdraw: {
+          method: "emergencyWithdraw"
+          arguments: [ _pid: bigint ]
+        }
+        enterStaking: {
+          method: "enterStaking"
+          arguments: [ _amount: bigint ]
+        }
+        getMultiplier: {
+          method: "getMultiplier"
+          arguments: [ _from: bigint, _to: bigint ]
+        }
+        leaveStaking: {
+          method: "leaveStaking"
+          arguments: [ _amount: bigint ]
+        }
+        massUpdatePools: {
+          method: "massUpdatePools"
+          arguments: [  ]
+        }
+        migrate: {
+          method: "migrate"
+          arguments: [ _pid: bigint ]
+        }
+        migrator: {
+          method: "migrator"
+          arguments: [  ]
+        }
+        owner: {
+          method: "owner"
+          arguments: [  ]
+        }
+        pendingCake: {
+          method: "pendingCake"
+          arguments: [ _pid: bigint, _user: TAddress ]
+        }
+        poolInfo: {
+          method: "poolInfo"
+          arguments: [ input0: bigint ]
+        }
+        poolLength: {
+          method: "poolLength"
+          arguments: [  ]
+        }
+        renounceOwnership: {
+          method: "renounceOwnership"
+          arguments: [  ]
+        }
+        set: {
+          method: "set"
+          arguments: [ _pid: bigint, _allocPoint: bigint, _withUpdate: boolean ]
+        }
+        setMigrator: {
+          method: "setMigrator"
+          arguments: [ _migrator: TAddress ]
+        }
+        startBlock: {
+          method: "startBlock"
+          arguments: [  ]
+        }
+        syrup: {
+          method: "syrup"
+          arguments: [  ]
+        }
+        totalAllocPoint: {
+          method: "totalAllocPoint"
+          arguments: [  ]
+        }
+        transferOwnership: {
+          method: "transferOwnership"
+          arguments: [ newOwner: TAddress ]
+        }
+        updateMultiplier: {
+          method: "updateMultiplier"
+          arguments: [ multiplierNumber: bigint ]
+        }
+        updatePool: {
+          method: "updatePool"
+          arguments: [ _pid: bigint ]
+        }
+        userInfo: {
+          method: "userInfo"
+          arguments: [ input0: bigint, input1: TAddress ]
+        }
+        withdraw: {
+          method: "withdraw"
+          arguments: [ _pid: bigint, _amount: bigint ]
+        }
+    }
 }
-
-interface IMethodAdd {
-  method: "add"
-  arguments: [ _allocPoint: bigint, _lpToken: TAddress, _withUpdate: boolean ]
-}
-
-interface IMethodCake {
-  method: "cake"
-  arguments: [  ]
-}
-
-interface IMethodCakePerBlock {
-  method: "cakePerBlock"
-  arguments: [  ]
-}
-
-interface IMethodDeposit {
-  method: "deposit"
-  arguments: [ _pid: bigint, _amount: bigint ]
-}
-
-interface IMethodDev {
-  method: "dev"
-  arguments: [ _devaddr: TAddress ]
-}
-
-interface IMethodDevaddr {
-  method: "devaddr"
-  arguments: [  ]
-}
-
-interface IMethodEmergencyWithdraw {
-  method: "emergencyWithdraw"
-  arguments: [ _pid: bigint ]
-}
-
-interface IMethodEnterStaking {
-  method: "enterStaking"
-  arguments: [ _amount: bigint ]
-}
-
-interface IMethodGetMultiplier {
-  method: "getMultiplier"
-  arguments: [ _from: bigint, _to: bigint ]
-}
-
-interface IMethodLeaveStaking {
-  method: "leaveStaking"
-  arguments: [ _amount: bigint ]
-}
-
-interface IMethodMassUpdatePools {
-  method: "massUpdatePools"
-  arguments: [  ]
-}
-
-interface IMethodMigrate {
-  method: "migrate"
-  arguments: [ _pid: bigint ]
-}
-
-interface IMethodMigrator {
-  method: "migrator"
-  arguments: [  ]
-}
-
-interface IMethodOwner {
-  method: "owner"
-  arguments: [  ]
-}
-
-interface IMethodPendingCake {
-  method: "pendingCake"
-  arguments: [ _pid: bigint, _user: TAddress ]
-}
-
-interface IMethodPoolInfo {
-  method: "poolInfo"
-  arguments: [ input0: bigint ]
-}
-
-interface IMethodPoolLength {
-  method: "poolLength"
-  arguments: [  ]
-}
-
-interface IMethodRenounceOwnership {
-  method: "renounceOwnership"
-  arguments: [  ]
-}
-
-interface IMethodSet {
-  method: "set"
-  arguments: [ _pid: bigint, _allocPoint: bigint, _withUpdate: boolean ]
-}
-
-interface IMethodSetMigrator {
-  method: "setMigrator"
-  arguments: [ _migrator: TAddress ]
-}
-
-interface IMethodStartBlock {
-  method: "startBlock"
-  arguments: [  ]
-}
-
-interface IMethodSyrup {
-  method: "syrup"
-  arguments: [  ]
-}
-
-interface IMethodTotalAllocPoint {
-  method: "totalAllocPoint"
-  arguments: [  ]
-}
-
-interface IMethodTransferOwnership {
-  method: "transferOwnership"
-  arguments: [ newOwner: TAddress ]
-}
-
-interface IMethodUpdateMultiplier {
-  method: "updateMultiplier"
-  arguments: [ multiplierNumber: bigint ]
-}
-
-interface IMethodUpdatePool {
-  method: "updatePool"
-  arguments: [ _pid: bigint ]
-}
-
-interface IMethodUserInfo {
-  method: "userInfo"
-  arguments: [ input0: bigint, input1: TAddress ]
-}
-
-interface IMethodWithdraw {
-  method: "withdraw"
-  arguments: [ _pid: bigint, _amount: bigint ]
-}
-
-interface IMethods {
-  BONUS_MULTIPLIER: IMethodBONUS_MULTIPLIER
-  add: IMethodAdd
-  cake: IMethodCake
-  cakePerBlock: IMethodCakePerBlock
-  deposit: IMethodDeposit
-  dev: IMethodDev
-  devaddr: IMethodDevaddr
-  emergencyWithdraw: IMethodEmergencyWithdraw
-  enterStaking: IMethodEnterStaking
-  getMultiplier: IMethodGetMultiplier
-  leaveStaking: IMethodLeaveStaking
-  massUpdatePools: IMethodMassUpdatePools
-  migrate: IMethodMigrate
-  migrator: IMethodMigrator
-  owner: IMethodOwner
-  pendingCake: IMethodPendingCake
-  poolInfo: IMethodPoolInfo
-  poolLength: IMethodPoolLength
-  renounceOwnership: IMethodRenounceOwnership
-  set: IMethodSet
-  setMigrator: IMethodSetMigrator
-  startBlock: IMethodStartBlock
-  syrup: IMethodSyrup
-  totalAllocPoint: IMethodTotalAllocPoint
-  transferOwnership: IMethodTransferOwnership
-  updateMultiplier: IMethodUpdateMultiplier
-  updatePool: IMethodUpdatePool
-  userInfo: IMethodUserInfo
-  withdraw: IMethodWithdraw
-  '*': { method: string, arguments: any[] } 
-}
-
-
 
 
 
@@ -644,7 +597,6 @@ class AmmMasterChefV2ContractStorageReader extends ContractStorageReaderBase {
 }
 
 
-
 interface IAmmMasterChefV2ContractTxCaller {
     add (sender: TSender, _allocPoint: bigint, _lpToken: TAddress, _withUpdate: boolean): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     deposit (sender: TSender, _pid: bigint, _amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
@@ -683,3 +635,5 @@ interface IAmmMasterChefV2ContractTxData {
 }
 
 
+type TEvents = TAmmMasterChefV2ContractTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

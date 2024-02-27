@@ -1,5 +1,7 @@
 import { TEth } from '@dequanto/models/TEth';
 
+const $Array = Array;
+
 export namespace $is {
     export function Number <T> (val: number | any): val is number {
         return typeof val === 'number' && isNaN(val) === false;
@@ -18,7 +20,7 @@ export namespace $is {
         if (typeof val === 'number' && val === 0) {
             return true;
         }
-        if (typeof val === 'string' || Array.isArray(val)) {
+        if (typeof val === 'string' || $Array.isArray(val)) {
             return val.length === 0;
         }
         return false;
@@ -54,5 +56,12 @@ export namespace $is {
     }
     export function HexBytes32(str: string | any): str is TEth.Hex {
         return Hex(str) && /0x.{64}/.test(str);
+    }
+
+    export function Array (val): val is any[] {
+        return $Array.isArray(val);
+    }
+    export function ArrayOfStrings (val): val is string[] {
+        return $Array.isArray(val) && val.length > 0 && val.every(x => typeof x ==='string');
     }
 }

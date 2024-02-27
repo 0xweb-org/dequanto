@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/0x5ff137d4b0fdcd49dca30c7cf57e578a026d2789#code
  */
 import di from 'a-di';
@@ -91,8 +91,8 @@ export class EntryPoint extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/erc4337/EntryPoint/EntryPoint.ts"
-}
+        "class": "./contracts/erc4337/EntryPoint/EntryPoint.ts"
+    }
 
     // 0x8f41ec5a
     async SIG_VALIDATION_FAILED (): Promise<bigint> {
@@ -207,10 +207,13 @@ export class EntryPoint extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TEntryPointTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TEntryPointTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -218,8 +221,20 @@ export class EntryPoint extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onAccountDeployed (fn?: (event: TClientEventsStreamData<TLogAccountDeployedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogAccountDeployedParameters>> {
@@ -262,61 +277,61 @@ export class EntryPoint extends ContractBase {
         return this.$onLog('Withdrawn', fn);
     }
 
-    extractLogsAccountDeployed (tx: TEth.TxReceipt): ITxLogItem<TLogAccountDeployed>[] {
+    extractLogsAccountDeployed (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'AccountDeployed'>>[] {
         let abi = this.$getAbiItem('event', 'AccountDeployed');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogAccountDeployed>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'AccountDeployed'>>[];
     }
 
-    extractLogsBeforeExecution (tx: TEth.TxReceipt): ITxLogItem<TLogBeforeExecution>[] {
+    extractLogsBeforeExecution (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'BeforeExecution'>>[] {
         let abi = this.$getAbiItem('event', 'BeforeExecution');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogBeforeExecution>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'BeforeExecution'>>[];
     }
 
-    extractLogsDeposited (tx: TEth.TxReceipt): ITxLogItem<TLogDeposited>[] {
+    extractLogsDeposited (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Deposited'>>[] {
         let abi = this.$getAbiItem('event', 'Deposited');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogDeposited>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Deposited'>>[];
     }
 
-    extractLogsSignatureAggregatorChanged (tx: TEth.TxReceipt): ITxLogItem<TLogSignatureAggregatorChanged>[] {
+    extractLogsSignatureAggregatorChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'SignatureAggregatorChanged'>>[] {
         let abi = this.$getAbiItem('event', 'SignatureAggregatorChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogSignatureAggregatorChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'SignatureAggregatorChanged'>>[];
     }
 
-    extractLogsStakeLocked (tx: TEth.TxReceipt): ITxLogItem<TLogStakeLocked>[] {
+    extractLogsStakeLocked (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'StakeLocked'>>[] {
         let abi = this.$getAbiItem('event', 'StakeLocked');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogStakeLocked>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'StakeLocked'>>[];
     }
 
-    extractLogsStakeUnlocked (tx: TEth.TxReceipt): ITxLogItem<TLogStakeUnlocked>[] {
+    extractLogsStakeUnlocked (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'StakeUnlocked'>>[] {
         let abi = this.$getAbiItem('event', 'StakeUnlocked');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogStakeUnlocked>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'StakeUnlocked'>>[];
     }
 
-    extractLogsStakeWithdrawn (tx: TEth.TxReceipt): ITxLogItem<TLogStakeWithdrawn>[] {
+    extractLogsStakeWithdrawn (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'StakeWithdrawn'>>[] {
         let abi = this.$getAbiItem('event', 'StakeWithdrawn');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogStakeWithdrawn>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'StakeWithdrawn'>>[];
     }
 
-    extractLogsUserOperationEvent (tx: TEth.TxReceipt): ITxLogItem<TLogUserOperationEvent>[] {
+    extractLogsUserOperationEvent (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'UserOperationEvent'>>[] {
         let abi = this.$getAbiItem('event', 'UserOperationEvent');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogUserOperationEvent>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'UserOperationEvent'>>[];
     }
 
-    extractLogsUserOperationRevertReason (tx: TEth.TxReceipt): ITxLogItem<TLogUserOperationRevertReason>[] {
+    extractLogsUserOperationRevertReason (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'UserOperationRevertReason'>>[] {
         let abi = this.$getAbiItem('event', 'UserOperationRevertReason');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogUserOperationRevertReason>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'UserOperationRevertReason'>>[];
     }
 
-    extractLogsWithdrawn (tx: TEth.TxReceipt): ITxLogItem<TLogWithdrawn>[] {
+    extractLogsWithdrawn (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Withdrawn'>>[] {
         let abi = this.$getAbiItem('event', 'Withdrawn');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogWithdrawn>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Withdrawn'>>[];
     }
 
     async getPastLogsAccountDeployed (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { userOpHash?: TEth.Hex,sender?: TAddress }
-    }): Promise<ITxLogItem<TLogAccountDeployed>[]> {
+    }): Promise<ITxLogItem<TEventParams<'AccountDeployed'>>[]> {
         return await this.$getPastLogsParsed('AccountDeployed', options) as any;
     }
 
@@ -324,7 +339,7 @@ export class EntryPoint extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogBeforeExecution>[]> {
+    }): Promise<ITxLogItem<TEventParams<'BeforeExecution'>>[]> {
         return await this.$getPastLogsParsed('BeforeExecution', options) as any;
     }
 
@@ -332,7 +347,7 @@ export class EntryPoint extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { account?: TAddress }
-    }): Promise<ITxLogItem<TLogDeposited>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Deposited'>>[]> {
         return await this.$getPastLogsParsed('Deposited', options) as any;
     }
 
@@ -340,7 +355,7 @@ export class EntryPoint extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { aggregator?: TAddress }
-    }): Promise<ITxLogItem<TLogSignatureAggregatorChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'SignatureAggregatorChanged'>>[]> {
         return await this.$getPastLogsParsed('SignatureAggregatorChanged', options) as any;
     }
 
@@ -348,7 +363,7 @@ export class EntryPoint extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { account?: TAddress }
-    }): Promise<ITxLogItem<TLogStakeLocked>[]> {
+    }): Promise<ITxLogItem<TEventParams<'StakeLocked'>>[]> {
         return await this.$getPastLogsParsed('StakeLocked', options) as any;
     }
 
@@ -356,7 +371,7 @@ export class EntryPoint extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { account?: TAddress }
-    }): Promise<ITxLogItem<TLogStakeUnlocked>[]> {
+    }): Promise<ITxLogItem<TEventParams<'StakeUnlocked'>>[]> {
         return await this.$getPastLogsParsed('StakeUnlocked', options) as any;
     }
 
@@ -364,7 +379,7 @@ export class EntryPoint extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { account?: TAddress }
-    }): Promise<ITxLogItem<TLogStakeWithdrawn>[]> {
+    }): Promise<ITxLogItem<TEventParams<'StakeWithdrawn'>>[]> {
         return await this.$getPastLogsParsed('StakeWithdrawn', options) as any;
     }
 
@@ -372,7 +387,7 @@ export class EntryPoint extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { userOpHash?: TEth.Hex,sender?: TAddress,paymaster?: TAddress }
-    }): Promise<ITxLogItem<TLogUserOperationEvent>[]> {
+    }): Promise<ITxLogItem<TEventParams<'UserOperationEvent'>>[]> {
         return await this.$getPastLogsParsed('UserOperationEvent', options) as any;
     }
 
@@ -380,7 +395,7 @@ export class EntryPoint extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { userOpHash?: TEth.Hex,sender?: TAddress }
-    }): Promise<ITxLogItem<TLogUserOperationRevertReason>[]> {
+    }): Promise<ITxLogItem<TEventParams<'UserOperationRevertReason'>>[]> {
         return await this.$getPastLogsParsed('UserOperationRevertReason', options) as any;
     }
 
@@ -388,7 +403,7 @@ export class EntryPoint extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { account?: TAddress }
-    }): Promise<ITxLogItem<TLogWithdrawn>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Withdrawn'>>[]> {
         return await this.$getPastLogsParsed('Withdrawn', options) as any;
     }
 
@@ -401,188 +416,138 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogAccountDeployed = {
-        userOpHash: TEth.Hex, _sender: TAddress, factory: TAddress, paymaster: TAddress
-    };
-    type TLogAccountDeployedParameters = [ userOpHash: TEth.Hex, _sender: TAddress, factory: TAddress, paymaster: TAddress ];
-    type TLogBeforeExecution = {
-        
-    };
-    type TLogBeforeExecutionParameters = [  ];
-    type TLogDeposited = {
-        account: TAddress, totalDeposit: bigint
-    };
-    type TLogDepositedParameters = [ account: TAddress, totalDeposit: bigint ];
-    type TLogSignatureAggregatorChanged = {
-        aggregator: TAddress
-    };
-    type TLogSignatureAggregatorChangedParameters = [ aggregator: TAddress ];
-    type TLogStakeLocked = {
-        account: TAddress, totalStaked: bigint, unstakeDelaySec: bigint
-    };
-    type TLogStakeLockedParameters = [ account: TAddress, totalStaked: bigint, unstakeDelaySec: bigint ];
-    type TLogStakeUnlocked = {
-        account: TAddress, withdrawTime: bigint
-    };
-    type TLogStakeUnlockedParameters = [ account: TAddress, withdrawTime: bigint ];
-    type TLogStakeWithdrawn = {
-        account: TAddress, withdrawAddress: TAddress, amount: bigint
-    };
-    type TLogStakeWithdrawnParameters = [ account: TAddress, withdrawAddress: TAddress, amount: bigint ];
-    type TLogUserOperationEvent = {
-        userOpHash: TEth.Hex, _sender: TAddress, paymaster: TAddress, nonce: bigint, success: boolean, actualGasCost: bigint, actualGasUsed: bigint
-    };
-    type TLogUserOperationEventParameters = [ userOpHash: TEth.Hex, _sender: TAddress, paymaster: TAddress, nonce: bigint, success: boolean, actualGasCost: bigint, actualGasUsed: bigint ];
-    type TLogUserOperationRevertReason = {
-        userOpHash: TEth.Hex, _sender: TAddress, nonce: bigint, revertReason: TEth.Hex
-    };
-    type TLogUserOperationRevertReasonParameters = [ userOpHash: TEth.Hex, _sender: TAddress, nonce: bigint, revertReason: TEth.Hex ];
-    type TLogWithdrawn = {
-        account: TAddress, withdrawAddress: TAddress, amount: bigint
-    };
-    type TLogWithdrawnParameters = [ account: TAddress, withdrawAddress: TAddress, amount: bigint ];
-
-interface IEvents {
-  AccountDeployed: TLogAccountDeployedParameters
-  BeforeExecution: TLogBeforeExecutionParameters
-  Deposited: TLogDepositedParameters
-  SignatureAggregatorChanged: TLogSignatureAggregatorChangedParameters
-  StakeLocked: TLogStakeLockedParameters
-  StakeUnlocked: TLogStakeUnlockedParameters
-  StakeWithdrawn: TLogStakeWithdrawnParameters
-  UserOperationEvent: TLogUserOperationEventParameters
-  UserOperationRevertReason: TLogUserOperationRevertReasonParameters
-  Withdrawn: TLogWithdrawnParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodSIG_VALIDATION_FAILED {
-  method: "SIG_VALIDATION_FAILED"
-  arguments: [  ]
+export type TEntryPointTypes = {
+    Events: {
+        AccountDeployed: {
+            outputParams: { userOpHash: TEth.Hex, _sender: TAddress, factory: TAddress, paymaster: TAddress },
+            outputArgs:   [ userOpHash: TEth.Hex, _sender: TAddress, factory: TAddress, paymaster: TAddress ],
+        }
+        BeforeExecution: {
+            outputParams: {  },
+            outputArgs:   [  ],
+        }
+        Deposited: {
+            outputParams: { account: TAddress, totalDeposit: bigint },
+            outputArgs:   [ account: TAddress, totalDeposit: bigint ],
+        }
+        SignatureAggregatorChanged: {
+            outputParams: { aggregator: TAddress },
+            outputArgs:   [ aggregator: TAddress ],
+        }
+        StakeLocked: {
+            outputParams: { account: TAddress, totalStaked: bigint, unstakeDelaySec: bigint },
+            outputArgs:   [ account: TAddress, totalStaked: bigint, unstakeDelaySec: bigint ],
+        }
+        StakeUnlocked: {
+            outputParams: { account: TAddress, withdrawTime: bigint },
+            outputArgs:   [ account: TAddress, withdrawTime: bigint ],
+        }
+        StakeWithdrawn: {
+            outputParams: { account: TAddress, withdrawAddress: TAddress, amount: bigint },
+            outputArgs:   [ account: TAddress, withdrawAddress: TAddress, amount: bigint ],
+        }
+        UserOperationEvent: {
+            outputParams: { userOpHash: TEth.Hex, _sender: TAddress, paymaster: TAddress, nonce: bigint, success: boolean, actualGasCost: bigint, actualGasUsed: bigint },
+            outputArgs:   [ userOpHash: TEth.Hex, _sender: TAddress, paymaster: TAddress, nonce: bigint, success: boolean, actualGasCost: bigint, actualGasUsed: bigint ],
+        }
+        UserOperationRevertReason: {
+            outputParams: { userOpHash: TEth.Hex, _sender: TAddress, nonce: bigint, revertReason: TEth.Hex },
+            outputArgs:   [ userOpHash: TEth.Hex, _sender: TAddress, nonce: bigint, revertReason: TEth.Hex ],
+        }
+        Withdrawn: {
+            outputParams: { account: TAddress, withdrawAddress: TAddress, amount: bigint },
+            outputArgs:   [ account: TAddress, withdrawAddress: TAddress, amount: bigint ],
+        }
+    },
+    Methods: {
+        SIG_VALIDATION_FAILED: {
+          method: "SIG_VALIDATION_FAILED"
+          arguments: [  ]
+        }
+        _validateSenderAndPaymaster: {
+          method: "_validateSenderAndPaymaster"
+          arguments: [ initCode: TEth.Hex, _sender: TAddress, paymasterAndData: TEth.Hex ]
+        }
+        addStake: {
+          method: "addStake"
+          arguments: [ unstakeDelaySec: number ]
+        }
+        balanceOf: {
+          method: "balanceOf"
+          arguments: [ account: TAddress ]
+        }
+        depositTo: {
+          method: "depositTo"
+          arguments: [ account: TAddress ]
+        }
+        deposits: {
+          method: "deposits"
+          arguments: [ input0: TAddress ]
+        }
+        getDepositInfo: {
+          method: "getDepositInfo"
+          arguments: [ account: TAddress ]
+        }
+        getNonce: {
+          method: "getNonce"
+          arguments: [ _sender: TAddress, key: bigint ]
+        }
+        getSenderAddress: {
+          method: "getSenderAddress"
+          arguments: [ initCode: TEth.Hex ]
+        }
+        getUserOpHash: {
+          method: "getUserOpHash"
+          arguments: [ userOp: { sender: TAddress, nonce: bigint, initCode: TEth.Hex, callData: TEth.Hex, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TEth.Hex, signature: TEth.Hex } ]
+        }
+        handleAggregatedOps: {
+          method: "handleAggregatedOps"
+          arguments: [ opsPerAggregator: { userOps: { sender: TAddress, nonce: bigint, initCode: TEth.Hex, callData: TEth.Hex, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TEth.Hex, signature: TEth.Hex }[], aggregator: TAddress, signature: TEth.Hex }[], beneficiary: TAddress ]
+        }
+        handleOps: {
+          method: "handleOps"
+          arguments: [ ops: { sender: TAddress, nonce: bigint, initCode: TEth.Hex, callData: TEth.Hex, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TEth.Hex, signature: TEth.Hex }[], beneficiary: TAddress ]
+        }
+        incrementNonce: {
+          method: "incrementNonce"
+          arguments: [ key: bigint ]
+        }
+        innerHandleOp: {
+          method: "innerHandleOp"
+          arguments: [ callData: TEth.Hex, opInfo: { mUserOp: { sender: TAddress, nonce: bigint, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, paymaster: TAddress, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint }, userOpHash: TEth.Hex, prefund: bigint, contextOffset: bigint, preOpGas: bigint }, context: TEth.Hex ]
+        }
+        nonceSequenceNumber: {
+          method: "nonceSequenceNumber"
+          arguments: [ input0: TAddress, input1: bigint ]
+        }
+        simulateHandleOp: {
+          method: "simulateHandleOp"
+          arguments: [ op: { sender: TAddress, nonce: bigint, initCode: TEth.Hex, callData: TEth.Hex, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TEth.Hex, signature: TEth.Hex }, target: TAddress, targetCallData: TEth.Hex ]
+        }
+        simulateValidation: {
+          method: "simulateValidation"
+          arguments: [ userOp: { sender: TAddress, nonce: bigint, initCode: TEth.Hex, callData: TEth.Hex, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TEth.Hex, signature: TEth.Hex } ]
+        }
+        unlockStake: {
+          method: "unlockStake"
+          arguments: [  ]
+        }
+        withdrawStake: {
+          method: "withdrawStake"
+          arguments: [ withdrawAddress: TAddress ]
+        }
+        withdrawTo: {
+          method: "withdrawTo"
+          arguments: [ withdrawAddress: TAddress, withdrawAmount: bigint ]
+        }
+    }
 }
-
-interface IMethod_validateSenderAndPaymaster {
-  method: "_validateSenderAndPaymaster"
-  arguments: [ initCode: TEth.Hex, _sender: TAddress, paymasterAndData: TEth.Hex ]
-}
-
-interface IMethodAddStake {
-  method: "addStake"
-  arguments: [ unstakeDelaySec: number ]
-}
-
-interface IMethodBalanceOf {
-  method: "balanceOf"
-  arguments: [ account: TAddress ]
-}
-
-interface IMethodDepositTo {
-  method: "depositTo"
-  arguments: [ account: TAddress ]
-}
-
-interface IMethodDeposits {
-  method: "deposits"
-  arguments: [ input0: TAddress ]
-}
-
-interface IMethodGetDepositInfo {
-  method: "getDepositInfo"
-  arguments: [ account: TAddress ]
-}
-
-interface IMethodGetNonce {
-  method: "getNonce"
-  arguments: [ _sender: TAddress, key: bigint ]
-}
-
-interface IMethodGetSenderAddress {
-  method: "getSenderAddress"
-  arguments: [ initCode: TEth.Hex ]
-}
-
-interface IMethodGetUserOpHash {
-  method: "getUserOpHash"
-  arguments: [ userOp: { sender: TAddress, nonce: bigint, initCode: TEth.Hex, callData: TEth.Hex, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TEth.Hex, signature: TEth.Hex } ]
-}
-
-interface IMethodHandleAggregatedOps {
-  method: "handleAggregatedOps"
-  arguments: [ opsPerAggregator: { userOps: { sender: TAddress, nonce: bigint, initCode: TEth.Hex, callData: TEth.Hex, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TEth.Hex, signature: TEth.Hex }[], aggregator: TAddress, signature: TEth.Hex }[], beneficiary: TAddress ]
-}
-
-interface IMethodHandleOps {
-  method: "handleOps"
-  arguments: [ ops: { sender: TAddress, nonce: bigint, initCode: TEth.Hex, callData: TEth.Hex, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TEth.Hex, signature: TEth.Hex }[], beneficiary: TAddress ]
-}
-
-interface IMethodIncrementNonce {
-  method: "incrementNonce"
-  arguments: [ key: bigint ]
-}
-
-interface IMethodInnerHandleOp {
-  method: "innerHandleOp"
-  arguments: [ callData: TEth.Hex, opInfo: { mUserOp: { sender: TAddress, nonce: bigint, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, paymaster: TAddress, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint }, userOpHash: TEth.Hex, prefund: bigint, contextOffset: bigint, preOpGas: bigint }, context: TEth.Hex ]
-}
-
-interface IMethodNonceSequenceNumber {
-  method: "nonceSequenceNumber"
-  arguments: [ input0: TAddress, input1: bigint ]
-}
-
-interface IMethodSimulateHandleOp {
-  method: "simulateHandleOp"
-  arguments: [ op: { sender: TAddress, nonce: bigint, initCode: TEth.Hex, callData: TEth.Hex, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TEth.Hex, signature: TEth.Hex }, target: TAddress, targetCallData: TEth.Hex ]
-}
-
-interface IMethodSimulateValidation {
-  method: "simulateValidation"
-  arguments: [ userOp: { sender: TAddress, nonce: bigint, initCode: TEth.Hex, callData: TEth.Hex, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TEth.Hex, signature: TEth.Hex } ]
-}
-
-interface IMethodUnlockStake {
-  method: "unlockStake"
-  arguments: [  ]
-}
-
-interface IMethodWithdrawStake {
-  method: "withdrawStake"
-  arguments: [ withdrawAddress: TAddress ]
-}
-
-interface IMethodWithdrawTo {
-  method: "withdrawTo"
-  arguments: [ withdrawAddress: TAddress, withdrawAmount: bigint ]
-}
-
-interface IMethods {
-  SIG_VALIDATION_FAILED: IMethodSIG_VALIDATION_FAILED
-  _validateSenderAndPaymaster: IMethod_validateSenderAndPaymaster
-  addStake: IMethodAddStake
-  balanceOf: IMethodBalanceOf
-  depositTo: IMethodDepositTo
-  deposits: IMethodDeposits
-  getDepositInfo: IMethodGetDepositInfo
-  getNonce: IMethodGetNonce
-  getSenderAddress: IMethodGetSenderAddress
-  getUserOpHash: IMethodGetUserOpHash
-  handleAggregatedOps: IMethodHandleAggregatedOps
-  handleOps: IMethodHandleOps
-  incrementNonce: IMethodIncrementNonce
-  innerHandleOp: IMethodInnerHandleOp
-  nonceSequenceNumber: IMethodNonceSequenceNumber
-  simulateHandleOp: IMethodSimulateHandleOp
-  simulateValidation: IMethodSimulateValidation
-  unlockStake: IMethodUnlockStake
-  withdrawStake: IMethodWithdrawStake
-  withdrawTo: IMethodWithdrawTo
-  '*': { method: string, arguments: any[] } 
-}
-
-
 
 
 
@@ -636,7 +601,6 @@ class EntryPointStorageReader extends ContractStorageReaderBase {
 }
 
 
-
 interface IEntryPointTxCaller {
     addStake (sender: TSender, unstakeDelaySec: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     depositTo (sender: TSender, account: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
@@ -669,3 +633,5 @@ interface IEntryPointTxData {
 }
 
 
+type TEvents = TEntryPointTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

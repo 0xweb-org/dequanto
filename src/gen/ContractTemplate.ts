@@ -38,7 +38,7 @@ export class $NAME$ extends ContractBase {
         /* STORAGE_READER_INITIALIZER */
     }
 
-    /* META_PROPERTY */
+/* META_PROPERTY */
 
 /* METHODS */
 
@@ -55,10 +55,13 @@ export class $NAME$ extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof T$NAME$Types['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: T$NAME$Types['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -66,8 +69,20 @@ export class $NAME$ extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
 /* EVENTS */
@@ -85,12 +100,22 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-/* $EVENT_INTERFACES$ */
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
+}
 
-/* $METHOD_INTERFACES$ */
+export type T$NAME$Types = {
+    Events: {
+/* $EVENT_TYPES$ */
+    },
+    Methods: {
+/* $METHOD_TYPES$ */
+    }
+}
 
 /* STORAGE_READER_CLASS */
-
 
 interface I$NAME$TxCaller {
 /* TX_CALLER_METHODS */
@@ -102,3 +127,5 @@ interface I$NAME$TxData {
 }
 
 
+type TEvents = T$NAME$Types['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

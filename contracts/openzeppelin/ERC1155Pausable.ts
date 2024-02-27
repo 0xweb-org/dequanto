@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class ERC1155Pausable extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/ERC1155Pausable.ts"
-}
+        "class": "./contracts/openzeppelin/ERC1155Pausable.ts"
+    }
 
     // 0x00fdd58e
     async balanceOf (account: TAddress, id: bigint): Promise<bigint> {
@@ -101,10 +101,13 @@ export class ERC1155Pausable extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TERC1155PausableTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TERC1155PausableTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -112,8 +115,20 @@ export class ERC1155Pausable extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onApprovalForAll (fn?: (event: TClientEventsStreamData<TLogApprovalForAllParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalForAllParameters>> {
@@ -140,41 +155,41 @@ export class ERC1155Pausable extends ContractBase {
         return this.$onLog('Unpaused', fn);
     }
 
-    extractLogsApprovalForAll (tx: TEth.TxReceipt): ITxLogItem<TLogApprovalForAll>[] {
+    extractLogsApprovalForAll (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ApprovalForAll'>>[] {
         let abi = this.$getAbiItem('event', 'ApprovalForAll');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApprovalForAll>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ApprovalForAll'>>[];
     }
 
-    extractLogsPaused (tx: TEth.TxReceipt): ITxLogItem<TLogPaused>[] {
+    extractLogsPaused (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Paused'>>[] {
         let abi = this.$getAbiItem('event', 'Paused');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogPaused>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Paused'>>[];
     }
 
-    extractLogsTransferBatch (tx: TEth.TxReceipt): ITxLogItem<TLogTransferBatch>[] {
+    extractLogsTransferBatch (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'TransferBatch'>>[] {
         let abi = this.$getAbiItem('event', 'TransferBatch');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogTransferBatch>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'TransferBatch'>>[];
     }
 
-    extractLogsTransferSingle (tx: TEth.TxReceipt): ITxLogItem<TLogTransferSingle>[] {
+    extractLogsTransferSingle (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'TransferSingle'>>[] {
         let abi = this.$getAbiItem('event', 'TransferSingle');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogTransferSingle>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'TransferSingle'>>[];
     }
 
-    extractLogsURI (tx: TEth.TxReceipt): ITxLogItem<TLogURI>[] {
+    extractLogsURI (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'URI'>>[] {
         let abi = this.$getAbiItem('event', 'URI');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogURI>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'URI'>>[];
     }
 
-    extractLogsUnpaused (tx: TEth.TxReceipt): ITxLogItem<TLogUnpaused>[] {
+    extractLogsUnpaused (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Unpaused'>>[] {
         let abi = this.$getAbiItem('event', 'Unpaused');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogUnpaused>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Unpaused'>>[];
     }
 
     async getPastLogsApprovalForAll (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { account?: TAddress,operator?: TAddress }
-    }): Promise<ITxLogItem<TLogApprovalForAll>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ApprovalForAll'>>[]> {
         return await this.$getPastLogsParsed('ApprovalForAll', options) as any;
     }
 
@@ -182,7 +197,7 @@ export class ERC1155Pausable extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogPaused>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Paused'>>[]> {
         return await this.$getPastLogsParsed('Paused', options) as any;
     }
 
@@ -190,7 +205,7 @@ export class ERC1155Pausable extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { operator?: TAddress,from?: TAddress,to?: TAddress }
-    }): Promise<ITxLogItem<TLogTransferBatch>[]> {
+    }): Promise<ITxLogItem<TEventParams<'TransferBatch'>>[]> {
         return await this.$getPastLogsParsed('TransferBatch', options) as any;
     }
 
@@ -198,7 +213,7 @@ export class ERC1155Pausable extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { operator?: TAddress,from?: TAddress,to?: TAddress }
-    }): Promise<ITxLogItem<TLogTransferSingle>[]> {
+    }): Promise<ITxLogItem<TEventParams<'TransferSingle'>>[]> {
         return await this.$getPastLogsParsed('TransferSingle', options) as any;
     }
 
@@ -206,7 +221,7 @@ export class ERC1155Pausable extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogURI>[]> {
+    }): Promise<ITxLogItem<TEventParams<'URI'>>[]> {
         return await this.$getPastLogsParsed('URI', options) as any;
     }
 
@@ -214,7 +229,7 @@ export class ERC1155Pausable extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogUnpaused>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Unpaused'>>[]> {
         return await this.$getPastLogsParsed('Unpaused', options) as any;
     }
 
@@ -227,103 +242,78 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogApprovalForAll = {
-        account: TAddress, operator: TAddress, approved: boolean
-    };
-    type TLogApprovalForAllParameters = [ account: TAddress, operator: TAddress, approved: boolean ];
-    type TLogPaused = {
-        account: TAddress
-    };
-    type TLogPausedParameters = [ account: TAddress ];
-    type TLogTransferBatch = {
-        operator: TAddress, from: TAddress, to: TAddress, ids: bigint[], values: bigint[]
-    };
-    type TLogTransferBatchParameters = [ operator: TAddress, from: TAddress, to: TAddress, ids: bigint[], values: bigint[] ];
-    type TLogTransferSingle = {
-        operator: TAddress, from: TAddress, to: TAddress, id: bigint, value: bigint
-    };
-    type TLogTransferSingleParameters = [ operator: TAddress, from: TAddress, to: TAddress, id: bigint, value: bigint ];
-    type TLogURI = {
-        value: string, id: bigint
-    };
-    type TLogURIParameters = [ value: string, id: bigint ];
-    type TLogUnpaused = {
-        account: TAddress
-    };
-    type TLogUnpausedParameters = [ account: TAddress ];
-
-interface IEvents {
-  ApprovalForAll: TLogApprovalForAllParameters
-  Paused: TLogPausedParameters
-  TransferBatch: TLogTransferBatchParameters
-  TransferSingle: TLogTransferSingleParameters
-  URI: TLogURIParameters
-  Unpaused: TLogUnpausedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodBalanceOf {
-  method: "balanceOf"
-  arguments: [ account: TAddress, id: bigint ]
+export type TERC1155PausableTypes = {
+    Events: {
+        ApprovalForAll: {
+            outputParams: { account: TAddress, operator: TAddress, approved: boolean },
+            outputArgs:   [ account: TAddress, operator: TAddress, approved: boolean ],
+        }
+        Paused: {
+            outputParams: { account: TAddress },
+            outputArgs:   [ account: TAddress ],
+        }
+        TransferBatch: {
+            outputParams: { operator: TAddress, from: TAddress, to: TAddress, ids: bigint[], values: bigint[] },
+            outputArgs:   [ operator: TAddress, from: TAddress, to: TAddress, ids: bigint[], values: bigint[] ],
+        }
+        TransferSingle: {
+            outputParams: { operator: TAddress, from: TAddress, to: TAddress, id: bigint, value: bigint },
+            outputArgs:   [ operator: TAddress, from: TAddress, to: TAddress, id: bigint, value: bigint ],
+        }
+        URI: {
+            outputParams: { value: string, id: bigint },
+            outputArgs:   [ value: string, id: bigint ],
+        }
+        Unpaused: {
+            outputParams: { account: TAddress },
+            outputArgs:   [ account: TAddress ],
+        }
+    },
+    Methods: {
+        balanceOf: {
+          method: "balanceOf"
+          arguments: [ account: TAddress, id: bigint ]
+        }
+        balanceOfBatch: {
+          method: "balanceOfBatch"
+          arguments: [ accounts: TAddress[], ids: bigint[] ]
+        }
+        isApprovedForAll: {
+          method: "isApprovedForAll"
+          arguments: [ account: TAddress, operator: TAddress ]
+        }
+        paused: {
+          method: "paused"
+          arguments: [  ]
+        }
+        safeBatchTransferFrom: {
+          method: "safeBatchTransferFrom"
+          arguments: [ from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex ]
+        }
+        safeTransferFrom: {
+          method: "safeTransferFrom"
+          arguments: [ from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex ]
+        }
+        setApprovalForAll: {
+          method: "setApprovalForAll"
+          arguments: [ operator: TAddress, approved: boolean ]
+        }
+        supportsInterface: {
+          method: "supportsInterface"
+          arguments: [ interfaceId: TEth.Hex ]
+        }
+        uri: {
+          method: "uri"
+          arguments: [ input0: bigint ]
+        }
+    }
 }
-
-interface IMethodBalanceOfBatch {
-  method: "balanceOfBatch"
-  arguments: [ accounts: TAddress[], ids: bigint[] ]
-}
-
-interface IMethodIsApprovedForAll {
-  method: "isApprovedForAll"
-  arguments: [ account: TAddress, operator: TAddress ]
-}
-
-interface IMethodPaused {
-  method: "paused"
-  arguments: [  ]
-}
-
-interface IMethodSafeBatchTransferFrom {
-  method: "safeBatchTransferFrom"
-  arguments: [ from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex ]
-}
-
-interface IMethodSafeTransferFrom {
-  method: "safeTransferFrom"
-  arguments: [ from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex ]
-}
-
-interface IMethodSetApprovalForAll {
-  method: "setApprovalForAll"
-  arguments: [ operator: TAddress, approved: boolean ]
-}
-
-interface IMethodSupportsInterface {
-  method: "supportsInterface"
-  arguments: [ interfaceId: TEth.Hex ]
-}
-
-interface IMethodUri {
-  method: "uri"
-  arguments: [ input0: bigint ]
-}
-
-interface IMethods {
-  balanceOf: IMethodBalanceOf
-  balanceOfBatch: IMethodBalanceOfBatch
-  isApprovedForAll: IMethodIsApprovedForAll
-  paused: IMethodPaused
-  safeBatchTransferFrom: IMethodSafeBatchTransferFrom
-  safeTransferFrom: IMethodSafeTransferFrom
-  setApprovalForAll: IMethodSetApprovalForAll
-  supportsInterface: IMethodSupportsInterface
-  uri: IMethodUri
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -341,3 +331,5 @@ interface IERC1155PausableTxData {
 }
 
 
+type TEvents = TERC1155PausableTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

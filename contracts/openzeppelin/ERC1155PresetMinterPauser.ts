@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class ERC1155PresetMinterPauser extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/ERC1155PresetMinterPauser.ts"
-}
+        "class": "./contracts/openzeppelin/ERC1155PresetMinterPauser.ts"
+    }
 
     async $constructor (deployer: TSender, uri: string): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -185,10 +185,13 @@ export class ERC1155PresetMinterPauser extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TERC1155PresetMinterPauserTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TERC1155PresetMinterPauserTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -196,8 +199,20 @@ export class ERC1155PresetMinterPauser extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onApprovalForAll (fn?: (event: TClientEventsStreamData<TLogApprovalForAllParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalForAllParameters>> {
@@ -236,56 +251,56 @@ export class ERC1155PresetMinterPauser extends ContractBase {
         return this.$onLog('Unpaused', fn);
     }
 
-    extractLogsApprovalForAll (tx: TEth.TxReceipt): ITxLogItem<TLogApprovalForAll>[] {
+    extractLogsApprovalForAll (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ApprovalForAll'>>[] {
         let abi = this.$getAbiItem('event', 'ApprovalForAll');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApprovalForAll>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ApprovalForAll'>>[];
     }
 
-    extractLogsPaused (tx: TEth.TxReceipt): ITxLogItem<TLogPaused>[] {
+    extractLogsPaused (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Paused'>>[] {
         let abi = this.$getAbiItem('event', 'Paused');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogPaused>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Paused'>>[];
     }
 
-    extractLogsRoleAdminChanged (tx: TEth.TxReceipt): ITxLogItem<TLogRoleAdminChanged>[] {
+    extractLogsRoleAdminChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RoleAdminChanged'>>[] {
         let abi = this.$getAbiItem('event', 'RoleAdminChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRoleAdminChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RoleAdminChanged'>>[];
     }
 
-    extractLogsRoleGranted (tx: TEth.TxReceipt): ITxLogItem<TLogRoleGranted>[] {
+    extractLogsRoleGranted (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RoleGranted'>>[] {
         let abi = this.$getAbiItem('event', 'RoleGranted');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRoleGranted>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RoleGranted'>>[];
     }
 
-    extractLogsRoleRevoked (tx: TEth.TxReceipt): ITxLogItem<TLogRoleRevoked>[] {
+    extractLogsRoleRevoked (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RoleRevoked'>>[] {
         let abi = this.$getAbiItem('event', 'RoleRevoked');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRoleRevoked>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RoleRevoked'>>[];
     }
 
-    extractLogsTransferBatch (tx: TEth.TxReceipt): ITxLogItem<TLogTransferBatch>[] {
+    extractLogsTransferBatch (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'TransferBatch'>>[] {
         let abi = this.$getAbiItem('event', 'TransferBatch');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogTransferBatch>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'TransferBatch'>>[];
     }
 
-    extractLogsTransferSingle (tx: TEth.TxReceipt): ITxLogItem<TLogTransferSingle>[] {
+    extractLogsTransferSingle (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'TransferSingle'>>[] {
         let abi = this.$getAbiItem('event', 'TransferSingle');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogTransferSingle>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'TransferSingle'>>[];
     }
 
-    extractLogsURI (tx: TEth.TxReceipt): ITxLogItem<TLogURI>[] {
+    extractLogsURI (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'URI'>>[] {
         let abi = this.$getAbiItem('event', 'URI');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogURI>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'URI'>>[];
     }
 
-    extractLogsUnpaused (tx: TEth.TxReceipt): ITxLogItem<TLogUnpaused>[] {
+    extractLogsUnpaused (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Unpaused'>>[] {
         let abi = this.$getAbiItem('event', 'Unpaused');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogUnpaused>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Unpaused'>>[];
     }
 
     async getPastLogsApprovalForAll (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { account?: TAddress,operator?: TAddress }
-    }): Promise<ITxLogItem<TLogApprovalForAll>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ApprovalForAll'>>[]> {
         return await this.$getPastLogsParsed('ApprovalForAll', options) as any;
     }
 
@@ -293,7 +308,7 @@ export class ERC1155PresetMinterPauser extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogPaused>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Paused'>>[]> {
         return await this.$getPastLogsParsed('Paused', options) as any;
     }
 
@@ -301,7 +316,7 @@ export class ERC1155PresetMinterPauser extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { role?: TEth.Hex,previousAdminRole?: TEth.Hex,newAdminRole?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogRoleAdminChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RoleAdminChanged'>>[]> {
         return await this.$getPastLogsParsed('RoleAdminChanged', options) as any;
     }
 
@@ -309,7 +324,7 @@ export class ERC1155PresetMinterPauser extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { role?: TEth.Hex,account?: TAddress,sender?: TAddress }
-    }): Promise<ITxLogItem<TLogRoleGranted>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RoleGranted'>>[]> {
         return await this.$getPastLogsParsed('RoleGranted', options) as any;
     }
 
@@ -317,7 +332,7 @@ export class ERC1155PresetMinterPauser extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { role?: TEth.Hex,account?: TAddress,sender?: TAddress }
-    }): Promise<ITxLogItem<TLogRoleRevoked>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RoleRevoked'>>[]> {
         return await this.$getPastLogsParsed('RoleRevoked', options) as any;
     }
 
@@ -325,7 +340,7 @@ export class ERC1155PresetMinterPauser extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { operator?: TAddress,from?: TAddress,to?: TAddress }
-    }): Promise<ITxLogItem<TLogTransferBatch>[]> {
+    }): Promise<ITxLogItem<TEventParams<'TransferBatch'>>[]> {
         return await this.$getPastLogsParsed('TransferBatch', options) as any;
     }
 
@@ -333,7 +348,7 @@ export class ERC1155PresetMinterPauser extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { operator?: TAddress,from?: TAddress,to?: TAddress }
-    }): Promise<ITxLogItem<TLogTransferSingle>[]> {
+    }): Promise<ITxLogItem<TEventParams<'TransferSingle'>>[]> {
         return await this.$getPastLogsParsed('TransferSingle', options) as any;
     }
 
@@ -341,7 +356,7 @@ export class ERC1155PresetMinterPauser extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogURI>[]> {
+    }): Promise<ITxLogItem<TEventParams<'URI'>>[]> {
         return await this.$getPastLogsParsed('URI', options) as any;
     }
 
@@ -349,7 +364,7 @@ export class ERC1155PresetMinterPauser extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogUnpaused>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Unpaused'>>[]> {
         return await this.$getPastLogsParsed('Unpaused', options) as any;
     }
 
@@ -362,214 +377,154 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogApprovalForAll = {
-        account: TAddress, operator: TAddress, approved: boolean
-    };
-    type TLogApprovalForAllParameters = [ account: TAddress, operator: TAddress, approved: boolean ];
-    type TLogPaused = {
-        account: TAddress
-    };
-    type TLogPausedParameters = [ account: TAddress ];
-    type TLogRoleAdminChanged = {
-        role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex
-    };
-    type TLogRoleAdminChangedParameters = [ role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex ];
-    type TLogRoleGranted = {
-        role: TEth.Hex, account: TAddress, _sender: TAddress
-    };
-    type TLogRoleGrantedParameters = [ role: TEth.Hex, account: TAddress, _sender: TAddress ];
-    type TLogRoleRevoked = {
-        role: TEth.Hex, account: TAddress, _sender: TAddress
-    };
-    type TLogRoleRevokedParameters = [ role: TEth.Hex, account: TAddress, _sender: TAddress ];
-    type TLogTransferBatch = {
-        operator: TAddress, from: TAddress, to: TAddress, ids: bigint[], values: bigint[]
-    };
-    type TLogTransferBatchParameters = [ operator: TAddress, from: TAddress, to: TAddress, ids: bigint[], values: bigint[] ];
-    type TLogTransferSingle = {
-        operator: TAddress, from: TAddress, to: TAddress, id: bigint, value: bigint
-    };
-    type TLogTransferSingleParameters = [ operator: TAddress, from: TAddress, to: TAddress, id: bigint, value: bigint ];
-    type TLogURI = {
-        value: string, id: bigint
-    };
-    type TLogURIParameters = [ value: string, id: bigint ];
-    type TLogUnpaused = {
-        account: TAddress
-    };
-    type TLogUnpausedParameters = [ account: TAddress ];
-
-interface IEvents {
-  ApprovalForAll: TLogApprovalForAllParameters
-  Paused: TLogPausedParameters
-  RoleAdminChanged: TLogRoleAdminChangedParameters
-  RoleGranted: TLogRoleGrantedParameters
-  RoleRevoked: TLogRoleRevokedParameters
-  TransferBatch: TLogTransferBatchParameters
-  TransferSingle: TLogTransferSingleParameters
-  URI: TLogURIParameters
-  Unpaused: TLogUnpausedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodDEFAULT_ADMIN_ROLE {
-  method: "DEFAULT_ADMIN_ROLE"
-  arguments: [  ]
+export type TERC1155PresetMinterPauserTypes = {
+    Events: {
+        ApprovalForAll: {
+            outputParams: { account: TAddress, operator: TAddress, approved: boolean },
+            outputArgs:   [ account: TAddress, operator: TAddress, approved: boolean ],
+        }
+        Paused: {
+            outputParams: { account: TAddress },
+            outputArgs:   [ account: TAddress ],
+        }
+        RoleAdminChanged: {
+            outputParams: { role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex },
+            outputArgs:   [ role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex ],
+        }
+        RoleGranted: {
+            outputParams: { role: TEth.Hex, account: TAddress, _sender: TAddress },
+            outputArgs:   [ role: TEth.Hex, account: TAddress, _sender: TAddress ],
+        }
+        RoleRevoked: {
+            outputParams: { role: TEth.Hex, account: TAddress, _sender: TAddress },
+            outputArgs:   [ role: TEth.Hex, account: TAddress, _sender: TAddress ],
+        }
+        TransferBatch: {
+            outputParams: { operator: TAddress, from: TAddress, to: TAddress, ids: bigint[], values: bigint[] },
+            outputArgs:   [ operator: TAddress, from: TAddress, to: TAddress, ids: bigint[], values: bigint[] ],
+        }
+        TransferSingle: {
+            outputParams: { operator: TAddress, from: TAddress, to: TAddress, id: bigint, value: bigint },
+            outputArgs:   [ operator: TAddress, from: TAddress, to: TAddress, id: bigint, value: bigint ],
+        }
+        URI: {
+            outputParams: { value: string, id: bigint },
+            outputArgs:   [ value: string, id: bigint ],
+        }
+        Unpaused: {
+            outputParams: { account: TAddress },
+            outputArgs:   [ account: TAddress ],
+        }
+    },
+    Methods: {
+        DEFAULT_ADMIN_ROLE: {
+          method: "DEFAULT_ADMIN_ROLE"
+          arguments: [  ]
+        }
+        MINTER_ROLE: {
+          method: "MINTER_ROLE"
+          arguments: [  ]
+        }
+        PAUSER_ROLE: {
+          method: "PAUSER_ROLE"
+          arguments: [  ]
+        }
+        balanceOf: {
+          method: "balanceOf"
+          arguments: [ account: TAddress, id: bigint ]
+        }
+        balanceOfBatch: {
+          method: "balanceOfBatch"
+          arguments: [ accounts: TAddress[], ids: bigint[] ]
+        }
+        burn: {
+          method: "burn"
+          arguments: [ account: TAddress, id: bigint, value: bigint ]
+        }
+        burnBatch: {
+          method: "burnBatch"
+          arguments: [ account: TAddress, ids: bigint[], values: bigint[] ]
+        }
+        getRoleAdmin: {
+          method: "getRoleAdmin"
+          arguments: [ role: TEth.Hex ]
+        }
+        getRoleMember: {
+          method: "getRoleMember"
+          arguments: [ role: TEth.Hex, index: bigint ]
+        }
+        getRoleMemberCount: {
+          method: "getRoleMemberCount"
+          arguments: [ role: TEth.Hex ]
+        }
+        grantRole: {
+          method: "grantRole"
+          arguments: [ role: TEth.Hex, account: TAddress ]
+        }
+        hasRole: {
+          method: "hasRole"
+          arguments: [ role: TEth.Hex, account: TAddress ]
+        }
+        isApprovedForAll: {
+          method: "isApprovedForAll"
+          arguments: [ account: TAddress, operator: TAddress ]
+        }
+        mint: {
+          method: "mint"
+          arguments: [ to: TAddress, id: bigint, amount: bigint, data: TEth.Hex ]
+        }
+        mintBatch: {
+          method: "mintBatch"
+          arguments: [ to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex ]
+        }
+        pause: {
+          method: "pause"
+          arguments: [  ]
+        }
+        paused: {
+          method: "paused"
+          arguments: [  ]
+        }
+        renounceRole: {
+          method: "renounceRole"
+          arguments: [ role: TEth.Hex, account: TAddress ]
+        }
+        revokeRole: {
+          method: "revokeRole"
+          arguments: [ role: TEth.Hex, account: TAddress ]
+        }
+        safeBatchTransferFrom: {
+          method: "safeBatchTransferFrom"
+          arguments: [ from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex ]
+        }
+        safeTransferFrom: {
+          method: "safeTransferFrom"
+          arguments: [ from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex ]
+        }
+        setApprovalForAll: {
+          method: "setApprovalForAll"
+          arguments: [ operator: TAddress, approved: boolean ]
+        }
+        supportsInterface: {
+          method: "supportsInterface"
+          arguments: [ interfaceId: TEth.Hex ]
+        }
+        unpause: {
+          method: "unpause"
+          arguments: [  ]
+        }
+        uri: {
+          method: "uri"
+          arguments: [ input0: bigint ]
+        }
+    }
 }
-
-interface IMethodMINTER_ROLE {
-  method: "MINTER_ROLE"
-  arguments: [  ]
-}
-
-interface IMethodPAUSER_ROLE {
-  method: "PAUSER_ROLE"
-  arguments: [  ]
-}
-
-interface IMethodBalanceOf {
-  method: "balanceOf"
-  arguments: [ account: TAddress, id: bigint ]
-}
-
-interface IMethodBalanceOfBatch {
-  method: "balanceOfBatch"
-  arguments: [ accounts: TAddress[], ids: bigint[] ]
-}
-
-interface IMethodBurn {
-  method: "burn"
-  arguments: [ account: TAddress, id: bigint, value: bigint ]
-}
-
-interface IMethodBurnBatch {
-  method: "burnBatch"
-  arguments: [ account: TAddress, ids: bigint[], values: bigint[] ]
-}
-
-interface IMethodGetRoleAdmin {
-  method: "getRoleAdmin"
-  arguments: [ role: TEth.Hex ]
-}
-
-interface IMethodGetRoleMember {
-  method: "getRoleMember"
-  arguments: [ role: TEth.Hex, index: bigint ]
-}
-
-interface IMethodGetRoleMemberCount {
-  method: "getRoleMemberCount"
-  arguments: [ role: TEth.Hex ]
-}
-
-interface IMethodGrantRole {
-  method: "grantRole"
-  arguments: [ role: TEth.Hex, account: TAddress ]
-}
-
-interface IMethodHasRole {
-  method: "hasRole"
-  arguments: [ role: TEth.Hex, account: TAddress ]
-}
-
-interface IMethodIsApprovedForAll {
-  method: "isApprovedForAll"
-  arguments: [ account: TAddress, operator: TAddress ]
-}
-
-interface IMethodMint {
-  method: "mint"
-  arguments: [ to: TAddress, id: bigint, amount: bigint, data: TEth.Hex ]
-}
-
-interface IMethodMintBatch {
-  method: "mintBatch"
-  arguments: [ to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex ]
-}
-
-interface IMethodPause {
-  method: "pause"
-  arguments: [  ]
-}
-
-interface IMethodPaused {
-  method: "paused"
-  arguments: [  ]
-}
-
-interface IMethodRenounceRole {
-  method: "renounceRole"
-  arguments: [ role: TEth.Hex, account: TAddress ]
-}
-
-interface IMethodRevokeRole {
-  method: "revokeRole"
-  arguments: [ role: TEth.Hex, account: TAddress ]
-}
-
-interface IMethodSafeBatchTransferFrom {
-  method: "safeBatchTransferFrom"
-  arguments: [ from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex ]
-}
-
-interface IMethodSafeTransferFrom {
-  method: "safeTransferFrom"
-  arguments: [ from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex ]
-}
-
-interface IMethodSetApprovalForAll {
-  method: "setApprovalForAll"
-  arguments: [ operator: TAddress, approved: boolean ]
-}
-
-interface IMethodSupportsInterface {
-  method: "supportsInterface"
-  arguments: [ interfaceId: TEth.Hex ]
-}
-
-interface IMethodUnpause {
-  method: "unpause"
-  arguments: [  ]
-}
-
-interface IMethodUri {
-  method: "uri"
-  arguments: [ input0: bigint ]
-}
-
-interface IMethods {
-  DEFAULT_ADMIN_ROLE: IMethodDEFAULT_ADMIN_ROLE
-  MINTER_ROLE: IMethodMINTER_ROLE
-  PAUSER_ROLE: IMethodPAUSER_ROLE
-  balanceOf: IMethodBalanceOf
-  balanceOfBatch: IMethodBalanceOfBatch
-  burn: IMethodBurn
-  burnBatch: IMethodBurnBatch
-  getRoleAdmin: IMethodGetRoleAdmin
-  getRoleMember: IMethodGetRoleMember
-  getRoleMemberCount: IMethodGetRoleMemberCount
-  grantRole: IMethodGrantRole
-  hasRole: IMethodHasRole
-  isApprovedForAll: IMethodIsApprovedForAll
-  mint: IMethodMint
-  mintBatch: IMethodMintBatch
-  pause: IMethodPause
-  paused: IMethodPaused
-  renounceRole: IMethodRenounceRole
-  revokeRole: IMethodRevokeRole
-  safeBatchTransferFrom: IMethodSafeBatchTransferFrom
-  safeTransferFrom: IMethodSafeTransferFrom
-  setApprovalForAll: IMethodSetApprovalForAll
-  supportsInterface: IMethodSupportsInterface
-  unpause: IMethodUnpause
-  uri: IMethodUri
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -605,3 +560,5 @@ interface IERC1155PresetMinterPauserTxData {
 }
 
 
+type TEvents = TERC1155PresetMinterPauserTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

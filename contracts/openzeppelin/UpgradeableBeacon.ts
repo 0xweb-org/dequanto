@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class UpgradeableBeacon extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/UpgradeableBeacon.ts"
-}
+        "class": "./contracts/openzeppelin/UpgradeableBeacon.ts"
+    }
 
     async $constructor (deployer: TSender, implementation_: TAddress): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -85,10 +85,13 @@ export class UpgradeableBeacon extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TUpgradeableBeaconTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TUpgradeableBeaconTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -96,8 +99,20 @@ export class UpgradeableBeacon extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onOwnershipTransferred (fn?: (event: TClientEventsStreamData<TLogOwnershipTransferredParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogOwnershipTransferredParameters>> {
@@ -108,21 +123,21 @@ export class UpgradeableBeacon extends ContractBase {
         return this.$onLog('Upgraded', fn);
     }
 
-    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TLogOwnershipTransferred>[] {
+    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'OwnershipTransferred'>>[] {
         let abi = this.$getAbiItem('event', 'OwnershipTransferred');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogOwnershipTransferred>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'OwnershipTransferred'>>[];
     }
 
-    extractLogsUpgraded (tx: TEth.TxReceipt): ITxLogItem<TLogUpgraded>[] {
+    extractLogsUpgraded (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Upgraded'>>[] {
         let abi = this.$getAbiItem('event', 'Upgraded');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogUpgraded>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Upgraded'>>[];
     }
 
     async getPastLogsOwnershipTransferred (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { previousOwner?: TAddress,newOwner?: TAddress }
-    }): Promise<ITxLogItem<TLogOwnershipTransferred>[]> {
+    }): Promise<ITxLogItem<TEventParams<'OwnershipTransferred'>>[]> {
         return await this.$getPastLogsParsed('OwnershipTransferred', options) as any;
     }
 
@@ -130,7 +145,7 @@ export class UpgradeableBeacon extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { implementation?: TAddress }
-    }): Promise<ITxLogItem<TLogUpgraded>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Upgraded'>>[]> {
         return await this.$getPastLogsParsed('Upgraded', options) as any;
     }
 
@@ -143,59 +158,46 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogOwnershipTransferred = {
-        previousOwner: TAddress, newOwner: TAddress
-    };
-    type TLogOwnershipTransferredParameters = [ previousOwner: TAddress, newOwner: TAddress ];
-    type TLogUpgraded = {
-        implementation: TAddress
-    };
-    type TLogUpgradedParameters = [ implementation: TAddress ];
-
-interface IEvents {
-  OwnershipTransferred: TLogOwnershipTransferredParameters
-  Upgraded: TLogUpgradedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodImplementation {
-  method: "implementation"
-  arguments: [  ]
+export type TUpgradeableBeaconTypes = {
+    Events: {
+        OwnershipTransferred: {
+            outputParams: { previousOwner: TAddress, newOwner: TAddress },
+            outputArgs:   [ previousOwner: TAddress, newOwner: TAddress ],
+        }
+        Upgraded: {
+            outputParams: { implementation: TAddress },
+            outputArgs:   [ implementation: TAddress ],
+        }
+    },
+    Methods: {
+        implementation: {
+          method: "implementation"
+          arguments: [  ]
+        }
+        owner: {
+          method: "owner"
+          arguments: [  ]
+        }
+        renounceOwnership: {
+          method: "renounceOwnership"
+          arguments: [  ]
+        }
+        transferOwnership: {
+          method: "transferOwnership"
+          arguments: [ newOwner: TAddress ]
+        }
+        upgradeTo: {
+          method: "upgradeTo"
+          arguments: [ newImplementation: TAddress ]
+        }
+    }
 }
-
-interface IMethodOwner {
-  method: "owner"
-  arguments: [  ]
-}
-
-interface IMethodRenounceOwnership {
-  method: "renounceOwnership"
-  arguments: [  ]
-}
-
-interface IMethodTransferOwnership {
-  method: "transferOwnership"
-  arguments: [ newOwner: TAddress ]
-}
-
-interface IMethodUpgradeTo {
-  method: "upgradeTo"
-  arguments: [ newImplementation: TAddress ]
-}
-
-interface IMethods {
-  implementation: IMethodImplementation
-  owner: IMethodOwner
-  renounceOwnership: IMethodRenounceOwnership
-  transferOwnership: IMethodTransferOwnership
-  upgradeTo: IMethodUpgradeTo
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -213,3 +215,5 @@ interface IUpgradeableBeaconTxData {
 }
 
 
+type TEvents = TUpgradeableBeaconTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

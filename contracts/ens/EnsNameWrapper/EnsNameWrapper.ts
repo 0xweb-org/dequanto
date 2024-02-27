@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401#code
  */
 import di from 'a-di';
@@ -99,8 +99,8 @@ export class EnsNameWrapper extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/ens/EnsNameWrapper/EnsNameWrapper.ts"
-}
+        "class": "./contracts/ens/EnsNameWrapper/EnsNameWrapper.ts"
+    }
 
     async $constructor (deployer: TSender, _ens: TAddress, _registrar: TAddress, _metadataService: TAddress): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -358,10 +358,13 @@ export class EnsNameWrapper extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TEnsNameWrapperTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TEnsNameWrapperTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -369,8 +372,20 @@ export class EnsNameWrapper extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onApproval (fn?: (event: TClientEventsStreamData<TLogApprovalParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalParameters>> {
@@ -417,66 +432,66 @@ export class EnsNameWrapper extends ContractBase {
         return this.$onLog('URI', fn);
     }
 
-    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TLogApproval>[] {
+    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Approval'>>[] {
         let abi = this.$getAbiItem('event', 'Approval');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApproval>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Approval'>>[];
     }
 
-    extractLogsApprovalForAll (tx: TEth.TxReceipt): ITxLogItem<TLogApprovalForAll>[] {
+    extractLogsApprovalForAll (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ApprovalForAll'>>[] {
         let abi = this.$getAbiItem('event', 'ApprovalForAll');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApprovalForAll>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ApprovalForAll'>>[];
     }
 
-    extractLogsControllerChanged (tx: TEth.TxReceipt): ITxLogItem<TLogControllerChanged>[] {
+    extractLogsControllerChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ControllerChanged'>>[] {
         let abi = this.$getAbiItem('event', 'ControllerChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogControllerChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ControllerChanged'>>[];
     }
 
-    extractLogsExpiryExtended (tx: TEth.TxReceipt): ITxLogItem<TLogExpiryExtended>[] {
+    extractLogsExpiryExtended (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ExpiryExtended'>>[] {
         let abi = this.$getAbiItem('event', 'ExpiryExtended');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogExpiryExtended>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ExpiryExtended'>>[];
     }
 
-    extractLogsFusesSet (tx: TEth.TxReceipt): ITxLogItem<TLogFusesSet>[] {
+    extractLogsFusesSet (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'FusesSet'>>[] {
         let abi = this.$getAbiItem('event', 'FusesSet');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogFusesSet>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'FusesSet'>>[];
     }
 
-    extractLogsNameUnwrapped (tx: TEth.TxReceipt): ITxLogItem<TLogNameUnwrapped>[] {
+    extractLogsNameUnwrapped (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'NameUnwrapped'>>[] {
         let abi = this.$getAbiItem('event', 'NameUnwrapped');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogNameUnwrapped>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'NameUnwrapped'>>[];
     }
 
-    extractLogsNameWrapped (tx: TEth.TxReceipt): ITxLogItem<TLogNameWrapped>[] {
+    extractLogsNameWrapped (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'NameWrapped'>>[] {
         let abi = this.$getAbiItem('event', 'NameWrapped');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogNameWrapped>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'NameWrapped'>>[];
     }
 
-    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TLogOwnershipTransferred>[] {
+    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'OwnershipTransferred'>>[] {
         let abi = this.$getAbiItem('event', 'OwnershipTransferred');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogOwnershipTransferred>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'OwnershipTransferred'>>[];
     }
 
-    extractLogsTransferBatch (tx: TEth.TxReceipt): ITxLogItem<TLogTransferBatch>[] {
+    extractLogsTransferBatch (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'TransferBatch'>>[] {
         let abi = this.$getAbiItem('event', 'TransferBatch');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogTransferBatch>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'TransferBatch'>>[];
     }
 
-    extractLogsTransferSingle (tx: TEth.TxReceipt): ITxLogItem<TLogTransferSingle>[] {
+    extractLogsTransferSingle (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'TransferSingle'>>[] {
         let abi = this.$getAbiItem('event', 'TransferSingle');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogTransferSingle>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'TransferSingle'>>[];
     }
 
-    extractLogsURI (tx: TEth.TxReceipt): ITxLogItem<TLogURI>[] {
+    extractLogsURI (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'URI'>>[] {
         let abi = this.$getAbiItem('event', 'URI');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogURI>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'URI'>>[];
     }
 
     async getPastLogsApproval (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { owner?: TAddress,approved?: TAddress,tokenId?: bigint }
-    }): Promise<ITxLogItem<TLogApproval>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Approval'>>[]> {
         return await this.$getPastLogsParsed('Approval', options) as any;
     }
 
@@ -484,7 +499,7 @@ export class EnsNameWrapper extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { account?: TAddress,operator?: TAddress }
-    }): Promise<ITxLogItem<TLogApprovalForAll>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ApprovalForAll'>>[]> {
         return await this.$getPastLogsParsed('ApprovalForAll', options) as any;
     }
 
@@ -492,7 +507,7 @@ export class EnsNameWrapper extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { controller?: TAddress }
-    }): Promise<ITxLogItem<TLogControllerChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ControllerChanged'>>[]> {
         return await this.$getPastLogsParsed('ControllerChanged', options) as any;
     }
 
@@ -500,7 +515,7 @@ export class EnsNameWrapper extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogExpiryExtended>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ExpiryExtended'>>[]> {
         return await this.$getPastLogsParsed('ExpiryExtended', options) as any;
     }
 
@@ -508,7 +523,7 @@ export class EnsNameWrapper extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogFusesSet>[]> {
+    }): Promise<ITxLogItem<TEventParams<'FusesSet'>>[]> {
         return await this.$getPastLogsParsed('FusesSet', options) as any;
     }
 
@@ -516,7 +531,7 @@ export class EnsNameWrapper extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogNameUnwrapped>[]> {
+    }): Promise<ITxLogItem<TEventParams<'NameUnwrapped'>>[]> {
         return await this.$getPastLogsParsed('NameUnwrapped', options) as any;
     }
 
@@ -524,7 +539,7 @@ export class EnsNameWrapper extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogNameWrapped>[]> {
+    }): Promise<ITxLogItem<TEventParams<'NameWrapped'>>[]> {
         return await this.$getPastLogsParsed('NameWrapped', options) as any;
     }
 
@@ -532,7 +547,7 @@ export class EnsNameWrapper extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { previousOwner?: TAddress,newOwner?: TAddress }
-    }): Promise<ITxLogItem<TLogOwnershipTransferred>[]> {
+    }): Promise<ITxLogItem<TEventParams<'OwnershipTransferred'>>[]> {
         return await this.$getPastLogsParsed('OwnershipTransferred', options) as any;
     }
 
@@ -540,7 +555,7 @@ export class EnsNameWrapper extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { operator?: TAddress,from?: TAddress,to?: TAddress }
-    }): Promise<ITxLogItem<TLogTransferBatch>[]> {
+    }): Promise<ITxLogItem<TEventParams<'TransferBatch'>>[]> {
         return await this.$getPastLogsParsed('TransferBatch', options) as any;
     }
 
@@ -548,7 +563,7 @@ export class EnsNameWrapper extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { operator?: TAddress,from?: TAddress,to?: TAddress }
-    }): Promise<ITxLogItem<TLogTransferSingle>[]> {
+    }): Promise<ITxLogItem<TEventParams<'TransferSingle'>>[]> {
         return await this.$getPastLogsParsed('TransferSingle', options) as any;
     }
 
@@ -556,7 +571,7 @@ export class EnsNameWrapper extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogURI>[]> {
+    }): Promise<ITxLogItem<TEventParams<'URI'>>[]> {
         return await this.$getPastLogsParsed('URI', options) as any;
     }
 
@@ -569,355 +584,250 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogApproval = {
-        owner: TAddress, approved: TAddress, tokenId: bigint
-    };
-    type TLogApprovalParameters = [ owner: TAddress, approved: TAddress, tokenId: bigint ];
-    type TLogApprovalForAll = {
-        account: TAddress, operator: TAddress, approved: boolean
-    };
-    type TLogApprovalForAllParameters = [ account: TAddress, operator: TAddress, approved: boolean ];
-    type TLogControllerChanged = {
-        controller: TAddress, active: boolean
-    };
-    type TLogControllerChangedParameters = [ controller: TAddress, active: boolean ];
-    type TLogExpiryExtended = {
-        node: TEth.Hex, expiry: number
-    };
-    type TLogExpiryExtendedParameters = [ node: TEth.Hex, expiry: number ];
-    type TLogFusesSet = {
-        node: TEth.Hex, fuses: number
-    };
-    type TLogFusesSetParameters = [ node: TEth.Hex, fuses: number ];
-    type TLogNameUnwrapped = {
-        node: TEth.Hex, owner: TAddress
-    };
-    type TLogNameUnwrappedParameters = [ node: TEth.Hex, owner: TAddress ];
-    type TLogNameWrapped = {
-        node: TEth.Hex, name: TEth.Hex, owner: TAddress, fuses: number, expiry: number
-    };
-    type TLogNameWrappedParameters = [ node: TEth.Hex, name: TEth.Hex, owner: TAddress, fuses: number, expiry: number ];
-    type TLogOwnershipTransferred = {
-        previousOwner: TAddress, newOwner: TAddress
-    };
-    type TLogOwnershipTransferredParameters = [ previousOwner: TAddress, newOwner: TAddress ];
-    type TLogTransferBatch = {
-        operator: TAddress, from: TAddress, to: TAddress, ids: bigint[], values: bigint[]
-    };
-    type TLogTransferBatchParameters = [ operator: TAddress, from: TAddress, to: TAddress, ids: bigint[], values: bigint[] ];
-    type TLogTransferSingle = {
-        operator: TAddress, from: TAddress, to: TAddress, id: bigint, value: bigint
-    };
-    type TLogTransferSingleParameters = [ operator: TAddress, from: TAddress, to: TAddress, id: bigint, value: bigint ];
-    type TLogURI = {
-        value: string, id: bigint
-    };
-    type TLogURIParameters = [ value: string, id: bigint ];
-
-interface IEvents {
-  Approval: TLogApprovalParameters
-  ApprovalForAll: TLogApprovalForAllParameters
-  ControllerChanged: TLogControllerChangedParameters
-  ExpiryExtended: TLogExpiryExtendedParameters
-  FusesSet: TLogFusesSetParameters
-  NameUnwrapped: TLogNameUnwrappedParameters
-  NameWrapped: TLogNameWrappedParameters
-  OwnershipTransferred: TLogOwnershipTransferredParameters
-  TransferBatch: TLogTransferBatchParameters
-  TransferSingle: TLogTransferSingleParameters
-  URI: TLogURIParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethod_tokens {
-  method: "_tokens"
-  arguments: [ input0: bigint ]
+export type TEnsNameWrapperTypes = {
+    Events: {
+        Approval: {
+            outputParams: { owner: TAddress, approved: TAddress, tokenId: bigint },
+            outputArgs:   [ owner: TAddress, approved: TAddress, tokenId: bigint ],
+        }
+        ApprovalForAll: {
+            outputParams: { account: TAddress, operator: TAddress, approved: boolean },
+            outputArgs:   [ account: TAddress, operator: TAddress, approved: boolean ],
+        }
+        ControllerChanged: {
+            outputParams: { controller: TAddress, active: boolean },
+            outputArgs:   [ controller: TAddress, active: boolean ],
+        }
+        ExpiryExtended: {
+            outputParams: { node: TEth.Hex, expiry: number },
+            outputArgs:   [ node: TEth.Hex, expiry: number ],
+        }
+        FusesSet: {
+            outputParams: { node: TEth.Hex, fuses: number },
+            outputArgs:   [ node: TEth.Hex, fuses: number ],
+        }
+        NameUnwrapped: {
+            outputParams: { node: TEth.Hex, owner: TAddress },
+            outputArgs:   [ node: TEth.Hex, owner: TAddress ],
+        }
+        NameWrapped: {
+            outputParams: { node: TEth.Hex, name: TEth.Hex, owner: TAddress, fuses: number, expiry: number },
+            outputArgs:   [ node: TEth.Hex, name: TEth.Hex, owner: TAddress, fuses: number, expiry: number ],
+        }
+        OwnershipTransferred: {
+            outputParams: { previousOwner: TAddress, newOwner: TAddress },
+            outputArgs:   [ previousOwner: TAddress, newOwner: TAddress ],
+        }
+        TransferBatch: {
+            outputParams: { operator: TAddress, from: TAddress, to: TAddress, ids: bigint[], values: bigint[] },
+            outputArgs:   [ operator: TAddress, from: TAddress, to: TAddress, ids: bigint[], values: bigint[] ],
+        }
+        TransferSingle: {
+            outputParams: { operator: TAddress, from: TAddress, to: TAddress, id: bigint, value: bigint },
+            outputArgs:   [ operator: TAddress, from: TAddress, to: TAddress, id: bigint, value: bigint ],
+        }
+        URI: {
+            outputParams: { value: string, id: bigint },
+            outputArgs:   [ value: string, id: bigint ],
+        }
+    },
+    Methods: {
+        _tokens: {
+          method: "_tokens"
+          arguments: [ input0: bigint ]
+        }
+        allFusesBurned: {
+          method: "allFusesBurned"
+          arguments: [ node: TEth.Hex, fuseMask: number ]
+        }
+        approve: {
+          method: "approve"
+          arguments: [ to: TAddress, tokenId: bigint ]
+        }
+        balanceOf: {
+          method: "balanceOf"
+          arguments: [ account: TAddress, id: bigint ]
+        }
+        balanceOfBatch: {
+          method: "balanceOfBatch"
+          arguments: [ accounts: TAddress[], ids: bigint[] ]
+        }
+        canExtendSubnames: {
+          method: "canExtendSubnames"
+          arguments: [ node: TEth.Hex, addr: TAddress ]
+        }
+        canModifyName: {
+          method: "canModifyName"
+          arguments: [ node: TEth.Hex, addr: TAddress ]
+        }
+        controllers: {
+          method: "controllers"
+          arguments: [ input0: TAddress ]
+        }
+        ens: {
+          method: "ens"
+          arguments: [  ]
+        }
+        extendExpiry: {
+          method: "extendExpiry"
+          arguments: [ parentNode: TEth.Hex, labelhash: TEth.Hex, expiry: number ]
+        }
+        getApproved: {
+          method: "getApproved"
+          arguments: [ id: bigint ]
+        }
+        getData: {
+          method: "getData"
+          arguments: [ id: bigint ]
+        }
+        isApprovedForAll: {
+          method: "isApprovedForAll"
+          arguments: [ account: TAddress, operator: TAddress ]
+        }
+        isWrapped: {
+          method: "isWrapped"
+          arguments: [ parentNode: TEth.Hex, labelhash: TEth.Hex ] | [ node: TEth.Hex ]
+        }
+        metadataService: {
+          method: "metadataService"
+          arguments: [  ]
+        }
+        name: {
+          method: "name"
+          arguments: [  ]
+        }
+        names: {
+          method: "names"
+          arguments: [ input0: TEth.Hex ]
+        }
+        onERC721Received: {
+          method: "onERC721Received"
+          arguments: [ to: TAddress, input1: TAddress, tokenId: bigint, data: TEth.Hex ]
+        }
+        owner: {
+          method: "owner"
+          arguments: [  ]
+        }
+        ownerOf: {
+          method: "ownerOf"
+          arguments: [ id: bigint ]
+        }
+        recoverFunds: {
+          method: "recoverFunds"
+          arguments: [ _token: TAddress, _to: TAddress, _amount: bigint ]
+        }
+        registerAndWrapETH2LD: {
+          method: "registerAndWrapETH2LD"
+          arguments: [ label: string, wrappedOwner: TAddress, duration: bigint, resolver: TAddress, ownerControlledFuses: number ]
+        }
+        registrar: {
+          method: "registrar"
+          arguments: [  ]
+        }
+        renew: {
+          method: "renew"
+          arguments: [ tokenId: bigint, duration: bigint ]
+        }
+        renounceOwnership: {
+          method: "renounceOwnership"
+          arguments: [  ]
+        }
+        safeBatchTransferFrom: {
+          method: "safeBatchTransferFrom"
+          arguments: [ from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex ]
+        }
+        safeTransferFrom: {
+          method: "safeTransferFrom"
+          arguments: [ from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex ]
+        }
+        setApprovalForAll: {
+          method: "setApprovalForAll"
+          arguments: [ operator: TAddress, approved: boolean ]
+        }
+        setChildFuses: {
+          method: "setChildFuses"
+          arguments: [ parentNode: TEth.Hex, labelhash: TEth.Hex, fuses: number, expiry: number ]
+        }
+        setController: {
+          method: "setController"
+          arguments: [ controller: TAddress, active: boolean ]
+        }
+        setFuses: {
+          method: "setFuses"
+          arguments: [ node: TEth.Hex, ownerControlledFuses: number ]
+        }
+        setMetadataService: {
+          method: "setMetadataService"
+          arguments: [ _metadataService: TAddress ]
+        }
+        setRecord: {
+          method: "setRecord"
+          arguments: [ node: TEth.Hex, owner: TAddress, resolver: TAddress, ttl: number ]
+        }
+        setResolver: {
+          method: "setResolver"
+          arguments: [ node: TEth.Hex, resolver: TAddress ]
+        }
+        setSubnodeOwner: {
+          method: "setSubnodeOwner"
+          arguments: [ parentNode: TEth.Hex, label: string, owner: TAddress, fuses: number, expiry: number ]
+        }
+        setSubnodeRecord: {
+          method: "setSubnodeRecord"
+          arguments: [ parentNode: TEth.Hex, label: string, owner: TAddress, resolver: TAddress, ttl: number, fuses: number, expiry: number ]
+        }
+        setTTL: {
+          method: "setTTL"
+          arguments: [ node: TEth.Hex, ttl: number ]
+        }
+        setUpgradeContract: {
+          method: "setUpgradeContract"
+          arguments: [ _upgradeAddress: TAddress ]
+        }
+        supportsInterface: {
+          method: "supportsInterface"
+          arguments: [ interfaceId: TEth.Hex ]
+        }
+        transferOwnership: {
+          method: "transferOwnership"
+          arguments: [ newOwner: TAddress ]
+        }
+        unwrap: {
+          method: "unwrap"
+          arguments: [ parentNode: TEth.Hex, labelhash: TEth.Hex, controller: TAddress ]
+        }
+        unwrapETH2LD: {
+          method: "unwrapETH2LD"
+          arguments: [ labelhash: TEth.Hex, registrant: TAddress, controller: TAddress ]
+        }
+        upgrade: {
+          method: "upgrade"
+          arguments: [ name: TEth.Hex, extraData: TEth.Hex ]
+        }
+        upgradeContract: {
+          method: "upgradeContract"
+          arguments: [  ]
+        }
+        uri: {
+          method: "uri"
+          arguments: [ tokenId: bigint ]
+        }
+        wrap: {
+          method: "wrap"
+          arguments: [ name: TEth.Hex, wrappedOwner: TAddress, resolver: TAddress ]
+        }
+        wrapETH2LD: {
+          method: "wrapETH2LD"
+          arguments: [ label: string, wrappedOwner: TAddress, ownerControlledFuses: number, resolver: TAddress ]
+        }
+    }
 }
-
-interface IMethodAllFusesBurned {
-  method: "allFusesBurned"
-  arguments: [ node: TEth.Hex, fuseMask: number ]
-}
-
-interface IMethodApprove {
-  method: "approve"
-  arguments: [ to: TAddress, tokenId: bigint ]
-}
-
-interface IMethodBalanceOf {
-  method: "balanceOf"
-  arguments: [ account: TAddress, id: bigint ]
-}
-
-interface IMethodBalanceOfBatch {
-  method: "balanceOfBatch"
-  arguments: [ accounts: TAddress[], ids: bigint[] ]
-}
-
-interface IMethodCanExtendSubnames {
-  method: "canExtendSubnames"
-  arguments: [ node: TEth.Hex, addr: TAddress ]
-}
-
-interface IMethodCanModifyName {
-  method: "canModifyName"
-  arguments: [ node: TEth.Hex, addr: TAddress ]
-}
-
-interface IMethodControllers {
-  method: "controllers"
-  arguments: [ input0: TAddress ]
-}
-
-interface IMethodEns {
-  method: "ens"
-  arguments: [  ]
-}
-
-interface IMethodExtendExpiry {
-  method: "extendExpiry"
-  arguments: [ parentNode: TEth.Hex, labelhash: TEth.Hex, expiry: number ]
-}
-
-interface IMethodGetApproved {
-  method: "getApproved"
-  arguments: [ id: bigint ]
-}
-
-interface IMethodGetData {
-  method: "getData"
-  arguments: [ id: bigint ]
-}
-
-interface IMethodIsApprovedForAll {
-  method: "isApprovedForAll"
-  arguments: [ account: TAddress, operator: TAddress ]
-}
-
-interface IMethodIsWrapped {
-  method: "isWrapped"
-  arguments: [ parentNode: TEth.Hex, labelhash: TEth.Hex ] | [ node: TEth.Hex ]
-}
-
-interface IMethodMetadataService {
-  method: "metadataService"
-  arguments: [  ]
-}
-
-interface IMethodName {
-  method: "name"
-  arguments: [  ]
-}
-
-interface IMethodNames {
-  method: "names"
-  arguments: [ input0: TEth.Hex ]
-}
-
-interface IMethodOnERC721Received {
-  method: "onERC721Received"
-  arguments: [ to: TAddress, input1: TAddress, tokenId: bigint, data: TEth.Hex ]
-}
-
-interface IMethodOwner {
-  method: "owner"
-  arguments: [  ]
-}
-
-interface IMethodOwnerOf {
-  method: "ownerOf"
-  arguments: [ id: bigint ]
-}
-
-interface IMethodRecoverFunds {
-  method: "recoverFunds"
-  arguments: [ _token: TAddress, _to: TAddress, _amount: bigint ]
-}
-
-interface IMethodRegisterAndWrapETH2LD {
-  method: "registerAndWrapETH2LD"
-  arguments: [ label: string, wrappedOwner: TAddress, duration: bigint, resolver: TAddress, ownerControlledFuses: number ]
-}
-
-interface IMethodRegistrar {
-  method: "registrar"
-  arguments: [  ]
-}
-
-interface IMethodRenew {
-  method: "renew"
-  arguments: [ tokenId: bigint, duration: bigint ]
-}
-
-interface IMethodRenounceOwnership {
-  method: "renounceOwnership"
-  arguments: [  ]
-}
-
-interface IMethodSafeBatchTransferFrom {
-  method: "safeBatchTransferFrom"
-  arguments: [ from: TAddress, to: TAddress, ids: bigint[], amounts: bigint[], data: TEth.Hex ]
-}
-
-interface IMethodSafeTransferFrom {
-  method: "safeTransferFrom"
-  arguments: [ from: TAddress, to: TAddress, id: bigint, amount: bigint, data: TEth.Hex ]
-}
-
-interface IMethodSetApprovalForAll {
-  method: "setApprovalForAll"
-  arguments: [ operator: TAddress, approved: boolean ]
-}
-
-interface IMethodSetChildFuses {
-  method: "setChildFuses"
-  arguments: [ parentNode: TEth.Hex, labelhash: TEth.Hex, fuses: number, expiry: number ]
-}
-
-interface IMethodSetController {
-  method: "setController"
-  arguments: [ controller: TAddress, active: boolean ]
-}
-
-interface IMethodSetFuses {
-  method: "setFuses"
-  arguments: [ node: TEth.Hex, ownerControlledFuses: number ]
-}
-
-interface IMethodSetMetadataService {
-  method: "setMetadataService"
-  arguments: [ _metadataService: TAddress ]
-}
-
-interface IMethodSetRecord {
-  method: "setRecord"
-  arguments: [ node: TEth.Hex, owner: TAddress, resolver: TAddress, ttl: number ]
-}
-
-interface IMethodSetResolver {
-  method: "setResolver"
-  arguments: [ node: TEth.Hex, resolver: TAddress ]
-}
-
-interface IMethodSetSubnodeOwner {
-  method: "setSubnodeOwner"
-  arguments: [ parentNode: TEth.Hex, label: string, owner: TAddress, fuses: number, expiry: number ]
-}
-
-interface IMethodSetSubnodeRecord {
-  method: "setSubnodeRecord"
-  arguments: [ parentNode: TEth.Hex, label: string, owner: TAddress, resolver: TAddress, ttl: number, fuses: number, expiry: number ]
-}
-
-interface IMethodSetTTL {
-  method: "setTTL"
-  arguments: [ node: TEth.Hex, ttl: number ]
-}
-
-interface IMethodSetUpgradeContract {
-  method: "setUpgradeContract"
-  arguments: [ _upgradeAddress: TAddress ]
-}
-
-interface IMethodSupportsInterface {
-  method: "supportsInterface"
-  arguments: [ interfaceId: TEth.Hex ]
-}
-
-interface IMethodTransferOwnership {
-  method: "transferOwnership"
-  arguments: [ newOwner: TAddress ]
-}
-
-interface IMethodUnwrap {
-  method: "unwrap"
-  arguments: [ parentNode: TEth.Hex, labelhash: TEth.Hex, controller: TAddress ]
-}
-
-interface IMethodUnwrapETH2LD {
-  method: "unwrapETH2LD"
-  arguments: [ labelhash: TEth.Hex, registrant: TAddress, controller: TAddress ]
-}
-
-interface IMethodUpgrade {
-  method: "upgrade"
-  arguments: [ name: TEth.Hex, extraData: TEth.Hex ]
-}
-
-interface IMethodUpgradeContract {
-  method: "upgradeContract"
-  arguments: [  ]
-}
-
-interface IMethodUri {
-  method: "uri"
-  arguments: [ tokenId: bigint ]
-}
-
-interface IMethodWrap {
-  method: "wrap"
-  arguments: [ name: TEth.Hex, wrappedOwner: TAddress, resolver: TAddress ]
-}
-
-interface IMethodWrapETH2LD {
-  method: "wrapETH2LD"
-  arguments: [ label: string, wrappedOwner: TAddress, ownerControlledFuses: number, resolver: TAddress ]
-}
-
-interface IMethods {
-  _tokens: IMethod_tokens
-  allFusesBurned: IMethodAllFusesBurned
-  approve: IMethodApprove
-  balanceOf: IMethodBalanceOf
-  balanceOfBatch: IMethodBalanceOfBatch
-  canExtendSubnames: IMethodCanExtendSubnames
-  canModifyName: IMethodCanModifyName
-  controllers: IMethodControllers
-  ens: IMethodEns
-  extendExpiry: IMethodExtendExpiry
-  getApproved: IMethodGetApproved
-  getData: IMethodGetData
-  isApprovedForAll: IMethodIsApprovedForAll
-  isWrapped: IMethodIsWrapped
-  metadataService: IMethodMetadataService
-  name: IMethodName
-  names: IMethodNames
-  onERC721Received: IMethodOnERC721Received
-  owner: IMethodOwner
-  ownerOf: IMethodOwnerOf
-  recoverFunds: IMethodRecoverFunds
-  registerAndWrapETH2LD: IMethodRegisterAndWrapETH2LD
-  registrar: IMethodRegistrar
-  renew: IMethodRenew
-  renounceOwnership: IMethodRenounceOwnership
-  safeBatchTransferFrom: IMethodSafeBatchTransferFrom
-  safeTransferFrom: IMethodSafeTransferFrom
-  setApprovalForAll: IMethodSetApprovalForAll
-  setChildFuses: IMethodSetChildFuses
-  setController: IMethodSetController
-  setFuses: IMethodSetFuses
-  setMetadataService: IMethodSetMetadataService
-  setRecord: IMethodSetRecord
-  setResolver: IMethodSetResolver
-  setSubnodeOwner: IMethodSetSubnodeOwner
-  setSubnodeRecord: IMethodSetSubnodeRecord
-  setTTL: IMethodSetTTL
-  setUpgradeContract: IMethodSetUpgradeContract
-  supportsInterface: IMethodSupportsInterface
-  transferOwnership: IMethodTransferOwnership
-  unwrap: IMethodUnwrap
-  unwrapETH2LD: IMethodUnwrapETH2LD
-  upgrade: IMethodUpgrade
-  upgradeContract: IMethodUpgradeContract
-  uri: IMethodUri
-  wrap: IMethodWrap
-  wrapETH2LD: IMethodWrapETH2LD
-  '*': { method: string, arguments: any[] } 
-}
-
-
 
 
 
@@ -1026,7 +936,6 @@ class EnsNameWrapperStorageReader extends ContractStorageReaderBase {
 }
 
 
-
 interface IEnsNameWrapperTxCaller {
     approve (sender: TSender, to: TAddress, tokenId: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     extendExpiry (sender: TSender, parentNode: TEth.Hex, labelhash: TEth.Hex, expiry: number): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
@@ -1087,3 +996,5 @@ interface IEnsNameWrapperTxData {
 }
 
 
+type TEvents = TEnsNameWrapperTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

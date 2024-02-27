@@ -1,9 +1,9 @@
-import { HopBridge } from './hop/HopBridge';
+//import { HopBridge } from './hop/HopBridge';
 import { IBridge } from './models/IBridge';
 
 export class BridgeFactory {
     bridges = [
-        new HopBridge()
+        //new HopBridge()
     ] as  IBridge[];
 
     get(name: 'hop' | string): IBridge {

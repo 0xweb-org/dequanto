@@ -192,6 +192,10 @@ UTest({
                 eq_(log.event, 'Updated');
                 eq_(log.params.newName, 'bar');
 
+                l`> Check logs for FOO contract with Event Name`;
+                let logsByName = await foo.getPastLogs('Updated');
+                deepEq_(logs, logsByName);
+
                 l`> Check logs by topic`
                 let parsed = await reader.getLogsParsed('event Updated(string newName)', {
                     fromBlock: quxReceipt.blockNumber,
@@ -241,6 +245,9 @@ UTest({
                 let allLogs = await foo.$getPastLogsParsed('*') as ITxLogItem[];
                 let allEvents = alot(allLogs).map(x => x.event).distinct().toArray();
                 deepEq_(allEvents, [ 'Updated', 'Updated2']);
+
+                let allLogsByName = await foo.getPastLogs(['Updated', 'Updated2']);
+                deepEq_(allLogs, allLogsByName);
             },
 
             async 'deploy and check indexed logs' () {

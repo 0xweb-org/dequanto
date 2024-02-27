@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -47,8 +47,8 @@ export class CrossChainEnabledPolygonChild extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/CrossChainEnabledPolygonChild.ts"
-}
+        "class": "./contracts/openzeppelin/CrossChainEnabledPolygonChild.ts"
+    }
 
     // 0x9a7c4b71
     async processMessageFromRoot (sender: TSender, input0: bigint, rootMessageSender: TAddress, data: TEth.Hex): Promise<TxWriter> {
@@ -68,10 +68,13 @@ export class CrossChainEnabledPolygonChild extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TCrossChainEnabledPolygonChildTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TCrossChainEnabledPolygonChildTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -79,8 +82,20 @@ export class CrossChainEnabledPolygonChild extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
 
@@ -98,26 +113,23 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-
-
-interface IEvents {
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodProcessMessageFromRoot {
-  method: "processMessageFromRoot"
-  arguments: [ input0: bigint, rootMessageSender: TAddress, data: TEth.Hex ]
+export type TCrossChainEnabledPolygonChildTypes = {
+    Events: {
+        
+    },
+    Methods: {
+        processMessageFromRoot: {
+          method: "processMessageFromRoot"
+          arguments: [ input0: bigint, rootMessageSender: TAddress, data: TEth.Hex ]
+        }
+    }
 }
-
-interface IMethods {
-  processMessageFromRoot: IMethodProcessMessageFromRoot
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -131,3 +143,5 @@ interface ICrossChainEnabledPolygonChildTxData {
 }
 
 
+type TEvents = TCrossChainEnabledPolygonChildTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

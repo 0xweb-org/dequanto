@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/0x253553366Da8546fC250F225fe3d25d0C782303b#code
  */
 import di from 'a-di';
@@ -92,8 +92,8 @@ export class EnsEthRegistrarController extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/ens/EnsEthRegistrarController/EnsEthRegistrarController.ts"
-}
+        "class": "./contracts/ens/EnsEthRegistrarController/EnsEthRegistrarController.ts"
+    }
 
     async $constructor (deployer: TSender, _base: TAddress, _prices: TAddress, _minCommitmentAge: bigint, _maxCommitmentAge: bigint, _reverseRegistrar: TAddress, _nameWrapper: TAddress, _ens: TAddress): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -212,10 +212,13 @@ export class EnsEthRegistrarController extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TEnsEthRegistrarControllerTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TEnsEthRegistrarControllerTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -223,8 +226,20 @@ export class EnsEthRegistrarController extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onNameRegistered (fn?: (event: TClientEventsStreamData<TLogNameRegisteredParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogNameRegisteredParameters>> {
@@ -239,26 +254,26 @@ export class EnsEthRegistrarController extends ContractBase {
         return this.$onLog('OwnershipTransferred', fn);
     }
 
-    extractLogsNameRegistered (tx: TEth.TxReceipt): ITxLogItem<TLogNameRegistered>[] {
+    extractLogsNameRegistered (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'NameRegistered'>>[] {
         let abi = this.$getAbiItem('event', 'NameRegistered');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogNameRegistered>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'NameRegistered'>>[];
     }
 
-    extractLogsNameRenewed (tx: TEth.TxReceipt): ITxLogItem<TLogNameRenewed>[] {
+    extractLogsNameRenewed (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'NameRenewed'>>[] {
         let abi = this.$getAbiItem('event', 'NameRenewed');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogNameRenewed>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'NameRenewed'>>[];
     }
 
-    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TLogOwnershipTransferred>[] {
+    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'OwnershipTransferred'>>[] {
         let abi = this.$getAbiItem('event', 'OwnershipTransferred');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogOwnershipTransferred>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'OwnershipTransferred'>>[];
     }
 
     async getPastLogsNameRegistered (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogNameRegistered>[]> {
+    }): Promise<ITxLogItem<TEventParams<'NameRegistered'>>[]> {
         return await this.$getPastLogsParsed('NameRegistered', options) as any;
     }
 
@@ -266,7 +281,7 @@ export class EnsEthRegistrarController extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogNameRenewed>[]> {
+    }): Promise<ITxLogItem<TEventParams<'NameRenewed'>>[]> {
         return await this.$getPastLogsParsed('NameRenewed', options) as any;
     }
 
@@ -274,7 +289,7 @@ export class EnsEthRegistrarController extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { previousOwner?: TAddress,newOwner?: TAddress }
-    }): Promise<ITxLogItem<TLogOwnershipTransferred>[]> {
+    }): Promise<ITxLogItem<TEventParams<'OwnershipTransferred'>>[]> {
         return await this.$getPastLogsParsed('OwnershipTransferred', options) as any;
     }
 
@@ -287,153 +302,110 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogNameRegistered = {
-        name: string, label: TEth.Hex, owner: TAddress, baseCost: bigint, premium: bigint, expires: bigint
-    };
-    type TLogNameRegisteredParameters = [ name: string, label: TEth.Hex, owner: TAddress, baseCost: bigint, premium: bigint, expires: bigint ];
-    type TLogNameRenewed = {
-        name: string, label: TEth.Hex, cost: bigint, expires: bigint
-    };
-    type TLogNameRenewedParameters = [ name: string, label: TEth.Hex, cost: bigint, expires: bigint ];
-    type TLogOwnershipTransferred = {
-        previousOwner: TAddress, newOwner: TAddress
-    };
-    type TLogOwnershipTransferredParameters = [ previousOwner: TAddress, newOwner: TAddress ];
-
-interface IEvents {
-  NameRegistered: TLogNameRegisteredParameters
-  NameRenewed: TLogNameRenewedParameters
-  OwnershipTransferred: TLogOwnershipTransferredParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodMIN_REGISTRATION_DURATION {
-  method: "MIN_REGISTRATION_DURATION"
-  arguments: [  ]
+export type TEnsEthRegistrarControllerTypes = {
+    Events: {
+        NameRegistered: {
+            outputParams: { name: string, label: TEth.Hex, owner: TAddress, baseCost: bigint, premium: bigint, expires: bigint },
+            outputArgs:   [ name: string, label: TEth.Hex, owner: TAddress, baseCost: bigint, premium: bigint, expires: bigint ],
+        }
+        NameRenewed: {
+            outputParams: { name: string, label: TEth.Hex, cost: bigint, expires: bigint },
+            outputArgs:   [ name: string, label: TEth.Hex, cost: bigint, expires: bigint ],
+        }
+        OwnershipTransferred: {
+            outputParams: { previousOwner: TAddress, newOwner: TAddress },
+            outputArgs:   [ previousOwner: TAddress, newOwner: TAddress ],
+        }
+    },
+    Methods: {
+        MIN_REGISTRATION_DURATION: {
+          method: "MIN_REGISTRATION_DURATION"
+          arguments: [  ]
+        }
+        available: {
+          method: "available"
+          arguments: [ name: string ]
+        }
+        commit: {
+          method: "commit"
+          arguments: [ commitment: TEth.Hex ]
+        }
+        commitments: {
+          method: "commitments"
+          arguments: [ input0: TEth.Hex ]
+        }
+        makeCommitment: {
+          method: "makeCommitment"
+          arguments: [ name: string, owner: TAddress, duration: bigint, secret: TEth.Hex, resolver: TAddress, data: TEth.Hex[], reverseRecord: boolean, ownerControlledFuses: number ]
+        }
+        maxCommitmentAge: {
+          method: "maxCommitmentAge"
+          arguments: [  ]
+        }
+        minCommitmentAge: {
+          method: "minCommitmentAge"
+          arguments: [  ]
+        }
+        nameWrapper: {
+          method: "nameWrapper"
+          arguments: [  ]
+        }
+        owner: {
+          method: "owner"
+          arguments: [  ]
+        }
+        prices: {
+          method: "prices"
+          arguments: [  ]
+        }
+        recoverFunds: {
+          method: "recoverFunds"
+          arguments: [ _token: TAddress, _to: TAddress, _amount: bigint ]
+        }
+        register: {
+          method: "register"
+          arguments: [ name: string, owner: TAddress, duration: bigint, secret: TEth.Hex, resolver: TAddress, data: TEth.Hex[], reverseRecord: boolean, ownerControlledFuses: number ]
+        }
+        renew: {
+          method: "renew"
+          arguments: [ name: string, duration: bigint ]
+        }
+        renounceOwnership: {
+          method: "renounceOwnership"
+          arguments: [  ]
+        }
+        rentPrice: {
+          method: "rentPrice"
+          arguments: [ name: string, duration: bigint ]
+        }
+        reverseRegistrar: {
+          method: "reverseRegistrar"
+          arguments: [  ]
+        }
+        supportsInterface: {
+          method: "supportsInterface"
+          arguments: [ interfaceID: TEth.Hex ]
+        }
+        transferOwnership: {
+          method: "transferOwnership"
+          arguments: [ newOwner: TAddress ]
+        }
+        valid: {
+          method: "valid"
+          arguments: [ name: string ]
+        }
+        withdraw: {
+          method: "withdraw"
+          arguments: [  ]
+        }
+    }
 }
-
-interface IMethodAvailable {
-  method: "available"
-  arguments: [ name: string ]
-}
-
-interface IMethodCommit {
-  method: "commit"
-  arguments: [ commitment: TEth.Hex ]
-}
-
-interface IMethodCommitments {
-  method: "commitments"
-  arguments: [ input0: TEth.Hex ]
-}
-
-interface IMethodMakeCommitment {
-  method: "makeCommitment"
-  arguments: [ name: string, owner: TAddress, duration: bigint, secret: TEth.Hex, resolver: TAddress, data: TEth.Hex[], reverseRecord: boolean, ownerControlledFuses: number ]
-}
-
-interface IMethodMaxCommitmentAge {
-  method: "maxCommitmentAge"
-  arguments: [  ]
-}
-
-interface IMethodMinCommitmentAge {
-  method: "minCommitmentAge"
-  arguments: [  ]
-}
-
-interface IMethodNameWrapper {
-  method: "nameWrapper"
-  arguments: [  ]
-}
-
-interface IMethodOwner {
-  method: "owner"
-  arguments: [  ]
-}
-
-interface IMethodPrices {
-  method: "prices"
-  arguments: [  ]
-}
-
-interface IMethodRecoverFunds {
-  method: "recoverFunds"
-  arguments: [ _token: TAddress, _to: TAddress, _amount: bigint ]
-}
-
-interface IMethodRegister {
-  method: "register"
-  arguments: [ name: string, owner: TAddress, duration: bigint, secret: TEth.Hex, resolver: TAddress, data: TEth.Hex[], reverseRecord: boolean, ownerControlledFuses: number ]
-}
-
-interface IMethodRenew {
-  method: "renew"
-  arguments: [ name: string, duration: bigint ]
-}
-
-interface IMethodRenounceOwnership {
-  method: "renounceOwnership"
-  arguments: [  ]
-}
-
-interface IMethodRentPrice {
-  method: "rentPrice"
-  arguments: [ name: string, duration: bigint ]
-}
-
-interface IMethodReverseRegistrar {
-  method: "reverseRegistrar"
-  arguments: [  ]
-}
-
-interface IMethodSupportsInterface {
-  method: "supportsInterface"
-  arguments: [ interfaceID: TEth.Hex ]
-}
-
-interface IMethodTransferOwnership {
-  method: "transferOwnership"
-  arguments: [ newOwner: TAddress ]
-}
-
-interface IMethodValid {
-  method: "valid"
-  arguments: [ name: string ]
-}
-
-interface IMethodWithdraw {
-  method: "withdraw"
-  arguments: [  ]
-}
-
-interface IMethods {
-  MIN_REGISTRATION_DURATION: IMethodMIN_REGISTRATION_DURATION
-  available: IMethodAvailable
-  commit: IMethodCommit
-  commitments: IMethodCommitments
-  makeCommitment: IMethodMakeCommitment
-  maxCommitmentAge: IMethodMaxCommitmentAge
-  minCommitmentAge: IMethodMinCommitmentAge
-  nameWrapper: IMethodNameWrapper
-  owner: IMethodOwner
-  prices: IMethodPrices
-  recoverFunds: IMethodRecoverFunds
-  register: IMethodRegister
-  renew: IMethodRenew
-  renounceOwnership: IMethodRenounceOwnership
-  rentPrice: IMethodRentPrice
-  reverseRegistrar: IMethodReverseRegistrar
-  supportsInterface: IMethodSupportsInterface
-  transferOwnership: IMethodTransferOwnership
-  valid: IMethodValid
-  withdraw: IMethodWithdraw
-  '*': { method: string, arguments: any[] } 
-}
-
-
 
 
 
@@ -476,7 +448,6 @@ class EnsEthRegistrarControllerStorageReader extends ContractStorageReaderBase {
 }
 
 
-
 interface IEnsEthRegistrarControllerTxCaller {
     commit (sender: TSender, commitment: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     recoverFunds (sender: TSender, _token: TAddress, _to: TAddress, _amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
@@ -499,3 +470,5 @@ interface IEnsEthRegistrarControllerTxData {
 }
 
 
+type TEvents = TEnsEthRegistrarControllerTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class WETH extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/weth/WETH/WETH.ts"
-}
+        "class": "./contracts/weth/WETH/WETH.ts"
+    }
 
     // 0x06fdde03
     async name (): Promise<string> {
@@ -111,10 +111,13 @@ export class WETH extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TWETHTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TWETHTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -122,8 +125,20 @@ export class WETH extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onApproval (fn?: (event: TClientEventsStreamData<TLogApprovalParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalParameters>> {
@@ -142,31 +157,31 @@ export class WETH extends ContractBase {
         return this.$onLog('Withdrawal', fn);
     }
 
-    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TLogApproval>[] {
+    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Approval'>>[] {
         let abi = this.$getAbiItem('event', 'Approval');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApproval>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Approval'>>[];
     }
 
-    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TLogTransfer>[] {
+    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Transfer'>>[] {
         let abi = this.$getAbiItem('event', 'Transfer');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogTransfer>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Transfer'>>[];
     }
 
-    extractLogsDeposit (tx: TEth.TxReceipt): ITxLogItem<TLogDeposit>[] {
+    extractLogsDeposit (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Deposit'>>[] {
         let abi = this.$getAbiItem('event', 'Deposit');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogDeposit>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Deposit'>>[];
     }
 
-    extractLogsWithdrawal (tx: TEth.TxReceipt): ITxLogItem<TLogWithdrawal>[] {
+    extractLogsWithdrawal (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Withdrawal'>>[] {
         let abi = this.$getAbiItem('event', 'Withdrawal');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogWithdrawal>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Withdrawal'>>[];
     }
 
     async getPastLogsApproval (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { src?: TAddress,guy?: TAddress }
-    }): Promise<ITxLogItem<TLogApproval>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Approval'>>[]> {
         return await this.$getPastLogsParsed('Approval', options) as any;
     }
 
@@ -174,7 +189,7 @@ export class WETH extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { src?: TAddress,dst?: TAddress }
-    }): Promise<ITxLogItem<TLogTransfer>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Transfer'>>[]> {
         return await this.$getPastLogsParsed('Transfer', options) as any;
     }
 
@@ -182,7 +197,7 @@ export class WETH extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { dst?: TAddress }
-    }): Promise<ITxLogItem<TLogDeposit>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Deposit'>>[]> {
         return await this.$getPastLogsParsed('Deposit', options) as any;
     }
 
@@ -190,7 +205,7 @@ export class WETH extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { src?: TAddress }
-    }): Promise<ITxLogItem<TLogWithdrawal>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Withdrawal'>>[]> {
         return await this.$getPastLogsParsed('Withdrawal', options) as any;
     }
 
@@ -203,104 +218,78 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogApproval = {
-        src: TAddress, guy: TAddress, wad: bigint
-    };
-    type TLogApprovalParameters = [ src: TAddress, guy: TAddress, wad: bigint ];
-    type TLogTransfer = {
-        src: TAddress, dst: TAddress, wad: bigint
-    };
-    type TLogTransferParameters = [ src: TAddress, dst: TAddress, wad: bigint ];
-    type TLogDeposit = {
-        dst: TAddress, wad: bigint
-    };
-    type TLogDepositParameters = [ dst: TAddress, wad: bigint ];
-    type TLogWithdrawal = {
-        src: TAddress, wad: bigint
-    };
-    type TLogWithdrawalParameters = [ src: TAddress, wad: bigint ];
-
-interface IEvents {
-  Approval: TLogApprovalParameters
-  Transfer: TLogTransferParameters
-  Deposit: TLogDepositParameters
-  Withdrawal: TLogWithdrawalParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodName {
-  method: "name"
-  arguments: [  ]
+export type TWETHTypes = {
+    Events: {
+        Approval: {
+            outputParams: { src: TAddress, guy: TAddress, wad: bigint },
+            outputArgs:   [ src: TAddress, guy: TAddress, wad: bigint ],
+        }
+        Transfer: {
+            outputParams: { src: TAddress, dst: TAddress, wad: bigint },
+            outputArgs:   [ src: TAddress, dst: TAddress, wad: bigint ],
+        }
+        Deposit: {
+            outputParams: { dst: TAddress, wad: bigint },
+            outputArgs:   [ dst: TAddress, wad: bigint ],
+        }
+        Withdrawal: {
+            outputParams: { src: TAddress, wad: bigint },
+            outputArgs:   [ src: TAddress, wad: bigint ],
+        }
+    },
+    Methods: {
+        name: {
+          method: "name"
+          arguments: [  ]
+        }
+        approve: {
+          method: "approve"
+          arguments: [ guy: TAddress, wad: bigint ]
+        }
+        totalSupply: {
+          method: "totalSupply"
+          arguments: [  ]
+        }
+        transferFrom: {
+          method: "transferFrom"
+          arguments: [ src: TAddress, dst: TAddress, wad: bigint ]
+        }
+        withdraw: {
+          method: "withdraw"
+          arguments: [ wad: bigint ]
+        }
+        decimals: {
+          method: "decimals"
+          arguments: [  ]
+        }
+        balanceOf: {
+          method: "balanceOf"
+          arguments: [ input0: TAddress ]
+        }
+        symbol: {
+          method: "symbol"
+          arguments: [  ]
+        }
+        transfer: {
+          method: "transfer"
+          arguments: [ dst: TAddress, wad: bigint ]
+        }
+        deposit: {
+          method: "deposit"
+          arguments: [  ]
+        }
+        allowance: {
+          method: "allowance"
+          arguments: [ input0: TAddress, input1: TAddress ]
+        }
+    }
 }
-
-interface IMethodApprove {
-  method: "approve"
-  arguments: [ guy: TAddress, wad: bigint ]
-}
-
-interface IMethodTotalSupply {
-  method: "totalSupply"
-  arguments: [  ]
-}
-
-interface IMethodTransferFrom {
-  method: "transferFrom"
-  arguments: [ src: TAddress, dst: TAddress, wad: bigint ]
-}
-
-interface IMethodWithdraw {
-  method: "withdraw"
-  arguments: [ wad: bigint ]
-}
-
-interface IMethodDecimals {
-  method: "decimals"
-  arguments: [  ]
-}
-
-interface IMethodBalanceOf {
-  method: "balanceOf"
-  arguments: [ input0: TAddress ]
-}
-
-interface IMethodSymbol {
-  method: "symbol"
-  arguments: [  ]
-}
-
-interface IMethodTransfer {
-  method: "transfer"
-  arguments: [ dst: TAddress, wad: bigint ]
-}
-
-interface IMethodDeposit {
-  method: "deposit"
-  arguments: [  ]
-}
-
-interface IMethodAllowance {
-  method: "allowance"
-  arguments: [ input0: TAddress, input1: TAddress ]
-}
-
-interface IMethods {
-  name: IMethodName
-  approve: IMethodApprove
-  totalSupply: IMethodTotalSupply
-  transferFrom: IMethodTransferFrom
-  withdraw: IMethodWithdraw
-  decimals: IMethodDecimals
-  balanceOf: IMethodBalanceOf
-  symbol: IMethodSymbol
-  transfer: IMethodTransfer
-  deposit: IMethodDeposit
-  allowance: IMethodAllowance
-  '*': { method: string, arguments: any[] } 
-}
-
-
 
 
 
@@ -376,7 +365,6 @@ class WETHStorageReader extends ContractStorageReaderBase {
 }
 
 
-
 interface IWETHTxCaller {
     approve (sender: TSender, guy: TAddress, wad: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     transferFrom (sender: TSender, src: TAddress, dst: TAddress, wad: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
@@ -395,3 +383,5 @@ interface IWETHTxData {
 }
 
 
+type TEvents = TWETHTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

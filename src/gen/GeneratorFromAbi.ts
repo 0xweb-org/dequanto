@@ -16,6 +16,7 @@ import { Str } from './utils/Str';
 import { $gen } from './utils/$gen';
 import { $str } from '@dequanto/solidity/utils/$str';
 
+
 export class GeneratorFromAbi {
 
     static get Gen () {
@@ -60,17 +61,27 @@ export class GeneratorFromAbi {
 
 
 
-        let methodInterfacesArr = alot(abiJson)
+        // let methodInterfacesArr = alot(abiJson)
+        //     .filter(x => x.type === 'function')
+        //     .groupBy(x => x.name)
+        //     .map(group => {
+        //         let item = group.values[0];
+        //         return Gen.serializeMethodInterfacesTs(item.name, group.values);
+        //     })
+        //     .filter(Boolean)
+        //     .toArray();
+
+        //let methodInterfacesAll = Gen.serializeMethodInterfacesAllTs(methodInterfacesArr);
+
+        let methodTypes = alot(abiJson)
             .filter(x => x.type === 'function')
             .groupBy(x => x.name)
             .map(group => {
                 let item = group.values[0];
-                return Gen.serializeMethodInterfacesTs(item.name, group.values);
+                return Gen.serializeMethodTypeTs(item.name, group.values);
             })
             .filter(Boolean)
             .toArray();
-
-        let methodInterfacesAll = Gen.serializeMethodInterfacesAllTs(methodInterfacesArr);
 
         let eventsArr = abiJson
             .filter(x => x.type === 'event')
@@ -79,7 +90,18 @@ export class GeneratorFromAbi {
             .map(Str.formatMethod);
             ;
 
-        let eventInterfacesAll = Gen.serializeEventsInterfacesAllTs(abiJson.filter(x => x.type === 'event'));
+        let eventTypes = alot(abiJson)
+            .filter(x => x.type === 'event')
+            .groupBy(x => x.name)
+            .map(group => {
+                let item = group.values[0];
+                return Gen.serializeEventType(item);
+            })
+            .filter(Boolean)
+            .toArray();
+
+
+        //let eventInterfacesAll = Gen.serializeEventsInterfacesAllTs(abiJson.filter(x => x.type === 'event'));
 
         let eventsExtractorsArr = abiJson
             .filter(x => x.type === 'event')
@@ -93,11 +115,11 @@ export class GeneratorFromAbi {
             .filter(Boolean)
             .map(Str.formatMethod);
 
-        let eventInterfaces = abiJson
-            .filter(x => x.type === 'event')
-            .map(x => Gen.serializeEventInterface(x))
-            .filter(Boolean)
-            .map(Str.formatMethod);
+        // let eventInterfaces = abiJson
+        //     .filter(x => x.type === 'event')
+        //     .map(x => Gen.serializeEventInterface(x))
+        //     .filter(Boolean)
+        //     .map(Str.formatMethod);
             ;
 
         let methods = methodsArr.join('\n\n');
@@ -233,7 +255,7 @@ export class GeneratorFromAbi {
             .replace(/\$Web3ClientOptions\$/g, Web3ClientOptions)
             .replace(/\$EvmScanOptions\$/g, EvmScanOptions)
 
-            .replace(`/* META_PROPERTY */`, () => metaProperty)
+            .replace(`/* META_PROPERTY */`, () => Str.indent(metaProperty, '    '))
             .replace(`/* IMPORTS */`, () => imports.join('\n'))
             .replace(`/* ERRORS */`, () => Gen.serializeErrors(className, abiJson))
             .replace(/\$NAME\$/g, className)
@@ -245,7 +267,7 @@ export class GeneratorFromAbi {
             .replace(`$ABI$`, () => JSON.stringify(abiJson))
             .replace(`$DATE$`, $date.format(new Date(), 'yyyy-MM-dd HH:mm'))
             .replace(`$EXPLORER_URL$`, sourceUri)
-            .replace(`/* $EVENT_INTERFACES$ */`, () => eventInterfaces.join('\n') + '\n\n' + eventInterfacesAll.code + '\n\n')
+            //.replace(`/* $EVENT_INTERFACES$ */`, () => eventInterfaces.join('\n') + '\n\n' + eventInterfacesAll.code + '\n\n')
 
             .replace(`/* STORAGE_READER_INITIALIZER */`, storageReaderInitializer)
             .replace(`/* STORAGE_READER_PROPERTY */`, storageReaderProperty)
@@ -253,7 +275,10 @@ export class GeneratorFromAbi {
             .replace(`/* TX_CALLER_METHODS */`, () => Gen.serializeTxCallerMethods(className, abiJson))
             .replace(`/* TX_DATA_METHODS */`, () => Gen.serializeTxDataMethods(className, abiJson))
 
-            .replace(`/* $METHOD_INTERFACES$ */`, () => methodInterfacesArr.map(x => x.code).join('\n\n') + '\n\n' + methodInterfacesAll.code + '\n\n')
+
+            .replace(`/* $EVENT_TYPES$ */`, () => Str.indent(eventTypes.map(x => x.code).join('\n'), '        '))
+            .replace(`/* $METHOD_TYPES$ */`, () => Str.indent(methodTypes.map(x => x.code).join('\n'), '        '))
+            //.replace(`/* $METHOD_INTERFACES$ */`, () => methodInterfacesArr.map(x => x.code).join('\n\n') + '\n\n' + methodInterfacesAll.code + '\n\n')
             ;
 
 
@@ -344,6 +369,26 @@ namespace Gen {
         };
     }
 
+    export function serializeMethodTypeTs (name: string, abis: TAbiItem[]) {
+        let args = abis.map(abi => {
+            let { fnInputArguments } = serializeArgumentsTs(abi);
+            return `[ ${fnInputArguments} ]`;
+        }).join(' | ');
+
+        let iface = `IMethod${name[0].toUpperCase()}${name.substring(1)}`;
+        let code = [
+            `${name}: {`,
+            `  method: "${name}"`,
+            `  arguments: ${args}`,
+            `}`,
+        ];
+        return {
+            method: name,
+            interface: iface,
+            code: code.join('\n')
+        };
+    }
+
     export function serializeMethodInterfacesAllTs (methods: { method: string, interface: string }[] ) {
         let fields = methods.map(method => {
             return `  ${method.method}: ${method.interface}`;
@@ -372,6 +417,20 @@ namespace Gen {
             code: code.join('\n')
         };
     }
+    export function serializeEventType (event: TAbiItem ) {
+        let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(event);
+        let outputParams = `{ ${fnInputArguments} }`;
+        let outputArgs = `[ ${fnInputArguments.replace('\n', '')} ]`;
+        let code = [
+            `${event.name}: {`,
+            `    outputParams: ${ outputParams },`,
+            `    outputArgs:   ${ outputArgs },`,
+            `}`
+        ];
+        return {
+            code: code.join('\n')
+        };
+    }
 
     export function serializeEvent (abi: TAbiItem) {
         let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
@@ -383,9 +442,9 @@ namespace Gen {
     }
     export function serializeEventExtractor (abi: TAbiItem) {
         return `
-            extractLogs${abi.name} (tx: TEth.TxReceipt): ITxLogItem<TLog${abi.name}>[] {
+            extractLogs${abi.name} (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'${abi.name}'>>[] {
                 let abi = this.$getAbiItem('event', '${abi.name}');
-                return this.$extractLogs(tx, abi) as any as ITxLogItem<TLog${abi.name}>[];
+                return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'${abi.name}'>>[];
             }
         `;
     }
@@ -398,20 +457,20 @@ namespace Gen {
                 fromBlock?: number | Date
                 toBlock?: number | Date
                 params?: { ${indexedParams} }
-            }): Promise<ITxLogItem<TLog${abi.name}>[]> {
+            }): Promise<ITxLogItem<TEventParams<'${abi.name}'>>[]> {
                 return await this.$getPastLogsParsed('${abi.name}', options) as any;
             }
         `;
     }
-    export function serializeEventInterface (abi: TAbiItem) {
-        let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
-        return `
-            type TLog${abi.name} = {
-                ${fnInputArguments}
-            };
-            type TLog${abi.name}Parameters = [ ${fnInputArguments.replace('\n', '')} ];
-        `;
-    }
+    // export function serializeEventInterface (abi: TAbiItem) {
+    //     let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
+    //     return `
+    //         type TLog${abi.name} = {
+    //             ${fnInputArguments}
+    //         };
+    //         type TLog${abi.name}Parameters = [ ${fnInputArguments.replace('\n', '')} ];
+    //     `;
+    // }
 
     export function serializeMethodAbi(abi: TAbiItem, includeNames?: boolean) {
         let params = abi.inputs?.map(x => {

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: ./test/fixtures/erc4337/samples/SimpleAccount.sol
  */
 import di from 'a-di';
@@ -40,9 +40,9 @@ export class SimpleAccount extends ContractBase {
     }
 
     $meta = {
-    "source": "./test/fixtures/erc4337/samples/SimpleAccount.sol",
-    "class": "./contracts/erc4337/SimpleAccount/SimpleAccount.ts"
-}
+        "source": "./test/fixtures/erc4337/samples/SimpleAccount.sol",
+        "class": "./contracts/erc4337/SimpleAccount/SimpleAccount.ts"
+    }
 
     // 0x3a871cdd
     async validateUserOp (sender: TSender, userOp: { sender: TAddress, nonce: bigint, initCode: TEth.Hex, callData: TEth.Hex, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TEth.Hex, signature: TEth.Hex }, userOpHash: TEth.Hex, missingAccountFunds: bigint): Promise<TxWriter>
@@ -179,10 +179,13 @@ export class SimpleAccount extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TSimpleAccountTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TSimpleAccountTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -190,8 +193,20 @@ export class SimpleAccount extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onUpgraded (fn?: (event: TClientEventsStreamData<TLogUpgradedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogUpgradedParameters>> {
@@ -214,36 +229,36 @@ export class SimpleAccount extends ContractBase {
         return this.$onLog('SimpleAccountInitialized', fn);
     }
 
-    extractLogsUpgraded (tx: TEth.TxReceipt): ITxLogItem<TLogUpgraded>[] {
+    extractLogsUpgraded (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Upgraded'>>[] {
         let abi = this.$getAbiItem('event', 'Upgraded');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogUpgraded>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Upgraded'>>[];
     }
 
-    extractLogsAdminChanged (tx: TEth.TxReceipt): ITxLogItem<TLogAdminChanged>[] {
+    extractLogsAdminChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'AdminChanged'>>[] {
         let abi = this.$getAbiItem('event', 'AdminChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogAdminChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'AdminChanged'>>[];
     }
 
-    extractLogsBeaconUpgraded (tx: TEth.TxReceipt): ITxLogItem<TLogBeaconUpgraded>[] {
+    extractLogsBeaconUpgraded (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'BeaconUpgraded'>>[] {
         let abi = this.$getAbiItem('event', 'BeaconUpgraded');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogBeaconUpgraded>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'BeaconUpgraded'>>[];
     }
 
-    extractLogsInitialized (tx: TEth.TxReceipt): ITxLogItem<TLogInitialized>[] {
+    extractLogsInitialized (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Initialized'>>[] {
         let abi = this.$getAbiItem('event', 'Initialized');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogInitialized>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Initialized'>>[];
     }
 
-    extractLogsSimpleAccountInitialized (tx: TEth.TxReceipt): ITxLogItem<TLogSimpleAccountInitialized>[] {
+    extractLogsSimpleAccountInitialized (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'SimpleAccountInitialized'>>[] {
         let abi = this.$getAbiItem('event', 'SimpleAccountInitialized');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogSimpleAccountInitialized>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'SimpleAccountInitialized'>>[];
     }
 
     async getPastLogsUpgraded (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { implementation?: TAddress }
-    }): Promise<ITxLogItem<TLogUpgraded>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Upgraded'>>[]> {
         return await this.$getPastLogsParsed('Upgraded', options) as any;
     }
 
@@ -251,7 +266,7 @@ export class SimpleAccount extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogAdminChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'AdminChanged'>>[]> {
         return await this.$getPastLogsParsed('AdminChanged', options) as any;
     }
 
@@ -259,7 +274,7 @@ export class SimpleAccount extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { beacon?: TAddress }
-    }): Promise<ITxLogItem<TLogBeaconUpgraded>[]> {
+    }): Promise<ITxLogItem<TEventParams<'BeaconUpgraded'>>[]> {
         return await this.$getPastLogsParsed('BeaconUpgraded', options) as any;
     }
 
@@ -267,7 +282,7 @@ export class SimpleAccount extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogInitialized>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Initialized'>>[]> {
         return await this.$getPastLogsParsed('Initialized', options) as any;
     }
 
@@ -275,7 +290,7 @@ export class SimpleAccount extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { entryPoint?: TAddress,owner?: TAddress }
-    }): Promise<ITxLogItem<TLogSimpleAccountInitialized>[]> {
+    }): Promise<ITxLogItem<TEventParams<'SimpleAccountInitialized'>>[]> {
         return await this.$getPastLogsParsed('SimpleAccountInitialized', options) as any;
     }
 
@@ -288,151 +303,110 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogUpgraded = {
-        implementation: TAddress
-    };
-    type TLogUpgradedParameters = [ implementation: TAddress ];
-    type TLogAdminChanged = {
-        previousAdmin: TAddress, newAdmin: TAddress
-    };
-    type TLogAdminChangedParameters = [ previousAdmin: TAddress, newAdmin: TAddress ];
-    type TLogBeaconUpgraded = {
-        beacon: TAddress
-    };
-    type TLogBeaconUpgradedParameters = [ beacon: TAddress ];
-    type TLogInitialized = {
-        version: number
-    };
-    type TLogInitializedParameters = [ version: number ];
-    type TLogSimpleAccountInitialized = {
-        entryPoint: TAddress, owner: TAddress
-    };
-    type TLogSimpleAccountInitializedParameters = [ entryPoint: TAddress, owner: TAddress ];
-
-interface IEvents {
-  Upgraded: TLogUpgradedParameters
-  AdminChanged: TLogAdminChangedParameters
-  BeaconUpgraded: TLogBeaconUpgradedParameters
-  Initialized: TLogInitializedParameters
-  SimpleAccountInitialized: TLogSimpleAccountInitializedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodValidateUserOp {
-  method: "validateUserOp"
-  arguments: [ userOp: { sender: TAddress, nonce: bigint, initCode: TEth.Hex, callData: TEth.Hex, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TEth.Hex, signature: TEth.Hex }, userOpHash: TEth.Hex, missingAccountFunds: bigint ] | [ userOp: { sender: TAddress, nonce: bigint, initCode: TEth.Hex, callData: TEth.Hex, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TEth.Hex, signature: TEth.Hex }, userOpHash: TEth.Hex, missingAccountFunds: bigint ]
+export type TSimpleAccountTypes = {
+    Events: {
+        Upgraded: {
+            outputParams: { implementation: TAddress },
+            outputArgs:   [ implementation: TAddress ],
+        }
+        AdminChanged: {
+            outputParams: { previousAdmin: TAddress, newAdmin: TAddress },
+            outputArgs:   [ previousAdmin: TAddress, newAdmin: TAddress ],
+        }
+        BeaconUpgraded: {
+            outputParams: { beacon: TAddress },
+            outputArgs:   [ beacon: TAddress ],
+        }
+        Initialized: {
+            outputParams: { version: number },
+            outputArgs:   [ version: number ],
+        }
+        SimpleAccountInitialized: {
+            outputParams: { entryPoint: TAddress, owner: TAddress },
+            outputArgs:   [ entryPoint: TAddress, owner: TAddress ],
+        }
+    },
+    Methods: {
+        validateUserOp: {
+          method: "validateUserOp"
+          arguments: [ userOp: { sender: TAddress, nonce: bigint, initCode: TEth.Hex, callData: TEth.Hex, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TEth.Hex, signature: TEth.Hex }, userOpHash: TEth.Hex, missingAccountFunds: bigint ] | [ userOp: { sender: TAddress, nonce: bigint, initCode: TEth.Hex, callData: TEth.Hex, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TEth.Hex, signature: TEth.Hex }, userOpHash: TEth.Hex, missingAccountFunds: bigint ]
+        }
+        getNonce: {
+          method: "getNonce"
+          arguments: [  ]
+        }
+        entryPoint: {
+          method: "entryPoint"
+          arguments: [  ] | [  ]
+        }
+        tokensReceived: {
+          method: "tokensReceived"
+          arguments: [ operator: TAddress, from: TAddress, to: TAddress, amount: bigint, userData: TEth.Hex, operatorData: TEth.Hex ] | [ input0: TAddress, input1: TAddress, input2: TAddress, input3: bigint, input4: TEth.Hex, input5: TEth.Hex ]
+        }
+        onERC721Received: {
+          method: "onERC721Received"
+          arguments: [ operator: TAddress, from: TAddress, tokenId: bigint, data: TEth.Hex ] | [ input0: TAddress, input1: TAddress, input2: bigint, input3: TEth.Hex ]
+        }
+        supportsInterface: {
+          method: "supportsInterface"
+          arguments: [ interfaceId: TEth.Hex ] | [ interfaceId: TEth.Hex ]
+        }
+        onERC1155Received: {
+          method: "onERC1155Received"
+          arguments: [ operator: TAddress, from: TAddress, id: bigint, value: bigint, data: TEth.Hex ] | [ input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TEth.Hex ]
+        }
+        onERC1155BatchReceived: {
+          method: "onERC1155BatchReceived"
+          arguments: [ operator: TAddress, from: TAddress, ids: bigint[], values: bigint[], data: TEth.Hex ] | [ input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TEth.Hex ]
+        }
+        proxiableUUID: {
+          method: "proxiableUUID"
+          arguments: [  ] | [  ]
+        }
+        upgradeTo: {
+          method: "upgradeTo"
+          arguments: [ newImplementation: TAddress ]
+        }
+        upgradeToAndCall: {
+          method: "upgradeToAndCall"
+          arguments: [ newImplementation: TAddress, data: TEth.Hex ]
+        }
+        execute: {
+          method: "execute"
+          arguments: [ dest: TAddress, value: bigint, func: TEth.Hex ]
+        }
+        executeBatch: {
+          method: "executeBatch"
+          arguments: [ dest: TAddress[], func: TEth.Hex[] ]
+        }
+        initialize: {
+          method: "initialize"
+          arguments: [ anOwner: TAddress ]
+        }
+        getDeposit: {
+          method: "getDeposit"
+          arguments: [  ]
+        }
+        addDeposit: {
+          method: "addDeposit"
+          arguments: [  ]
+        }
+        withdrawDepositTo: {
+          method: "withdrawDepositTo"
+          arguments: [ withdrawAddress: TAddress, amount: bigint ]
+        }
+        owner: {
+          method: "owner"
+          arguments: [  ]
+        }
+    }
 }
-
-interface IMethodGetNonce {
-  method: "getNonce"
-  arguments: [  ]
-}
-
-interface IMethodEntryPoint {
-  method: "entryPoint"
-  arguments: [  ] | [  ]
-}
-
-interface IMethodTokensReceived {
-  method: "tokensReceived"
-  arguments: [ operator: TAddress, from: TAddress, to: TAddress, amount: bigint, userData: TEth.Hex, operatorData: TEth.Hex ] | [ input0: TAddress, input1: TAddress, input2: TAddress, input3: bigint, input4: TEth.Hex, input5: TEth.Hex ]
-}
-
-interface IMethodOnERC721Received {
-  method: "onERC721Received"
-  arguments: [ operator: TAddress, from: TAddress, tokenId: bigint, data: TEth.Hex ] | [ input0: TAddress, input1: TAddress, input2: bigint, input3: TEth.Hex ]
-}
-
-interface IMethodSupportsInterface {
-  method: "supportsInterface"
-  arguments: [ interfaceId: TEth.Hex ] | [ interfaceId: TEth.Hex ]
-}
-
-interface IMethodOnERC1155Received {
-  method: "onERC1155Received"
-  arguments: [ operator: TAddress, from: TAddress, id: bigint, value: bigint, data: TEth.Hex ] | [ input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TEth.Hex ]
-}
-
-interface IMethodOnERC1155BatchReceived {
-  method: "onERC1155BatchReceived"
-  arguments: [ operator: TAddress, from: TAddress, ids: bigint[], values: bigint[], data: TEth.Hex ] | [ input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TEth.Hex ]
-}
-
-interface IMethodProxiableUUID {
-  method: "proxiableUUID"
-  arguments: [  ] | [  ]
-}
-
-interface IMethodUpgradeTo {
-  method: "upgradeTo"
-  arguments: [ newImplementation: TAddress ]
-}
-
-interface IMethodUpgradeToAndCall {
-  method: "upgradeToAndCall"
-  arguments: [ newImplementation: TAddress, data: TEth.Hex ]
-}
-
-interface IMethodExecute {
-  method: "execute"
-  arguments: [ dest: TAddress, value: bigint, func: TEth.Hex ]
-}
-
-interface IMethodExecuteBatch {
-  method: "executeBatch"
-  arguments: [ dest: TAddress[], func: TEth.Hex[] ]
-}
-
-interface IMethodInitialize {
-  method: "initialize"
-  arguments: [ anOwner: TAddress ]
-}
-
-interface IMethodGetDeposit {
-  method: "getDeposit"
-  arguments: [  ]
-}
-
-interface IMethodAddDeposit {
-  method: "addDeposit"
-  arguments: [  ]
-}
-
-interface IMethodWithdrawDepositTo {
-  method: "withdrawDepositTo"
-  arguments: [ withdrawAddress: TAddress, amount: bigint ]
-}
-
-interface IMethodOwner {
-  method: "owner"
-  arguments: [  ]
-}
-
-interface IMethods {
-  validateUserOp: IMethodValidateUserOp
-  getNonce: IMethodGetNonce
-  entryPoint: IMethodEntryPoint
-  tokensReceived: IMethodTokensReceived
-  onERC721Received: IMethodOnERC721Received
-  supportsInterface: IMethodSupportsInterface
-  onERC1155Received: IMethodOnERC1155Received
-  onERC1155BatchReceived: IMethodOnERC1155BatchReceived
-  proxiableUUID: IMethodProxiableUUID
-  upgradeTo: IMethodUpgradeTo
-  upgradeToAndCall: IMethodUpgradeToAndCall
-  execute: IMethodExecute
-  executeBatch: IMethodExecuteBatch
-  initialize: IMethodInitialize
-  getDeposit: IMethodGetDeposit
-  addDeposit: IMethodAddDeposit
-  withdrawDepositTo: IMethodWithdrawDepositTo
-  owner: IMethodOwner
-  '*': { method: string, arguments: any[] } 
-}
-
-
 
 
 
@@ -486,7 +460,6 @@ class SimpleAccountStorageReader extends ContractStorageReaderBase {
 }
 
 
-
 interface ISimpleAccountTxCaller {
     validateUserOp (sender: TSender, userOp: { sender: TAddress, nonce: bigint, initCode: TEth.Hex, callData: TEth.Hex, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TEth.Hex, signature: TEth.Hex }, userOpHash: TEth.Hex, missingAccountFunds: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     validateUserOp (sender: TSender, userOp: { sender: TAddress, nonce: bigint, initCode: TEth.Hex, callData: TEth.Hex, callGasLimit: bigint, verificationGasLimit: bigint, preVerificationGas: bigint, maxFeePerGas: bigint, maxPriorityFeePerGas: bigint, paymasterAndData: TEth.Hex, signature: TEth.Hex }, userOpHash: TEth.Hex, missingAccountFunds: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
@@ -521,3 +494,5 @@ interface ISimpleAccountTxData {
 }
 
 
+type TEvents = TSimpleAccountTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

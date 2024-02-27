@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class ICompoundTimelock extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/ICompoundTimelock.ts"
-}
+        "class": "./contracts/openzeppelin/ICompoundTimelock.ts"
+    }
 
     // 0xc1a287e2
     async GRACE_PERIOD (): Promise<bigint> {
@@ -121,10 +121,13 @@ export class ICompoundTimelock extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TICompoundTimelockTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TICompoundTimelockTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -132,8 +135,20 @@ export class ICompoundTimelock extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onCancelTransaction (fn?: (event: TClientEventsStreamData<TLogCancelTransactionParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogCancelTransactionParameters>> {
@@ -160,41 +175,41 @@ export class ICompoundTimelock extends ContractBase {
         return this.$onLog('QueueTransaction', fn);
     }
 
-    extractLogsCancelTransaction (tx: TEth.TxReceipt): ITxLogItem<TLogCancelTransaction>[] {
+    extractLogsCancelTransaction (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'CancelTransaction'>>[] {
         let abi = this.$getAbiItem('event', 'CancelTransaction');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogCancelTransaction>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'CancelTransaction'>>[];
     }
 
-    extractLogsExecuteTransaction (tx: TEth.TxReceipt): ITxLogItem<TLogExecuteTransaction>[] {
+    extractLogsExecuteTransaction (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ExecuteTransaction'>>[] {
         let abi = this.$getAbiItem('event', 'ExecuteTransaction');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogExecuteTransaction>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ExecuteTransaction'>>[];
     }
 
-    extractLogsNewAdmin (tx: TEth.TxReceipt): ITxLogItem<TLogNewAdmin>[] {
+    extractLogsNewAdmin (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'NewAdmin'>>[] {
         let abi = this.$getAbiItem('event', 'NewAdmin');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogNewAdmin>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'NewAdmin'>>[];
     }
 
-    extractLogsNewDelay (tx: TEth.TxReceipt): ITxLogItem<TLogNewDelay>[] {
+    extractLogsNewDelay (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'NewDelay'>>[] {
         let abi = this.$getAbiItem('event', 'NewDelay');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogNewDelay>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'NewDelay'>>[];
     }
 
-    extractLogsNewPendingAdmin (tx: TEth.TxReceipt): ITxLogItem<TLogNewPendingAdmin>[] {
+    extractLogsNewPendingAdmin (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'NewPendingAdmin'>>[] {
         let abi = this.$getAbiItem('event', 'NewPendingAdmin');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogNewPendingAdmin>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'NewPendingAdmin'>>[];
     }
 
-    extractLogsQueueTransaction (tx: TEth.TxReceipt): ITxLogItem<TLogQueueTransaction>[] {
+    extractLogsQueueTransaction (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'QueueTransaction'>>[] {
         let abi = this.$getAbiItem('event', 'QueueTransaction');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogQueueTransaction>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'QueueTransaction'>>[];
     }
 
     async getPastLogsCancelTransaction (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { txHash?: TEth.Hex,target?: TAddress }
-    }): Promise<ITxLogItem<TLogCancelTransaction>[]> {
+    }): Promise<ITxLogItem<TEventParams<'CancelTransaction'>>[]> {
         return await this.$getPastLogsParsed('CancelTransaction', options) as any;
     }
 
@@ -202,7 +217,7 @@ export class ICompoundTimelock extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { txHash?: TEth.Hex,target?: TAddress }
-    }): Promise<ITxLogItem<TLogExecuteTransaction>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ExecuteTransaction'>>[]> {
         return await this.$getPastLogsParsed('ExecuteTransaction', options) as any;
     }
 
@@ -210,7 +225,7 @@ export class ICompoundTimelock extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { newAdmin?: TAddress }
-    }): Promise<ITxLogItem<TLogNewAdmin>[]> {
+    }): Promise<ITxLogItem<TEventParams<'NewAdmin'>>[]> {
         return await this.$getPastLogsParsed('NewAdmin', options) as any;
     }
 
@@ -218,7 +233,7 @@ export class ICompoundTimelock extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { newDelay?: bigint }
-    }): Promise<ITxLogItem<TLogNewDelay>[]> {
+    }): Promise<ITxLogItem<TEventParams<'NewDelay'>>[]> {
         return await this.$getPastLogsParsed('NewDelay', options) as any;
     }
 
@@ -226,7 +241,7 @@ export class ICompoundTimelock extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { newPendingAdmin?: TAddress }
-    }): Promise<ITxLogItem<TLogNewPendingAdmin>[]> {
+    }): Promise<ITxLogItem<TEventParams<'NewPendingAdmin'>>[]> {
         return await this.$getPastLogsParsed('NewPendingAdmin', options) as any;
     }
 
@@ -234,7 +249,7 @@ export class ICompoundTimelock extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { txHash?: TEth.Hex,target?: TAddress }
-    }): Promise<ITxLogItem<TLogQueueTransaction>[]> {
+    }): Promise<ITxLogItem<TEventParams<'QueueTransaction'>>[]> {
         return await this.$getPastLogsParsed('QueueTransaction', options) as any;
     }
 
@@ -247,127 +262,94 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogCancelTransaction = {
-        txHash: TEth.Hex, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint
-    };
-    type TLogCancelTransactionParameters = [ txHash: TEth.Hex, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint ];
-    type TLogExecuteTransaction = {
-        txHash: TEth.Hex, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint
-    };
-    type TLogExecuteTransactionParameters = [ txHash: TEth.Hex, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint ];
-    type TLogNewAdmin = {
-        newAdmin: TAddress
-    };
-    type TLogNewAdminParameters = [ newAdmin: TAddress ];
-    type TLogNewDelay = {
-        newDelay: bigint
-    };
-    type TLogNewDelayParameters = [ newDelay: bigint ];
-    type TLogNewPendingAdmin = {
-        newPendingAdmin: TAddress
-    };
-    type TLogNewPendingAdminParameters = [ newPendingAdmin: TAddress ];
-    type TLogQueueTransaction = {
-        txHash: TEth.Hex, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint
-    };
-    type TLogQueueTransactionParameters = [ txHash: TEth.Hex, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint ];
-
-interface IEvents {
-  CancelTransaction: TLogCancelTransactionParameters
-  ExecuteTransaction: TLogExecuteTransactionParameters
-  NewAdmin: TLogNewAdminParameters
-  NewDelay: TLogNewDelayParameters
-  NewPendingAdmin: TLogNewPendingAdminParameters
-  QueueTransaction: TLogQueueTransactionParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodGRACE_PERIOD {
-  method: "GRACE_PERIOD"
-  arguments: [  ]
+export type TICompoundTimelockTypes = {
+    Events: {
+        CancelTransaction: {
+            outputParams: { txHash: TEth.Hex, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint },
+            outputArgs:   [ txHash: TEth.Hex, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint ],
+        }
+        ExecuteTransaction: {
+            outputParams: { txHash: TEth.Hex, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint },
+            outputArgs:   [ txHash: TEth.Hex, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint ],
+        }
+        NewAdmin: {
+            outputParams: { newAdmin: TAddress },
+            outputArgs:   [ newAdmin: TAddress ],
+        }
+        NewDelay: {
+            outputParams: { newDelay: bigint },
+            outputArgs:   [ newDelay: bigint ],
+        }
+        NewPendingAdmin: {
+            outputParams: { newPendingAdmin: TAddress },
+            outputArgs:   [ newPendingAdmin: TAddress ],
+        }
+        QueueTransaction: {
+            outputParams: { txHash: TEth.Hex, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint },
+            outputArgs:   [ txHash: TEth.Hex, target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint ],
+        }
+    },
+    Methods: {
+        GRACE_PERIOD: {
+          method: "GRACE_PERIOD"
+          arguments: [  ]
+        }
+        MAXIMUM_DELAY: {
+          method: "MAXIMUM_DELAY"
+          arguments: [  ]
+        }
+        MINIMUM_DELAY: {
+          method: "MINIMUM_DELAY"
+          arguments: [  ]
+        }
+        acceptAdmin: {
+          method: "acceptAdmin"
+          arguments: [  ]
+        }
+        admin: {
+          method: "admin"
+          arguments: [  ]
+        }
+        cancelTransaction: {
+          method: "cancelTransaction"
+          arguments: [ target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint ]
+        }
+        delay: {
+          method: "delay"
+          arguments: [  ]
+        }
+        executeTransaction: {
+          method: "executeTransaction"
+          arguments: [ target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint ]
+        }
+        pendingAdmin: {
+          method: "pendingAdmin"
+          arguments: [  ]
+        }
+        queueTransaction: {
+          method: "queueTransaction"
+          arguments: [ target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint ]
+        }
+        queuedTransactions: {
+          method: "queuedTransactions"
+          arguments: [ input0: TEth.Hex ]
+        }
+        setDelay: {
+          method: "setDelay"
+          arguments: [ input0: bigint ]
+        }
+        setPendingAdmin: {
+          method: "setPendingAdmin"
+          arguments: [ input0: TAddress ]
+        }
+    }
 }
-
-interface IMethodMAXIMUM_DELAY {
-  method: "MAXIMUM_DELAY"
-  arguments: [  ]
-}
-
-interface IMethodMINIMUM_DELAY {
-  method: "MINIMUM_DELAY"
-  arguments: [  ]
-}
-
-interface IMethodAcceptAdmin {
-  method: "acceptAdmin"
-  arguments: [  ]
-}
-
-interface IMethodAdmin {
-  method: "admin"
-  arguments: [  ]
-}
-
-interface IMethodCancelTransaction {
-  method: "cancelTransaction"
-  arguments: [ target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint ]
-}
-
-interface IMethodDelay {
-  method: "delay"
-  arguments: [  ]
-}
-
-interface IMethodExecuteTransaction {
-  method: "executeTransaction"
-  arguments: [ target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint ]
-}
-
-interface IMethodPendingAdmin {
-  method: "pendingAdmin"
-  arguments: [  ]
-}
-
-interface IMethodQueueTransaction {
-  method: "queueTransaction"
-  arguments: [ target: TAddress, value: bigint, signature: string, data: TEth.Hex, eta: bigint ]
-}
-
-interface IMethodQueuedTransactions {
-  method: "queuedTransactions"
-  arguments: [ input0: TEth.Hex ]
-}
-
-interface IMethodSetDelay {
-  method: "setDelay"
-  arguments: [ input0: bigint ]
-}
-
-interface IMethodSetPendingAdmin {
-  method: "setPendingAdmin"
-  arguments: [ input0: TAddress ]
-}
-
-interface IMethods {
-  GRACE_PERIOD: IMethodGRACE_PERIOD
-  MAXIMUM_DELAY: IMethodMAXIMUM_DELAY
-  MINIMUM_DELAY: IMethodMINIMUM_DELAY
-  acceptAdmin: IMethodAcceptAdmin
-  admin: IMethodAdmin
-  cancelTransaction: IMethodCancelTransaction
-  delay: IMethodDelay
-  executeTransaction: IMethodExecuteTransaction
-  pendingAdmin: IMethodPendingAdmin
-  queueTransaction: IMethodQueueTransaction
-  queuedTransactions: IMethodQueuedTransactions
-  setDelay: IMethodSetDelay
-  setPendingAdmin: IMethodSetPendingAdmin
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -391,3 +373,5 @@ interface IICompoundTimelockTxData {
 }
 
 
+type TEvents = TICompoundTimelockTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

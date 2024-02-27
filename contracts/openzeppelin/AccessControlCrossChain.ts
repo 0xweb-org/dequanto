@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class AccessControlCrossChain extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/AccessControlCrossChain.ts"
-}
+        "class": "./contracts/openzeppelin/AccessControlCrossChain.ts"
+    }
 
     // 0xf9d04295
     async CROSSCHAIN_ALIAS (): Promise<TEth.Hex> {
@@ -96,10 +96,13 @@ export class AccessControlCrossChain extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TAccessControlCrossChainTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TAccessControlCrossChainTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -107,8 +110,20 @@ export class AccessControlCrossChain extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onRoleAdminChanged (fn?: (event: TClientEventsStreamData<TLogRoleAdminChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRoleAdminChangedParameters>> {
@@ -123,26 +138,26 @@ export class AccessControlCrossChain extends ContractBase {
         return this.$onLog('RoleRevoked', fn);
     }
 
-    extractLogsRoleAdminChanged (tx: TEth.TxReceipt): ITxLogItem<TLogRoleAdminChanged>[] {
+    extractLogsRoleAdminChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RoleAdminChanged'>>[] {
         let abi = this.$getAbiItem('event', 'RoleAdminChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRoleAdminChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RoleAdminChanged'>>[];
     }
 
-    extractLogsRoleGranted (tx: TEth.TxReceipt): ITxLogItem<TLogRoleGranted>[] {
+    extractLogsRoleGranted (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RoleGranted'>>[] {
         let abi = this.$getAbiItem('event', 'RoleGranted');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRoleGranted>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RoleGranted'>>[];
     }
 
-    extractLogsRoleRevoked (tx: TEth.TxReceipt): ITxLogItem<TLogRoleRevoked>[] {
+    extractLogsRoleRevoked (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RoleRevoked'>>[] {
         let abi = this.$getAbiItem('event', 'RoleRevoked');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRoleRevoked>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RoleRevoked'>>[];
     }
 
     async getPastLogsRoleAdminChanged (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { role?: TEth.Hex,previousAdminRole?: TEth.Hex,newAdminRole?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogRoleAdminChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RoleAdminChanged'>>[]> {
         return await this.$getPastLogsParsed('RoleAdminChanged', options) as any;
     }
 
@@ -150,7 +165,7 @@ export class AccessControlCrossChain extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { role?: TEth.Hex,account?: TAddress,sender?: TAddress }
-    }): Promise<ITxLogItem<TLogRoleGranted>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RoleGranted'>>[]> {
         return await this.$getPastLogsParsed('RoleGranted', options) as any;
     }
 
@@ -158,7 +173,7 @@ export class AccessControlCrossChain extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { role?: TEth.Hex,account?: TAddress,sender?: TAddress }
-    }): Promise<ITxLogItem<TLogRoleRevoked>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RoleRevoked'>>[]> {
         return await this.$getPastLogsParsed('RoleRevoked', options) as any;
     }
 
@@ -171,82 +186,62 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogRoleAdminChanged = {
-        role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex
-    };
-    type TLogRoleAdminChangedParameters = [ role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex ];
-    type TLogRoleGranted = {
-        role: TEth.Hex, account: TAddress, _sender: TAddress
-    };
-    type TLogRoleGrantedParameters = [ role: TEth.Hex, account: TAddress, _sender: TAddress ];
-    type TLogRoleRevoked = {
-        role: TEth.Hex, account: TAddress, _sender: TAddress
-    };
-    type TLogRoleRevokedParameters = [ role: TEth.Hex, account: TAddress, _sender: TAddress ];
-
-interface IEvents {
-  RoleAdminChanged: TLogRoleAdminChangedParameters
-  RoleGranted: TLogRoleGrantedParameters
-  RoleRevoked: TLogRoleRevokedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodCROSSCHAIN_ALIAS {
-  method: "CROSSCHAIN_ALIAS"
-  arguments: [  ]
+export type TAccessControlCrossChainTypes = {
+    Events: {
+        RoleAdminChanged: {
+            outputParams: { role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex },
+            outputArgs:   [ role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex ],
+        }
+        RoleGranted: {
+            outputParams: { role: TEth.Hex, account: TAddress, _sender: TAddress },
+            outputArgs:   [ role: TEth.Hex, account: TAddress, _sender: TAddress ],
+        }
+        RoleRevoked: {
+            outputParams: { role: TEth.Hex, account: TAddress, _sender: TAddress },
+            outputArgs:   [ role: TEth.Hex, account: TAddress, _sender: TAddress ],
+        }
+    },
+    Methods: {
+        CROSSCHAIN_ALIAS: {
+          method: "CROSSCHAIN_ALIAS"
+          arguments: [  ]
+        }
+        DEFAULT_ADMIN_ROLE: {
+          method: "DEFAULT_ADMIN_ROLE"
+          arguments: [  ]
+        }
+        getRoleAdmin: {
+          method: "getRoleAdmin"
+          arguments: [ role: TEth.Hex ]
+        }
+        grantRole: {
+          method: "grantRole"
+          arguments: [ role: TEth.Hex, account: TAddress ]
+        }
+        hasRole: {
+          method: "hasRole"
+          arguments: [ role: TEth.Hex, account: TAddress ]
+        }
+        renounceRole: {
+          method: "renounceRole"
+          arguments: [ role: TEth.Hex, account: TAddress ]
+        }
+        revokeRole: {
+          method: "revokeRole"
+          arguments: [ role: TEth.Hex, account: TAddress ]
+        }
+        supportsInterface: {
+          method: "supportsInterface"
+          arguments: [ interfaceId: TEth.Hex ]
+        }
+    }
 }
-
-interface IMethodDEFAULT_ADMIN_ROLE {
-  method: "DEFAULT_ADMIN_ROLE"
-  arguments: [  ]
-}
-
-interface IMethodGetRoleAdmin {
-  method: "getRoleAdmin"
-  arguments: [ role: TEth.Hex ]
-}
-
-interface IMethodGrantRole {
-  method: "grantRole"
-  arguments: [ role: TEth.Hex, account: TAddress ]
-}
-
-interface IMethodHasRole {
-  method: "hasRole"
-  arguments: [ role: TEth.Hex, account: TAddress ]
-}
-
-interface IMethodRenounceRole {
-  method: "renounceRole"
-  arguments: [ role: TEth.Hex, account: TAddress ]
-}
-
-interface IMethodRevokeRole {
-  method: "revokeRole"
-  arguments: [ role: TEth.Hex, account: TAddress ]
-}
-
-interface IMethodSupportsInterface {
-  method: "supportsInterface"
-  arguments: [ interfaceId: TEth.Hex ]
-}
-
-interface IMethods {
-  CROSSCHAIN_ALIAS: IMethodCROSSCHAIN_ALIAS
-  DEFAULT_ADMIN_ROLE: IMethodDEFAULT_ADMIN_ROLE
-  getRoleAdmin: IMethodGetRoleAdmin
-  grantRole: IMethodGrantRole
-  hasRole: IMethodHasRole
-  renounceRole: IMethodRenounceRole
-  revokeRole: IMethodRevokeRole
-  supportsInterface: IMethodSupportsInterface
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -264,3 +259,5 @@ interface IAccessControlCrossChainTxData {
 }
 
 
+type TEvents = TAccessControlCrossChainTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

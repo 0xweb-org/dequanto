@@ -433,7 +433,7 @@ export abstract class Web3Client implements IWeb3Client {
         onProgress? (info: TLogsRangeProgress): void
     }): Promise<TEth.Log[]> {
         // ensure numbers, bigints, bools are in HEX
-        filter.topics = filter.topics.map(mix => {
+        filter.topics = filter.topics?.map(mix => {
             if (mix != null && Array.isArray(mix) === false) {
                 return $hex.ensure(mix as any)
             }

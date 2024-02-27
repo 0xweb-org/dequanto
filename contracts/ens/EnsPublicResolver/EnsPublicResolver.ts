@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class EnsPublicResolver extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/ens/EnsPublicResolver/EnsPublicResolver.ts"
-}
+        "class": "./contracts/ens/EnsPublicResolver/EnsPublicResolver.ts"
+    }
 
     async $constructor (deployer: TSender, _ens: TAddress, wrapperAddress: TAddress, _trustedETHController: TAddress, _trustedReverseRegistrar: TAddress): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -208,10 +208,13 @@ export class EnsPublicResolver extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TEnsPublicResolverTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TEnsPublicResolverTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -219,8 +222,20 @@ export class EnsPublicResolver extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onABIChanged (fn?: (event: TClientEventsStreamData<TLogABIChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogABIChangedParameters>> {
@@ -279,81 +294,81 @@ export class EnsPublicResolver extends ContractBase {
         return this.$onLog('VersionChanged', fn);
     }
 
-    extractLogsABIChanged (tx: TEth.TxReceipt): ITxLogItem<TLogABIChanged>[] {
+    extractLogsABIChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ABIChanged'>>[] {
         let abi = this.$getAbiItem('event', 'ABIChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogABIChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ABIChanged'>>[];
     }
 
-    extractLogsAddrChanged (tx: TEth.TxReceipt): ITxLogItem<TLogAddrChanged>[] {
+    extractLogsAddrChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'AddrChanged'>>[] {
         let abi = this.$getAbiItem('event', 'AddrChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogAddrChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'AddrChanged'>>[];
     }
 
-    extractLogsAddressChanged (tx: TEth.TxReceipt): ITxLogItem<TLogAddressChanged>[] {
+    extractLogsAddressChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'AddressChanged'>>[] {
         let abi = this.$getAbiItem('event', 'AddressChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogAddressChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'AddressChanged'>>[];
     }
 
-    extractLogsApprovalForAll (tx: TEth.TxReceipt): ITxLogItem<TLogApprovalForAll>[] {
+    extractLogsApprovalForAll (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ApprovalForAll'>>[] {
         let abi = this.$getAbiItem('event', 'ApprovalForAll');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApprovalForAll>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ApprovalForAll'>>[];
     }
 
-    extractLogsApproved (tx: TEth.TxReceipt): ITxLogItem<TLogApproved>[] {
+    extractLogsApproved (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Approved'>>[] {
         let abi = this.$getAbiItem('event', 'Approved');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApproved>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Approved'>>[];
     }
 
-    extractLogsContenthashChanged (tx: TEth.TxReceipt): ITxLogItem<TLogContenthashChanged>[] {
+    extractLogsContenthashChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ContenthashChanged'>>[] {
         let abi = this.$getAbiItem('event', 'ContenthashChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogContenthashChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ContenthashChanged'>>[];
     }
 
-    extractLogsDNSRecordChanged (tx: TEth.TxReceipt): ITxLogItem<TLogDNSRecordChanged>[] {
+    extractLogsDNSRecordChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'DNSRecordChanged'>>[] {
         let abi = this.$getAbiItem('event', 'DNSRecordChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogDNSRecordChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'DNSRecordChanged'>>[];
     }
 
-    extractLogsDNSRecordDeleted (tx: TEth.TxReceipt): ITxLogItem<TLogDNSRecordDeleted>[] {
+    extractLogsDNSRecordDeleted (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'DNSRecordDeleted'>>[] {
         let abi = this.$getAbiItem('event', 'DNSRecordDeleted');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogDNSRecordDeleted>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'DNSRecordDeleted'>>[];
     }
 
-    extractLogsDNSZonehashChanged (tx: TEth.TxReceipt): ITxLogItem<TLogDNSZonehashChanged>[] {
+    extractLogsDNSZonehashChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'DNSZonehashChanged'>>[] {
         let abi = this.$getAbiItem('event', 'DNSZonehashChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogDNSZonehashChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'DNSZonehashChanged'>>[];
     }
 
-    extractLogsInterfaceChanged (tx: TEth.TxReceipt): ITxLogItem<TLogInterfaceChanged>[] {
+    extractLogsInterfaceChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'InterfaceChanged'>>[] {
         let abi = this.$getAbiItem('event', 'InterfaceChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogInterfaceChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'InterfaceChanged'>>[];
     }
 
-    extractLogsNameChanged (tx: TEth.TxReceipt): ITxLogItem<TLogNameChanged>[] {
+    extractLogsNameChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'NameChanged'>>[] {
         let abi = this.$getAbiItem('event', 'NameChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogNameChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'NameChanged'>>[];
     }
 
-    extractLogsPubkeyChanged (tx: TEth.TxReceipt): ITxLogItem<TLogPubkeyChanged>[] {
+    extractLogsPubkeyChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'PubkeyChanged'>>[] {
         let abi = this.$getAbiItem('event', 'PubkeyChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogPubkeyChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'PubkeyChanged'>>[];
     }
 
-    extractLogsTextChanged (tx: TEth.TxReceipt): ITxLogItem<TLogTextChanged>[] {
+    extractLogsTextChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'TextChanged'>>[] {
         let abi = this.$getAbiItem('event', 'TextChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogTextChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'TextChanged'>>[];
     }
 
-    extractLogsVersionChanged (tx: TEth.TxReceipt): ITxLogItem<TLogVersionChanged>[] {
+    extractLogsVersionChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'VersionChanged'>>[] {
         let abi = this.$getAbiItem('event', 'VersionChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogVersionChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'VersionChanged'>>[];
     }
 
     async getPastLogsABIChanged (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex,contentType?: bigint }
-    }): Promise<ITxLogItem<TLogABIChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ABIChanged'>>[]> {
         return await this.$getPastLogsParsed('ABIChanged', options) as any;
     }
 
@@ -361,7 +376,7 @@ export class EnsPublicResolver extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogAddrChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'AddrChanged'>>[]> {
         return await this.$getPastLogsParsed('AddrChanged', options) as any;
     }
 
@@ -369,7 +384,7 @@ export class EnsPublicResolver extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogAddressChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'AddressChanged'>>[]> {
         return await this.$getPastLogsParsed('AddressChanged', options) as any;
     }
 
@@ -377,7 +392,7 @@ export class EnsPublicResolver extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { owner?: TAddress,operator?: TAddress }
-    }): Promise<ITxLogItem<TLogApprovalForAll>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ApprovalForAll'>>[]> {
         return await this.$getPastLogsParsed('ApprovalForAll', options) as any;
     }
 
@@ -385,7 +400,7 @@ export class EnsPublicResolver extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogApproved>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Approved'>>[]> {
         return await this.$getPastLogsParsed('Approved', options) as any;
     }
 
@@ -393,7 +408,7 @@ export class EnsPublicResolver extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogContenthashChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ContenthashChanged'>>[]> {
         return await this.$getPastLogsParsed('ContenthashChanged', options) as any;
     }
 
@@ -401,7 +416,7 @@ export class EnsPublicResolver extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogDNSRecordChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'DNSRecordChanged'>>[]> {
         return await this.$getPastLogsParsed('DNSRecordChanged', options) as any;
     }
 
@@ -409,7 +424,7 @@ export class EnsPublicResolver extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogDNSRecordDeleted>[]> {
+    }): Promise<ITxLogItem<TEventParams<'DNSRecordDeleted'>>[]> {
         return await this.$getPastLogsParsed('DNSRecordDeleted', options) as any;
     }
 
@@ -417,7 +432,7 @@ export class EnsPublicResolver extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogDNSZonehashChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'DNSZonehashChanged'>>[]> {
         return await this.$getPastLogsParsed('DNSZonehashChanged', options) as any;
     }
 
@@ -425,7 +440,7 @@ export class EnsPublicResolver extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex,interfaceID?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogInterfaceChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'InterfaceChanged'>>[]> {
         return await this.$getPastLogsParsed('InterfaceChanged', options) as any;
     }
 
@@ -433,7 +448,7 @@ export class EnsPublicResolver extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogNameChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'NameChanged'>>[]> {
         return await this.$getPastLogsParsed('NameChanged', options) as any;
     }
 
@@ -441,7 +456,7 @@ export class EnsPublicResolver extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogPubkeyChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'PubkeyChanged'>>[]> {
         return await this.$getPastLogsParsed('PubkeyChanged', options) as any;
     }
 
@@ -449,7 +464,7 @@ export class EnsPublicResolver extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex,indexedKey?: string }
-    }): Promise<ITxLogItem<TLogTextChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'TextChanged'>>[]> {
         return await this.$getPastLogsParsed('TextChanged', options) as any;
     }
 
@@ -457,7 +472,7 @@ export class EnsPublicResolver extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogVersionChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'VersionChanged'>>[]> {
         return await this.$getPastLogsParsed('VersionChanged', options) as any;
     }
 
@@ -470,256 +485,186 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogABIChanged = {
-        node: TEth.Hex, contentType: bigint
-    };
-    type TLogABIChangedParameters = [ node: TEth.Hex, contentType: bigint ];
-    type TLogAddrChanged = {
-        node: TEth.Hex, a: TAddress
-    };
-    type TLogAddrChangedParameters = [ node: TEth.Hex, a: TAddress ];
-    type TLogAddressChanged = {
-        node: TEth.Hex, coinType: bigint, newAddress: TEth.Hex
-    };
-    type TLogAddressChangedParameters = [ node: TEth.Hex, coinType: bigint, newAddress: TEth.Hex ];
-    type TLogApprovalForAll = {
-        owner: TAddress, operator: TAddress, approved: boolean
-    };
-    type TLogApprovalForAllParameters = [ owner: TAddress, operator: TAddress, approved: boolean ];
-    type TLogApproved = {
-        owner: TAddress, node: TEth.Hex, delegate: TAddress, approved: boolean
-    };
-    type TLogApprovedParameters = [ owner: TAddress, node: TEth.Hex, delegate: TAddress, approved: boolean ];
-    type TLogContenthashChanged = {
-        node: TEth.Hex, hash: TEth.Hex
-    };
-    type TLogContenthashChangedParameters = [ node: TEth.Hex, hash: TEth.Hex ];
-    type TLogDNSRecordChanged = {
-        node: TEth.Hex, name: TEth.Hex, resource: number, record: TEth.Hex
-    };
-    type TLogDNSRecordChangedParameters = [ node: TEth.Hex, name: TEth.Hex, resource: number, record: TEth.Hex ];
-    type TLogDNSRecordDeleted = {
-        node: TEth.Hex, name: TEth.Hex, resource: number
-    };
-    type TLogDNSRecordDeletedParameters = [ node: TEth.Hex, name: TEth.Hex, resource: number ];
-    type TLogDNSZonehashChanged = {
-        node: TEth.Hex, lastzonehash: TEth.Hex, zonehash: TEth.Hex
-    };
-    type TLogDNSZonehashChangedParameters = [ node: TEth.Hex, lastzonehash: TEth.Hex, zonehash: TEth.Hex ];
-    type TLogInterfaceChanged = {
-        node: TEth.Hex, interfaceID: TEth.Hex, implementer: TAddress
-    };
-    type TLogInterfaceChangedParameters = [ node: TEth.Hex, interfaceID: TEth.Hex, implementer: TAddress ];
-    type TLogNameChanged = {
-        node: TEth.Hex, name: string
-    };
-    type TLogNameChangedParameters = [ node: TEth.Hex, name: string ];
-    type TLogPubkeyChanged = {
-        node: TEth.Hex, x: TEth.Hex, y: TEth.Hex
-    };
-    type TLogPubkeyChangedParameters = [ node: TEth.Hex, x: TEth.Hex, y: TEth.Hex ];
-    type TLogTextChanged = {
-        node: TEth.Hex, indexedKey: string, key: string, value: string
-    };
-    type TLogTextChangedParameters = [ node: TEth.Hex, indexedKey: string, key: string, value: string ];
-    type TLogVersionChanged = {
-        node: TEth.Hex, newVersion: number
-    };
-    type TLogVersionChangedParameters = [ node: TEth.Hex, newVersion: number ];
-
-interface IEvents {
-  ABIChanged: TLogABIChangedParameters
-  AddrChanged: TLogAddrChangedParameters
-  AddressChanged: TLogAddressChangedParameters
-  ApprovalForAll: TLogApprovalForAllParameters
-  Approved: TLogApprovedParameters
-  ContenthashChanged: TLogContenthashChangedParameters
-  DNSRecordChanged: TLogDNSRecordChangedParameters
-  DNSRecordDeleted: TLogDNSRecordDeletedParameters
-  DNSZonehashChanged: TLogDNSZonehashChangedParameters
-  InterfaceChanged: TLogInterfaceChangedParameters
-  NameChanged: TLogNameChangedParameters
-  PubkeyChanged: TLogPubkeyChangedParameters
-  TextChanged: TLogTextChangedParameters
-  VersionChanged: TLogVersionChangedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodABI {
-  method: "ABI"
-  arguments: [ node: TEth.Hex, contentTypes: bigint ]
+export type TEnsPublicResolverTypes = {
+    Events: {
+        ABIChanged: {
+            outputParams: { node: TEth.Hex, contentType: bigint },
+            outputArgs:   [ node: TEth.Hex, contentType: bigint ],
+        }
+        AddrChanged: {
+            outputParams: { node: TEth.Hex, a: TAddress },
+            outputArgs:   [ node: TEth.Hex, a: TAddress ],
+        }
+        AddressChanged: {
+            outputParams: { node: TEth.Hex, coinType: bigint, newAddress: TEth.Hex },
+            outputArgs:   [ node: TEth.Hex, coinType: bigint, newAddress: TEth.Hex ],
+        }
+        ApprovalForAll: {
+            outputParams: { owner: TAddress, operator: TAddress, approved: boolean },
+            outputArgs:   [ owner: TAddress, operator: TAddress, approved: boolean ],
+        }
+        Approved: {
+            outputParams: { owner: TAddress, node: TEth.Hex, delegate: TAddress, approved: boolean },
+            outputArgs:   [ owner: TAddress, node: TEth.Hex, delegate: TAddress, approved: boolean ],
+        }
+        ContenthashChanged: {
+            outputParams: { node: TEth.Hex, hash: TEth.Hex },
+            outputArgs:   [ node: TEth.Hex, hash: TEth.Hex ],
+        }
+        DNSRecordChanged: {
+            outputParams: { node: TEth.Hex, name: TEth.Hex, resource: number, record: TEth.Hex },
+            outputArgs:   [ node: TEth.Hex, name: TEth.Hex, resource: number, record: TEth.Hex ],
+        }
+        DNSRecordDeleted: {
+            outputParams: { node: TEth.Hex, name: TEth.Hex, resource: number },
+            outputArgs:   [ node: TEth.Hex, name: TEth.Hex, resource: number ],
+        }
+        DNSZonehashChanged: {
+            outputParams: { node: TEth.Hex, lastzonehash: TEth.Hex, zonehash: TEth.Hex },
+            outputArgs:   [ node: TEth.Hex, lastzonehash: TEth.Hex, zonehash: TEth.Hex ],
+        }
+        InterfaceChanged: {
+            outputParams: { node: TEth.Hex, interfaceID: TEth.Hex, implementer: TAddress },
+            outputArgs:   [ node: TEth.Hex, interfaceID: TEth.Hex, implementer: TAddress ],
+        }
+        NameChanged: {
+            outputParams: { node: TEth.Hex, name: string },
+            outputArgs:   [ node: TEth.Hex, name: string ],
+        }
+        PubkeyChanged: {
+            outputParams: { node: TEth.Hex, x: TEth.Hex, y: TEth.Hex },
+            outputArgs:   [ node: TEth.Hex, x: TEth.Hex, y: TEth.Hex ],
+        }
+        TextChanged: {
+            outputParams: { node: TEth.Hex, indexedKey: string, key: string, value: string },
+            outputArgs:   [ node: TEth.Hex, indexedKey: string, key: string, value: string ],
+        }
+        VersionChanged: {
+            outputParams: { node: TEth.Hex, newVersion: number },
+            outputArgs:   [ node: TEth.Hex, newVersion: number ],
+        }
+    },
+    Methods: {
+        ABI: {
+          method: "ABI"
+          arguments: [ node: TEth.Hex, contentTypes: bigint ]
+        }
+        addr: {
+          method: "addr"
+          arguments: [ node: TEth.Hex ] | [ node: TEth.Hex, coinType: bigint ]
+        }
+        approve: {
+          method: "approve"
+          arguments: [ node: TEth.Hex, delegate: TAddress, approved: boolean ]
+        }
+        clearRecords: {
+          method: "clearRecords"
+          arguments: [ node: TEth.Hex ]
+        }
+        contenthash: {
+          method: "contenthash"
+          arguments: [ node: TEth.Hex ]
+        }
+        dnsRecord: {
+          method: "dnsRecord"
+          arguments: [ node: TEth.Hex, name: TEth.Hex, resource: number ]
+        }
+        hasDNSRecords: {
+          method: "hasDNSRecords"
+          arguments: [ node: TEth.Hex, name: TEth.Hex ]
+        }
+        interfaceImplementer: {
+          method: "interfaceImplementer"
+          arguments: [ node: TEth.Hex, interfaceID: TEth.Hex ]
+        }
+        isApprovedFor: {
+          method: "isApprovedFor"
+          arguments: [ owner: TAddress, node: TEth.Hex, delegate: TAddress ]
+        }
+        isApprovedForAll: {
+          method: "isApprovedForAll"
+          arguments: [ account: TAddress, operator: TAddress ]
+        }
+        multicall: {
+          method: "multicall"
+          arguments: [ data: TEth.Hex[] ]
+        }
+        multicallWithNodeCheck: {
+          method: "multicallWithNodeCheck"
+          arguments: [ nodehash: TEth.Hex, data: TEth.Hex[] ]
+        }
+        name: {
+          method: "name"
+          arguments: [ node: TEth.Hex ]
+        }
+        pubkey: {
+          method: "pubkey"
+          arguments: [ node: TEth.Hex ]
+        }
+        recordVersions: {
+          method: "recordVersions"
+          arguments: [ input0: TEth.Hex ]
+        }
+        setABI: {
+          method: "setABI"
+          arguments: [ node: TEth.Hex, contentType: bigint, data: TEth.Hex ]
+        }
+        setAddr: {
+          method: "setAddr"
+          arguments: [ node: TEth.Hex, coinType: bigint, a: TEth.Hex ] | [ node: TEth.Hex, a: TAddress ]
+        }
+        setApprovalForAll: {
+          method: "setApprovalForAll"
+          arguments: [ operator: TAddress, approved: boolean ]
+        }
+        setContenthash: {
+          method: "setContenthash"
+          arguments: [ node: TEth.Hex, hash: TEth.Hex ]
+        }
+        setDNSRecords: {
+          method: "setDNSRecords"
+          arguments: [ node: TEth.Hex, data: TEth.Hex ]
+        }
+        setInterface: {
+          method: "setInterface"
+          arguments: [ node: TEth.Hex, interfaceID: TEth.Hex, implementer: TAddress ]
+        }
+        setName: {
+          method: "setName"
+          arguments: [ node: TEth.Hex, newName: string ]
+        }
+        setPubkey: {
+          method: "setPubkey"
+          arguments: [ node: TEth.Hex, x: TEth.Hex, y: TEth.Hex ]
+        }
+        setText: {
+          method: "setText"
+          arguments: [ node: TEth.Hex, key: string, value: string ]
+        }
+        setZonehash: {
+          method: "setZonehash"
+          arguments: [ node: TEth.Hex, hash: TEth.Hex ]
+        }
+        supportsInterface: {
+          method: "supportsInterface"
+          arguments: [ interfaceID: TEth.Hex ]
+        }
+        text: {
+          method: "text"
+          arguments: [ node: TEth.Hex, key: string ]
+        }
+        zonehash: {
+          method: "zonehash"
+          arguments: [ node: TEth.Hex ]
+        }
+    }
 }
-
-interface IMethodAddr {
-  method: "addr"
-  arguments: [ node: TEth.Hex ] | [ node: TEth.Hex, coinType: bigint ]
-}
-
-interface IMethodApprove {
-  method: "approve"
-  arguments: [ node: TEth.Hex, delegate: TAddress, approved: boolean ]
-}
-
-interface IMethodClearRecords {
-  method: "clearRecords"
-  arguments: [ node: TEth.Hex ]
-}
-
-interface IMethodContenthash {
-  method: "contenthash"
-  arguments: [ node: TEth.Hex ]
-}
-
-interface IMethodDnsRecord {
-  method: "dnsRecord"
-  arguments: [ node: TEth.Hex, name: TEth.Hex, resource: number ]
-}
-
-interface IMethodHasDNSRecords {
-  method: "hasDNSRecords"
-  arguments: [ node: TEth.Hex, name: TEth.Hex ]
-}
-
-interface IMethodInterfaceImplementer {
-  method: "interfaceImplementer"
-  arguments: [ node: TEth.Hex, interfaceID: TEth.Hex ]
-}
-
-interface IMethodIsApprovedFor {
-  method: "isApprovedFor"
-  arguments: [ owner: TAddress, node: TEth.Hex, delegate: TAddress ]
-}
-
-interface IMethodIsApprovedForAll {
-  method: "isApprovedForAll"
-  arguments: [ account: TAddress, operator: TAddress ]
-}
-
-interface IMethodMulticall {
-  method: "multicall"
-  arguments: [ data: TEth.Hex[] ]
-}
-
-interface IMethodMulticallWithNodeCheck {
-  method: "multicallWithNodeCheck"
-  arguments: [ nodehash: TEth.Hex, data: TEth.Hex[] ]
-}
-
-interface IMethodName {
-  method: "name"
-  arguments: [ node: TEth.Hex ]
-}
-
-interface IMethodPubkey {
-  method: "pubkey"
-  arguments: [ node: TEth.Hex ]
-}
-
-interface IMethodRecordVersions {
-  method: "recordVersions"
-  arguments: [ input0: TEth.Hex ]
-}
-
-interface IMethodSetABI {
-  method: "setABI"
-  arguments: [ node: TEth.Hex, contentType: bigint, data: TEth.Hex ]
-}
-
-interface IMethodSetAddr {
-  method: "setAddr"
-  arguments: [ node: TEth.Hex, coinType: bigint, a: TEth.Hex ] | [ node: TEth.Hex, a: TAddress ]
-}
-
-interface IMethodSetApprovalForAll {
-  method: "setApprovalForAll"
-  arguments: [ operator: TAddress, approved: boolean ]
-}
-
-interface IMethodSetContenthash {
-  method: "setContenthash"
-  arguments: [ node: TEth.Hex, hash: TEth.Hex ]
-}
-
-interface IMethodSetDNSRecords {
-  method: "setDNSRecords"
-  arguments: [ node: TEth.Hex, data: TEth.Hex ]
-}
-
-interface IMethodSetInterface {
-  method: "setInterface"
-  arguments: [ node: TEth.Hex, interfaceID: TEth.Hex, implementer: TAddress ]
-}
-
-interface IMethodSetName {
-  method: "setName"
-  arguments: [ node: TEth.Hex, newName: string ]
-}
-
-interface IMethodSetPubkey {
-  method: "setPubkey"
-  arguments: [ node: TEth.Hex, x: TEth.Hex, y: TEth.Hex ]
-}
-
-interface IMethodSetText {
-  method: "setText"
-  arguments: [ node: TEth.Hex, key: string, value: string ]
-}
-
-interface IMethodSetZonehash {
-  method: "setZonehash"
-  arguments: [ node: TEth.Hex, hash: TEth.Hex ]
-}
-
-interface IMethodSupportsInterface {
-  method: "supportsInterface"
-  arguments: [ interfaceID: TEth.Hex ]
-}
-
-interface IMethodText {
-  method: "text"
-  arguments: [ node: TEth.Hex, key: string ]
-}
-
-interface IMethodZonehash {
-  method: "zonehash"
-  arguments: [ node: TEth.Hex ]
-}
-
-interface IMethods {
-  ABI: IMethodABI
-  addr: IMethodAddr
-  approve: IMethodApprove
-  clearRecords: IMethodClearRecords
-  contenthash: IMethodContenthash
-  dnsRecord: IMethodDnsRecord
-  hasDNSRecords: IMethodHasDNSRecords
-  interfaceImplementer: IMethodInterfaceImplementer
-  isApprovedFor: IMethodIsApprovedFor
-  isApprovedForAll: IMethodIsApprovedForAll
-  multicall: IMethodMulticall
-  multicallWithNodeCheck: IMethodMulticallWithNodeCheck
-  name: IMethodName
-  pubkey: IMethodPubkey
-  recordVersions: IMethodRecordVersions
-  setABI: IMethodSetABI
-  setAddr: IMethodSetAddr
-  setApprovalForAll: IMethodSetApprovalForAll
-  setContenthash: IMethodSetContenthash
-  setDNSRecords: IMethodSetDNSRecords
-  setInterface: IMethodSetInterface
-  setName: IMethodSetName
-  setPubkey: IMethodSetPubkey
-  setText: IMethodSetText
-  setZonehash: IMethodSetZonehash
-  supportsInterface: IMethodSupportsInterface
-  text: IMethodText
-  zonehash: IMethodZonehash
-  '*': { method: string, arguments: any[] } 
-}
-
-
 
 
 
@@ -883,7 +828,6 @@ class EnsPublicResolverStorageReader extends ContractStorageReaderBase {
 }
 
 
-
 interface IEnsPublicResolverTxCaller {
     approve (sender: TSender, node: TEth.Hex, delegate: TAddress, approved: boolean): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     clearRecords (sender: TSender, node: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
@@ -922,3 +866,5 @@ interface IEnsPublicResolverTxData {
 }
 
 
+type TEvents = TEnsPublicResolverTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

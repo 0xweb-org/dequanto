@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class Ownable2Step extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/Ownable2Step.ts"
-}
+        "class": "./contracts/openzeppelin/Ownable2Step.ts"
+    }
 
     // 0x79ba5097
     async acceptOwnership (sender: TSender, ): Promise<TxWriter> {
@@ -81,10 +81,13 @@ export class Ownable2Step extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TOwnable2StepTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TOwnable2StepTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -92,8 +95,20 @@ export class Ownable2Step extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onOwnershipTransferStarted (fn?: (event: TClientEventsStreamData<TLogOwnershipTransferStartedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogOwnershipTransferStartedParameters>> {
@@ -104,21 +119,21 @@ export class Ownable2Step extends ContractBase {
         return this.$onLog('OwnershipTransferred', fn);
     }
 
-    extractLogsOwnershipTransferStarted (tx: TEth.TxReceipt): ITxLogItem<TLogOwnershipTransferStarted>[] {
+    extractLogsOwnershipTransferStarted (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'OwnershipTransferStarted'>>[] {
         let abi = this.$getAbiItem('event', 'OwnershipTransferStarted');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogOwnershipTransferStarted>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'OwnershipTransferStarted'>>[];
     }
 
-    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TLogOwnershipTransferred>[] {
+    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'OwnershipTransferred'>>[] {
         let abi = this.$getAbiItem('event', 'OwnershipTransferred');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogOwnershipTransferred>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'OwnershipTransferred'>>[];
     }
 
     async getPastLogsOwnershipTransferStarted (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { previousOwner?: TAddress,newOwner?: TAddress }
-    }): Promise<ITxLogItem<TLogOwnershipTransferStarted>[]> {
+    }): Promise<ITxLogItem<TEventParams<'OwnershipTransferStarted'>>[]> {
         return await this.$getPastLogsParsed('OwnershipTransferStarted', options) as any;
     }
 
@@ -126,7 +141,7 @@ export class Ownable2Step extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { previousOwner?: TAddress,newOwner?: TAddress }
-    }): Promise<ITxLogItem<TLogOwnershipTransferred>[]> {
+    }): Promise<ITxLogItem<TEventParams<'OwnershipTransferred'>>[]> {
         return await this.$getPastLogsParsed('OwnershipTransferred', options) as any;
     }
 
@@ -139,59 +154,46 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogOwnershipTransferStarted = {
-        previousOwner: TAddress, newOwner: TAddress
-    };
-    type TLogOwnershipTransferStartedParameters = [ previousOwner: TAddress, newOwner: TAddress ];
-    type TLogOwnershipTransferred = {
-        previousOwner: TAddress, newOwner: TAddress
-    };
-    type TLogOwnershipTransferredParameters = [ previousOwner: TAddress, newOwner: TAddress ];
-
-interface IEvents {
-  OwnershipTransferStarted: TLogOwnershipTransferStartedParameters
-  OwnershipTransferred: TLogOwnershipTransferredParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodAcceptOwnership {
-  method: "acceptOwnership"
-  arguments: [  ]
+export type TOwnable2StepTypes = {
+    Events: {
+        OwnershipTransferStarted: {
+            outputParams: { previousOwner: TAddress, newOwner: TAddress },
+            outputArgs:   [ previousOwner: TAddress, newOwner: TAddress ],
+        }
+        OwnershipTransferred: {
+            outputParams: { previousOwner: TAddress, newOwner: TAddress },
+            outputArgs:   [ previousOwner: TAddress, newOwner: TAddress ],
+        }
+    },
+    Methods: {
+        acceptOwnership: {
+          method: "acceptOwnership"
+          arguments: [  ]
+        }
+        owner: {
+          method: "owner"
+          arguments: [  ]
+        }
+        pendingOwner: {
+          method: "pendingOwner"
+          arguments: [  ]
+        }
+        renounceOwnership: {
+          method: "renounceOwnership"
+          arguments: [  ]
+        }
+        transferOwnership: {
+          method: "transferOwnership"
+          arguments: [ newOwner: TAddress ]
+        }
+    }
 }
-
-interface IMethodOwner {
-  method: "owner"
-  arguments: [  ]
-}
-
-interface IMethodPendingOwner {
-  method: "pendingOwner"
-  arguments: [  ]
-}
-
-interface IMethodRenounceOwnership {
-  method: "renounceOwnership"
-  arguments: [  ]
-}
-
-interface IMethodTransferOwnership {
-  method: "transferOwnership"
-  arguments: [ newOwner: TAddress ]
-}
-
-interface IMethods {
-  acceptOwnership: IMethodAcceptOwnership
-  owner: IMethodOwner
-  pendingOwner: IMethodPendingOwner
-  renounceOwnership: IMethodRenounceOwnership
-  transferOwnership: IMethodTransferOwnership
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -209,3 +211,5 @@ interface IOwnable2StepTxData {
 }
 
 
+type TEvents = TOwnable2StepTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

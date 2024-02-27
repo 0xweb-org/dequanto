@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/0x58774Bb8acD458A640aF0B88238369A167546ef2#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class EnsDnsRegistrar extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/ens/EnsDnsRegistrar/EnsDnsRegistrar.ts"
-}
+        "class": "./contracts/ens/EnsDnsRegistrar/EnsDnsRegistrar.ts"
+    }
 
     async $constructor (deployer: TSender, _dnssec: TAddress, _suffixes: TAddress, _ens: TAddress): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -105,10 +105,13 @@ export class EnsDnsRegistrar extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TEnsDnsRegistrarTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TEnsDnsRegistrarTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -116,8 +119,20 @@ export class EnsDnsRegistrar extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onClaim (fn?: (event: TClientEventsStreamData<TLogClaimParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogClaimParameters>> {
@@ -132,26 +147,26 @@ export class EnsDnsRegistrar extends ContractBase {
         return this.$onLog('NewPublicSuffixList', fn);
     }
 
-    extractLogsClaim (tx: TEth.TxReceipt): ITxLogItem<TLogClaim>[] {
+    extractLogsClaim (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Claim'>>[] {
         let abi = this.$getAbiItem('event', 'Claim');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogClaim>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Claim'>>[];
     }
 
-    extractLogsNewOracle (tx: TEth.TxReceipt): ITxLogItem<TLogNewOracle>[] {
+    extractLogsNewOracle (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'NewOracle'>>[] {
         let abi = this.$getAbiItem('event', 'NewOracle');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogNewOracle>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'NewOracle'>>[];
     }
 
-    extractLogsNewPublicSuffixList (tx: TEth.TxReceipt): ITxLogItem<TLogNewPublicSuffixList>[] {
+    extractLogsNewPublicSuffixList (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'NewPublicSuffixList'>>[] {
         let abi = this.$getAbiItem('event', 'NewPublicSuffixList');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogNewPublicSuffixList>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'NewPublicSuffixList'>>[];
     }
 
     async getPastLogsClaim (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { node?: TEth.Hex,owner?: TAddress }
-    }): Promise<ITxLogItem<TLogClaim>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Claim'>>[]> {
         return await this.$getPastLogsParsed('Claim', options) as any;
     }
 
@@ -159,7 +174,7 @@ export class EnsDnsRegistrar extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogNewOracle>[]> {
+    }): Promise<ITxLogItem<TEventParams<'NewOracle'>>[]> {
         return await this.$getPastLogsParsed('NewOracle', options) as any;
     }
 
@@ -167,7 +182,7 @@ export class EnsDnsRegistrar extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogNewPublicSuffixList>[]> {
+    }): Promise<ITxLogItem<TEventParams<'NewPublicSuffixList'>>[]> {
         return await this.$getPastLogsParsed('NewPublicSuffixList', options) as any;
     }
 
@@ -180,87 +195,66 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogClaim = {
-        node: TEth.Hex, owner: TAddress, dnsname: TEth.Hex
-    };
-    type TLogClaimParameters = [ node: TEth.Hex, owner: TAddress, dnsname: TEth.Hex ];
-    type TLogNewOracle = {
-        oracle: TAddress
-    };
-    type TLogNewOracleParameters = [ oracle: TAddress ];
-    type TLogNewPublicSuffixList = {
-        suffixes: TAddress
-    };
-    type TLogNewPublicSuffixListParameters = [ suffixes: TAddress ];
-
-interface IEvents {
-  Claim: TLogClaimParameters
-  NewOracle: TLogNewOracleParameters
-  NewPublicSuffixList: TLogNewPublicSuffixListParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodClaim {
-  method: "claim"
-  arguments: [ name: TEth.Hex, proof: TEth.Hex ]
+export type TEnsDnsRegistrarTypes = {
+    Events: {
+        Claim: {
+            outputParams: { node: TEth.Hex, owner: TAddress, dnsname: TEth.Hex },
+            outputArgs:   [ node: TEth.Hex, owner: TAddress, dnsname: TEth.Hex ],
+        }
+        NewOracle: {
+            outputParams: { oracle: TAddress },
+            outputArgs:   [ oracle: TAddress ],
+        }
+        NewPublicSuffixList: {
+            outputParams: { suffixes: TAddress },
+            outputArgs:   [ suffixes: TAddress ],
+        }
+    },
+    Methods: {
+        claim: {
+          method: "claim"
+          arguments: [ name: TEth.Hex, proof: TEth.Hex ]
+        }
+        ens: {
+          method: "ens"
+          arguments: [  ]
+        }
+        oracle: {
+          method: "oracle"
+          arguments: [  ]
+        }
+        proveAndClaim: {
+          method: "proveAndClaim"
+          arguments: [ name: TEth.Hex, input: { rrset: TEth.Hex, sig: TEth.Hex }[], proof: TEth.Hex ]
+        }
+        proveAndClaimWithResolver: {
+          method: "proveAndClaimWithResolver"
+          arguments: [ name: TEth.Hex, input: { rrset: TEth.Hex, sig: TEth.Hex }[], proof: TEth.Hex, resolver: TAddress, addr: TAddress ]
+        }
+        setOracle: {
+          method: "setOracle"
+          arguments: [ _dnssec: TAddress ]
+        }
+        setPublicSuffixList: {
+          method: "setPublicSuffixList"
+          arguments: [ _suffixes: TAddress ]
+        }
+        suffixes: {
+          method: "suffixes"
+          arguments: [  ]
+        }
+        supportsInterface: {
+          method: "supportsInterface"
+          arguments: [ interfaceID: TEth.Hex ]
+        }
+    }
 }
-
-interface IMethodEns {
-  method: "ens"
-  arguments: [  ]
-}
-
-interface IMethodOracle {
-  method: "oracle"
-  arguments: [  ]
-}
-
-interface IMethodProveAndClaim {
-  method: "proveAndClaim"
-  arguments: [ name: TEth.Hex, input: { rrset: TEth.Hex, sig: TEth.Hex }[], proof: TEth.Hex ]
-}
-
-interface IMethodProveAndClaimWithResolver {
-  method: "proveAndClaimWithResolver"
-  arguments: [ name: TEth.Hex, input: { rrset: TEth.Hex, sig: TEth.Hex }[], proof: TEth.Hex, resolver: TAddress, addr: TAddress ]
-}
-
-interface IMethodSetOracle {
-  method: "setOracle"
-  arguments: [ _dnssec: TAddress ]
-}
-
-interface IMethodSetPublicSuffixList {
-  method: "setPublicSuffixList"
-  arguments: [ _suffixes: TAddress ]
-}
-
-interface IMethodSuffixes {
-  method: "suffixes"
-  arguments: [  ]
-}
-
-interface IMethodSupportsInterface {
-  method: "supportsInterface"
-  arguments: [ interfaceID: TEth.Hex ]
-}
-
-interface IMethods {
-  claim: IMethodClaim
-  ens: IMethodEns
-  oracle: IMethodOracle
-  proveAndClaim: IMethodProveAndClaim
-  proveAndClaimWithResolver: IMethodProveAndClaimWithResolver
-  setOracle: IMethodSetOracle
-  setPublicSuffixList: IMethodSetPublicSuffixList
-  suffixes: IMethodSuffixes
-  supportsInterface: IMethodSupportsInterface
-  '*': { method: string, arguments: any[] } 
-}
-
-
 
 
 
@@ -314,7 +308,6 @@ class EnsDnsRegistrarStorageReader extends ContractStorageReaderBase {
 }
 
 
-
 interface IEnsDnsRegistrarTxCaller {
     claim (sender: TSender, name: TEth.Hex, proof: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     proveAndClaim (sender: TSender, name: TEth.Hex, input: { rrset: TEth.Hex, sig: TEth.Hex }[], proof: TEth.Hex): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
@@ -333,3 +326,5 @@ interface IEnsDnsRegistrarTxData {
 }
 
 
+type TEvents = TEnsDnsRegistrarTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

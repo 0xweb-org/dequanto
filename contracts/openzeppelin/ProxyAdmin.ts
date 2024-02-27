@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class ProxyAdmin extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/ProxyAdmin.ts"
-}
+        "class": "./contracts/openzeppelin/ProxyAdmin.ts"
+    }
 
     // 0x7eff275e
     async changeProxyAdmin (sender: TSender, proxy: TAddress, newAdmin: TAddress): Promise<TxWriter> {
@@ -96,10 +96,13 @@ export class ProxyAdmin extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TProxyAdminTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TProxyAdminTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -107,24 +110,36 @@ export class ProxyAdmin extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onOwnershipTransferred (fn?: (event: TClientEventsStreamData<TLogOwnershipTransferredParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogOwnershipTransferredParameters>> {
         return this.$onLog('OwnershipTransferred', fn);
     }
 
-    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TLogOwnershipTransferred>[] {
+    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'OwnershipTransferred'>>[] {
         let abi = this.$getAbiItem('event', 'OwnershipTransferred');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogOwnershipTransferred>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'OwnershipTransferred'>>[];
     }
 
     async getPastLogsOwnershipTransferred (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { previousOwner?: TAddress,newOwner?: TAddress }
-    }): Promise<ITxLogItem<TLogOwnershipTransferred>[]> {
+    }): Promise<ITxLogItem<TEventParams<'OwnershipTransferred'>>[]> {
         return await this.$getPastLogsParsed('OwnershipTransferred', options) as any;
     }
 
@@ -137,72 +152,54 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogOwnershipTransferred = {
-        previousOwner: TAddress, newOwner: TAddress
-    };
-    type TLogOwnershipTransferredParameters = [ previousOwner: TAddress, newOwner: TAddress ];
-
-interface IEvents {
-  OwnershipTransferred: TLogOwnershipTransferredParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodChangeProxyAdmin {
-  method: "changeProxyAdmin"
-  arguments: [ proxy: TAddress, newAdmin: TAddress ]
+export type TProxyAdminTypes = {
+    Events: {
+        OwnershipTransferred: {
+            outputParams: { previousOwner: TAddress, newOwner: TAddress },
+            outputArgs:   [ previousOwner: TAddress, newOwner: TAddress ],
+        }
+    },
+    Methods: {
+        changeProxyAdmin: {
+          method: "changeProxyAdmin"
+          arguments: [ proxy: TAddress, newAdmin: TAddress ]
+        }
+        getProxyAdmin: {
+          method: "getProxyAdmin"
+          arguments: [ proxy: TAddress ]
+        }
+        getProxyImplementation: {
+          method: "getProxyImplementation"
+          arguments: [ proxy: TAddress ]
+        }
+        owner: {
+          method: "owner"
+          arguments: [  ]
+        }
+        renounceOwnership: {
+          method: "renounceOwnership"
+          arguments: [  ]
+        }
+        transferOwnership: {
+          method: "transferOwnership"
+          arguments: [ newOwner: TAddress ]
+        }
+        upgrade: {
+          method: "upgrade"
+          arguments: [ proxy: TAddress, implementation: TAddress ]
+        }
+        upgradeAndCall: {
+          method: "upgradeAndCall"
+          arguments: [ proxy: TAddress, implementation: TAddress, data: TEth.Hex ]
+        }
+    }
 }
-
-interface IMethodGetProxyAdmin {
-  method: "getProxyAdmin"
-  arguments: [ proxy: TAddress ]
-}
-
-interface IMethodGetProxyImplementation {
-  method: "getProxyImplementation"
-  arguments: [ proxy: TAddress ]
-}
-
-interface IMethodOwner {
-  method: "owner"
-  arguments: [  ]
-}
-
-interface IMethodRenounceOwnership {
-  method: "renounceOwnership"
-  arguments: [  ]
-}
-
-interface IMethodTransferOwnership {
-  method: "transferOwnership"
-  arguments: [ newOwner: TAddress ]
-}
-
-interface IMethodUpgrade {
-  method: "upgrade"
-  arguments: [ proxy: TAddress, implementation: TAddress ]
-}
-
-interface IMethodUpgradeAndCall {
-  method: "upgradeAndCall"
-  arguments: [ proxy: TAddress, implementation: TAddress, data: TEth.Hex ]
-}
-
-interface IMethods {
-  changeProxyAdmin: IMethodChangeProxyAdmin
-  getProxyAdmin: IMethodGetProxyAdmin
-  getProxyImplementation: IMethodGetProxyImplementation
-  owner: IMethodOwner
-  renounceOwnership: IMethodRenounceOwnership
-  transferOwnership: IMethodTransferOwnership
-  upgrade: IMethodUpgrade
-  upgradeAndCall: IMethodUpgradeAndCall
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -224,3 +221,5 @@ interface IProxyAdminTxData {
 }
 
 
+type TEvents = TProxyAdminTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

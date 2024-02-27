@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class GnosisSafe extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/safe/GnosisSafe.ts"
-}
+        "class": "./contracts/safe/GnosisSafe.ts"
+    }
 
     async $constructor (deployer: TSender, ): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -210,10 +210,13 @@ export class GnosisSafe extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TGnosisSafeTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TGnosisSafeTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -221,8 +224,20 @@ export class GnosisSafe extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onAddedOwner (fn?: (event: TClientEventsStreamData<TLogAddedOwnerParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogAddedOwnerParameters>> {
@@ -273,71 +288,71 @@ export class GnosisSafe extends ContractBase {
         return this.$onLog('SignMsg', fn);
     }
 
-    extractLogsAddedOwner (tx: TEth.TxReceipt): ITxLogItem<TLogAddedOwner>[] {
+    extractLogsAddedOwner (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'AddedOwner'>>[] {
         let abi = this.$getAbiItem('event', 'AddedOwner');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogAddedOwner>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'AddedOwner'>>[];
     }
 
-    extractLogsApproveHash (tx: TEth.TxReceipt): ITxLogItem<TLogApproveHash>[] {
+    extractLogsApproveHash (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ApproveHash'>>[] {
         let abi = this.$getAbiItem('event', 'ApproveHash');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApproveHash>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ApproveHash'>>[];
     }
 
-    extractLogsChangedMasterCopy (tx: TEth.TxReceipt): ITxLogItem<TLogChangedMasterCopy>[] {
+    extractLogsChangedMasterCopy (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ChangedMasterCopy'>>[] {
         let abi = this.$getAbiItem('event', 'ChangedMasterCopy');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogChangedMasterCopy>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ChangedMasterCopy'>>[];
     }
 
-    extractLogsChangedThreshold (tx: TEth.TxReceipt): ITxLogItem<TLogChangedThreshold>[] {
+    extractLogsChangedThreshold (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ChangedThreshold'>>[] {
         let abi = this.$getAbiItem('event', 'ChangedThreshold');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogChangedThreshold>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ChangedThreshold'>>[];
     }
 
-    extractLogsDisabledModule (tx: TEth.TxReceipt): ITxLogItem<TLogDisabledModule>[] {
+    extractLogsDisabledModule (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'DisabledModule'>>[] {
         let abi = this.$getAbiItem('event', 'DisabledModule');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogDisabledModule>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'DisabledModule'>>[];
     }
 
-    extractLogsEnabledModule (tx: TEth.TxReceipt): ITxLogItem<TLogEnabledModule>[] {
+    extractLogsEnabledModule (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'EnabledModule'>>[] {
         let abi = this.$getAbiItem('event', 'EnabledModule');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogEnabledModule>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'EnabledModule'>>[];
     }
 
-    extractLogsExecutionFailure (tx: TEth.TxReceipt): ITxLogItem<TLogExecutionFailure>[] {
+    extractLogsExecutionFailure (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ExecutionFailure'>>[] {
         let abi = this.$getAbiItem('event', 'ExecutionFailure');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogExecutionFailure>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ExecutionFailure'>>[];
     }
 
-    extractLogsExecutionFromModuleFailure (tx: TEth.TxReceipt): ITxLogItem<TLogExecutionFromModuleFailure>[] {
+    extractLogsExecutionFromModuleFailure (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ExecutionFromModuleFailure'>>[] {
         let abi = this.$getAbiItem('event', 'ExecutionFromModuleFailure');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogExecutionFromModuleFailure>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ExecutionFromModuleFailure'>>[];
     }
 
-    extractLogsExecutionFromModuleSuccess (tx: TEth.TxReceipt): ITxLogItem<TLogExecutionFromModuleSuccess>[] {
+    extractLogsExecutionFromModuleSuccess (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ExecutionFromModuleSuccess'>>[] {
         let abi = this.$getAbiItem('event', 'ExecutionFromModuleSuccess');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogExecutionFromModuleSuccess>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ExecutionFromModuleSuccess'>>[];
     }
 
-    extractLogsExecutionSuccess (tx: TEth.TxReceipt): ITxLogItem<TLogExecutionSuccess>[] {
+    extractLogsExecutionSuccess (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ExecutionSuccess'>>[] {
         let abi = this.$getAbiItem('event', 'ExecutionSuccess');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogExecutionSuccess>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ExecutionSuccess'>>[];
     }
 
-    extractLogsRemovedOwner (tx: TEth.TxReceipt): ITxLogItem<TLogRemovedOwner>[] {
+    extractLogsRemovedOwner (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RemovedOwner'>>[] {
         let abi = this.$getAbiItem('event', 'RemovedOwner');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRemovedOwner>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RemovedOwner'>>[];
     }
 
-    extractLogsSignMsg (tx: TEth.TxReceipt): ITxLogItem<TLogSignMsg>[] {
+    extractLogsSignMsg (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'SignMsg'>>[] {
         let abi = this.$getAbiItem('event', 'SignMsg');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogSignMsg>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'SignMsg'>>[];
     }
 
     async getPastLogsAddedOwner (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogAddedOwner>[]> {
+    }): Promise<ITxLogItem<TEventParams<'AddedOwner'>>[]> {
         return await this.$getPastLogsParsed('AddedOwner', options) as any;
     }
 
@@ -345,7 +360,7 @@ export class GnosisSafe extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { approvedHash?: TEth.Hex,owner?: TAddress }
-    }): Promise<ITxLogItem<TLogApproveHash>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ApproveHash'>>[]> {
         return await this.$getPastLogsParsed('ApproveHash', options) as any;
     }
 
@@ -353,7 +368,7 @@ export class GnosisSafe extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogChangedMasterCopy>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ChangedMasterCopy'>>[]> {
         return await this.$getPastLogsParsed('ChangedMasterCopy', options) as any;
     }
 
@@ -361,7 +376,7 @@ export class GnosisSafe extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogChangedThreshold>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ChangedThreshold'>>[]> {
         return await this.$getPastLogsParsed('ChangedThreshold', options) as any;
     }
 
@@ -369,7 +384,7 @@ export class GnosisSafe extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogDisabledModule>[]> {
+    }): Promise<ITxLogItem<TEventParams<'DisabledModule'>>[]> {
         return await this.$getPastLogsParsed('DisabledModule', options) as any;
     }
 
@@ -377,7 +392,7 @@ export class GnosisSafe extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogEnabledModule>[]> {
+    }): Promise<ITxLogItem<TEventParams<'EnabledModule'>>[]> {
         return await this.$getPastLogsParsed('EnabledModule', options) as any;
     }
 
@@ -385,7 +400,7 @@ export class GnosisSafe extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogExecutionFailure>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ExecutionFailure'>>[]> {
         return await this.$getPastLogsParsed('ExecutionFailure', options) as any;
     }
 
@@ -393,7 +408,7 @@ export class GnosisSafe extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { module?: TAddress }
-    }): Promise<ITxLogItem<TLogExecutionFromModuleFailure>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ExecutionFromModuleFailure'>>[]> {
         return await this.$getPastLogsParsed('ExecutionFromModuleFailure', options) as any;
     }
 
@@ -401,7 +416,7 @@ export class GnosisSafe extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { module?: TAddress }
-    }): Promise<ITxLogItem<TLogExecutionFromModuleSuccess>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ExecutionFromModuleSuccess'>>[]> {
         return await this.$getPastLogsParsed('ExecutionFromModuleSuccess', options) as any;
     }
 
@@ -409,7 +424,7 @@ export class GnosisSafe extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogExecutionSuccess>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ExecutionSuccess'>>[]> {
         return await this.$getPastLogsParsed('ExecutionSuccess', options) as any;
     }
 
@@ -417,7 +432,7 @@ export class GnosisSafe extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogRemovedOwner>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RemovedOwner'>>[]> {
         return await this.$getPastLogsParsed('RemovedOwner', options) as any;
     }
 
@@ -425,7 +440,7 @@ export class GnosisSafe extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { msgHash?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogSignMsg>[]> {
+    }): Promise<ITxLogItem<TEventParams<'SignMsg'>>[]> {
         return await this.$getPastLogsParsed('SignMsg', options) as any;
     }
 
@@ -438,259 +453,186 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogAddedOwner = {
-        owner: TAddress
-    };
-    type TLogAddedOwnerParameters = [ owner: TAddress ];
-    type TLogApproveHash = {
-        approvedHash: TEth.Hex, owner: TAddress
-    };
-    type TLogApproveHashParameters = [ approvedHash: TEth.Hex, owner: TAddress ];
-    type TLogChangedMasterCopy = {
-        masterCopy: TAddress
-    };
-    type TLogChangedMasterCopyParameters = [ masterCopy: TAddress ];
-    type TLogChangedThreshold = {
-        threshold: bigint
-    };
-    type TLogChangedThresholdParameters = [ threshold: bigint ];
-    type TLogDisabledModule = {
-        module: TAddress
-    };
-    type TLogDisabledModuleParameters = [ module: TAddress ];
-    type TLogEnabledModule = {
-        module: TAddress
-    };
-    type TLogEnabledModuleParameters = [ module: TAddress ];
-    type TLogExecutionFailure = {
-        txHash: TEth.Hex, payment: bigint
-    };
-    type TLogExecutionFailureParameters = [ txHash: TEth.Hex, payment: bigint ];
-    type TLogExecutionFromModuleFailure = {
-        module: TAddress
-    };
-    type TLogExecutionFromModuleFailureParameters = [ module: TAddress ];
-    type TLogExecutionFromModuleSuccess = {
-        module: TAddress
-    };
-    type TLogExecutionFromModuleSuccessParameters = [ module: TAddress ];
-    type TLogExecutionSuccess = {
-        txHash: TEth.Hex, payment: bigint
-    };
-    type TLogExecutionSuccessParameters = [ txHash: TEth.Hex, payment: bigint ];
-    type TLogRemovedOwner = {
-        owner: TAddress
-    };
-    type TLogRemovedOwnerParameters = [ owner: TAddress ];
-    type TLogSignMsg = {
-        msgHash: TEth.Hex
-    };
-    type TLogSignMsgParameters = [ msgHash: TEth.Hex ];
-
-interface IEvents {
-  AddedOwner: TLogAddedOwnerParameters
-  ApproveHash: TLogApproveHashParameters
-  ChangedMasterCopy: TLogChangedMasterCopyParameters
-  ChangedThreshold: TLogChangedThresholdParameters
-  DisabledModule: TLogDisabledModuleParameters
-  EnabledModule: TLogEnabledModuleParameters
-  ExecutionFailure: TLogExecutionFailureParameters
-  ExecutionFromModuleFailure: TLogExecutionFromModuleFailureParameters
-  ExecutionFromModuleSuccess: TLogExecutionFromModuleSuccessParameters
-  ExecutionSuccess: TLogExecutionSuccessParameters
-  RemovedOwner: TLogRemovedOwnerParameters
-  SignMsg: TLogSignMsgParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodNAME {
-  method: "NAME"
-  arguments: [  ]
+export type TGnosisSafeTypes = {
+    Events: {
+        AddedOwner: {
+            outputParams: { owner: TAddress },
+            outputArgs:   [ owner: TAddress ],
+        }
+        ApproveHash: {
+            outputParams: { approvedHash: TEth.Hex, owner: TAddress },
+            outputArgs:   [ approvedHash: TEth.Hex, owner: TAddress ],
+        }
+        ChangedMasterCopy: {
+            outputParams: { masterCopy: TAddress },
+            outputArgs:   [ masterCopy: TAddress ],
+        }
+        ChangedThreshold: {
+            outputParams: { threshold: bigint },
+            outputArgs:   [ threshold: bigint ],
+        }
+        DisabledModule: {
+            outputParams: { module: TAddress },
+            outputArgs:   [ module: TAddress ],
+        }
+        EnabledModule: {
+            outputParams: { module: TAddress },
+            outputArgs:   [ module: TAddress ],
+        }
+        ExecutionFailure: {
+            outputParams: { txHash: TEth.Hex, payment: bigint },
+            outputArgs:   [ txHash: TEth.Hex, payment: bigint ],
+        }
+        ExecutionFromModuleFailure: {
+            outputParams: { module: TAddress },
+            outputArgs:   [ module: TAddress ],
+        }
+        ExecutionFromModuleSuccess: {
+            outputParams: { module: TAddress },
+            outputArgs:   [ module: TAddress ],
+        }
+        ExecutionSuccess: {
+            outputParams: { txHash: TEth.Hex, payment: bigint },
+            outputArgs:   [ txHash: TEth.Hex, payment: bigint ],
+        }
+        RemovedOwner: {
+            outputParams: { owner: TAddress },
+            outputArgs:   [ owner: TAddress ],
+        }
+        SignMsg: {
+            outputParams: { msgHash: TEth.Hex },
+            outputArgs:   [ msgHash: TEth.Hex ],
+        }
+    },
+    Methods: {
+        NAME: {
+          method: "NAME"
+          arguments: [  ]
+        }
+        VERSION: {
+          method: "VERSION"
+          arguments: [  ]
+        }
+        addOwnerWithThreshold: {
+          method: "addOwnerWithThreshold"
+          arguments: [ owner: TAddress, _threshold: bigint ]
+        }
+        approveHash: {
+          method: "approveHash"
+          arguments: [ hashToApprove: TEth.Hex ]
+        }
+        approvedHashes: {
+          method: "approvedHashes"
+          arguments: [ input0: TAddress, input1: TEth.Hex ]
+        }
+        changeMasterCopy: {
+          method: "changeMasterCopy"
+          arguments: [ _masterCopy: TAddress ]
+        }
+        changeThreshold: {
+          method: "changeThreshold"
+          arguments: [ _threshold: bigint ]
+        }
+        disableModule: {
+          method: "disableModule"
+          arguments: [ prevModule: TAddress, module: TAddress ]
+        }
+        domainSeparator: {
+          method: "domainSeparator"
+          arguments: [  ]
+        }
+        enableModule: {
+          method: "enableModule"
+          arguments: [ module: TAddress ]
+        }
+        encodeTransactionData: {
+          method: "encodeTransactionData"
+          arguments: [ to: TAddress, value: bigint, data: TEth.Hex, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, _nonce: bigint ]
+        }
+        execTransaction: {
+          method: "execTransaction"
+          arguments: [ to: TAddress, value: bigint, data: TEth.Hex, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, signatures: TEth.Hex ]
+        }
+        execTransactionFromModule: {
+          method: "execTransactionFromModule"
+          arguments: [ to: TAddress, value: bigint, data: TEth.Hex, operation: number ]
+        }
+        execTransactionFromModuleReturnData: {
+          method: "execTransactionFromModuleReturnData"
+          arguments: [ to: TAddress, value: bigint, data: TEth.Hex, operation: number ]
+        }
+        getMessageHash: {
+          method: "getMessageHash"
+          arguments: [ message: TEth.Hex ]
+        }
+        getModules: {
+          method: "getModules"
+          arguments: [  ]
+        }
+        getModulesPaginated: {
+          method: "getModulesPaginated"
+          arguments: [ start: TAddress, pageSize: bigint ]
+        }
+        getOwners: {
+          method: "getOwners"
+          arguments: [  ]
+        }
+        getThreshold: {
+          method: "getThreshold"
+          arguments: [  ]
+        }
+        getTransactionHash: {
+          method: "getTransactionHash"
+          arguments: [ to: TAddress, value: bigint, data: TEth.Hex, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, _nonce: bigint ]
+        }
+        isOwner: {
+          method: "isOwner"
+          arguments: [ owner: TAddress ]
+        }
+        isValidSignature: {
+          method: "isValidSignature"
+          arguments: [ _data: TEth.Hex, _signature: TEth.Hex ]
+        }
+        nonce: {
+          method: "nonce"
+          arguments: [  ]
+        }
+        removeOwner: {
+          method: "removeOwner"
+          arguments: [ prevOwner: TAddress, owner: TAddress, _threshold: bigint ]
+        }
+        requiredTxGas: {
+          method: "requiredTxGas"
+          arguments: [ to: TAddress, value: bigint, data: TEth.Hex, operation: number ]
+        }
+        setFallbackHandler: {
+          method: "setFallbackHandler"
+          arguments: [ handler: TAddress ]
+        }
+        setup: {
+          method: "setup"
+          arguments: [ _owners: TAddress[], _threshold: bigint, to: TAddress, data: TEth.Hex, fallbackHandler: TAddress, paymentToken: TAddress, payment: bigint, paymentReceiver: TAddress ]
+        }
+        signMessage: {
+          method: "signMessage"
+          arguments: [ _data: TEth.Hex ]
+        }
+        signedMessages: {
+          method: "signedMessages"
+          arguments: [ input0: TEth.Hex ]
+        }
+        swapOwner: {
+          method: "swapOwner"
+          arguments: [ prevOwner: TAddress, oldOwner: TAddress, newOwner: TAddress ]
+        }
+    }
 }
-
-interface IMethodVERSION {
-  method: "VERSION"
-  arguments: [  ]
-}
-
-interface IMethodAddOwnerWithThreshold {
-  method: "addOwnerWithThreshold"
-  arguments: [ owner: TAddress, _threshold: bigint ]
-}
-
-interface IMethodApproveHash {
-  method: "approveHash"
-  arguments: [ hashToApprove: TEth.Hex ]
-}
-
-interface IMethodApprovedHashes {
-  method: "approvedHashes"
-  arguments: [ input0: TAddress, input1: TEth.Hex ]
-}
-
-interface IMethodChangeMasterCopy {
-  method: "changeMasterCopy"
-  arguments: [ _masterCopy: TAddress ]
-}
-
-interface IMethodChangeThreshold {
-  method: "changeThreshold"
-  arguments: [ _threshold: bigint ]
-}
-
-interface IMethodDisableModule {
-  method: "disableModule"
-  arguments: [ prevModule: TAddress, module: TAddress ]
-}
-
-interface IMethodDomainSeparator {
-  method: "domainSeparator"
-  arguments: [  ]
-}
-
-interface IMethodEnableModule {
-  method: "enableModule"
-  arguments: [ module: TAddress ]
-}
-
-interface IMethodEncodeTransactionData {
-  method: "encodeTransactionData"
-  arguments: [ to: TAddress, value: bigint, data: TEth.Hex, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, _nonce: bigint ]
-}
-
-interface IMethodExecTransaction {
-  method: "execTransaction"
-  arguments: [ to: TAddress, value: bigint, data: TEth.Hex, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, signatures: TEth.Hex ]
-}
-
-interface IMethodExecTransactionFromModule {
-  method: "execTransactionFromModule"
-  arguments: [ to: TAddress, value: bigint, data: TEth.Hex, operation: number ]
-}
-
-interface IMethodExecTransactionFromModuleReturnData {
-  method: "execTransactionFromModuleReturnData"
-  arguments: [ to: TAddress, value: bigint, data: TEth.Hex, operation: number ]
-}
-
-interface IMethodGetMessageHash {
-  method: "getMessageHash"
-  arguments: [ message: TEth.Hex ]
-}
-
-interface IMethodGetModules {
-  method: "getModules"
-  arguments: [  ]
-}
-
-interface IMethodGetModulesPaginated {
-  method: "getModulesPaginated"
-  arguments: [ start: TAddress, pageSize: bigint ]
-}
-
-interface IMethodGetOwners {
-  method: "getOwners"
-  arguments: [  ]
-}
-
-interface IMethodGetThreshold {
-  method: "getThreshold"
-  arguments: [  ]
-}
-
-interface IMethodGetTransactionHash {
-  method: "getTransactionHash"
-  arguments: [ to: TAddress, value: bigint, data: TEth.Hex, operation: number, safeTxGas: bigint, baseGas: bigint, gasPrice: bigint, gasToken: TAddress, refundReceiver: TAddress, _nonce: bigint ]
-}
-
-interface IMethodIsOwner {
-  method: "isOwner"
-  arguments: [ owner: TAddress ]
-}
-
-interface IMethodIsValidSignature {
-  method: "isValidSignature"
-  arguments: [ _data: TEth.Hex, _signature: TEth.Hex ]
-}
-
-interface IMethodNonce {
-  method: "nonce"
-  arguments: [  ]
-}
-
-interface IMethodRemoveOwner {
-  method: "removeOwner"
-  arguments: [ prevOwner: TAddress, owner: TAddress, _threshold: bigint ]
-}
-
-interface IMethodRequiredTxGas {
-  method: "requiredTxGas"
-  arguments: [ to: TAddress, value: bigint, data: TEth.Hex, operation: number ]
-}
-
-interface IMethodSetFallbackHandler {
-  method: "setFallbackHandler"
-  arguments: [ handler: TAddress ]
-}
-
-interface IMethodSetup {
-  method: "setup"
-  arguments: [ _owners: TAddress[], _threshold: bigint, to: TAddress, data: TEth.Hex, fallbackHandler: TAddress, paymentToken: TAddress, payment: bigint, paymentReceiver: TAddress ]
-}
-
-interface IMethodSignMessage {
-  method: "signMessage"
-  arguments: [ _data: TEth.Hex ]
-}
-
-interface IMethodSignedMessages {
-  method: "signedMessages"
-  arguments: [ input0: TEth.Hex ]
-}
-
-interface IMethodSwapOwner {
-  method: "swapOwner"
-  arguments: [ prevOwner: TAddress, oldOwner: TAddress, newOwner: TAddress ]
-}
-
-interface IMethods {
-  NAME: IMethodNAME
-  VERSION: IMethodVERSION
-  addOwnerWithThreshold: IMethodAddOwnerWithThreshold
-  approveHash: IMethodApproveHash
-  approvedHashes: IMethodApprovedHashes
-  changeMasterCopy: IMethodChangeMasterCopy
-  changeThreshold: IMethodChangeThreshold
-  disableModule: IMethodDisableModule
-  domainSeparator: IMethodDomainSeparator
-  enableModule: IMethodEnableModule
-  encodeTransactionData: IMethodEncodeTransactionData
-  execTransaction: IMethodExecTransaction
-  execTransactionFromModule: IMethodExecTransactionFromModule
-  execTransactionFromModuleReturnData: IMethodExecTransactionFromModuleReturnData
-  getMessageHash: IMethodGetMessageHash
-  getModules: IMethodGetModules
-  getModulesPaginated: IMethodGetModulesPaginated
-  getOwners: IMethodGetOwners
-  getThreshold: IMethodGetThreshold
-  getTransactionHash: IMethodGetTransactionHash
-  isOwner: IMethodIsOwner
-  isValidSignature: IMethodIsValidSignature
-  nonce: IMethodNonce
-  removeOwner: IMethodRemoveOwner
-  requiredTxGas: IMethodRequiredTxGas
-  setFallbackHandler: IMethodSetFallbackHandler
-  setup: IMethodSetup
-  signMessage: IMethodSignMessage
-  signedMessages: IMethodSignedMessages
-  swapOwner: IMethodSwapOwner
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -734,3 +676,5 @@ interface IGnosisSafeTxData {
 }
 
 
+type TEvents = TGnosisSafeTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

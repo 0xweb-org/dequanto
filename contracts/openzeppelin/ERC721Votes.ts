@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -53,8 +53,8 @@ export class ERC721Votes extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/ERC721Votes.ts"
-}
+        "class": "./contracts/openzeppelin/ERC721Votes.ts"
+    }
 
     // 0x4bf5d7e9
     async CLOCK_MODE (): Promise<string> {
@@ -188,10 +188,13 @@ export class ERC721Votes extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TERC721VotesTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TERC721VotesTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -199,8 +202,20 @@ export class ERC721Votes extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onApproval (fn?: (event: TClientEventsStreamData<TLogApprovalParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalParameters>> {
@@ -227,41 +242,41 @@ export class ERC721Votes extends ContractBase {
         return this.$onLog('Transfer', fn);
     }
 
-    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TLogApproval>[] {
+    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Approval'>>[] {
         let abi = this.$getAbiItem('event', 'Approval');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApproval>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Approval'>>[];
     }
 
-    extractLogsApprovalForAll (tx: TEth.TxReceipt): ITxLogItem<TLogApprovalForAll>[] {
+    extractLogsApprovalForAll (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ApprovalForAll'>>[] {
         let abi = this.$getAbiItem('event', 'ApprovalForAll');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApprovalForAll>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ApprovalForAll'>>[];
     }
 
-    extractLogsDelegateChanged (tx: TEth.TxReceipt): ITxLogItem<TLogDelegateChanged>[] {
+    extractLogsDelegateChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'DelegateChanged'>>[] {
         let abi = this.$getAbiItem('event', 'DelegateChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogDelegateChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'DelegateChanged'>>[];
     }
 
-    extractLogsDelegateVotesChanged (tx: TEth.TxReceipt): ITxLogItem<TLogDelegateVotesChanged>[] {
+    extractLogsDelegateVotesChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'DelegateVotesChanged'>>[] {
         let abi = this.$getAbiItem('event', 'DelegateVotesChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogDelegateVotesChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'DelegateVotesChanged'>>[];
     }
 
-    extractLogsEIP712DomainChanged (tx: TEth.TxReceipt): ITxLogItem<TLogEIP712DomainChanged>[] {
+    extractLogsEIP712DomainChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'EIP712DomainChanged'>>[] {
         let abi = this.$getAbiItem('event', 'EIP712DomainChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogEIP712DomainChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'EIP712DomainChanged'>>[];
     }
 
-    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TLogTransfer>[] {
+    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Transfer'>>[] {
         let abi = this.$getAbiItem('event', 'Transfer');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogTransfer>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Transfer'>>[];
     }
 
     async getPastLogsApproval (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { owner?: TAddress,approved?: TAddress,tokenId?: bigint }
-    }): Promise<ITxLogItem<TLogApproval>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Approval'>>[]> {
         return await this.$getPastLogsParsed('Approval', options) as any;
     }
 
@@ -269,7 +284,7 @@ export class ERC721Votes extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { owner?: TAddress,operator?: TAddress }
-    }): Promise<ITxLogItem<TLogApprovalForAll>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ApprovalForAll'>>[]> {
         return await this.$getPastLogsParsed('ApprovalForAll', options) as any;
     }
 
@@ -277,7 +292,7 @@ export class ERC721Votes extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { delegator?: TAddress,fromDelegate?: TAddress,toDelegate?: TAddress }
-    }): Promise<ITxLogItem<TLogDelegateChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'DelegateChanged'>>[]> {
         return await this.$getPastLogsParsed('DelegateChanged', options) as any;
     }
 
@@ -285,7 +300,7 @@ export class ERC721Votes extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { delegate?: TAddress }
-    }): Promise<ITxLogItem<TLogDelegateVotesChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'DelegateVotesChanged'>>[]> {
         return await this.$getPastLogsParsed('DelegateVotesChanged', options) as any;
     }
 
@@ -293,7 +308,7 @@ export class ERC721Votes extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogEIP712DomainChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'EIP712DomainChanged'>>[]> {
         return await this.$getPastLogsParsed('EIP712DomainChanged', options) as any;
     }
 
@@ -301,7 +316,7 @@ export class ERC721Votes extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { from?: TAddress,to?: TAddress,tokenId?: bigint }
-    }): Promise<ITxLogItem<TLogTransfer>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Transfer'>>[]> {
         return await this.$getPastLogsParsed('Transfer', options) as any;
     }
 
@@ -314,187 +329,134 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogApproval = {
-        owner: TAddress, approved: TAddress, tokenId: bigint
-    };
-    type TLogApprovalParameters = [ owner: TAddress, approved: TAddress, tokenId: bigint ];
-    type TLogApprovalForAll = {
-        owner: TAddress, operator: TAddress, approved: boolean
-    };
-    type TLogApprovalForAllParameters = [ owner: TAddress, operator: TAddress, approved: boolean ];
-    type TLogDelegateChanged = {
-        delegator: TAddress, fromDelegate: TAddress, toDelegate: TAddress
-    };
-    type TLogDelegateChangedParameters = [ delegator: TAddress, fromDelegate: TAddress, toDelegate: TAddress ];
-    type TLogDelegateVotesChanged = {
-        delegate: TAddress, previousBalance: bigint, newBalance: bigint
-    };
-    type TLogDelegateVotesChangedParameters = [ delegate: TAddress, previousBalance: bigint, newBalance: bigint ];
-    type TLogEIP712DomainChanged = {
-        
-    };
-    type TLogEIP712DomainChangedParameters = [  ];
-    type TLogTransfer = {
-        from: TAddress, to: TAddress, tokenId: bigint
-    };
-    type TLogTransferParameters = [ from: TAddress, to: TAddress, tokenId: bigint ];
-
-interface IEvents {
-  Approval: TLogApprovalParameters
-  ApprovalForAll: TLogApprovalForAllParameters
-  DelegateChanged: TLogDelegateChangedParameters
-  DelegateVotesChanged: TLogDelegateVotesChangedParameters
-  EIP712DomainChanged: TLogEIP712DomainChangedParameters
-  Transfer: TLogTransferParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodCLOCK_MODE {
-  method: "CLOCK_MODE"
-  arguments: [  ]
+export type TERC721VotesTypes = {
+    Events: {
+        Approval: {
+            outputParams: { owner: TAddress, approved: TAddress, tokenId: bigint },
+            outputArgs:   [ owner: TAddress, approved: TAddress, tokenId: bigint ],
+        }
+        ApprovalForAll: {
+            outputParams: { owner: TAddress, operator: TAddress, approved: boolean },
+            outputArgs:   [ owner: TAddress, operator: TAddress, approved: boolean ],
+        }
+        DelegateChanged: {
+            outputParams: { delegator: TAddress, fromDelegate: TAddress, toDelegate: TAddress },
+            outputArgs:   [ delegator: TAddress, fromDelegate: TAddress, toDelegate: TAddress ],
+        }
+        DelegateVotesChanged: {
+            outputParams: { delegate: TAddress, previousBalance: bigint, newBalance: bigint },
+            outputArgs:   [ delegate: TAddress, previousBalance: bigint, newBalance: bigint ],
+        }
+        EIP712DomainChanged: {
+            outputParams: {  },
+            outputArgs:   [  ],
+        }
+        Transfer: {
+            outputParams: { from: TAddress, to: TAddress, tokenId: bigint },
+            outputArgs:   [ from: TAddress, to: TAddress, tokenId: bigint ],
+        }
+    },
+    Methods: {
+        CLOCK_MODE: {
+          method: "CLOCK_MODE"
+          arguments: [  ]
+        }
+        DOMAIN_SEPARATOR: {
+          method: "DOMAIN_SEPARATOR"
+          arguments: [  ]
+        }
+        approve: {
+          method: "approve"
+          arguments: [ to: TAddress, tokenId: bigint ]
+        }
+        balanceOf: {
+          method: "balanceOf"
+          arguments: [ owner: TAddress ]
+        }
+        clock: {
+          method: "clock"
+          arguments: [  ]
+        }
+        delegate: {
+          method: "delegate"
+          arguments: [ delegatee: TAddress ]
+        }
+        delegateBySig: {
+          method: "delegateBySig"
+          arguments: [ delegatee: TAddress, nonce: bigint, expiry: bigint, v: number, r: TEth.Hex, s: TEth.Hex ]
+        }
+        delegates: {
+          method: "delegates"
+          arguments: [ account: TAddress ]
+        }
+        eip712Domain: {
+          method: "eip712Domain"
+          arguments: [  ]
+        }
+        getApproved: {
+          method: "getApproved"
+          arguments: [ tokenId: bigint ]
+        }
+        getPastTotalSupply: {
+          method: "getPastTotalSupply"
+          arguments: [ timepoint: bigint ]
+        }
+        getPastVotes: {
+          method: "getPastVotes"
+          arguments: [ account: TAddress, timepoint: bigint ]
+        }
+        getVotes: {
+          method: "getVotes"
+          arguments: [ account: TAddress ]
+        }
+        isApprovedForAll: {
+          method: "isApprovedForAll"
+          arguments: [ owner: TAddress, operator: TAddress ]
+        }
+        name: {
+          method: "name"
+          arguments: [  ]
+        }
+        nonces: {
+          method: "nonces"
+          arguments: [ owner: TAddress ]
+        }
+        ownerOf: {
+          method: "ownerOf"
+          arguments: [ tokenId: bigint ]
+        }
+        safeTransferFrom: {
+          method: "safeTransferFrom"
+          arguments: [ from: TAddress, to: TAddress, tokenId: bigint ] | [ from: TAddress, to: TAddress, tokenId: bigint, data: TEth.Hex ]
+        }
+        setApprovalForAll: {
+          method: "setApprovalForAll"
+          arguments: [ operator: TAddress, approved: boolean ]
+        }
+        supportsInterface: {
+          method: "supportsInterface"
+          arguments: [ interfaceId: TEth.Hex ]
+        }
+        symbol: {
+          method: "symbol"
+          arguments: [  ]
+        }
+        tokenURI: {
+          method: "tokenURI"
+          arguments: [ tokenId: bigint ]
+        }
+        transferFrom: {
+          method: "transferFrom"
+          arguments: [ from: TAddress, to: TAddress, tokenId: bigint ]
+        }
+    }
 }
-
-interface IMethodDOMAIN_SEPARATOR {
-  method: "DOMAIN_SEPARATOR"
-  arguments: [  ]
-}
-
-interface IMethodApprove {
-  method: "approve"
-  arguments: [ to: TAddress, tokenId: bigint ]
-}
-
-interface IMethodBalanceOf {
-  method: "balanceOf"
-  arguments: [ owner: TAddress ]
-}
-
-interface IMethodClock {
-  method: "clock"
-  arguments: [  ]
-}
-
-interface IMethodDelegate {
-  method: "delegate"
-  arguments: [ delegatee: TAddress ]
-}
-
-interface IMethodDelegateBySig {
-  method: "delegateBySig"
-  arguments: [ delegatee: TAddress, nonce: bigint, expiry: bigint, v: number, r: TEth.Hex, s: TEth.Hex ]
-}
-
-interface IMethodDelegates {
-  method: "delegates"
-  arguments: [ account: TAddress ]
-}
-
-interface IMethodEip712Domain {
-  method: "eip712Domain"
-  arguments: [  ]
-}
-
-interface IMethodGetApproved {
-  method: "getApproved"
-  arguments: [ tokenId: bigint ]
-}
-
-interface IMethodGetPastTotalSupply {
-  method: "getPastTotalSupply"
-  arguments: [ timepoint: bigint ]
-}
-
-interface IMethodGetPastVotes {
-  method: "getPastVotes"
-  arguments: [ account: TAddress, timepoint: bigint ]
-}
-
-interface IMethodGetVotes {
-  method: "getVotes"
-  arguments: [ account: TAddress ]
-}
-
-interface IMethodIsApprovedForAll {
-  method: "isApprovedForAll"
-  arguments: [ owner: TAddress, operator: TAddress ]
-}
-
-interface IMethodName {
-  method: "name"
-  arguments: [  ]
-}
-
-interface IMethodNonces {
-  method: "nonces"
-  arguments: [ owner: TAddress ]
-}
-
-interface IMethodOwnerOf {
-  method: "ownerOf"
-  arguments: [ tokenId: bigint ]
-}
-
-interface IMethodSafeTransferFrom {
-  method: "safeTransferFrom"
-  arguments: [ from: TAddress, to: TAddress, tokenId: bigint ] | [ from: TAddress, to: TAddress, tokenId: bigint, data: TEth.Hex ]
-}
-
-interface IMethodSetApprovalForAll {
-  method: "setApprovalForAll"
-  arguments: [ operator: TAddress, approved: boolean ]
-}
-
-interface IMethodSupportsInterface {
-  method: "supportsInterface"
-  arguments: [ interfaceId: TEth.Hex ]
-}
-
-interface IMethodSymbol {
-  method: "symbol"
-  arguments: [  ]
-}
-
-interface IMethodTokenURI {
-  method: "tokenURI"
-  arguments: [ tokenId: bigint ]
-}
-
-interface IMethodTransferFrom {
-  method: "transferFrom"
-  arguments: [ from: TAddress, to: TAddress, tokenId: bigint ]
-}
-
-interface IMethods {
-  CLOCK_MODE: IMethodCLOCK_MODE
-  DOMAIN_SEPARATOR: IMethodDOMAIN_SEPARATOR
-  approve: IMethodApprove
-  balanceOf: IMethodBalanceOf
-  clock: IMethodClock
-  delegate: IMethodDelegate
-  delegateBySig: IMethodDelegateBySig
-  delegates: IMethodDelegates
-  eip712Domain: IMethodEip712Domain
-  getApproved: IMethodGetApproved
-  getPastTotalSupply: IMethodGetPastTotalSupply
-  getPastVotes: IMethodGetPastVotes
-  getVotes: IMethodGetVotes
-  isApprovedForAll: IMethodIsApprovedForAll
-  name: IMethodName
-  nonces: IMethodNonces
-  ownerOf: IMethodOwnerOf
-  safeTransferFrom: IMethodSafeTransferFrom
-  setApprovalForAll: IMethodSetApprovalForAll
-  supportsInterface: IMethodSupportsInterface
-  symbol: IMethodSymbol
-  tokenURI: IMethodTokenURI
-  transferFrom: IMethodTransferFrom
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -520,3 +482,5 @@ interface IERC721VotesTxData {
 }
 
 
+type TEvents = TERC721VotesTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

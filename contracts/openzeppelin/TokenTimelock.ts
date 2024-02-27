@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class TokenTimelock extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/TokenTimelock.ts"
-}
+        "class": "./contracts/openzeppelin/TokenTimelock.ts"
+    }
 
     async $constructor (deployer: TSender, token_: TAddress, beneficiary_: TAddress, releaseTime_: bigint): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -80,10 +80,13 @@ export class TokenTimelock extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TTokenTimelockTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TTokenTimelockTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -91,8 +94,20 @@ export class TokenTimelock extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
 
@@ -110,44 +125,35 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-
-
-interface IEvents {
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodBeneficiary {
-  method: "beneficiary"
-  arguments: [  ]
+export type TTokenTimelockTypes = {
+    Events: {
+        
+    },
+    Methods: {
+        beneficiary: {
+          method: "beneficiary"
+          arguments: [  ]
+        }
+        release: {
+          method: "release"
+          arguments: [  ]
+        }
+        releaseTime: {
+          method: "releaseTime"
+          arguments: [  ]
+        }
+        token: {
+          method: "token"
+          arguments: [  ]
+        }
+    }
 }
-
-interface IMethodRelease {
-  method: "release"
-  arguments: [  ]
-}
-
-interface IMethodReleaseTime {
-  method: "releaseTime"
-  arguments: [  ]
-}
-
-interface IMethodToken {
-  method: "token"
-  arguments: [  ]
-}
-
-interface IMethods {
-  beneficiary: IMethodBeneficiary
-  release: IMethodRelease
-  releaseTime: IMethodReleaseTime
-  token: IMethodToken
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -161,3 +167,5 @@ interface ITokenTimelockTxData {
 }
 
 
+type TEvents = TTokenTimelockTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

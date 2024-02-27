@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class Pausable extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/Pausable.ts"
-}
+        "class": "./contracts/openzeppelin/Pausable.ts"
+    }
 
     // 0x5c975abb
     async paused (): Promise<boolean> {
@@ -61,10 +61,13 @@ export class Pausable extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TPausableTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TPausableTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -72,8 +75,20 @@ export class Pausable extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onPaused (fn?: (event: TClientEventsStreamData<TLogPausedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogPausedParameters>> {
@@ -84,21 +99,21 @@ export class Pausable extends ContractBase {
         return this.$onLog('Unpaused', fn);
     }
 
-    extractLogsPaused (tx: TEth.TxReceipt): ITxLogItem<TLogPaused>[] {
+    extractLogsPaused (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Paused'>>[] {
         let abi = this.$getAbiItem('event', 'Paused');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogPaused>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Paused'>>[];
     }
 
-    extractLogsUnpaused (tx: TEth.TxReceipt): ITxLogItem<TLogUnpaused>[] {
+    extractLogsUnpaused (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Unpaused'>>[] {
         let abi = this.$getAbiItem('event', 'Unpaused');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogUnpaused>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Unpaused'>>[];
     }
 
     async getPastLogsPaused (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogPaused>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Paused'>>[]> {
         return await this.$getPastLogsParsed('Paused', options) as any;
     }
 
@@ -106,7 +121,7 @@ export class Pausable extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogUnpaused>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Unpaused'>>[]> {
         return await this.$getPastLogsParsed('Unpaused', options) as any;
     }
 
@@ -119,35 +134,30 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogPaused = {
-        account: TAddress
-    };
-    type TLogPausedParameters = [ account: TAddress ];
-    type TLogUnpaused = {
-        account: TAddress
-    };
-    type TLogUnpausedParameters = [ account: TAddress ];
-
-interface IEvents {
-  Paused: TLogPausedParameters
-  Unpaused: TLogUnpausedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodPaused {
-  method: "paused"
-  arguments: [  ]
+export type TPausableTypes = {
+    Events: {
+        Paused: {
+            outputParams: { account: TAddress },
+            outputArgs:   [ account: TAddress ],
+        }
+        Unpaused: {
+            outputParams: { account: TAddress },
+            outputArgs:   [ account: TAddress ],
+        }
+    },
+    Methods: {
+        paused: {
+          method: "paused"
+          arguments: [  ]
+        }
+    }
 }
-
-interface IMethods {
-  paused: IMethodPaused
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -161,3 +171,5 @@ interface IPausableTxData {
 }
 
 
+type TEvents = TPausableTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

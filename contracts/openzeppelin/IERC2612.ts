@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class IERC2612 extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/IERC2612.ts"
-}
+        "class": "./contracts/openzeppelin/IERC2612.ts"
+    }
 
     // 0x3644e515
     async DOMAIN_SEPARATOR (): Promise<TEth.Hex> {
@@ -71,10 +71,13 @@ export class IERC2612 extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TIERC2612Types['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TIERC2612Types['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -82,8 +85,20 @@ export class IERC2612 extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
 
@@ -101,38 +116,31 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-
-
-interface IEvents {
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodDOMAIN_SEPARATOR {
-  method: "DOMAIN_SEPARATOR"
-  arguments: [  ]
+export type TIERC2612Types = {
+    Events: {
+        
+    },
+    Methods: {
+        DOMAIN_SEPARATOR: {
+          method: "DOMAIN_SEPARATOR"
+          arguments: [  ]
+        }
+        nonces: {
+          method: "nonces"
+          arguments: [ owner: TAddress ]
+        }
+        permit: {
+          method: "permit"
+          arguments: [ owner: TAddress, spender: TAddress, value: bigint, deadline: bigint, v: number, r: TEth.Hex, s: TEth.Hex ]
+        }
+    }
 }
-
-interface IMethodNonces {
-  method: "nonces"
-  arguments: [ owner: TAddress ]
-}
-
-interface IMethodPermit {
-  method: "permit"
-  arguments: [ owner: TAddress, spender: TAddress, value: bigint, deadline: bigint, v: number, r: TEth.Hex, s: TEth.Hex ]
-}
-
-interface IMethods {
-  DOMAIN_SEPARATOR: IMethodDOMAIN_SEPARATOR
-  nonces: IMethodNonces
-  permit: IMethodPermit
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -146,3 +154,5 @@ interface IIERC2612TxData {
 }
 
 
+type TEvents = TIERC2612Types['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

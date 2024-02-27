@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class IERC3156FlashLender extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/IERC3156FlashLender.ts"
-}
+        "class": "./contracts/openzeppelin/IERC3156FlashLender.ts"
+    }
 
     // 0xd9d98ce4
     async flashFee (token: TAddress, amount: bigint): Promise<bigint> {
@@ -71,10 +71,13 @@ export class IERC3156FlashLender extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TIERC3156FlashLenderTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TIERC3156FlashLenderTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -82,8 +85,20 @@ export class IERC3156FlashLender extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
 
@@ -101,38 +116,31 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-
-
-interface IEvents {
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodFlashFee {
-  method: "flashFee"
-  arguments: [ token: TAddress, amount: bigint ]
+export type TIERC3156FlashLenderTypes = {
+    Events: {
+        
+    },
+    Methods: {
+        flashFee: {
+          method: "flashFee"
+          arguments: [ token: TAddress, amount: bigint ]
+        }
+        flashLoan: {
+          method: "flashLoan"
+          arguments: [ receiver: TAddress, token: TAddress, amount: bigint, data: TEth.Hex ]
+        }
+        maxFlashLoan: {
+          method: "maxFlashLoan"
+          arguments: [ token: TAddress ]
+        }
+    }
 }
-
-interface IMethodFlashLoan {
-  method: "flashLoan"
-  arguments: [ receiver: TAddress, token: TAddress, amount: bigint, data: TEth.Hex ]
-}
-
-interface IMethodMaxFlashLoan {
-  method: "maxFlashLoan"
-  arguments: [ token: TAddress ]
-}
-
-interface IMethods {
-  flashFee: IMethodFlashFee
-  flashLoan: IMethodFlashLoan
-  maxFlashLoan: IMethodMaxFlashLoan
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -146,3 +154,5 @@ interface IIERC3156FlashLenderTxData {
 }
 
 
+type TEvents = TIERC3156FlashLenderTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

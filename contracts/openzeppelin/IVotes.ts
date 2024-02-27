@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class IVotes extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/IVotes.ts"
-}
+        "class": "./contracts/openzeppelin/IVotes.ts"
+    }
 
     // 0x5c19a95c
     async delegate (sender: TSender, delegatee: TAddress): Promise<TxWriter> {
@@ -86,10 +86,13 @@ export class IVotes extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TIVotesTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TIVotesTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -97,8 +100,20 @@ export class IVotes extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onDelegateChanged (fn?: (event: TClientEventsStreamData<TLogDelegateChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDelegateChangedParameters>> {
@@ -109,21 +124,21 @@ export class IVotes extends ContractBase {
         return this.$onLog('DelegateVotesChanged', fn);
     }
 
-    extractLogsDelegateChanged (tx: TEth.TxReceipt): ITxLogItem<TLogDelegateChanged>[] {
+    extractLogsDelegateChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'DelegateChanged'>>[] {
         let abi = this.$getAbiItem('event', 'DelegateChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogDelegateChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'DelegateChanged'>>[];
     }
 
-    extractLogsDelegateVotesChanged (tx: TEth.TxReceipt): ITxLogItem<TLogDelegateVotesChanged>[] {
+    extractLogsDelegateVotesChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'DelegateVotesChanged'>>[] {
         let abi = this.$getAbiItem('event', 'DelegateVotesChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogDelegateVotesChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'DelegateVotesChanged'>>[];
     }
 
     async getPastLogsDelegateChanged (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { delegator?: TAddress,fromDelegate?: TAddress,toDelegate?: TAddress }
-    }): Promise<ITxLogItem<TLogDelegateChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'DelegateChanged'>>[]> {
         return await this.$getPastLogsParsed('DelegateChanged', options) as any;
     }
 
@@ -131,7 +146,7 @@ export class IVotes extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { delegate?: TAddress }
-    }): Promise<ITxLogItem<TLogDelegateVotesChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'DelegateVotesChanged'>>[]> {
         return await this.$getPastLogsParsed('DelegateVotesChanged', options) as any;
     }
 
@@ -144,65 +159,50 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogDelegateChanged = {
-        delegator: TAddress, fromDelegate: TAddress, toDelegate: TAddress
-    };
-    type TLogDelegateChangedParameters = [ delegator: TAddress, fromDelegate: TAddress, toDelegate: TAddress ];
-    type TLogDelegateVotesChanged = {
-        delegate: TAddress, previousBalance: bigint, newBalance: bigint
-    };
-    type TLogDelegateVotesChangedParameters = [ delegate: TAddress, previousBalance: bigint, newBalance: bigint ];
-
-interface IEvents {
-  DelegateChanged: TLogDelegateChangedParameters
-  DelegateVotesChanged: TLogDelegateVotesChangedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodDelegate {
-  method: "delegate"
-  arguments: [ delegatee: TAddress ]
+export type TIVotesTypes = {
+    Events: {
+        DelegateChanged: {
+            outputParams: { delegator: TAddress, fromDelegate: TAddress, toDelegate: TAddress },
+            outputArgs:   [ delegator: TAddress, fromDelegate: TAddress, toDelegate: TAddress ],
+        }
+        DelegateVotesChanged: {
+            outputParams: { delegate: TAddress, previousBalance: bigint, newBalance: bigint },
+            outputArgs:   [ delegate: TAddress, previousBalance: bigint, newBalance: bigint ],
+        }
+    },
+    Methods: {
+        delegate: {
+          method: "delegate"
+          arguments: [ delegatee: TAddress ]
+        }
+        delegateBySig: {
+          method: "delegateBySig"
+          arguments: [ delegatee: TAddress, nonce: bigint, expiry: bigint, v: number, r: TEth.Hex, s: TEth.Hex ]
+        }
+        delegates: {
+          method: "delegates"
+          arguments: [ account: TAddress ]
+        }
+        getPastTotalSupply: {
+          method: "getPastTotalSupply"
+          arguments: [ timepoint: bigint ]
+        }
+        getPastVotes: {
+          method: "getPastVotes"
+          arguments: [ account: TAddress, timepoint: bigint ]
+        }
+        getVotes: {
+          method: "getVotes"
+          arguments: [ account: TAddress ]
+        }
+    }
 }
-
-interface IMethodDelegateBySig {
-  method: "delegateBySig"
-  arguments: [ delegatee: TAddress, nonce: bigint, expiry: bigint, v: number, r: TEth.Hex, s: TEth.Hex ]
-}
-
-interface IMethodDelegates {
-  method: "delegates"
-  arguments: [ account: TAddress ]
-}
-
-interface IMethodGetPastTotalSupply {
-  method: "getPastTotalSupply"
-  arguments: [ timepoint: bigint ]
-}
-
-interface IMethodGetPastVotes {
-  method: "getPastVotes"
-  arguments: [ account: TAddress, timepoint: bigint ]
-}
-
-interface IMethodGetVotes {
-  method: "getVotes"
-  arguments: [ account: TAddress ]
-}
-
-interface IMethods {
-  delegate: IMethodDelegate
-  delegateBySig: IMethodDelegateBySig
-  delegates: IMethodDelegates
-  getPastTotalSupply: IMethodGetPastTotalSupply
-  getPastVotes: IMethodGetPastVotes
-  getVotes: IMethodGetVotes
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -218,3 +218,5 @@ interface IIVotesTxData {
 }
 
 
+type TEvents = TIVotesTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

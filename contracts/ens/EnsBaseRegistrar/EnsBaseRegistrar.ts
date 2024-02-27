@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class EnsBaseRegistrar extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/ens/EnsBaseRegistrar/EnsBaseRegistrar.ts"
-}
+        "class": "./contracts/ens/EnsBaseRegistrar/EnsBaseRegistrar.ts"
+    }
 
     async $constructor (deployer: TSender, _ens: TAddress, _baseNode: TEth.Hex): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -194,10 +194,13 @@ export class EnsBaseRegistrar extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TEnsBaseRegistrarTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TEnsBaseRegistrarTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -205,8 +208,20 @@ export class EnsBaseRegistrar extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onApproval (fn?: (event: TClientEventsStreamData<TLogApprovalParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalParameters>> {
@@ -245,56 +260,56 @@ export class EnsBaseRegistrar extends ContractBase {
         return this.$onLog('Transfer', fn);
     }
 
-    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TLogApproval>[] {
+    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Approval'>>[] {
         let abi = this.$getAbiItem('event', 'Approval');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApproval>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Approval'>>[];
     }
 
-    extractLogsApprovalForAll (tx: TEth.TxReceipt): ITxLogItem<TLogApprovalForAll>[] {
+    extractLogsApprovalForAll (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ApprovalForAll'>>[] {
         let abi = this.$getAbiItem('event', 'ApprovalForAll');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApprovalForAll>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ApprovalForAll'>>[];
     }
 
-    extractLogsControllerAdded (tx: TEth.TxReceipt): ITxLogItem<TLogControllerAdded>[] {
+    extractLogsControllerAdded (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ControllerAdded'>>[] {
         let abi = this.$getAbiItem('event', 'ControllerAdded');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogControllerAdded>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ControllerAdded'>>[];
     }
 
-    extractLogsControllerRemoved (tx: TEth.TxReceipt): ITxLogItem<TLogControllerRemoved>[] {
+    extractLogsControllerRemoved (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ControllerRemoved'>>[] {
         let abi = this.$getAbiItem('event', 'ControllerRemoved');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogControllerRemoved>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ControllerRemoved'>>[];
     }
 
-    extractLogsNameMigrated (tx: TEth.TxReceipt): ITxLogItem<TLogNameMigrated>[] {
+    extractLogsNameMigrated (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'NameMigrated'>>[] {
         let abi = this.$getAbiItem('event', 'NameMigrated');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogNameMigrated>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'NameMigrated'>>[];
     }
 
-    extractLogsNameRegistered (tx: TEth.TxReceipt): ITxLogItem<TLogNameRegistered>[] {
+    extractLogsNameRegistered (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'NameRegistered'>>[] {
         let abi = this.$getAbiItem('event', 'NameRegistered');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogNameRegistered>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'NameRegistered'>>[];
     }
 
-    extractLogsNameRenewed (tx: TEth.TxReceipt): ITxLogItem<TLogNameRenewed>[] {
+    extractLogsNameRenewed (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'NameRenewed'>>[] {
         let abi = this.$getAbiItem('event', 'NameRenewed');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogNameRenewed>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'NameRenewed'>>[];
     }
 
-    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TLogOwnershipTransferred>[] {
+    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'OwnershipTransferred'>>[] {
         let abi = this.$getAbiItem('event', 'OwnershipTransferred');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogOwnershipTransferred>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'OwnershipTransferred'>>[];
     }
 
-    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TLogTransfer>[] {
+    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Transfer'>>[] {
         let abi = this.$getAbiItem('event', 'Transfer');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogTransfer>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Transfer'>>[];
     }
 
     async getPastLogsApproval (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { owner?: TAddress,approved?: TAddress,tokenId?: bigint }
-    }): Promise<ITxLogItem<TLogApproval>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Approval'>>[]> {
         return await this.$getPastLogsParsed('Approval', options) as any;
     }
 
@@ -302,7 +317,7 @@ export class EnsBaseRegistrar extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { owner?: TAddress,operator?: TAddress }
-    }): Promise<ITxLogItem<TLogApprovalForAll>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ApprovalForAll'>>[]> {
         return await this.$getPastLogsParsed('ApprovalForAll', options) as any;
     }
 
@@ -310,7 +325,7 @@ export class EnsBaseRegistrar extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { controller?: TAddress }
-    }): Promise<ITxLogItem<TLogControllerAdded>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ControllerAdded'>>[]> {
         return await this.$getPastLogsParsed('ControllerAdded', options) as any;
     }
 
@@ -318,7 +333,7 @@ export class EnsBaseRegistrar extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { controller?: TAddress }
-    }): Promise<ITxLogItem<TLogControllerRemoved>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ControllerRemoved'>>[]> {
         return await this.$getPastLogsParsed('ControllerRemoved', options) as any;
     }
 
@@ -326,7 +341,7 @@ export class EnsBaseRegistrar extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { id?: bigint,owner?: TAddress }
-    }): Promise<ITxLogItem<TLogNameMigrated>[]> {
+    }): Promise<ITxLogItem<TEventParams<'NameMigrated'>>[]> {
         return await this.$getPastLogsParsed('NameMigrated', options) as any;
     }
 
@@ -334,7 +349,7 @@ export class EnsBaseRegistrar extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { id?: bigint,owner?: TAddress }
-    }): Promise<ITxLogItem<TLogNameRegistered>[]> {
+    }): Promise<ITxLogItem<TEventParams<'NameRegistered'>>[]> {
         return await this.$getPastLogsParsed('NameRegistered', options) as any;
     }
 
@@ -342,7 +357,7 @@ export class EnsBaseRegistrar extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { id?: bigint }
-    }): Promise<ITxLogItem<TLogNameRenewed>[]> {
+    }): Promise<ITxLogItem<TEventParams<'NameRenewed'>>[]> {
         return await this.$getPastLogsParsed('NameRenewed', options) as any;
     }
 
@@ -350,7 +365,7 @@ export class EnsBaseRegistrar extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { previousOwner?: TAddress,newOwner?: TAddress }
-    }): Promise<ITxLogItem<TLogOwnershipTransferred>[]> {
+    }): Promise<ITxLogItem<TEventParams<'OwnershipTransferred'>>[]> {
         return await this.$getPastLogsParsed('OwnershipTransferred', options) as any;
     }
 
@@ -358,7 +373,7 @@ export class EnsBaseRegistrar extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { from?: TAddress,to?: TAddress,tokenId?: bigint }
-    }): Promise<ITxLogItem<TLogTransfer>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Transfer'>>[]> {
         return await this.$getPastLogsParsed('Transfer', options) as any;
     }
 
@@ -371,219 +386,158 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogApproval = {
-        owner: TAddress, approved: TAddress, tokenId: bigint
-    };
-    type TLogApprovalParameters = [ owner: TAddress, approved: TAddress, tokenId: bigint ];
-    type TLogApprovalForAll = {
-        owner: TAddress, operator: TAddress, approved: boolean
-    };
-    type TLogApprovalForAllParameters = [ owner: TAddress, operator: TAddress, approved: boolean ];
-    type TLogControllerAdded = {
-        controller: TAddress
-    };
-    type TLogControllerAddedParameters = [ controller: TAddress ];
-    type TLogControllerRemoved = {
-        controller: TAddress
-    };
-    type TLogControllerRemovedParameters = [ controller: TAddress ];
-    type TLogNameMigrated = {
-        id: bigint, owner: TAddress, expires: bigint
-    };
-    type TLogNameMigratedParameters = [ id: bigint, owner: TAddress, expires: bigint ];
-    type TLogNameRegistered = {
-        id: bigint, owner: TAddress, expires: bigint
-    };
-    type TLogNameRegisteredParameters = [ id: bigint, owner: TAddress, expires: bigint ];
-    type TLogNameRenewed = {
-        id: bigint, expires: bigint
-    };
-    type TLogNameRenewedParameters = [ id: bigint, expires: bigint ];
-    type TLogOwnershipTransferred = {
-        previousOwner: TAddress, newOwner: TAddress
-    };
-    type TLogOwnershipTransferredParameters = [ previousOwner: TAddress, newOwner: TAddress ];
-    type TLogTransfer = {
-        from: TAddress, to: TAddress, tokenId: bigint
-    };
-    type TLogTransferParameters = [ from: TAddress, to: TAddress, tokenId: bigint ];
-
-interface IEvents {
-  Approval: TLogApprovalParameters
-  ApprovalForAll: TLogApprovalForAllParameters
-  ControllerAdded: TLogControllerAddedParameters
-  ControllerRemoved: TLogControllerRemovedParameters
-  NameMigrated: TLogNameMigratedParameters
-  NameRegistered: TLogNameRegisteredParameters
-  NameRenewed: TLogNameRenewedParameters
-  OwnershipTransferred: TLogOwnershipTransferredParameters
-  Transfer: TLogTransferParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodGRACE_PERIOD {
-  method: "GRACE_PERIOD"
-  arguments: [  ]
+export type TEnsBaseRegistrarTypes = {
+    Events: {
+        Approval: {
+            outputParams: { owner: TAddress, approved: TAddress, tokenId: bigint },
+            outputArgs:   [ owner: TAddress, approved: TAddress, tokenId: bigint ],
+        }
+        ApprovalForAll: {
+            outputParams: { owner: TAddress, operator: TAddress, approved: boolean },
+            outputArgs:   [ owner: TAddress, operator: TAddress, approved: boolean ],
+        }
+        ControllerAdded: {
+            outputParams: { controller: TAddress },
+            outputArgs:   [ controller: TAddress ],
+        }
+        ControllerRemoved: {
+            outputParams: { controller: TAddress },
+            outputArgs:   [ controller: TAddress ],
+        }
+        NameMigrated: {
+            outputParams: { id: bigint, owner: TAddress, expires: bigint },
+            outputArgs:   [ id: bigint, owner: TAddress, expires: bigint ],
+        }
+        NameRegistered: {
+            outputParams: { id: bigint, owner: TAddress, expires: bigint },
+            outputArgs:   [ id: bigint, owner: TAddress, expires: bigint ],
+        }
+        NameRenewed: {
+            outputParams: { id: bigint, expires: bigint },
+            outputArgs:   [ id: bigint, expires: bigint ],
+        }
+        OwnershipTransferred: {
+            outputParams: { previousOwner: TAddress, newOwner: TAddress },
+            outputArgs:   [ previousOwner: TAddress, newOwner: TAddress ],
+        }
+        Transfer: {
+            outputParams: { from: TAddress, to: TAddress, tokenId: bigint },
+            outputArgs:   [ from: TAddress, to: TAddress, tokenId: bigint ],
+        }
+    },
+    Methods: {
+        GRACE_PERIOD: {
+          method: "GRACE_PERIOD"
+          arguments: [  ]
+        }
+        addController: {
+          method: "addController"
+          arguments: [ controller: TAddress ]
+        }
+        approve: {
+          method: "approve"
+          arguments: [ to: TAddress, tokenId: bigint ]
+        }
+        available: {
+          method: "available"
+          arguments: [ id: bigint ]
+        }
+        balanceOf: {
+          method: "balanceOf"
+          arguments: [ owner: TAddress ]
+        }
+        baseNode: {
+          method: "baseNode"
+          arguments: [  ]
+        }
+        controllers: {
+          method: "controllers"
+          arguments: [ input0: TAddress ]
+        }
+        ens: {
+          method: "ens"
+          arguments: [  ]
+        }
+        getApproved: {
+          method: "getApproved"
+          arguments: [ tokenId: bigint ]
+        }
+        isApprovedForAll: {
+          method: "isApprovedForAll"
+          arguments: [ owner: TAddress, operator: TAddress ]
+        }
+        isOwner: {
+          method: "isOwner"
+          arguments: [  ]
+        }
+        nameExpires: {
+          method: "nameExpires"
+          arguments: [ id: bigint ]
+        }
+        owner: {
+          method: "owner"
+          arguments: [  ]
+        }
+        ownerOf: {
+          method: "ownerOf"
+          arguments: [ tokenId: bigint ]
+        }
+        reclaim: {
+          method: "reclaim"
+          arguments: [ id: bigint, owner: TAddress ]
+        }
+        register: {
+          method: "register"
+          arguments: [ id: bigint, owner: TAddress, duration: bigint ]
+        }
+        registerOnly: {
+          method: "registerOnly"
+          arguments: [ id: bigint, owner: TAddress, duration: bigint ]
+        }
+        removeController: {
+          method: "removeController"
+          arguments: [ controller: TAddress ]
+        }
+        renew: {
+          method: "renew"
+          arguments: [ id: bigint, duration: bigint ]
+        }
+        renounceOwnership: {
+          method: "renounceOwnership"
+          arguments: [  ]
+        }
+        safeTransferFrom: {
+          method: "safeTransferFrom"
+          arguments: [ from: TAddress, to: TAddress, tokenId: bigint ] | [ from: TAddress, to: TAddress, tokenId: bigint, _data: TEth.Hex ]
+        }
+        setApprovalForAll: {
+          method: "setApprovalForAll"
+          arguments: [ to: TAddress, approved: boolean ]
+        }
+        setResolver: {
+          method: "setResolver"
+          arguments: [ resolver: TAddress ]
+        }
+        supportsInterface: {
+          method: "supportsInterface"
+          arguments: [ interfaceID: TEth.Hex ]
+        }
+        transferFrom: {
+          method: "transferFrom"
+          arguments: [ from: TAddress, to: TAddress, tokenId: bigint ]
+        }
+        transferOwnership: {
+          method: "transferOwnership"
+          arguments: [ newOwner: TAddress ]
+        }
+    }
 }
-
-interface IMethodAddController {
-  method: "addController"
-  arguments: [ controller: TAddress ]
-}
-
-interface IMethodApprove {
-  method: "approve"
-  arguments: [ to: TAddress, tokenId: bigint ]
-}
-
-interface IMethodAvailable {
-  method: "available"
-  arguments: [ id: bigint ]
-}
-
-interface IMethodBalanceOf {
-  method: "balanceOf"
-  arguments: [ owner: TAddress ]
-}
-
-interface IMethodBaseNode {
-  method: "baseNode"
-  arguments: [  ]
-}
-
-interface IMethodControllers {
-  method: "controllers"
-  arguments: [ input0: TAddress ]
-}
-
-interface IMethodEns {
-  method: "ens"
-  arguments: [  ]
-}
-
-interface IMethodGetApproved {
-  method: "getApproved"
-  arguments: [ tokenId: bigint ]
-}
-
-interface IMethodIsApprovedForAll {
-  method: "isApprovedForAll"
-  arguments: [ owner: TAddress, operator: TAddress ]
-}
-
-interface IMethodIsOwner {
-  method: "isOwner"
-  arguments: [  ]
-}
-
-interface IMethodNameExpires {
-  method: "nameExpires"
-  arguments: [ id: bigint ]
-}
-
-interface IMethodOwner {
-  method: "owner"
-  arguments: [  ]
-}
-
-interface IMethodOwnerOf {
-  method: "ownerOf"
-  arguments: [ tokenId: bigint ]
-}
-
-interface IMethodReclaim {
-  method: "reclaim"
-  arguments: [ id: bigint, owner: TAddress ]
-}
-
-interface IMethodRegister {
-  method: "register"
-  arguments: [ id: bigint, owner: TAddress, duration: bigint ]
-}
-
-interface IMethodRegisterOnly {
-  method: "registerOnly"
-  arguments: [ id: bigint, owner: TAddress, duration: bigint ]
-}
-
-interface IMethodRemoveController {
-  method: "removeController"
-  arguments: [ controller: TAddress ]
-}
-
-interface IMethodRenew {
-  method: "renew"
-  arguments: [ id: bigint, duration: bigint ]
-}
-
-interface IMethodRenounceOwnership {
-  method: "renounceOwnership"
-  arguments: [  ]
-}
-
-interface IMethodSafeTransferFrom {
-  method: "safeTransferFrom"
-  arguments: [ from: TAddress, to: TAddress, tokenId: bigint ] | [ from: TAddress, to: TAddress, tokenId: bigint, _data: TEth.Hex ]
-}
-
-interface IMethodSetApprovalForAll {
-  method: "setApprovalForAll"
-  arguments: [ to: TAddress, approved: boolean ]
-}
-
-interface IMethodSetResolver {
-  method: "setResolver"
-  arguments: [ resolver: TAddress ]
-}
-
-interface IMethodSupportsInterface {
-  method: "supportsInterface"
-  arguments: [ interfaceID: TEth.Hex ]
-}
-
-interface IMethodTransferFrom {
-  method: "transferFrom"
-  arguments: [ from: TAddress, to: TAddress, tokenId: bigint ]
-}
-
-interface IMethodTransferOwnership {
-  method: "transferOwnership"
-  arguments: [ newOwner: TAddress ]
-}
-
-interface IMethods {
-  GRACE_PERIOD: IMethodGRACE_PERIOD
-  addController: IMethodAddController
-  approve: IMethodApprove
-  available: IMethodAvailable
-  balanceOf: IMethodBalanceOf
-  baseNode: IMethodBaseNode
-  controllers: IMethodControllers
-  ens: IMethodEns
-  getApproved: IMethodGetApproved
-  isApprovedForAll: IMethodIsApprovedForAll
-  isOwner: IMethodIsOwner
-  nameExpires: IMethodNameExpires
-  owner: IMethodOwner
-  ownerOf: IMethodOwnerOf
-  reclaim: IMethodReclaim
-  register: IMethodRegister
-  registerOnly: IMethodRegisterOnly
-  removeController: IMethodRemoveController
-  renew: IMethodRenew
-  renounceOwnership: IMethodRenounceOwnership
-  safeTransferFrom: IMethodSafeTransferFrom
-  setApprovalForAll: IMethodSetApprovalForAll
-  setResolver: IMethodSetResolver
-  supportsInterface: IMethodSupportsInterface
-  transferFrom: IMethodTransferFrom
-  transferOwnership: IMethodTransferOwnership
-  '*': { method: string, arguments: any[] } 
-}
-
-
 
 
 
@@ -596,6 +550,22 @@ class EnsBaseRegistrarStorageReader extends ContractStorageReaderBase {
         super(address, client, explorer);
 
         this.$createHandler(this.$slots);
+    }
+
+    async _owner(): Promise<TAddress> {
+        return this.$storage.get(['_owner', ]);
+    }
+
+    async ens(): Promise<TAddress> {
+        return this.$storage.get(['ens', ]);
+    }
+
+    async baseNode(): Promise<TEth.Hex> {
+        return this.$storage.get(['baseNode', ]);
+    }
+
+    async controllers(key: TAddress): Promise<boolean> {
+        return this.$storage.get(['controllers', key]);
     }
 
     async _supportedInterfaces(key: TEth.Hex): Promise<boolean> {
@@ -618,22 +588,6 @@ class EnsBaseRegistrarStorageReader extends ContractStorageReaderBase {
         return this.$storage.get(['_operatorApprovals', key]);
     }
 
-    async _owner(): Promise<TAddress> {
-        return this.$storage.get(['_owner', ]);
-    }
-
-    async ens(): Promise<TAddress> {
-        return this.$storage.get(['ens', ]);
-    }
-
-    async baseNode(): Promise<TEth.Hex> {
-        return this.$storage.get(['baseNode', ]);
-    }
-
-    async controllers(key: TAddress): Promise<boolean> {
-        return this.$storage.get(['controllers', key]);
-    }
-
     async expiries(key: bigint): Promise<number> {
         return this.$storage.get(['expiries', key]);
     }
@@ -642,65 +596,65 @@ class EnsBaseRegistrarStorageReader extends ContractStorageReaderBase {
     {
         "slot": 0,
         "position": 0,
-        "name": "_supportedInterfaces",
-        "size": null,
-        "type": "mapping(bytes4 => bool)"
-    },
-    {
-        "slot": 1,
-        "position": 0,
-        "name": "_tokenOwner",
-        "size": null,
-        "type": "mapping(uint256 => address)"
-    },
-    {
-        "slot": 2,
-        "position": 0,
-        "name": "_tokenApprovals",
-        "size": null,
-        "type": "mapping(uint256 => address)"
-    },
-    {
-        "slot": 3,
-        "position": 0,
-        "name": "_ownedTokensCount",
-        "size": null,
-        "type": "mapping(address => uint256)"
-    },
-    {
-        "slot": 4,
-        "position": 0,
-        "name": "_operatorApprovals",
-        "size": null,
-        "type": "mapping(address => mapping(address => bool))"
-    },
-    {
-        "slot": 5,
-        "position": 0,
         "name": "_owner",
         "size": 160,
         "type": "address"
     },
     {
-        "slot": 6,
+        "slot": 1,
         "position": 0,
         "name": "ens",
         "size": 160,
         "type": "address"
     },
     {
-        "slot": 7,
+        "slot": 2,
         "position": 0,
         "name": "baseNode",
         "size": 256,
         "type": "bytes32"
     },
     {
-        "slot": 8,
+        "slot": 3,
         "position": 0,
         "name": "controllers",
         "size": null,
         "type": "mapping(address => bool)"
+    },
+    {
+        "slot": 4,
+        "position": 0,
+        "name": "_supportedInterfaces",
+        "size": null,
+        "type": "mapping(bytes4 => bool)"
+    },
+    {
+        "slot": 5,
+        "position": 0,
+        "name": "_tokenOwner",
+        "size": null,
+        "type": "mapping(uint256 => address)"
+    },
+    {
+        "slot": 6,
+        "position": 0,
+        "name": "_tokenApprovals",
+        "size": null,
+        "type": "mapping(uint256 => address)"
+    },
+    {
+        "slot": 7,
+        "position": 0,
+        "name": "_ownedTokensCount",
+        "size": null,
+        "type": "mapping(address => uint256)"
+    },
+    {
+        "slot": 8,
+        "position": 0,
+        "name": "_operatorApprovals",
+        "size": null,
+        "type": "mapping(address => mapping(address => bool))"
     },
     {
         "slot": 9,
@@ -712,7 +666,6 @@ class EnsBaseRegistrarStorageReader extends ContractStorageReaderBase {
 ]
 
 }
-
 
 
 interface IEnsBaseRegistrarTxCaller {
@@ -751,3 +704,5 @@ interface IEnsBaseRegistrarTxData {
 }
 
 
+type TEvents = TEnsBaseRegistrarTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

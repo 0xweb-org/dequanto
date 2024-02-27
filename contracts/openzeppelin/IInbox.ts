@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class IInbox extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/IInbox.ts"
-}
+        "class": "./contracts/openzeppelin/IInbox.ts"
+    }
 
     // 0xe78cea92
     async bridge (): Promise<TAddress> {
@@ -136,10 +136,13 @@ export class IInbox extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TIInboxTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TIInboxTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -147,8 +150,20 @@ export class IInbox extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onInboxMessageDelivered (fn?: (event: TClientEventsStreamData<TLogInboxMessageDeliveredParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogInboxMessageDeliveredParameters>> {
@@ -159,21 +174,21 @@ export class IInbox extends ContractBase {
         return this.$onLog('InboxMessageDeliveredFromOrigin', fn);
     }
 
-    extractLogsInboxMessageDelivered (tx: TEth.TxReceipt): ITxLogItem<TLogInboxMessageDelivered>[] {
+    extractLogsInboxMessageDelivered (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'InboxMessageDelivered'>>[] {
         let abi = this.$getAbiItem('event', 'InboxMessageDelivered');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogInboxMessageDelivered>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'InboxMessageDelivered'>>[];
     }
 
-    extractLogsInboxMessageDeliveredFromOrigin (tx: TEth.TxReceipt): ITxLogItem<TLogInboxMessageDeliveredFromOrigin>[] {
+    extractLogsInboxMessageDeliveredFromOrigin (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'InboxMessageDeliveredFromOrigin'>>[] {
         let abi = this.$getAbiItem('event', 'InboxMessageDeliveredFromOrigin');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogInboxMessageDeliveredFromOrigin>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'InboxMessageDeliveredFromOrigin'>>[];
     }
 
     async getPastLogsInboxMessageDelivered (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { messageNum?: bigint }
-    }): Promise<ITxLogItem<TLogInboxMessageDelivered>[]> {
+    }): Promise<ITxLogItem<TEventParams<'InboxMessageDelivered'>>[]> {
         return await this.$getPastLogsParsed('InboxMessageDelivered', options) as any;
     }
 
@@ -181,7 +196,7 @@ export class IInbox extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { messageNum?: bigint }
-    }): Promise<ITxLogItem<TLogInboxMessageDeliveredFromOrigin>[]> {
+    }): Promise<ITxLogItem<TEventParams<'InboxMessageDeliveredFromOrigin'>>[]> {
         return await this.$getPastLogsParsed('InboxMessageDeliveredFromOrigin', options) as any;
     }
 
@@ -194,125 +209,90 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogInboxMessageDelivered = {
-        messageNum: bigint, data: TEth.Hex
-    };
-    type TLogInboxMessageDeliveredParameters = [ messageNum: bigint, data: TEth.Hex ];
-    type TLogInboxMessageDeliveredFromOrigin = {
-        messageNum: bigint
-    };
-    type TLogInboxMessageDeliveredFromOriginParameters = [ messageNum: bigint ];
-
-interface IEvents {
-  InboxMessageDelivered: TLogInboxMessageDeliveredParameters
-  InboxMessageDeliveredFromOrigin: TLogInboxMessageDeliveredFromOriginParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodBridge {
-  method: "bridge"
-  arguments: [  ]
+export type TIInboxTypes = {
+    Events: {
+        InboxMessageDelivered: {
+            outputParams: { messageNum: bigint, data: TEth.Hex },
+            outputArgs:   [ messageNum: bigint, data: TEth.Hex ],
+        }
+        InboxMessageDeliveredFromOrigin: {
+            outputParams: { messageNum: bigint },
+            outputArgs:   [ messageNum: bigint ],
+        }
+    },
+    Methods: {
+        bridge: {
+          method: "bridge"
+          arguments: [  ]
+        }
+        calculateRetryableSubmissionFee: {
+          method: "calculateRetryableSubmissionFee"
+          arguments: [ dataLength: bigint, baseFee: bigint ]
+        }
+        createRetryableTicket: {
+          method: "createRetryableTicket"
+          arguments: [ to: TAddress, l2CallValue: bigint, maxSubmissionCost: bigint, excessFeeRefundAddress: TAddress, callValueRefundAddress: TAddress, gasLimit: bigint, maxFeePerGas: bigint, data: TEth.Hex ]
+        }
+        depositEth: {
+          method: "depositEth"
+          arguments: [  ]
+        }
+        initialize: {
+          method: "initialize"
+          arguments: [ _bridge: TAddress, _sequencerInbox: TAddress ]
+        }
+        pause: {
+          method: "pause"
+          arguments: [  ]
+        }
+        postUpgradeInit: {
+          method: "postUpgradeInit"
+          arguments: [ _bridge: TAddress ]
+        }
+        sendContractTransaction: {
+          method: "sendContractTransaction"
+          arguments: [ gasLimit: bigint, maxFeePerGas: bigint, to: TAddress, value: bigint, data: TEth.Hex ]
+        }
+        sendL1FundedContractTransaction: {
+          method: "sendL1FundedContractTransaction"
+          arguments: [ gasLimit: bigint, maxFeePerGas: bigint, to: TAddress, data: TEth.Hex ]
+        }
+        sendL1FundedUnsignedTransaction: {
+          method: "sendL1FundedUnsignedTransaction"
+          arguments: [ gasLimit: bigint, maxFeePerGas: bigint, nonce: bigint, to: TAddress, data: TEth.Hex ]
+        }
+        sendL2Message: {
+          method: "sendL2Message"
+          arguments: [ messageData: TEth.Hex ]
+        }
+        sendL2MessageFromOrigin: {
+          method: "sendL2MessageFromOrigin"
+          arguments: [ messageData: TEth.Hex ]
+        }
+        sendUnsignedTransaction: {
+          method: "sendUnsignedTransaction"
+          arguments: [ gasLimit: bigint, maxFeePerGas: bigint, nonce: bigint, to: TAddress, value: bigint, data: TEth.Hex ]
+        }
+        sequencerInbox: {
+          method: "sequencerInbox"
+          arguments: [  ]
+        }
+        unpause: {
+          method: "unpause"
+          arguments: [  ]
+        }
+        unsafeCreateRetryableTicket: {
+          method: "unsafeCreateRetryableTicket"
+          arguments: [ to: TAddress, l2CallValue: bigint, maxSubmissionCost: bigint, excessFeeRefundAddress: TAddress, callValueRefundAddress: TAddress, gasLimit: bigint, maxFeePerGas: bigint, data: TEth.Hex ]
+        }
+    }
 }
-
-interface IMethodCalculateRetryableSubmissionFee {
-  method: "calculateRetryableSubmissionFee"
-  arguments: [ dataLength: bigint, baseFee: bigint ]
-}
-
-interface IMethodCreateRetryableTicket {
-  method: "createRetryableTicket"
-  arguments: [ to: TAddress, l2CallValue: bigint, maxSubmissionCost: bigint, excessFeeRefundAddress: TAddress, callValueRefundAddress: TAddress, gasLimit: bigint, maxFeePerGas: bigint, data: TEth.Hex ]
-}
-
-interface IMethodDepositEth {
-  method: "depositEth"
-  arguments: [  ]
-}
-
-interface IMethodInitialize {
-  method: "initialize"
-  arguments: [ _bridge: TAddress, _sequencerInbox: TAddress ]
-}
-
-interface IMethodPause {
-  method: "pause"
-  arguments: [  ]
-}
-
-interface IMethodPostUpgradeInit {
-  method: "postUpgradeInit"
-  arguments: [ _bridge: TAddress ]
-}
-
-interface IMethodSendContractTransaction {
-  method: "sendContractTransaction"
-  arguments: [ gasLimit: bigint, maxFeePerGas: bigint, to: TAddress, value: bigint, data: TEth.Hex ]
-}
-
-interface IMethodSendL1FundedContractTransaction {
-  method: "sendL1FundedContractTransaction"
-  arguments: [ gasLimit: bigint, maxFeePerGas: bigint, to: TAddress, data: TEth.Hex ]
-}
-
-interface IMethodSendL1FundedUnsignedTransaction {
-  method: "sendL1FundedUnsignedTransaction"
-  arguments: [ gasLimit: bigint, maxFeePerGas: bigint, nonce: bigint, to: TAddress, data: TEth.Hex ]
-}
-
-interface IMethodSendL2Message {
-  method: "sendL2Message"
-  arguments: [ messageData: TEth.Hex ]
-}
-
-interface IMethodSendL2MessageFromOrigin {
-  method: "sendL2MessageFromOrigin"
-  arguments: [ messageData: TEth.Hex ]
-}
-
-interface IMethodSendUnsignedTransaction {
-  method: "sendUnsignedTransaction"
-  arguments: [ gasLimit: bigint, maxFeePerGas: bigint, nonce: bigint, to: TAddress, value: bigint, data: TEth.Hex ]
-}
-
-interface IMethodSequencerInbox {
-  method: "sequencerInbox"
-  arguments: [  ]
-}
-
-interface IMethodUnpause {
-  method: "unpause"
-  arguments: [  ]
-}
-
-interface IMethodUnsafeCreateRetryableTicket {
-  method: "unsafeCreateRetryableTicket"
-  arguments: [ to: TAddress, l2CallValue: bigint, maxSubmissionCost: bigint, excessFeeRefundAddress: TAddress, callValueRefundAddress: TAddress, gasLimit: bigint, maxFeePerGas: bigint, data: TEth.Hex ]
-}
-
-interface IMethods {
-  bridge: IMethodBridge
-  calculateRetryableSubmissionFee: IMethodCalculateRetryableSubmissionFee
-  createRetryableTicket: IMethodCreateRetryableTicket
-  depositEth: IMethodDepositEth
-  initialize: IMethodInitialize
-  pause: IMethodPause
-  postUpgradeInit: IMethodPostUpgradeInit
-  sendContractTransaction: IMethodSendContractTransaction
-  sendL1FundedContractTransaction: IMethodSendL1FundedContractTransaction
-  sendL1FundedUnsignedTransaction: IMethodSendL1FundedUnsignedTransaction
-  sendL2Message: IMethodSendL2Message
-  sendL2MessageFromOrigin: IMethodSendL2MessageFromOrigin
-  sendUnsignedTransaction: IMethodSendUnsignedTransaction
-  sequencerInbox: IMethodSequencerInbox
-  unpause: IMethodUnpause
-  unsafeCreateRetryableTicket: IMethodUnsafeCreateRetryableTicket
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -350,3 +330,5 @@ interface IIInboxTxData {
 }
 
 
+type TEvents = TIInboxTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

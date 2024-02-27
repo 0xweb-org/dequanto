@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class IAMB extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/IAMB.ts"
-}
+        "class": "./contracts/openzeppelin/IAMB.ts"
+    }
 
     // 0xb0750611
     async destinationChainId (): Promise<bigint> {
@@ -121,10 +121,13 @@ export class IAMB extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TIAMBTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TIAMBTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -132,8 +135,20 @@ export class IAMB extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onAffirmationCompleted (fn?: (event: TClientEventsStreamData<TLogAffirmationCompletedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogAffirmationCompletedParameters>> {
@@ -152,31 +167,31 @@ export class IAMB extends ContractBase {
         return this.$onLog('UserRequestForSignature', fn);
     }
 
-    extractLogsAffirmationCompleted (tx: TEth.TxReceipt): ITxLogItem<TLogAffirmationCompleted>[] {
+    extractLogsAffirmationCompleted (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'AffirmationCompleted'>>[] {
         let abi = this.$getAbiItem('event', 'AffirmationCompleted');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogAffirmationCompleted>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'AffirmationCompleted'>>[];
     }
 
-    extractLogsRelayedMessage (tx: TEth.TxReceipt): ITxLogItem<TLogRelayedMessage>[] {
+    extractLogsRelayedMessage (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RelayedMessage'>>[] {
         let abi = this.$getAbiItem('event', 'RelayedMessage');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRelayedMessage>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RelayedMessage'>>[];
     }
 
-    extractLogsUserRequestForAffirmation (tx: TEth.TxReceipt): ITxLogItem<TLogUserRequestForAffirmation>[] {
+    extractLogsUserRequestForAffirmation (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'UserRequestForAffirmation'>>[] {
         let abi = this.$getAbiItem('event', 'UserRequestForAffirmation');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogUserRequestForAffirmation>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'UserRequestForAffirmation'>>[];
     }
 
-    extractLogsUserRequestForSignature (tx: TEth.TxReceipt): ITxLogItem<TLogUserRequestForSignature>[] {
+    extractLogsUserRequestForSignature (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'UserRequestForSignature'>>[] {
         let abi = this.$getAbiItem('event', 'UserRequestForSignature');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogUserRequestForSignature>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'UserRequestForSignature'>>[];
     }
 
     async getPastLogsAffirmationCompleted (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { sender?: TAddress,executor?: TAddress,messageId?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogAffirmationCompleted>[]> {
+    }): Promise<ITxLogItem<TEventParams<'AffirmationCompleted'>>[]> {
         return await this.$getPastLogsParsed('AffirmationCompleted', options) as any;
     }
 
@@ -184,7 +199,7 @@ export class IAMB extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { sender?: TAddress,executor?: TAddress,messageId?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogRelayedMessage>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RelayedMessage'>>[]> {
         return await this.$getPastLogsParsed('RelayedMessage', options) as any;
     }
 
@@ -192,7 +207,7 @@ export class IAMB extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { messageId?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogUserRequestForAffirmation>[]> {
+    }): Promise<ITxLogItem<TEventParams<'UserRequestForAffirmation'>>[]> {
         return await this.$getPastLogsParsed('UserRequestForAffirmation', options) as any;
     }
 
@@ -200,7 +215,7 @@ export class IAMB extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { messageId?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogUserRequestForSignature>[]> {
+    }): Promise<ITxLogItem<TEventParams<'UserRequestForSignature'>>[]> {
         return await this.$getPastLogsParsed('UserRequestForSignature', options) as any;
     }
 
@@ -213,117 +228,86 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogAffirmationCompleted = {
-        _sender: TAddress, executor: TAddress, messageId: TEth.Hex, status: boolean
-    };
-    type TLogAffirmationCompletedParameters = [ _sender: TAddress, executor: TAddress, messageId: TEth.Hex, status: boolean ];
-    type TLogRelayedMessage = {
-        _sender: TAddress, executor: TAddress, messageId: TEth.Hex, status: boolean
-    };
-    type TLogRelayedMessageParameters = [ _sender: TAddress, executor: TAddress, messageId: TEth.Hex, status: boolean ];
-    type TLogUserRequestForAffirmation = {
-        messageId: TEth.Hex, encodedData: TEth.Hex
-    };
-    type TLogUserRequestForAffirmationParameters = [ messageId: TEth.Hex, encodedData: TEth.Hex ];
-    type TLogUserRequestForSignature = {
-        messageId: TEth.Hex, encodedData: TEth.Hex
-    };
-    type TLogUserRequestForSignatureParameters = [ messageId: TEth.Hex, encodedData: TEth.Hex ];
-
-interface IEvents {
-  AffirmationCompleted: TLogAffirmationCompletedParameters
-  RelayedMessage: TLogRelayedMessageParameters
-  UserRequestForAffirmation: TLogUserRequestForAffirmationParameters
-  UserRequestForSignature: TLogUserRequestForSignatureParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodDestinationChainId {
-  method: "destinationChainId"
-  arguments: [  ]
+export type TIAMBTypes = {
+    Events: {
+        AffirmationCompleted: {
+            outputParams: { _sender: TAddress, executor: TAddress, messageId: TEth.Hex, status: boolean },
+            outputArgs:   [ _sender: TAddress, executor: TAddress, messageId: TEth.Hex, status: boolean ],
+        }
+        RelayedMessage: {
+            outputParams: { _sender: TAddress, executor: TAddress, messageId: TEth.Hex, status: boolean },
+            outputArgs:   [ _sender: TAddress, executor: TAddress, messageId: TEth.Hex, status: boolean ],
+        }
+        UserRequestForAffirmation: {
+            outputParams: { messageId: TEth.Hex, encodedData: TEth.Hex },
+            outputArgs:   [ messageId: TEth.Hex, encodedData: TEth.Hex ],
+        }
+        UserRequestForSignature: {
+            outputParams: { messageId: TEth.Hex, encodedData: TEth.Hex },
+            outputArgs:   [ messageId: TEth.Hex, encodedData: TEth.Hex ],
+        }
+    },
+    Methods: {
+        destinationChainId: {
+          method: "destinationChainId"
+          arguments: [  ]
+        }
+        failedMessageDataHash: {
+          method: "failedMessageDataHash"
+          arguments: [ _messageId: TEth.Hex ]
+        }
+        failedMessageReceiver: {
+          method: "failedMessageReceiver"
+          arguments: [ _messageId: TEth.Hex ]
+        }
+        failedMessageSender: {
+          method: "failedMessageSender"
+          arguments: [ _messageId: TEth.Hex ]
+        }
+        maxGasPerTx: {
+          method: "maxGasPerTx"
+          arguments: [  ]
+        }
+        messageCallStatus: {
+          method: "messageCallStatus"
+          arguments: [ _messageId: TEth.Hex ]
+        }
+        messageId: {
+          method: "messageId"
+          arguments: [  ]
+        }
+        messageSender: {
+          method: "messageSender"
+          arguments: [  ]
+        }
+        messageSourceChainId: {
+          method: "messageSourceChainId"
+          arguments: [  ]
+        }
+        requireToConfirmMessage: {
+          method: "requireToConfirmMessage"
+          arguments: [ _contract: TAddress, _data: TEth.Hex, _gas: bigint ]
+        }
+        requireToPassMessage: {
+          method: "requireToPassMessage"
+          arguments: [ _contract: TAddress, _data: TEth.Hex, _gas: bigint ]
+        }
+        sourceChainId: {
+          method: "sourceChainId"
+          arguments: [  ]
+        }
+        transactionHash: {
+          method: "transactionHash"
+          arguments: [  ]
+        }
+    }
 }
-
-interface IMethodFailedMessageDataHash {
-  method: "failedMessageDataHash"
-  arguments: [ _messageId: TEth.Hex ]
-}
-
-interface IMethodFailedMessageReceiver {
-  method: "failedMessageReceiver"
-  arguments: [ _messageId: TEth.Hex ]
-}
-
-interface IMethodFailedMessageSender {
-  method: "failedMessageSender"
-  arguments: [ _messageId: TEth.Hex ]
-}
-
-interface IMethodMaxGasPerTx {
-  method: "maxGasPerTx"
-  arguments: [  ]
-}
-
-interface IMethodMessageCallStatus {
-  method: "messageCallStatus"
-  arguments: [ _messageId: TEth.Hex ]
-}
-
-interface IMethodMessageId {
-  method: "messageId"
-  arguments: [  ]
-}
-
-interface IMethodMessageSender {
-  method: "messageSender"
-  arguments: [  ]
-}
-
-interface IMethodMessageSourceChainId {
-  method: "messageSourceChainId"
-  arguments: [  ]
-}
-
-interface IMethodRequireToConfirmMessage {
-  method: "requireToConfirmMessage"
-  arguments: [ _contract: TAddress, _data: TEth.Hex, _gas: bigint ]
-}
-
-interface IMethodRequireToPassMessage {
-  method: "requireToPassMessage"
-  arguments: [ _contract: TAddress, _data: TEth.Hex, _gas: bigint ]
-}
-
-interface IMethodSourceChainId {
-  method: "sourceChainId"
-  arguments: [  ]
-}
-
-interface IMethodTransactionHash {
-  method: "transactionHash"
-  arguments: [  ]
-}
-
-interface IMethods {
-  destinationChainId: IMethodDestinationChainId
-  failedMessageDataHash: IMethodFailedMessageDataHash
-  failedMessageReceiver: IMethodFailedMessageReceiver
-  failedMessageSender: IMethodFailedMessageSender
-  maxGasPerTx: IMethodMaxGasPerTx
-  messageCallStatus: IMethodMessageCallStatus
-  messageId: IMethodMessageId
-  messageSender: IMethodMessageSender
-  messageSourceChainId: IMethodMessageSourceChainId
-  requireToConfirmMessage: IMethodRequireToConfirmMessage
-  requireToPassMessage: IMethodRequireToPassMessage
-  sourceChainId: IMethodSourceChainId
-  transactionHash: IMethodTransactionHash
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -339,3 +323,5 @@ interface IIAMBTxData {
 }
 
 
+type TEvents = TIAMBTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

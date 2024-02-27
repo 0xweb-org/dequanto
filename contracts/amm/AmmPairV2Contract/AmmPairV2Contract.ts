@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://bscscan.com/address/0x7752e1fa9f3a2e860856458517008558deb989e3#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class AmmPairV2Contract extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/amm/AmmPairV2Contract/AmmPairV2Contract.ts"
-}
+        "class": "./contracts/amm/AmmPairV2Contract/AmmPairV2Contract.ts"
+    }
 
     async $constructor (deployer: TSender, ): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -195,10 +195,13 @@ export class AmmPairV2Contract extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TAmmPairV2ContractTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TAmmPairV2ContractTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -206,8 +209,20 @@ export class AmmPairV2Contract extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onApproval (fn?: (event: TClientEventsStreamData<TLogApprovalParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalParameters>> {
@@ -234,41 +249,41 @@ export class AmmPairV2Contract extends ContractBase {
         return this.$onLog('Transfer', fn);
     }
 
-    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TLogApproval>[] {
+    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Approval'>>[] {
         let abi = this.$getAbiItem('event', 'Approval');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApproval>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Approval'>>[];
     }
 
-    extractLogsBurn (tx: TEth.TxReceipt): ITxLogItem<TLogBurn>[] {
+    extractLogsBurn (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Burn'>>[] {
         let abi = this.$getAbiItem('event', 'Burn');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogBurn>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Burn'>>[];
     }
 
-    extractLogsMint (tx: TEth.TxReceipt): ITxLogItem<TLogMint>[] {
+    extractLogsMint (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Mint'>>[] {
         let abi = this.$getAbiItem('event', 'Mint');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogMint>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Mint'>>[];
     }
 
-    extractLogsSwap (tx: TEth.TxReceipt): ITxLogItem<TLogSwap>[] {
+    extractLogsSwap (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Swap'>>[] {
         let abi = this.$getAbiItem('event', 'Swap');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogSwap>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Swap'>>[];
     }
 
-    extractLogsSync (tx: TEth.TxReceipt): ITxLogItem<TLogSync>[] {
+    extractLogsSync (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Sync'>>[] {
         let abi = this.$getAbiItem('event', 'Sync');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogSync>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Sync'>>[];
     }
 
-    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TLogTransfer>[] {
+    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Transfer'>>[] {
         let abi = this.$getAbiItem('event', 'Transfer');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogTransfer>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Transfer'>>[];
     }
 
     async getPastLogsApproval (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { owner?: TAddress,spender?: TAddress }
-    }): Promise<ITxLogItem<TLogApproval>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Approval'>>[]> {
         return await this.$getPastLogsParsed('Approval', options) as any;
     }
 
@@ -276,7 +291,7 @@ export class AmmPairV2Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { sender?: TAddress }
-    }): Promise<ITxLogItem<TLogBurn>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Burn'>>[]> {
         return await this.$getPastLogsParsed('Burn', options) as any;
     }
 
@@ -284,7 +299,7 @@ export class AmmPairV2Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { sender?: TAddress }
-    }): Promise<ITxLogItem<TLogMint>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Mint'>>[]> {
         return await this.$getPastLogsParsed('Mint', options) as any;
     }
 
@@ -292,7 +307,7 @@ export class AmmPairV2Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { sender?: TAddress }
-    }): Promise<ITxLogItem<TLogSwap>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Swap'>>[]> {
         return await this.$getPastLogsParsed('Swap', options) as any;
     }
 
@@ -300,7 +315,7 @@ export class AmmPairV2Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogSync>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Sync'>>[]> {
         return await this.$getPastLogsParsed('Sync', options) as any;
     }
 
@@ -308,7 +323,7 @@ export class AmmPairV2Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { from?: TAddress,to?: TAddress }
-    }): Promise<ITxLogItem<TLogTransfer>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Transfer'>>[]> {
         return await this.$getPastLogsParsed('Transfer', options) as any;
     }
 
@@ -321,210 +336,150 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogApproval = {
-        owner: TAddress, spender: TAddress, value: bigint
-    };
-    type TLogApprovalParameters = [ owner: TAddress, spender: TAddress, value: bigint ];
-    type TLogBurn = {
-        _sender: TAddress, amount0: bigint, amount1: bigint, to: TAddress
-    };
-    type TLogBurnParameters = [ _sender: TAddress, amount0: bigint, amount1: bigint, to: TAddress ];
-    type TLogMint = {
-        _sender: TAddress, amount0: bigint, amount1: bigint
-    };
-    type TLogMintParameters = [ _sender: TAddress, amount0: bigint, amount1: bigint ];
-    type TLogSwap = {
-        _sender: TAddress, amount0In: bigint, amount1In: bigint, amount0Out: bigint, amount1Out: bigint, to: TAddress
-    };
-    type TLogSwapParameters = [ _sender: TAddress, amount0In: bigint, amount1In: bigint, amount0Out: bigint, amount1Out: bigint, to: TAddress ];
-    type TLogSync = {
-        reserve0: bigint, reserve1: bigint
-    };
-    type TLogSyncParameters = [ reserve0: bigint, reserve1: bigint ];
-    type TLogTransfer = {
-        from: TAddress, to: TAddress, value: bigint
-    };
-    type TLogTransferParameters = [ from: TAddress, to: TAddress, value: bigint ];
-
-interface IEvents {
-  Approval: TLogApprovalParameters
-  Burn: TLogBurnParameters
-  Mint: TLogMintParameters
-  Swap: TLogSwapParameters
-  Sync: TLogSyncParameters
-  Transfer: TLogTransferParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodDOMAIN_SEPARATOR {
-  method: "DOMAIN_SEPARATOR"
-  arguments: [  ]
+export type TAmmPairV2ContractTypes = {
+    Events: {
+        Approval: {
+            outputParams: { owner: TAddress, spender: TAddress, value: bigint },
+            outputArgs:   [ owner: TAddress, spender: TAddress, value: bigint ],
+        }
+        Burn: {
+            outputParams: { _sender: TAddress, amount0: bigint, amount1: bigint, to: TAddress },
+            outputArgs:   [ _sender: TAddress, amount0: bigint, amount1: bigint, to: TAddress ],
+        }
+        Mint: {
+            outputParams: { _sender: TAddress, amount0: bigint, amount1: bigint },
+            outputArgs:   [ _sender: TAddress, amount0: bigint, amount1: bigint ],
+        }
+        Swap: {
+            outputParams: { _sender: TAddress, amount0In: bigint, amount1In: bigint, amount0Out: bigint, amount1Out: bigint, to: TAddress },
+            outputArgs:   [ _sender: TAddress, amount0In: bigint, amount1In: bigint, amount0Out: bigint, amount1Out: bigint, to: TAddress ],
+        }
+        Sync: {
+            outputParams: { reserve0: bigint, reserve1: bigint },
+            outputArgs:   [ reserve0: bigint, reserve1: bigint ],
+        }
+        Transfer: {
+            outputParams: { from: TAddress, to: TAddress, value: bigint },
+            outputArgs:   [ from: TAddress, to: TAddress, value: bigint ],
+        }
+    },
+    Methods: {
+        DOMAIN_SEPARATOR: {
+          method: "DOMAIN_SEPARATOR"
+          arguments: [  ]
+        }
+        MINIMUM_LIQUIDITY: {
+          method: "MINIMUM_LIQUIDITY"
+          arguments: [  ]
+        }
+        PERMIT_TYPEHASH: {
+          method: "PERMIT_TYPEHASH"
+          arguments: [  ]
+        }
+        allowance: {
+          method: "allowance"
+          arguments: [ input0: TAddress, input1: TAddress ]
+        }
+        approve: {
+          method: "approve"
+          arguments: [ spender: TAddress, value: bigint ]
+        }
+        balanceOf: {
+          method: "balanceOf"
+          arguments: [ input0: TAddress ]
+        }
+        burn: {
+          method: "burn"
+          arguments: [ to: TAddress ]
+        }
+        decimals: {
+          method: "decimals"
+          arguments: [  ]
+        }
+        factory: {
+          method: "factory"
+          arguments: [  ]
+        }
+        getReserves: {
+          method: "getReserves"
+          arguments: [  ]
+        }
+        initialize: {
+          method: "initialize"
+          arguments: [ _token0: TAddress, _token1: TAddress ]
+        }
+        kLast: {
+          method: "kLast"
+          arguments: [  ]
+        }
+        mint: {
+          method: "mint"
+          arguments: [ to: TAddress ]
+        }
+        name: {
+          method: "name"
+          arguments: [  ]
+        }
+        nonces: {
+          method: "nonces"
+          arguments: [ input0: TAddress ]
+        }
+        permit: {
+          method: "permit"
+          arguments: [ owner: TAddress, spender: TAddress, value: bigint, deadline: bigint, v: number, r: TEth.Hex, s: TEth.Hex ]
+        }
+        price0CumulativeLast: {
+          method: "price0CumulativeLast"
+          arguments: [  ]
+        }
+        price1CumulativeLast: {
+          method: "price1CumulativeLast"
+          arguments: [  ]
+        }
+        skim: {
+          method: "skim"
+          arguments: [ to: TAddress ]
+        }
+        swap: {
+          method: "swap"
+          arguments: [ amount0Out: bigint, amount1Out: bigint, to: TAddress, data: TEth.Hex ]
+        }
+        symbol: {
+          method: "symbol"
+          arguments: [  ]
+        }
+        sync: {
+          method: "sync"
+          arguments: [  ]
+        }
+        token0: {
+          method: "token0"
+          arguments: [  ]
+        }
+        token1: {
+          method: "token1"
+          arguments: [  ]
+        }
+        totalSupply: {
+          method: "totalSupply"
+          arguments: [  ]
+        }
+        transfer: {
+          method: "transfer"
+          arguments: [ to: TAddress, value: bigint ]
+        }
+        transferFrom: {
+          method: "transferFrom"
+          arguments: [ from: TAddress, to: TAddress, value: bigint ]
+        }
+    }
 }
-
-interface IMethodMINIMUM_LIQUIDITY {
-  method: "MINIMUM_LIQUIDITY"
-  arguments: [  ]
-}
-
-interface IMethodPERMIT_TYPEHASH {
-  method: "PERMIT_TYPEHASH"
-  arguments: [  ]
-}
-
-interface IMethodAllowance {
-  method: "allowance"
-  arguments: [ input0: TAddress, input1: TAddress ]
-}
-
-interface IMethodApprove {
-  method: "approve"
-  arguments: [ spender: TAddress, value: bigint ]
-}
-
-interface IMethodBalanceOf {
-  method: "balanceOf"
-  arguments: [ input0: TAddress ]
-}
-
-interface IMethodBurn {
-  method: "burn"
-  arguments: [ to: TAddress ]
-}
-
-interface IMethodDecimals {
-  method: "decimals"
-  arguments: [  ]
-}
-
-interface IMethodFactory {
-  method: "factory"
-  arguments: [  ]
-}
-
-interface IMethodGetReserves {
-  method: "getReserves"
-  arguments: [  ]
-}
-
-interface IMethodInitialize {
-  method: "initialize"
-  arguments: [ _token0: TAddress, _token1: TAddress ]
-}
-
-interface IMethodKLast {
-  method: "kLast"
-  arguments: [  ]
-}
-
-interface IMethodMint {
-  method: "mint"
-  arguments: [ to: TAddress ]
-}
-
-interface IMethodName {
-  method: "name"
-  arguments: [  ]
-}
-
-interface IMethodNonces {
-  method: "nonces"
-  arguments: [ input0: TAddress ]
-}
-
-interface IMethodPermit {
-  method: "permit"
-  arguments: [ owner: TAddress, spender: TAddress, value: bigint, deadline: bigint, v: number, r: TEth.Hex, s: TEth.Hex ]
-}
-
-interface IMethodPrice0CumulativeLast {
-  method: "price0CumulativeLast"
-  arguments: [  ]
-}
-
-interface IMethodPrice1CumulativeLast {
-  method: "price1CumulativeLast"
-  arguments: [  ]
-}
-
-interface IMethodSkim {
-  method: "skim"
-  arguments: [ to: TAddress ]
-}
-
-interface IMethodSwap {
-  method: "swap"
-  arguments: [ amount0Out: bigint, amount1Out: bigint, to: TAddress, data: TEth.Hex ]
-}
-
-interface IMethodSymbol {
-  method: "symbol"
-  arguments: [  ]
-}
-
-interface IMethodSync {
-  method: "sync"
-  arguments: [  ]
-}
-
-interface IMethodToken0 {
-  method: "token0"
-  arguments: [  ]
-}
-
-interface IMethodToken1 {
-  method: "token1"
-  arguments: [  ]
-}
-
-interface IMethodTotalSupply {
-  method: "totalSupply"
-  arguments: [  ]
-}
-
-interface IMethodTransfer {
-  method: "transfer"
-  arguments: [ to: TAddress, value: bigint ]
-}
-
-interface IMethodTransferFrom {
-  method: "transferFrom"
-  arguments: [ from: TAddress, to: TAddress, value: bigint ]
-}
-
-interface IMethods {
-  DOMAIN_SEPARATOR: IMethodDOMAIN_SEPARATOR
-  MINIMUM_LIQUIDITY: IMethodMINIMUM_LIQUIDITY
-  PERMIT_TYPEHASH: IMethodPERMIT_TYPEHASH
-  allowance: IMethodAllowance
-  approve: IMethodApprove
-  balanceOf: IMethodBalanceOf
-  burn: IMethodBurn
-  decimals: IMethodDecimals
-  factory: IMethodFactory
-  getReserves: IMethodGetReserves
-  initialize: IMethodInitialize
-  kLast: IMethodKLast
-  mint: IMethodMint
-  name: IMethodName
-  nonces: IMethodNonces
-  permit: IMethodPermit
-  price0CumulativeLast: IMethodPrice0CumulativeLast
-  price1CumulativeLast: IMethodPrice1CumulativeLast
-  skim: IMethodSkim
-  swap: IMethodSwap
-  symbol: IMethodSymbol
-  sync: IMethodSync
-  token0: IMethodToken0
-  token1: IMethodToken1
-  totalSupply: IMethodTotalSupply
-  transfer: IMethodTransfer
-  transferFrom: IMethodTransferFrom
-  '*': { method: string, arguments: any[] } 
-}
-
-
 
 
 
@@ -710,7 +665,6 @@ class AmmPairV2ContractStorageReader extends ContractStorageReaderBase {
 }
 
 
-
 interface IAmmPairV2ContractTxCaller {
     approve (sender: TSender, spender: TAddress, value: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     burn (sender: TSender, to: TAddress): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
@@ -739,3 +693,5 @@ interface IAmmPairV2ContractTxData {
 }
 
 
+type TEvents = TAmmPairV2ContractTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

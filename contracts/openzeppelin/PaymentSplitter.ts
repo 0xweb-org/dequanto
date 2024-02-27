@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class PaymentSplitter extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/PaymentSplitter.ts"
-}
+        "class": "./contracts/openzeppelin/PaymentSplitter.ts"
+    }
 
     async $constructor (deployer: TSender, payees: TAddress[], shares_: bigint[]): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -111,10 +111,13 @@ export class PaymentSplitter extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TPaymentSplitterTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TPaymentSplitterTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -122,8 +125,20 @@ export class PaymentSplitter extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onERC20PaymentReleased (fn?: (event: TClientEventsStreamData<TLogERC20PaymentReleasedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogERC20PaymentReleasedParameters>> {
@@ -142,31 +157,31 @@ export class PaymentSplitter extends ContractBase {
         return this.$onLog('PaymentReleased', fn);
     }
 
-    extractLogsERC20PaymentReleased (tx: TEth.TxReceipt): ITxLogItem<TLogERC20PaymentReleased>[] {
+    extractLogsERC20PaymentReleased (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ERC20PaymentReleased'>>[] {
         let abi = this.$getAbiItem('event', 'ERC20PaymentReleased');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogERC20PaymentReleased>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ERC20PaymentReleased'>>[];
     }
 
-    extractLogsPayeeAdded (tx: TEth.TxReceipt): ITxLogItem<TLogPayeeAdded>[] {
+    extractLogsPayeeAdded (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'PayeeAdded'>>[] {
         let abi = this.$getAbiItem('event', 'PayeeAdded');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogPayeeAdded>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'PayeeAdded'>>[];
     }
 
-    extractLogsPaymentReceived (tx: TEth.TxReceipt): ITxLogItem<TLogPaymentReceived>[] {
+    extractLogsPaymentReceived (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'PaymentReceived'>>[] {
         let abi = this.$getAbiItem('event', 'PaymentReceived');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogPaymentReceived>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'PaymentReceived'>>[];
     }
 
-    extractLogsPaymentReleased (tx: TEth.TxReceipt): ITxLogItem<TLogPaymentReleased>[] {
+    extractLogsPaymentReleased (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'PaymentReleased'>>[] {
         let abi = this.$getAbiItem('event', 'PaymentReleased');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogPaymentReleased>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'PaymentReleased'>>[];
     }
 
     async getPastLogsERC20PaymentReleased (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { token?: TAddress }
-    }): Promise<ITxLogItem<TLogERC20PaymentReleased>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ERC20PaymentReleased'>>[]> {
         return await this.$getPastLogsParsed('ERC20PaymentReleased', options) as any;
     }
 
@@ -174,7 +189,7 @@ export class PaymentSplitter extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogPayeeAdded>[]> {
+    }): Promise<ITxLogItem<TEventParams<'PayeeAdded'>>[]> {
         return await this.$getPastLogsParsed('PayeeAdded', options) as any;
     }
 
@@ -182,7 +197,7 @@ export class PaymentSplitter extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogPaymentReceived>[]> {
+    }): Promise<ITxLogItem<TEventParams<'PaymentReceived'>>[]> {
         return await this.$getPastLogsParsed('PaymentReceived', options) as any;
     }
 
@@ -190,7 +205,7 @@ export class PaymentSplitter extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogPaymentReleased>[]> {
+    }): Promise<ITxLogItem<TEventParams<'PaymentReleased'>>[]> {
         return await this.$getPastLogsParsed('PaymentReleased', options) as any;
     }
 
@@ -203,81 +218,62 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogERC20PaymentReleased = {
-        token: TAddress, to: TAddress, amount: bigint
-    };
-    type TLogERC20PaymentReleasedParameters = [ token: TAddress, to: TAddress, amount: bigint ];
-    type TLogPayeeAdded = {
-        account: TAddress, shares: bigint
-    };
-    type TLogPayeeAddedParameters = [ account: TAddress, shares: bigint ];
-    type TLogPaymentReceived = {
-        from: TAddress, amount: bigint
-    };
-    type TLogPaymentReceivedParameters = [ from: TAddress, amount: bigint ];
-    type TLogPaymentReleased = {
-        to: TAddress, amount: bigint
-    };
-    type TLogPaymentReleasedParameters = [ to: TAddress, amount: bigint ];
-
-interface IEvents {
-  ERC20PaymentReleased: TLogERC20PaymentReleasedParameters
-  PayeeAdded: TLogPayeeAddedParameters
-  PaymentReceived: TLogPaymentReceivedParameters
-  PaymentReleased: TLogPaymentReleasedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodPayee {
-  method: "payee"
-  arguments: [ index: bigint ]
+export type TPaymentSplitterTypes = {
+    Events: {
+        ERC20PaymentReleased: {
+            outputParams: { token: TAddress, to: TAddress, amount: bigint },
+            outputArgs:   [ token: TAddress, to: TAddress, amount: bigint ],
+        }
+        PayeeAdded: {
+            outputParams: { account: TAddress, shares: bigint },
+            outputArgs:   [ account: TAddress, shares: bigint ],
+        }
+        PaymentReceived: {
+            outputParams: { from: TAddress, amount: bigint },
+            outputArgs:   [ from: TAddress, amount: bigint ],
+        }
+        PaymentReleased: {
+            outputParams: { to: TAddress, amount: bigint },
+            outputArgs:   [ to: TAddress, amount: bigint ],
+        }
+    },
+    Methods: {
+        payee: {
+          method: "payee"
+          arguments: [ index: bigint ]
+        }
+        releasable: {
+          method: "releasable"
+          arguments: [ account: TAddress ] | [ token: TAddress, account: TAddress ]
+        }
+        release: {
+          method: "release"
+          arguments: [ account: TAddress ] | [ token: TAddress, account: TAddress ]
+        }
+        released: {
+          method: "released"
+          arguments: [ token: TAddress, account: TAddress ] | [ account: TAddress ]
+        }
+        shares: {
+          method: "shares"
+          arguments: [ account: TAddress ]
+        }
+        totalReleased: {
+          method: "totalReleased"
+          arguments: [ token: TAddress ] | [  ]
+        }
+        totalShares: {
+          method: "totalShares"
+          arguments: [  ]
+        }
+    }
 }
-
-interface IMethodReleasable {
-  method: "releasable"
-  arguments: [ account: TAddress ] | [ token: TAddress, account: TAddress ]
-}
-
-interface IMethodRelease {
-  method: "release"
-  arguments: [ account: TAddress ] | [ token: TAddress, account: TAddress ]
-}
-
-interface IMethodReleased {
-  method: "released"
-  arguments: [ token: TAddress, account: TAddress ] | [ account: TAddress ]
-}
-
-interface IMethodShares {
-  method: "shares"
-  arguments: [ account: TAddress ]
-}
-
-interface IMethodTotalReleased {
-  method: "totalReleased"
-  arguments: [ token: TAddress ] | [  ]
-}
-
-interface IMethodTotalShares {
-  method: "totalShares"
-  arguments: [  ]
-}
-
-interface IMethods {
-  payee: IMethodPayee
-  releasable: IMethodReleasable
-  release: IMethodRelease
-  released: IMethodReleased
-  shares: IMethodShares
-  totalReleased: IMethodTotalReleased
-  totalShares: IMethodTotalShares
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -293,3 +289,5 @@ interface IPaymentSplitterTxData {
 }
 
 
+type TEvents = TPaymentSplitterTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

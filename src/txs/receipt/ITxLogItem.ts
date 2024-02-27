@@ -2,13 +2,13 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { type TAbiItem } from '@dequanto/types/TAbi';
 
-export interface ITxLogItem<TParams = { [name: string]: any }> {
+export interface ITxLogItem<TParams = { [name: string]: any }, TEventName = string> {
     id: string
     blockNumber: number
     logIndex: number
     transactionHash: string
     address: TAddress
-    event: string
+    event: TEventName
     arguments: {
         name?: string
         value: any

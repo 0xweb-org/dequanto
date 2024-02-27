@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class ERC721Wrapper extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/ERC721Wrapper.ts"
-}
+        "class": "./contracts/openzeppelin/ERC721Wrapper.ts"
+    }
 
     // 0x095ea7b3
     async approve (sender: TSender, to: TAddress, tokenId: bigint): Promise<TxWriter> {
@@ -140,10 +140,13 @@ export class ERC721Wrapper extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TERC721WrapperTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TERC721WrapperTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -151,8 +154,20 @@ export class ERC721Wrapper extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onApproval (fn?: (event: TClientEventsStreamData<TLogApprovalParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalParameters>> {
@@ -167,26 +182,26 @@ export class ERC721Wrapper extends ContractBase {
         return this.$onLog('Transfer', fn);
     }
 
-    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TLogApproval>[] {
+    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Approval'>>[] {
         let abi = this.$getAbiItem('event', 'Approval');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApproval>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Approval'>>[];
     }
 
-    extractLogsApprovalForAll (tx: TEth.TxReceipt): ITxLogItem<TLogApprovalForAll>[] {
+    extractLogsApprovalForAll (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ApprovalForAll'>>[] {
         let abi = this.$getAbiItem('event', 'ApprovalForAll');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApprovalForAll>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ApprovalForAll'>>[];
     }
 
-    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TLogTransfer>[] {
+    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Transfer'>>[] {
         let abi = this.$getAbiItem('event', 'Transfer');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogTransfer>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Transfer'>>[];
     }
 
     async getPastLogsApproval (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { owner?: TAddress,approved?: TAddress,tokenId?: bigint }
-    }): Promise<ITxLogItem<TLogApproval>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Approval'>>[]> {
         return await this.$getPastLogsParsed('Approval', options) as any;
     }
 
@@ -194,7 +209,7 @@ export class ERC721Wrapper extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { owner?: TAddress,operator?: TAddress }
-    }): Promise<ITxLogItem<TLogApprovalForAll>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ApprovalForAll'>>[]> {
         return await this.$getPastLogsParsed('ApprovalForAll', options) as any;
     }
 
@@ -202,7 +217,7 @@ export class ERC721Wrapper extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { from?: TAddress,to?: TAddress,tokenId?: bigint }
-    }): Promise<ITxLogItem<TLogTransfer>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Transfer'>>[]> {
         return await this.$getPastLogsParsed('Transfer', options) as any;
     }
 
@@ -215,130 +230,94 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogApproval = {
-        owner: TAddress, approved: TAddress, tokenId: bigint
-    };
-    type TLogApprovalParameters = [ owner: TAddress, approved: TAddress, tokenId: bigint ];
-    type TLogApprovalForAll = {
-        owner: TAddress, operator: TAddress, approved: boolean
-    };
-    type TLogApprovalForAllParameters = [ owner: TAddress, operator: TAddress, approved: boolean ];
-    type TLogTransfer = {
-        from: TAddress, to: TAddress, tokenId: bigint
-    };
-    type TLogTransferParameters = [ from: TAddress, to: TAddress, tokenId: bigint ];
-
-interface IEvents {
-  Approval: TLogApprovalParameters
-  ApprovalForAll: TLogApprovalForAllParameters
-  Transfer: TLogTransferParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodApprove {
-  method: "approve"
-  arguments: [ to: TAddress, tokenId: bigint ]
+export type TERC721WrapperTypes = {
+    Events: {
+        Approval: {
+            outputParams: { owner: TAddress, approved: TAddress, tokenId: bigint },
+            outputArgs:   [ owner: TAddress, approved: TAddress, tokenId: bigint ],
+        }
+        ApprovalForAll: {
+            outputParams: { owner: TAddress, operator: TAddress, approved: boolean },
+            outputArgs:   [ owner: TAddress, operator: TAddress, approved: boolean ],
+        }
+        Transfer: {
+            outputParams: { from: TAddress, to: TAddress, tokenId: bigint },
+            outputArgs:   [ from: TAddress, to: TAddress, tokenId: bigint ],
+        }
+    },
+    Methods: {
+        approve: {
+          method: "approve"
+          arguments: [ to: TAddress, tokenId: bigint ]
+        }
+        balanceOf: {
+          method: "balanceOf"
+          arguments: [ owner: TAddress ]
+        }
+        depositFor: {
+          method: "depositFor"
+          arguments: [ account: TAddress, tokenIds: bigint[] ]
+        }
+        getApproved: {
+          method: "getApproved"
+          arguments: [ tokenId: bigint ]
+        }
+        isApprovedForAll: {
+          method: "isApprovedForAll"
+          arguments: [ owner: TAddress, operator: TAddress ]
+        }
+        name: {
+          method: "name"
+          arguments: [  ]
+        }
+        onERC721Received: {
+          method: "onERC721Received"
+          arguments: [ input0: TAddress, from: TAddress, tokenId: bigint, input3: TEth.Hex ]
+        }
+        ownerOf: {
+          method: "ownerOf"
+          arguments: [ tokenId: bigint ]
+        }
+        safeTransferFrom: {
+          method: "safeTransferFrom"
+          arguments: [ from: TAddress, to: TAddress, tokenId: bigint ] | [ from: TAddress, to: TAddress, tokenId: bigint, data: TEth.Hex ]
+        }
+        setApprovalForAll: {
+          method: "setApprovalForAll"
+          arguments: [ operator: TAddress, approved: boolean ]
+        }
+        supportsInterface: {
+          method: "supportsInterface"
+          arguments: [ interfaceId: TEth.Hex ]
+        }
+        symbol: {
+          method: "symbol"
+          arguments: [  ]
+        }
+        tokenURI: {
+          method: "tokenURI"
+          arguments: [ tokenId: bigint ]
+        }
+        transferFrom: {
+          method: "transferFrom"
+          arguments: [ from: TAddress, to: TAddress, tokenId: bigint ]
+        }
+        underlying: {
+          method: "underlying"
+          arguments: [  ]
+        }
+        withdrawTo: {
+          method: "withdrawTo"
+          arguments: [ account: TAddress, tokenIds: bigint[] ]
+        }
+    }
 }
-
-interface IMethodBalanceOf {
-  method: "balanceOf"
-  arguments: [ owner: TAddress ]
-}
-
-interface IMethodDepositFor {
-  method: "depositFor"
-  arguments: [ account: TAddress, tokenIds: bigint[] ]
-}
-
-interface IMethodGetApproved {
-  method: "getApproved"
-  arguments: [ tokenId: bigint ]
-}
-
-interface IMethodIsApprovedForAll {
-  method: "isApprovedForAll"
-  arguments: [ owner: TAddress, operator: TAddress ]
-}
-
-interface IMethodName {
-  method: "name"
-  arguments: [  ]
-}
-
-interface IMethodOnERC721Received {
-  method: "onERC721Received"
-  arguments: [ input0: TAddress, from: TAddress, tokenId: bigint, input3: TEth.Hex ]
-}
-
-interface IMethodOwnerOf {
-  method: "ownerOf"
-  arguments: [ tokenId: bigint ]
-}
-
-interface IMethodSafeTransferFrom {
-  method: "safeTransferFrom"
-  arguments: [ from: TAddress, to: TAddress, tokenId: bigint ] | [ from: TAddress, to: TAddress, tokenId: bigint, data: TEth.Hex ]
-}
-
-interface IMethodSetApprovalForAll {
-  method: "setApprovalForAll"
-  arguments: [ operator: TAddress, approved: boolean ]
-}
-
-interface IMethodSupportsInterface {
-  method: "supportsInterface"
-  arguments: [ interfaceId: TEth.Hex ]
-}
-
-interface IMethodSymbol {
-  method: "symbol"
-  arguments: [  ]
-}
-
-interface IMethodTokenURI {
-  method: "tokenURI"
-  arguments: [ tokenId: bigint ]
-}
-
-interface IMethodTransferFrom {
-  method: "transferFrom"
-  arguments: [ from: TAddress, to: TAddress, tokenId: bigint ]
-}
-
-interface IMethodUnderlying {
-  method: "underlying"
-  arguments: [  ]
-}
-
-interface IMethodWithdrawTo {
-  method: "withdrawTo"
-  arguments: [ account: TAddress, tokenIds: bigint[] ]
-}
-
-interface IMethods {
-  approve: IMethodApprove
-  balanceOf: IMethodBalanceOf
-  depositFor: IMethodDepositFor
-  getApproved: IMethodGetApproved
-  isApprovedForAll: IMethodIsApprovedForAll
-  name: IMethodName
-  onERC721Received: IMethodOnERC721Received
-  ownerOf: IMethodOwnerOf
-  safeTransferFrom: IMethodSafeTransferFrom
-  setApprovalForAll: IMethodSetApprovalForAll
-  supportsInterface: IMethodSupportsInterface
-  symbol: IMethodSymbol
-  tokenURI: IMethodTokenURI
-  transferFrom: IMethodTransferFrom
-  underlying: IMethodUnderlying
-  withdrawTo: IMethodWithdrawTo
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -366,3 +345,5 @@ interface IERC721WrapperTxData {
 }
 
 
+type TEvents = TERC721WrapperTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

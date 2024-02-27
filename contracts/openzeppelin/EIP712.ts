@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -53,8 +53,8 @@ export class EIP712 extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/EIP712.ts"
-}
+        "class": "./contracts/openzeppelin/EIP712.ts"
+    }
 
     // 0x84b0196e
     async eip712Domain (): Promise<{ fields: TEth.Hex, name: string, version: string, chainId: bigint, verifyingContract: TAddress, salt: TEth.Hex, extensions: bigint[] }> {
@@ -74,10 +74,13 @@ export class EIP712 extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TEIP712Types['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TEIP712Types['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -85,24 +88,36 @@ export class EIP712 extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onEIP712DomainChanged (fn?: (event: TClientEventsStreamData<TLogEIP712DomainChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogEIP712DomainChangedParameters>> {
         return this.$onLog('EIP712DomainChanged', fn);
     }
 
-    extractLogsEIP712DomainChanged (tx: TEth.TxReceipt): ITxLogItem<TLogEIP712DomainChanged>[] {
+    extractLogsEIP712DomainChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'EIP712DomainChanged'>>[] {
         let abi = this.$getAbiItem('event', 'EIP712DomainChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogEIP712DomainChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'EIP712DomainChanged'>>[];
     }
 
     async getPastLogsEIP712DomainChanged (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogEIP712DomainChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'EIP712DomainChanged'>>[]> {
         return await this.$getPastLogsParsed('EIP712DomainChanged', options) as any;
     }
 
@@ -115,30 +130,26 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogEIP712DomainChanged = {
-        
-    };
-    type TLogEIP712DomainChangedParameters = [  ];
-
-interface IEvents {
-  EIP712DomainChanged: TLogEIP712DomainChangedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodEip712Domain {
-  method: "eip712Domain"
-  arguments: [  ]
+export type TEIP712Types = {
+    Events: {
+        EIP712DomainChanged: {
+            outputParams: {  },
+            outputArgs:   [  ],
+        }
+    },
+    Methods: {
+        eip712Domain: {
+          method: "eip712Domain"
+          arguments: [  ]
+        }
+    }
 }
-
-interface IMethods {
-  eip712Domain: IMethodEip712Domain
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -152,3 +163,5 @@ interface IEIP712TxData {
 }
 
 
+type TEvents = TEIP712Types['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

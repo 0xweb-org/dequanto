@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://bscscan.com/address/0x10ED43C718714eb63d5aA57B78B54704E256024E#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class AmmRouterV2Contract extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/amm/AmmRouterV2Contract/AmmRouterV2Contract.ts"
-}
+        "class": "./contracts/amm/AmmRouterV2Contract/AmmRouterV2Contract.ts"
+    }
 
     async $constructor (deployer: TSender, _factory: TAddress, _WETH: TAddress): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -180,10 +180,13 @@ export class AmmRouterV2Contract extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TAmmRouterV2ContractTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TAmmRouterV2ContractTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -191,8 +194,20 @@ export class AmmRouterV2Contract extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
 
@@ -210,163 +225,115 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-
-
-interface IEvents {
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodWETH {
-  method: "WETH"
-  arguments: [  ]
+export type TAmmRouterV2ContractTypes = {
+    Events: {
+        
+    },
+    Methods: {
+        WETH: {
+          method: "WETH"
+          arguments: [  ]
+        }
+        addLiquidity: {
+          method: "addLiquidity"
+          arguments: [ tokenA: TAddress, tokenB: TAddress, amountADesired: bigint, amountBDesired: bigint, amountAMin: bigint, amountBMin: bigint, to: TAddress, deadline: bigint ]
+        }
+        addLiquidityETH: {
+          method: "addLiquidityETH"
+          arguments: [ token: TAddress, amountTokenDesired: bigint, amountTokenMin: bigint, amountETHMin: bigint, to: TAddress, deadline: bigint ]
+        }
+        factory: {
+          method: "factory"
+          arguments: [  ]
+        }
+        getAmountIn: {
+          method: "getAmountIn"
+          arguments: [ amountOut: bigint, reserveIn: bigint, reserveOut: bigint ]
+        }
+        getAmountOut: {
+          method: "getAmountOut"
+          arguments: [ amountIn: bigint, reserveIn: bigint, reserveOut: bigint ]
+        }
+        getAmountsIn: {
+          method: "getAmountsIn"
+          arguments: [ amountOut: bigint, path: TAddress[] ]
+        }
+        getAmountsOut: {
+          method: "getAmountsOut"
+          arguments: [ amountIn: bigint, path: TAddress[] ]
+        }
+        quote: {
+          method: "quote"
+          arguments: [ amountA: bigint, reserveA: bigint, reserveB: bigint ]
+        }
+        removeLiquidity: {
+          method: "removeLiquidity"
+          arguments: [ tokenA: TAddress, tokenB: TAddress, liquidity: bigint, amountAMin: bigint, amountBMin: bigint, to: TAddress, deadline: bigint ]
+        }
+        removeLiquidityETH: {
+          method: "removeLiquidityETH"
+          arguments: [ token: TAddress, liquidity: bigint, amountTokenMin: bigint, amountETHMin: bigint, to: TAddress, deadline: bigint ]
+        }
+        removeLiquidityETHSupportingFeeOnTransferTokens: {
+          method: "removeLiquidityETHSupportingFeeOnTransferTokens"
+          arguments: [ token: TAddress, liquidity: bigint, amountTokenMin: bigint, amountETHMin: bigint, to: TAddress, deadline: bigint ]
+        }
+        removeLiquidityETHWithPermit: {
+          method: "removeLiquidityETHWithPermit"
+          arguments: [ token: TAddress, liquidity: bigint, amountTokenMin: bigint, amountETHMin: bigint, to: TAddress, deadline: bigint, approveMax: boolean, v: number, r: TEth.Hex, s: TEth.Hex ]
+        }
+        removeLiquidityETHWithPermitSupportingFeeOnTransferTokens: {
+          method: "removeLiquidityETHWithPermitSupportingFeeOnTransferTokens"
+          arguments: [ token: TAddress, liquidity: bigint, amountTokenMin: bigint, amountETHMin: bigint, to: TAddress, deadline: bigint, approveMax: boolean, v: number, r: TEth.Hex, s: TEth.Hex ]
+        }
+        removeLiquidityWithPermit: {
+          method: "removeLiquidityWithPermit"
+          arguments: [ tokenA: TAddress, tokenB: TAddress, liquidity: bigint, amountAMin: bigint, amountBMin: bigint, to: TAddress, deadline: bigint, approveMax: boolean, v: number, r: TEth.Hex, s: TEth.Hex ]
+        }
+        swapETHForExactTokens: {
+          method: "swapETHForExactTokens"
+          arguments: [ amountOut: bigint, path: TAddress[], to: TAddress, deadline: bigint ]
+        }
+        swapExactETHForTokens: {
+          method: "swapExactETHForTokens"
+          arguments: [ amountOutMin: bigint, path: TAddress[], to: TAddress, deadline: bigint ]
+        }
+        swapExactETHForTokensSupportingFeeOnTransferTokens: {
+          method: "swapExactETHForTokensSupportingFeeOnTransferTokens"
+          arguments: [ amountOutMin: bigint, path: TAddress[], to: TAddress, deadline: bigint ]
+        }
+        swapExactTokensForETH: {
+          method: "swapExactTokensForETH"
+          arguments: [ amountIn: bigint, amountOutMin: bigint, path: TAddress[], to: TAddress, deadline: bigint ]
+        }
+        swapExactTokensForETHSupportingFeeOnTransferTokens: {
+          method: "swapExactTokensForETHSupportingFeeOnTransferTokens"
+          arguments: [ amountIn: bigint, amountOutMin: bigint, path: TAddress[], to: TAddress, deadline: bigint ]
+        }
+        swapExactTokensForTokens: {
+          method: "swapExactTokensForTokens"
+          arguments: [ amountIn: bigint, amountOutMin: bigint, path: TAddress[], to: TAddress, deadline: bigint ]
+        }
+        swapExactTokensForTokensSupportingFeeOnTransferTokens: {
+          method: "swapExactTokensForTokensSupportingFeeOnTransferTokens"
+          arguments: [ amountIn: bigint, amountOutMin: bigint, path: TAddress[], to: TAddress, deadline: bigint ]
+        }
+        swapTokensForExactETH: {
+          method: "swapTokensForExactETH"
+          arguments: [ amountOut: bigint, amountInMax: bigint, path: TAddress[], to: TAddress, deadline: bigint ]
+        }
+        swapTokensForExactTokens: {
+          method: "swapTokensForExactTokens"
+          arguments: [ amountOut: bigint, amountInMax: bigint, path: TAddress[], to: TAddress, deadline: bigint ]
+        }
+    }
 }
-
-interface IMethodAddLiquidity {
-  method: "addLiquidity"
-  arguments: [ tokenA: TAddress, tokenB: TAddress, amountADesired: bigint, amountBDesired: bigint, amountAMin: bigint, amountBMin: bigint, to: TAddress, deadline: bigint ]
-}
-
-interface IMethodAddLiquidityETH {
-  method: "addLiquidityETH"
-  arguments: [ token: TAddress, amountTokenDesired: bigint, amountTokenMin: bigint, amountETHMin: bigint, to: TAddress, deadline: bigint ]
-}
-
-interface IMethodFactory {
-  method: "factory"
-  arguments: [  ]
-}
-
-interface IMethodGetAmountIn {
-  method: "getAmountIn"
-  arguments: [ amountOut: bigint, reserveIn: bigint, reserveOut: bigint ]
-}
-
-interface IMethodGetAmountOut {
-  method: "getAmountOut"
-  arguments: [ amountIn: bigint, reserveIn: bigint, reserveOut: bigint ]
-}
-
-interface IMethodGetAmountsIn {
-  method: "getAmountsIn"
-  arguments: [ amountOut: bigint, path: TAddress[] ]
-}
-
-interface IMethodGetAmountsOut {
-  method: "getAmountsOut"
-  arguments: [ amountIn: bigint, path: TAddress[] ]
-}
-
-interface IMethodQuote {
-  method: "quote"
-  arguments: [ amountA: bigint, reserveA: bigint, reserveB: bigint ]
-}
-
-interface IMethodRemoveLiquidity {
-  method: "removeLiquidity"
-  arguments: [ tokenA: TAddress, tokenB: TAddress, liquidity: bigint, amountAMin: bigint, amountBMin: bigint, to: TAddress, deadline: bigint ]
-}
-
-interface IMethodRemoveLiquidityETH {
-  method: "removeLiquidityETH"
-  arguments: [ token: TAddress, liquidity: bigint, amountTokenMin: bigint, amountETHMin: bigint, to: TAddress, deadline: bigint ]
-}
-
-interface IMethodRemoveLiquidityETHSupportingFeeOnTransferTokens {
-  method: "removeLiquidityETHSupportingFeeOnTransferTokens"
-  arguments: [ token: TAddress, liquidity: bigint, amountTokenMin: bigint, amountETHMin: bigint, to: TAddress, deadline: bigint ]
-}
-
-interface IMethodRemoveLiquidityETHWithPermit {
-  method: "removeLiquidityETHWithPermit"
-  arguments: [ token: TAddress, liquidity: bigint, amountTokenMin: bigint, amountETHMin: bigint, to: TAddress, deadline: bigint, approveMax: boolean, v: number, r: TEth.Hex, s: TEth.Hex ]
-}
-
-interface IMethodRemoveLiquidityETHWithPermitSupportingFeeOnTransferTokens {
-  method: "removeLiquidityETHWithPermitSupportingFeeOnTransferTokens"
-  arguments: [ token: TAddress, liquidity: bigint, amountTokenMin: bigint, amountETHMin: bigint, to: TAddress, deadline: bigint, approveMax: boolean, v: number, r: TEth.Hex, s: TEth.Hex ]
-}
-
-interface IMethodRemoveLiquidityWithPermit {
-  method: "removeLiquidityWithPermit"
-  arguments: [ tokenA: TAddress, tokenB: TAddress, liquidity: bigint, amountAMin: bigint, amountBMin: bigint, to: TAddress, deadline: bigint, approveMax: boolean, v: number, r: TEth.Hex, s: TEth.Hex ]
-}
-
-interface IMethodSwapETHForExactTokens {
-  method: "swapETHForExactTokens"
-  arguments: [ amountOut: bigint, path: TAddress[], to: TAddress, deadline: bigint ]
-}
-
-interface IMethodSwapExactETHForTokens {
-  method: "swapExactETHForTokens"
-  arguments: [ amountOutMin: bigint, path: TAddress[], to: TAddress, deadline: bigint ]
-}
-
-interface IMethodSwapExactETHForTokensSupportingFeeOnTransferTokens {
-  method: "swapExactETHForTokensSupportingFeeOnTransferTokens"
-  arguments: [ amountOutMin: bigint, path: TAddress[], to: TAddress, deadline: bigint ]
-}
-
-interface IMethodSwapExactTokensForETH {
-  method: "swapExactTokensForETH"
-  arguments: [ amountIn: bigint, amountOutMin: bigint, path: TAddress[], to: TAddress, deadline: bigint ]
-}
-
-interface IMethodSwapExactTokensForETHSupportingFeeOnTransferTokens {
-  method: "swapExactTokensForETHSupportingFeeOnTransferTokens"
-  arguments: [ amountIn: bigint, amountOutMin: bigint, path: TAddress[], to: TAddress, deadline: bigint ]
-}
-
-interface IMethodSwapExactTokensForTokens {
-  method: "swapExactTokensForTokens"
-  arguments: [ amountIn: bigint, amountOutMin: bigint, path: TAddress[], to: TAddress, deadline: bigint ]
-}
-
-interface IMethodSwapExactTokensForTokensSupportingFeeOnTransferTokens {
-  method: "swapExactTokensForTokensSupportingFeeOnTransferTokens"
-  arguments: [ amountIn: bigint, amountOutMin: bigint, path: TAddress[], to: TAddress, deadline: bigint ]
-}
-
-interface IMethodSwapTokensForExactETH {
-  method: "swapTokensForExactETH"
-  arguments: [ amountOut: bigint, amountInMax: bigint, path: TAddress[], to: TAddress, deadline: bigint ]
-}
-
-interface IMethodSwapTokensForExactTokens {
-  method: "swapTokensForExactTokens"
-  arguments: [ amountOut: bigint, amountInMax: bigint, path: TAddress[], to: TAddress, deadline: bigint ]
-}
-
-interface IMethods {
-  WETH: IMethodWETH
-  addLiquidity: IMethodAddLiquidity
-  addLiquidityETH: IMethodAddLiquidityETH
-  factory: IMethodFactory
-  getAmountIn: IMethodGetAmountIn
-  getAmountOut: IMethodGetAmountOut
-  getAmountsIn: IMethodGetAmountsIn
-  getAmountsOut: IMethodGetAmountsOut
-  quote: IMethodQuote
-  removeLiquidity: IMethodRemoveLiquidity
-  removeLiquidityETH: IMethodRemoveLiquidityETH
-  removeLiquidityETHSupportingFeeOnTransferTokens: IMethodRemoveLiquidityETHSupportingFeeOnTransferTokens
-  removeLiquidityETHWithPermit: IMethodRemoveLiquidityETHWithPermit
-  removeLiquidityETHWithPermitSupportingFeeOnTransferTokens: IMethodRemoveLiquidityETHWithPermitSupportingFeeOnTransferTokens
-  removeLiquidityWithPermit: IMethodRemoveLiquidityWithPermit
-  swapETHForExactTokens: IMethodSwapETHForExactTokens
-  swapExactETHForTokens: IMethodSwapExactETHForTokens
-  swapExactETHForTokensSupportingFeeOnTransferTokens: IMethodSwapExactETHForTokensSupportingFeeOnTransferTokens
-  swapExactTokensForETH: IMethodSwapExactTokensForETH
-  swapExactTokensForETHSupportingFeeOnTransferTokens: IMethodSwapExactTokensForETHSupportingFeeOnTransferTokens
-  swapExactTokensForTokens: IMethodSwapExactTokensForTokens
-  swapExactTokensForTokensSupportingFeeOnTransferTokens: IMethodSwapExactTokensForTokensSupportingFeeOnTransferTokens
-  swapTokensForExactETH: IMethodSwapTokensForExactETH
-  swapTokensForExactTokens: IMethodSwapTokensForExactTokens
-  '*': { method: string, arguments: any[] } 
-}
-
-
 
 
 
@@ -386,7 +353,6 @@ class AmmRouterV2ContractStorageReader extends ContractStorageReaderBase {
     $slots = []
 
 }
-
 
 
 interface IAmmRouterV2ContractTxCaller {
@@ -431,3 +397,5 @@ interface IAmmRouterV2ContractTxData {
 }
 
 
+type TEvents = TAmmRouterV2ContractTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

@@ -9,7 +9,7 @@
             "node_modules/@types",
             "typings/globals"
         ],
-        "types": ["node", "assertion", "atma-utest"],
+        "types": ["node", "assertion"],
 
         "outDir": "dist",
         "module": "CommonJS",
@@ -31,6 +31,10 @@
         "db",
         "test",
         "**/*.spec.ts",
-        "src/gen/ContractTemplate.ts"
+        "**/*.act.ts",
+        "src/gen/ContractTemplate.ts",
+        "src/gen/ContractStorageReaderTemplate.ts",
+        "src/bridges/hop/HopBridge.ts",
+        "typings/globals/atma-utest"
     ]
 }

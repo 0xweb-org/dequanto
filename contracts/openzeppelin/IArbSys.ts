@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class IArbSys extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/IArbSys.ts"
-}
+        "class": "./contracts/openzeppelin/IArbSys.ts"
+    }
 
     // 0x2b407a82
     async arbBlockHash (arbBlockNum: bigint): Promise<TEth.Hex> {
@@ -116,10 +116,13 @@ export class IArbSys extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TIArbSysTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TIArbSysTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -127,8 +130,20 @@ export class IArbSys extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onL2ToL1Transaction (fn?: (event: TClientEventsStreamData<TLogL2ToL1TransactionParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogL2ToL1TransactionParameters>> {
@@ -143,26 +158,26 @@ export class IArbSys extends ContractBase {
         return this.$onLog('SendMerkleUpdate', fn);
     }
 
-    extractLogsL2ToL1Transaction (tx: TEth.TxReceipt): ITxLogItem<TLogL2ToL1Transaction>[] {
+    extractLogsL2ToL1Transaction (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'L2ToL1Transaction'>>[] {
         let abi = this.$getAbiItem('event', 'L2ToL1Transaction');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogL2ToL1Transaction>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'L2ToL1Transaction'>>[];
     }
 
-    extractLogsL2ToL1Tx (tx: TEth.TxReceipt): ITxLogItem<TLogL2ToL1Tx>[] {
+    extractLogsL2ToL1Tx (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'L2ToL1Tx'>>[] {
         let abi = this.$getAbiItem('event', 'L2ToL1Tx');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogL2ToL1Tx>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'L2ToL1Tx'>>[];
     }
 
-    extractLogsSendMerkleUpdate (tx: TEth.TxReceipt): ITxLogItem<TLogSendMerkleUpdate>[] {
+    extractLogsSendMerkleUpdate (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'SendMerkleUpdate'>>[] {
         let abi = this.$getAbiItem('event', 'SendMerkleUpdate');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogSendMerkleUpdate>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'SendMerkleUpdate'>>[];
     }
 
     async getPastLogsL2ToL1Transaction (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogL2ToL1Transaction>[]> {
+    }): Promise<ITxLogItem<TEventParams<'L2ToL1Transaction'>>[]> {
         return await this.$getPastLogsParsed('L2ToL1Transaction', options) as any;
     }
 
@@ -170,7 +185,7 @@ export class IArbSys extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogL2ToL1Tx>[]> {
+    }): Promise<ITxLogItem<TEventParams<'L2ToL1Tx'>>[]> {
         return await this.$getPastLogsParsed('L2ToL1Tx', options) as any;
     }
 
@@ -178,7 +193,7 @@ export class IArbSys extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { reserved?: bigint,hash?: TEth.Hex,position?: bigint }
-    }): Promise<ITxLogItem<TLogSendMerkleUpdate>[]> {
+    }): Promise<ITxLogItem<TEventParams<'SendMerkleUpdate'>>[]> {
         return await this.$getPastLogsParsed('SendMerkleUpdate', options) as any;
     }
 
@@ -191,106 +206,78 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogL2ToL1Transaction = {
-        caller: TAddress, destination: TAddress, uniqueId: bigint, batchNumber: bigint, indexInBatch: bigint, arbBlockNum: bigint, ethBlockNum: bigint, timestamp: bigint, callvalue: bigint, data: TEth.Hex
-    };
-    type TLogL2ToL1TransactionParameters = [ caller: TAddress, destination: TAddress, uniqueId: bigint, batchNumber: bigint, indexInBatch: bigint, arbBlockNum: bigint, ethBlockNum: bigint, timestamp: bigint, callvalue: bigint, data: TEth.Hex ];
-    type TLogL2ToL1Tx = {
-        caller: TAddress, destination: TAddress, hash: bigint, position: bigint, arbBlockNum: bigint, ethBlockNum: bigint, timestamp: bigint, callvalue: bigint, data: TEth.Hex
-    };
-    type TLogL2ToL1TxParameters = [ caller: TAddress, destination: TAddress, hash: bigint, position: bigint, arbBlockNum: bigint, ethBlockNum: bigint, timestamp: bigint, callvalue: bigint, data: TEth.Hex ];
-    type TLogSendMerkleUpdate = {
-        reserved: bigint, hash: TEth.Hex, position: bigint
-    };
-    type TLogSendMerkleUpdateParameters = [ reserved: bigint, hash: TEth.Hex, position: bigint ];
-
-interface IEvents {
-  L2ToL1Transaction: TLogL2ToL1TransactionParameters
-  L2ToL1Tx: TLogL2ToL1TxParameters
-  SendMerkleUpdate: TLogSendMerkleUpdateParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodArbBlockHash {
-  method: "arbBlockHash"
-  arguments: [ arbBlockNum: bigint ]
+export type TIArbSysTypes = {
+    Events: {
+        L2ToL1Transaction: {
+            outputParams: { caller: TAddress, destination: TAddress, uniqueId: bigint, batchNumber: bigint, indexInBatch: bigint, arbBlockNum: bigint, ethBlockNum: bigint, timestamp: bigint, callvalue: bigint, data: TEth.Hex },
+            outputArgs:   [ caller: TAddress, destination: TAddress, uniqueId: bigint, batchNumber: bigint, indexInBatch: bigint, arbBlockNum: bigint, ethBlockNum: bigint, timestamp: bigint, callvalue: bigint, data: TEth.Hex ],
+        }
+        L2ToL1Tx: {
+            outputParams: { caller: TAddress, destination: TAddress, hash: bigint, position: bigint, arbBlockNum: bigint, ethBlockNum: bigint, timestamp: bigint, callvalue: bigint, data: TEth.Hex },
+            outputArgs:   [ caller: TAddress, destination: TAddress, hash: bigint, position: bigint, arbBlockNum: bigint, ethBlockNum: bigint, timestamp: bigint, callvalue: bigint, data: TEth.Hex ],
+        }
+        SendMerkleUpdate: {
+            outputParams: { reserved: bigint, hash: TEth.Hex, position: bigint },
+            outputArgs:   [ reserved: bigint, hash: TEth.Hex, position: bigint ],
+        }
+    },
+    Methods: {
+        arbBlockHash: {
+          method: "arbBlockHash"
+          arguments: [ arbBlockNum: bigint ]
+        }
+        arbBlockNumber: {
+          method: "arbBlockNumber"
+          arguments: [  ]
+        }
+        arbChainID: {
+          method: "arbChainID"
+          arguments: [  ]
+        }
+        arbOSVersion: {
+          method: "arbOSVersion"
+          arguments: [  ]
+        }
+        getStorageGasAvailable: {
+          method: "getStorageGasAvailable"
+          arguments: [  ]
+        }
+        isTopLevelCall: {
+          method: "isTopLevelCall"
+          arguments: [  ]
+        }
+        mapL1SenderContractAddressToL2Alias: {
+          method: "mapL1SenderContractAddressToL2Alias"
+          arguments: [ _sender: TAddress, unused: TAddress ]
+        }
+        myCallersAddressWithoutAliasing: {
+          method: "myCallersAddressWithoutAliasing"
+          arguments: [  ]
+        }
+        sendMerkleTreeState: {
+          method: "sendMerkleTreeState"
+          arguments: [  ]
+        }
+        sendTxToL1: {
+          method: "sendTxToL1"
+          arguments: [ destination: TAddress, data: TEth.Hex ]
+        }
+        wasMyCallersAddressAliased: {
+          method: "wasMyCallersAddressAliased"
+          arguments: [  ]
+        }
+        withdrawEth: {
+          method: "withdrawEth"
+          arguments: [ destination: TAddress ]
+        }
+    }
 }
-
-interface IMethodArbBlockNumber {
-  method: "arbBlockNumber"
-  arguments: [  ]
-}
-
-interface IMethodArbChainID {
-  method: "arbChainID"
-  arguments: [  ]
-}
-
-interface IMethodArbOSVersion {
-  method: "arbOSVersion"
-  arguments: [  ]
-}
-
-interface IMethodGetStorageGasAvailable {
-  method: "getStorageGasAvailable"
-  arguments: [  ]
-}
-
-interface IMethodIsTopLevelCall {
-  method: "isTopLevelCall"
-  arguments: [  ]
-}
-
-interface IMethodMapL1SenderContractAddressToL2Alias {
-  method: "mapL1SenderContractAddressToL2Alias"
-  arguments: [ _sender: TAddress, unused: TAddress ]
-}
-
-interface IMethodMyCallersAddressWithoutAliasing {
-  method: "myCallersAddressWithoutAliasing"
-  arguments: [  ]
-}
-
-interface IMethodSendMerkleTreeState {
-  method: "sendMerkleTreeState"
-  arguments: [  ]
-}
-
-interface IMethodSendTxToL1 {
-  method: "sendTxToL1"
-  arguments: [ destination: TAddress, data: TEth.Hex ]
-}
-
-interface IMethodWasMyCallersAddressAliased {
-  method: "wasMyCallersAddressAliased"
-  arguments: [  ]
-}
-
-interface IMethodWithdrawEth {
-  method: "withdrawEth"
-  arguments: [ destination: TAddress ]
-}
-
-interface IMethods {
-  arbBlockHash: IMethodArbBlockHash
-  arbBlockNumber: IMethodArbBlockNumber
-  arbChainID: IMethodArbChainID
-  arbOSVersion: IMethodArbOSVersion
-  getStorageGasAvailable: IMethodGetStorageGasAvailable
-  isTopLevelCall: IMethodIsTopLevelCall
-  mapL1SenderContractAddressToL2Alias: IMethodMapL1SenderContractAddressToL2Alias
-  myCallersAddressWithoutAliasing: IMethodMyCallersAddressWithoutAliasing
-  sendMerkleTreeState: IMethodSendMerkleTreeState
-  sendTxToL1: IMethodSendTxToL1
-  wasMyCallersAddressAliased: IMethodWasMyCallersAddressAliased
-  withdrawEth: IMethodWithdrawEth
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -306,3 +293,5 @@ interface IIArbSysTxData {
 }
 
 
+type TEvents = TIArbSysTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

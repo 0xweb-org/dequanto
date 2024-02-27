@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class ERC721PresetMinterPauserAutoId extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/ERC721PresetMinterPauserAutoId.ts"
-}
+        "class": "./contracts/openzeppelin/ERC721PresetMinterPauserAutoId.ts"
+    }
 
     async $constructor (deployer: TSender, name: string, symbol: string, baseTokenURI: string): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -214,10 +214,13 @@ export class ERC721PresetMinterPauserAutoId extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TERC721PresetMinterPauserAutoIdTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TERC721PresetMinterPauserAutoIdTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -225,8 +228,20 @@ export class ERC721PresetMinterPauserAutoId extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onApproval (fn?: (event: TClientEventsStreamData<TLogApprovalParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalParameters>> {
@@ -261,51 +276,51 @@ export class ERC721PresetMinterPauserAutoId extends ContractBase {
         return this.$onLog('Unpaused', fn);
     }
 
-    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TLogApproval>[] {
+    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Approval'>>[] {
         let abi = this.$getAbiItem('event', 'Approval');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApproval>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Approval'>>[];
     }
 
-    extractLogsApprovalForAll (tx: TEth.TxReceipt): ITxLogItem<TLogApprovalForAll>[] {
+    extractLogsApprovalForAll (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ApprovalForAll'>>[] {
         let abi = this.$getAbiItem('event', 'ApprovalForAll');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApprovalForAll>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ApprovalForAll'>>[];
     }
 
-    extractLogsPaused (tx: TEth.TxReceipt): ITxLogItem<TLogPaused>[] {
+    extractLogsPaused (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Paused'>>[] {
         let abi = this.$getAbiItem('event', 'Paused');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogPaused>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Paused'>>[];
     }
 
-    extractLogsRoleAdminChanged (tx: TEth.TxReceipt): ITxLogItem<TLogRoleAdminChanged>[] {
+    extractLogsRoleAdminChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RoleAdminChanged'>>[] {
         let abi = this.$getAbiItem('event', 'RoleAdminChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRoleAdminChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RoleAdminChanged'>>[];
     }
 
-    extractLogsRoleGranted (tx: TEth.TxReceipt): ITxLogItem<TLogRoleGranted>[] {
+    extractLogsRoleGranted (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RoleGranted'>>[] {
         let abi = this.$getAbiItem('event', 'RoleGranted');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRoleGranted>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RoleGranted'>>[];
     }
 
-    extractLogsRoleRevoked (tx: TEth.TxReceipt): ITxLogItem<TLogRoleRevoked>[] {
+    extractLogsRoleRevoked (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RoleRevoked'>>[] {
         let abi = this.$getAbiItem('event', 'RoleRevoked');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRoleRevoked>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RoleRevoked'>>[];
     }
 
-    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TLogTransfer>[] {
+    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Transfer'>>[] {
         let abi = this.$getAbiItem('event', 'Transfer');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogTransfer>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Transfer'>>[];
     }
 
-    extractLogsUnpaused (tx: TEth.TxReceipt): ITxLogItem<TLogUnpaused>[] {
+    extractLogsUnpaused (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Unpaused'>>[] {
         let abi = this.$getAbiItem('event', 'Unpaused');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogUnpaused>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Unpaused'>>[];
     }
 
     async getPastLogsApproval (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { owner?: TAddress,approved?: TAddress,tokenId?: bigint }
-    }): Promise<ITxLogItem<TLogApproval>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Approval'>>[]> {
         return await this.$getPastLogsParsed('Approval', options) as any;
     }
 
@@ -313,7 +328,7 @@ export class ERC721PresetMinterPauserAutoId extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { owner?: TAddress,operator?: TAddress }
-    }): Promise<ITxLogItem<TLogApprovalForAll>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ApprovalForAll'>>[]> {
         return await this.$getPastLogsParsed('ApprovalForAll', options) as any;
     }
 
@@ -321,7 +336,7 @@ export class ERC721PresetMinterPauserAutoId extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogPaused>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Paused'>>[]> {
         return await this.$getPastLogsParsed('Paused', options) as any;
     }
 
@@ -329,7 +344,7 @@ export class ERC721PresetMinterPauserAutoId extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { role?: TEth.Hex,previousAdminRole?: TEth.Hex,newAdminRole?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogRoleAdminChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RoleAdminChanged'>>[]> {
         return await this.$getPastLogsParsed('RoleAdminChanged', options) as any;
     }
 
@@ -337,7 +352,7 @@ export class ERC721PresetMinterPauserAutoId extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { role?: TEth.Hex,account?: TAddress,sender?: TAddress }
-    }): Promise<ITxLogItem<TLogRoleGranted>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RoleGranted'>>[]> {
         return await this.$getPastLogsParsed('RoleGranted', options) as any;
     }
 
@@ -345,7 +360,7 @@ export class ERC721PresetMinterPauserAutoId extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { role?: TEth.Hex,account?: TAddress,sender?: TAddress }
-    }): Promise<ITxLogItem<TLogRoleRevoked>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RoleRevoked'>>[]> {
         return await this.$getPastLogsParsed('RoleRevoked', options) as any;
     }
 
@@ -353,7 +368,7 @@ export class ERC721PresetMinterPauserAutoId extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { from?: TAddress,to?: TAddress,tokenId?: bigint }
-    }): Promise<ITxLogItem<TLogTransfer>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Transfer'>>[]> {
         return await this.$getPastLogsParsed('Transfer', options) as any;
     }
 
@@ -361,7 +376,7 @@ export class ERC721PresetMinterPauserAutoId extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogUnpaused>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Unpaused'>>[]> {
         return await this.$getPastLogsParsed('Unpaused', options) as any;
     }
 
@@ -374,239 +389,170 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogApproval = {
-        owner: TAddress, approved: TAddress, tokenId: bigint
-    };
-    type TLogApprovalParameters = [ owner: TAddress, approved: TAddress, tokenId: bigint ];
-    type TLogApprovalForAll = {
-        owner: TAddress, operator: TAddress, approved: boolean
-    };
-    type TLogApprovalForAllParameters = [ owner: TAddress, operator: TAddress, approved: boolean ];
-    type TLogPaused = {
-        account: TAddress
-    };
-    type TLogPausedParameters = [ account: TAddress ];
-    type TLogRoleAdminChanged = {
-        role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex
-    };
-    type TLogRoleAdminChangedParameters = [ role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex ];
-    type TLogRoleGranted = {
-        role: TEth.Hex, account: TAddress, _sender: TAddress
-    };
-    type TLogRoleGrantedParameters = [ role: TEth.Hex, account: TAddress, _sender: TAddress ];
-    type TLogRoleRevoked = {
-        role: TEth.Hex, account: TAddress, _sender: TAddress
-    };
-    type TLogRoleRevokedParameters = [ role: TEth.Hex, account: TAddress, _sender: TAddress ];
-    type TLogTransfer = {
-        from: TAddress, to: TAddress, tokenId: bigint
-    };
-    type TLogTransferParameters = [ from: TAddress, to: TAddress, tokenId: bigint ];
-    type TLogUnpaused = {
-        account: TAddress
-    };
-    type TLogUnpausedParameters = [ account: TAddress ];
-
-interface IEvents {
-  Approval: TLogApprovalParameters
-  ApprovalForAll: TLogApprovalForAllParameters
-  Paused: TLogPausedParameters
-  RoleAdminChanged: TLogRoleAdminChangedParameters
-  RoleGranted: TLogRoleGrantedParameters
-  RoleRevoked: TLogRoleRevokedParameters
-  Transfer: TLogTransferParameters
-  Unpaused: TLogUnpausedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodDEFAULT_ADMIN_ROLE {
-  method: "DEFAULT_ADMIN_ROLE"
-  arguments: [  ]
+export type TERC721PresetMinterPauserAutoIdTypes = {
+    Events: {
+        Approval: {
+            outputParams: { owner: TAddress, approved: TAddress, tokenId: bigint },
+            outputArgs:   [ owner: TAddress, approved: TAddress, tokenId: bigint ],
+        }
+        ApprovalForAll: {
+            outputParams: { owner: TAddress, operator: TAddress, approved: boolean },
+            outputArgs:   [ owner: TAddress, operator: TAddress, approved: boolean ],
+        }
+        Paused: {
+            outputParams: { account: TAddress },
+            outputArgs:   [ account: TAddress ],
+        }
+        RoleAdminChanged: {
+            outputParams: { role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex },
+            outputArgs:   [ role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex ],
+        }
+        RoleGranted: {
+            outputParams: { role: TEth.Hex, account: TAddress, _sender: TAddress },
+            outputArgs:   [ role: TEth.Hex, account: TAddress, _sender: TAddress ],
+        }
+        RoleRevoked: {
+            outputParams: { role: TEth.Hex, account: TAddress, _sender: TAddress },
+            outputArgs:   [ role: TEth.Hex, account: TAddress, _sender: TAddress ],
+        }
+        Transfer: {
+            outputParams: { from: TAddress, to: TAddress, tokenId: bigint },
+            outputArgs:   [ from: TAddress, to: TAddress, tokenId: bigint ],
+        }
+        Unpaused: {
+            outputParams: { account: TAddress },
+            outputArgs:   [ account: TAddress ],
+        }
+    },
+    Methods: {
+        DEFAULT_ADMIN_ROLE: {
+          method: "DEFAULT_ADMIN_ROLE"
+          arguments: [  ]
+        }
+        MINTER_ROLE: {
+          method: "MINTER_ROLE"
+          arguments: [  ]
+        }
+        PAUSER_ROLE: {
+          method: "PAUSER_ROLE"
+          arguments: [  ]
+        }
+        approve: {
+          method: "approve"
+          arguments: [ to: TAddress, tokenId: bigint ]
+        }
+        balanceOf: {
+          method: "balanceOf"
+          arguments: [ owner: TAddress ]
+        }
+        burn: {
+          method: "burn"
+          arguments: [ tokenId: bigint ]
+        }
+        getApproved: {
+          method: "getApproved"
+          arguments: [ tokenId: bigint ]
+        }
+        getRoleAdmin: {
+          method: "getRoleAdmin"
+          arguments: [ role: TEth.Hex ]
+        }
+        getRoleMember: {
+          method: "getRoleMember"
+          arguments: [ role: TEth.Hex, index: bigint ]
+        }
+        getRoleMemberCount: {
+          method: "getRoleMemberCount"
+          arguments: [ role: TEth.Hex ]
+        }
+        grantRole: {
+          method: "grantRole"
+          arguments: [ role: TEth.Hex, account: TAddress ]
+        }
+        hasRole: {
+          method: "hasRole"
+          arguments: [ role: TEth.Hex, account: TAddress ]
+        }
+        isApprovedForAll: {
+          method: "isApprovedForAll"
+          arguments: [ owner: TAddress, operator: TAddress ]
+        }
+        mint: {
+          method: "mint"
+          arguments: [ to: TAddress ]
+        }
+        name: {
+          method: "name"
+          arguments: [  ]
+        }
+        ownerOf: {
+          method: "ownerOf"
+          arguments: [ tokenId: bigint ]
+        }
+        pause: {
+          method: "pause"
+          arguments: [  ]
+        }
+        paused: {
+          method: "paused"
+          arguments: [  ]
+        }
+        renounceRole: {
+          method: "renounceRole"
+          arguments: [ role: TEth.Hex, account: TAddress ]
+        }
+        revokeRole: {
+          method: "revokeRole"
+          arguments: [ role: TEth.Hex, account: TAddress ]
+        }
+        safeTransferFrom: {
+          method: "safeTransferFrom"
+          arguments: [ from: TAddress, to: TAddress, tokenId: bigint ] | [ from: TAddress, to: TAddress, tokenId: bigint, data: TEth.Hex ]
+        }
+        setApprovalForAll: {
+          method: "setApprovalForAll"
+          arguments: [ operator: TAddress, approved: boolean ]
+        }
+        supportsInterface: {
+          method: "supportsInterface"
+          arguments: [ interfaceId: TEth.Hex ]
+        }
+        symbol: {
+          method: "symbol"
+          arguments: [  ]
+        }
+        tokenByIndex: {
+          method: "tokenByIndex"
+          arguments: [ index: bigint ]
+        }
+        tokenOfOwnerByIndex: {
+          method: "tokenOfOwnerByIndex"
+          arguments: [ owner: TAddress, index: bigint ]
+        }
+        tokenURI: {
+          method: "tokenURI"
+          arguments: [ tokenId: bigint ]
+        }
+        totalSupply: {
+          method: "totalSupply"
+          arguments: [  ]
+        }
+        transferFrom: {
+          method: "transferFrom"
+          arguments: [ from: TAddress, to: TAddress, tokenId: bigint ]
+        }
+        unpause: {
+          method: "unpause"
+          arguments: [  ]
+        }
+    }
 }
-
-interface IMethodMINTER_ROLE {
-  method: "MINTER_ROLE"
-  arguments: [  ]
-}
-
-interface IMethodPAUSER_ROLE {
-  method: "PAUSER_ROLE"
-  arguments: [  ]
-}
-
-interface IMethodApprove {
-  method: "approve"
-  arguments: [ to: TAddress, tokenId: bigint ]
-}
-
-interface IMethodBalanceOf {
-  method: "balanceOf"
-  arguments: [ owner: TAddress ]
-}
-
-interface IMethodBurn {
-  method: "burn"
-  arguments: [ tokenId: bigint ]
-}
-
-interface IMethodGetApproved {
-  method: "getApproved"
-  arguments: [ tokenId: bigint ]
-}
-
-interface IMethodGetRoleAdmin {
-  method: "getRoleAdmin"
-  arguments: [ role: TEth.Hex ]
-}
-
-interface IMethodGetRoleMember {
-  method: "getRoleMember"
-  arguments: [ role: TEth.Hex, index: bigint ]
-}
-
-interface IMethodGetRoleMemberCount {
-  method: "getRoleMemberCount"
-  arguments: [ role: TEth.Hex ]
-}
-
-interface IMethodGrantRole {
-  method: "grantRole"
-  arguments: [ role: TEth.Hex, account: TAddress ]
-}
-
-interface IMethodHasRole {
-  method: "hasRole"
-  arguments: [ role: TEth.Hex, account: TAddress ]
-}
-
-interface IMethodIsApprovedForAll {
-  method: "isApprovedForAll"
-  arguments: [ owner: TAddress, operator: TAddress ]
-}
-
-interface IMethodMint {
-  method: "mint"
-  arguments: [ to: TAddress ]
-}
-
-interface IMethodName {
-  method: "name"
-  arguments: [  ]
-}
-
-interface IMethodOwnerOf {
-  method: "ownerOf"
-  arguments: [ tokenId: bigint ]
-}
-
-interface IMethodPause {
-  method: "pause"
-  arguments: [  ]
-}
-
-interface IMethodPaused {
-  method: "paused"
-  arguments: [  ]
-}
-
-interface IMethodRenounceRole {
-  method: "renounceRole"
-  arguments: [ role: TEth.Hex, account: TAddress ]
-}
-
-interface IMethodRevokeRole {
-  method: "revokeRole"
-  arguments: [ role: TEth.Hex, account: TAddress ]
-}
-
-interface IMethodSafeTransferFrom {
-  method: "safeTransferFrom"
-  arguments: [ from: TAddress, to: TAddress, tokenId: bigint ] | [ from: TAddress, to: TAddress, tokenId: bigint, data: TEth.Hex ]
-}
-
-interface IMethodSetApprovalForAll {
-  method: "setApprovalForAll"
-  arguments: [ operator: TAddress, approved: boolean ]
-}
-
-interface IMethodSupportsInterface {
-  method: "supportsInterface"
-  arguments: [ interfaceId: TEth.Hex ]
-}
-
-interface IMethodSymbol {
-  method: "symbol"
-  arguments: [  ]
-}
-
-interface IMethodTokenByIndex {
-  method: "tokenByIndex"
-  arguments: [ index: bigint ]
-}
-
-interface IMethodTokenOfOwnerByIndex {
-  method: "tokenOfOwnerByIndex"
-  arguments: [ owner: TAddress, index: bigint ]
-}
-
-interface IMethodTokenURI {
-  method: "tokenURI"
-  arguments: [ tokenId: bigint ]
-}
-
-interface IMethodTotalSupply {
-  method: "totalSupply"
-  arguments: [  ]
-}
-
-interface IMethodTransferFrom {
-  method: "transferFrom"
-  arguments: [ from: TAddress, to: TAddress, tokenId: bigint ]
-}
-
-interface IMethodUnpause {
-  method: "unpause"
-  arguments: [  ]
-}
-
-interface IMethods {
-  DEFAULT_ADMIN_ROLE: IMethodDEFAULT_ADMIN_ROLE
-  MINTER_ROLE: IMethodMINTER_ROLE
-  PAUSER_ROLE: IMethodPAUSER_ROLE
-  approve: IMethodApprove
-  balanceOf: IMethodBalanceOf
-  burn: IMethodBurn
-  getApproved: IMethodGetApproved
-  getRoleAdmin: IMethodGetRoleAdmin
-  getRoleMember: IMethodGetRoleMember
-  getRoleMemberCount: IMethodGetRoleMemberCount
-  grantRole: IMethodGrantRole
-  hasRole: IMethodHasRole
-  isApprovedForAll: IMethodIsApprovedForAll
-  mint: IMethodMint
-  name: IMethodName
-  ownerOf: IMethodOwnerOf
-  pause: IMethodPause
-  paused: IMethodPaused
-  renounceRole: IMethodRenounceRole
-  revokeRole: IMethodRevokeRole
-  safeTransferFrom: IMethodSafeTransferFrom
-  setApprovalForAll: IMethodSetApprovalForAll
-  supportsInterface: IMethodSupportsInterface
-  symbol: IMethodSymbol
-  tokenByIndex: IMethodTokenByIndex
-  tokenOfOwnerByIndex: IMethodTokenOfOwnerByIndex
-  tokenURI: IMethodTokenURI
-  totalSupply: IMethodTotalSupply
-  transferFrom: IMethodTransferFrom
-  unpause: IMethodUnpause
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -642,3 +588,5 @@ interface IERC721PresetMinterPauserAutoIdTxData {
 }
 
 
+type TEvents = TERC721PresetMinterPauserAutoIdTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

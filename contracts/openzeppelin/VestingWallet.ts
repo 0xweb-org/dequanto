@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class VestingWallet extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/VestingWallet.ts"
-}
+        "class": "./contracts/openzeppelin/VestingWallet.ts"
+    }
 
     async $constructor (deployer: TSender, beneficiaryAddress: TAddress, startTimestamp: number, durationSeconds: number): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -111,10 +111,13 @@ export class VestingWallet extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TVestingWalletTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TVestingWalletTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -122,8 +125,20 @@ export class VestingWallet extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onERC20Released (fn?: (event: TClientEventsStreamData<TLogERC20ReleasedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogERC20ReleasedParameters>> {
@@ -134,21 +149,21 @@ export class VestingWallet extends ContractBase {
         return this.$onLog('EtherReleased', fn);
     }
 
-    extractLogsERC20Released (tx: TEth.TxReceipt): ITxLogItem<TLogERC20Released>[] {
+    extractLogsERC20Released (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ERC20Released'>>[] {
         let abi = this.$getAbiItem('event', 'ERC20Released');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogERC20Released>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ERC20Released'>>[];
     }
 
-    extractLogsEtherReleased (tx: TEth.TxReceipt): ITxLogItem<TLogEtherReleased>[] {
+    extractLogsEtherReleased (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'EtherReleased'>>[] {
         let abi = this.$getAbiItem('event', 'EtherReleased');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogEtherReleased>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'EtherReleased'>>[];
     }
 
     async getPastLogsERC20Released (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { token?: TAddress }
-    }): Promise<ITxLogItem<TLogERC20Released>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ERC20Released'>>[]> {
         return await this.$getPastLogsParsed('ERC20Released', options) as any;
     }
 
@@ -156,7 +171,7 @@ export class VestingWallet extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogEtherReleased>[]> {
+    }): Promise<ITxLogItem<TEventParams<'EtherReleased'>>[]> {
         return await this.$getPastLogsParsed('EtherReleased', options) as any;
     }
 
@@ -169,71 +184,54 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogERC20Released = {
-        token: TAddress, amount: bigint
-    };
-    type TLogERC20ReleasedParameters = [ token: TAddress, amount: bigint ];
-    type TLogEtherReleased = {
-        amount: bigint
-    };
-    type TLogEtherReleasedParameters = [ amount: bigint ];
-
-interface IEvents {
-  ERC20Released: TLogERC20ReleasedParameters
-  EtherReleased: TLogEtherReleasedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodBeneficiary {
-  method: "beneficiary"
-  arguments: [  ]
+export type TVestingWalletTypes = {
+    Events: {
+        ERC20Released: {
+            outputParams: { token: TAddress, amount: bigint },
+            outputArgs:   [ token: TAddress, amount: bigint ],
+        }
+        EtherReleased: {
+            outputParams: { amount: bigint },
+            outputArgs:   [ amount: bigint ],
+        }
+    },
+    Methods: {
+        beneficiary: {
+          method: "beneficiary"
+          arguments: [  ]
+        }
+        duration: {
+          method: "duration"
+          arguments: [  ]
+        }
+        releasable: {
+          method: "releasable"
+          arguments: [ token: TAddress ] | [  ]
+        }
+        release: {
+          method: "release"
+          arguments: [ token: TAddress ] | [  ]
+        }
+        released: {
+          method: "released"
+          arguments: [  ] | [ token: TAddress ]
+        }
+        start: {
+          method: "start"
+          arguments: [  ]
+        }
+        vestedAmount: {
+          method: "vestedAmount"
+          arguments: [ timestamp: number ] | [ token: TAddress, timestamp: number ]
+        }
+    }
 }
-
-interface IMethodDuration {
-  method: "duration"
-  arguments: [  ]
-}
-
-interface IMethodReleasable {
-  method: "releasable"
-  arguments: [ token: TAddress ] | [  ]
-}
-
-interface IMethodRelease {
-  method: "release"
-  arguments: [ token: TAddress ] | [  ]
-}
-
-interface IMethodReleased {
-  method: "released"
-  arguments: [  ] | [ token: TAddress ]
-}
-
-interface IMethodStart {
-  method: "start"
-  arguments: [  ]
-}
-
-interface IMethodVestedAmount {
-  method: "vestedAmount"
-  arguments: [ timestamp: number ] | [ token: TAddress, timestamp: number ]
-}
-
-interface IMethods {
-  beneficiary: IMethodBeneficiary
-  duration: IMethodDuration
-  releasable: IMethodReleasable
-  release: IMethodRelease
-  released: IMethodReleased
-  start: IMethodStart
-  vestedAmount: IMethodVestedAmount
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -249,3 +247,5 @@ interface IVestingWalletTxData {
 }
 
 
+type TEvents = TVestingWalletTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

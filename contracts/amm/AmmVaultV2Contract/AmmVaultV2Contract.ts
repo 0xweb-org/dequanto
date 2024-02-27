@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://bscscan.com/address/0xa80240Eb5d7E05d3F250cF000eEc0891d00b51CC#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class AmmVaultV2Contract extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/amm/AmmVaultV2Contract/AmmVaultV2Contract.ts"
-}
+        "class": "./contracts/amm/AmmVaultV2Contract/AmmVaultV2Contract.ts"
+    }
 
     async $constructor (deployer: TSender, _token: TAddress, _receiptToken: TAddress, _masterchef: TAddress, _admin: TAddress, _treasury: TAddress): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -255,10 +255,13 @@ export class AmmVaultV2Contract extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TAmmVaultV2ContractTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TAmmVaultV2ContractTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -266,8 +269,20 @@ export class AmmVaultV2Contract extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onDeposit (fn?: (event: TClientEventsStreamData<TLogDepositParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDepositParameters>> {
@@ -302,51 +317,51 @@ export class AmmVaultV2Contract extends ContractBase {
         return this.$onLog('Withdraw', fn);
     }
 
-    extractLogsDeposit (tx: TEth.TxReceipt): ITxLogItem<TLogDeposit>[] {
+    extractLogsDeposit (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Deposit'>>[] {
         let abi = this.$getAbiItem('event', 'Deposit');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogDeposit>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Deposit'>>[];
     }
 
-    extractLogsHarvest (tx: TEth.TxReceipt): ITxLogItem<TLogHarvest>[] {
+    extractLogsHarvest (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Harvest'>>[] {
         let abi = this.$getAbiItem('event', 'Harvest');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogHarvest>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Harvest'>>[];
     }
 
-    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TLogOwnershipTransferred>[] {
+    extractLogsOwnershipTransferred (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'OwnershipTransferred'>>[] {
         let abi = this.$getAbiItem('event', 'OwnershipTransferred');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogOwnershipTransferred>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'OwnershipTransferred'>>[];
     }
 
-    extractLogsPause (tx: TEth.TxReceipt): ITxLogItem<TLogPause>[] {
+    extractLogsPause (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Pause'>>[] {
         let abi = this.$getAbiItem('event', 'Pause');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogPause>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Pause'>>[];
     }
 
-    extractLogsPaused (tx: TEth.TxReceipt): ITxLogItem<TLogPaused>[] {
+    extractLogsPaused (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Paused'>>[] {
         let abi = this.$getAbiItem('event', 'Paused');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogPaused>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Paused'>>[];
     }
 
-    extractLogsUnpause (tx: TEth.TxReceipt): ITxLogItem<TLogUnpause>[] {
+    extractLogsUnpause (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Unpause'>>[] {
         let abi = this.$getAbiItem('event', 'Unpause');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogUnpause>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Unpause'>>[];
     }
 
-    extractLogsUnpaused (tx: TEth.TxReceipt): ITxLogItem<TLogUnpaused>[] {
+    extractLogsUnpaused (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Unpaused'>>[] {
         let abi = this.$getAbiItem('event', 'Unpaused');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogUnpaused>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Unpaused'>>[];
     }
 
-    extractLogsWithdraw (tx: TEth.TxReceipt): ITxLogItem<TLogWithdraw>[] {
+    extractLogsWithdraw (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Withdraw'>>[] {
         let abi = this.$getAbiItem('event', 'Withdraw');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogWithdraw>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Withdraw'>>[];
     }
 
     async getPastLogsDeposit (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { sender?: TAddress }
-    }): Promise<ITxLogItem<TLogDeposit>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Deposit'>>[]> {
         return await this.$getPastLogsParsed('Deposit', options) as any;
     }
 
@@ -354,7 +369,7 @@ export class AmmVaultV2Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { sender?: TAddress }
-    }): Promise<ITxLogItem<TLogHarvest>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Harvest'>>[]> {
         return await this.$getPastLogsParsed('Harvest', options) as any;
     }
 
@@ -362,7 +377,7 @@ export class AmmVaultV2Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { previousOwner?: TAddress,newOwner?: TAddress }
-    }): Promise<ITxLogItem<TLogOwnershipTransferred>[]> {
+    }): Promise<ITxLogItem<TEventParams<'OwnershipTransferred'>>[]> {
         return await this.$getPastLogsParsed('OwnershipTransferred', options) as any;
     }
 
@@ -370,7 +385,7 @@ export class AmmVaultV2Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogPause>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Pause'>>[]> {
         return await this.$getPastLogsParsed('Pause', options) as any;
     }
 
@@ -378,7 +393,7 @@ export class AmmVaultV2Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogPaused>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Paused'>>[]> {
         return await this.$getPastLogsParsed('Paused', options) as any;
     }
 
@@ -386,7 +401,7 @@ export class AmmVaultV2Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogUnpause>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Unpause'>>[]> {
         return await this.$getPastLogsParsed('Unpause', options) as any;
     }
 
@@ -394,7 +409,7 @@ export class AmmVaultV2Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogUnpaused>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Unpaused'>>[]> {
         return await this.$getPastLogsParsed('Unpaused', options) as any;
     }
 
@@ -402,7 +417,7 @@ export class AmmVaultV2Contract extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { sender?: TAddress }
-    }): Promise<ITxLogItem<TLogWithdraw>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Withdraw'>>[]> {
         return await this.$getPastLogsParsed('Withdraw', options) as any;
     }
 
@@ -415,292 +430,206 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogDeposit = {
-        _sender: TAddress, amount: bigint, shares: bigint, lastDepositedTime: bigint
-    };
-    type TLogDepositParameters = [ _sender: TAddress, amount: bigint, shares: bigint, lastDepositedTime: bigint ];
-    type TLogHarvest = {
-        _sender: TAddress, performanceFee: bigint, callFee: bigint
-    };
-    type TLogHarvestParameters = [ _sender: TAddress, performanceFee: bigint, callFee: bigint ];
-    type TLogOwnershipTransferred = {
-        previousOwner: TAddress, newOwner: TAddress
-    };
-    type TLogOwnershipTransferredParameters = [ previousOwner: TAddress, newOwner: TAddress ];
-    type TLogPause = {
-        
-    };
-    type TLogPauseParameters = [  ];
-    type TLogPaused = {
-        account: TAddress
-    };
-    type TLogPausedParameters = [ account: TAddress ];
-    type TLogUnpause = {
-        
-    };
-    type TLogUnpauseParameters = [  ];
-    type TLogUnpaused = {
-        account: TAddress
-    };
-    type TLogUnpausedParameters = [ account: TAddress ];
-    type TLogWithdraw = {
-        _sender: TAddress, amount: bigint, shares: bigint
-    };
-    type TLogWithdrawParameters = [ _sender: TAddress, amount: bigint, shares: bigint ];
-
-interface IEvents {
-  Deposit: TLogDepositParameters
-  Harvest: TLogHarvestParameters
-  OwnershipTransferred: TLogOwnershipTransferredParameters
-  Pause: TLogPauseParameters
-  Paused: TLogPausedParameters
-  Unpause: TLogUnpauseParameters
-  Unpaused: TLogUnpausedParameters
-  Withdraw: TLogWithdrawParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodMAX_CALL_FEE {
-  method: "MAX_CALL_FEE"
-  arguments: [  ]
+export type TAmmVaultV2ContractTypes = {
+    Events: {
+        Deposit: {
+            outputParams: { _sender: TAddress, amount: bigint, shares: bigint, lastDepositedTime: bigint },
+            outputArgs:   [ _sender: TAddress, amount: bigint, shares: bigint, lastDepositedTime: bigint ],
+        }
+        Harvest: {
+            outputParams: { _sender: TAddress, performanceFee: bigint, callFee: bigint },
+            outputArgs:   [ _sender: TAddress, performanceFee: bigint, callFee: bigint ],
+        }
+        OwnershipTransferred: {
+            outputParams: { previousOwner: TAddress, newOwner: TAddress },
+            outputArgs:   [ previousOwner: TAddress, newOwner: TAddress ],
+        }
+        Pause: {
+            outputParams: {  },
+            outputArgs:   [  ],
+        }
+        Paused: {
+            outputParams: { account: TAddress },
+            outputArgs:   [ account: TAddress ],
+        }
+        Unpause: {
+            outputParams: {  },
+            outputArgs:   [  ],
+        }
+        Unpaused: {
+            outputParams: { account: TAddress },
+            outputArgs:   [ account: TAddress ],
+        }
+        Withdraw: {
+            outputParams: { _sender: TAddress, amount: bigint, shares: bigint },
+            outputArgs:   [ _sender: TAddress, amount: bigint, shares: bigint ],
+        }
+    },
+    Methods: {
+        MAX_CALL_FEE: {
+          method: "MAX_CALL_FEE"
+          arguments: [  ]
+        }
+        MAX_PERFORMANCE_FEE: {
+          method: "MAX_PERFORMANCE_FEE"
+          arguments: [  ]
+        }
+        MAX_WITHDRAW_FEE: {
+          method: "MAX_WITHDRAW_FEE"
+          arguments: [  ]
+        }
+        MAX_WITHDRAW_FEE_PERIOD: {
+          method: "MAX_WITHDRAW_FEE_PERIOD"
+          arguments: [  ]
+        }
+        admin: {
+          method: "admin"
+          arguments: [  ]
+        }
+        available: {
+          method: "available"
+          arguments: [  ]
+        }
+        balanceOf: {
+          method: "balanceOf"
+          arguments: [  ]
+        }
+        calculateHarvestCakeRewards: {
+          method: "calculateHarvestCakeRewards"
+          arguments: [  ]
+        }
+        calculateTotalPendingCakeRewards: {
+          method: "calculateTotalPendingCakeRewards"
+          arguments: [  ]
+        }
+        callFee: {
+          method: "callFee"
+          arguments: [  ]
+        }
+        deposit: {
+          method: "deposit"
+          arguments: [ _amount: bigint ]
+        }
+        emergencyWithdraw: {
+          method: "emergencyWithdraw"
+          arguments: [  ]
+        }
+        getPricePerFullShare: {
+          method: "getPricePerFullShare"
+          arguments: [  ]
+        }
+        harvest: {
+          method: "harvest"
+          arguments: [  ]
+        }
+        inCaseTokensGetStuck: {
+          method: "inCaseTokensGetStuck"
+          arguments: [ _token: TAddress ]
+        }
+        lastHarvestedTime: {
+          method: "lastHarvestedTime"
+          arguments: [  ]
+        }
+        masterchef: {
+          method: "masterchef"
+          arguments: [  ]
+        }
+        owner: {
+          method: "owner"
+          arguments: [  ]
+        }
+        pause: {
+          method: "pause"
+          arguments: [  ]
+        }
+        paused: {
+          method: "paused"
+          arguments: [  ]
+        }
+        performanceFee: {
+          method: "performanceFee"
+          arguments: [  ]
+        }
+        receiptToken: {
+          method: "receiptToken"
+          arguments: [  ]
+        }
+        renounceOwnership: {
+          method: "renounceOwnership"
+          arguments: [  ]
+        }
+        setAdmin: {
+          method: "setAdmin"
+          arguments: [ _admin: TAddress ]
+        }
+        setCallFee: {
+          method: "setCallFee"
+          arguments: [ _callFee: bigint ]
+        }
+        setPerformanceFee: {
+          method: "setPerformanceFee"
+          arguments: [ _performanceFee: bigint ]
+        }
+        setTreasury: {
+          method: "setTreasury"
+          arguments: [ _treasury: TAddress ]
+        }
+        setWithdrawFee: {
+          method: "setWithdrawFee"
+          arguments: [ _withdrawFee: bigint ]
+        }
+        setWithdrawFeePeriod: {
+          method: "setWithdrawFeePeriod"
+          arguments: [ _withdrawFeePeriod: bigint ]
+        }
+        token: {
+          method: "token"
+          arguments: [  ]
+        }
+        totalShares: {
+          method: "totalShares"
+          arguments: [  ]
+        }
+        transferOwnership: {
+          method: "transferOwnership"
+          arguments: [ newOwner: TAddress ]
+        }
+        treasury: {
+          method: "treasury"
+          arguments: [  ]
+        }
+        unpause: {
+          method: "unpause"
+          arguments: [  ]
+        }
+        userInfo: {
+          method: "userInfo"
+          arguments: [ input0: TAddress ]
+        }
+        withdraw: {
+          method: "withdraw"
+          arguments: [ _shares: bigint ]
+        }
+        withdrawAll: {
+          method: "withdrawAll"
+          arguments: [  ]
+        }
+        withdrawFee: {
+          method: "withdrawFee"
+          arguments: [  ]
+        }
+        withdrawFeePeriod: {
+          method: "withdrawFeePeriod"
+          arguments: [  ]
+        }
+    }
 }
-
-interface IMethodMAX_PERFORMANCE_FEE {
-  method: "MAX_PERFORMANCE_FEE"
-  arguments: [  ]
-}
-
-interface IMethodMAX_WITHDRAW_FEE {
-  method: "MAX_WITHDRAW_FEE"
-  arguments: [  ]
-}
-
-interface IMethodMAX_WITHDRAW_FEE_PERIOD {
-  method: "MAX_WITHDRAW_FEE_PERIOD"
-  arguments: [  ]
-}
-
-interface IMethodAdmin {
-  method: "admin"
-  arguments: [  ]
-}
-
-interface IMethodAvailable {
-  method: "available"
-  arguments: [  ]
-}
-
-interface IMethodBalanceOf {
-  method: "balanceOf"
-  arguments: [  ]
-}
-
-interface IMethodCalculateHarvestCakeRewards {
-  method: "calculateHarvestCakeRewards"
-  arguments: [  ]
-}
-
-interface IMethodCalculateTotalPendingCakeRewards {
-  method: "calculateTotalPendingCakeRewards"
-  arguments: [  ]
-}
-
-interface IMethodCallFee {
-  method: "callFee"
-  arguments: [  ]
-}
-
-interface IMethodDeposit {
-  method: "deposit"
-  arguments: [ _amount: bigint ]
-}
-
-interface IMethodEmergencyWithdraw {
-  method: "emergencyWithdraw"
-  arguments: [  ]
-}
-
-interface IMethodGetPricePerFullShare {
-  method: "getPricePerFullShare"
-  arguments: [  ]
-}
-
-interface IMethodHarvest {
-  method: "harvest"
-  arguments: [  ]
-}
-
-interface IMethodInCaseTokensGetStuck {
-  method: "inCaseTokensGetStuck"
-  arguments: [ _token: TAddress ]
-}
-
-interface IMethodLastHarvestedTime {
-  method: "lastHarvestedTime"
-  arguments: [  ]
-}
-
-interface IMethodMasterchef {
-  method: "masterchef"
-  arguments: [  ]
-}
-
-interface IMethodOwner {
-  method: "owner"
-  arguments: [  ]
-}
-
-interface IMethodPause {
-  method: "pause"
-  arguments: [  ]
-}
-
-interface IMethodPaused {
-  method: "paused"
-  arguments: [  ]
-}
-
-interface IMethodPerformanceFee {
-  method: "performanceFee"
-  arguments: [  ]
-}
-
-interface IMethodReceiptToken {
-  method: "receiptToken"
-  arguments: [  ]
-}
-
-interface IMethodRenounceOwnership {
-  method: "renounceOwnership"
-  arguments: [  ]
-}
-
-interface IMethodSetAdmin {
-  method: "setAdmin"
-  arguments: [ _admin: TAddress ]
-}
-
-interface IMethodSetCallFee {
-  method: "setCallFee"
-  arguments: [ _callFee: bigint ]
-}
-
-interface IMethodSetPerformanceFee {
-  method: "setPerformanceFee"
-  arguments: [ _performanceFee: bigint ]
-}
-
-interface IMethodSetTreasury {
-  method: "setTreasury"
-  arguments: [ _treasury: TAddress ]
-}
-
-interface IMethodSetWithdrawFee {
-  method: "setWithdrawFee"
-  arguments: [ _withdrawFee: bigint ]
-}
-
-interface IMethodSetWithdrawFeePeriod {
-  method: "setWithdrawFeePeriod"
-  arguments: [ _withdrawFeePeriod: bigint ]
-}
-
-interface IMethodToken {
-  method: "token"
-  arguments: [  ]
-}
-
-interface IMethodTotalShares {
-  method: "totalShares"
-  arguments: [  ]
-}
-
-interface IMethodTransferOwnership {
-  method: "transferOwnership"
-  arguments: [ newOwner: TAddress ]
-}
-
-interface IMethodTreasury {
-  method: "treasury"
-  arguments: [  ]
-}
-
-interface IMethodUnpause {
-  method: "unpause"
-  arguments: [  ]
-}
-
-interface IMethodUserInfo {
-  method: "userInfo"
-  arguments: [ input0: TAddress ]
-}
-
-interface IMethodWithdraw {
-  method: "withdraw"
-  arguments: [ _shares: bigint ]
-}
-
-interface IMethodWithdrawAll {
-  method: "withdrawAll"
-  arguments: [  ]
-}
-
-interface IMethodWithdrawFee {
-  method: "withdrawFee"
-  arguments: [  ]
-}
-
-interface IMethodWithdrawFeePeriod {
-  method: "withdrawFeePeriod"
-  arguments: [  ]
-}
-
-interface IMethods {
-  MAX_CALL_FEE: IMethodMAX_CALL_FEE
-  MAX_PERFORMANCE_FEE: IMethodMAX_PERFORMANCE_FEE
-  MAX_WITHDRAW_FEE: IMethodMAX_WITHDRAW_FEE
-  MAX_WITHDRAW_FEE_PERIOD: IMethodMAX_WITHDRAW_FEE_PERIOD
-  admin: IMethodAdmin
-  available: IMethodAvailable
-  balanceOf: IMethodBalanceOf
-  calculateHarvestCakeRewards: IMethodCalculateHarvestCakeRewards
-  calculateTotalPendingCakeRewards: IMethodCalculateTotalPendingCakeRewards
-  callFee: IMethodCallFee
-  deposit: IMethodDeposit
-  emergencyWithdraw: IMethodEmergencyWithdraw
-  getPricePerFullShare: IMethodGetPricePerFullShare
-  harvest: IMethodHarvest
-  inCaseTokensGetStuck: IMethodInCaseTokensGetStuck
-  lastHarvestedTime: IMethodLastHarvestedTime
-  masterchef: IMethodMasterchef
-  owner: IMethodOwner
-  pause: IMethodPause
-  paused: IMethodPaused
-  performanceFee: IMethodPerformanceFee
-  receiptToken: IMethodReceiptToken
-  renounceOwnership: IMethodRenounceOwnership
-  setAdmin: IMethodSetAdmin
-  setCallFee: IMethodSetCallFee
-  setPerformanceFee: IMethodSetPerformanceFee
-  setTreasury: IMethodSetTreasury
-  setWithdrawFee: IMethodSetWithdrawFee
-  setWithdrawFeePeriod: IMethodSetWithdrawFeePeriod
-  token: IMethodToken
-  totalShares: IMethodTotalShares
-  transferOwnership: IMethodTransferOwnership
-  treasury: IMethodTreasury
-  unpause: IMethodUnpause
-  userInfo: IMethodUserInfo
-  withdraw: IMethodWithdraw
-  withdrawAll: IMethodWithdrawAll
-  withdrawFee: IMethodWithdrawFee
-  withdrawFeePeriod: IMethodWithdrawFeePeriod
-  '*': { method: string, arguments: any[] } 
-}
-
-
 
 
 
@@ -842,7 +771,6 @@ class AmmVaultV2ContractStorageReader extends ContractStorageReaderBase {
 }
 
 
-
 interface IAmmVaultV2ContractTxCaller {
     deposit (sender: TSender, _amount: bigint): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
     emergencyWithdraw (sender: TSender, ): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>
@@ -883,3 +811,5 @@ interface IAmmVaultV2ContractTxData {
 }
 
 
+type TEvents = TAmmVaultV2ContractTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

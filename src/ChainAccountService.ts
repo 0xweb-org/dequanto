@@ -54,7 +54,7 @@ export class ChainAccountService {
                 let client =  Web3ClientFactory.get(params?.platform ?? 'eth');
                 let ns = new NameService(client);
                 if (ns.supports(mix)) {
-                    let address = await ns.getAddress(mix);
+                    let { address } = await ns.getAddress(mix);
                     $require.Address(address, `Address from ${mix} not resolve from NameService`);
                     mix = address;
                 }

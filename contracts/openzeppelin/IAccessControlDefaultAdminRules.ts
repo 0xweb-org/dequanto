@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class IAccessControlDefaultAdminRules extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/IAccessControlDefaultAdminRules.ts"
-}
+        "class": "./contracts/openzeppelin/IAccessControlDefaultAdminRules.ts"
+    }
 
     // 0xcefc1429
     async acceptDefaultAdminTransfer (sender: TSender, ): Promise<TxWriter> {
@@ -131,10 +131,13 @@ export class IAccessControlDefaultAdminRules extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TIAccessControlDefaultAdminRulesTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TIAccessControlDefaultAdminRulesTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -142,8 +145,20 @@ export class IAccessControlDefaultAdminRules extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onDefaultAdminDelayChangeCanceled (fn?: (event: TClientEventsStreamData<TLogDefaultAdminDelayChangeCanceledParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDefaultAdminDelayChangeCanceledParameters>> {
@@ -174,46 +189,46 @@ export class IAccessControlDefaultAdminRules extends ContractBase {
         return this.$onLog('RoleRevoked', fn);
     }
 
-    extractLogsDefaultAdminDelayChangeCanceled (tx: TEth.TxReceipt): ITxLogItem<TLogDefaultAdminDelayChangeCanceled>[] {
+    extractLogsDefaultAdminDelayChangeCanceled (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'DefaultAdminDelayChangeCanceled'>>[] {
         let abi = this.$getAbiItem('event', 'DefaultAdminDelayChangeCanceled');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogDefaultAdminDelayChangeCanceled>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'DefaultAdminDelayChangeCanceled'>>[];
     }
 
-    extractLogsDefaultAdminDelayChangeScheduled (tx: TEth.TxReceipt): ITxLogItem<TLogDefaultAdminDelayChangeScheduled>[] {
+    extractLogsDefaultAdminDelayChangeScheduled (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'DefaultAdminDelayChangeScheduled'>>[] {
         let abi = this.$getAbiItem('event', 'DefaultAdminDelayChangeScheduled');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogDefaultAdminDelayChangeScheduled>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'DefaultAdminDelayChangeScheduled'>>[];
     }
 
-    extractLogsDefaultAdminTransferCanceled (tx: TEth.TxReceipt): ITxLogItem<TLogDefaultAdminTransferCanceled>[] {
+    extractLogsDefaultAdminTransferCanceled (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'DefaultAdminTransferCanceled'>>[] {
         let abi = this.$getAbiItem('event', 'DefaultAdminTransferCanceled');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogDefaultAdminTransferCanceled>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'DefaultAdminTransferCanceled'>>[];
     }
 
-    extractLogsDefaultAdminTransferScheduled (tx: TEth.TxReceipt): ITxLogItem<TLogDefaultAdminTransferScheduled>[] {
+    extractLogsDefaultAdminTransferScheduled (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'DefaultAdminTransferScheduled'>>[] {
         let abi = this.$getAbiItem('event', 'DefaultAdminTransferScheduled');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogDefaultAdminTransferScheduled>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'DefaultAdminTransferScheduled'>>[];
     }
 
-    extractLogsRoleAdminChanged (tx: TEth.TxReceipt): ITxLogItem<TLogRoleAdminChanged>[] {
+    extractLogsRoleAdminChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RoleAdminChanged'>>[] {
         let abi = this.$getAbiItem('event', 'RoleAdminChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRoleAdminChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RoleAdminChanged'>>[];
     }
 
-    extractLogsRoleGranted (tx: TEth.TxReceipt): ITxLogItem<TLogRoleGranted>[] {
+    extractLogsRoleGranted (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RoleGranted'>>[] {
         let abi = this.$getAbiItem('event', 'RoleGranted');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRoleGranted>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RoleGranted'>>[];
     }
 
-    extractLogsRoleRevoked (tx: TEth.TxReceipt): ITxLogItem<TLogRoleRevoked>[] {
+    extractLogsRoleRevoked (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RoleRevoked'>>[] {
         let abi = this.$getAbiItem('event', 'RoleRevoked');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRoleRevoked>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RoleRevoked'>>[];
     }
 
     async getPastLogsDefaultAdminDelayChangeCanceled (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogDefaultAdminDelayChangeCanceled>[]> {
+    }): Promise<ITxLogItem<TEventParams<'DefaultAdminDelayChangeCanceled'>>[]> {
         return await this.$getPastLogsParsed('DefaultAdminDelayChangeCanceled', options) as any;
     }
 
@@ -221,7 +236,7 @@ export class IAccessControlDefaultAdminRules extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogDefaultAdminDelayChangeScheduled>[]> {
+    }): Promise<ITxLogItem<TEventParams<'DefaultAdminDelayChangeScheduled'>>[]> {
         return await this.$getPastLogsParsed('DefaultAdminDelayChangeScheduled', options) as any;
     }
 
@@ -229,7 +244,7 @@ export class IAccessControlDefaultAdminRules extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogDefaultAdminTransferCanceled>[]> {
+    }): Promise<ITxLogItem<TEventParams<'DefaultAdminTransferCanceled'>>[]> {
         return await this.$getPastLogsParsed('DefaultAdminTransferCanceled', options) as any;
     }
 
@@ -237,7 +252,7 @@ export class IAccessControlDefaultAdminRules extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { newAdmin?: TAddress }
-    }): Promise<ITxLogItem<TLogDefaultAdminTransferScheduled>[]> {
+    }): Promise<ITxLogItem<TEventParams<'DefaultAdminTransferScheduled'>>[]> {
         return await this.$getPastLogsParsed('DefaultAdminTransferScheduled', options) as any;
     }
 
@@ -245,7 +260,7 @@ export class IAccessControlDefaultAdminRules extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { role?: TEth.Hex,previousAdminRole?: TEth.Hex,newAdminRole?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogRoleAdminChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RoleAdminChanged'>>[]> {
         return await this.$getPastLogsParsed('RoleAdminChanged', options) as any;
     }
 
@@ -253,7 +268,7 @@ export class IAccessControlDefaultAdminRules extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { role?: TEth.Hex,account?: TAddress,sender?: TAddress }
-    }): Promise<ITxLogItem<TLogRoleGranted>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RoleGranted'>>[]> {
         return await this.$getPastLogsParsed('RoleGranted', options) as any;
     }
 
@@ -261,7 +276,7 @@ export class IAccessControlDefaultAdminRules extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { role?: TEth.Hex,account?: TAddress,sender?: TAddress }
-    }): Promise<ITxLogItem<TLogRoleRevoked>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RoleRevoked'>>[]> {
         return await this.$getPastLogsParsed('RoleRevoked', options) as any;
     }
 
@@ -274,144 +289,106 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogDefaultAdminDelayChangeCanceled = {
-        
-    };
-    type TLogDefaultAdminDelayChangeCanceledParameters = [  ];
-    type TLogDefaultAdminDelayChangeScheduled = {
-        newDelay: number, effectSchedule: number
-    };
-    type TLogDefaultAdminDelayChangeScheduledParameters = [ newDelay: number, effectSchedule: number ];
-    type TLogDefaultAdminTransferCanceled = {
-        
-    };
-    type TLogDefaultAdminTransferCanceledParameters = [  ];
-    type TLogDefaultAdminTransferScheduled = {
-        newAdmin: TAddress, acceptSchedule: number
-    };
-    type TLogDefaultAdminTransferScheduledParameters = [ newAdmin: TAddress, acceptSchedule: number ];
-    type TLogRoleAdminChanged = {
-        role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex
-    };
-    type TLogRoleAdminChangedParameters = [ role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex ];
-    type TLogRoleGranted = {
-        role: TEth.Hex, account: TAddress, _sender: TAddress
-    };
-    type TLogRoleGrantedParameters = [ role: TEth.Hex, account: TAddress, _sender: TAddress ];
-    type TLogRoleRevoked = {
-        role: TEth.Hex, account: TAddress, _sender: TAddress
-    };
-    type TLogRoleRevokedParameters = [ role: TEth.Hex, account: TAddress, _sender: TAddress ];
-
-interface IEvents {
-  DefaultAdminDelayChangeCanceled: TLogDefaultAdminDelayChangeCanceledParameters
-  DefaultAdminDelayChangeScheduled: TLogDefaultAdminDelayChangeScheduledParameters
-  DefaultAdminTransferCanceled: TLogDefaultAdminTransferCanceledParameters
-  DefaultAdminTransferScheduled: TLogDefaultAdminTransferScheduledParameters
-  RoleAdminChanged: TLogRoleAdminChangedParameters
-  RoleGranted: TLogRoleGrantedParameters
-  RoleRevoked: TLogRoleRevokedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodAcceptDefaultAdminTransfer {
-  method: "acceptDefaultAdminTransfer"
-  arguments: [  ]
+export type TIAccessControlDefaultAdminRulesTypes = {
+    Events: {
+        DefaultAdminDelayChangeCanceled: {
+            outputParams: {  },
+            outputArgs:   [  ],
+        }
+        DefaultAdminDelayChangeScheduled: {
+            outputParams: { newDelay: number, effectSchedule: number },
+            outputArgs:   [ newDelay: number, effectSchedule: number ],
+        }
+        DefaultAdminTransferCanceled: {
+            outputParams: {  },
+            outputArgs:   [  ],
+        }
+        DefaultAdminTransferScheduled: {
+            outputParams: { newAdmin: TAddress, acceptSchedule: number },
+            outputArgs:   [ newAdmin: TAddress, acceptSchedule: number ],
+        }
+        RoleAdminChanged: {
+            outputParams: { role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex },
+            outputArgs:   [ role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex ],
+        }
+        RoleGranted: {
+            outputParams: { role: TEth.Hex, account: TAddress, _sender: TAddress },
+            outputArgs:   [ role: TEth.Hex, account: TAddress, _sender: TAddress ],
+        }
+        RoleRevoked: {
+            outputParams: { role: TEth.Hex, account: TAddress, _sender: TAddress },
+            outputArgs:   [ role: TEth.Hex, account: TAddress, _sender: TAddress ],
+        }
+    },
+    Methods: {
+        acceptDefaultAdminTransfer: {
+          method: "acceptDefaultAdminTransfer"
+          arguments: [  ]
+        }
+        beginDefaultAdminTransfer: {
+          method: "beginDefaultAdminTransfer"
+          arguments: [ newAdmin: TAddress ]
+        }
+        cancelDefaultAdminTransfer: {
+          method: "cancelDefaultAdminTransfer"
+          arguments: [  ]
+        }
+        changeDefaultAdminDelay: {
+          method: "changeDefaultAdminDelay"
+          arguments: [ newDelay: number ]
+        }
+        defaultAdmin: {
+          method: "defaultAdmin"
+          arguments: [  ]
+        }
+        defaultAdminDelay: {
+          method: "defaultAdminDelay"
+          arguments: [  ]
+        }
+        defaultAdminDelayIncreaseWait: {
+          method: "defaultAdminDelayIncreaseWait"
+          arguments: [  ]
+        }
+        getRoleAdmin: {
+          method: "getRoleAdmin"
+          arguments: [ role: TEth.Hex ]
+        }
+        grantRole: {
+          method: "grantRole"
+          arguments: [ role: TEth.Hex, account: TAddress ]
+        }
+        hasRole: {
+          method: "hasRole"
+          arguments: [ role: TEth.Hex, account: TAddress ]
+        }
+        pendingDefaultAdmin: {
+          method: "pendingDefaultAdmin"
+          arguments: [  ]
+        }
+        pendingDefaultAdminDelay: {
+          method: "pendingDefaultAdminDelay"
+          arguments: [  ]
+        }
+        renounceRole: {
+          method: "renounceRole"
+          arguments: [ role: TEth.Hex, account: TAddress ]
+        }
+        revokeRole: {
+          method: "revokeRole"
+          arguments: [ role: TEth.Hex, account: TAddress ]
+        }
+        rollbackDefaultAdminDelay: {
+          method: "rollbackDefaultAdminDelay"
+          arguments: [  ]
+        }
+    }
 }
-
-interface IMethodBeginDefaultAdminTransfer {
-  method: "beginDefaultAdminTransfer"
-  arguments: [ newAdmin: TAddress ]
-}
-
-interface IMethodCancelDefaultAdminTransfer {
-  method: "cancelDefaultAdminTransfer"
-  arguments: [  ]
-}
-
-interface IMethodChangeDefaultAdminDelay {
-  method: "changeDefaultAdminDelay"
-  arguments: [ newDelay: number ]
-}
-
-interface IMethodDefaultAdmin {
-  method: "defaultAdmin"
-  arguments: [  ]
-}
-
-interface IMethodDefaultAdminDelay {
-  method: "defaultAdminDelay"
-  arguments: [  ]
-}
-
-interface IMethodDefaultAdminDelayIncreaseWait {
-  method: "defaultAdminDelayIncreaseWait"
-  arguments: [  ]
-}
-
-interface IMethodGetRoleAdmin {
-  method: "getRoleAdmin"
-  arguments: [ role: TEth.Hex ]
-}
-
-interface IMethodGrantRole {
-  method: "grantRole"
-  arguments: [ role: TEth.Hex, account: TAddress ]
-}
-
-interface IMethodHasRole {
-  method: "hasRole"
-  arguments: [ role: TEth.Hex, account: TAddress ]
-}
-
-interface IMethodPendingDefaultAdmin {
-  method: "pendingDefaultAdmin"
-  arguments: [  ]
-}
-
-interface IMethodPendingDefaultAdminDelay {
-  method: "pendingDefaultAdminDelay"
-  arguments: [  ]
-}
-
-interface IMethodRenounceRole {
-  method: "renounceRole"
-  arguments: [ role: TEth.Hex, account: TAddress ]
-}
-
-interface IMethodRevokeRole {
-  method: "revokeRole"
-  arguments: [ role: TEth.Hex, account: TAddress ]
-}
-
-interface IMethodRollbackDefaultAdminDelay {
-  method: "rollbackDefaultAdminDelay"
-  arguments: [  ]
-}
-
-interface IMethods {
-  acceptDefaultAdminTransfer: IMethodAcceptDefaultAdminTransfer
-  beginDefaultAdminTransfer: IMethodBeginDefaultAdminTransfer
-  cancelDefaultAdminTransfer: IMethodCancelDefaultAdminTransfer
-  changeDefaultAdminDelay: IMethodChangeDefaultAdminDelay
-  defaultAdmin: IMethodDefaultAdmin
-  defaultAdminDelay: IMethodDefaultAdminDelay
-  defaultAdminDelayIncreaseWait: IMethodDefaultAdminDelayIncreaseWait
-  getRoleAdmin: IMethodGetRoleAdmin
-  grantRole: IMethodGrantRole
-  hasRole: IMethodHasRole
-  pendingDefaultAdmin: IMethodPendingDefaultAdmin
-  pendingDefaultAdminDelay: IMethodPendingDefaultAdminDelay
-  renounceRole: IMethodRenounceRole
-  revokeRole: IMethodRevokeRole
-  rollbackDefaultAdminDelay: IMethodRollbackDefaultAdminDelay
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -439,3 +416,5 @@ interface IIAccessControlDefaultAdminRulesTxData {
 }
 
 
+type TEvents = TIAccessControlDefaultAdminRulesTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

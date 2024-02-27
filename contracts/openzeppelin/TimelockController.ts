@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class TimelockController extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/TimelockController.ts"
-}
+        "class": "./contracts/openzeppelin/TimelockController.ts"
+    }
 
     async $constructor (deployer: TSender, minDelay: bigint, proposers: TAddress[], executors: TAddress[], admin: TAddress): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -200,10 +200,13 @@ export class TimelockController extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TTimelockControllerTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TTimelockControllerTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -211,8 +214,20 @@ export class TimelockController extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onCallExecuted (fn?: (event: TClientEventsStreamData<TLogCallExecutedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogCallExecutedParameters>> {
@@ -247,51 +262,51 @@ export class TimelockController extends ContractBase {
         return this.$onLog('RoleRevoked', fn);
     }
 
-    extractLogsCallExecuted (tx: TEth.TxReceipt): ITxLogItem<TLogCallExecuted>[] {
+    extractLogsCallExecuted (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'CallExecuted'>>[] {
         let abi = this.$getAbiItem('event', 'CallExecuted');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogCallExecuted>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'CallExecuted'>>[];
     }
 
-    extractLogsCallSalt (tx: TEth.TxReceipt): ITxLogItem<TLogCallSalt>[] {
+    extractLogsCallSalt (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'CallSalt'>>[] {
         let abi = this.$getAbiItem('event', 'CallSalt');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogCallSalt>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'CallSalt'>>[];
     }
 
-    extractLogsCallScheduled (tx: TEth.TxReceipt): ITxLogItem<TLogCallScheduled>[] {
+    extractLogsCallScheduled (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'CallScheduled'>>[] {
         let abi = this.$getAbiItem('event', 'CallScheduled');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogCallScheduled>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'CallScheduled'>>[];
     }
 
-    extractLogsCancelled (tx: TEth.TxReceipt): ITxLogItem<TLogCancelled>[] {
+    extractLogsCancelled (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Cancelled'>>[] {
         let abi = this.$getAbiItem('event', 'Cancelled');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogCancelled>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Cancelled'>>[];
     }
 
-    extractLogsMinDelayChange (tx: TEth.TxReceipt): ITxLogItem<TLogMinDelayChange>[] {
+    extractLogsMinDelayChange (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'MinDelayChange'>>[] {
         let abi = this.$getAbiItem('event', 'MinDelayChange');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogMinDelayChange>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'MinDelayChange'>>[];
     }
 
-    extractLogsRoleAdminChanged (tx: TEth.TxReceipt): ITxLogItem<TLogRoleAdminChanged>[] {
+    extractLogsRoleAdminChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RoleAdminChanged'>>[] {
         let abi = this.$getAbiItem('event', 'RoleAdminChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRoleAdminChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RoleAdminChanged'>>[];
     }
 
-    extractLogsRoleGranted (tx: TEth.TxReceipt): ITxLogItem<TLogRoleGranted>[] {
+    extractLogsRoleGranted (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RoleGranted'>>[] {
         let abi = this.$getAbiItem('event', 'RoleGranted');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRoleGranted>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RoleGranted'>>[];
     }
 
-    extractLogsRoleRevoked (tx: TEth.TxReceipt): ITxLogItem<TLogRoleRevoked>[] {
+    extractLogsRoleRevoked (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RoleRevoked'>>[] {
         let abi = this.$getAbiItem('event', 'RoleRevoked');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRoleRevoked>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RoleRevoked'>>[];
     }
 
     async getPastLogsCallExecuted (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { id?: TEth.Hex,index?: bigint }
-    }): Promise<ITxLogItem<TLogCallExecuted>[]> {
+    }): Promise<ITxLogItem<TEventParams<'CallExecuted'>>[]> {
         return await this.$getPastLogsParsed('CallExecuted', options) as any;
     }
 
@@ -299,7 +314,7 @@ export class TimelockController extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { id?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogCallSalt>[]> {
+    }): Promise<ITxLogItem<TEventParams<'CallSalt'>>[]> {
         return await this.$getPastLogsParsed('CallSalt', options) as any;
     }
 
@@ -307,7 +322,7 @@ export class TimelockController extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { id?: TEth.Hex,index?: bigint }
-    }): Promise<ITxLogItem<TLogCallScheduled>[]> {
+    }): Promise<ITxLogItem<TEventParams<'CallScheduled'>>[]> {
         return await this.$getPastLogsParsed('CallScheduled', options) as any;
     }
 
@@ -315,7 +330,7 @@ export class TimelockController extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { id?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogCancelled>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Cancelled'>>[]> {
         return await this.$getPastLogsParsed('Cancelled', options) as any;
     }
 
@@ -323,7 +338,7 @@ export class TimelockController extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogMinDelayChange>[]> {
+    }): Promise<ITxLogItem<TEventParams<'MinDelayChange'>>[]> {
         return await this.$getPastLogsParsed('MinDelayChange', options) as any;
     }
 
@@ -331,7 +346,7 @@ export class TimelockController extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { role?: TEth.Hex,previousAdminRole?: TEth.Hex,newAdminRole?: TEth.Hex }
-    }): Promise<ITxLogItem<TLogRoleAdminChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RoleAdminChanged'>>[]> {
         return await this.$getPastLogsParsed('RoleAdminChanged', options) as any;
     }
 
@@ -339,7 +354,7 @@ export class TimelockController extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { role?: TEth.Hex,account?: TAddress,sender?: TAddress }
-    }): Promise<ITxLogItem<TLogRoleGranted>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RoleGranted'>>[]> {
         return await this.$getPastLogsParsed('RoleGranted', options) as any;
     }
 
@@ -347,7 +362,7 @@ export class TimelockController extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { role?: TEth.Hex,account?: TAddress,sender?: TAddress }
-    }): Promise<ITxLogItem<TLogRoleRevoked>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RoleRevoked'>>[]> {
         return await this.$getPastLogsParsed('RoleRevoked', options) as any;
     }
 
@@ -360,227 +375,162 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogCallExecuted = {
-        id: TEth.Hex, index: bigint, target: TAddress, value: bigint, data: TEth.Hex
-    };
-    type TLogCallExecutedParameters = [ id: TEth.Hex, index: bigint, target: TAddress, value: bigint, data: TEth.Hex ];
-    type TLogCallSalt = {
-        id: TEth.Hex, salt: TEth.Hex
-    };
-    type TLogCallSaltParameters = [ id: TEth.Hex, salt: TEth.Hex ];
-    type TLogCallScheduled = {
-        id: TEth.Hex, index: bigint, target: TAddress, value: bigint, data: TEth.Hex, predecessor: TEth.Hex, delay: bigint
-    };
-    type TLogCallScheduledParameters = [ id: TEth.Hex, index: bigint, target: TAddress, value: bigint, data: TEth.Hex, predecessor: TEth.Hex, delay: bigint ];
-    type TLogCancelled = {
-        id: TEth.Hex
-    };
-    type TLogCancelledParameters = [ id: TEth.Hex ];
-    type TLogMinDelayChange = {
-        oldDuration: bigint, newDuration: bigint
-    };
-    type TLogMinDelayChangeParameters = [ oldDuration: bigint, newDuration: bigint ];
-    type TLogRoleAdminChanged = {
-        role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex
-    };
-    type TLogRoleAdminChangedParameters = [ role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex ];
-    type TLogRoleGranted = {
-        role: TEth.Hex, account: TAddress, _sender: TAddress
-    };
-    type TLogRoleGrantedParameters = [ role: TEth.Hex, account: TAddress, _sender: TAddress ];
-    type TLogRoleRevoked = {
-        role: TEth.Hex, account: TAddress, _sender: TAddress
-    };
-    type TLogRoleRevokedParameters = [ role: TEth.Hex, account: TAddress, _sender: TAddress ];
-
-interface IEvents {
-  CallExecuted: TLogCallExecutedParameters
-  CallSalt: TLogCallSaltParameters
-  CallScheduled: TLogCallScheduledParameters
-  Cancelled: TLogCancelledParameters
-  MinDelayChange: TLogMinDelayChangeParameters
-  RoleAdminChanged: TLogRoleAdminChangedParameters
-  RoleGranted: TLogRoleGrantedParameters
-  RoleRevoked: TLogRoleRevokedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodCANCELLER_ROLE {
-  method: "CANCELLER_ROLE"
-  arguments: [  ]
+export type TTimelockControllerTypes = {
+    Events: {
+        CallExecuted: {
+            outputParams: { id: TEth.Hex, index: bigint, target: TAddress, value: bigint, data: TEth.Hex },
+            outputArgs:   [ id: TEth.Hex, index: bigint, target: TAddress, value: bigint, data: TEth.Hex ],
+        }
+        CallSalt: {
+            outputParams: { id: TEth.Hex, salt: TEth.Hex },
+            outputArgs:   [ id: TEth.Hex, salt: TEth.Hex ],
+        }
+        CallScheduled: {
+            outputParams: { id: TEth.Hex, index: bigint, target: TAddress, value: bigint, data: TEth.Hex, predecessor: TEth.Hex, delay: bigint },
+            outputArgs:   [ id: TEth.Hex, index: bigint, target: TAddress, value: bigint, data: TEth.Hex, predecessor: TEth.Hex, delay: bigint ],
+        }
+        Cancelled: {
+            outputParams: { id: TEth.Hex },
+            outputArgs:   [ id: TEth.Hex ],
+        }
+        MinDelayChange: {
+            outputParams: { oldDuration: bigint, newDuration: bigint },
+            outputArgs:   [ oldDuration: bigint, newDuration: bigint ],
+        }
+        RoleAdminChanged: {
+            outputParams: { role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex },
+            outputArgs:   [ role: TEth.Hex, previousAdminRole: TEth.Hex, newAdminRole: TEth.Hex ],
+        }
+        RoleGranted: {
+            outputParams: { role: TEth.Hex, account: TAddress, _sender: TAddress },
+            outputArgs:   [ role: TEth.Hex, account: TAddress, _sender: TAddress ],
+        }
+        RoleRevoked: {
+            outputParams: { role: TEth.Hex, account: TAddress, _sender: TAddress },
+            outputArgs:   [ role: TEth.Hex, account: TAddress, _sender: TAddress ],
+        }
+    },
+    Methods: {
+        CANCELLER_ROLE: {
+          method: "CANCELLER_ROLE"
+          arguments: [  ]
+        }
+        DEFAULT_ADMIN_ROLE: {
+          method: "DEFAULT_ADMIN_ROLE"
+          arguments: [  ]
+        }
+        EXECUTOR_ROLE: {
+          method: "EXECUTOR_ROLE"
+          arguments: [  ]
+        }
+        PROPOSER_ROLE: {
+          method: "PROPOSER_ROLE"
+          arguments: [  ]
+        }
+        TIMELOCK_ADMIN_ROLE: {
+          method: "TIMELOCK_ADMIN_ROLE"
+          arguments: [  ]
+        }
+        cancel: {
+          method: "cancel"
+          arguments: [ id: TEth.Hex ]
+        }
+        execute: {
+          method: "execute"
+          arguments: [ target: TAddress, value: bigint, payload: TEth.Hex, predecessor: TEth.Hex, salt: TEth.Hex ]
+        }
+        executeBatch: {
+          method: "executeBatch"
+          arguments: [ targets: TAddress[], values: bigint[], payloads: TEth.Hex[], predecessor: TEth.Hex, salt: TEth.Hex ]
+        }
+        getMinDelay: {
+          method: "getMinDelay"
+          arguments: [  ]
+        }
+        getRoleAdmin: {
+          method: "getRoleAdmin"
+          arguments: [ role: TEth.Hex ]
+        }
+        getTimestamp: {
+          method: "getTimestamp"
+          arguments: [ id: TEth.Hex ]
+        }
+        grantRole: {
+          method: "grantRole"
+          arguments: [ role: TEth.Hex, account: TAddress ]
+        }
+        hasRole: {
+          method: "hasRole"
+          arguments: [ role: TEth.Hex, account: TAddress ]
+        }
+        hashOperation: {
+          method: "hashOperation"
+          arguments: [ target: TAddress, value: bigint, data: TEth.Hex, predecessor: TEth.Hex, salt: TEth.Hex ]
+        }
+        hashOperationBatch: {
+          method: "hashOperationBatch"
+          arguments: [ targets: TAddress[], values: bigint[], payloads: TEth.Hex[], predecessor: TEth.Hex, salt: TEth.Hex ]
+        }
+        isOperation: {
+          method: "isOperation"
+          arguments: [ id: TEth.Hex ]
+        }
+        isOperationDone: {
+          method: "isOperationDone"
+          arguments: [ id: TEth.Hex ]
+        }
+        isOperationPending: {
+          method: "isOperationPending"
+          arguments: [ id: TEth.Hex ]
+        }
+        isOperationReady: {
+          method: "isOperationReady"
+          arguments: [ id: TEth.Hex ]
+        }
+        onERC1155BatchReceived: {
+          method: "onERC1155BatchReceived"
+          arguments: [ input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TEth.Hex ]
+        }
+        onERC1155Received: {
+          method: "onERC1155Received"
+          arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TEth.Hex ]
+        }
+        onERC721Received: {
+          method: "onERC721Received"
+          arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: TEth.Hex ]
+        }
+        renounceRole: {
+          method: "renounceRole"
+          arguments: [ role: TEth.Hex, account: TAddress ]
+        }
+        revokeRole: {
+          method: "revokeRole"
+          arguments: [ role: TEth.Hex, account: TAddress ]
+        }
+        schedule: {
+          method: "schedule"
+          arguments: [ target: TAddress, value: bigint, data: TEth.Hex, predecessor: TEth.Hex, salt: TEth.Hex, delay: bigint ]
+        }
+        scheduleBatch: {
+          method: "scheduleBatch"
+          arguments: [ targets: TAddress[], values: bigint[], payloads: TEth.Hex[], predecessor: TEth.Hex, salt: TEth.Hex, delay: bigint ]
+        }
+        supportsInterface: {
+          method: "supportsInterface"
+          arguments: [ interfaceId: TEth.Hex ]
+        }
+        updateDelay: {
+          method: "updateDelay"
+          arguments: [ newDelay: bigint ]
+        }
+    }
 }
-
-interface IMethodDEFAULT_ADMIN_ROLE {
-  method: "DEFAULT_ADMIN_ROLE"
-  arguments: [  ]
-}
-
-interface IMethodEXECUTOR_ROLE {
-  method: "EXECUTOR_ROLE"
-  arguments: [  ]
-}
-
-interface IMethodPROPOSER_ROLE {
-  method: "PROPOSER_ROLE"
-  arguments: [  ]
-}
-
-interface IMethodTIMELOCK_ADMIN_ROLE {
-  method: "TIMELOCK_ADMIN_ROLE"
-  arguments: [  ]
-}
-
-interface IMethodCancel {
-  method: "cancel"
-  arguments: [ id: TEth.Hex ]
-}
-
-interface IMethodExecute {
-  method: "execute"
-  arguments: [ target: TAddress, value: bigint, payload: TEth.Hex, predecessor: TEth.Hex, salt: TEth.Hex ]
-}
-
-interface IMethodExecuteBatch {
-  method: "executeBatch"
-  arguments: [ targets: TAddress[], values: bigint[], payloads: TEth.Hex[], predecessor: TEth.Hex, salt: TEth.Hex ]
-}
-
-interface IMethodGetMinDelay {
-  method: "getMinDelay"
-  arguments: [  ]
-}
-
-interface IMethodGetRoleAdmin {
-  method: "getRoleAdmin"
-  arguments: [ role: TEth.Hex ]
-}
-
-interface IMethodGetTimestamp {
-  method: "getTimestamp"
-  arguments: [ id: TEth.Hex ]
-}
-
-interface IMethodGrantRole {
-  method: "grantRole"
-  arguments: [ role: TEth.Hex, account: TAddress ]
-}
-
-interface IMethodHasRole {
-  method: "hasRole"
-  arguments: [ role: TEth.Hex, account: TAddress ]
-}
-
-interface IMethodHashOperation {
-  method: "hashOperation"
-  arguments: [ target: TAddress, value: bigint, data: TEth.Hex, predecessor: TEth.Hex, salt: TEth.Hex ]
-}
-
-interface IMethodHashOperationBatch {
-  method: "hashOperationBatch"
-  arguments: [ targets: TAddress[], values: bigint[], payloads: TEth.Hex[], predecessor: TEth.Hex, salt: TEth.Hex ]
-}
-
-interface IMethodIsOperation {
-  method: "isOperation"
-  arguments: [ id: TEth.Hex ]
-}
-
-interface IMethodIsOperationDone {
-  method: "isOperationDone"
-  arguments: [ id: TEth.Hex ]
-}
-
-interface IMethodIsOperationPending {
-  method: "isOperationPending"
-  arguments: [ id: TEth.Hex ]
-}
-
-interface IMethodIsOperationReady {
-  method: "isOperationReady"
-  arguments: [ id: TEth.Hex ]
-}
-
-interface IMethodOnERC1155BatchReceived {
-  method: "onERC1155BatchReceived"
-  arguments: [ input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TEth.Hex ]
-}
-
-interface IMethodOnERC1155Received {
-  method: "onERC1155Received"
-  arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TEth.Hex ]
-}
-
-interface IMethodOnERC721Received {
-  method: "onERC721Received"
-  arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: TEth.Hex ]
-}
-
-interface IMethodRenounceRole {
-  method: "renounceRole"
-  arguments: [ role: TEth.Hex, account: TAddress ]
-}
-
-interface IMethodRevokeRole {
-  method: "revokeRole"
-  arguments: [ role: TEth.Hex, account: TAddress ]
-}
-
-interface IMethodSchedule {
-  method: "schedule"
-  arguments: [ target: TAddress, value: bigint, data: TEth.Hex, predecessor: TEth.Hex, salt: TEth.Hex, delay: bigint ]
-}
-
-interface IMethodScheduleBatch {
-  method: "scheduleBatch"
-  arguments: [ targets: TAddress[], values: bigint[], payloads: TEth.Hex[], predecessor: TEth.Hex, salt: TEth.Hex, delay: bigint ]
-}
-
-interface IMethodSupportsInterface {
-  method: "supportsInterface"
-  arguments: [ interfaceId: TEth.Hex ]
-}
-
-interface IMethodUpdateDelay {
-  method: "updateDelay"
-  arguments: [ newDelay: bigint ]
-}
-
-interface IMethods {
-  CANCELLER_ROLE: IMethodCANCELLER_ROLE
-  DEFAULT_ADMIN_ROLE: IMethodDEFAULT_ADMIN_ROLE
-  EXECUTOR_ROLE: IMethodEXECUTOR_ROLE
-  PROPOSER_ROLE: IMethodPROPOSER_ROLE
-  TIMELOCK_ADMIN_ROLE: IMethodTIMELOCK_ADMIN_ROLE
-  cancel: IMethodCancel
-  execute: IMethodExecute
-  executeBatch: IMethodExecuteBatch
-  getMinDelay: IMethodGetMinDelay
-  getRoleAdmin: IMethodGetRoleAdmin
-  getTimestamp: IMethodGetTimestamp
-  grantRole: IMethodGrantRole
-  hasRole: IMethodHasRole
-  hashOperation: IMethodHashOperation
-  hashOperationBatch: IMethodHashOperationBatch
-  isOperation: IMethodIsOperation
-  isOperationDone: IMethodIsOperationDone
-  isOperationPending: IMethodIsOperationPending
-  isOperationReady: IMethodIsOperationReady
-  onERC1155BatchReceived: IMethodOnERC1155BatchReceived
-  onERC1155Received: IMethodOnERC1155Received
-  onERC721Received: IMethodOnERC721Received
-  renounceRole: IMethodRenounceRole
-  revokeRole: IMethodRevokeRole
-  schedule: IMethodSchedule
-  scheduleBatch: IMethodScheduleBatch
-  supportsInterface: IMethodSupportsInterface
-  updateDelay: IMethodUpdateDelay
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -616,3 +566,5 @@ interface ITimelockControllerTxData {
 }
 
 
+type TEvents = TTimelockControllerTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

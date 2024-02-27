@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class IERC1820Registry extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/IERC1820Registry.ts"
-}
+        "class": "./contracts/openzeppelin/IERC1820Registry.ts"
+    }
 
     // 0xaabbb8ca
     async getInterfaceImplementer (account: TAddress, _interfaceHash: TEth.Hex): Promise<TAddress> {
@@ -96,10 +96,13 @@ export class IERC1820Registry extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TIERC1820RegistryTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TIERC1820RegistryTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -107,8 +110,20 @@ export class IERC1820Registry extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onInterfaceImplementerSet (fn?: (event: TClientEventsStreamData<TLogInterfaceImplementerSetParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogInterfaceImplementerSetParameters>> {
@@ -119,21 +134,21 @@ export class IERC1820Registry extends ContractBase {
         return this.$onLog('ManagerChanged', fn);
     }
 
-    extractLogsInterfaceImplementerSet (tx: TEth.TxReceipt): ITxLogItem<TLogInterfaceImplementerSet>[] {
+    extractLogsInterfaceImplementerSet (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'InterfaceImplementerSet'>>[] {
         let abi = this.$getAbiItem('event', 'InterfaceImplementerSet');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogInterfaceImplementerSet>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'InterfaceImplementerSet'>>[];
     }
 
-    extractLogsManagerChanged (tx: TEth.TxReceipt): ITxLogItem<TLogManagerChanged>[] {
+    extractLogsManagerChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ManagerChanged'>>[] {
         let abi = this.$getAbiItem('event', 'ManagerChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogManagerChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ManagerChanged'>>[];
     }
 
     async getPastLogsInterfaceImplementerSet (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { account?: TAddress,interfaceHash?: TEth.Hex,implementer?: TAddress }
-    }): Promise<ITxLogItem<TLogInterfaceImplementerSet>[]> {
+    }): Promise<ITxLogItem<TEventParams<'InterfaceImplementerSet'>>[]> {
         return await this.$getPastLogsParsed('InterfaceImplementerSet', options) as any;
     }
 
@@ -141,7 +156,7 @@ export class IERC1820Registry extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { account?: TAddress,newManager?: TAddress }
-    }): Promise<ITxLogItem<TLogManagerChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ManagerChanged'>>[]> {
         return await this.$getPastLogsParsed('ManagerChanged', options) as any;
     }
 
@@ -154,77 +169,58 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogInterfaceImplementerSet = {
-        account: TAddress, interfaceHash: TEth.Hex, implementer: TAddress
-    };
-    type TLogInterfaceImplementerSetParameters = [ account: TAddress, interfaceHash: TEth.Hex, implementer: TAddress ];
-    type TLogManagerChanged = {
-        account: TAddress, newManager: TAddress
-    };
-    type TLogManagerChangedParameters = [ account: TAddress, newManager: TAddress ];
-
-interface IEvents {
-  InterfaceImplementerSet: TLogInterfaceImplementerSetParameters
-  ManagerChanged: TLogManagerChangedParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodGetInterfaceImplementer {
-  method: "getInterfaceImplementer"
-  arguments: [ account: TAddress, _interfaceHash: TEth.Hex ]
+export type TIERC1820RegistryTypes = {
+    Events: {
+        InterfaceImplementerSet: {
+            outputParams: { account: TAddress, interfaceHash: TEth.Hex, implementer: TAddress },
+            outputArgs:   [ account: TAddress, interfaceHash: TEth.Hex, implementer: TAddress ],
+        }
+        ManagerChanged: {
+            outputParams: { account: TAddress, newManager: TAddress },
+            outputArgs:   [ account: TAddress, newManager: TAddress ],
+        }
+    },
+    Methods: {
+        getInterfaceImplementer: {
+          method: "getInterfaceImplementer"
+          arguments: [ account: TAddress, _interfaceHash: TEth.Hex ]
+        }
+        getManager: {
+          method: "getManager"
+          arguments: [ account: TAddress ]
+        }
+        implementsERC165Interface: {
+          method: "implementsERC165Interface"
+          arguments: [ account: TAddress, interfaceId: TEth.Hex ]
+        }
+        implementsERC165InterfaceNoCache: {
+          method: "implementsERC165InterfaceNoCache"
+          arguments: [ account: TAddress, interfaceId: TEth.Hex ]
+        }
+        interfaceHash: {
+          method: "interfaceHash"
+          arguments: [ interfaceName: string ]
+        }
+        setInterfaceImplementer: {
+          method: "setInterfaceImplementer"
+          arguments: [ account: TAddress, _interfaceHash: TEth.Hex, implementer: TAddress ]
+        }
+        setManager: {
+          method: "setManager"
+          arguments: [ account: TAddress, newManager: TAddress ]
+        }
+        updateERC165Cache: {
+          method: "updateERC165Cache"
+          arguments: [ account: TAddress, interfaceId: TEth.Hex ]
+        }
+    }
 }
-
-interface IMethodGetManager {
-  method: "getManager"
-  arguments: [ account: TAddress ]
-}
-
-interface IMethodImplementsERC165Interface {
-  method: "implementsERC165Interface"
-  arguments: [ account: TAddress, interfaceId: TEth.Hex ]
-}
-
-interface IMethodImplementsERC165InterfaceNoCache {
-  method: "implementsERC165InterfaceNoCache"
-  arguments: [ account: TAddress, interfaceId: TEth.Hex ]
-}
-
-interface IMethodInterfaceHash {
-  method: "interfaceHash"
-  arguments: [ interfaceName: string ]
-}
-
-interface IMethodSetInterfaceImplementer {
-  method: "setInterfaceImplementer"
-  arguments: [ account: TAddress, _interfaceHash: TEth.Hex, implementer: TAddress ]
-}
-
-interface IMethodSetManager {
-  method: "setManager"
-  arguments: [ account: TAddress, newManager: TAddress ]
-}
-
-interface IMethodUpdateERC165Cache {
-  method: "updateERC165Cache"
-  arguments: [ account: TAddress, interfaceId: TEth.Hex ]
-}
-
-interface IMethods {
-  getInterfaceImplementer: IMethodGetInterfaceImplementer
-  getManager: IMethodGetManager
-  implementsERC165Interface: IMethodImplementsERC165Interface
-  implementsERC165InterfaceNoCache: IMethodImplementsERC165InterfaceNoCache
-  interfaceHash: IMethodInterfaceHash
-  setInterfaceImplementer: IMethodSetInterfaceImplementer
-  setManager: IMethodSetManager
-  updateERC165Cache: IMethodUpdateERC165Cache
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -242,3 +238,5 @@ interface IIERC1820RegistryTxData {
 }
 
 
+type TEvents = TIERC1820RegistryTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

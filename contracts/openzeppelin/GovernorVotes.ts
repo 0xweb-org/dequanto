@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -58,8 +58,8 @@ export class GovernorVotes extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/GovernorVotes.ts"
-}
+        "class": "./contracts/openzeppelin/GovernorVotes.ts"
+    }
 
     // 0xdeaaa7cc
     async BALLOT_TYPEHASH (): Promise<TEth.Hex> {
@@ -244,10 +244,13 @@ export class GovernorVotes extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TGovernorVotesTypes['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TGovernorVotesTypes['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -255,8 +258,20 @@ export class GovernorVotes extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onEIP712DomainChanged (fn?: (event: TClientEventsStreamData<TLogEIP712DomainChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogEIP712DomainChangedParameters>> {
@@ -283,41 +298,41 @@ export class GovernorVotes extends ContractBase {
         return this.$onLog('VoteCastWithParams', fn);
     }
 
-    extractLogsEIP712DomainChanged (tx: TEth.TxReceipt): ITxLogItem<TLogEIP712DomainChanged>[] {
+    extractLogsEIP712DomainChanged (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'EIP712DomainChanged'>>[] {
         let abi = this.$getAbiItem('event', 'EIP712DomainChanged');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogEIP712DomainChanged>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'EIP712DomainChanged'>>[];
     }
 
-    extractLogsProposalCanceled (tx: TEth.TxReceipt): ITxLogItem<TLogProposalCanceled>[] {
+    extractLogsProposalCanceled (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ProposalCanceled'>>[] {
         let abi = this.$getAbiItem('event', 'ProposalCanceled');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogProposalCanceled>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ProposalCanceled'>>[];
     }
 
-    extractLogsProposalCreated (tx: TEth.TxReceipt): ITxLogItem<TLogProposalCreated>[] {
+    extractLogsProposalCreated (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ProposalCreated'>>[] {
         let abi = this.$getAbiItem('event', 'ProposalCreated');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogProposalCreated>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ProposalCreated'>>[];
     }
 
-    extractLogsProposalExecuted (tx: TEth.TxReceipt): ITxLogItem<TLogProposalExecuted>[] {
+    extractLogsProposalExecuted (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'ProposalExecuted'>>[] {
         let abi = this.$getAbiItem('event', 'ProposalExecuted');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogProposalExecuted>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'ProposalExecuted'>>[];
     }
 
-    extractLogsVoteCast (tx: TEth.TxReceipt): ITxLogItem<TLogVoteCast>[] {
+    extractLogsVoteCast (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'VoteCast'>>[] {
         let abi = this.$getAbiItem('event', 'VoteCast');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogVoteCast>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'VoteCast'>>[];
     }
 
-    extractLogsVoteCastWithParams (tx: TEth.TxReceipt): ITxLogItem<TLogVoteCastWithParams>[] {
+    extractLogsVoteCastWithParams (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'VoteCastWithParams'>>[] {
         let abi = this.$getAbiItem('event', 'VoteCastWithParams');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogVoteCastWithParams>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'VoteCastWithParams'>>[];
     }
 
     async getPastLogsEIP712DomainChanged (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogEIP712DomainChanged>[]> {
+    }): Promise<ITxLogItem<TEventParams<'EIP712DomainChanged'>>[]> {
         return await this.$getPastLogsParsed('EIP712DomainChanged', options) as any;
     }
 
@@ -325,7 +340,7 @@ export class GovernorVotes extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogProposalCanceled>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ProposalCanceled'>>[]> {
         return await this.$getPastLogsParsed('ProposalCanceled', options) as any;
     }
 
@@ -333,7 +348,7 @@ export class GovernorVotes extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogProposalCreated>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ProposalCreated'>>[]> {
         return await this.$getPastLogsParsed('ProposalCreated', options) as any;
     }
 
@@ -341,7 +356,7 @@ export class GovernorVotes extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {  }
-    }): Promise<ITxLogItem<TLogProposalExecuted>[]> {
+    }): Promise<ITxLogItem<TEventParams<'ProposalExecuted'>>[]> {
         return await this.$getPastLogsParsed('ProposalExecuted', options) as any;
     }
 
@@ -349,7 +364,7 @@ export class GovernorVotes extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { voter?: TAddress }
-    }): Promise<ITxLogItem<TLogVoteCast>[]> {
+    }): Promise<ITxLogItem<TEventParams<'VoteCast'>>[]> {
         return await this.$getPastLogsParsed('VoteCast', options) as any;
     }
 
@@ -357,7 +372,7 @@ export class GovernorVotes extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { voter?: TAddress }
-    }): Promise<ITxLogItem<TLogVoteCastWithParams>[]> {
+    }): Promise<ITxLogItem<TEventParams<'VoteCastWithParams'>>[]> {
         return await this.$getPastLogsParsed('VoteCastWithParams', options) as any;
     }
 
@@ -370,253 +385,178 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogEIP712DomainChanged = {
-        
-    };
-    type TLogEIP712DomainChangedParameters = [  ];
-    type TLogProposalCanceled = {
-        proposalId: bigint
-    };
-    type TLogProposalCanceledParameters = [ proposalId: bigint ];
-    type TLogProposalCreated = {
-        proposalId: bigint, proposer: TAddress, targets: TAddress[], values: bigint[], signatures: string[], calldatas: TEth.Hex[], voteStart: bigint, voteEnd: bigint, description: string
-    };
-    type TLogProposalCreatedParameters = [ proposalId: bigint, proposer: TAddress, targets: TAddress[], values: bigint[], signatures: string[], calldatas: TEth.Hex[], voteStart: bigint, voteEnd: bigint, description: string ];
-    type TLogProposalExecuted = {
-        proposalId: bigint
-    };
-    type TLogProposalExecutedParameters = [ proposalId: bigint ];
-    type TLogVoteCast = {
-        voter: TAddress, proposalId: bigint, support: number, weight: bigint, reason: string
-    };
-    type TLogVoteCastParameters = [ voter: TAddress, proposalId: bigint, support: number, weight: bigint, reason: string ];
-    type TLogVoteCastWithParams = {
-        voter: TAddress, proposalId: bigint, support: number, weight: bigint, reason: string, params: TEth.Hex
-    };
-    type TLogVoteCastWithParamsParameters = [ voter: TAddress, proposalId: bigint, support: number, weight: bigint, reason: string, params: TEth.Hex ];
-
-interface IEvents {
-  EIP712DomainChanged: TLogEIP712DomainChangedParameters
-  ProposalCanceled: TLogProposalCanceledParameters
-  ProposalCreated: TLogProposalCreatedParameters
-  ProposalExecuted: TLogProposalExecutedParameters
-  VoteCast: TLogVoteCastParameters
-  VoteCastWithParams: TLogVoteCastWithParamsParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodBALLOT_TYPEHASH {
-  method: "BALLOT_TYPEHASH"
-  arguments: [  ]
+export type TGovernorVotesTypes = {
+    Events: {
+        EIP712DomainChanged: {
+            outputParams: {  },
+            outputArgs:   [  ],
+        }
+        ProposalCanceled: {
+            outputParams: { proposalId: bigint },
+            outputArgs:   [ proposalId: bigint ],
+        }
+        ProposalCreated: {
+            outputParams: { proposalId: bigint, proposer: TAddress, targets: TAddress[], values: bigint[], signatures: string[], calldatas: TEth.Hex[], voteStart: bigint, voteEnd: bigint, description: string },
+            outputArgs:   [ proposalId: bigint, proposer: TAddress, targets: TAddress[], values: bigint[], signatures: string[], calldatas: TEth.Hex[], voteStart: bigint, voteEnd: bigint, description: string ],
+        }
+        ProposalExecuted: {
+            outputParams: { proposalId: bigint },
+            outputArgs:   [ proposalId: bigint ],
+        }
+        VoteCast: {
+            outputParams: { voter: TAddress, proposalId: bigint, support: number, weight: bigint, reason: string },
+            outputArgs:   [ voter: TAddress, proposalId: bigint, support: number, weight: bigint, reason: string ],
+        }
+        VoteCastWithParams: {
+            outputParams: { voter: TAddress, proposalId: bigint, support: number, weight: bigint, reason: string, params: TEth.Hex },
+            outputArgs:   [ voter: TAddress, proposalId: bigint, support: number, weight: bigint, reason: string, params: TEth.Hex ],
+        }
+    },
+    Methods: {
+        BALLOT_TYPEHASH: {
+          method: "BALLOT_TYPEHASH"
+          arguments: [  ]
+        }
+        CLOCK_MODE: {
+          method: "CLOCK_MODE"
+          arguments: [  ]
+        }
+        COUNTING_MODE: {
+          method: "COUNTING_MODE"
+          arguments: [  ]
+        }
+        EXTENDED_BALLOT_TYPEHASH: {
+          method: "EXTENDED_BALLOT_TYPEHASH"
+          arguments: [  ]
+        }
+        cancel: {
+          method: "cancel"
+          arguments: [ targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], descriptionHash: TEth.Hex ]
+        }
+        castVote: {
+          method: "castVote"
+          arguments: [ proposalId: bigint, support: number ]
+        }
+        castVoteBySig: {
+          method: "castVoteBySig"
+          arguments: [ proposalId: bigint, support: number, v: number, r: TEth.Hex, s: TEth.Hex ]
+        }
+        castVoteWithReason: {
+          method: "castVoteWithReason"
+          arguments: [ proposalId: bigint, support: number, reason: string ]
+        }
+        castVoteWithReasonAndParams: {
+          method: "castVoteWithReasonAndParams"
+          arguments: [ proposalId: bigint, support: number, reason: string, params: TEth.Hex ]
+        }
+        castVoteWithReasonAndParamsBySig: {
+          method: "castVoteWithReasonAndParamsBySig"
+          arguments: [ proposalId: bigint, support: number, reason: string, params: TEth.Hex, v: number, r: TEth.Hex, s: TEth.Hex ]
+        }
+        clock: {
+          method: "clock"
+          arguments: [  ]
+        }
+        eip712Domain: {
+          method: "eip712Domain"
+          arguments: [  ]
+        }
+        execute: {
+          method: "execute"
+          arguments: [ targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], descriptionHash: TEth.Hex ]
+        }
+        getVotes: {
+          method: "getVotes"
+          arguments: [ account: TAddress, timepoint: bigint ]
+        }
+        getVotesWithParams: {
+          method: "getVotesWithParams"
+          arguments: [ account: TAddress, timepoint: bigint, params: TEth.Hex ]
+        }
+        hasVoted: {
+          method: "hasVoted"
+          arguments: [ proposalId: bigint, account: TAddress ]
+        }
+        hashProposal: {
+          method: "hashProposal"
+          arguments: [ targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], descriptionHash: TEth.Hex ]
+        }
+        name: {
+          method: "name"
+          arguments: [  ]
+        }
+        onERC1155BatchReceived: {
+          method: "onERC1155BatchReceived"
+          arguments: [ input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TEth.Hex ]
+        }
+        onERC1155Received: {
+          method: "onERC1155Received"
+          arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TEth.Hex ]
+        }
+        onERC721Received: {
+          method: "onERC721Received"
+          arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: TEth.Hex ]
+        }
+        proposalDeadline: {
+          method: "proposalDeadline"
+          arguments: [ proposalId: bigint ]
+        }
+        proposalProposer: {
+          method: "proposalProposer"
+          arguments: [ proposalId: bigint ]
+        }
+        proposalSnapshot: {
+          method: "proposalSnapshot"
+          arguments: [ proposalId: bigint ]
+        }
+        proposalThreshold: {
+          method: "proposalThreshold"
+          arguments: [  ]
+        }
+        propose: {
+          method: "propose"
+          arguments: [ targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], description: string ]
+        }
+        quorum: {
+          method: "quorum"
+          arguments: [ timepoint: bigint ]
+        }
+        relay: {
+          method: "relay"
+          arguments: [ target: TAddress, value: bigint, data: TEth.Hex ]
+        }
+        state: {
+          method: "state"
+          arguments: [ proposalId: bigint ]
+        }
+        supportsInterface: {
+          method: "supportsInterface"
+          arguments: [ interfaceId: TEth.Hex ]
+        }
+        token: {
+          method: "token"
+          arguments: [  ]
+        }
+        version: {
+          method: "version"
+          arguments: [  ]
+        }
+        votingDelay: {
+          method: "votingDelay"
+          arguments: [  ]
+        }
+        votingPeriod: {
+          method: "votingPeriod"
+          arguments: [  ]
+        }
+    }
 }
-
-interface IMethodCLOCK_MODE {
-  method: "CLOCK_MODE"
-  arguments: [  ]
-}
-
-interface IMethodCOUNTING_MODE {
-  method: "COUNTING_MODE"
-  arguments: [  ]
-}
-
-interface IMethodEXTENDED_BALLOT_TYPEHASH {
-  method: "EXTENDED_BALLOT_TYPEHASH"
-  arguments: [  ]
-}
-
-interface IMethodCancel {
-  method: "cancel"
-  arguments: [ targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], descriptionHash: TEth.Hex ]
-}
-
-interface IMethodCastVote {
-  method: "castVote"
-  arguments: [ proposalId: bigint, support: number ]
-}
-
-interface IMethodCastVoteBySig {
-  method: "castVoteBySig"
-  arguments: [ proposalId: bigint, support: number, v: number, r: TEth.Hex, s: TEth.Hex ]
-}
-
-interface IMethodCastVoteWithReason {
-  method: "castVoteWithReason"
-  arguments: [ proposalId: bigint, support: number, reason: string ]
-}
-
-interface IMethodCastVoteWithReasonAndParams {
-  method: "castVoteWithReasonAndParams"
-  arguments: [ proposalId: bigint, support: number, reason: string, params: TEth.Hex ]
-}
-
-interface IMethodCastVoteWithReasonAndParamsBySig {
-  method: "castVoteWithReasonAndParamsBySig"
-  arguments: [ proposalId: bigint, support: number, reason: string, params: TEth.Hex, v: number, r: TEth.Hex, s: TEth.Hex ]
-}
-
-interface IMethodClock {
-  method: "clock"
-  arguments: [  ]
-}
-
-interface IMethodEip712Domain {
-  method: "eip712Domain"
-  arguments: [  ]
-}
-
-interface IMethodExecute {
-  method: "execute"
-  arguments: [ targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], descriptionHash: TEth.Hex ]
-}
-
-interface IMethodGetVotes {
-  method: "getVotes"
-  arguments: [ account: TAddress, timepoint: bigint ]
-}
-
-interface IMethodGetVotesWithParams {
-  method: "getVotesWithParams"
-  arguments: [ account: TAddress, timepoint: bigint, params: TEth.Hex ]
-}
-
-interface IMethodHasVoted {
-  method: "hasVoted"
-  arguments: [ proposalId: bigint, account: TAddress ]
-}
-
-interface IMethodHashProposal {
-  method: "hashProposal"
-  arguments: [ targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], descriptionHash: TEth.Hex ]
-}
-
-interface IMethodName {
-  method: "name"
-  arguments: [  ]
-}
-
-interface IMethodOnERC1155BatchReceived {
-  method: "onERC1155BatchReceived"
-  arguments: [ input0: TAddress, input1: TAddress, input2: bigint[], input3: bigint[], input4: TEth.Hex ]
-}
-
-interface IMethodOnERC1155Received {
-  method: "onERC1155Received"
-  arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: bigint, input4: TEth.Hex ]
-}
-
-interface IMethodOnERC721Received {
-  method: "onERC721Received"
-  arguments: [ input0: TAddress, input1: TAddress, input2: bigint, input3: TEth.Hex ]
-}
-
-interface IMethodProposalDeadline {
-  method: "proposalDeadline"
-  arguments: [ proposalId: bigint ]
-}
-
-interface IMethodProposalProposer {
-  method: "proposalProposer"
-  arguments: [ proposalId: bigint ]
-}
-
-interface IMethodProposalSnapshot {
-  method: "proposalSnapshot"
-  arguments: [ proposalId: bigint ]
-}
-
-interface IMethodProposalThreshold {
-  method: "proposalThreshold"
-  arguments: [  ]
-}
-
-interface IMethodPropose {
-  method: "propose"
-  arguments: [ targets: TAddress[], values: bigint[], calldatas: TEth.Hex[], description: string ]
-}
-
-interface IMethodQuorum {
-  method: "quorum"
-  arguments: [ timepoint: bigint ]
-}
-
-interface IMethodRelay {
-  method: "relay"
-  arguments: [ target: TAddress, value: bigint, data: TEth.Hex ]
-}
-
-interface IMethodState {
-  method: "state"
-  arguments: [ proposalId: bigint ]
-}
-
-interface IMethodSupportsInterface {
-  method: "supportsInterface"
-  arguments: [ interfaceId: TEth.Hex ]
-}
-
-interface IMethodToken {
-  method: "token"
-  arguments: [  ]
-}
-
-interface IMethodVersion {
-  method: "version"
-  arguments: [  ]
-}
-
-interface IMethodVotingDelay {
-  method: "votingDelay"
-  arguments: [  ]
-}
-
-interface IMethodVotingPeriod {
-  method: "votingPeriod"
-  arguments: [  ]
-}
-
-interface IMethods {
-  BALLOT_TYPEHASH: IMethodBALLOT_TYPEHASH
-  CLOCK_MODE: IMethodCLOCK_MODE
-  COUNTING_MODE: IMethodCOUNTING_MODE
-  EXTENDED_BALLOT_TYPEHASH: IMethodEXTENDED_BALLOT_TYPEHASH
-  cancel: IMethodCancel
-  castVote: IMethodCastVote
-  castVoteBySig: IMethodCastVoteBySig
-  castVoteWithReason: IMethodCastVoteWithReason
-  castVoteWithReasonAndParams: IMethodCastVoteWithReasonAndParams
-  castVoteWithReasonAndParamsBySig: IMethodCastVoteWithReasonAndParamsBySig
-  clock: IMethodClock
-  eip712Domain: IMethodEip712Domain
-  execute: IMethodExecute
-  getVotes: IMethodGetVotes
-  getVotesWithParams: IMethodGetVotesWithParams
-  hasVoted: IMethodHasVoted
-  hashProposal: IMethodHashProposal
-  name: IMethodName
-  onERC1155BatchReceived: IMethodOnERC1155BatchReceived
-  onERC1155Received: IMethodOnERC1155Received
-  onERC721Received: IMethodOnERC721Received
-  proposalDeadline: IMethodProposalDeadline
-  proposalProposer: IMethodProposalProposer
-  proposalSnapshot: IMethodProposalSnapshot
-  proposalThreshold: IMethodProposalThreshold
-  propose: IMethodPropose
-  quorum: IMethodQuorum
-  relay: IMethodRelay
-  state: IMethodState
-  supportsInterface: IMethodSupportsInterface
-  token: IMethodToken
-  version: IMethodVersion
-  votingDelay: IMethodVotingDelay
-  votingPeriod: IMethodVotingPeriod
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -652,3 +592,5 @@ interface IGovernorVotesTxData {
 }
 
 
+type TEvents = TGovernorVotesTypes['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

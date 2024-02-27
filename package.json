@@ -6,7 +6,7 @@
     "build": "tsc -p tsconfig-src.json",
     "test": "atma --openssl-legacy-provider test --config='settings.base=./'",
     "contracts": "atma act ./actions/contracts.act.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --project tsconfig-src.json --noEmit"
   },
   "devDependencies": {
     "@0xweb/hardhat": "^0.1.15",
@@ -31,7 +31,7 @@
     "alot": "^0.3.7",
     "appcfg": "^0.4.70",
     "atma": "^0.15.20",
-    "atma-io": "^1.2.67",
+    "atma-io": "^1.2.72",
     "atma-utils": "^0.2.51",
     "everlog": "^1.0.11",
     "includejs": "^0.16.9",

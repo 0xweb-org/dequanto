@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2023-12-26 12:42
+ *  AUTO-Generated Class: 2024-02-27 16:48
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -40,8 +40,8 @@ export class ERC777 extends ContractBase {
     }
 
     $meta = {
-    "class": "./contracts/openzeppelin/ERC777.ts"
-}
+        "class": "./contracts/openzeppelin/ERC777.ts"
+    }
 
     async $constructor (deployer: TSender, name_: string, symbol_: string, defaultOperators_: TAddress[]): Promise<TxWriter> {
         throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
@@ -150,10 +150,13 @@ export class ERC777 extends ContractBase {
         return super.$gas() as any;
     }
 
-    onTransaction <TMethod extends keyof IMethods> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
+    onTransaction <TMethod extends keyof TERC777Types['Methods']> (method: TMethod, options: Parameters<ContractBase['$onTransaction']>[0]): SubjectStream<{
         tx: TEth.Tx
         block: TEth.Block<TEth.Hex>
-        calldata: IMethods[TMethod]
+        calldata: {
+            method: TMethod
+            arguments: TERC777Types['Methods'][TMethod]['arguments']
+        }
     }> {
         options ??= {};
         options.filter ??= {};
@@ -161,8 +164,20 @@ export class ERC777 extends ContractBase {
         return <any> this.$onTransaction(options);
     }
 
-    onLog (event: keyof IEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
+    onLog (event: keyof TEvents, cb?: (event: TClientEventsStreamData) => void): ClientEventsStream<TClientEventsStreamData> {
         return this.$onLog(event, cb);
+    }
+
+    async getPastLogs <TEventName extends keyof TEvents> (
+        events: TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs <TEventName extends keyof TEvents> (
+        event: TEventName
+        , options?: TEventLogOptions<TEventParams<TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
+    async getPastLogs (mix: any, options?): Promise<any> {
+        return await this.$getPastLogsParsed(mix, options) as any;
     }
 
     onApproval (fn?: (event: TClientEventsStreamData<TLogApprovalParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalParameters>> {
@@ -193,46 +208,46 @@ export class ERC777 extends ContractBase {
         return this.$onLog('Transfer', fn);
     }
 
-    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TLogApproval>[] {
+    extractLogsApproval (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Approval'>>[] {
         let abi = this.$getAbiItem('event', 'Approval');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogApproval>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Approval'>>[];
     }
 
-    extractLogsAuthorizedOperator (tx: TEth.TxReceipt): ITxLogItem<TLogAuthorizedOperator>[] {
+    extractLogsAuthorizedOperator (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'AuthorizedOperator'>>[] {
         let abi = this.$getAbiItem('event', 'AuthorizedOperator');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogAuthorizedOperator>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'AuthorizedOperator'>>[];
     }
 
-    extractLogsBurned (tx: TEth.TxReceipt): ITxLogItem<TLogBurned>[] {
+    extractLogsBurned (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Burned'>>[] {
         let abi = this.$getAbiItem('event', 'Burned');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogBurned>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Burned'>>[];
     }
 
-    extractLogsMinted (tx: TEth.TxReceipt): ITxLogItem<TLogMinted>[] {
+    extractLogsMinted (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Minted'>>[] {
         let abi = this.$getAbiItem('event', 'Minted');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogMinted>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Minted'>>[];
     }
 
-    extractLogsRevokedOperator (tx: TEth.TxReceipt): ITxLogItem<TLogRevokedOperator>[] {
+    extractLogsRevokedOperator (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'RevokedOperator'>>[] {
         let abi = this.$getAbiItem('event', 'RevokedOperator');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogRevokedOperator>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'RevokedOperator'>>[];
     }
 
-    extractLogsSent (tx: TEth.TxReceipt): ITxLogItem<TLogSent>[] {
+    extractLogsSent (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Sent'>>[] {
         let abi = this.$getAbiItem('event', 'Sent');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogSent>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Sent'>>[];
     }
 
-    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TLogTransfer>[] {
+    extractLogsTransfer (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'Transfer'>>[] {
         let abi = this.$getAbiItem('event', 'Transfer');
-        return this.$extractLogs(tx, abi) as any as ITxLogItem<TLogTransfer>[];
+        return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'Transfer'>>[];
     }
 
     async getPastLogsApproval (options?: {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { owner?: TAddress,spender?: TAddress }
-    }): Promise<ITxLogItem<TLogApproval>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Approval'>>[]> {
         return await this.$getPastLogsParsed('Approval', options) as any;
     }
 
@@ -240,7 +255,7 @@ export class ERC777 extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { operator?: TAddress,tokenHolder?: TAddress }
-    }): Promise<ITxLogItem<TLogAuthorizedOperator>[]> {
+    }): Promise<ITxLogItem<TEventParams<'AuthorizedOperator'>>[]> {
         return await this.$getPastLogsParsed('AuthorizedOperator', options) as any;
     }
 
@@ -248,7 +263,7 @@ export class ERC777 extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { operator?: TAddress,from?: TAddress }
-    }): Promise<ITxLogItem<TLogBurned>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Burned'>>[]> {
         return await this.$getPastLogsParsed('Burned', options) as any;
     }
 
@@ -256,7 +271,7 @@ export class ERC777 extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { operator?: TAddress,to?: TAddress }
-    }): Promise<ITxLogItem<TLogMinted>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Minted'>>[]> {
         return await this.$getPastLogsParsed('Minted', options) as any;
     }
 
@@ -264,7 +279,7 @@ export class ERC777 extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { operator?: TAddress,tokenHolder?: TAddress }
-    }): Promise<ITxLogItem<TLogRevokedOperator>[]> {
+    }): Promise<ITxLogItem<TEventParams<'RevokedOperator'>>[]> {
         return await this.$getPastLogsParsed('RevokedOperator', options) as any;
     }
 
@@ -272,7 +287,7 @@ export class ERC777 extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { operator?: TAddress,from?: TAddress,to?: TAddress }
-    }): Promise<ITxLogItem<TLogSent>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Sent'>>[]> {
         return await this.$getPastLogsParsed('Sent', options) as any;
     }
 
@@ -280,7 +295,7 @@ export class ERC777 extends ContractBase {
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: { from?: TAddress,to?: TAddress }
-    }): Promise<ITxLogItem<TLogTransfer>[]> {
+    }): Promise<ITxLogItem<TEventParams<'Transfer'>>[]> {
         return await this.$getPastLogsParsed('Transfer', options) as any;
     }
 
@@ -293,162 +308,118 @@ type TSender = TAccount & {
     value?: string | number | bigint
 }
 
-    type TLogApproval = {
-        owner: TAddress, spender: TAddress, value: bigint
-    };
-    type TLogApprovalParameters = [ owner: TAddress, spender: TAddress, value: bigint ];
-    type TLogAuthorizedOperator = {
-        operator: TAddress, tokenHolder: TAddress
-    };
-    type TLogAuthorizedOperatorParameters = [ operator: TAddress, tokenHolder: TAddress ];
-    type TLogBurned = {
-        operator: TAddress, from: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex
-    };
-    type TLogBurnedParameters = [ operator: TAddress, from: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex ];
-    type TLogMinted = {
-        operator: TAddress, to: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex
-    };
-    type TLogMintedParameters = [ operator: TAddress, to: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex ];
-    type TLogRevokedOperator = {
-        operator: TAddress, tokenHolder: TAddress
-    };
-    type TLogRevokedOperatorParameters = [ operator: TAddress, tokenHolder: TAddress ];
-    type TLogSent = {
-        operator: TAddress, from: TAddress, to: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex
-    };
-    type TLogSentParameters = [ operator: TAddress, from: TAddress, to: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex ];
-    type TLogTransfer = {
-        from: TAddress, to: TAddress, value: bigint
-    };
-    type TLogTransferParameters = [ from: TAddress, to: TAddress, value: bigint ];
-
-interface IEvents {
-  Approval: TLogApprovalParameters
-  AuthorizedOperator: TLogAuthorizedOperatorParameters
-  Burned: TLogBurnedParameters
-  Minted: TLogMintedParameters
-  RevokedOperator: TLogRevokedOperatorParameters
-  Sent: TLogSentParameters
-  Transfer: TLogTransferParameters
-  '*': any[] 
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
 }
 
-
-
-interface IMethodAllowance {
-  method: "allowance"
-  arguments: [ holder: TAddress, spender: TAddress ]
+export type TERC777Types = {
+    Events: {
+        Approval: {
+            outputParams: { owner: TAddress, spender: TAddress, value: bigint },
+            outputArgs:   [ owner: TAddress, spender: TAddress, value: bigint ],
+        }
+        AuthorizedOperator: {
+            outputParams: { operator: TAddress, tokenHolder: TAddress },
+            outputArgs:   [ operator: TAddress, tokenHolder: TAddress ],
+        }
+        Burned: {
+            outputParams: { operator: TAddress, from: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex },
+            outputArgs:   [ operator: TAddress, from: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex ],
+        }
+        Minted: {
+            outputParams: { operator: TAddress, to: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex },
+            outputArgs:   [ operator: TAddress, to: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex ],
+        }
+        RevokedOperator: {
+            outputParams: { operator: TAddress, tokenHolder: TAddress },
+            outputArgs:   [ operator: TAddress, tokenHolder: TAddress ],
+        }
+        Sent: {
+            outputParams: { operator: TAddress, from: TAddress, to: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex },
+            outputArgs:   [ operator: TAddress, from: TAddress, to: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex ],
+        }
+        Transfer: {
+            outputParams: { from: TAddress, to: TAddress, value: bigint },
+            outputArgs:   [ from: TAddress, to: TAddress, value: bigint ],
+        }
+    },
+    Methods: {
+        allowance: {
+          method: "allowance"
+          arguments: [ holder: TAddress, spender: TAddress ]
+        }
+        approve: {
+          method: "approve"
+          arguments: [ spender: TAddress, value: bigint ]
+        }
+        authorizeOperator: {
+          method: "authorizeOperator"
+          arguments: [ operator: TAddress ]
+        }
+        balanceOf: {
+          method: "balanceOf"
+          arguments: [ tokenHolder: TAddress ]
+        }
+        burn: {
+          method: "burn"
+          arguments: [ amount: bigint, data: TEth.Hex ]
+        }
+        decimals: {
+          method: "decimals"
+          arguments: [  ]
+        }
+        defaultOperators: {
+          method: "defaultOperators"
+          arguments: [  ]
+        }
+        granularity: {
+          method: "granularity"
+          arguments: [  ]
+        }
+        isOperatorFor: {
+          method: "isOperatorFor"
+          arguments: [ operator: TAddress, tokenHolder: TAddress ]
+        }
+        name: {
+          method: "name"
+          arguments: [  ]
+        }
+        operatorBurn: {
+          method: "operatorBurn"
+          arguments: [ account: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex ]
+        }
+        operatorSend: {
+          method: "operatorSend"
+          arguments: [ _sender: TAddress, recipient: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex ]
+        }
+        revokeOperator: {
+          method: "revokeOperator"
+          arguments: [ operator: TAddress ]
+        }
+        send: {
+          method: "send"
+          arguments: [ recipient: TAddress, amount: bigint, data: TEth.Hex ]
+        }
+        symbol: {
+          method: "symbol"
+          arguments: [  ]
+        }
+        totalSupply: {
+          method: "totalSupply"
+          arguments: [  ]
+        }
+        transfer: {
+          method: "transfer"
+          arguments: [ recipient: TAddress, amount: bigint ]
+        }
+        transferFrom: {
+          method: "transferFrom"
+          arguments: [ holder: TAddress, recipient: TAddress, amount: bigint ]
+        }
+    }
 }
-
-interface IMethodApprove {
-  method: "approve"
-  arguments: [ spender: TAddress, value: bigint ]
-}
-
-interface IMethodAuthorizeOperator {
-  method: "authorizeOperator"
-  arguments: [ operator: TAddress ]
-}
-
-interface IMethodBalanceOf {
-  method: "balanceOf"
-  arguments: [ tokenHolder: TAddress ]
-}
-
-interface IMethodBurn {
-  method: "burn"
-  arguments: [ amount: bigint, data: TEth.Hex ]
-}
-
-interface IMethodDecimals {
-  method: "decimals"
-  arguments: [  ]
-}
-
-interface IMethodDefaultOperators {
-  method: "defaultOperators"
-  arguments: [  ]
-}
-
-interface IMethodGranularity {
-  method: "granularity"
-  arguments: [  ]
-}
-
-interface IMethodIsOperatorFor {
-  method: "isOperatorFor"
-  arguments: [ operator: TAddress, tokenHolder: TAddress ]
-}
-
-interface IMethodName {
-  method: "name"
-  arguments: [  ]
-}
-
-interface IMethodOperatorBurn {
-  method: "operatorBurn"
-  arguments: [ account: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex ]
-}
-
-interface IMethodOperatorSend {
-  method: "operatorSend"
-  arguments: [ _sender: TAddress, recipient: TAddress, amount: bigint, data: TEth.Hex, operatorData: TEth.Hex ]
-}
-
-interface IMethodRevokeOperator {
-  method: "revokeOperator"
-  arguments: [ operator: TAddress ]
-}
-
-interface IMethodSend {
-  method: "send"
-  arguments: [ recipient: TAddress, amount: bigint, data: TEth.Hex ]
-}
-
-interface IMethodSymbol {
-  method: "symbol"
-  arguments: [  ]
-}
-
-interface IMethodTotalSupply {
-  method: "totalSupply"
-  arguments: [  ]
-}
-
-interface IMethodTransfer {
-  method: "transfer"
-  arguments: [ recipient: TAddress, amount: bigint ]
-}
-
-interface IMethodTransferFrom {
-  method: "transferFrom"
-  arguments: [ holder: TAddress, recipient: TAddress, amount: bigint ]
-}
-
-interface IMethods {
-  allowance: IMethodAllowance
-  approve: IMethodApprove
-  authorizeOperator: IMethodAuthorizeOperator
-  balanceOf: IMethodBalanceOf
-  burn: IMethodBurn
-  decimals: IMethodDecimals
-  defaultOperators: IMethodDefaultOperators
-  granularity: IMethodGranularity
-  isOperatorFor: IMethodIsOperatorFor
-  name: IMethodName
-  operatorBurn: IMethodOperatorBurn
-  operatorSend: IMethodOperatorSend
-  revokeOperator: IMethodRevokeOperator
-  send: IMethodSend
-  symbol: IMethodSymbol
-  totalSupply: IMethodTotalSupply
-  transfer: IMethodTransfer
-  transferFrom: IMethodTransferFrom
-  '*': { method: string, arguments: any[] } 
-}
-
-
-
 
 
 
@@ -478,3 +449,5 @@ interface IERC777TxData {
 }
 
 
+type TEvents = TERC777Types['Events'];
+type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
