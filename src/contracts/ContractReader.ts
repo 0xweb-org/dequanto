@@ -147,14 +147,14 @@ export class ContractReader implements IContractReader {
     }
 
     async getLogs (filters: RpcTypes.Filter, options?: {
-        onProgress? (info: TLogsRangeProgress)
+        onProgress? (info: TLogsRangeProgress<TEth.Log>)
     }) {
         return this.client.getPastLogs(filters, options);
     }
 
     async getLogsFilter(abi: TAbiItem | string | '*' | TAbiItem[], options: {
         /** Can be UNDEFINED, then the logs will be searched globally */
-        address?: TAddress
+        address?: TAddress | TAddress[]
         /**
          * "deployment": get the contracts deployment date to skip lots of blocks (in case we use pagination to fetch logs)
          */
@@ -169,6 +169,9 @@ export class ContractReader implements IContractReader {
 
         if (options.fromBlock != null) {
             if (options.fromBlock === 'deployment') {
+                if ($is.Array(options.address)) {
+                    throw new Error('Cannot use "deployment" with multiple addresses');
+                }
                 $require.Address(options.address, `No contract address provided, but the "fromBlock" is "deployment"`)
                 try {
                     let explorer = BlockChainExplorerProvider.get(this.client.platform);

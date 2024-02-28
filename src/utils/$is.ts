@@ -10,7 +10,7 @@ export namespace $is {
     export function notNull<T> (val: T): boolean {
         return val != null
     }
-    export function notEmpty<T extends string | []> (val: T): boolean {
+    export function notEmpty<T extends string | any[]> (val: T): boolean {
         return val != null && val.length > 0;
     }
     export function empty<T extends string | any[] | number | Uint8Array> (val: T): boolean {

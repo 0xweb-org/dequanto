@@ -15,7 +15,7 @@ UTest({
         let hh = new HardhatProvider();
         let deployer = hh.deployer();
         let client = hh.client();
-        let { contract } = await hh.deployCode(`
+        let code = `
             contract Foo {
                 event Number (uint256 num);
                 event String (string str);
@@ -27,7 +27,8 @@ UTest({
                     emit String(str);
                 }
             }
-        `, {
+        `;
+        let { contract } = await hh.deployCode(code, {
             client
         });
 
@@ -63,5 +64,33 @@ UTest({
         let stringEvents = resultMany.logs.filter(x => x.event === 'String');
         eq_(stringEvents.length, 1);
         eq_(stringEvents[0].params.str, 'hello');
+
+
+        let resultAll = await indexer.getPastLogs('*');
+        deepEq_(resultMany.logs, resultAll.logs);
+
+
+        let { contract: contract2 } = await hh.deployCode(code, {
+            client
+        });
+        await contract2.$receipt().emitString(deployer, 'world');
+
+        let multiIndexer = new EventsIndexer(contract, {
+            addresses: [
+                contract.address,
+                contract2.address
+            ],
+            name: 'FooTest',
+            fs: {
+                directory: FS_DIR
+            }
+        });
+
+        let { logs: logsMulti } = await multiIndexer.getPastLogs('String');
+        eq_(logsMulti.length, 2);
+        eq_(logsMulti[0].params.str, 'hello');
+        eq_(logsMulti[1].params.str, 'world');
+        eq_(logsMulti[0].address, contract.address);
+        eq_(logsMulti[1].address, contract2.address);
     }
 });

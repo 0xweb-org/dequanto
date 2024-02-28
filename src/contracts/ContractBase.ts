@@ -370,6 +370,9 @@ export abstract class ContractBase {
             abi = mix === '*' ? this.abi : this.$getAbiItem('event', mix)
         } else {
             if ($is.ArrayOfStrings(mix)) {
+                if (mix.length === 1 && mix[0] === '*') {
+                    return this.$extractLog(log, '*');
+                }
                 abi = mix.map(x => this.$getAbiItem('event', x));
             } else {
                 abi = mix;
@@ -384,6 +387,7 @@ export abstract class ContractBase {
         return this.getContractReader().getLogs(filters, options);
     }
     public async $getPastLogsParsed (mix: string | TAbiItem | string[] | TAbiItem[], options?: {
+        addresses?: TAddress[]
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {
@@ -409,6 +413,7 @@ export abstract class ContractBase {
         return logs.map(log => this.$extractLog(log, mix)) as any;
     }
     protected async $getPastLogsFilters(mix: string | TAbiItem | string[] | TAbiItem[], options: {
+        addresses?: TAddress[]
         topic?: string
         fromBlock?: number | Date
         toBlock?: number | Date
@@ -423,6 +428,8 @@ export abstract class ContractBase {
             abi = this.$getAbiItem('event', mix);
         } else if (Array.isArray(mix) === false) {
             abi = mix;
+        } else if (mix.length === 1 && typeof mix[0] ==='string' && mix[0] === '*') {
+            abi = '*';
         } else {
             abi = mix.map(x => {
                 if (typeof x === 'string') {
@@ -435,7 +442,7 @@ export abstract class ContractBase {
             abi,
             {
                 ...(options ?? {}),
-                address: this.address
+                address: options?.addresses ?? this.address
             }
         );
     }
@@ -531,6 +538,7 @@ type TEventsBase = {
 }
 
 type TEventLogOptions<TParams> = {
+    addresses?: TAddress[]
     fromBlock?: number | Date
     toBlock?: number | Date
     params?: TParams

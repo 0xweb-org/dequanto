@@ -8,6 +8,10 @@ import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { $date } from '@dequanto/utils/$date';
 import { $require } from '@dequanto/utils/$require';
 import type { Alot } from 'alot/alot';
+import { TAddress } from '@dequanto/models/TAddress';
+import { $is } from '@dequanto/utils/$is';
+import { $contract } from '@dequanto/utils/$contract';
+import { $hex } from '@dequanto/utils/$hex';
 
 
 type TItem = ITxLogItem<any>
@@ -32,6 +36,8 @@ export class EventsIndexer <T extends ContractBase> {
     public storeMeta: IMetaStore
 
     constructor(public contract: T, public options: {
+        // Load events from the contract that was deployed to multiple addresses
+        addresses?: TAddress[]
         name?: string
         initialBlockNumber?: number
         store?: IEventsIndexerStore
@@ -43,13 +49,25 @@ export class EventsIndexer <T extends ContractBase> {
         let client = contract.client;
         let key = client.network.replace(':', '-');
         let directly = options?.fs?.directory ?? `./data/tx-logs`;
+        let addressKey = contract.address;
+        if ($is.notEmpty(this.options.addresses)) {
+            let sorted = alot(this.options.addresses)
+                .map(x => $hex.raw(x))
+                .distinct()
+                .sortBy(x => x)
+                .toArray()
+                .join('-');
+            let hash = $contract.keccak256(sorted, 'hex');
+            addressKey = hash;
+        }
+
         this.store = options?.store ?? new JsonArrayStore<ITxLogItem<any>>({
-            path: `${directly}/${key}/${options.name}-${contract.address}.json`,
+            path: `${directly}/${key}/${options.name}-${addressKey}.json`,
             key: x => x.id
         });
 
         this.storeMeta = options?.storeMeta ?? new JsonArrayStore<TMeta>({
-            path: `${directly}/${key}/${options.name}-${contract.address}-meta-arr.json`,
+            path: `${directly}/${key}/${options.name}-${addressKey}-meta-arr.json`,
             key: x => x.event
         });
     }
@@ -57,7 +75,7 @@ export class EventsIndexer <T extends ContractBase> {
     async getPastLogs <
         TLogName extends GetEventLogNames<T>,
     > (
-        event: TLogName | TLogName[],
+        event: TLogName | TLogName[] | '*',
         // Fetch all logs and filter later if needed
         //- params?: T[TMethodName] extends (options: { params?: infer TParams }) => any ? TParams : never
     ): Promise<{
@@ -122,6 +140,7 @@ export class EventsIndexer <T extends ContractBase> {
             let { fromBlock, toBlock, events } = range;
 
             let fetched = await contract.getPastLogs(events, {
+                addresses: this.options.addresses,
                 fromBlock: fromBlock,
                 toBlock: toBlock,
                 onProgress: async info => {
@@ -147,7 +166,9 @@ export class EventsIndexer <T extends ContractBase> {
         let requestedEvents = alot(events).toDictionary(x => x);
         let allLogs = await this.getItemsFromStore();
 
-        let logs = allLogs.filter(x => x.event in requestedEvents );
+        let logs = events[0] === '*'
+            ? allLogs
+            : allLogs.filter(x => x.event in requestedEvents );
         return logs;
     }
 
