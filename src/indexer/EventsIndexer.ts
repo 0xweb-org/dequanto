@@ -8,11 +8,11 @@ import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { $date } from '@dequanto/utils/$date';
 import { $require } from '@dequanto/utils/$require';
 import type { Alot } from 'alot/alot';
-import { JsonObjectStore } from '@dequanto/json/JsonObjectStore';
 
 
 type TItem = ITxLogItem<any>
 type TMeta = {
+    event: string
     lastBlock: number
 }
 
@@ -22,8 +22,8 @@ export interface IEventsIndexerStore {
 }
 
 export interface IMetaStore {
-    get(): Promise<TMeta>
-    save (meta: TMeta): Promise<TMeta>
+    upsertMany(meta: TMeta[]): Promise<TMeta[]>
+    getAll (): Promise<TMeta[]>
 }
 
 export class EventsIndexer <T extends ContractBase> {
@@ -48,86 +48,140 @@ export class EventsIndexer <T extends ContractBase> {
             key: x => x.id
         });
 
-        this.storeMeta = options?.storeMeta ?? new JsonObjectStore<TMeta>({
-            path: `${directly}/${key}/${options.name}-${contract.address}-meta.json`
+        this.storeMeta = options?.storeMeta ?? new JsonArrayStore<TMeta>({
+            path: `${directly}/${key}/${options.name}-${contract.address}-meta-arr.json`,
+            key: x => x.event
         });
     }
 
     async getPastLogs <
-        TMethodName extends GetPastLogsMethods<T>,
+        TLogName extends GetEventLogNames<T>,
     > (
-        method: TMethodName,
+        event: TLogName | TLogName[],
         // Fetch all logs and filter later if needed
         //- params?: T[TMethodName] extends (options: { params?: infer TParams }) => any ? TParams : never
     ): Promise<{
-        logs: T[TMethodName] extends (options?: { params?: any }) => Promise<infer TReturn> ? TReturn : never
+        logs: ITxLogItem<GetTypes<T>['Events'][TLogName]['outputParams']>[],
     }> {
         let contract = this.contract;
         let client = contract.client;
-        let meta = await this.storeMeta.get();
-        let fromBlock = Math.max(0, meta?.lastBlock ?? ((this.options.initialBlockNumber ?? 0) - 1));
-        if (fromBlock > 0) {
-            fromBlock = fromBlock + 1;
-        } else if (client.platform !== 'hardhat') {
-            let explorer = await BlockChainExplorerProvider.get(this.contract.client.platform);
-            let deployment = new ContractCreationResolver(client, explorer);
-            let contractInfo = await deployment.getInfo(this.contract.address);
-            fromBlock = $require.Number(contractInfo.block, `Contract deployment not resolved from the blockchain explorer`);
-        }
-
         let latestBlock = await client.getBlockNumber();
-        let event = (method as string).replace('getPastLogs', '');
-        let PERSIST_INTERVAL = $date.parseTimespan('2min');
-        let time = Date.now();
-        let buffer = [] as TItem[];
+        let events = Array.isArray(event) ? event as string[] : [ event as string ];
+        let ranges = await this.getRanges(events, this.options.initialBlockNumber, latestBlock)
+        let logs = await this.getPastLogsRanges(ranges, events, latestBlock);
 
-        let fetched = await contract.$getPastLogsParsed(event, {
-            fromBlock: fromBlock,
-            toBlock: latestBlock,
-            onProgress: async info => {
-                buffer.push(...info.paged);
+        return {
+            logs: logs as any
+        };
+    }
 
-                let now = Date.now();
-                if (buffer.length > 0 && now - time > PERSIST_INTERVAL) {
-                    let cloned = buffer.slice();
-                    buffer = [];
-                    time = now;
-                    let maxBlock = alot(buffer).max(x => x.blockNumber);
-                    await this.upsert(cloned);
-                    await this.storeMeta.save({
-                        ...meta,
-                        lastBlock: maxBlock
-                    });
-                }
+    private async getRanges (events: string[], initialBlockNumber: number, toBlock: number): Promise<TRange[]> {
+        let logsMetaArr = await this.storeMeta.getAll();
+        let eventsBlock = alot(logsMetaArr).toDictionary(x => x.event, x => x.lastBlock);
+        let logsMeta = events.map(event => {
+            let blockNr = eventsBlock[event] ?? initialBlockNumber;
+            return {
+                event: event,
+                lastBlock: blockNr
             }
         });
-
-        await this.upsert(fetched);
-        await this.storeMeta.save({
-            ...meta,
-            lastBlock: latestBlock
-        });
-
-        let allLogs = await this.getItemsFromStore();
-        return {
-            logs: allLogs as any
+        let hasInitialBlock = logsMeta.every(x => x.lastBlock != null);
+        if (hasInitialBlock === false) {
+            let blockNr = await this.getInitialBlockNumber();
+            logsMeta.filter(x => x.lastBlock == null).forEach(x => x.lastBlock = blockNr);
         };
+
+        let ranges = [] as TRange[];
+        let blockNumbers = [ ...logsMeta.map(x => x.lastBlock), toBlock ];
+        let blockNumberSteps = alot(blockNumbers).distinct().sortBy(x => x).toArray();
+
+        for (let i = 0; i < blockNumberSteps.length - 1; i++) {
+            let from = blockNumberSteps[i];
+            if (i > 0) {
+                from += 1;
+            }
+            let to = blockNumberSteps[i + 1];
+            let events = logsMeta.filter(x => x.lastBlock < to).map(x =>x.event);
+            ranges.push({
+                fromBlock: from,
+                toBlock: to,
+                events: events
+            });
+        }
+        return ranges;
+    }
+    private async getPastLogsRanges (ranges: TRange[], events: string[], toBlock: number) {
+        // Save indexed logs every 2 minutes
+        let PERSIST_INTERVAL = $date.parseTimespan('2min');
+        let time = Date.now();
+        let contract = this.contract;
+        let buffer = [] as TItem[];
+
+        for (let i = 0; i < ranges.length; i++) {
+            let range = ranges[i];
+            let { fromBlock, toBlock, events } = range;
+
+            let fetched = await contract.getPastLogs(events, {
+                fromBlock: fromBlock,
+                toBlock: toBlock,
+                onProgress: async info => {
+                    buffer.push(...info.paged);
+
+                    let now = Date.now();
+                    if (buffer.length > 0 && now - time > PERSIST_INTERVAL) {
+                        let cloned = buffer.slice();
+                        buffer = [];
+                        time = now;
+
+                        await this.upsert(cloned, events, info.latestBlock);
+                    }
+                }
+            });
+
+            await this.upsert(fetched, events, toBlock);
+        }
+
+
+        await this.upsert(buffer, events, toBlock);
+
+        let requestedEvents = alot(events).toDictionary(x => x);
+        let allLogs = await this.getItemsFromStore();
+
+        let logs = allLogs.filter(x => x.event in requestedEvents );
+        return logs;
     }
 
     private async getItemsFromStore () {
         return (await this.store.query()).toArray();
     }
 
+    private async getInitialBlockNumber () {
+        let client = this.contract.client;
+        if (client.platform !== 'hardhat') {
+            let explorer = await BlockChainExplorerProvider.get(this.contract.client.platform);
+            let deployment = new ContractCreationResolver(client, explorer);
+            let contractInfo = await deployment.getInfo(this.contract.address);
+            return $require.Number(contractInfo.block, `Contract deployment not resolved from the blockchain explorer`);
+        }
+        return 0;
+    }
+
     @memd.deco.queued()
-    private async upsert (logs) {
+    private async upsert (logs, events: string[], latestBlock: number) {
         await this.store.upsertMany(logs);
+
+        const logsMeta =  events.map(event => ({ event, lastBlock: latestBlock }));
+        await this.storeMeta.upsertMany(logsMeta);
     }
 }
 
-type GetPastLogsMethods<T> = {
-    [P in keyof T]: T[P] extends ((options?: {
-        fromBlock?: number | Date
-        toBlock?: number | Date
-        params?: any
-    }) => Promise<ITxLogItem<any>[]>) ? P : never;
-}[keyof T];
+type TRange = {
+    events: string[]
+    fromBlock: number
+    toBlock: number
+}
+
+
+type GetEventLogNames<T extends ContractBase> = keyof T['Types']['Events'];
+type GetTypes<T extends ContractBase> = T['Types'];
+

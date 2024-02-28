@@ -435,7 +435,7 @@ namespace Gen {
     export function serializeEvent (abi: TAbiItem) {
         let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
         return `
-            on${abi.name} (fn?: (event: TClientEventsStreamData<TLog${abi.name}Parameters>) => void): ClientEventsStream<TClientEventsStreamData<TLog${abi.name}Parameters>> {
+            on${abi.name} (fn?: (event: TClientEventsStreamData<TEventArguments<'${abi.name}'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'${abi.name}'>>> {
                 return this.$onLog('${abi.name}', fn);
             }
         `;

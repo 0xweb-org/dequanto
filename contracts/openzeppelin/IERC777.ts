@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class IERC777 extends ContractBase {
 
         
     }
+
+    Types: TIERC777Types;
 
     $meta = {
         "class": "./contracts/openzeppelin/IERC777.ts"
@@ -148,26 +150,26 @@ export class IERC777 extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onAuthorizedOperator (fn?: (event: TClientEventsStreamData<TLogAuthorizedOperatorParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogAuthorizedOperatorParameters>> {
+    onAuthorizedOperator (fn?: (event: TClientEventsStreamData<TEventArguments<'AuthorizedOperator'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'AuthorizedOperator'>>> {
         return this.$onLog('AuthorizedOperator', fn);
     }
 
-    onBurned (fn?: (event: TClientEventsStreamData<TLogBurnedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogBurnedParameters>> {
+    onBurned (fn?: (event: TClientEventsStreamData<TEventArguments<'Burned'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Burned'>>> {
         return this.$onLog('Burned', fn);
     }
 
-    onMinted (fn?: (event: TClientEventsStreamData<TLogMintedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogMintedParameters>> {
+    onMinted (fn?: (event: TClientEventsStreamData<TEventArguments<'Minted'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Minted'>>> {
         return this.$onLog('Minted', fn);
     }
 
-    onRevokedOperator (fn?: (event: TClientEventsStreamData<TLogRevokedOperatorParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRevokedOperatorParameters>> {
+    onRevokedOperator (fn?: (event: TClientEventsStreamData<TEventArguments<'RevokedOperator'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'RevokedOperator'>>> {
         return this.$onLog('RevokedOperator', fn);
     }
 
-    onSent (fn?: (event: TClientEventsStreamData<TLogSentParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogSentParameters>> {
+    onSent (fn?: (event: TClientEventsStreamData<TEventArguments<'Sent'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Sent'>>> {
         return this.$onLog('Sent', fn);
     }
 
@@ -354,3 +356,4 @@ interface IIERC777TxData {
 
 type TEvents = TIERC777Types['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

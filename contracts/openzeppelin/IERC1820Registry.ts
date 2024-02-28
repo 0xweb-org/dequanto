@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class IERC1820Registry extends ContractBase {
 
         
     }
+
+    Types: TIERC1820RegistryTypes;
 
     $meta = {
         "class": "./contracts/openzeppelin/IERC1820Registry.ts"
@@ -123,14 +125,14 @@ export class IERC1820Registry extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onInterfaceImplementerSet (fn?: (event: TClientEventsStreamData<TLogInterfaceImplementerSetParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogInterfaceImplementerSetParameters>> {
+    onInterfaceImplementerSet (fn?: (event: TClientEventsStreamData<TEventArguments<'InterfaceImplementerSet'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'InterfaceImplementerSet'>>> {
         return this.$onLog('InterfaceImplementerSet', fn);
     }
 
-    onManagerChanged (fn?: (event: TClientEventsStreamData<TLogManagerChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogManagerChangedParameters>> {
+    onManagerChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'ManagerChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ManagerChanged'>>> {
         return this.$onLog('ManagerChanged', fn);
     }
 
@@ -240,3 +242,4 @@ interface IIERC1820RegistryTxData {
 
 type TEvents = TIERC1820RegistryTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class ITransparentUpgradeableProxy extends ContractBase {
 
         
     }
+
+    Types: TITransparentUpgradeableProxyTypes;
 
     $meta = {
         "class": "./contracts/openzeppelin/ITransparentUpgradeableProxy.ts"
@@ -108,18 +110,18 @@ export class ITransparentUpgradeableProxy extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onAdminChanged (fn?: (event: TClientEventsStreamData<TLogAdminChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogAdminChangedParameters>> {
+    onAdminChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'AdminChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'AdminChanged'>>> {
         return this.$onLog('AdminChanged', fn);
     }
 
-    onBeaconUpgraded (fn?: (event: TClientEventsStreamData<TLogBeaconUpgradedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogBeaconUpgradedParameters>> {
+    onBeaconUpgraded (fn?: (event: TClientEventsStreamData<TEventArguments<'BeaconUpgraded'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'BeaconUpgraded'>>> {
         return this.$onLog('BeaconUpgraded', fn);
     }
 
-    onUpgraded (fn?: (event: TClientEventsStreamData<TLogUpgradedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogUpgradedParameters>> {
+    onUpgraded (fn?: (event: TClientEventsStreamData<TEventArguments<'Upgraded'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Upgraded'>>> {
         return this.$onLog('Upgraded', fn);
     }
 
@@ -234,3 +236,4 @@ interface IITransparentUpgradeableProxyTxData {
 
 type TEvents = TITransparentUpgradeableProxyTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

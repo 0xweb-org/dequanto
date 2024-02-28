@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://bscscan.com/address/0x10ED43C718714eb63d5aA57B78B54704E256024E#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class AmmRouterV2Contract extends ContractBase {
 
         this.storage = new AmmRouterV2ContractStorageReader(this.address, this.client, this.explorer);
     }
+
+    Types: TAmmRouterV2ContractTypes;
 
     $meta = {
         "class": "./contracts/amm/AmmRouterV2Contract/AmmRouterV2Contract.ts"
@@ -207,7 +209,7 @@ export class AmmRouterV2Contract extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
 
@@ -399,3 +401,4 @@ interface IAmmRouterV2ContractTxData {
 
 type TEvents = TAmmRouterV2ContractTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

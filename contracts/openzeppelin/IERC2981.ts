@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class IERC2981 extends ContractBase {
 
         
     }
+
+    Types: TIERC2981Types;
 
     $meta = {
         "class": "./contracts/openzeppelin/IERC2981.ts"
@@ -93,7 +95,7 @@ export class IERC2981 extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
 
@@ -147,3 +149,4 @@ interface IIERC2981TxData {
 
 type TEvents = TIERC2981Types['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

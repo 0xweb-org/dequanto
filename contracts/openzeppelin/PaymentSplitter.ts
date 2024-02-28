@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class PaymentSplitter extends ContractBase {
 
         
     }
+
+    Types: TPaymentSplitterTypes;
 
     $meta = {
         "class": "./contracts/openzeppelin/PaymentSplitter.ts"
@@ -138,22 +140,22 @@ export class PaymentSplitter extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onERC20PaymentReleased (fn?: (event: TClientEventsStreamData<TLogERC20PaymentReleasedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogERC20PaymentReleasedParameters>> {
+    onERC20PaymentReleased (fn?: (event: TClientEventsStreamData<TEventArguments<'ERC20PaymentReleased'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ERC20PaymentReleased'>>> {
         return this.$onLog('ERC20PaymentReleased', fn);
     }
 
-    onPayeeAdded (fn?: (event: TClientEventsStreamData<TLogPayeeAddedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogPayeeAddedParameters>> {
+    onPayeeAdded (fn?: (event: TClientEventsStreamData<TEventArguments<'PayeeAdded'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'PayeeAdded'>>> {
         return this.$onLog('PayeeAdded', fn);
     }
 
-    onPaymentReceived (fn?: (event: TClientEventsStreamData<TLogPaymentReceivedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogPaymentReceivedParameters>> {
+    onPaymentReceived (fn?: (event: TClientEventsStreamData<TEventArguments<'PaymentReceived'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'PaymentReceived'>>> {
         return this.$onLog('PaymentReceived', fn);
     }
 
-    onPaymentReleased (fn?: (event: TClientEventsStreamData<TLogPaymentReleasedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogPaymentReleasedParameters>> {
+    onPaymentReleased (fn?: (event: TClientEventsStreamData<TEventArguments<'PaymentReleased'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'PaymentReleased'>>> {
         return this.$onLog('PaymentReleased', fn);
     }
 
@@ -291,3 +293,4 @@ interface IPaymentSplitterTxData {
 
 type TEvents = TPaymentSplitterTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

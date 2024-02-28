@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class TimelockController extends ContractBase {
 
         
     }
+
+    Types: TTimelockControllerTypes;
 
     $meta = {
         "class": "./contracts/openzeppelin/TimelockController.ts"
@@ -227,38 +229,38 @@ export class TimelockController extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onCallExecuted (fn?: (event: TClientEventsStreamData<TLogCallExecutedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogCallExecutedParameters>> {
+    onCallExecuted (fn?: (event: TClientEventsStreamData<TEventArguments<'CallExecuted'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'CallExecuted'>>> {
         return this.$onLog('CallExecuted', fn);
     }
 
-    onCallSalt (fn?: (event: TClientEventsStreamData<TLogCallSaltParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogCallSaltParameters>> {
+    onCallSalt (fn?: (event: TClientEventsStreamData<TEventArguments<'CallSalt'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'CallSalt'>>> {
         return this.$onLog('CallSalt', fn);
     }
 
-    onCallScheduled (fn?: (event: TClientEventsStreamData<TLogCallScheduledParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogCallScheduledParameters>> {
+    onCallScheduled (fn?: (event: TClientEventsStreamData<TEventArguments<'CallScheduled'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'CallScheduled'>>> {
         return this.$onLog('CallScheduled', fn);
     }
 
-    onCancelled (fn?: (event: TClientEventsStreamData<TLogCancelledParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogCancelledParameters>> {
+    onCancelled (fn?: (event: TClientEventsStreamData<TEventArguments<'Cancelled'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Cancelled'>>> {
         return this.$onLog('Cancelled', fn);
     }
 
-    onMinDelayChange (fn?: (event: TClientEventsStreamData<TLogMinDelayChangeParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogMinDelayChangeParameters>> {
+    onMinDelayChange (fn?: (event: TClientEventsStreamData<TEventArguments<'MinDelayChange'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'MinDelayChange'>>> {
         return this.$onLog('MinDelayChange', fn);
     }
 
-    onRoleAdminChanged (fn?: (event: TClientEventsStreamData<TLogRoleAdminChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRoleAdminChangedParameters>> {
+    onRoleAdminChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'RoleAdminChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'RoleAdminChanged'>>> {
         return this.$onLog('RoleAdminChanged', fn);
     }
 
-    onRoleGranted (fn?: (event: TClientEventsStreamData<TLogRoleGrantedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRoleGrantedParameters>> {
+    onRoleGranted (fn?: (event: TClientEventsStreamData<TEventArguments<'RoleGranted'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'RoleGranted'>>> {
         return this.$onLog('RoleGranted', fn);
     }
 
-    onRoleRevoked (fn?: (event: TClientEventsStreamData<TLogRoleRevokedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRoleRevokedParameters>> {
+    onRoleRevoked (fn?: (event: TClientEventsStreamData<TEventArguments<'RoleRevoked'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'RoleRevoked'>>> {
         return this.$onLog('RoleRevoked', fn);
     }
 
@@ -568,3 +570,4 @@ interface ITimelockControllerTxData {
 
 type TEvents = TTimelockControllerTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

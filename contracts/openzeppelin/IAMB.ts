@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class IAMB extends ContractBase {
 
         
     }
+
+    Types: TIAMBTypes;
 
     $meta = {
         "class": "./contracts/openzeppelin/IAMB.ts"
@@ -148,22 +150,22 @@ export class IAMB extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onAffirmationCompleted (fn?: (event: TClientEventsStreamData<TLogAffirmationCompletedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogAffirmationCompletedParameters>> {
+    onAffirmationCompleted (fn?: (event: TClientEventsStreamData<TEventArguments<'AffirmationCompleted'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'AffirmationCompleted'>>> {
         return this.$onLog('AffirmationCompleted', fn);
     }
 
-    onRelayedMessage (fn?: (event: TClientEventsStreamData<TLogRelayedMessageParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRelayedMessageParameters>> {
+    onRelayedMessage (fn?: (event: TClientEventsStreamData<TEventArguments<'RelayedMessage'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'RelayedMessage'>>> {
         return this.$onLog('RelayedMessage', fn);
     }
 
-    onUserRequestForAffirmation (fn?: (event: TClientEventsStreamData<TLogUserRequestForAffirmationParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogUserRequestForAffirmationParameters>> {
+    onUserRequestForAffirmation (fn?: (event: TClientEventsStreamData<TEventArguments<'UserRequestForAffirmation'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'UserRequestForAffirmation'>>> {
         return this.$onLog('UserRequestForAffirmation', fn);
     }
 
-    onUserRequestForSignature (fn?: (event: TClientEventsStreamData<TLogUserRequestForSignatureParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogUserRequestForSignatureParameters>> {
+    onUserRequestForSignature (fn?: (event: TClientEventsStreamData<TEventArguments<'UserRequestForSignature'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'UserRequestForSignature'>>> {
         return this.$onLog('UserRequestForSignature', fn);
     }
 
@@ -325,3 +327,4 @@ interface IIAMBTxData {
 
 type TEvents = TIAMBTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

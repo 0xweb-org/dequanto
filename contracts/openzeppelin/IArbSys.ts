@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class IArbSys extends ContractBase {
 
         
     }
+
+    Types: TIArbSysTypes;
 
     $meta = {
         "class": "./contracts/openzeppelin/IArbSys.ts"
@@ -143,18 +145,18 @@ export class IArbSys extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onL2ToL1Transaction (fn?: (event: TClientEventsStreamData<TLogL2ToL1TransactionParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogL2ToL1TransactionParameters>> {
+    onL2ToL1Transaction (fn?: (event: TClientEventsStreamData<TEventArguments<'L2ToL1Transaction'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'L2ToL1Transaction'>>> {
         return this.$onLog('L2ToL1Transaction', fn);
     }
 
-    onL2ToL1Tx (fn?: (event: TClientEventsStreamData<TLogL2ToL1TxParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogL2ToL1TxParameters>> {
+    onL2ToL1Tx (fn?: (event: TClientEventsStreamData<TEventArguments<'L2ToL1Tx'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'L2ToL1Tx'>>> {
         return this.$onLog('L2ToL1Tx', fn);
     }
 
-    onSendMerkleUpdate (fn?: (event: TClientEventsStreamData<TLogSendMerkleUpdateParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogSendMerkleUpdateParameters>> {
+    onSendMerkleUpdate (fn?: (event: TClientEventsStreamData<TEventArguments<'SendMerkleUpdate'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'SendMerkleUpdate'>>> {
         return this.$onLog('SendMerkleUpdate', fn);
     }
 
@@ -295,3 +297,4 @@ interface IIArbSysTxData {
 
 type TEvents = TIArbSysTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

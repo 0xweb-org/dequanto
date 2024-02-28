@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/0x58774Bb8acD458A640aF0B88238369A167546ef2#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class EnsDnsRegistrar extends ContractBase {
 
         this.storage = new EnsDnsRegistrarStorageReader(this.address, this.client, this.explorer);
     }
+
+    Types: TEnsDnsRegistrarTypes;
 
     $meta = {
         "class": "./contracts/ens/EnsDnsRegistrar/EnsDnsRegistrar.ts"
@@ -132,18 +134,18 @@ export class EnsDnsRegistrar extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onClaim (fn?: (event: TClientEventsStreamData<TLogClaimParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogClaimParameters>> {
+    onClaim (fn?: (event: TClientEventsStreamData<TEventArguments<'Claim'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Claim'>>> {
         return this.$onLog('Claim', fn);
     }
 
-    onNewOracle (fn?: (event: TClientEventsStreamData<TLogNewOracleParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogNewOracleParameters>> {
+    onNewOracle (fn?: (event: TClientEventsStreamData<TEventArguments<'NewOracle'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'NewOracle'>>> {
         return this.$onLog('NewOracle', fn);
     }
 
-    onNewPublicSuffixList (fn?: (event: TClientEventsStreamData<TLogNewPublicSuffixListParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogNewPublicSuffixListParameters>> {
+    onNewPublicSuffixList (fn?: (event: TClientEventsStreamData<TEventArguments<'NewPublicSuffixList'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'NewPublicSuffixList'>>> {
         return this.$onLog('NewPublicSuffixList', fn);
     }
 
@@ -328,3 +330,4 @@ interface IEnsDnsRegistrarTxData {
 
 type TEvents = TEnsDnsRegistrarTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class CreateCall extends ContractBase {
 
         
     }
+
+    Types: TCreateCallTypes;
 
     $meta = {
         "class": "./contracts/safe/CreateCall.ts"
@@ -93,10 +95,10 @@ export class CreateCall extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onContractCreation (fn?: (event: TClientEventsStreamData<TLogContractCreationParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogContractCreationParameters>> {
+    onContractCreation (fn?: (event: TClientEventsStreamData<TEventArguments<'ContractCreation'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ContractCreation'>>> {
         return this.$onLog('ContractCreation', fn);
     }
 
@@ -163,3 +165,4 @@ interface ICreateCallTxData {
 
 type TEvents = TCreateCallTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

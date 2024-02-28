@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class ERC1155 extends ContractBase {
 
         
     }
+
+    Types: TERC1155Types;
 
     $meta = {
         "class": "./contracts/openzeppelin/ERC1155.ts"
@@ -127,22 +129,22 @@ export class ERC1155 extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onApprovalForAll (fn?: (event: TClientEventsStreamData<TLogApprovalForAllParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalForAllParameters>> {
+    onApprovalForAll (fn?: (event: TClientEventsStreamData<TEventArguments<'ApprovalForAll'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ApprovalForAll'>>> {
         return this.$onLog('ApprovalForAll', fn);
     }
 
-    onTransferBatch (fn?: (event: TClientEventsStreamData<TLogTransferBatchParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogTransferBatchParameters>> {
+    onTransferBatch (fn?: (event: TClientEventsStreamData<TEventArguments<'TransferBatch'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'TransferBatch'>>> {
         return this.$onLog('TransferBatch', fn);
     }
 
-    onTransferSingle (fn?: (event: TClientEventsStreamData<TLogTransferSingleParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogTransferSingleParameters>> {
+    onTransferSingle (fn?: (event: TClientEventsStreamData<TEventArguments<'TransferSingle'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'TransferSingle'>>> {
         return this.$onLog('TransferSingle', fn);
     }
 
-    onURI (fn?: (event: TClientEventsStreamData<TLogURIParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogURIParameters>> {
+    onURI (fn?: (event: TClientEventsStreamData<TEventArguments<'URI'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'URI'>>> {
         return this.$onLog('URI', fn);
     }
 
@@ -286,3 +288,4 @@ interface IERC1155TxData {
 
 type TEvents = TERC1155Types['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

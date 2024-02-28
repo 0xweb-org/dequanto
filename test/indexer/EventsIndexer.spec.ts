@@ -42,7 +42,7 @@ UTest({
                 directory: FS_DIR
             }
         });
-        let { logs } = await indexer.getPastLogs('getPastLogsNumber');
+        let { logs } = await indexer.getPastLogs('Number');
         eq_(logs.length, 3);
         eq_(logs[0].params.num, 1);
         eq_(logs[1].params.num, 2);
@@ -53,7 +53,15 @@ UTest({
 
         eq_(storageData.length, 3);
 
-        let storageMetaData = await File.readAsync<any>(`${FS_DIR}/hardhat/FooTest-${contract.address}-meta.json`);
-        eq_(storageMetaData.lastBlock, blockNr);
+        let storageMetaData = await File.readAsync<any[]>(`${FS_DIR}/hardhat/FooTest-${contract.address}-meta-arr.json`);
+        eq_(storageMetaData.find(x => x.event === 'Number').lastBlock, blockNr);
+
+        let resultMany = await indexer.getPastLogs([ 'Number', 'String' ]);
+
+        deepEq_(logs, resultMany.logs.filter(x => x.event === 'Number'));
+
+        let stringEvents = resultMany.logs.filter(x => x.event === 'String');
+        eq_(stringEvents.length, 1);
+        eq_(stringEvents[0].params.str, 'hello');
     }
 });

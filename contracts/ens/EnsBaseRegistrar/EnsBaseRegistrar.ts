@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class EnsBaseRegistrar extends ContractBase {
 
         this.storage = new EnsBaseRegistrarStorageReader(this.address, this.client, this.explorer);
     }
+
+    Types: TEnsBaseRegistrarTypes;
 
     $meta = {
         "class": "./contracts/ens/EnsBaseRegistrar/EnsBaseRegistrar.ts"
@@ -221,42 +223,42 @@ export class EnsBaseRegistrar extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onApproval (fn?: (event: TClientEventsStreamData<TLogApprovalParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalParameters>> {
+    onApproval (fn?: (event: TClientEventsStreamData<TEventArguments<'Approval'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Approval'>>> {
         return this.$onLog('Approval', fn);
     }
 
-    onApprovalForAll (fn?: (event: TClientEventsStreamData<TLogApprovalForAllParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalForAllParameters>> {
+    onApprovalForAll (fn?: (event: TClientEventsStreamData<TEventArguments<'ApprovalForAll'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ApprovalForAll'>>> {
         return this.$onLog('ApprovalForAll', fn);
     }
 
-    onControllerAdded (fn?: (event: TClientEventsStreamData<TLogControllerAddedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogControllerAddedParameters>> {
+    onControllerAdded (fn?: (event: TClientEventsStreamData<TEventArguments<'ControllerAdded'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ControllerAdded'>>> {
         return this.$onLog('ControllerAdded', fn);
     }
 
-    onControllerRemoved (fn?: (event: TClientEventsStreamData<TLogControllerRemovedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogControllerRemovedParameters>> {
+    onControllerRemoved (fn?: (event: TClientEventsStreamData<TEventArguments<'ControllerRemoved'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ControllerRemoved'>>> {
         return this.$onLog('ControllerRemoved', fn);
     }
 
-    onNameMigrated (fn?: (event: TClientEventsStreamData<TLogNameMigratedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogNameMigratedParameters>> {
+    onNameMigrated (fn?: (event: TClientEventsStreamData<TEventArguments<'NameMigrated'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'NameMigrated'>>> {
         return this.$onLog('NameMigrated', fn);
     }
 
-    onNameRegistered (fn?: (event: TClientEventsStreamData<TLogNameRegisteredParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogNameRegisteredParameters>> {
+    onNameRegistered (fn?: (event: TClientEventsStreamData<TEventArguments<'NameRegistered'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'NameRegistered'>>> {
         return this.$onLog('NameRegistered', fn);
     }
 
-    onNameRenewed (fn?: (event: TClientEventsStreamData<TLogNameRenewedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogNameRenewedParameters>> {
+    onNameRenewed (fn?: (event: TClientEventsStreamData<TEventArguments<'NameRenewed'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'NameRenewed'>>> {
         return this.$onLog('NameRenewed', fn);
     }
 
-    onOwnershipTransferred (fn?: (event: TClientEventsStreamData<TLogOwnershipTransferredParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogOwnershipTransferredParameters>> {
+    onOwnershipTransferred (fn?: (event: TClientEventsStreamData<TEventArguments<'OwnershipTransferred'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'OwnershipTransferred'>>> {
         return this.$onLog('OwnershipTransferred', fn);
     }
 
-    onTransfer (fn?: (event: TClientEventsStreamData<TLogTransferParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogTransferParameters>> {
+    onTransfer (fn?: (event: TClientEventsStreamData<TEventArguments<'Transfer'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Transfer'>>> {
         return this.$onLog('Transfer', fn);
     }
 
@@ -706,3 +708,4 @@ interface IEnsBaseRegistrarTxData {
 
 type TEvents = TEnsBaseRegistrarTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

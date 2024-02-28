@@ -38,6 +38,8 @@ export class $NAME$ extends ContractBase {
         /* STORAGE_READER_INITIALIZER */
     }
 
+    Types: T$NAME$Types;
+
 /* META_PROPERTY */
 
 /* METHODS */
@@ -82,7 +84,7 @@ export class $NAME$ extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
 /* EVENTS */
@@ -129,3 +131,4 @@ interface I$NAME$TxData {
 
 type TEvents = T$NAME$Types['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

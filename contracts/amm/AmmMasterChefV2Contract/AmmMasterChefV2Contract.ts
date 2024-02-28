@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://bscscan.com/address/0x73feaa1eE314F8c655E354234017bE2193C9E24E#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class AmmMasterChefV2Contract extends ContractBase {
 
         this.storage = new AmmMasterChefV2ContractStorageReader(this.address, this.client, this.explorer);
     }
+
+    Types: TAmmMasterChefV2ContractTypes;
 
     $meta = {
         "class": "./contracts/amm/AmmMasterChefV2Contract/AmmMasterChefV2Contract.ts"
@@ -232,22 +234,22 @@ export class AmmMasterChefV2Contract extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onDeposit (fn?: (event: TClientEventsStreamData<TLogDepositParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDepositParameters>> {
+    onDeposit (fn?: (event: TClientEventsStreamData<TEventArguments<'Deposit'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Deposit'>>> {
         return this.$onLog('Deposit', fn);
     }
 
-    onEmergencyWithdraw (fn?: (event: TClientEventsStreamData<TLogEmergencyWithdrawParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogEmergencyWithdrawParameters>> {
+    onEmergencyWithdraw (fn?: (event: TClientEventsStreamData<TEventArguments<'EmergencyWithdraw'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'EmergencyWithdraw'>>> {
         return this.$onLog('EmergencyWithdraw', fn);
     }
 
-    onOwnershipTransferred (fn?: (event: TClientEventsStreamData<TLogOwnershipTransferredParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogOwnershipTransferredParameters>> {
+    onOwnershipTransferred (fn?: (event: TClientEventsStreamData<TEventArguments<'OwnershipTransferred'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'OwnershipTransferred'>>> {
         return this.$onLog('OwnershipTransferred', fn);
     }
 
-    onWithdraw (fn?: (event: TClientEventsStreamData<TLogWithdrawParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogWithdrawParameters>> {
+    onWithdraw (fn?: (event: TClientEventsStreamData<TEventArguments<'Withdraw'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Withdraw'>>> {
         return this.$onLog('Withdraw', fn);
     }
 
@@ -637,3 +639,4 @@ interface IAmmMasterChefV2ContractTxData {
 
 type TEvents = TAmmMasterChefV2ContractTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class IVotes extends ContractBase {
 
         
     }
+
+    Types: TIVotesTypes;
 
     $meta = {
         "class": "./contracts/openzeppelin/IVotes.ts"
@@ -113,14 +115,14 @@ export class IVotes extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onDelegateChanged (fn?: (event: TClientEventsStreamData<TLogDelegateChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDelegateChangedParameters>> {
+    onDelegateChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'DelegateChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'DelegateChanged'>>> {
         return this.$onLog('DelegateChanged', fn);
     }
 
-    onDelegateVotesChanged (fn?: (event: TClientEventsStreamData<TLogDelegateVotesChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDelegateVotesChangedParameters>> {
+    onDelegateVotesChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'DelegateVotesChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'DelegateVotesChanged'>>> {
         return this.$onLog('DelegateVotesChanged', fn);
     }
 
@@ -220,3 +222,4 @@ interface IIVotesTxData {
 
 type TEvents = TIVotesTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

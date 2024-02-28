@@ -430,7 +430,7 @@ export abstract class Web3Client implements IWeb3Client {
     }
 
     async getPastLogs(filter: RpcTypes.Filter, options?: {
-        onProgress? (info: TLogsRangeProgress): void
+        onProgress? (info: TLogsRangeProgress<TEth.Log>): void
     }): Promise<TEth.Log[]> {
         // ensure numbers, bigints, bools are in HEX
         filter.topics = filter.topics?.map(mix => {
@@ -503,9 +503,10 @@ export abstract class Web3Client implements IWeb3Client {
     }
 }
 
-export type TLogsRangeProgress = {
+export type TLogsRangeProgress<TLogParsed> = {
     logs: TEth.Log[]
-    paged: TEth.Log[]
+    paged: TLogParsed[]
+    latestBlock: number
     blocks: {
         total: number
         loaded: number
@@ -524,7 +525,7 @@ namespace RangeWorker {
         limits: { maxBlockRange?: number, maxResultCount?: number },
         ranges: { fromBlock: number, toBlock: number },
         options?: {
-            onProgress? (info: TLogsRangeProgress)
+            onProgress? (info: TLogsRangeProgress<TEth.Log>)
         }
     ) {
         let { fromBlock, toBlock } = ranges;
@@ -564,6 +565,7 @@ namespace RangeWorker {
             options?.onProgress?.({
                 logs: logs,
                 paged: paged.result as RpcTypes.Log[],
+                latestBlock: paged.range.toBlock,
                 blocks: perf.blocks,
                 blocksPerSecond: Number(blocksPerSecFormatted),
                 timeLeftSeconds: leftSeconds,

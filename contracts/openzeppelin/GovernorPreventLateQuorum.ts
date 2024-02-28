@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -56,6 +56,8 @@ export class GovernorPreventLateQuorum extends ContractBase {
 
         
     }
+
+    Types: TGovernorPreventLateQuorumTypes;
 
     $meta = {
         "class": "./contracts/openzeppelin/GovernorPreventLateQuorum.ts"
@@ -276,38 +278,38 @@ export class GovernorPreventLateQuorum extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onEIP712DomainChanged (fn?: (event: TClientEventsStreamData<TLogEIP712DomainChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogEIP712DomainChangedParameters>> {
+    onEIP712DomainChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'EIP712DomainChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'EIP712DomainChanged'>>> {
         return this.$onLog('EIP712DomainChanged', fn);
     }
 
-    onLateQuorumVoteExtensionSet (fn?: (event: TClientEventsStreamData<TLogLateQuorumVoteExtensionSetParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogLateQuorumVoteExtensionSetParameters>> {
+    onLateQuorumVoteExtensionSet (fn?: (event: TClientEventsStreamData<TEventArguments<'LateQuorumVoteExtensionSet'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'LateQuorumVoteExtensionSet'>>> {
         return this.$onLog('LateQuorumVoteExtensionSet', fn);
     }
 
-    onProposalCanceled (fn?: (event: TClientEventsStreamData<TLogProposalCanceledParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogProposalCanceledParameters>> {
+    onProposalCanceled (fn?: (event: TClientEventsStreamData<TEventArguments<'ProposalCanceled'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ProposalCanceled'>>> {
         return this.$onLog('ProposalCanceled', fn);
     }
 
-    onProposalCreated (fn?: (event: TClientEventsStreamData<TLogProposalCreatedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogProposalCreatedParameters>> {
+    onProposalCreated (fn?: (event: TClientEventsStreamData<TEventArguments<'ProposalCreated'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ProposalCreated'>>> {
         return this.$onLog('ProposalCreated', fn);
     }
 
-    onProposalExecuted (fn?: (event: TClientEventsStreamData<TLogProposalExecutedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogProposalExecutedParameters>> {
+    onProposalExecuted (fn?: (event: TClientEventsStreamData<TEventArguments<'ProposalExecuted'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ProposalExecuted'>>> {
         return this.$onLog('ProposalExecuted', fn);
     }
 
-    onProposalExtended (fn?: (event: TClientEventsStreamData<TLogProposalExtendedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogProposalExtendedParameters>> {
+    onProposalExtended (fn?: (event: TClientEventsStreamData<TEventArguments<'ProposalExtended'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ProposalExtended'>>> {
         return this.$onLog('ProposalExtended', fn);
     }
 
-    onVoteCast (fn?: (event: TClientEventsStreamData<TLogVoteCastParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogVoteCastParameters>> {
+    onVoteCast (fn?: (event: TClientEventsStreamData<TEventArguments<'VoteCast'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'VoteCast'>>> {
         return this.$onLog('VoteCast', fn);
     }
 
-    onVoteCastWithParams (fn?: (event: TClientEventsStreamData<TLogVoteCastWithParamsParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogVoteCastWithParamsParameters>> {
+    onVoteCastWithParams (fn?: (event: TClientEventsStreamData<TEventArguments<'VoteCastWithParams'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'VoteCastWithParams'>>> {
         return this.$onLog('VoteCastWithParams', fn);
     }
 
@@ -647,3 +649,4 @@ interface IGovernorPreventLateQuorumTxData {
 
 type TEvents = TGovernorPreventLateQuorumTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

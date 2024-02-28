@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: ./test/fixtures/erc4337/samples/SimpleAccount.sol
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class SimpleAccount extends ContractBase {
 
         this.storage = new SimpleAccountStorageReader(this.address, this.client, this.explorer);
     }
+
+    Types: TSimpleAccountTypes;
 
     $meta = {
         "source": "./test/fixtures/erc4337/samples/SimpleAccount.sol",
@@ -206,26 +208,26 @@ export class SimpleAccount extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onUpgraded (fn?: (event: TClientEventsStreamData<TLogUpgradedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogUpgradedParameters>> {
+    onUpgraded (fn?: (event: TClientEventsStreamData<TEventArguments<'Upgraded'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Upgraded'>>> {
         return this.$onLog('Upgraded', fn);
     }
 
-    onAdminChanged (fn?: (event: TClientEventsStreamData<TLogAdminChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogAdminChangedParameters>> {
+    onAdminChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'AdminChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'AdminChanged'>>> {
         return this.$onLog('AdminChanged', fn);
     }
 
-    onBeaconUpgraded (fn?: (event: TClientEventsStreamData<TLogBeaconUpgradedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogBeaconUpgradedParameters>> {
+    onBeaconUpgraded (fn?: (event: TClientEventsStreamData<TEventArguments<'BeaconUpgraded'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'BeaconUpgraded'>>> {
         return this.$onLog('BeaconUpgraded', fn);
     }
 
-    onInitialized (fn?: (event: TClientEventsStreamData<TLogInitializedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogInitializedParameters>> {
+    onInitialized (fn?: (event: TClientEventsStreamData<TEventArguments<'Initialized'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Initialized'>>> {
         return this.$onLog('Initialized', fn);
     }
 
-    onSimpleAccountInitialized (fn?: (event: TClientEventsStreamData<TLogSimpleAccountInitializedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogSimpleAccountInitializedParameters>> {
+    onSimpleAccountInitialized (fn?: (event: TClientEventsStreamData<TEventArguments<'SimpleAccountInitialized'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'SimpleAccountInitialized'>>> {
         return this.$onLog('SimpleAccountInitialized', fn);
     }
 
@@ -496,3 +498,4 @@ interface ISimpleAccountTxData {
 
 type TEvents = TSimpleAccountTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

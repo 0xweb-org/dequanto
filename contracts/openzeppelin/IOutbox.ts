@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class IOutbox extends ContractBase {
 
         
     }
+
+    Types: TIOutboxTypes;
 
     $meta = {
         "class": "./contracts/openzeppelin/IOutbox.ts"
@@ -163,14 +165,14 @@ export class IOutbox extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onOutBoxTransactionExecuted (fn?: (event: TClientEventsStreamData<TLogOutBoxTransactionExecutedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogOutBoxTransactionExecutedParameters>> {
+    onOutBoxTransactionExecuted (fn?: (event: TClientEventsStreamData<TEventArguments<'OutBoxTransactionExecuted'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'OutBoxTransactionExecuted'>>> {
         return this.$onLog('OutBoxTransactionExecuted', fn);
     }
 
-    onSendRootUpdated (fn?: (event: TClientEventsStreamData<TLogSendRootUpdatedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogSendRootUpdatedParameters>> {
+    onSendRootUpdated (fn?: (event: TClientEventsStreamData<TEventArguments<'SendRootUpdated'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'SendRootUpdated'>>> {
         return this.$onLog('SendRootUpdated', fn);
     }
 
@@ -312,3 +314,4 @@ interface IIOutboxTxData {
 
 type TEvents = TIOutboxTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

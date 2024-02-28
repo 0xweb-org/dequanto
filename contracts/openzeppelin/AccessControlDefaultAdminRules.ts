@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class AccessControlDefaultAdminRules extends ContractBase {
 
         
     }
+
+    Types: TAccessControlDefaultAdminRulesTypes;
 
     $meta = {
         "class": "./contracts/openzeppelin/AccessControlDefaultAdminRules.ts"
@@ -173,34 +175,34 @@ export class AccessControlDefaultAdminRules extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onDefaultAdminDelayChangeCanceled (fn?: (event: TClientEventsStreamData<TLogDefaultAdminDelayChangeCanceledParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDefaultAdminDelayChangeCanceledParameters>> {
+    onDefaultAdminDelayChangeCanceled (fn?: (event: TClientEventsStreamData<TEventArguments<'DefaultAdminDelayChangeCanceled'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'DefaultAdminDelayChangeCanceled'>>> {
         return this.$onLog('DefaultAdminDelayChangeCanceled', fn);
     }
 
-    onDefaultAdminDelayChangeScheduled (fn?: (event: TClientEventsStreamData<TLogDefaultAdminDelayChangeScheduledParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDefaultAdminDelayChangeScheduledParameters>> {
+    onDefaultAdminDelayChangeScheduled (fn?: (event: TClientEventsStreamData<TEventArguments<'DefaultAdminDelayChangeScheduled'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'DefaultAdminDelayChangeScheduled'>>> {
         return this.$onLog('DefaultAdminDelayChangeScheduled', fn);
     }
 
-    onDefaultAdminTransferCanceled (fn?: (event: TClientEventsStreamData<TLogDefaultAdminTransferCanceledParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDefaultAdminTransferCanceledParameters>> {
+    onDefaultAdminTransferCanceled (fn?: (event: TClientEventsStreamData<TEventArguments<'DefaultAdminTransferCanceled'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'DefaultAdminTransferCanceled'>>> {
         return this.$onLog('DefaultAdminTransferCanceled', fn);
     }
 
-    onDefaultAdminTransferScheduled (fn?: (event: TClientEventsStreamData<TLogDefaultAdminTransferScheduledParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDefaultAdminTransferScheduledParameters>> {
+    onDefaultAdminTransferScheduled (fn?: (event: TClientEventsStreamData<TEventArguments<'DefaultAdminTransferScheduled'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'DefaultAdminTransferScheduled'>>> {
         return this.$onLog('DefaultAdminTransferScheduled', fn);
     }
 
-    onRoleAdminChanged (fn?: (event: TClientEventsStreamData<TLogRoleAdminChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRoleAdminChangedParameters>> {
+    onRoleAdminChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'RoleAdminChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'RoleAdminChanged'>>> {
         return this.$onLog('RoleAdminChanged', fn);
     }
 
-    onRoleGranted (fn?: (event: TClientEventsStreamData<TLogRoleGrantedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRoleGrantedParameters>> {
+    onRoleGranted (fn?: (event: TClientEventsStreamData<TEventArguments<'RoleGranted'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'RoleGranted'>>> {
         return this.$onLog('RoleGranted', fn);
     }
 
-    onRoleRevoked (fn?: (event: TClientEventsStreamData<TLogRoleRevokedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRoleRevokedParameters>> {
+    onRoleRevoked (fn?: (event: TClientEventsStreamData<TEventArguments<'RoleRevoked'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'RoleRevoked'>>> {
         return this.$onLog('RoleRevoked', fn);
     }
 
@@ -445,3 +447,4 @@ interface IAccessControlDefaultAdminRulesTxData {
 
 type TEvents = TAccessControlDefaultAdminRulesTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

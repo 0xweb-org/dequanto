@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class EnsPublicResolver extends ContractBase {
 
         this.storage = new EnsPublicResolverStorageReader(this.address, this.client, this.explorer);
     }
+
+    Types: TEnsPublicResolverTypes;
 
     $meta = {
         "class": "./contracts/ens/EnsPublicResolver/EnsPublicResolver.ts"
@@ -235,62 +237,62 @@ export class EnsPublicResolver extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onABIChanged (fn?: (event: TClientEventsStreamData<TLogABIChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogABIChangedParameters>> {
+    onABIChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'ABIChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ABIChanged'>>> {
         return this.$onLog('ABIChanged', fn);
     }
 
-    onAddrChanged (fn?: (event: TClientEventsStreamData<TLogAddrChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogAddrChangedParameters>> {
+    onAddrChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'AddrChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'AddrChanged'>>> {
         return this.$onLog('AddrChanged', fn);
     }
 
-    onAddressChanged (fn?: (event: TClientEventsStreamData<TLogAddressChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogAddressChangedParameters>> {
+    onAddressChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'AddressChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'AddressChanged'>>> {
         return this.$onLog('AddressChanged', fn);
     }
 
-    onApprovalForAll (fn?: (event: TClientEventsStreamData<TLogApprovalForAllParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalForAllParameters>> {
+    onApprovalForAll (fn?: (event: TClientEventsStreamData<TEventArguments<'ApprovalForAll'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ApprovalForAll'>>> {
         return this.$onLog('ApprovalForAll', fn);
     }
 
-    onApproved (fn?: (event: TClientEventsStreamData<TLogApprovedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovedParameters>> {
+    onApproved (fn?: (event: TClientEventsStreamData<TEventArguments<'Approved'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Approved'>>> {
         return this.$onLog('Approved', fn);
     }
 
-    onContenthashChanged (fn?: (event: TClientEventsStreamData<TLogContenthashChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogContenthashChangedParameters>> {
+    onContenthashChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'ContenthashChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ContenthashChanged'>>> {
         return this.$onLog('ContenthashChanged', fn);
     }
 
-    onDNSRecordChanged (fn?: (event: TClientEventsStreamData<TLogDNSRecordChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDNSRecordChangedParameters>> {
+    onDNSRecordChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'DNSRecordChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'DNSRecordChanged'>>> {
         return this.$onLog('DNSRecordChanged', fn);
     }
 
-    onDNSRecordDeleted (fn?: (event: TClientEventsStreamData<TLogDNSRecordDeletedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDNSRecordDeletedParameters>> {
+    onDNSRecordDeleted (fn?: (event: TClientEventsStreamData<TEventArguments<'DNSRecordDeleted'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'DNSRecordDeleted'>>> {
         return this.$onLog('DNSRecordDeleted', fn);
     }
 
-    onDNSZonehashChanged (fn?: (event: TClientEventsStreamData<TLogDNSZonehashChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDNSZonehashChangedParameters>> {
+    onDNSZonehashChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'DNSZonehashChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'DNSZonehashChanged'>>> {
         return this.$onLog('DNSZonehashChanged', fn);
     }
 
-    onInterfaceChanged (fn?: (event: TClientEventsStreamData<TLogInterfaceChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogInterfaceChangedParameters>> {
+    onInterfaceChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'InterfaceChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'InterfaceChanged'>>> {
         return this.$onLog('InterfaceChanged', fn);
     }
 
-    onNameChanged (fn?: (event: TClientEventsStreamData<TLogNameChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogNameChangedParameters>> {
+    onNameChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'NameChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'NameChanged'>>> {
         return this.$onLog('NameChanged', fn);
     }
 
-    onPubkeyChanged (fn?: (event: TClientEventsStreamData<TLogPubkeyChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogPubkeyChangedParameters>> {
+    onPubkeyChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'PubkeyChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'PubkeyChanged'>>> {
         return this.$onLog('PubkeyChanged', fn);
     }
 
-    onTextChanged (fn?: (event: TClientEventsStreamData<TLogTextChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogTextChangedParameters>> {
+    onTextChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'TextChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'TextChanged'>>> {
         return this.$onLog('TextChanged', fn);
     }
 
-    onVersionChanged (fn?: (event: TClientEventsStreamData<TLogVersionChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogVersionChangedParameters>> {
+    onVersionChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'VersionChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'VersionChanged'>>> {
         return this.$onLog('VersionChanged', fn);
     }
 
@@ -868,3 +870,4 @@ interface IEnsPublicResolverTxData {
 
 type TEvents = TEnsPublicResolverTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

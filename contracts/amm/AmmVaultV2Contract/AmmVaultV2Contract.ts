@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://bscscan.com/address/0xa80240Eb5d7E05d3F250cF000eEc0891d00b51CC#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class AmmVaultV2Contract extends ContractBase {
 
         this.storage = new AmmVaultV2ContractStorageReader(this.address, this.client, this.explorer);
     }
+
+    Types: TAmmVaultV2ContractTypes;
 
     $meta = {
         "class": "./contracts/amm/AmmVaultV2Contract/AmmVaultV2Contract.ts"
@@ -282,38 +284,38 @@ export class AmmVaultV2Contract extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onDeposit (fn?: (event: TClientEventsStreamData<TLogDepositParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDepositParameters>> {
+    onDeposit (fn?: (event: TClientEventsStreamData<TEventArguments<'Deposit'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Deposit'>>> {
         return this.$onLog('Deposit', fn);
     }
 
-    onHarvest (fn?: (event: TClientEventsStreamData<TLogHarvestParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogHarvestParameters>> {
+    onHarvest (fn?: (event: TClientEventsStreamData<TEventArguments<'Harvest'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Harvest'>>> {
         return this.$onLog('Harvest', fn);
     }
 
-    onOwnershipTransferred (fn?: (event: TClientEventsStreamData<TLogOwnershipTransferredParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogOwnershipTransferredParameters>> {
+    onOwnershipTransferred (fn?: (event: TClientEventsStreamData<TEventArguments<'OwnershipTransferred'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'OwnershipTransferred'>>> {
         return this.$onLog('OwnershipTransferred', fn);
     }
 
-    onPause (fn?: (event: TClientEventsStreamData<TLogPauseParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogPauseParameters>> {
+    onPause (fn?: (event: TClientEventsStreamData<TEventArguments<'Pause'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Pause'>>> {
         return this.$onLog('Pause', fn);
     }
 
-    onPaused (fn?: (event: TClientEventsStreamData<TLogPausedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogPausedParameters>> {
+    onPaused (fn?: (event: TClientEventsStreamData<TEventArguments<'Paused'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Paused'>>> {
         return this.$onLog('Paused', fn);
     }
 
-    onUnpause (fn?: (event: TClientEventsStreamData<TLogUnpauseParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogUnpauseParameters>> {
+    onUnpause (fn?: (event: TClientEventsStreamData<TEventArguments<'Unpause'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Unpause'>>> {
         return this.$onLog('Unpause', fn);
     }
 
-    onUnpaused (fn?: (event: TClientEventsStreamData<TLogUnpausedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogUnpausedParameters>> {
+    onUnpaused (fn?: (event: TClientEventsStreamData<TEventArguments<'Unpaused'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Unpaused'>>> {
         return this.$onLog('Unpaused', fn);
     }
 
-    onWithdraw (fn?: (event: TClientEventsStreamData<TLogWithdrawParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogWithdrawParameters>> {
+    onWithdraw (fn?: (event: TClientEventsStreamData<TEventArguments<'Withdraw'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Withdraw'>>> {
         return this.$onLog('Withdraw', fn);
     }
 
@@ -813,3 +815,4 @@ interface IAmmVaultV2ContractTxData {
 
 type TEvents = TAmmVaultV2ContractTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

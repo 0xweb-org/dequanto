@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class IERC4906 extends ContractBase {
 
         
     }
+
+    Types: TIERC4906Types;
 
     $meta = {
         "class": "./contracts/openzeppelin/IERC4906.ts"
@@ -132,26 +134,26 @@ export class IERC4906 extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onApproval (fn?: (event: TClientEventsStreamData<TLogApprovalParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalParameters>> {
+    onApproval (fn?: (event: TClientEventsStreamData<TEventArguments<'Approval'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Approval'>>> {
         return this.$onLog('Approval', fn);
     }
 
-    onApprovalForAll (fn?: (event: TClientEventsStreamData<TLogApprovalForAllParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalForAllParameters>> {
+    onApprovalForAll (fn?: (event: TClientEventsStreamData<TEventArguments<'ApprovalForAll'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ApprovalForAll'>>> {
         return this.$onLog('ApprovalForAll', fn);
     }
 
-    onBatchMetadataUpdate (fn?: (event: TClientEventsStreamData<TLogBatchMetadataUpdateParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogBatchMetadataUpdateParameters>> {
+    onBatchMetadataUpdate (fn?: (event: TClientEventsStreamData<TEventArguments<'BatchMetadataUpdate'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'BatchMetadataUpdate'>>> {
         return this.$onLog('BatchMetadataUpdate', fn);
     }
 
-    onMetadataUpdate (fn?: (event: TClientEventsStreamData<TLogMetadataUpdateParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogMetadataUpdateParameters>> {
+    onMetadataUpdate (fn?: (event: TClientEventsStreamData<TEventArguments<'MetadataUpdate'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'MetadataUpdate'>>> {
         return this.$onLog('MetadataUpdate', fn);
     }
 
-    onTransfer (fn?: (event: TClientEventsStreamData<TLogTransferParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogTransferParameters>> {
+    onTransfer (fn?: (event: TClientEventsStreamData<TEventArguments<'Transfer'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Transfer'>>> {
         return this.$onLog('Transfer', fn);
     }
 
@@ -320,3 +322,4 @@ interface IIERC4906TxData {
 
 type TEvents = TIERC4906Types['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

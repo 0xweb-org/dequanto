@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/0xa58E81fe9b61B5c3fE2AFD33CF304c454AbFc7Cb#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class EnsReverseRegistrar extends ContractBase {
 
         this.storage = new EnsReverseRegistrarStorageReader(this.address, this.client, this.explorer);
     }
+
+    Types: TEnsReverseRegistrarTypes;
 
     $meta = {
         "class": "./contracts/ens/EnsReverseRegistrar/EnsReverseRegistrar.ts"
@@ -157,22 +159,22 @@ export class EnsReverseRegistrar extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onControllerChanged (fn?: (event: TClientEventsStreamData<TLogControllerChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogControllerChangedParameters>> {
+    onControllerChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'ControllerChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ControllerChanged'>>> {
         return this.$onLog('ControllerChanged', fn);
     }
 
-    onDefaultResolverChanged (fn?: (event: TClientEventsStreamData<TLogDefaultResolverChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDefaultResolverChangedParameters>> {
+    onDefaultResolverChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'DefaultResolverChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'DefaultResolverChanged'>>> {
         return this.$onLog('DefaultResolverChanged', fn);
     }
 
-    onOwnershipTransferred (fn?: (event: TClientEventsStreamData<TLogOwnershipTransferredParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogOwnershipTransferredParameters>> {
+    onOwnershipTransferred (fn?: (event: TClientEventsStreamData<TEventArguments<'OwnershipTransferred'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'OwnershipTransferred'>>> {
         return this.$onLog('OwnershipTransferred', fn);
     }
 
-    onReverseClaimed (fn?: (event: TClientEventsStreamData<TLogReverseClaimedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogReverseClaimedParameters>> {
+    onReverseClaimed (fn?: (event: TClientEventsStreamData<TEventArguments<'ReverseClaimed'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ReverseClaimed'>>> {
         return this.$onLog('ReverseClaimed', fn);
     }
 
@@ -402,3 +404,4 @@ interface IEnsReverseRegistrarTxData {
 
 type TEvents = TEnsReverseRegistrarTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

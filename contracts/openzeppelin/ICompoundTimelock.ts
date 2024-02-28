@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class ICompoundTimelock extends ContractBase {
 
         
     }
+
+    Types: TICompoundTimelockTypes;
 
     $meta = {
         "class": "./contracts/openzeppelin/ICompoundTimelock.ts"
@@ -148,30 +150,30 @@ export class ICompoundTimelock extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onCancelTransaction (fn?: (event: TClientEventsStreamData<TLogCancelTransactionParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogCancelTransactionParameters>> {
+    onCancelTransaction (fn?: (event: TClientEventsStreamData<TEventArguments<'CancelTransaction'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'CancelTransaction'>>> {
         return this.$onLog('CancelTransaction', fn);
     }
 
-    onExecuteTransaction (fn?: (event: TClientEventsStreamData<TLogExecuteTransactionParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogExecuteTransactionParameters>> {
+    onExecuteTransaction (fn?: (event: TClientEventsStreamData<TEventArguments<'ExecuteTransaction'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ExecuteTransaction'>>> {
         return this.$onLog('ExecuteTransaction', fn);
     }
 
-    onNewAdmin (fn?: (event: TClientEventsStreamData<TLogNewAdminParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogNewAdminParameters>> {
+    onNewAdmin (fn?: (event: TClientEventsStreamData<TEventArguments<'NewAdmin'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'NewAdmin'>>> {
         return this.$onLog('NewAdmin', fn);
     }
 
-    onNewDelay (fn?: (event: TClientEventsStreamData<TLogNewDelayParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogNewDelayParameters>> {
+    onNewDelay (fn?: (event: TClientEventsStreamData<TEventArguments<'NewDelay'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'NewDelay'>>> {
         return this.$onLog('NewDelay', fn);
     }
 
-    onNewPendingAdmin (fn?: (event: TClientEventsStreamData<TLogNewPendingAdminParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogNewPendingAdminParameters>> {
+    onNewPendingAdmin (fn?: (event: TClientEventsStreamData<TEventArguments<'NewPendingAdmin'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'NewPendingAdmin'>>> {
         return this.$onLog('NewPendingAdmin', fn);
     }
 
-    onQueueTransaction (fn?: (event: TClientEventsStreamData<TLogQueueTransactionParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogQueueTransactionParameters>> {
+    onQueueTransaction (fn?: (event: TClientEventsStreamData<TEventArguments<'QueueTransaction'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'QueueTransaction'>>> {
         return this.$onLog('QueueTransaction', fn);
     }
 
@@ -375,3 +377,4 @@ interface IICompoundTimelockTxData {
 
 type TEvents = TICompoundTimelockTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

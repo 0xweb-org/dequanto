@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class EnsRegistry extends ContractBase {
 
         this.storage = new EnsRegistryStorageReader(this.address, this.client, this.explorer);
     }
+
+    Types: TEnsRegistryTypes;
 
     $meta = {
         "class": "./contracts/ens/EnsRegistry/EnsRegistry.ts"
@@ -152,26 +154,26 @@ export class EnsRegistry extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onApprovalForAll (fn?: (event: TClientEventsStreamData<TLogApprovalForAllParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalForAllParameters>> {
+    onApprovalForAll (fn?: (event: TClientEventsStreamData<TEventArguments<'ApprovalForAll'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ApprovalForAll'>>> {
         return this.$onLog('ApprovalForAll', fn);
     }
 
-    onNewOwner (fn?: (event: TClientEventsStreamData<TLogNewOwnerParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogNewOwnerParameters>> {
+    onNewOwner (fn?: (event: TClientEventsStreamData<TEventArguments<'NewOwner'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'NewOwner'>>> {
         return this.$onLog('NewOwner', fn);
     }
 
-    onNewResolver (fn?: (event: TClientEventsStreamData<TLogNewResolverParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogNewResolverParameters>> {
+    onNewResolver (fn?: (event: TClientEventsStreamData<TEventArguments<'NewResolver'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'NewResolver'>>> {
         return this.$onLog('NewResolver', fn);
     }
 
-    onNewTTL (fn?: (event: TClientEventsStreamData<TLogNewTTLParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogNewTTLParameters>> {
+    onNewTTL (fn?: (event: TClientEventsStreamData<TEventArguments<'NewTTL'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'NewTTL'>>> {
         return this.$onLog('NewTTL', fn);
     }
 
-    onTransfer (fn?: (event: TClientEventsStreamData<TLogTransferParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogTransferParameters>> {
+    onTransfer (fn?: (event: TClientEventsStreamData<TEventArguments<'Transfer'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Transfer'>>> {
         return this.$onLog('Transfer', fn);
     }
 
@@ -410,3 +412,4 @@ interface IEnsRegistryTxData {
 
 type TEvents = TEnsRegistryTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

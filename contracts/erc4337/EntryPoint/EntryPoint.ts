@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/0x5ff137d4b0fdcd49dca30c7cf57e578a026d2789#code
  */
 import di from 'a-di';
@@ -89,6 +89,8 @@ export class EntryPoint extends ContractBase {
 
         this.storage = new EntryPointStorageReader(this.address, this.client, this.explorer);
     }
+
+    Types: TEntryPointTypes;
 
     $meta = {
         "class": "./contracts/erc4337/EntryPoint/EntryPoint.ts"
@@ -234,46 +236,46 @@ export class EntryPoint extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onAccountDeployed (fn?: (event: TClientEventsStreamData<TLogAccountDeployedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogAccountDeployedParameters>> {
+    onAccountDeployed (fn?: (event: TClientEventsStreamData<TEventArguments<'AccountDeployed'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'AccountDeployed'>>> {
         return this.$onLog('AccountDeployed', fn);
     }
 
-    onBeforeExecution (fn?: (event: TClientEventsStreamData<TLogBeforeExecutionParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogBeforeExecutionParameters>> {
+    onBeforeExecution (fn?: (event: TClientEventsStreamData<TEventArguments<'BeforeExecution'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'BeforeExecution'>>> {
         return this.$onLog('BeforeExecution', fn);
     }
 
-    onDeposited (fn?: (event: TClientEventsStreamData<TLogDepositedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDepositedParameters>> {
+    onDeposited (fn?: (event: TClientEventsStreamData<TEventArguments<'Deposited'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Deposited'>>> {
         return this.$onLog('Deposited', fn);
     }
 
-    onSignatureAggregatorChanged (fn?: (event: TClientEventsStreamData<TLogSignatureAggregatorChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogSignatureAggregatorChangedParameters>> {
+    onSignatureAggregatorChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'SignatureAggregatorChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'SignatureAggregatorChanged'>>> {
         return this.$onLog('SignatureAggregatorChanged', fn);
     }
 
-    onStakeLocked (fn?: (event: TClientEventsStreamData<TLogStakeLockedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogStakeLockedParameters>> {
+    onStakeLocked (fn?: (event: TClientEventsStreamData<TEventArguments<'StakeLocked'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'StakeLocked'>>> {
         return this.$onLog('StakeLocked', fn);
     }
 
-    onStakeUnlocked (fn?: (event: TClientEventsStreamData<TLogStakeUnlockedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogStakeUnlockedParameters>> {
+    onStakeUnlocked (fn?: (event: TClientEventsStreamData<TEventArguments<'StakeUnlocked'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'StakeUnlocked'>>> {
         return this.$onLog('StakeUnlocked', fn);
     }
 
-    onStakeWithdrawn (fn?: (event: TClientEventsStreamData<TLogStakeWithdrawnParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogStakeWithdrawnParameters>> {
+    onStakeWithdrawn (fn?: (event: TClientEventsStreamData<TEventArguments<'StakeWithdrawn'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'StakeWithdrawn'>>> {
         return this.$onLog('StakeWithdrawn', fn);
     }
 
-    onUserOperationEvent (fn?: (event: TClientEventsStreamData<TLogUserOperationEventParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogUserOperationEventParameters>> {
+    onUserOperationEvent (fn?: (event: TClientEventsStreamData<TEventArguments<'UserOperationEvent'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'UserOperationEvent'>>> {
         return this.$onLog('UserOperationEvent', fn);
     }
 
-    onUserOperationRevertReason (fn?: (event: TClientEventsStreamData<TLogUserOperationRevertReasonParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogUserOperationRevertReasonParameters>> {
+    onUserOperationRevertReason (fn?: (event: TClientEventsStreamData<TEventArguments<'UserOperationRevertReason'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'UserOperationRevertReason'>>> {
         return this.$onLog('UserOperationRevertReason', fn);
     }
 
-    onWithdrawn (fn?: (event: TClientEventsStreamData<TLogWithdrawnParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogWithdrawnParameters>> {
+    onWithdrawn (fn?: (event: TClientEventsStreamData<TEventArguments<'Withdrawn'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Withdrawn'>>> {
         return this.$onLog('Withdrawn', fn);
     }
 
@@ -635,3 +637,4 @@ interface IEntryPointTxData {
 
 type TEvents = TEntryPointTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

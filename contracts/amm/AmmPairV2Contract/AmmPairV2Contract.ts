@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://bscscan.com/address/0x7752e1fa9f3a2e860856458517008558deb989e3#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class AmmPairV2Contract extends ContractBase {
 
         this.storage = new AmmPairV2ContractStorageReader(this.address, this.client, this.explorer);
     }
+
+    Types: TAmmPairV2ContractTypes;
 
     $meta = {
         "class": "./contracts/amm/AmmPairV2Contract/AmmPairV2Contract.ts"
@@ -222,30 +224,30 @@ export class AmmPairV2Contract extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onApproval (fn?: (event: TClientEventsStreamData<TLogApprovalParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalParameters>> {
+    onApproval (fn?: (event: TClientEventsStreamData<TEventArguments<'Approval'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Approval'>>> {
         return this.$onLog('Approval', fn);
     }
 
-    onBurn (fn?: (event: TClientEventsStreamData<TLogBurnParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogBurnParameters>> {
+    onBurn (fn?: (event: TClientEventsStreamData<TEventArguments<'Burn'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Burn'>>> {
         return this.$onLog('Burn', fn);
     }
 
-    onMint (fn?: (event: TClientEventsStreamData<TLogMintParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogMintParameters>> {
+    onMint (fn?: (event: TClientEventsStreamData<TEventArguments<'Mint'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Mint'>>> {
         return this.$onLog('Mint', fn);
     }
 
-    onSwap (fn?: (event: TClientEventsStreamData<TLogSwapParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogSwapParameters>> {
+    onSwap (fn?: (event: TClientEventsStreamData<TEventArguments<'Swap'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Swap'>>> {
         return this.$onLog('Swap', fn);
     }
 
-    onSync (fn?: (event: TClientEventsStreamData<TLogSyncParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogSyncParameters>> {
+    onSync (fn?: (event: TClientEventsStreamData<TEventArguments<'Sync'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Sync'>>> {
         return this.$onLog('Sync', fn);
     }
 
-    onTransfer (fn?: (event: TClientEventsStreamData<TLogTransferParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogTransferParameters>> {
+    onTransfer (fn?: (event: TClientEventsStreamData<TEventArguments<'Transfer'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Transfer'>>> {
         return this.$onLog('Transfer', fn);
     }
 
@@ -695,3 +697,4 @@ interface IAmmPairV2ContractTxData {
 
 type TEvents = TAmmPairV2ContractTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -51,6 +51,8 @@ export class Votes extends ContractBase {
 
         
     }
+
+    Types: TVotesTypes;
 
     $meta = {
         "class": "./contracts/openzeppelin/Votes.ts"
@@ -151,18 +153,18 @@ export class Votes extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onDelegateChanged (fn?: (event: TClientEventsStreamData<TLogDelegateChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDelegateChangedParameters>> {
+    onDelegateChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'DelegateChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'DelegateChanged'>>> {
         return this.$onLog('DelegateChanged', fn);
     }
 
-    onDelegateVotesChanged (fn?: (event: TClientEventsStreamData<TLogDelegateVotesChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDelegateVotesChangedParameters>> {
+    onDelegateVotesChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'DelegateVotesChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'DelegateVotesChanged'>>> {
         return this.$onLog('DelegateVotesChanged', fn);
     }
 
-    onEIP712DomainChanged (fn?: (event: TClientEventsStreamData<TLogEIP712DomainChangedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogEIP712DomainChangedParameters>> {
+    onEIP712DomainChanged (fn?: (event: TClientEventsStreamData<TEventArguments<'EIP712DomainChanged'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'EIP712DomainChanged'>>> {
         return this.$onLog('EIP712DomainChanged', fn);
     }
 
@@ -299,3 +301,4 @@ interface IVotesTxData {
 
 type TEvents = TVotesTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

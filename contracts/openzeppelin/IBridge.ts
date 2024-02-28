@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class IBridge extends ContractBase {
 
         
     }
+
+    Types: TIBridgeTypes;
 
     $meta = {
         "class": "./contracts/openzeppelin/IBridge.ts"
@@ -183,26 +185,26 @@ export class IBridge extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onBridgeCallTriggered (fn?: (event: TClientEventsStreamData<TLogBridgeCallTriggeredParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogBridgeCallTriggeredParameters>> {
+    onBridgeCallTriggered (fn?: (event: TClientEventsStreamData<TEventArguments<'BridgeCallTriggered'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'BridgeCallTriggered'>>> {
         return this.$onLog('BridgeCallTriggered', fn);
     }
 
-    onInboxToggle (fn?: (event: TClientEventsStreamData<TLogInboxToggleParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogInboxToggleParameters>> {
+    onInboxToggle (fn?: (event: TClientEventsStreamData<TEventArguments<'InboxToggle'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'InboxToggle'>>> {
         return this.$onLog('InboxToggle', fn);
     }
 
-    onMessageDelivered (fn?: (event: TClientEventsStreamData<TLogMessageDeliveredParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogMessageDeliveredParameters>> {
+    onMessageDelivered (fn?: (event: TClientEventsStreamData<TEventArguments<'MessageDelivered'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'MessageDelivered'>>> {
         return this.$onLog('MessageDelivered', fn);
     }
 
-    onOutboxToggle (fn?: (event: TClientEventsStreamData<TLogOutboxToggleParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogOutboxToggleParameters>> {
+    onOutboxToggle (fn?: (event: TClientEventsStreamData<TEventArguments<'OutboxToggle'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'OutboxToggle'>>> {
         return this.$onLog('OutboxToggle', fn);
     }
 
-    onSequencerInboxUpdated (fn?: (event: TClientEventsStreamData<TLogSequencerInboxUpdatedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogSequencerInboxUpdatedParameters>> {
+    onSequencerInboxUpdated (fn?: (event: TClientEventsStreamData<TEventArguments<'SequencerInboxUpdated'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'SequencerInboxUpdated'>>> {
         return this.$onLog('SequencerInboxUpdated', fn);
     }
 
@@ -425,3 +427,4 @@ interface IIBridgeTxData {
 
 type TEvents = TIBridgeTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

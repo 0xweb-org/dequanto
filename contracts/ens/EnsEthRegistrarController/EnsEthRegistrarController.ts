@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/0x253553366Da8546fC250F225fe3d25d0C782303b#code
  */
 import di from 'a-di';
@@ -90,6 +90,8 @@ export class EnsEthRegistrarController extends ContractBase {
 
         this.storage = new EnsEthRegistrarControllerStorageReader(this.address, this.client, this.explorer);
     }
+
+    Types: TEnsEthRegistrarControllerTypes;
 
     $meta = {
         "class": "./contracts/ens/EnsEthRegistrarController/EnsEthRegistrarController.ts"
@@ -239,18 +241,18 @@ export class EnsEthRegistrarController extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onNameRegistered (fn?: (event: TClientEventsStreamData<TLogNameRegisteredParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogNameRegisteredParameters>> {
+    onNameRegistered (fn?: (event: TClientEventsStreamData<TEventArguments<'NameRegistered'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'NameRegistered'>>> {
         return this.$onLog('NameRegistered', fn);
     }
 
-    onNameRenewed (fn?: (event: TClientEventsStreamData<TLogNameRenewedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogNameRenewedParameters>> {
+    onNameRenewed (fn?: (event: TClientEventsStreamData<TEventArguments<'NameRenewed'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'NameRenewed'>>> {
         return this.$onLog('NameRenewed', fn);
     }
 
-    onOwnershipTransferred (fn?: (event: TClientEventsStreamData<TLogOwnershipTransferredParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogOwnershipTransferredParameters>> {
+    onOwnershipTransferred (fn?: (event: TClientEventsStreamData<TEventArguments<'OwnershipTransferred'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'OwnershipTransferred'>>> {
         return this.$onLog('OwnershipTransferred', fn);
     }
 
@@ -472,3 +474,4 @@ interface IEnsEthRegistrarControllerTxData {
 
 type TEvents = TEnsEthRegistrarControllerTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

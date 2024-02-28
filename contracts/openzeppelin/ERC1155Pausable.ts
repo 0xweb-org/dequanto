@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class ERC1155Pausable extends ContractBase {
 
         
     }
+
+    Types: TERC1155PausableTypes;
 
     $meta = {
         "class": "./contracts/openzeppelin/ERC1155Pausable.ts"
@@ -128,30 +130,30 @@ export class ERC1155Pausable extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onApprovalForAll (fn?: (event: TClientEventsStreamData<TLogApprovalForAllParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApprovalForAllParameters>> {
+    onApprovalForAll (fn?: (event: TClientEventsStreamData<TEventArguments<'ApprovalForAll'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ApprovalForAll'>>> {
         return this.$onLog('ApprovalForAll', fn);
     }
 
-    onPaused (fn?: (event: TClientEventsStreamData<TLogPausedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogPausedParameters>> {
+    onPaused (fn?: (event: TClientEventsStreamData<TEventArguments<'Paused'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Paused'>>> {
         return this.$onLog('Paused', fn);
     }
 
-    onTransferBatch (fn?: (event: TClientEventsStreamData<TLogTransferBatchParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogTransferBatchParameters>> {
+    onTransferBatch (fn?: (event: TClientEventsStreamData<TEventArguments<'TransferBatch'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'TransferBatch'>>> {
         return this.$onLog('TransferBatch', fn);
     }
 
-    onTransferSingle (fn?: (event: TClientEventsStreamData<TLogTransferSingleParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogTransferSingleParameters>> {
+    onTransferSingle (fn?: (event: TClientEventsStreamData<TEventArguments<'TransferSingle'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'TransferSingle'>>> {
         return this.$onLog('TransferSingle', fn);
     }
 
-    onURI (fn?: (event: TClientEventsStreamData<TLogURIParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogURIParameters>> {
+    onURI (fn?: (event: TClientEventsStreamData<TEventArguments<'URI'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'URI'>>> {
         return this.$onLog('URI', fn);
     }
 
-    onUnpaused (fn?: (event: TClientEventsStreamData<TLogUnpausedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogUnpausedParameters>> {
+    onUnpaused (fn?: (event: TClientEventsStreamData<TEventArguments<'Unpaused'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Unpaused'>>> {
         return this.$onLog('Unpaused', fn);
     }
 
@@ -333,3 +335,4 @@ interface IERC1155PausableTxData {
 
 type TEvents = TERC1155PausableTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://bscscan.com/address/0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class AmmFactoryV2Contract extends ContractBase {
 
         this.storage = new AmmFactoryV2ContractStorageReader(this.address, this.client, this.explorer);
     }
+
+    Types: TAmmFactoryV2ContractTypes;
 
     $meta = {
         "class": "./contracts/amm/AmmFactoryV2Contract/AmmFactoryV2Contract.ts"
@@ -132,10 +134,10 @@ export class AmmFactoryV2Contract extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onPairCreated (fn?: (event: TClientEventsStreamData<TLogPairCreatedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogPairCreatedParameters>> {
+    onPairCreated (fn?: (event: TClientEventsStreamData<TEventArguments<'PairCreated'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'PairCreated'>>> {
         return this.$onLog('PairCreated', fn);
     }
 
@@ -293,3 +295,4 @@ interface IAmmFactoryV2ContractTxData {
 
 type TEvents = TAmmFactoryV2ContractTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

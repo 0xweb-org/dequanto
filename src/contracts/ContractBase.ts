@@ -42,6 +42,7 @@ export abstract class ContractBase {
     protected writerConfig?: ITxWriterOptions;
 
     abstract abi?: TAbiItem[]
+    abstract Types?: TContractTypes
 
     $meta?: {
         // Path to the compiled JSON artifact file (exists when the contract was generated from artifact JSON)
@@ -73,6 +74,13 @@ export abstract class ContractBase {
 
         let reader = await this.getContractReader();
         return reader.executeBatch(values);
+    }
+
+    async getPastLogs <TEvents extends TEventsBase, TEventName extends keyof TEvents> (
+        event: TEventName | TEventName[]
+        , options?: TEventLogOptions<TEventParams<TEvents, TEventName>>
+    ): Promise<ITxLogItem<TEventParams<TEvents, TEventName>, TEventName>[]> {
+        return await this.$getPastLogsParsed(event as string | string[], options) as any;
     }
 
     public $config (builderConfig?: ITxBuilderOptions, writerConfig?: ITxWriterOptions): this {
@@ -371,7 +379,7 @@ export abstract class ContractBase {
         return parsed;
     }
     protected async $getPastLogs(filters: RpcTypes.Filter, options?: {
-        onProgress? (info: TLogsRangeProgress)
+        onProgress? (info: TLogsRangeProgress<TEth.Log>)
     }) {
         return this.getContractReader().getLogs(filters, options);
     }
@@ -381,7 +389,7 @@ export abstract class ContractBase {
         params?: {
             [key: string]: any
         }
-        onProgress? (info: Omit<TLogsRangeProgress, 'paged'> & { paged: ITxLogItem[] })
+        onProgress? (info: TLogsRangeProgress<ITxLogItem>)
     }) {
         let filters = await this.$getPastLogsFilters(mix, {
             ...options
@@ -509,3 +517,24 @@ namespace BlockWalker {
         return indexer;
     }
 }
+
+
+export type TContractTypes = {
+    Events: TEventsBase
+}
+
+type TEventsBase = {
+    [name: string]: {
+        outputParams: Record<string, any>,
+        outputArgs:   any[],
+    }
+}
+
+type TEventLogOptions<TParams> = {
+    fromBlock?: number | Date
+    toBlock?: number | Date
+    params?: TParams
+    onProgress? (info: TLogsRangeProgress<ITxLogItem>)
+}
+
+type TEventParams<TEvents extends TEventsBase, TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

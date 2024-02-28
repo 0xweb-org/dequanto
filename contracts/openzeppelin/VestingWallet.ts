@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class VestingWallet extends ContractBase {
 
         
     }
+
+    Types: TVestingWalletTypes;
 
     $meta = {
         "class": "./contracts/openzeppelin/VestingWallet.ts"
@@ -138,14 +140,14 @@ export class VestingWallet extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onERC20Released (fn?: (event: TClientEventsStreamData<TLogERC20ReleasedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogERC20ReleasedParameters>> {
+    onERC20Released (fn?: (event: TClientEventsStreamData<TEventArguments<'ERC20Released'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ERC20Released'>>> {
         return this.$onLog('ERC20Released', fn);
     }
 
-    onEtherReleased (fn?: (event: TClientEventsStreamData<TLogEtherReleasedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogEtherReleasedParameters>> {
+    onEtherReleased (fn?: (event: TClientEventsStreamData<TEventArguments<'EtherReleased'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'EtherReleased'>>> {
         return this.$onLog('EtherReleased', fn);
     }
 
@@ -249,3 +251,4 @@ interface IVestingWalletTxData {
 
 type TEvents = TVestingWalletTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

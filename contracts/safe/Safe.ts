@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class Safe extends ContractBase {
 
         
     }
+
+    Types: TSafeTypes;
 
     $meta = {
         "class": "./contracts/safe/Safe.ts"
@@ -237,66 +239,66 @@ export class Safe extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onAddedOwner (fn?: (event: TClientEventsStreamData<TLogAddedOwnerParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogAddedOwnerParameters>> {
+    onAddedOwner (fn?: (event: TClientEventsStreamData<TEventArguments<'AddedOwner'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'AddedOwner'>>> {
         return this.$onLog('AddedOwner', fn);
     }
 
-    onApproveHash (fn?: (event: TClientEventsStreamData<TLogApproveHashParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogApproveHashParameters>> {
+    onApproveHash (fn?: (event: TClientEventsStreamData<TEventArguments<'ApproveHash'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ApproveHash'>>> {
         return this.$onLog('ApproveHash', fn);
     }
 
-    onChangedFallbackHandler (fn?: (event: TClientEventsStreamData<TLogChangedFallbackHandlerParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogChangedFallbackHandlerParameters>> {
+    onChangedFallbackHandler (fn?: (event: TClientEventsStreamData<TEventArguments<'ChangedFallbackHandler'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ChangedFallbackHandler'>>> {
         return this.$onLog('ChangedFallbackHandler', fn);
     }
 
-    onChangedGuard (fn?: (event: TClientEventsStreamData<TLogChangedGuardParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogChangedGuardParameters>> {
+    onChangedGuard (fn?: (event: TClientEventsStreamData<TEventArguments<'ChangedGuard'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ChangedGuard'>>> {
         return this.$onLog('ChangedGuard', fn);
     }
 
-    onChangedThreshold (fn?: (event: TClientEventsStreamData<TLogChangedThresholdParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogChangedThresholdParameters>> {
+    onChangedThreshold (fn?: (event: TClientEventsStreamData<TEventArguments<'ChangedThreshold'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ChangedThreshold'>>> {
         return this.$onLog('ChangedThreshold', fn);
     }
 
-    onDisabledModule (fn?: (event: TClientEventsStreamData<TLogDisabledModuleParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDisabledModuleParameters>> {
+    onDisabledModule (fn?: (event: TClientEventsStreamData<TEventArguments<'DisabledModule'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'DisabledModule'>>> {
         return this.$onLog('DisabledModule', fn);
     }
 
-    onEnabledModule (fn?: (event: TClientEventsStreamData<TLogEnabledModuleParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogEnabledModuleParameters>> {
+    onEnabledModule (fn?: (event: TClientEventsStreamData<TEventArguments<'EnabledModule'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'EnabledModule'>>> {
         return this.$onLog('EnabledModule', fn);
     }
 
-    onExecutionFailure (fn?: (event: TClientEventsStreamData<TLogExecutionFailureParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogExecutionFailureParameters>> {
+    onExecutionFailure (fn?: (event: TClientEventsStreamData<TEventArguments<'ExecutionFailure'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ExecutionFailure'>>> {
         return this.$onLog('ExecutionFailure', fn);
     }
 
-    onExecutionFromModuleFailure (fn?: (event: TClientEventsStreamData<TLogExecutionFromModuleFailureParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogExecutionFromModuleFailureParameters>> {
+    onExecutionFromModuleFailure (fn?: (event: TClientEventsStreamData<TEventArguments<'ExecutionFromModuleFailure'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ExecutionFromModuleFailure'>>> {
         return this.$onLog('ExecutionFromModuleFailure', fn);
     }
 
-    onExecutionFromModuleSuccess (fn?: (event: TClientEventsStreamData<TLogExecutionFromModuleSuccessParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogExecutionFromModuleSuccessParameters>> {
+    onExecutionFromModuleSuccess (fn?: (event: TClientEventsStreamData<TEventArguments<'ExecutionFromModuleSuccess'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ExecutionFromModuleSuccess'>>> {
         return this.$onLog('ExecutionFromModuleSuccess', fn);
     }
 
-    onExecutionSuccess (fn?: (event: TClientEventsStreamData<TLogExecutionSuccessParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogExecutionSuccessParameters>> {
+    onExecutionSuccess (fn?: (event: TClientEventsStreamData<TEventArguments<'ExecutionSuccess'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'ExecutionSuccess'>>> {
         return this.$onLog('ExecutionSuccess', fn);
     }
 
-    onRemovedOwner (fn?: (event: TClientEventsStreamData<TLogRemovedOwnerParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRemovedOwnerParameters>> {
+    onRemovedOwner (fn?: (event: TClientEventsStreamData<TEventArguments<'RemovedOwner'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'RemovedOwner'>>> {
         return this.$onLog('RemovedOwner', fn);
     }
 
-    onSafeReceived (fn?: (event: TClientEventsStreamData<TLogSafeReceivedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogSafeReceivedParameters>> {
+    onSafeReceived (fn?: (event: TClientEventsStreamData<TEventArguments<'SafeReceived'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'SafeReceived'>>> {
         return this.$onLog('SafeReceived', fn);
     }
 
-    onSafeSetup (fn?: (event: TClientEventsStreamData<TLogSafeSetupParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogSafeSetupParameters>> {
+    onSafeSetup (fn?: (event: TClientEventsStreamData<TEventArguments<'SafeSetup'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'SafeSetup'>>> {
         return this.$onLog('SafeSetup', fn);
     }
 
-    onSignMsg (fn?: (event: TClientEventsStreamData<TLogSignMsgParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogSignMsgParameters>> {
+    onSignMsg (fn?: (event: TClientEventsStreamData<TEventArguments<'SignMsg'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'SignMsg'>>> {
         return this.$onLog('SignMsg', fn);
     }
 
@@ -737,3 +739,4 @@ interface ISafeTxData {
 
 type TEvents = TSafeTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

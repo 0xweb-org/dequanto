@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class RefundEscrow extends ContractBase {
 
         
     }
+
+    Types: TRefundEscrowTypes;
 
     $meta = {
         "class": "./contracts/openzeppelin/RefundEscrow.ts"
@@ -147,26 +149,26 @@ export class RefundEscrow extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onDeposited (fn?: (event: TClientEventsStreamData<TLogDepositedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogDepositedParameters>> {
+    onDeposited (fn?: (event: TClientEventsStreamData<TEventArguments<'Deposited'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Deposited'>>> {
         return this.$onLog('Deposited', fn);
     }
 
-    onOwnershipTransferred (fn?: (event: TClientEventsStreamData<TLogOwnershipTransferredParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogOwnershipTransferredParameters>> {
+    onOwnershipTransferred (fn?: (event: TClientEventsStreamData<TEventArguments<'OwnershipTransferred'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'OwnershipTransferred'>>> {
         return this.$onLog('OwnershipTransferred', fn);
     }
 
-    onRefundsClosed (fn?: (event: TClientEventsStreamData<TLogRefundsClosedParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRefundsClosedParameters>> {
+    onRefundsClosed (fn?: (event: TClientEventsStreamData<TEventArguments<'RefundsClosed'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'RefundsClosed'>>> {
         return this.$onLog('RefundsClosed', fn);
     }
 
-    onRefundsEnabled (fn?: (event: TClientEventsStreamData<TLogRefundsEnabledParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRefundsEnabledParameters>> {
+    onRefundsEnabled (fn?: (event: TClientEventsStreamData<TEventArguments<'RefundsEnabled'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'RefundsEnabled'>>> {
         return this.$onLog('RefundsEnabled', fn);
     }
 
-    onWithdrawn (fn?: (event: TClientEventsStreamData<TLogWithdrawnParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogWithdrawnParameters>> {
+    onWithdrawn (fn?: (event: TClientEventsStreamData<TEventArguments<'Withdrawn'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'Withdrawn'>>> {
         return this.$onLog('Withdrawn', fn);
     }
 
@@ -351,3 +353,4 @@ interface IRefundEscrowTxData {
 
 type TEvents = TRefundEscrowTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

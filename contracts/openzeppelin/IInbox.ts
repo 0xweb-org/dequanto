@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class IInbox extends ContractBase {
 
         
     }
+
+    Types: TIInboxTypes;
 
     $meta = {
         "class": "./contracts/openzeppelin/IInbox.ts"
@@ -163,14 +165,14 @@ export class IInbox extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onInboxMessageDelivered (fn?: (event: TClientEventsStreamData<TLogInboxMessageDeliveredParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogInboxMessageDeliveredParameters>> {
+    onInboxMessageDelivered (fn?: (event: TClientEventsStreamData<TEventArguments<'InboxMessageDelivered'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'InboxMessageDelivered'>>> {
         return this.$onLog('InboxMessageDelivered', fn);
     }
 
-    onInboxMessageDeliveredFromOrigin (fn?: (event: TClientEventsStreamData<TLogInboxMessageDeliveredFromOriginParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogInboxMessageDeliveredFromOriginParameters>> {
+    onInboxMessageDeliveredFromOrigin (fn?: (event: TClientEventsStreamData<TEventArguments<'InboxMessageDeliveredFromOrigin'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'InboxMessageDeliveredFromOrigin'>>> {
         return this.$onLog('InboxMessageDeliveredFromOrigin', fn);
     }
 
@@ -332,3 +334,4 @@ interface IIInboxTxData {
 
 type TEvents = TIInboxTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;

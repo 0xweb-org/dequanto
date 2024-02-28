@@ -1,5 +1,5 @@
 /**
- *  AUTO-Generated Class: 2024-02-27 16:48
+ *  AUTO-Generated Class: 2024-02-27 17:40
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
@@ -38,6 +38,8 @@ export class ICrossDomainMessenger extends ContractBase {
 
         
     }
+
+    Types: TICrossDomainMessengerTypes;
 
     $meta = {
         "class": "./contracts/openzeppelin/ICrossDomainMessenger.ts"
@@ -93,18 +95,18 @@ export class ICrossDomainMessenger extends ContractBase {
         , options?: TEventLogOptions<TEventParams<TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEventName>, TEventName>[]>
     async getPastLogs (mix: any, options?): Promise<any> {
-        return await this.$getPastLogsParsed(mix, options) as any;
+        return await super.getPastLogs(mix, options) as any;
     }
 
-    onFailedRelayedMessage (fn?: (event: TClientEventsStreamData<TLogFailedRelayedMessageParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogFailedRelayedMessageParameters>> {
+    onFailedRelayedMessage (fn?: (event: TClientEventsStreamData<TEventArguments<'FailedRelayedMessage'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'FailedRelayedMessage'>>> {
         return this.$onLog('FailedRelayedMessage', fn);
     }
 
-    onRelayedMessage (fn?: (event: TClientEventsStreamData<TLogRelayedMessageParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogRelayedMessageParameters>> {
+    onRelayedMessage (fn?: (event: TClientEventsStreamData<TEventArguments<'RelayedMessage'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'RelayedMessage'>>> {
         return this.$onLog('RelayedMessage', fn);
     }
 
-    onSentMessage (fn?: (event: TClientEventsStreamData<TLogSentMessageParameters>) => void): ClientEventsStream<TClientEventsStreamData<TLogSentMessageParameters>> {
+    onSentMessage (fn?: (event: TClientEventsStreamData<TEventArguments<'SentMessage'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'SentMessage'>>> {
         return this.$onLog('SentMessage', fn);
     }
 
@@ -203,3 +205,4 @@ interface IICrossDomainMessengerTxData {
 
 type TEvents = TICrossDomainMessengerTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;
