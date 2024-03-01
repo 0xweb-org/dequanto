@@ -33,6 +33,8 @@ interface ITimelockTx {
     to: TAddress | TAddress[]
     data: TEth.Hex | TEth.Hex[]
     value?: TEth.Hex | TEth.Hex[]
+    predecessor?: TEth.Hex
+
     createdAt: number
     validAt: number
 
@@ -42,11 +44,12 @@ interface ITimelockTx {
 }
 
 interface ITimelockTxParams {
+    title?: string
+
     sender: IAccount
     to: TAddress | TAddress[]
     data: TEth.Hex | TEth.Hex[]
 
-    title?: string
     value?: bigint | bigint[]
     predecessor?: TEth.Hex
     delay?: bigint
@@ -81,6 +84,42 @@ export class TimelockService {
         private timelock: TTimelockController,
     ) {
 
+    }
+
+    async getPendingByTitle (title: string): Promise<{
+        status: ETimelockTxStatus;
+        schedule: ITimelockTx;
+    }> {
+        let store = await this.getStore();
+        let arr = await store.getAll();
+        let txs = arr.filter(x => x.title === title && x.txExecute == null);
+        $require.lt(txs.length, 2, `Only one pending tx must be present with same title "${title}"`);
+        let schedule = txs.length === 0 ? null : txs[0];
+        let status = await this.getScheduleStatus(schedule);
+        return { status, schedule };
+    }
+
+    async executePendingByTitle (sender: IAccount, title: string): Promise<{
+        tx: TxWriter;
+        schedule: ITimelockTx;
+    }> {
+        let store = await this.getStore();
+        let arr = await store.getAll();
+        let txs = arr.filter(x => x.title === title);
+        $require.eq(txs.length, 1, `No pending tx found ${title}`);
+        let [ txParams ] = txs;
+        return this.executePending(sender, txParams);
+    }
+    async executePending (sender: IAccount, txParams: ITimelockTx): Promise<{
+        tx: TxWriter;
+        schedule: ITimelockTx;
+    }> {
+        let result = await this.execute({
+            ...txParams,
+            value: util.toBigInt(txParams.value),
+            sender: sender,
+        });
+        return result;
     }
 
     /** Schedules-Wait-Execute a task distinguished by the unique task name
@@ -143,7 +182,7 @@ export class TimelockService {
     }>  {
         let key = await this.getOperationKey(txParams);
         let schedule = await this.getUniqueByKey(key);
-        let status = this.getScheduleStatus(schedule);
+        let status = await this.getScheduleStatus(schedule);
         l`Current schedule status: ${status}`;
 
         if (status == ETimelockTxStatus.None) {
@@ -290,7 +329,7 @@ export class TimelockService {
         let pendingTx = await this.getPendingByKey(key);
         $require.notNull(pendingTx, `Tx not scheduled: ${ params.to } ${ params.data }`);
 
-        let status = this.getScheduleStatus(pendingTx);
+        let status = await this.getScheduleStatus(pendingTx);
         $require.eq(status, ETimelockTxStatus.Ready, `Tx not ready to execute: ${status}`)
 
         let timelock = this.timelock;
@@ -436,7 +475,7 @@ export class TimelockService {
         return arr.length === 1 ? arr[0] : null;
     }
 
-    private getScheduleStatus (schedule: ITimelockTx): ETimelockTxStatus {
+    private async getScheduleStatus (schedule: ITimelockTx): Promise<ETimelockTxStatus> {
         if (schedule == null || schedule.txSchedule == null) {
             return ETimelockTxStatus.None;
         }
@@ -444,14 +483,23 @@ export class TimelockService {
             return ETimelockTxStatus.Executed;
         }
         $require.Number(schedule.validAt, `Unknown valid time: ${ schedule.validAt }`);
-
-        let now = $date.toUnixTimestamp();
+        let now = await this.getCurrentTime();
         if (now < schedule.validAt) {
             return ETimelockTxStatus.Pending;
         }
         return ETimelockTxStatus.Ready;
     }
-
+    private async getCurrentTime (): Promise<number> {
+        let client = this.timelock.client;
+        let platform = client.platform;
+        if (platform !== 'hardhat') {
+            // Assume public blockchains are on current time
+            return $date.toUnixTimestamp();
+        }
+        let nr = await client.getBlockNumber();
+        let block = await client.getBlock(nr);
+        return block.timestamp;
+    }
 
     private async getTxParamsNormalized (params: ITimelockTxParams): Promise<ITimelockTxParamsNormalized> {
         let value = params.value ?? 0n;
@@ -538,3 +586,13 @@ type WriteMethodKeys<T> = {
     [P in keyof T]: T[P] extends ((sender: IAccount, ...args) => (Promise<TxWriter>)) ? P : never;
 }[keyof T];
 
+
+
+namespace util {
+    export function toBigInt (mix: string | string[]) {
+        if (typeof mix === 'string') {
+            return BigInt(mix);
+        }
+        return mix.map(BigInt);
+    }
+}

@@ -7,6 +7,7 @@ import { $bigint } from '@dequanto/utils/$bigint';
 import { $hex } from '@dequanto/utils/$hex';
 import { TEth } from '@dequanto/models/TEth';
 import { $array } from '@dequanto/utils/$array';
+import { $date } from '@dequanto/utils/$date';
 
 
 export class ClientDebugMethods {
@@ -40,8 +41,15 @@ export class ClientDebugMethods {
         return this.call('setCode', address, buffer);
     }
 
-    /** Mines a specified number of blocks at a given interval. */
-    mine (blocks?: number | bigint, intervalSeconds?: number | bigint) {
+    /**
+     * Mines a specified number of blocks at a given interval
+     * @param blocks Number of blocks or amount of seconds parsed from a timespan, e.g. 1day, 5minutes, 3weeks, etc
+     * @param intervalSeconds Default: 1 block in 1 second
+     */
+    mine (blocks?: number | bigint | string, intervalSeconds?: number | bigint) {
+        if (typeof blocks ==='string') {
+            blocks = $date.parseTimespan(blocks, { get: 's' });
+        }
         let args = $array.trimEnd([ blocks, intervalSeconds ]);
         return this.call('mine', ...args);
     }
