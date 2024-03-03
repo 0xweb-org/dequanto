@@ -14,7 +14,7 @@ import { $is } from '@dequanto/utils/$is';
 
 export abstract class ANsProvider implements INsProvider {
 
-    protected configField: string
+    public configKey: string
 
     constructor(public client) {
 
@@ -78,7 +78,7 @@ export abstract class ANsProvider implements INsProvider {
     }
 
     protected getSupportedChains(): TPlatform[] {
-        let settings = $config.get(`ns.${this.configField}`);
+        let settings = $config.get(`ns.${this.configKey}`);
         let chains = $config.get(`web3`);
         return Object.keys(settings).filter(x => x in chains) as TPlatform[];
     }
@@ -102,7 +102,7 @@ export abstract class ANsProvider implements INsProvider {
 
 
     protected getNsAddress(platform: TPlatform, type: 'registry' | 'resolver' = 'registry'): TAddress {
-        let key = `ns.${this.configField}.${platform}.${type}`;
+        let key = `ns.${this.configKey}.${platform}.${type}`;
         let registryAddr = $config.get(key);
         $require.Address(registryAddr, `Not valid registry address in ${key}`);
         return registryAddr;

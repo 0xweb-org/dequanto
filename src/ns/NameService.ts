@@ -33,15 +33,22 @@ export class NameService {
     supports (mix: string) {
         return this.providers.some(x => x.supports(mix));
     }
-    getReverseName (address: TAddress, opts?: INsProviderOptions & { provider?: 'ens' | 'sid' | 'ud' }) {
-        return alot(this.providers)
-            .mapAsync(async x => {
+    async getReverseName (address: TAddress, opts?: INsProviderOptions & { provider?: 'ens' | 'sid' | 'ud' }) {
+        let providerErrors = {};
+        let entry = await alot(this.providers)
+            .mapAsync(async provider => {
                 try {
-                    return await x.getReverseName(address, opts)
+                    return await provider.getReverseName(address, opts)
                 } catch (e) {
+                    providerErrors[provider.configKey] = e.message;
                     return null;
                 }
             })
             .firstAsync(x => $is.notEmpty(x?.name));
+
+        return {
+            errors: providerErrors,
+            ...(entry ?? {})
+        };
     }
 }

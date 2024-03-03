@@ -7,7 +7,7 @@ export class SpaceIdProvider extends EnsProvider {
 
     constructor(public client = di.resolve(BscWeb3Client)) {
         super(client);
-        this.configField = 'sid';
+        this.configKey = 'sid';
     }
 
     supports (domain: string) {

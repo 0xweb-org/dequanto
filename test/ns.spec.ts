@@ -56,6 +56,12 @@ UTest({
             let ns = new NameService(Web3ClientFactory.get('bsc'));
             let { address: addr } = await ns.getAddress('fr.boracle.bnb');
             eq_(addr?.toLowerCase(), `0x55328A2dF78C5E379a3FeE693F47E6d4279C2193`.toLowerCase());
+        },
+        async 'reversed' () {
+            let ns = new NameService(Web3ClientFactory.get('bsc'));
+            let { name, platform } = await ns.getReverseName(`0xb5932a6B7d50A966AEC6C74C97385412Fb497540`);
+            eq_(platform, 'bsc');
+            eq_(name, 'spaceid.bnb');
         }
     }
 })

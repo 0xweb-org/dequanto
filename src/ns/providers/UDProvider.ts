@@ -17,7 +17,7 @@ export class UDProvider extends ANsProvider {
 
     constructor (client: Web3Client) {
         super(client);
-        this.configField = 'ud';
+        this.configKey = 'ud';
     }
 
     supports (domain: string) {

@@ -19,7 +19,7 @@ export class EnsProvider extends ANsProvider {
 
     constructor(client: Web3Client = di.resolve(EthWeb3Client)) {
         super(client);
-        this.configField = 'ens';
+        this.configKey = 'ens';
     }
 
     supports(domain: string) {
@@ -87,7 +87,7 @@ export class EnsProvider extends ANsProvider {
     protected async getResolver(client: Web3Client, node: TEth.Hex): Promise<Pick<EnsPublicResolver, 'addr' | 'contenthash' | 'text' | 'name'>> {
         let registry = await this.getRegistry(client);
         let address = await registry.resolver(node);
-        $require.Address(address, `Resolver address is empty for ${node} in registry ${this.client.platform}:${registry.address}`);
+        $require.AddressNotEmpty(address, `Resolver address is empty for ${node} in registry ${this.client.platform}:${registry.address}`);
 
         let { contract: resolver } = ContractClassFactory.fromAbi<EnsPublicResolver>(address, [
             'function addr(bytes32) view returns address',

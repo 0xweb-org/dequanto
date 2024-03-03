@@ -11,6 +11,9 @@ export interface INsProviderOptions {
 }
 
 export interface INsProvider {
+
+    configKey: string;
+
     supports (domain: string): boolean
 
     getAddress (domain: string, opts?: INsProviderOptions): Promise<{

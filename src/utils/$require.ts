@@ -125,6 +125,12 @@ export namespace $require {
         }
         return val;
     }
+    export function AddressNotEmpty (val: TAddress | string, message: string = ''): TAddress {
+        if ($address.isEmpty( $require.Address(val, message))) {
+            throw new Error(`Value ${val} is not a valid address. ${message}`);
+        }
+        return val as TAddress;
+    }
     export function AddressChecked (val: TAddress, message: string = ''): TAddress {
         $require.Address(val, message);
         let checkSum = $address.toChecksum(val.toLowerCase() as TAddress);
