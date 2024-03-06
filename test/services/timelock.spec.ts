@@ -4,10 +4,17 @@ import { TimelockService } from '@dequanto/services/TimelockService';
 import { $address } from '@dequanto/utils/$address';
 import { $date } from '@dequanto/utils/$date';
 import { l } from '@dequanto/utils/$logger';
+import { Directory } from 'atma-io';
 
 let hh = new HardhatProvider();
 let client = hh.client();
+let dir = './test/tmp/timelocks/';
 UTest({
+    async $before () {
+        try {
+            await Directory.removeAsync(dir);
+        } catch (error) { }
+    },
     async 'timelock transaction' () {
         const DELAY = $date.parseTimespan('5min', { get: 's' });
 
@@ -19,9 +26,8 @@ UTest({
                     uint minDelay,
                     address[] memory proposers,
                     address[] memory executors,
-                    address admin) TimelockController(minDelay, proposers, executors, admin) {
-
-                }
+                    address admin
+                ) TimelockController(minDelay, proposers, executors, admin) { }
             }
         `, {
             client,
@@ -54,7 +60,10 @@ UTest({
             tmpDir: './test/tmp/'
         });
 
-        let service = new TimelockService(timelock);
+        let service = new TimelockService(timelock, {
+            dir,
+            simulate: false
+        });
         let scheduled = await service.scheduleCall(account, counter, 'update', 10);
         has_(scheduled.txSchedule, /0x\w+/);
 

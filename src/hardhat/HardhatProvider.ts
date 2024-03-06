@@ -65,15 +65,16 @@ export class HardhatProvider {
             let platformClient = await Web3ClientFactory.get(platform);
             url = await platformClient.getNodeURL({ ws: false });
 
-            // Hardhat looks like supports only HTTP nodes to fork from
+            // Hardhat looks like supports only HTTPs? nodes to fork from
             $require.True(/^(http)/.test(url), `Requires the HTTP path of a node to fork: ${url}`);
 
-            if (block == null) {
-                let rpc = await platformClient.getRpc({ node: { url }});
-                block = await rpc.eth_blockNumber();
-                // hardhat performance issues on latest block. Requires at least 5 confirmations
-                block -= 5;
-            }
+            // Removed: use default Hardhat's behavior
+            // if (block == null) {
+            //     let rpc = await platformClient.getRpc({ node: { url }});
+            //     block = await rpc.eth_blockNumber();
+            //     // hardhat performance issues on latest block. Requires at least 5 confirmations
+            //     block -= 5;
+            // }
         }
         await client.debug.reset({
             forking: {

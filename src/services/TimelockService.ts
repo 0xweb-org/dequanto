@@ -82,6 +82,13 @@ export class TimelockService {
 
     constructor(
         private timelock: TTimelockController,
+        private options?: {
+            // Only for hardhat client. Default: true
+            simulate?: boolean
+
+            // Directory to store the submitted schedules, default: `./data/0x/`
+            dir?: string
+        }
     ) {
 
     }
@@ -320,7 +327,7 @@ export class TimelockService {
             txSchedule: tx.receipt.transactionHash
         });
 
-        if (client.platform === 'hardhat') {
+        if (client.platform === 'hardhat' && this.options?.simulate !== false) {
             // In Hardhat environment perform also the simulation check
             await client.debug.mine(delay, 1);
             let { error } = isBatch
@@ -597,16 +604,18 @@ export class TimelockService {
     @memd.deco.memoize({ perInstance: true })
     private async getStore () {
         let { platform, network } = this.timelock.client;
-        let path = getPath(platform);
+        let dir = this.options?.dir ?? `data/0x`;
+
+        let path = getPath(platform, dir);
         if (platform === 'hardhat' && network !== platform) {
             // forked chain
-            let sourcePath = getPath(network);
+            let sourcePath = getPath(network, dir);
             if (await File.existsAsync(sourcePath)) {
                 await File.copyToAsync(sourcePath, path, { silent: true })
             }
         }
-        function getPath (p: TPlatform) {
-            return `/data/0x/timelocks-${ $platform.toPath(p) }.json`
+        function getPath (p: TPlatform, directory: string) {
+            return `/${directory}/timelocks-${ $platform.toPath(p) }.json`
         }
         return new JsonArrayStore<ITimelockTx>({
             path,
