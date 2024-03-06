@@ -3,7 +3,8 @@ import { TPlatform } from '@dequanto/models/TPlatform';
 import { type TAbiItem } from '@dequanto/types/TAbi';
 
 export interface ITxLogItem<TParams = { [name: string]: any }, TEventName = string> {
-    id: string
+    // The overall unique Log ID based on blockNumber and logIndex
+    id: number
     blockNumber: number
     logIndex: number
     transactionHash: string

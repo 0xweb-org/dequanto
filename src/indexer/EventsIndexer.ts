@@ -60,14 +60,18 @@ export class EventsIndexer <T extends ContractBase> {
             let hash = $contract.keccak256(sorted, 'hex');
             addressKey = hash;
         }
+        let pfxKey = '';
+        if (options.name) {
+            pfxKey = options.name + '-';
+        }
 
         this.store = options?.store ?? new JsonArrayStore<ITxLogItem<any>>({
-            path: `${directly}/${key}/${options.name}-${addressKey}.json`,
+            path: `${directly}/${key}/${pfxKey}${addressKey}.json`,
             key: x => x.id
         });
 
         this.storeMeta = options?.storeMeta ?? new JsonArrayStore<TMeta>({
-            path: `${directly}/${key}/${options.name}-${addressKey}-meta-arr.json`,
+            path: `${directly}/${key}/${pfxKey}${addressKey}-meta-arr.json`,
             key: x => x.event
         });
     }
