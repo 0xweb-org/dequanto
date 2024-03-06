@@ -278,6 +278,7 @@ export class TimelockService {
 
         let delay = params.delay ?? await this.getMinDelay();
         let timelock = this.timelock;
+        let client = timelock.client;
 
         let isBatch = Array.isArray(txParams.to);
         let tx  = isBatch
@@ -300,7 +301,8 @@ export class TimelockService {
             txParams.delay,
         );
 
-        let block = await this.timelock.client.getBlock(tx.receipt.blockNumber);
+
+        let block = await client.getBlock(tx.receipt.blockNumber);
         let store = await this.getStore();
         let timelockTx = await store.upsert({
             id: salt,
@@ -317,6 +319,37 @@ export class TimelockService {
             status: 'pending',
             txSchedule: tx.receipt.transactionHash
         });
+
+        if (client.platform === 'hardhat') {
+            // In Hardhat environment perform also the simulation check
+            await client.debug.mine(delay, 1);
+            let { error } = isBatch
+                ? await timelock.$gas().executeBatch(
+                    txParams.sender,
+                    txParams.to as TAddress[],
+                    txParams.value as bigint[],
+                    txParams.data as TEth.Hex[],
+                    txParams.predecessor,
+                    salt
+                )
+                : await timelock.$gas().execute(
+                    txParams.sender,
+                    txParams.to as TAddress,
+                    txParams.value as bigint,
+                    txParams.data as TEth.Hex,
+                    txParams.predecessor,
+                    salt
+                );
+
+            if (error != null) {
+                // Simulation was not successful
+                error.message = `Timelock simulation failed: ${error.message}`;
+                throw error;
+            } else {
+                l`🟢 Hardhat: Timelock(${txParams.title}) simulation succeeded`;
+            }
+        }
+
         return timelockTx;
     }
 
