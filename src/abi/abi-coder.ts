@@ -56,13 +56,13 @@ let defaultCoder: null | AbiCoder = null;
  */
 export class AbiCoder {
 
-    #getCoder(param: ParamType): Coder {
+    #getCoder(param: ParamType, dynamic?): Coder {
         if (param.isArray()) {
             return new ArrayCoder(this.#getCoder(param.arrayChildren), param.arrayLength, param.name);
         }
 
         if (param.isTuple()) {
-            return new TupleCoder(param.components.map((c) => this.#getCoder(c)), param.name);
+            return new TupleCoder(param.components.map((c) => this.#getCoder(c)), param.name, dynamic);
         }
 
         switch (param.baseType) {
@@ -133,10 +133,23 @@ export class AbiCoder {
      *  not enforced. Some older versions of Solidity incorrectly
      *  padded event data emitted from ``external`` functions.
      */
-    decode(types: ReadonlyArray<string | ParamType | TAbiInput>, data: string, loose?: boolean): Result {
-        const coders: Array<Coder> = types.map((type) => this.#getCoder(ParamType.from(type)));
-        const coder = new TupleCoder(coders, "_");
-        return coder.decode(new Reader(data, loose));
+    decode(types: ReadonlyArray<string | ParamType | TAbiInput>, hex: string, opts?: {
+        loose?: boolean
+        dynamic?: boolean
+    }): Result {
+
+        let params = types.map((type) => ParamType.from(type));
+        let coders: Coder[] = params.map(param => {
+            let dynamic = opts?.dynamic;
+            if (dynamic == null && types.length === 1 && /^tuple/.test(param.type)) {
+                // Ensure Tuples to be not dynamic, as if one tuple is encoded it could have no offset
+                dynamic = false;
+            }
+            return this.#getCoder(param, dynamic);
+        });
+        let coder = new TupleCoder(coders, "_");
+        let result = coder.decode(new Reader(hex, opts?.loose));
+        return result;
     }
 
     /**

@@ -7,7 +7,6 @@ import { $signSerializer } from '@dequanto/utils/$signSerializer';
 import { $sig } from '@dequanto/utils/$sig';
 import { TEth } from '@dequanto/models/TEth';
 import { l } from '@dequanto/utils/$logger';
-import { $account } from '@dequanto/utils/$account';
 
 const provider = new HardhatProvider();
 const client = provider.client();
@@ -219,8 +218,6 @@ UTest({
     async 'should return memory strings'() {
         let provider = new HardhatProvider();
         let code = `
-            import "hardhat/console.sol";
-
             contract Fruits {
                 mapping (uint256 =>string) public example;
                 constructor () {
@@ -235,6 +232,32 @@ UTest({
         let { contract } = await provider.deployCode(code);
         let val = await contract.foo();
         eq_(val, 'peach');
+    },
+    async 'should handle complex enums'() {
+        let hh = new HardhatProvider();
+        let code = `
+            contract Cars {
+                struct TCar {
+                    uint256 id;
+                    string name;
+                }
+                mapping (uint256 => TCar) public cars;
+
+                function create (TCar memory car) external {
+                    cars[car.id] = car;
+                }
+            }
+        `;
+        let { contract } = await hh.deployCode(code);
+        let val = await contract.$receipt().create(hh.deployer(), {
+            id: 1,
+            name: 'Foo'
+        });
+        let car = await contract.cars(1);
+        deepEq_(car, {
+            id: 1n,
+            name: 'Foo'
+        });
     },
     async 'should initialize sub contract'() {
         let provider = new HardhatProvider();

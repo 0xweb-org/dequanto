@@ -6,13 +6,11 @@ import type { Reader, Writer } from './abstract-coder';
 export class TupleCoder extends Coder {
     readonly coders!: ReadonlyArray<Coder>;
 
-    constructor(coders: Array<Coder>, localName: string) {
-        let dynamic = false;
-        const types: Array<string> = [];
-        coders.forEach((coder) => {
-            if (coder.dynamic) { dynamic = true; }
-            types.push(coder.type);
-        });
+    constructor(coders: Array<Coder>, localName: string, dynamic?: boolean) {
+
+        dynamic ??= coders.some(x => x.dynamic);
+
+        const types = coders.map(x => x.type);
         const type = ('tuple(' + types.join(',') + ')');
 
         super('tuple', type, localName, dynamic);

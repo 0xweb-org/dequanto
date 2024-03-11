@@ -14,9 +14,12 @@ export namespace $abiCoder {
         return solidityPacked(types, values) as TEth.Hex;
     }
 
-    export function decode(types: (string | ParamType | TAbiInput)[], hex: string): any {
+    export function decode(types: (string | ParamType | TAbiInput)[], hex: string, opts?: {
+        loose?: boolean
+        dynamic?: boolean
+    }): any {
         let coder = new AbiCoder();
-        let arr = coder.decode(types, hex);
+        let arr = coder.decode(types, hex, opts);
         return arr.map((x, i) => {
             return unwrap(types[i] as TAbiInput, x);
         });
