@@ -1,6 +1,7 @@
+import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
+import { JsonObjectStore } from '@dequanto/json/JsonObjectStore';
+import { $promise } from '@dequanto/utils/$promise';
 import { File } from 'atma-io'
-import { JsonArrayStore } from './JsonArrayStore';
-import { JsonObjectStore } from './JsonObjectStore';
 
 
 let pathArr = '/test/tmp/jsonstore-arr.json';
@@ -94,5 +95,76 @@ UTest({
             let obj1 = await File.readAsync <any> (pathObj, { cache: false });
             eq_(obj1.tick, tick);
         },
+    },
+    'watchers': {
+        async 'array' () {
+            let path = `./test/tmp/json-store-test.json`;
+            let data = [
+                { id: 'foo', letter: 'F'},
+                { id: 'bar', letter: 'B'}
+            ]
+            await File.writeAsync(path, data);
+
+            let storeA = new JsonArrayStore<any>({
+                path: path,
+                key: x => x.id
+            });
+            let dataFromA = await storeA.getAll();
+            deepEq_(data, dataFromA);
+
+
+            let storeB = new JsonArrayStore<any>({
+                path: path,
+                key: x => x.id,
+                watchFs: true
+            });
+            let dataFromB = await storeA.getAll();
+            deepEq_(data, dataFromB);
+
+
+            let dataModified = JSON.parse(JSON.stringify(data));
+            dataModified[0].letter = 'Q';
+            await File.writeAsync(path, dataModified);
+            await $promise.wait(200);
+
+            dataFromA = await storeA.getAll();
+            deepEq_(data, dataFromA);
+
+            dataFromB = await storeB.getAll();
+            deepEq_(dataModified, dataFromB);
+        },
+        async 'object' () {
+            let path = `./test/tmp/json-store-test-object.json`;
+            let data = {
+                time: Date.now()
+            }
+            await File.writeAsync(path, data);
+
+            let storeA = new JsonObjectStore<any>({
+                path: path
+            });
+            let dataFromA = await storeA.get();
+            deepEq_(data, dataFromA);
+
+
+            let storeB = new JsonObjectStore<any>({
+                path: path,
+                watchFs: true
+            });
+            let dataFromB = await storeA.get();
+            deepEq_(data, dataFromB);
+
+
+            let dataModified = JSON.parse(JSON.stringify(data));
+            dataModified.time = Date.now();
+            await File.writeAsync(path, dataModified);
+            await $promise.wait(200);
+
+            dataFromA = await storeA.get();
+            deepEq_(data, dataFromA);
+
+            dataFromB = await storeB.get();
+            deepEq_(dataModified, dataFromB);
+        }
     }
 })

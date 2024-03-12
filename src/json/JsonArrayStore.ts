@@ -1,12 +1,8 @@
-import { File } from 'atma-io'
-import { class_Dfr, Constructor } from 'atma-utils'
-import memd from 'memd'
 import alot from 'alot'
-
 import { JsonConvert } from 'class-json'
 import { Alot } from 'alot/alot'
-import { $promise } from '@dequanto/utils/$promise'
-import { $require } from '@dequanto/utils/$require'
+import { JsonStoreFs } from './JsonStoreFs'
+import type { IConstructor } from 'class-json/JsonSettings'
 
 export interface IStoreOptions<T, TOut = T> {
     path: string
@@ -14,8 +10,7 @@ export interface IStoreOptions<T, TOut = T> {
 
     key: (x: Partial<T>) => string | number
     map? (x: T): TOut
-    Type?: Constructor<T>
-    trackHistory?: boolean
+    Type?: IConstructor
     format?: boolean
 }
 
@@ -23,14 +18,20 @@ export class JsonArrayStore<T> {
     private array: T[];
     private hash: { [key: string]: T }
 
-    private fs: JsonArrayFs<T>;
+    private fs: JsonStoreFs<T[]>;
 
     constructor (public options: IStoreOptions<T>) {
         let keyFn = this.options.key;
         if (keyFn == null) {
             throw new Error('Key getter must be defined');
         }
-        this.fs = new JsonArrayFs<T>(this.options.path, this.options.Type, this.options.map, this.options.format);
+        this.fs = new JsonStoreFs<T[]>(
+            this.options.path
+            , this.options.Type
+            , this.options.map as any
+            , this.options.format
+            , []
+        );
         if (this.options?.watchFs) {
             this.fs.watch(() => this.onStoreChanged());
         }
@@ -184,193 +185,5 @@ export class JsonArrayStore<T> {
             this.array.splice(i, 1);
         }
         return current;
-    }
-}
-
-class JsonArrayFs<T> {
-    public errored: Error = null;
-
-    private listeners = [] as ({version: number, promise: class_Dfr})[];
-    private version = 0;
-    private array: T[];
-    private pending: T[];
-    private busy = false;
-    private pathBak: string;
-    private pathFilename: string;
-    private watcherFn: (path?: string) => any
-    private watching = false;
-
-    public lock = new class_Dfr;
-
-    constructor (public path: string, public Type?: Function,  public mapFn?: (x: T) => any, public format?: boolean) {
-        this.lock.resolve();
-        this.pathBak = this.path + '.bak';
-        this.pathFilename = this.path.substring(this.path.lastIndexOf('/') + 1);
-    }
-
-    public watch (cb: typeof this.watcherFn) {
-        $require.Null(this.watcherFn, `Already watching`);
-        this.watcherFn = cb;
-    }
-    public unwatch () {
-        File.unwatch(this.pathFilename, this.watcherFn);
-        this.watcherFn = null;
-    }
-    public cleanCache () {
-        this.array = null;
-        memd.fn.clearMemoized(this.readInner);
-    }
-
-    public write (arr: T[]) {
-        this.array = arr;
-
-        let dfr = new class_Dfr;
-        this.listeners.push({
-            version: ++this.version,
-            promise: dfr
-        });
-
-        if (this.busy === true) {
-            this.pending = arr;
-            return dfr;
-        }
-
-        this.busy = true;
-        this.lock.defer();
-        this.writeInner(arr);
-        return dfr;
-    }
-    public async read (): Promise<T[]> {
-        if (this.array != null) {
-            return Promise.resolve(this.array);
-        }
-        let arr = await this.readInner();
-        return this.array = arr;
-    }
-
-    @memd.deco.memoize({ perInstance: true })
-    private async readInner () {
-        let existsBak = await File.existsAsync (this.pathBak);
-        if (existsBak) {
-            let arr = await Fs.read(this.pathBak);
-            if (this.array) {
-                // When `write` was called between `exists` check and now
-                return this.array;
-            }
-            if (arr) {
-                await File.renameAsync(this.pathBak, this.pathFilename);
-                return arr;
-            } else {
-                await File.removeAsync(this.pathBak);
-            }
-        }
-        let exists = await File.existsAsync (this.path);
-        if (exists === false) {
-            return [];
-        }
-        if (!this.path) {
-            throw new Error(`Read inner: ${this.path}/${this.pathBak} is undefined`);
-        }
-        let arr = await File.readAsync<T[]>(this.path);
-        if (this.Type) {
-            let rgx = Math.round(Math.random() * 100000);
-            let key = `JsonArray.Type ${rgx}`;
-            console.time(key);
-            arr = arr.map(x => JsonConvert.fromJSON(x, { Type: this.Type as any }));
-            console.timeEnd(key)
-        }
-        if (this.mapFn) {
-            arr = arr.map(this.mapFn);
-        }
-        if (this.watcherFn != null && this.watching === false) {
-            File.watch(this.path, this.watcherFn);
-            this.watching = true;
-        }
-        return arr;
-    }
-
-    private async writeInner (arr: T[]) {
-        try {
-            let v = this.version;
-            let data = Fs.serialize(arr, this.Type, this.format);
-            await File.writeAsync(this.pathBak, data);
-            await this.renameFileAsync(this.pathBak, this.pathFilename);
-            this.callWriteListeners(v, null);
-        } catch (error) {
-            console.error(`JsonArrayStore.WriteInner>`, error);
-            this.errored = error;
-        } finally {
-            if (this.pending == null) {
-                this.busy = false;
-                this.lock.resolve();
-                return;
-            }
-            let next = this.pending;
-            this.pending = null;
-            this.writeInner(next);
-        }
-    }
-    private async renameFileAsync (pathBak: string, pathFilename: string, opts?: { retries: number }) {
-        opts ??= { retries: 0 };
-
-        try {
-            await File.renameAsync(pathBak, pathFilename);
-        } catch (error) {
-            let isPERM = error.message.includes('EPERM') || error.code === 'EPERM';
-            if (isPERM === false) {
-                throw error;
-            }
-            if (opts.retries > 5) {
-                error.message = `After ${opts.retries} retries: ${ error.message}`;
-                throw error;
-            }
-            await File.removeAsync(pathFilename);
-            await $promise.wait(150);
-            await this.renameFileAsync(pathBak, pathFilename, opts);
-        }
-    }
-
-    private callWriteListeners (v: number, error = null) {
-        for (let i = 0; i < this.listeners.length; i++) {
-            let x = this.listeners[i];
-            if (x.version <= v) {
-                try {
-                    if (error != null) {
-                        x.promise.reject(error);
-                    } else {
-                        x.promise.resolve();
-                    }
-                } finally {
-                    this.listeners.splice(i, 1);
-                    i--;
-                }
-            }
-        }
-    }
-}
-
-namespace Fs {
-    export function serialize <T = any> (arr: T[], Type?: Function, format?: boolean) {
-        if (Type) {
-            arr = arr.map(x => JsonConvert.toJSON(x))
-        }
-        return JSON.stringify(arr, null, format ? '  ' : null);
-    }
-    export function parse (str: string) {
-        return JSON.parse(str);
-    }
-    export async function read (path: string) {
-        if (!path) {
-            throw new Error(`${path} is undefined`);
-        }
-        let str = await File.readAsync <string> (path, { skipHooks: true, encoding: 'utf8' });
-        if (str.length === 0) {
-            return null;
-        }
-        try {
-            return JSON.parse(str);
-        } catch (error) {
-            return null;
-        }
     }
 }
