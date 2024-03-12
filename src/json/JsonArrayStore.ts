@@ -6,9 +6,12 @@ import alot from 'alot'
 import { JsonConvert } from 'class-json'
 import { Alot } from 'alot/alot'
 import { $promise } from '@dequanto/utils/$promise'
+import { $require } from '@dequanto/utils/$require'
 
 export interface IStoreOptions<T, TOut = T> {
     path: string
+    watchFs?: boolean
+
     key: (x: Partial<T>) => string | number
     map? (x: T): TOut
     Type?: Constructor<T>
@@ -28,6 +31,9 @@ export class JsonArrayStore<T> {
             throw new Error('Key getter must be defined');
         }
         this.fs = new JsonArrayFs<T>(this.options.path, this.options.Type, this.options.map, this.options.format);
+        if (this.options?.watchFs) {
+            this.fs.watch(() => this.onStoreChanged());
+        }
     }
 
     async query(): Promise<Alot<T>> {
@@ -121,6 +127,12 @@ export class JsonArrayStore<T> {
         return this.fs.lock;
     }
 
+    private onStoreChanged () {
+        this.array = null;
+        this.hash = null;
+        this.fs.cleanCache();
+    }
+
     private async restore () {
         let arr = await this.fs.read();
         let keyFn = this.options.key;
@@ -185,6 +197,8 @@ class JsonArrayFs<T> {
     private busy = false;
     private pathBak: string;
     private pathFilename: string;
+    private watcherFn: (path?: string) => any
+    private watching = false;
 
     public lock = new class_Dfr;
 
@@ -192,6 +206,19 @@ class JsonArrayFs<T> {
         this.lock.resolve();
         this.pathBak = this.path + '.bak';
         this.pathFilename = this.path.substring(this.path.lastIndexOf('/') + 1);
+    }
+
+    public watch (cb: typeof this.watcherFn) {
+        $require.Null(this.watcherFn, `Already watching`);
+        this.watcherFn = cb;
+    }
+    public unwatch () {
+        File.unwatch(this.pathFilename, this.watcherFn);
+        this.watcherFn = null;
+    }
+    public cleanCache () {
+        this.array = null;
+        memd.fn.clearMemoized(this.readInner);
     }
 
     public write (arr: T[]) {
@@ -227,7 +254,7 @@ class JsonArrayFs<T> {
         if (existsBak) {
             let arr = await Fs.read(this.pathBak);
             if (this.array) {
-                // When `write` was called inbetween `exists` check and now
+                // When `write` was called between `exists` check and now
                 return this.array;
             }
             if (arr) {
@@ -254,6 +281,10 @@ class JsonArrayFs<T> {
         }
         if (this.mapFn) {
             arr = arr.map(this.mapFn);
+        }
+        if (this.watcherFn != null && this.watching === false) {
+            File.watch(this.path, this.watcherFn);
+            this.watching = true;
         }
         return arr;
     }

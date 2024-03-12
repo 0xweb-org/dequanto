@@ -67,6 +67,13 @@ export namespace $require {
         }
         return val;
     }
+    export function Null<T> (val: T, message: string, ...logs): T {
+        if (val != null) {
+            logs?.forEach(log => console.error(log));
+            throw new Error(`Value ${val} expects to be undefined. ${message}`);
+        }
+        return val;
+    }
     export function notEmpty<T extends string | Array<any>> (val: T, message: string): T {
         if (val == null) {
             throw new Error(`Value is undefined. ${message}`);

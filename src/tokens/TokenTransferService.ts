@@ -105,8 +105,8 @@ export class TokenTransferService {
         let buildTxRetries = 1;
 
         const buildTx = async () => {
-            let GAS = 21000;
-            let GAS_RATIO = 1.05;
+            const GAS = 21000;
+            const GAS_RATIO = 1.05;
             let [ balance, gasPrice] = await Promise.all([
                 this.client.getBalance(from.address),
                 this.client.getGasPrice()
