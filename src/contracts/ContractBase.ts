@@ -29,6 +29,7 @@ import { ContractBaseUtils } from './utils/ContractBaseUtils';
 import { FnSignedWrapper } from './wrappers/FnSignedWrapper';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { $is } from '@dequanto/utils/$is';
+import { FnRequestWrapper } from './wrappers/FnRequestWrapper';
 
 
 export abstract class ContractBase {
@@ -70,8 +71,9 @@ export abstract class ContractBase {
     public $parseInputData (buffer: TEth.BufferLike, value?: string) {
         return $abiUtils.parseMethodCallData(this.abi, buffer);
     }
-    public async $executeBatch <T extends readonly unknown[] | []>(values: T): Promise<{ -readonly [P in keyof T]: Awaited<T[P]> }> {
-
+    public async $executeBatch <T extends readonly unknown[] | ContractReaderUtils.IContractReadParams[]>(values: T): Promise<
+        { -readonly [P in keyof T]: ContractReaderUtils.TIContractReadParamsInferred<T[P]>; }
+    > {
         let reader = await this.getContractReader();
         return reader.executeBatch(values);
     }
@@ -190,6 +192,10 @@ export abstract class ContractBase {
             ...fns
         });
         return $contract as any;
+    }
+
+    public $req () {
+        return FnRequestWrapper.create(this);
     }
 
     public $signed (builderConfig?: ITxBuilderOptions, writerConfig?: ITxWriterOptions) {

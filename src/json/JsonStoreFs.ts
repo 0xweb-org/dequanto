@@ -71,8 +71,8 @@ export class JsonStoreFs<T> {
         if (this.data != null) {
             return Promise.resolve(this.data);
         }
-        let arr = await this.readInner();
-        return this.data = arr;
+        let data = await this.readInner();
+        return this.data = data;
     }
 
     @memd.deco.memoize({ perInstance: true })
@@ -166,13 +166,15 @@ export class JsonStoreFs<T> {
         }
     }
 
-    private decode (str: string) {
+    private decode (mix: string | any) {
         let isCsv = this.path.endsWith('.csv');
         if (isCsv) {
 
         }
+        let data = typeof mix ==='string'
+            ? JSON.parse(mix)
+            : mix;
 
-        let data = JSON.parse(str);
         let { Type, mapFn } = this;
         if (Type) {
             data = Array.isArray(data)

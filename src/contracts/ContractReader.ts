@@ -112,7 +112,10 @@ export class ContractReader implements IContractReader {
         }
     }
 
-    public async executeBatch <T extends readonly unknown[] | []>(values: T): Promise<{ -readonly [P in keyof T]: Awaited<T[P]> }> {
+    public async executeBatch <T extends readonly unknown[] | ContractReaderUtils.IContractReadParams[]>(values: T): Promise<
+        { -readonly [P in keyof T]: ContractReaderUtils.TIContractReadParamsInferred<T[P]>; }
+    > {
+    //-public async executeBatch <T extends readonly unknown[] | []>(values: T): Promise<{ -readonly [P in keyof T]: Awaited<T[P]> }> {
 
         let requests = await alot(values as any[])
             .mapAsync(async x => await x)
@@ -288,7 +291,7 @@ export namespace ContractReaderUtils {
     }
 
 
-    export interface IContractReadParams {
+    export interface IContractReadParams<TOutput = any> {
         address: TAddress,
         abi: string | TAbiItem
         params?: any[]
@@ -298,6 +301,13 @@ export namespace ContractReaderUtils {
             from?: TAddress
         }
     }
+
+    export type TIContractReadParamsInferred<T> = T extends IContractReadParams<infer P> ? P : never;
+    export type TIContractReadParamsInferredMany<T extends IContractReadParams[]> = {
+        [P in keyof T]: T[P] extends IContractReadParams<infer P>  ? P : never
+    }
+
+    ;
 
     export async function readAsyncBatch(client: Web3Client, requests: IContractReadParams[]) {
 

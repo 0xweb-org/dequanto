@@ -9,10 +9,19 @@ import { XDaiWeb3Client } from '@dequanto/chains/xdai/XDaiWeb3Client';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { Config, config } from '@dequanto/Config';
 import { EvmWeb3Client } from './EvmWeb3Client';
+import alot from 'alot';
 
 export namespace Web3ClientFactory {
 
-    export function get (platform: TPlatform | string, opts?: IWeb3EndpointOptions) {
+    export function get (platform: TPlatform | string | number, opts?: IWeb3EndpointOptions) {
+        if (typeof platform ==='number') {
+            let chain = alot.fromObject(config.web3).find(x => x.value.chainId === platform);
+            if (chain == null) {
+                throw new Error(`Unsupported platform ${platform} for web3 client`);
+            }
+            platform = chain.key
+        }
+
         switch (platform) {
             case 'bsc':
                 return di.resolve(BscWeb3Client, opts);
@@ -42,7 +51,7 @@ export namespace Web3ClientFactory {
     }
 
     /** Same as sync variation, but ensures the config is being fetched */
-    export async function getAsync (platform: TPlatform | string, opts?: IWeb3EndpointOptions) {
+    export async function getAsync (platform: TPlatform | string | number, opts?: IWeb3EndpointOptions) {
         let cfg = await Config.get();
         return get(platform, opts);
     }
