@@ -258,15 +258,15 @@ export abstract class ContractBase {
 
     protected $read (abi: string | TAbiItem, ...params) {
         if (this.builderConfig?.send === 'manual') {
-            let req = new ContractReaderUtils.DeferredRequest({
+            let req = <ContractReaderUtils.IContractReadParams>{
                 address: this.address,
                 abi,
-                params,
+                params: params,
                 blockNumber: this.blockNumber ?? this.blockDate,
                 options: {
                     from: this.builderConfig?.from
                 }
-            });
+            };
             return req;
         }
         let reader = this.getContractReader();

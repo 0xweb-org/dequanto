@@ -9,11 +9,14 @@ UTest({
 
         let nameReq = erc20.$config({ from: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063' }).$req().name();
         let totalSupplyReq = erc20.$req().totalSupply();
+        let balanceReq = erc20.$req().balanceOf(address);
 
-        let [ name, totalSupply ] = await erc20.$executeBatch([nameReq, totalSupplyReq ]);
+        let [ name, totalSupply, balance ] = await erc20.$executeBatch([nameReq, totalSupplyReq, balanceReq ]);
 
 
         eq_(name, '(PoS) Dai Stablecoin');
         gt_(totalSupply, 1000n);
+        gt_(balance, 1000n);
+
     }
 })

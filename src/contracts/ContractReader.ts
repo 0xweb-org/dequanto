@@ -112,17 +112,16 @@ export class ContractReader implements IContractReader {
         }
     }
 
-    public async executeBatch <T extends readonly unknown[] | ContractReaderUtils.IContractReadParams[]>(values: T): Promise<
+    public async executeBatch <T extends readonly unknown[] | ContractReaderUtils.IContractReadParams[]>(requestArr: T): Promise<
         { -readonly [P in keyof T]: ContractReaderUtils.TIContractReadParamsInferred<T[P]>; }
     > {
-    //-public async executeBatch <T extends readonly unknown[] | []>(values: T): Promise<{ -readonly [P in keyof T]: Awaited<T[P]> }> {
-
-        let requests = await alot(values as any[])
-            .mapAsync(async x => await x)
-            .toArrayAsync() as ContractReaderUtils.DeferredRequest[];
 
         // all inputs should be deferred requests
-        let invalid = requests.find(x => $is.Address(x.request?.address) === false);
+        let requests = await alot(requestArr as any[])
+            .mapAsync(async x => await x)
+            .toArrayAsync() as ContractReaderUtils.IContractReadParams[];
+
+        let invalid = requests.find(x => $is.Address(x.address) === false);
         if (invalid != null) {
             $logger.error('Invalid object', invalid);
             throw new Error(`Invalid Deferred Request at position ${ requests.indexOf(invalid) }`);
@@ -130,11 +129,11 @@ export class ContractReader implements IContractReader {
 
         let inputs = await alot(requests).mapAsync(async req => {
             return {
-                address: req.request.address,
-                abi: req.request.abi,
-                params: req.request.params,
-                blockNumber: req.request.blockNumber,
-                options: req.request.options,
+                address: req.address,
+                abi: req.abi,
+                params: req.params,
+                blockNumber: req.blockNumber,
+                options: req.options,
             } as ContractReaderUtils.IContractReadParams;
         }).toArrayAsync();
 
@@ -311,7 +310,7 @@ export namespace ContractReaderUtils {
 
     export async function readAsyncBatch(client: Web3Client, requests: IContractReadParams[]) {
 
-        let reqs = await alot(requests).map(async request => {
+        let rpcRequests = await alot(requests).map(async request => {
             let abi = request.abi;
             if (typeof abi === 'string') {
                 abi = $abiParser.parseMethod(abi);
@@ -325,13 +324,13 @@ export namespace ContractReaderUtils {
                 address: request.address,
                 abi: [ abi ],
                 method: abi.name,
-                arguments: request.params,
+                params: request.params,
                 blockNumber: blockNumber,
                 options: request.options
-            };
+            } as TRpcContractCall;
         }).toArrayAsync();
 
-        let outputs = await client.readContractBatch(reqs);
+        let outputs = await client.readContractBatch(rpcRequests);
         return outputs;
     }
 }
