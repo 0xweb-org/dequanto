@@ -12,6 +12,8 @@ let rateLimitRgx = {
         /exceed.+request/i,
         /try.+later/i,
         /request.+rate/i,
+        /\b429\b/i,
+        [/\bCUPS\b/i, /(\b(maximum|limit)\b)i/]
     ],
     extracts: [
         // 100 per 1 minute
@@ -57,11 +59,15 @@ export class RateLimitGuard {
 
     static isRateLimited (error: TRateLimitError) {
         let message = error.message;
-        let hasMatches = rateLimitRgx.checks.some(x => x.test(message));
+        let hasMatches = rateLimitRgx.checks.some(checkRgxMix => {
+            if (Array.isArray(checkRgxMix)) {
+                return checkRgxMix.every(rgx => rgx.test(message));
+            }
+            checkRgxMix.test(message)
+        });
         if (hasMatches) {
             return true;
         }
-
         return false;
     }
 
@@ -126,6 +132,9 @@ export class RateLimitGuard {
                 } catch (error) { }
                 spanLimit = Number(limit);
             }
+        }
+        if (spanLimit == null && spanMs == null && backoff == null) {
+            return null;
         }
         let result = {
             backoff,
@@ -209,9 +218,8 @@ export class RateLimitGuard {
         if (this.backoff != null) {
             let ms = this.backoff - Date.now();
             this.backoff = null;
-
             if (ms > 0) {
-                await $promise.wait(this.backoff)
+                await $promise.wait(ms)
             }
         }
 

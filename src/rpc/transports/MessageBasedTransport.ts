@@ -5,6 +5,7 @@ import { RpcSubscription } from '../RpcSubscription';
 import { RpcError } from '../RpcError';
 import { $require } from '@dequanto/utils/$require';
 import { $rpc } from '../$rpc';
+import { l } from '@dequanto/utils/$logger';
 
 export abstract class MessageBasedTransport extends class_EventEmitter implements TTransport.Transport {
 
@@ -91,7 +92,26 @@ export abstract class MessageBasedTransport extends class_EventEmitter implement
         if (Array.isArray(json)) {
             id = json.map(x => x.id).join('-');
         } else {
-            id = String(json.id);
+            id = json.id == null
+                ? null
+                : String(json.id);
+        }
+
+        if (id == null) {
+            if (json.error != null) {
+                // Reject all pending requests if ID is undefined
+                let keys = Array.from(this.requests.keys());
+                for (let i = 0; i < keys.length; i++) {
+                    let key = keys[i];
+                    let dfr = this.requests.get(key);
+                    if (dfr != null) {
+                        dfr.resolve(json);
+                    }
+                    this.requests.delete(key);
+                }
+                return;
+            }
+            l`RPC MessageBasedTransport: No ID for message: ${message}`;
         }
 
         let dfr = this.requests.get(id);

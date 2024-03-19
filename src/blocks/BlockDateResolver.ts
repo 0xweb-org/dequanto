@@ -33,10 +33,16 @@ export class BlockDateResolver {
 
         this.maxBlock = topBlock.blockNumber;
         this.known.push(topBlock);
-        return await this.moveNext(date);
+        return await this.moveNext(date, {
+            closestTime: null,
+            blockNumber: null,
+        });
     }
 
-    private async moveNext (date: Date) {
+    private async moveNext (date: Date, ctx: {
+        closestTime: number;
+        blockNumber: number;
+    }) {
 
         let closestIndex = this.getClosest(date);
         let block = this.known[closestIndex];
@@ -47,20 +53,19 @@ export class BlockDateResolver {
         if (timeDistance <= block.avg * BLOCKS_TOLERANCE) {
             return block.blockNumber;
         }
-        if (this.closestTime != null && timeDistance >= this.closestTime) {
-            let b = this.known[this.closestIdx];
-            return b.blockNumber;
+        if (ctx.closestTime != null && timeDistance >= ctx.closestTime) {
+            return ctx.blockNumber;
         }
 
-        this.closestTime = timeDistance;
-        this.closestIdx = closestIndex;
+        ctx.closestTime = timeDistance;
+        ctx.blockNumber = block.blockNumber;
 
         let nextInfo = await this.checkPoint(block, timeDiff);
         if (nextInfo == null) {
             return block.blockNumber;
         }
 
-        return this.moveNext(date);
+        return this.moveNext(date, ctx);
     }
 
     /**

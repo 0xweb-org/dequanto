@@ -62,8 +62,8 @@ export namespace $promise {
         }
     }
 
-    export function timeout<T extends Promise<any>> (promise: T, ms: number): T {
-        let err = new Error(`Promise timeouted in ${ms}ms`)
+    export function timeout<T extends Promise<any>> (promise: T, ms: number, message?: string): T {
+        let err = new Error(`Promise timeout in ${ms}ms. ${message}`);
 
         return new Promise((resolve, reject) => {
             let completed = false;
