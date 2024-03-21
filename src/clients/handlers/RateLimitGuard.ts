@@ -63,7 +63,7 @@ export class RateLimitGuard {
             if (Array.isArray(checkRgxMix)) {
                 return checkRgxMix.every(rgx => rgx.test(message));
             }
-            checkRgxMix.test(message)
+            return checkRgxMix.test(message);
         });
         if (hasMatches) {
             return true;
