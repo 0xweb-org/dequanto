@@ -422,7 +422,7 @@ export abstract class Web3Client implements IWeb3Client {
         });
     }
 
-    @memd.deco.memoize({ maxAge: 30 })
+    @memd.deco.memoize({ perInstance: true, maxAge: 30 })
     getBlockNumberCached() {
         return this.pool.call(wClient => {
             return wClient.rpc.eth_blockNumber();
