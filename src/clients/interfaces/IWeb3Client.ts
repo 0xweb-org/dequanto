@@ -25,6 +25,7 @@ export interface IWeb3ClientOptions {
     provider?: TTransport.Transport
 
     defaultTxType?: 0 | 1 | 2;
+    defaultGasPriceRatio?: number;
 
     debug?: {
         setStorageAt?: {

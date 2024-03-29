@@ -38,7 +38,7 @@ export class ContractDeployment {
             bytecode += $hex.raw(encoded);
         }
         let builder = new TxDataBuilder(client, account, {
-            type: 2,
+            type: client.defaultTxType ?? 2,
             data: bytecode
         })
         let tx = TxWriter.create(client, builder, account);
