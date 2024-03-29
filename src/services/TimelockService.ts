@@ -112,11 +112,12 @@ export class TimelockService {
     }> {
         let store = await this.getStore();
         let arr = await store.getAll();
-        let txs = arr.filter(x => x.title === title);
+        let txs = arr.filter(x => x.title === title && x.txExecute == null);
         $require.eq(txs.length, 1, `No pending tx found ${title}`);
         let [ txParams ] = txs;
         return this.executePending(sender, txParams);
     }
+
     async executePending (sender: IAccount, txParams: ITimelockTx): Promise<{
         tx: TxWriter;
         schedule: ITimelockTx;
