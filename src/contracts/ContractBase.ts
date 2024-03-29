@@ -127,7 +127,10 @@ export abstract class ContractBase {
     }
 
     @memd.deco.memoize({ perInstance: true })
-    public $data () {
+    public $data (params?: {
+        estimateGas?: boolean
+        getNonce?: boolean
+    }) {
         let $top = this;
         let writeMethods = this.abi.filter(abi => abi.type === 'function' && $abiUtils.isReadMethod(abi) === false);
         let writeFns = alot(writeMethods).map(method => {
@@ -137,8 +140,8 @@ export abstract class ContractBase {
                     let writer: TxWriter = await $top
                         .$config({
                             send: 'manual',
-                            gasEstimation: false,
-                            nonce: 0,
+                            gasEstimation: params?.estimateGas ?? false,
+                            nonce: params?.getNonce ? void 0 : 0,
                         })
                         [method.name](sender, ...args);
 
@@ -154,8 +157,8 @@ export abstract class ContractBase {
                 async fn (...args: any[]) {
                     return {
                         to: $top.address,
-                        input: $abiUtils.serializeMethodCallData(method, args)
-                    }
+                        data: $abiUtils.serializeMethodCallData(method, args)
+                    };
                 }
             }
         }).toDictionary(x => x.name, x => x.fn);
