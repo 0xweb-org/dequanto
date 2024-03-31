@@ -163,7 +163,7 @@ export abstract class ContractBase {
                         await writer.builder.ensureGas();
                     }
                     let data = writer.builder.data as any as TEth.Tx;
-                    if (params?.estimateGas) {
+                    if (!params?.estimateGas) {
                         // remove default values
                         delete data.gasPrice;
                         delete data.maxPriorityFeePerGas;
