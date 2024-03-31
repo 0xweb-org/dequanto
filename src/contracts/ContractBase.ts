@@ -87,8 +87,14 @@ export abstract class ContractBase {
 
     public $config (builderConfig?: ITxBuilderOptions, writerConfig?: ITxWriterOptions): this {
         let $contract = $class.curry(this, {
-            builderConfig: builderConfig,
-            writerConfig: writerConfig,
+            builderConfig: {
+                ...(this.builderConfig ?? {}),
+                ...(builderConfig ?? {})
+            },
+            writerConfig: {
+                ...(this.builderConfig ?? {}),
+                ...(writerConfig ?? {}),
+            },
         });
         return $contract;
     }
@@ -130,8 +136,13 @@ export abstract class ContractBase {
     public $data (params?: {
         estimateGas?: boolean
         getNonce?: boolean
+        from?: TAddress
     }) {
         let $top = this;
+        if (params?.from) {
+            $top = $top.$config({ from: params.from });
+        }
+
         let writeMethods = this.abi.filter(abi => abi.type === 'function' && $abiUtils.isReadMethod(abi) === false);
         let writeFns = alot(writeMethods).map(method => {
             return {
@@ -140,12 +151,26 @@ export abstract class ContractBase {
                     let writer: TxWriter = await $top
                         .$config({
                             send: 'manual',
-                            gasEstimation: params?.estimateGas ?? false,
+                            gasEstimation: false,
                             nonce: params?.getNonce ? void 0 : 0,
                         })
                         [method.name](sender, ...args);
 
-                    return writer.builder.data as any as TEth.Tx;
+                    if (params?.getNonce) {
+                        await writer.builder.ensureNonce();
+                    }
+                    if (params?.estimateGas) {
+                        await writer.builder.ensureGas();
+                    }
+                    let data = writer.builder.data as any as TEth.Tx;
+                    if (params?.estimateGas) {
+                        // remove default values
+                        delete data.gasPrice;
+                        delete data.maxPriorityFeePerGas;
+                        delete data.maxFeePerGas;
+                        delete data.gas;
+                    }
+                    return data;
                 }
             }
         }).toDictionary(x => x.name, x => x.fn);
