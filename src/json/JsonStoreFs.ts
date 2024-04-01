@@ -40,12 +40,13 @@ export class JsonStoreFs<T> {
         this.watcherFn = cb;
     }
     public unwatch () {
-        File.unwatch(this.pathFilename, this.watcherFn);
+        File.unwatch(this.path, this.watcherFn);
         this.watcherFn = null;
     }
     public cleanCache () {
         this.data = null;
         memd.fn.clearMemoized(this.readInner);
+        File.clearCache(this.path);
     }
 
     public write (arr: T) {
