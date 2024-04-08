@@ -87,6 +87,30 @@ UTest({
             type: 'bytes16'
         });
     },
+    async 'struct with different sizes' () {
+        const code = `
+            contract Test {
+                struct Answer {
+                    uint80 roundId;
+                    int256 answer;
+                    uint256 startedAt;
+                    uint256 updatedAt;
+                    uint80 answeredInRound;
+                }
+
+                Answer public _latest;
+                uint256 public _decimals;
+            }
+        `;
+        const slots = await SlotsParser.slots({
+            code: code,
+            path: './test/solidity/Oracle.sol'
+        }, 'Test');
+
+        eq_(slots[0].size, 256 /*roundId*/ + 256 /*answer*/ + 256 /*startedAt*/ + 256 /*updatedAt*/ + 80 /*answeredInRound*/);
+        // though roundId is uint80, it is still 256 as the next field in the struct is int256
+        eq_(slots[1].slot, 5);
+    },
     async 'constants and immutables'() {
         return UTest({
             async 'should ignore constants per default'() {

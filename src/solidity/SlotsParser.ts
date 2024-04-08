@@ -19,7 +19,8 @@ import { Ast } from './SlotsParser/Ast';
 import { ISlotsParserOption, ISlotVarDefinition } from './SlotsParser/models';
 
 import type { TAbiInput } from '@dequanto/types/TAbi';
-import { $regexp } from '@dequanto/utils/$regexp';
+
+const SLOT_SIZE = 256;
 export namespace SlotsParser {
 
     export async function slotsFromAbi (abiDef: string | TAbiInput[]): Promise<ISlotVarDefinition[]> {
@@ -139,7 +140,6 @@ export namespace SlotsParser {
     function applyPositions ($vars: ISlotVarDefinition[], offset?: { slot: number, position: number }) {
         offset ??= { slot: 0, position: 0 };
 
-        const MAX = 256;
         $vars.forEach($var => {
             if ($var.memory === 'constant' || $var.memory === 'immutable') {
                 // skip calculation for static variables
@@ -160,7 +160,7 @@ export namespace SlotsParser {
                 offset.position = 0;
                 return;
             }
-            if ($var.size <= MAX - offset.position && TypeUtil.isComplexType($var.type) === false) {
+            if ($var.size <= SLOT_SIZE - offset.position && TypeUtil.isComplexType($var.type) === false) {
                 $var.slot = offset.slot;
                 $var.position = offset.position;
                 offset.position += $var.size;
@@ -174,10 +174,10 @@ export namespace SlotsParser {
             $var.slot = offset.slot;
             $var.position = offset.position;
 
-            let slots = Math.floor($var.size / MAX);
+            let slots = Math.floor($var.size / SLOT_SIZE);
 
             offset.slot += slots;
-            offset.position = $var.size % MAX;
+            offset.position = $var.size % SLOT_SIZE;
         });
         return $vars;
     }
@@ -255,6 +255,8 @@ namespace TypeUtil {
         constructor (public type: UserDefinedTypeName, public ctx: ITypeCtx) {
 
         }
+
+        // Calculate the SLOTs size of the enum excluding any dynamic values that are stored in offset
         async sizeOf () {
             let definition = await this.getDefinition();
             if (definition.type === 'ContractDefinition') {
@@ -269,8 +271,33 @@ namespace TypeUtil {
                 contract: definition.parent,
             };
             let members = definition.members.map(x => get(x.typeName, ctx));
-            let sizes = await alot(members).sumAsync(x => x.sizeOf());
-            return sizes;
+            let position = 0;
+            let size = 0;
+            for (let member of members) {
+                let sizeOf = await member.sizeOf();
+                if (sizeOf === Infinity) {
+                    // dynamic value occupies a slot as pointer to the offset
+                    size += SLOT_SIZE;
+                    position = 0;
+                    continue;
+                }
+                if (sizeOf > SLOT_SIZE - position) {
+                    // next slot
+                    if (position > 0) {
+                        // include empty memory in current slot
+                        size += SLOT_SIZE - position;
+                    }
+                    size += sizeOf;
+                    position = sizeOf < SLOT_SIZE ? sizeOf : 0;
+                    continue;
+                }
+                // pack into current slot
+                size += sizeOf;
+                position += sizeOf;
+            }
+
+            //--let sizes = await alot(members).sumAsync(x => x.sizeOf());
+            return size;
         }
         async serialize () {
             let definition = await this.getDefinition();
