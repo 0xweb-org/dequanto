@@ -54,7 +54,7 @@ export class RpcContract {
             if (methodAbi == null) {
                 return hex;
             }
-            return utils.deserializeOutput(hex, methodAbi.outputs)
+            return utils.deserializeOutput(hex, methodAbi.outputs);
         } catch (err) {
             if (err instanceof RpcError) {
                 err.message = `RpcCall ${req.method} (${JSON.stringify(req.params)}) ${err.message}`;
@@ -161,15 +161,18 @@ export class RpcContract {
 namespace utils {
     export function deserializeOutput(hex: string, outputs: TAbiOutput[]) {
         let abi = outputs;
-
+        let isDynamic: boolean = null;
         if (outputs.length > 1) {
             let isNamedTuple = outputs.every(x => x.name != null && x.name !== '');
             if (isNamedTuple) {
                 // will return as object
                 abi = [ { type: 'tuple', components: outputs, name: null } ];
+                isDynamic = false;
             }
         }
-        let arr = $abiCoder.decode(abi as any, hex);
+        let arr = $abiCoder.decode(abi as any, hex, {
+            dynamic: isDynamic
+        });
         let value = abi.length === 1 ? arr[0] : arr;
         return value;
     }

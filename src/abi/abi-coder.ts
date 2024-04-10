@@ -140,12 +140,7 @@ export class AbiCoder {
 
         let params = types.map((type) => ParamType.from(type));
         let coders: Coder[] = params.map(param => {
-            let dynamic = opts?.dynamic;
-            if (dynamic == null && types.length === 1 && /^tuple/.test(param.type)) {
-                // Ensure Tuples to be not dynamic, as if one tuple is encoded it could have no offset
-                dynamic = false;
-            }
-            return this.#getCoder(param, dynamic);
+            return this.#getCoder(param, opts?.dynamic);
         });
         let coder = new TupleCoder(coders, "_");
         let result = coder.decode(new Reader(hex, opts?.loose));

@@ -242,9 +242,14 @@ UTest({
                     string name;
                 }
                 mapping (uint256 => TCar) public cars;
+                TCar public latest;
 
                 function create (TCar memory car) external {
                     cars[car.id] = car;
+                    latest = car;
+                }
+                function getById (uint id) public view returns (TCar memory) {
+                    return cars[id];
                 }
             }
         `;
@@ -258,6 +263,11 @@ UTest({
             id: 1n,
             name: 'Foo'
         });
+        let carLatest = await contract.latest();
+        deepEq_(car, carLatest);
+
+        let carByGetter = await contract.getById(1n);
+        deepEq_(car, carByGetter);
     },
     async 'should initialize sub contract'() {
         let provider = new HardhatProvider();
