@@ -53,15 +53,8 @@ export class TokenService {
             ? amount
             : $bigint.toWei(amount, token.decimals);
 
-        if (true || approved < desiredApproval) {
-            return await erc20
-                .$config({
-                    gasEstimation: true,
-                    type: 2,
-                }, {
-                    retries: 0
-                })
-                .approve(account, spender, desiredApproval * 2n);
+        if (approved < desiredApproval) {
+            return await erc20.approve(account, spender, desiredApproval);
         }
         return null;
     }

@@ -234,18 +234,24 @@ export class  DeploymentsStorage {
 
                 if (shouldCopy === false) {
                     let deployments = await File.readAsync<IDeployment[]>(path);
-                    // 2. Just-in-case, check if there are deployments with higher block number, as the current HEAD
-                    let hasNewDeployments = deployments.some(x => x.block > blockNumber);
-                    shouldCopy = hasNewDeployments;
+                    // 2. Always copy if forked deployments are empty
+                    if (deployments.length === 0) {
+                        shouldCopy = true;
+                    }
                     if (shouldCopy === false) {
-                        // 3. Check if the latest deployments transaction exists in current forked network
-                        let latestDeployment = alot(deployments).maxItem(x => x.block);
-                        if (latestDeployment != null) {
-                            try {
-                                let tx = await this.client.getTransaction(latestDeployment.tx);
-                                shouldCopy = tx == null;
-                            } catch (error) {
-                                shouldCopy = true;
+                        // 3. Just-in-case, check if there are deployments with higher block number, as the current HEAD
+                        let hasNewDeployments = deployments.some(x => x.block > blockNumber);
+                        shouldCopy = hasNewDeployments;
+                        if (shouldCopy === false) {
+                            // 4. Check if the latest deployments transaction exists in current forked network
+                            let latestDeployment = alot(deployments).maxItem(x => x.block);
+                            if (latestDeployment != null) {
+                                try {
+                                    let tx = await this.client.getTransaction(latestDeployment.tx);
+                                    shouldCopy = tx == null;
+                                } catch (error) {
+                                    shouldCopy = true;
+                                }
                             }
                         }
                     }

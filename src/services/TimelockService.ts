@@ -86,6 +86,9 @@ export class TimelockService {
             // Only for hardhat client. Default: true
             simulate?: boolean
 
+            // Only for hardhat client. Default: false
+            execute?: boolean
+
             // Directory to store the submitted schedules, default: `./data/0x/`
             dir?: string
         }
@@ -312,10 +315,11 @@ export class TimelockService {
 
         let block = await client.getBlock(tx.receipt.blockNumber);
         let store = await this.getStore();
+        let id = this.getOperationHash({ ...txParams, salt })
         let timelockTx = await store.upsert({
-            id: salt,
-            key: key,
-            salt: salt,
+            id,
+            key,
+            salt,
             title: txParams.title,
             to: txParams.to,
             data: txParams.data,
@@ -546,8 +550,6 @@ export class TimelockService {
         let value = params.value ?? 0n;
         let data = params.data;
         let predecessor = params.predecessor ?? $hex.ZERO;
-
-
         let delay = params.delay ?? await this.getMinDelay();
         return {
             title: params.title ?? '',
