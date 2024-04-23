@@ -2,8 +2,8 @@
 version: 2.1
 
 orbs:
-  # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/node
-  browser-tools: circleci/browser-tools@1.4.6
+  # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/browser-tools
+  browser-tools: circleci/browser-tools@1.4.8
 
 
 jobs:
@@ -11,9 +11,9 @@ jobs:
     # These next lines define a Docker executor: https://circleci.com/docs/2.0/executor-types/
     # https://circleci.com/developer/images/image/cimg/node
     docker:
-      - image: cimg/node:20.8.1-browsers
+      - image: cimg/node:20.4.0-browsers
     steps:
-      - browser-tools/install-browser-tools
+      - browser-tools/install-chrome
       - checkout
       - run:
           name: NPM Install
@@ -29,7 +29,7 @@ jobs:
           command: sleep 5;
       - run:
           name: Launch Web
-          command: firefox http://localhost:5777/utest/
+          command: google-chrome http://localhost:5777/utest/
           background: true
       - run:
           command: sleep 5;
