@@ -38,7 +38,7 @@ export namespace TTransport {
 
     export namespace Options {
 
-        export type Any = string | Http | Ws | Wrapped | Transport;
+        export type Any = string | Http | Ws | Wrapped | Transport | Web3Wrapper;
 
         export type Http = {
             url: string
@@ -53,6 +53,10 @@ export namespace TTransport {
 
         export type Wrapped = {
             transport: Transport
+        }
+
+        export type Web3Wrapper = {
+            web3
         }
     }
 }

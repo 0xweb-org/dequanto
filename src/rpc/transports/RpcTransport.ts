@@ -3,6 +3,7 @@ import { HttpTransport } from './HttpTransport';
 import { WsTransport } from './WsTransport';
 import { TTransport } from './ITransport';
 import { EIP1193Transport, IEip1193Provider } from './compatibility/EIP1193Transport';
+import { Web3Transport } from './compatibility/Web3Transport';
 
 export namespace RpcTransport {
 
@@ -38,7 +39,14 @@ export namespace RpcTransport {
         if (isTransport(mix)) {
             return mix;
         }
-
+        if ('web3' in mix && mix.web3 != null) {
+            if ('currentProvider' in mix.web3 && 'eth' in mix.web3) {
+                return new Web3Transport(mix.web3);
+            }
+            if (isEIP1193Compatible(mix.web3)) {
+                return new EIP1193Transport(mix.web3);
+            }
+        }
         throw new Error(`Unknown transport: ${JSON.stringify(mix)}`);
     }
 

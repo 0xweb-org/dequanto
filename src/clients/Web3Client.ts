@@ -87,7 +87,6 @@ export abstract class Web3Client implements IWeb3Client {
         if (this.options.defaultGasPriceRatio != null) {
             this.defaultGasPriceRatio = this.options.defaultGasPriceRatio;
         }
-
     }
 
     async request<TResult = any>(req: TRpc.IRpcAction): Promise<TResult> {
