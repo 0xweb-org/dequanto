@@ -315,7 +315,7 @@ export class TimelockService {
 
         let block = await client.getBlock(tx.receipt.blockNumber);
         let store = await this.getStore();
-        let id = this.getOperationHash({ ...txParams, salt })
+        let id = this.getOperationHash({ ...txParams, salt });
         let timelockTx = await store.upsert({
             id,
             key,

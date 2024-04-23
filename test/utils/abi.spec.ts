@@ -117,7 +117,9 @@ UTest({
             'Hello Bar'
         ]);
 
-        let [ decoded2 ] = $abiCoder.decode([ tupleAbi ], hex);
+        let [ decoded2 ] = $abiCoder.decode([ tupleAbi ], hex, {
+            dynamic: false
+        });
         deepEq_(decoded2, {
             a1: '0x0000000000000000000000000000000000000002',
             a2: '0x0000000000000000000000000000000000000003',

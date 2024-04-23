@@ -26,7 +26,7 @@ UTest({
             eq_(urlRecord, 'https://vitalik.ca');
 
             let { value: contentHash } = await ns.getContent('vitalik.eth');
-            eq_(contentHash, `ipfs://QmS2i36wpaHTTPmizoRmCJ46PcomSjs1TN7zdxigSpD3Ld`);
+            eq_(contentHash, `ipfs://QmVj5UQQ5UcKsUBRTN6F9LuBStB39TmxxaVHLYGWQ5zw8u`);
         },
         async 'reverse registrar' () {
             let ns = new NameService(Web3ClientFactory.get('eth'));

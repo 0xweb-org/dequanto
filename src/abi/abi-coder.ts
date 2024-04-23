@@ -141,10 +141,6 @@ export class AbiCoder {
         let params = types.map((type) => ParamType.from(type));
         let coders: Coder[] = params.map(param => {
             let dynamic = opts?.dynamic;
-            if (dynamic == null && types.length === 1 && /^tuple/.test(param.type)) {
-                // Ensure Tuples to be not dynamic per default, as if one tuple is encoded it could have no offset
-                dynamic = false;
-            }
             return this.#getCoder(param, dynamic);
         });
         let coder = new TupleCoder(coders, "_");

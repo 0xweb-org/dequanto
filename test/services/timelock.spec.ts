@@ -62,7 +62,8 @@ UTest({
 
         let service = new TimelockService(timelock, {
             dir,
-            simulate: false
+            simulate: false,
+            execute: false,
         });
         let scheduled = await service.scheduleCall(account, counter, 'update', 10);
         has_(scheduled.txSchedule, /0x\w+/);
@@ -90,7 +91,7 @@ UTest({
             await service.executeCall(account, counter, 'update', 10);
             throw new Error(`Successful?`);
         } catch (e) {
-            has_(e.message, /not ready/);
+            has_(e.message, /Tx not scheduled/, 'or wrong message?');
         }
     }
 })
