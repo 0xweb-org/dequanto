@@ -91,7 +91,9 @@ UTest({
         });
         deepEq_(decoded2, [ { a1: values[0], a2: values[1] }]);
 
-        let decoded3 = $abiCoder.decode([ abi ], hexFromRaw);
+        let decoded3 = $abiCoder.decode([ abi ], hexFromRaw, {
+            dynamic: false
+        });
         deepEq_(decoded3, [ { a1: values[0], a2: values[1] }]);
     },
     async 'encode struct' () {
