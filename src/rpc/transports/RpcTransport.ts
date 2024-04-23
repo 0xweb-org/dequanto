@@ -5,6 +5,16 @@ import { TTransport } from './ITransport';
 import { EIP1193Transport, IEip1193Provider } from './compatibility/EIP1193Transport';
 
 export namespace RpcTransport {
+
+    type TFactory = new (opts: TTransport.Options.Any) => TTransport.Transport;
+
+    const factories = {
+        'http' : HttpTransport,
+        'https': HttpTransport,
+        'ws' : WsTransport,
+        'wss': WsTransport,
+    } as Record<string, TFactory>
+
     export function create (mix: TTransport.Options.Any | TTransport.Transport): TTransport.Transport {
         if (mix == null) {
             return null;
@@ -16,13 +26,11 @@ export namespace RpcTransport {
             let url = mix.url;
             let protocol = /^(?<protocol>\w+):\/\//.exec(url).groups?.protocol;
             $require.notEmpty(protocol, `Invalid protocol: ${url}`);
-            if (/https?/.test(protocol)) {
-                return new HttpTransport(mix);
-            }
-            if (/wss?/.test(protocol)) {
-                return new WsTransport(mix);
-            }
-            throw new Error(`Unknown protocol: ${mix}`);
+
+            let Factory = factories[protocol];
+            $require.notNull(Factory, `Unsupported protocol ${protocol} in ${url}`);
+
+            return new Factory(mix);
         }
         if (isEIP1193Compatible(mix)) {
             return new EIP1193Transport(mix);
@@ -32,6 +40,10 @@ export namespace RpcTransport {
         }
 
         throw new Error(`Unknown transport: ${JSON.stringify(mix)}`);
+    }
+
+    export function register (protocol: string, Factory: TFactory): void {
+        factories[protocol] = Factory;
     }
 
     function hasUrl (mix: TTransport.Options.Any): mix is TTransport.Options.Http | TTransport.Options.Ws {

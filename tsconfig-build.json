@@ -9,8 +9,8 @@
         "module": "AMD",
         "moduleResolution": "Node",
         "experimentalDecorators": true,
-        "target": "es2022",
-        "lib": ["dom", "es2022"],
+        "target": "ES2022",
+        "lib": ["dom", "ES2022"],
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true
     },

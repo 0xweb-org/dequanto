@@ -1,62 +1,170 @@
 {
-  "name": "dequanto",
-  "version": "0.1.0",
-  "scripts": {
-    "hardhat": "node --openssl-legacy-provider ./node_modules/hardhat/internal/cli/cli.js node --hostname 127.0.0.1 --verbose",
-    "build": "tsc -p tsconfig-src.json",
-    "test": "atma --openssl-legacy-provider test --config='settings.base=./'",
-    "contracts": "atma act ./actions/contracts.act.ts",
-    "typecheck": "tsc --project tsconfig-src.json --noEmit"
-  },
-  "devDependencies": {
-    "@0xweb/hardhat": "^0.1.15",
-    "@gnosis.pm/safe-contracts": "^1.3.0",
-    "@openzeppelin/contracts": "^4.9.3",
-    "@types/sinon": "^10.0.13",
-    "atma-loader-ts": "^1.1.20",
-    "atma-utest": "^0.21.30",
-    "ethers": "^5.5.1",
-    "hardhat": "^2.19.2",
-    "shellbee": "^0.5.29",
-    "ts-nameof": "^5.0.0",
-    "web3": "^1.6.0"
-  },
-  "dependencies": {
-    "@noble/curves": "^1.2.0",
-    "@noble/hashes": "^1.3.2",
-    "@scure/bip32": "^1.3.2",
-    "@scure/bip39": "^1.2.1",
-    "@solidity-parser/parser": "^0.16.0",
-    "a-di": "^1.0.25",
-    "alot": "^0.3.7",
-    "appcfg": "^0.4.70",
-    "atma": "^0.15.20",
-    "atma-io": "^1.2.72",
-    "atma-utils": "^0.2.51",
-    "everlog": "^1.0.11",
-    "includejs": "^0.16.9",
-    "isomorphic-ws": "^5.0.0",
-    "memd": "^0.3.12",
-    "typescript": "^5.3.3"
-  },
-  "atma": {
-    "configs": "./configs/**.yml",
-    "plugins": [
-      "atma-loader-ts"
-    ],
-    "settings": {
-      "include": {
-        "amd": true,
-        "extentionDefault": {
-          "js": "ts"
+    "name": "dequanto",
+    "version": "0.1.0",
+    "scripts": {
+        "hardhat": "node --openssl-legacy-provider ./node_modules/hardhat/internal/cli/cli.js node --hostname 127.0.0.1 --verbose",
+        "build:tsc": "tsc -p tsconfig-src.json",
+        "build": "app-bundler",
+        "server": "atma server --TEST",
+        "test": "atma --openssl-legacy-provider test --config='settings.base=./' --TEST",
+        "contracts": "atma act ./actions/contracts.act.ts",
+        "typecheck": "tsc --project tsconfig-src.json --noEmit"
+    },
+    "devDependencies": {
+        "@0xweb/hardhat": "^0.1.15",
+        "@gnosis.pm/safe-contracts": "^1.3.0",
+        "@openzeppelin/contracts": "^4.9.3",
+        "@types/sinon": "^10.0.13",
+        "app-bundler": "^0.1.16",
+        "atma-io-middleware-uglify": "^1.1.25",
+        "atma-loader-ts": "^1.1.20",
+        "atma-utest": "^0.21.30",
+        "ethers": "^5.5.1",
+        "hardhat": "^2.19.2",
+        "shellbee": "^0.5.29",
+        "ts-nameof": "^5.0.0",
+        "web3": "^1.6.0"
+    },
+    "dependencies": {
+        "@noble/curves": "^1.2.0",
+        "@noble/hashes": "^1.3.2",
+        "@scure/bip32": "^1.3.2",
+        "@scure/bip39": "^1.2.1",
+        "@solidity-parser/parser": "^0.16.0",
+        "a-di": "^1.0.25",
+        "alot": "^0.3.7",
+        "appcfg": "^0.4.70",
+        "atma": "^0.15.22",
+        "atma-io": "^1.2.72",
+        "atma-utils": "^0.2.51",
+        "everlog": "^1.0.11",
+        "includejs": "^0.17.4",
+        "memd": "^0.3.12",
+        "typescript": "^5.3.3",
+        "ws": "^8.16.0"
+    },
+    "app-bundler": {
+        "apps": {
+            "umd": {
+                "outputMain": "lib/umd/dequanto.js",
+                "js": [],
+                "package": {
+                    "module": "commonjs",
+                    "moduleName": "dequanto",
+                    "moduleWrapper": "umd",
+                    "commonjs": {
+                        "output": "simplified"
+                    }
+                },
+                "options": {
+                    "include": {
+                        "amd": true,
+                        "extentionDefault": {
+                            "js": "ts"
+                        },
+                        "routes": {
+                            "@dequanto/*": [
+                                "src/*"
+                            ],
+                            "@dequanto-contracts/*": [
+                                "contracts/*"
+                            ]
+                        },
+                        "map": {}
+                    }
+                },
+                "settings": {
+
+                    "atma-io-middleware-condcomments": {
+                        "defines": {
+                            "BROWSER": true
+                        }
+                    },
+                    "atma-loader-ts": {
+                        "sourceMap": true,
+                        "typescript": {
+                            "compilerOptions": {
+                                "paths": {
+                                    "@dequanto/*": [ "src/*" ],
+                                    "@dequanto-contracts/*": [ "contracts/*" ]
+                                },
+                                "module": "CommonJS",
+                                "experimentalDecorators": true,
+                                "target": "ES2022",
+                                "esModuleInterop": true,
+                                "allowSyntheticDefaultImports": true
+                            }
+                        }
+                    }
+                }
+            }
         },
-        "routes": "#import ./tsconfig-build.json compilerOptions.paths",
-        "map": {}
-      },
-      "atma-loader-ts": {
-        "sourceMap": true,
-        "typescript": "#import ./tsconfig-build.json"
-      }
+        "common": {
+            "file": "src/exports.ts",
+            "defaultExtensions": {
+                "js": "ts"
+            },
+            "dynamicDependencies": [
+                "^readline$",
+                "^https?$",
+                "atma-io",
+                "atma-server",
+                "atma-utils",
+                "atma-logger",
+                "class-json",
+
+                "atma-formatter",
+                "memd",
+                "appcfg",
+                "alot",
+                "a-di",
+                "everlog",
+
+                "^@noble",
+                "^@scure",
+                "^debug$",
+                "^hardhat$",
+                "^child_process$",
+                "^crypto$",
+                "^fs$",
+                "^os$",
+                "^path$",
+                "^assert$",
+                "^stream$",
+                "^papaparse$",
+                "^ws$",
+                "^@slack",
+                "^@solidity-parser",
+                "^signal-exit$"
+            ],
+            "middlewares": {
+                "jss": [
+                    "atma-io-middleware-uglify:write"
+                ],
+                "ts": [
+                    "atma-io-middleware-condcomments:read",
+                    "atma-loader-ts:read"
+                ]
+            }
+        }
+    },
+    "atma": {
+        "configs": "./configs/**.yml",
+        "plugins": [
+            "atma-loader-ts"
+        ],
+        "settings": {
+            "include": {
+                "amd": true,
+                "extentionDefault": {
+                    "js": "ts"
+                },
+                "routes": "#import ./tsconfig-build.json compilerOptions.paths",
+                "map": {}
+            },
+            "atma-loader-ts": {
+                "sourceMap": true,
+                "typescript": "#import ./tsconfig-build.json"
+        }
     }
-  }
 }

@@ -64,14 +64,6 @@ export class SlotsStorage {
         await handler.set(keys, value);
     }
 
-    // for(property: string) {
-    //     let slot = this.slots.find(x => x.name === property);
-    //     $require.notNull(slot, `StateVariable ${property} not found. Available: ${this.slots.map(x => x.name).join(', ')}`);
-
-    //     const Ctor = this.getSlotStorage(slot);
-    //     return new Ctor(this.transport, slot);
-    // }
-
     async fetchAll() {
 
         let arr = await alot(this.slots)

@@ -1,7 +1,7 @@
+import type { ISlotVarDefinition } from '@dequanto/solidity/SlotsParser/models';
 import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
-import { ISlotVarDefinition } from '@dequanto/solidity/SlotsParser/models';
 import { SlotsStorage } from '@dequanto/solidity/SlotsStorage';
 
 export class ContractStorageReaderBase {

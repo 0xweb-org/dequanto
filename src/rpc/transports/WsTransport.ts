@@ -1,5 +1,5 @@
 import memd from 'memd';
-import WebSocket, { type MessageEvent } from 'isomorphic-ws'
+import WebSocket from './WsTransportIsomorphic'
 import { TTransport } from './ITransport';
 import { MessageBasedTransport } from './MessageBasedTransport';
 import { RpcSubscription } from '../RpcSubscription';
