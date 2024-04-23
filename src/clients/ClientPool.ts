@@ -741,27 +741,7 @@ export class WClient {
         const hasWeb3 = 'web3' in mix && typeof mix.web3 != null;
         if (hasUrl || hasWeb3) {
             this.config = mix;
-            let transport: TTransport.Transport;
-
-            if (typeof mix.url === 'string') {
-                let { url, options } = this.config;
-                if (url.startsWith('ws')) {
-                    transport = this.createWebSocketClient(url);
-                } else if (typeof url.startsWith('http')) {
-                    transport = new HttpTransport(<TTransport.Options.Http> {
-                        url,
-                        ...options
-                    });
-                } else {
-                    throw new Error(`Unsupported transport url ${url}`);
-                }
-            } else if (mix.web3 != null && 'currentProvider' in mix.web3 && 'eth' in mix.web3) {
-                transport = new Web3Transport(mix.web3);
-            } else {
-                // provider
-                transport = mix.web3 as any as TTransport.Transport;
-            }
-
+            let transport = mix as TTransport.Options.Any;
             this.rpc = new Rpc(transport);
         } else {
             throw new Error(`Neither Node URL nor Web3 Instance in argument`);
@@ -787,24 +767,24 @@ export class WClient {
     }
 
 
-    @memd.deco.memoize()
-    private createWebSocketClient(url: string) {
-        let { options } = this.config;
+    // @memd.deco.memoize()
+    // private createWebSocketClient(url: string) {
+    //     let { options } = this.config;
 
-        // options = obj_extendDefaults(options ?? {}, { clientConfig: {} });
-        // obj_extendDefaults((options as TTransport.Options.Ws).clientConfig, {
-        //     // default frame size is too small
-        //     maxReceivedFrameSize: 50_000_000,
-        //     maxReceivedMessageSize: 50_000_000,
-        // });
+    //     // options = obj_extendDefaults(options ?? {}, { clientConfig: {} });
+    //     // obj_extendDefaults((options as TTransport.Options.Ws).clientConfig, {
+    //     //     // default frame size is too small
+    //     //     maxReceivedFrameSize: 50_000_000,
+    //     //     maxReceivedMessageSize: 50_000_000,
+    //     // });
 
-        let transport = new WsTransport({ url, ...options });
+    //     let transport = new WsTransport({ url, ...options });
 
-        // transport.on('close', ev => this.websocket.code = ev.code);
-        // transport.on('connect', _ => this.websocket.code = WS_STATE.CONNECTED);
+    //     // transport.on('close', ev => this.websocket.code = ev.code);
+    //     // transport.on('connect', _ => this.websocket.code = WS_STATE.CONNECTED);
 
-        return transport;
-    }
+    //     return transport;
+    // }
 
     async send<TResult>(fn: (web3: WClient) => PromiseEvent<TResult>): Promise<{ status: ClientStatus, error?, result?: PromiseEvent<TResult> }> {
         return new Promise((resolve, reject) => {
