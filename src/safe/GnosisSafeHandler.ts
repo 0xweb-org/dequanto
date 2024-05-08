@@ -83,8 +83,9 @@ export class GnosisSafeHandler {
             }
         }
 
+
         let signaturesArr = alot(confirmations)
-            .sortBy(x => x.owner)
+            .sortBy(x => BigInt(x.owner))
             .map(x => x.signature)
             .toArray();
 
