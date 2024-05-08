@@ -37,7 +37,7 @@ export interface IDeployment {
     deployer: TEth.Address
     timestamp: number
     bytecodeHash: TEth.Hex
-    history?: Omit<IDeployment, 'id' | 'name'>[]
+    history?: (Omit<IDeployment, 'id' | 'name'> & { version?: string })[]
 }
 
 
@@ -62,19 +62,23 @@ export class  DeploymentsStorage {
     async getDeploymentInfo (Ctor: Constructor<any>, opts?: {
         id?: string
         address?: TAddress
+        history?: string
     }): Promise<IDeployment>
     async getDeploymentInfo (name: string, opts?: {
         id?: string
         address?: TAddress
+        history?: string
     }): Promise<IDeployment>
     async getDeploymentInfo (address: TAddress): Promise<IDeployment>
     async getDeploymentInfo (contractInfo: Constructor<any> | string, opts?: {
         id?: string
         address?: TAddress
+        history?: string
     }): Promise<IDeployment>
     async getDeploymentInfo (mix: Constructor<any> | string | TAddress, opts?: {
         id?: string,
         address?: TAddress
+        version?: string
     }): Promise<IDeployment> {
         await this.cleanTestDeploymentsIfAny();
 
@@ -96,6 +100,17 @@ export class  DeploymentsStorage {
 
         let id = typeof mix === 'string' ? mix : mix.name;
         let deployment = await store.getSingle(id);
+        if (opts?.version != null) {
+            let history = deployment.history?.find(x => x.version === opts.version);
+            console.log(deployment, 'history', history);
+            if (history == null) {
+                return null;
+            }
+            deployment = {
+                ...deployment,
+                ...history,
+            };
+        }
         return deployment;
     }
 

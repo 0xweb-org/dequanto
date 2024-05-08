@@ -103,6 +103,7 @@ export class Deployments {
     async get<T extends ContractBase>(Ctor: Constructor<T>, opts?: {
         id?: string;
         address?: TAddress;
+        version?: string
     }): Promise<T> {
         let contract = await this.getOrNull(Ctor, opts);
         if (contract == null) {
@@ -121,6 +122,7 @@ export class Deployments {
     private async getOrNull<T extends ContractBase>(Ctor: Constructor<T>, opts: {
         id?: string;
         address?: TAddress;
+        version?: string;
     }): Promise<T> {
         let deployment = await this.store.getDeploymentInfo(Ctor, opts);
         let address = deployment?.address;
