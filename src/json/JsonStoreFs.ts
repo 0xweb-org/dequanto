@@ -29,6 +29,7 @@ export class JsonStoreFs<T> {
         , public mapFn?: (x: T) => any
         , public format?: boolean
         , public $default?: T
+        , public serializeFn?: (x: T) => any
     ) {
         this.lock.resolve();
         this.pathBak = this.path + '.bak';
@@ -190,11 +191,16 @@ export class JsonStoreFs<T> {
         return data;
     }
     private encode (data: any) {
-        let { Type, format } = this;
+        let { Type, format, serializeFn } = this;
         if (Type) {
             data = Array.isArray(data)
                 ? data.map(x => JsonConvert.toJSON(x, { Type }))
                 : JsonConvert.toJSON(data, { Type });
+        }
+        if (serializeFn) {
+            data = Array.isArray(data)
+                ? data.map(serializeFn)
+                : serializeFn(data);
         }
         return JSON.stringify(data, null, format ? '  ' : null)
     }

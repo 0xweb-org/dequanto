@@ -4,12 +4,13 @@ import { Alot } from 'alot/alot'
 import { JsonStoreFs } from './JsonStoreFs'
 import type { IConstructor } from 'class-json/JsonSettings'
 
-export interface IStoreOptions<T, TOut = T> {
+export interface IStoreOptions<T, TStorage = T> {
     path: string
     watchFs?: boolean
 
     key: (x: Partial<T>) => string | number
-    map? (x: T): TOut
+    map? (x: TStorage): T
+    serialize? (x: T): TStorage
     Type?: IConstructor
     format?: boolean
 }
@@ -31,6 +32,7 @@ export class JsonArrayStore<T> {
             , this.options.map as any
             , this.options.format
             , []
+            , this.options.serialize as any
         );
         if (this.options?.watchFs) {
             this.fs.watch(() => this.onStoreChanged());
