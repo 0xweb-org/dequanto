@@ -32,7 +32,6 @@ import { $sig } from '@dequanto/utils/$sig';
 import { TEth } from '@dequanto/models/TEth';
 import { SafeServiceTypes } from '@dequanto/safe/types/SafeServiceTypes';
 import { ChainAccountService } from '@dequanto/ChainAccountService';
-import { TxNonceManager } from './TxNonceManager';
 import { $is } from '@dequanto/utils/$is';
 
 interface ITxWriterEvents {

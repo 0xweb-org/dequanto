@@ -64,4 +64,13 @@ export namespace $is {
     export function ArrayOfStrings (val): val is string[] {
         return $Array.isArray(val) && val.length > 0 && val.every(x => typeof x ==='string');
     }
+
+    //# if (!BROWSER)
+    export const NODE = true;
+    //# endif
+
+    /*# if (BROWSER)
+    export const NODE = false;
+    */
+
 }

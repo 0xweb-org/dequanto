@@ -1,5 +1,4 @@
 import { is_NODE } from 'atma-utils';
-import { $require } from './$require';
 import { TEth } from '@dequanto/models/TEth';
 
 
