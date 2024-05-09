@@ -12,6 +12,9 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { $is } from '@dequanto/utils/$is';
 import { $contract } from '@dequanto/utils/$contract';
 import { $hex } from '@dequanto/utils/$hex';
+import { TAbiInput, TAbiItem } from '@dequanto/types/TAbi';
+import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { $abiType } from '@dequanto/utils/$abiType';
 
 
 type TItem = ITxLogItem<any>
@@ -65,9 +68,32 @@ export class EventsIndexer <T extends ContractBase> {
             pfxKey = options.name + '-';
         }
 
+        let events = alot(this.contract.abi).filter(x => x.type === 'event').toDictionary(x => x.name, x => x);
         this.store = options?.store ?? new JsonArrayStore<ITxLogItem<any>>({
             path: `${directly}/${key}/${pfxKey}${addressKey}.json`,
-            key: x => x.id
+            key: x => x.id,
+            map (x) {
+                let abi = events[x.event];
+                let blockNumber = x.id / 100000;
+                let logIndex = x.id % 100000;
+                x.params = EventAbiInputs.deserialize(x.params, abi);
+                return {
+                    ...x,
+                    blockNumber,
+                    logIndex,
+                    arguments: abi.inputs.map(input => {
+                        return x.params[input.name];
+                    })
+                };
+            },
+            serialize (x) {
+                return {
+                    ...x,
+                    arguments: void 0,
+                    blockNumber: void 0,
+                    logIndex: void 0,
+                };
+            }
         });
 
         this.storeMeta = options?.storeMeta ?? new JsonArrayStore<TMeta>({
@@ -210,3 +236,46 @@ type TRange = {
 type GetEventLogNames<T extends ContractBase> = keyof T['Types']['Events'];
 type GetTypes<T extends ContractBase> = T['Types'];
 
+
+namespace EventAbiInputs {
+    // primary to convert BigInt from JSON
+
+    export function deserialize (params: Record<string, any>, abi: TAbiItem): Record<string, any> {
+        let inputs = alot(abi.inputs).toDictionary(x => x.name, x => x);
+        for (let key in params) {
+            let abiInput = inputs[key];
+            if (abiInput) {
+                params[key] = deserializeValue(params[key], abiInput);
+            }
+        }
+        return params;
+    }
+
+    function deserializeValue (value: any, abiInput: TAbiInput): any {
+        if (value == null || abiInput == null) {
+            return value;
+        }
+        if (typeof value === 'string' && abiInput.type.startsWith('uint')) {
+            return BigInt(value);
+        }
+
+        let arrayRgx = /\[\d*\]$/;
+        let isArrayType = arrayRgx.test(abiInput.type);
+        if (isArrayType && Array.isArray(value)) {
+            let type = abiInput.type.replace(arrayRgx, '');
+            let abiItem = { ...abiInput, type };
+            return value.map(x => deserializeValue(x, abiItem));
+        }
+
+        if (abiInput.type === 'tuple' && abiInput.components != null && typeof value === 'object') {
+            let result = {};
+            let abiComponents = alot(abiInput.components).toDictionary(x => x.name, x => x);
+            for (let key in value) {
+                let abiItem = abiComponents[key];
+                result[key] = deserializeValue(value[key], abiItem);
+            }
+            return result;
+        }
+        return value;
+    }
+}
