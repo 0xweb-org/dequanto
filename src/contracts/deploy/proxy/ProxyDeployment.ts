@@ -124,6 +124,8 @@ export class ProxyDeployment {
 
         let proxyOpts = <Parameters<Deployments['ensure']>[1]> {
             id: proxyId,
+            // will not compare the contract updates, once deployed. As proxies normally not updated
+            latest: false,
             // will be used for verification
             proxyFor: implAddress,
             arguments: [
