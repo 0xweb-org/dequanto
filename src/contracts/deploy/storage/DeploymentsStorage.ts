@@ -37,6 +37,7 @@ export interface IDeployment {
     deployer: TEth.Address
     timestamp: number
     bytecodeHash: TEth.Hex
+
     history?: (Omit<IDeployment, 'id' | 'name'> & { version?: string })[]
 }
 

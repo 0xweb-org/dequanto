@@ -424,6 +424,19 @@ export class Deployments {
                 this._logger.log(`${deployment.id} bytecode has not changed. yellow<v0 bytecode check>`);
                 return true;
             }
+
+            if (bytecode.length === deployedBytecode.length) {
+
+                let { bytecode: bytecodeOnchain } = $bytecode.splitToMetadata(bytecode);
+                let { bytecode: bytecodeLocal } = $bytecode.splitToMetadata(deployedBytecode);
+                let [ localDiff, onchainDiff ] = Str.getDifference(bytecodeLocal, bytecodeOnchain);
+                if (localDiff === '' || /^0+$/.test(localDiff)) {
+                    this._logger.log(`${deployment.id} bytecode has only immutable data diff, assume unchanged`);
+                    // Local deployedBytecode doesn't contain the immutable data
+                    // instead the solc generates the bytecode with 0 as the placeholder
+                    return true;
+                }
+            }
         }
 
         this._logger.log(`yellow<${deployment.id} bytecode has changed. Redeploying...>`);
@@ -627,4 +640,32 @@ function getImplementationId (Ctor: Constructor<TContract>) {
         id = id.substring(0, id.length - version[0].length)
     };
     return id;
+}
+
+namespace Str {
+    export function getDifference (a: TEth.Hex, b: TEth.Hex) {
+        if (a === b) {
+            return [ '', '' ];
+        }
+
+        let start = -1;
+        let end = -1;
+        for (let i = 0; i < a.length; i++) {
+            if (a[i] !== b[i]) {
+                start = i;
+                break;
+            }
+        }
+        for (let i = a.length - 1; i > start; i--) {
+            if (a[i] !== b[i]) {
+                end = i;
+                break;
+            }
+        }
+
+        return [
+            a.substring(start, end + 1),
+            b.substring(start, end + 1),
+        ];
+    }
 }
