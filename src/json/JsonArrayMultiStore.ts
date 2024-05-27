@@ -1,0 +1,151 @@
+/**
+ * Store data across multiple files for cases, that could contain thousands of entries
+ */
+
+import { IStoreOptions, JsonArrayStore } from './JsonArrayStore';
+import { Directory } from 'atma-io';
+import memd from 'memd';
+import alot from 'alot';
+import type { Alot } from 'alot/alot';
+import { $require } from '@dequanto/utils/$require';
+
+export interface  IMultiStoreOptions<T> extends IStoreOptions<T> {
+    groupKey: (x: T) => number
+    groupSize: number
+}
+
+export class JsonArrayMultiStore<T> {
+
+    //private stores: Record<string, JsonArrayStore<T>>;
+
+    constructor (public options: IMultiStoreOptions<T>) {
+        $require.Function(this.options.groupKey, `Expect a method to get the group key for an entry`);
+        $require.Number(this.options.groupSize, `Expect a size for the group`);
+        $require.True(this.options.path.endsWith('/'), `The ${this.options.path} must end with a slash, as it will be used as a folder`);
+    }
+
+    async query(filter?: {
+        groupKey?: {
+            from?: number
+            to?: number
+        }
+    }): Promise<Alot<T>> {
+        let arr = await this.fetch(filter);
+        return alot(arr);
+    }
+
+    async fetch(filter?: {
+        groupKey?: {
+            from?: number
+            to?: number
+        }
+    }): Promise<T[]> {
+        let groups = await this.getGroupedFiles();
+        let from = filter?.groupKey?.from;
+        if (from != null) {
+            groups = groups
+                .filter(x => {
+                    if (x.range?.end < from) {
+                        return false;
+                    }
+                    return true;
+                });
+        }
+        let to = filter?.groupKey?.to;
+        if (to != null) {
+            groups = groups
+                .filter(x => {
+                    if (x.range?.start > to) {
+                        return false;
+                    }
+                    return true;
+                });
+        }
+        if (groups.length === 0) {
+            return [];
+        }
+        let stores = this.getStores(groups.map(x => x.range));
+        let arr = await alot(stores).mapManyAsync(x => x.getAll()).toArrayAsync();
+        return arr;
+    }
+
+    async migrate (store: { getAll(): Promise<T[]> }) {
+        let arr = await store.getAll();
+        await this.upsertMany(arr);
+    }
+
+    private async getGroupedFiles () {
+        try {
+            let files = await Directory.readFilesAsync(this.options.path, '*.json');
+            let rangeFiles = files
+            .map(file => {
+                return {
+                    file,
+                    range: this.parseRangeFilename(file.uri.file)
+                };
+            })
+            .filter(x => x.range != null);
+            return rangeFiles;
+        } catch (e) {
+            return [];
+        }
+    }
+    private parseRangeFilename (filename: string) {
+        let match = /^(?<start>\d+)\-(?<end>\d+)\./.exec(filename);
+        if (match == null) {
+            return null;
+        }
+        return {
+            start: Number(match.groups.start),
+            end: Number(match.groups.end),
+        };
+    }
+
+
+    private getStores (groups: { start: number, end: number }[]) {
+        return groups.map(group => {
+            return this.getStore(`${group.start}-${group.end}`);
+        })
+    }
+
+    @memd.deco.memoize({ perInstance: true})
+    private getStore (groupKey: string) {
+        let path  = `${this.options.path}${groupKey}.json`;
+        return new JsonArrayStore<T>({
+            ...this.options,
+            path: path,
+        });
+    }
+
+
+    async getSingle (groupKey: number, key: string | number) {
+        let groups = await this.getGroupedFiles();
+        let group = groups.find(x => groupKey >= x.range?.start && groupKey < x.range?.end);
+        if (group == null) {
+            return null;
+        }
+        let store = this.getStore(`${group.range.start}-${group.range.end}`);
+        return store.getSingle(key);
+    }
+
+
+    async upsertMany(arr: Partial<T>[]): Promise<T[]> {
+        let groupSize = this.options.groupSize;
+        await alot(arr)
+            .groupBy(entry => {
+                let key = this.options.groupKey(entry as T);
+                let start = key - key % groupSize;
+                let end = start + groupSize;
+                return `${start}-${end}`;
+            })
+            .mapAsync(async group => {
+                let store = this.getStore(group.key);
+                await store.upsertMany(group.values);
+            })
+            .toArrayAsync();
+
+        return arr as T[];
+    }
+
+
+}

@@ -764,6 +764,11 @@ export class WClient {
         if (mix.batchLimit) {
             this.batchLimit = $number.parse(mix.batchLimit);
         }
+        if (mix.fetchableBlockRange) {
+            this.updateBlockRangeInfo({
+                blocks: $number.parse(mix.fetchableBlockRange)
+            });
+        }
     }
 
 

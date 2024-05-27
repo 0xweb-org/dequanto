@@ -94,7 +94,7 @@ export namespace $require {
         }
     }
 
-    export function True(value: boolean, message: string) {
+    export function True(value: boolean, message?: string) {
         if (value !== true) {
             throw new Error(`Got false expression ${message}`);
         }

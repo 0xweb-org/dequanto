@@ -3,40 +3,19 @@ import memd from 'memd';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
 import { ContractCreationResolver } from '@dequanto/contracts/ContractCreationResolver';
 import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
-import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { $date } from '@dequanto/utils/$date';
 import { $require } from '@dequanto/utils/$require';
-import type { Alot } from 'alot/alot';
 import { TAddress } from '@dequanto/models/TAddress';
-import { $is } from '@dequanto/utils/$is';
-import { $contract } from '@dequanto/utils/$contract';
-import { $hex } from '@dequanto/utils/$hex';
-import { TAbiInput, TAbiItem } from '@dequanto/types/TAbi';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { $abiType } from '@dequanto/utils/$abiType';
+import { IEventsIndexerMetaStore, IEventsIndexerStore } from './storage/interfaces';
+import { FsEventsIndexerStore } from './storage/FsEventsIndexerStore';
+import { FsEventsMetaStore } from './storage/FsEventsMetaStore';
 
-
-type TItem = ITxLogItem<any>
-type TMeta = {
-    event: string
-    lastBlock: number
-}
-
-export interface IEventsIndexerStore {
-    upsertMany(logs: TItem[]): Promise<TItem[]>
-    query (): Promise<Alot<TItem>>
-}
-
-export interface IMetaStore {
-    upsertMany(meta: TMeta[]): Promise<TMeta[]>
-    getAll (): Promise<TMeta[]>
-}
 
 export class EventsIndexer <T extends ContractBase> {
 
     public store: IEventsIndexerStore
-    public storeMeta: IMetaStore
+    public storeMeta: IEventsIndexerMetaStore
 
     constructor(public contract: T, public options: {
         // Load events from the contract that was deployed to multiple addresses
@@ -44,62 +23,47 @@ export class EventsIndexer <T extends ContractBase> {
         name?: string
         initialBlockNumber?: number
         store?: IEventsIndexerStore
-        storeMeta?: IMetaStore
+        storeMeta?: IEventsIndexerMetaStore
         fs?: {
+            /** Is used as a base directory. Later the ContractName and the address(es) hash will be appended */
             directory?: string
+
+            /** The events will be splitted into multiple files by block range */
+            // @default ~1week
+            rangeSeconds?: number
+            // @default is taken from Web3Client
+            blockTimeAvg?: number
         }
     }) {
         let client = contract.client;
-        let key = client.network.replace(':', '-');
-        let directly = options?.fs?.directory ?? `./data/tx-logs`;
-        let addressKey = contract.address;
-        if ($is.notEmpty(this.options.addresses)) {
-            let sorted = alot(this.options.addresses)
-                .map(x => $hex.raw(x))
-                .distinct()
-                .sortBy(x => x)
-                .toArray()
-                .join('-');
-            let hash = $contract.keccak256(sorted, 'hex');
-            addressKey = hash;
-        }
-        let pfxKey = '';
-        if (options.name) {
-            pfxKey = options.name + '-';
-        }
 
-        let events = alot(this.contract.abi).filter(x => x.type === 'event').toDictionary(x => x.name, x => x);
-        this.store = options?.store ?? new JsonArrayStore<ITxLogItem<any>>({
-            path: `${directly}/${key}/${pfxKey}${addressKey}.json`,
-            key: x => x.id,
-            map (x) {
-                let abi = events[x.event];
-                let blockNumber = x.id / 100000;
-                let logIndex = x.id % 100000;
-                x.params = EventAbiInputs.deserialize(x.params, abi);
-                return {
-                    ...x,
-                    blockNumber,
-                    logIndex,
-                    arguments: abi.inputs.map(input => {
-                        return x.params[input.name];
-                    })
-                };
-            },
-            serialize (x) {
-                return {
-                    ...x,
-                    arguments: void 0,
-                    blockNumber: void 0,
-                    logIndex: void 0,
-                };
+        this.store = options?.store ?? new FsEventsIndexerStore(contract, {
+            addresses: this.options.addresses,
+            name: this.options.name,
+            initialBlockNumber: this.options.initialBlockNumber,
+            fs: {
+                directory: options?.fs?.directory,
+                rangeSeconds: options?.fs?.rangeSeconds ?? $date.parseTimespan('1week', { get: 's' }),
+                blockTimeAvg: options?.fs?.blockTimeAvg ?? client.blockTimeAvg
             }
         });
 
-        this.storeMeta = options?.storeMeta ?? new JsonArrayStore<TMeta>({
-            path: `${directly}/${key}/${pfxKey}${addressKey}-meta-arr.json`,
-            key: x => x.event
+        this.storeMeta = options?.storeMeta ?? new FsEventsMetaStore(contract, {
+            addresses: this.options.addresses,
+            name: this.options.name,
+            fs: {
+                directory: options?.fs?.directory,
+            }
         });
+    }
+
+    /** @deprecated For migration only */
+    async fsEnsureMigrated () {
+        $require.True(this.store instanceof FsEventsIndexerStore);
+        $require.True(this.store instanceof FsEventsMetaStore);
+
+        await (this.store as FsEventsIndexerStore<T>).ensureMigrated();
+        await (this.storeMeta as FsEventsMetaStore<T>).ensureMigrated();
     }
 
     async getPastLogs <
@@ -107,24 +71,28 @@ export class EventsIndexer <T extends ContractBase> {
     > (
         event: TLogName | TLogName[] | '*',
         // Fetch all logs and filter later if needed
-        //- params?: T[TMethodName] extends (options: { params?: infer TParams }) => any ? TParams : never
+        //- params?: T[TMethodName] extends (options: { params?: infer TParams }) => any ? TParams : never,
+        filter?: {
+            fromBlock?: number
+            toBlock?: number
+        }
     ): Promise<{
         logs: ITxLogItem<GetTypes<T>['Events'][TLogName]['outputParams']>[],
     }> {
         let contract = this.contract;
         let client = contract.client;
-        let latestBlock = await client.getBlockNumber();
+        let toBlock = filter?.toBlock ?? await client.getBlockNumber();
         let events = Array.isArray(event) ? event as string[] : [ event as string ];
-        let ranges = await this.getRanges(events, this.options.initialBlockNumber, latestBlock)
-        let logs = await this.getPastLogsRanges(ranges, events, latestBlock);
+        let ranges = await this.getRanges(events, this.options.initialBlockNumber, toBlock)
+        let logs = await this.getPastLogsRanges(ranges, events, toBlock, filter?.fromBlock);
 
         return {
             logs: logs as any
         };
     }
 
-    private async getRanges (events: string[], initialBlockNumber: number, toBlock: number): Promise<TRange[]> {
-        let logsMetaArr = await this.storeMeta.getAll();
+    private async getRanges (events: string[], initialBlockNumber: number, toBlock: number, fromBlock?: number): Promise<TRange[]> {
+        let logsMetaArr = await this.storeMeta.fetch();
         let eventsBlock = alot(logsMetaArr).toDictionary(x => x.event, x => x.lastBlock);
         let logsMeta = events.map(event => {
             let blockNr = eventsBlock[event] ?? initialBlockNumber;
@@ -158,12 +126,12 @@ export class EventsIndexer <T extends ContractBase> {
         }
         return ranges;
     }
-    private async getPastLogsRanges (ranges: TRange[], events: string[], toBlock: number) {
+    private async getPastLogsRanges (ranges: TRange[], events: string[], toBlock: number, fromBlock?: number) {
         // Save indexed logs every 2 minutes
         let PERSIST_INTERVAL = $date.parseTimespan('2min');
         let time = Date.now();
         let contract = this.contract;
-        let buffer = [] as TItem[];
+        let buffer = [] as ITxLogItem<any>[];
 
         for (let i = 0; i < ranges.length; i++) {
             let range = ranges[i];
@@ -194,7 +162,10 @@ export class EventsIndexer <T extends ContractBase> {
         await this.upsert(buffer, events, toBlock);
 
         let requestedEvents = alot(events).toDictionary(x => x);
-        let allLogs = await this.getItemsFromStore();
+        let allLogs = await this.getItemsFromStore({
+            fromBlock: fromBlock,
+            toBlock: toBlock + 1,
+        });
 
         let logs = events[0] === '*'
             ? allLogs
@@ -202,8 +173,11 @@ export class EventsIndexer <T extends ContractBase> {
         return logs;
     }
 
-    private async getItemsFromStore () {
-        return (await this.store.query()).toArray();
+    private async getItemsFromStore (filter: {
+        fromBlock?: number
+        toBlock?: number
+    }) {
+        return await this.store.fetch(filter);
     }
 
     private async getInitialBlockNumber () {
@@ -235,47 +209,3 @@ type TRange = {
 
 type GetEventLogNames<T extends ContractBase> = keyof T['Types']['Events'];
 type GetTypes<T extends ContractBase> = T['Types'];
-
-
-namespace EventAbiInputs {
-    // primary to convert BigInt from JSON
-
-    export function deserialize (params: Record<string, any>, abi: TAbiItem): Record<string, any> {
-        let inputs = alot(abi.inputs).toDictionary(x => x.name, x => x);
-        for (let key in params) {
-            let abiInput = inputs[key];
-            if (abiInput) {
-                params[key] = deserializeValue(params[key], abiInput);
-            }
-        }
-        return params;
-    }
-
-    function deserializeValue (value: any, abiInput: TAbiInput): any {
-        if (value == null || abiInput == null) {
-            return value;
-        }
-        if (typeof value === 'string' && abiInput.type.startsWith('uint')) {
-            return BigInt(value);
-        }
-
-        let arrayRgx = /\[\d*\]$/;
-        let isArrayType = arrayRgx.test(abiInput.type);
-        if (isArrayType && Array.isArray(value)) {
-            let type = abiInput.type.replace(arrayRgx, '');
-            let abiItem = { ...abiInput, type };
-            return value.map(x => deserializeValue(x, abiItem));
-        }
-
-        if (abiInput.type === 'tuple' && abiInput.components != null && typeof value === 'object') {
-            let result = {};
-            let abiComponents = alot(abiInput.components).toDictionary(x => x.name, x => x);
-            for (let key in value) {
-                let abiItem = abiComponents[key];
-                result[key] = deserializeValue(value[key], abiItem);
-            }
-            return result;
-        }
-        return value;
-    }
-}

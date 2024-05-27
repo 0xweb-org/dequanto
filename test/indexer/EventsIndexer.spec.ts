@@ -1,5 +1,6 @@
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { EventsIndexer } from '@dequanto/indexer/EventsIndexer';
+import { $date } from '@dequanto/utils/$date';
 import { File, Directory } from 'atma-io';
 
 const FS_DIR = './test/tmp/data/logs/';
@@ -40,7 +41,8 @@ UTest({
         let indexer = new EventsIndexer(contract, {
             name: 'FooTest',
             fs: {
-                directory: FS_DIR
+                directory: FS_DIR,
+                blockTimeAvg: 1,
             }
         });
         let { logs } = await indexer.getPastLogs('Number');
@@ -49,12 +51,14 @@ UTest({
         eq_(logs[1].params.num, 2);
         eq_(logs[2].params.num, 3);
 
+        const WEEK_SECONDS = $date.parseTimespan('1week', { get: 's' });
+        const BASE_DIR = `${FS_DIR}/hardhat/FooTest-${contract.address}/`;
         let blockNr = await client.getBlockNumber();
-        let storageData = await File.readAsync<any[]>(`${FS_DIR}/hardhat/FooTest-${contract.address}.json`);
+        let storageData = await File.readAsync<any[]>(`${BASE_DIR}0-${WEEK_SECONDS}.json`);
 
         eq_(storageData.length, 3);
 
-        let storageMetaData = await File.readAsync<any[]>(`${FS_DIR}/hardhat/FooTest-${contract.address}-meta-arr.json`);
+        let storageMetaData = await File.readAsync<any[]>(`${BASE_DIR}meta-arr.json`);
         eq_(storageMetaData.find(x => x.event === 'Number').lastBlock, blockNr);
 
         let resultMany = await indexer.getPastLogs([ 'Number', 'String' ]);
@@ -92,5 +96,19 @@ UTest({
         eq_(logsMulti[1].params.str, 'world');
         eq_(logsMulti[0].address, contract.address);
         eq_(logsMulti[1].address, contract2.address);
+
+
+        await client.debug.mine('3weeks');
+        await contract.$receipt().emitNumber(deployer, 4);
+
+        let resultAfter4Weeks = await indexer.getPastLogs([ 'Number' ]);
+
+        deepEq_(
+            resultAfter4Weeks.logs.map(x => Number(x.params.num)),
+            [ 1, 2, 3, 4 ]
+        );
+
+        let storageData3rdWeek = await File.readAsync<any[]>(`${BASE_DIR}${WEEK_SECONDS * 3}-${WEEK_SECONDS * 4}.json`);
+        eq_(storageData3rdWeek.length, 1);
     }
 });
