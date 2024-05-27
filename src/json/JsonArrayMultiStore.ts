@@ -66,6 +66,18 @@ export class JsonArrayMultiStore<T> {
         }
         let stores = this.getStores(groups.map(x => x.range));
         let arr = await alot(stores).mapManyAsync(x => x.getAll()).toArrayAsync();
+        if (from != null || to != null) {
+            arr = arr.filter(x => {
+                let key = this.options.groupKey(x);
+                if (from != null && key < from) {
+                    return false;
+                }
+                if (to != null && key >= to) {
+                    return false;
+                }
+                return true;
+            });
+        }
         return arr;
     }
 
