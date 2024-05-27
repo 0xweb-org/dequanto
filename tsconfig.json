@@ -1,25 +1,32 @@
 {
+    "exclude": [
+        "build/exports.lib.ts"
+    ],
     "compilerOptions": {
         "baseUrl": "./",
         "paths": {
             "@dequanto/*": [ "src/*" ],
-            "@dequanto-contracts/*": [ "contracts/*" ]
+            "@dequanto-contracts/*": [ "src/prebuilt/*" ]
         },
         "typeRoots": [
             "node_modules/@types",
             "typings",
             "typings/globals"
         ],
-        "types": ["node", "assertion", "atma-utest"],
+        "types": [
+            "node",
+            "assertion",
+            "atma-utest"
+        ],
         "declaration": true,
-
         "module": "es2022",
         "moduleResolution": "node",
         "experimentalDecorators": true,
         "target": "es2022",
         "lib": ["dom", "es2022"],
         "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true
     },
     "transformers": {
         "before": ["ts-nameof"]

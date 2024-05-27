@@ -1,4 +1,4 @@
-import { Config } from '@dequanto/Config';
+import { IConfigData } from '@dequanto/config/interface/IConfigData';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { TTransport } from '@dequanto/rpc/transports/ITransport';
 
@@ -8,7 +8,7 @@ export interface IWeb3EndpointOptions {
     safe?: boolean
     ws?: boolean
 
-    endpoints?: Config['web3']['eth']['endpoints']
+    endpoints?: IConfigData['web3']['eth']['endpoints']
     web3?: TTransport.Transport
     platform?: TPlatform
     chainId?: number

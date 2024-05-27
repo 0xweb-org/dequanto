@@ -4,7 +4,10 @@
     "scripts": {
         "hardhat": "node --openssl-legacy-provider ./node_modules/hardhat/internal/cli/cli.js node --hostname 127.0.0.1 --verbose",
         "build:tsc": "tsc -p tsconfig-src.json",
-        "build": "app-bundler",
+        "build": "app-bundler && npm run build-dts",
+        "build-esm": "app-bundler --app esm",
+        "build-dts": "tsc -p tsconfig-umd.json && atma run tools/build-dts",
+        "watch": "app-bundler --watch",
         "server": "atma server --TEST",
         "test": "atma --openssl-legacy-provider test --config='settings.base=./' --TEST",
         "contracts": "atma act ./actions/contracts.act.ts",
@@ -14,11 +17,14 @@
         "@0xweb/hardhat": "^0.1.15",
         "@gnosis.pm/safe-contracts": "^1.3.0",
         "@openzeppelin/contracts": "^4.9.3",
+        "@types/node": "^20.12.11",
         "@types/sinon": "^10.0.13",
         "app-bundler": "^0.1.16",
+        "atma-io-middleware-importer": "^1.1.38",
         "atma-io-middleware-uglify": "^1.1.25",
         "atma-loader-ts": "^1.1.20",
         "atma-utest": "^0.21.30",
+        "dts-bundle": "^0.7.3",
         "ethers": "^5.5.1",
         "hardhat": "^2.19.2",
         "shellbee": "^0.5.29",
@@ -44,116 +50,29 @@
         "ws": "^8.16.0"
     },
     "app-bundler": {
-        "apps": {
-            "umd": {
-                "outputMain": "lib/umd/dequanto.js",
-                "js": [],
-                "package": {
-                    "module": "commonjs",
-                    "moduleName": "dequanto",
-                    "moduleWrapper": "umd",
-                    "commonjs": {
-                        "output": "simplified"
-                    }
-                },
-                "options": {
-                    "include": {
-                        "amd": true,
-                        "extentionDefault": {
-                            "js": "ts"
-                        },
-                        "routes": {
-                            "@dequanto/*": [
-                                "src/*"
-                            ],
-                            "@dequanto-contracts/*": [
-                                "contracts/*"
-                            ]
-                        },
-                        "map": {}
-                    }
-                },
-                "settings": {
-
-                    "atma-io-middleware-condcomments": {
-                        "defines": {
-                            "BROWSER": true
-                        }
-                    },
-                    "atma-loader-ts": {
-                        "sourceMap": true,
-                        "typescript": {
-                            "compilerOptions": {
-                                "paths": {
-                                    "@dequanto/*": [ "src/*" ],
-                                    "@dequanto-contracts/*": [ "contracts/*" ]
-                                },
-                                "module": "CommonJS",
-                                "experimentalDecorators": true,
-                                "target": "ES2022",
-                                "esModuleInterop": true,
-                                "allowSyntheticDefaultImports": true
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "common": {
-            "file": "src/exports.ts",
-            "defaultExtensions": {
-                "js": "ts"
-            },
-            "dynamicDependencies": [
-                "^readline$",
-                "^https?$",
-                "atma-io",
-                "atma-server",
-                "atma-utils",
-                "atma-logger",
-                "class-json",
-
-                "atma-formatter",
-                "memd",
-                "appcfg",
-                "alot",
-                "a-di",
-                "everlog",
-
-                "^@noble",
-                "^@scure",
-                "^debug$",
-                "^hardhat$",
-                "^child_process$",
-                "^crypto$",
-                "^fs$",
-                "^os$",
-                "^path$",
-                "^assert$",
-                "^stream$",
-                "^papaparse$",
-                "^ws$",
-                "^@slack",
-                "^@solidity-parser",
-                "^signal-exit$"
-            ],
-            "middlewares": {
-                "jss": [
-                    "atma-io-middleware-uglify:write"
-                ],
-                "ts": [
-                    "atma-io-middleware-condcomments:read",
-                    "atma-loader-ts:read"
-                ]
-            }
-        }
+        "config": "package-bundler.json"
     },
     "atma": {
         "configs": "./configs/**.yml",
         "plugins": [
-            "atma-loader-ts"
+            "atma-loader-ts",
+            "atma-io-middleware-importer"
         ],
         "settings": {
+            "io": {
+                "middlewares": {
+                    "yml": [
+                        "atma-io-middleware-yml:read"
+                    ]
+                }
+            },
+            "atma-io": {
+                "middlewares": {
+                    "yml": [
+                        "atma-io-middleware-yml:read"
+                    ]
+                }
+            },
             "include": {
                 "amd": true,
                 "extentionDefault": {
@@ -164,7 +83,21 @@
             },
             "atma-loader-ts": {
                 "sourceMap": true,
-                "typescript": "#import ./tsconfig-build.json"
+                "typescript": {
+                    "compilerOptions": {
+                        "module": "AMD",
+                        "moduleResolution": "Node",
+                        "experimentalDecorators": true,
+                        "target": "ES2022",
+                        "lib": [
+                            "dom",
+                            "ES2022"
+                        ],
+                        "esModuleInterop": true,
+                        "allowSyntheticDefaultImports": true,
+                        "resolveJsonModule": true
+                    }
+                }
             }
         }
     }

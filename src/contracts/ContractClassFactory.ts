@@ -71,6 +71,7 @@ class ClassBuilder<T = ContractBase> {
         return class extends ContractBase {
             abi = abi
             $meta = $meta
+            Types = null
         };
     }
 

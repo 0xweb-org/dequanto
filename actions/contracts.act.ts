@@ -26,7 +26,7 @@ UAction.create({
                         abi: path
                     },
                     platform: 'eth',
-                    output: `./contracts/safe/${name}.ts`
+                    output: `./src/prebuilt/safe/${name}.ts`
                 });
                 await generator.generate();
             })
@@ -49,14 +49,14 @@ UAction.create({
                         abi: path
                     },
                     platform: 'eth',
-                    output: `./contracts/openzeppelin/${name}.ts`,
+                    output: `./src/prebuilt/openzeppelin/${name}.ts`,
                     saveSources: false
                 });
 
                 await generator.generate();
 
                 let content = await file.readAsync<{ abi }>();
-                await File.writeAsync(`./contracts/openzeppelin/${name}.json`, content.abi);
+                await File.writeAsync(`./src/prebuilt/openzeppelin/${name}.json`, content.abi);
             })
             .toArrayAsync();
     },
@@ -67,7 +67,7 @@ UAction.create({
                 path: './node_modules/@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol'
             },
             platform: 'eth',
-            output: `./contracts/openzeppelin/compiled/`,
+            output: `./src/prebuilt/openzeppelin/compiled/`,
             saveSources: false
         });
 
@@ -147,7 +147,7 @@ UAction.create({
                             source: {
                                 abi: contractEntry.value,
                             },
-                            output: `./contracts/hop/${ $platform.toPath(platform) }/`,
+                            output: `./src/prebuilt/hop/${ $platform.toPath(platform) }/`,
                             saveSources: false
                         });
                         await generator.generate();
@@ -171,7 +171,7 @@ async function generate(
         name: contractName,
         source: source,
         platform: platform,
-        output: `./contracts/${outputDir}/`,
+        output: `./src/prebuilt/${outputDir}/`,
         saveSources: false
     });
     await generator.generate();

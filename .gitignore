@@ -4,6 +4,9 @@
 /artifacts/
 /0xweb/
 /0xc/
+/dist/
+/lib/
+/ts-temp
 0xweb.json
 hardhat-*.config.js
 del.act.ts

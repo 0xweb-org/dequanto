@@ -1,5 +1,5 @@
 import alot from 'alot';
-import type appcfg from 'appcfg';
+import type { Config as Appcfg } from 'appcfg/Config';
 import { Config } from './Config';
 
 import { IAccount } from "./models/TAccount";
@@ -24,7 +24,7 @@ export class ChainAccountService {
     constructor (params?: {
         store?: IAccountsStore
         writable?: 'config' | 'fs' | 'custom'
-        config?: appcfg
+        config?: InstanceType<typeof Appcfg>
     }) {
         this.storeConfig = new ConfigStore(params?.config);
         this.storeFs = new FileStore();
@@ -33,13 +33,13 @@ export class ChainAccountService {
     }
 
 
-    async get <T extends IAccount = IAccount>  (key: TEth.Hex | TAddress): Promise<T>
-    async get <T extends IAccount = IAccount>  (mnemonic: string, params?: { index?: number, path?: string }): Promise<T>
-    async get <T extends IAccount = IAccount>  (ns: string, params?: { platform?: TPlatform }): Promise<T>
-    async get <T extends IAccount = IAccount>  (name: string, params?: { platform?: TPlatform }): Promise<T>
-    async get <T extends IAccount = IAccount>  (address: TAddress, params?: { platform?: TPlatform }): Promise<T>
+    async get <T extends IAccount = IAccount> (key: TEth.Hex | TAddress): Promise<T>
+    async get <T extends IAccount = IAccount> (mnemonic: string, params?: { index?: number, path?: string }): Promise<T>
+    async get <T extends IAccount = IAccount> (ns: string, params?: { platform?: TPlatform }): Promise<T>
+    async get <T extends IAccount = IAccount> (name: string, params?: { platform?: TPlatform }): Promise<T>
+    async get <T extends IAccount = IAccount> (address: TAddress, params?: { platform?: TPlatform }): Promise<T>
     async get<T extends IAccount = IAccount>  (mix: string | TEth.Hex | TAddress, params?: { platform?: TPlatform , index?: number, path?: string }): Promise<T>
-    async get<T extends IAccount = IAccount> (mix: string | TEth.Hex | TAddress, params?: { platform?: TPlatform , index?: number, path?: string }): Promise<T> {
+    async get<T extends IAccount = IAccount>  (mix: string | TEth.Hex | TAddress, params?: { platform?: TPlatform , index?: number, path?: string }): Promise<T> {
         if ($is.Hex(mix) && mix.length >= 64) {
             return await $sig.$account.fromKey(mix) as T;
         }
@@ -74,7 +74,7 @@ export class ChainAccountService {
         platform?: TPlatform
         store?: IAccountsStore
         writable?: 'config' | 'fs' | 'custom'
-        config?: appcfg
+        config?: Appcfg
     }): Promise<T> {
         let service = new ChainAccountService(params)
         return service.get<T>(name, { platform: params?.platform });
@@ -174,7 +174,7 @@ class FileStore implements IAccountsStore {
 
 class ConfigStore implements IAccountsStore {
 
-    constructor (private config?: appcfg) {
+    constructor (private config?: Appcfg) {
 
     }
 

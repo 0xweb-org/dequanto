@@ -1,0 +1,28 @@
+{
+    "files": [
+        "src/exp.ts"
+    ],
+    "exclude": ["node_modules"],
+    "compilerOptions": {
+        "baseUrl": "./",
+        "paths": {
+            "@dequanto/*": [ "src/*" ],
+            "@dequanto-contracts/*": [ "src/prebuilt/*" ]
+        },
+        "lib": [ "ES2019", "dom" ],
+        "typeRoots": [
+            "node_modules/@types",
+            "typings/globals",
+            "typings-other"
+        ],
+
+        "types": ["node", "assertion"],
+        "outDir": "ts-temp",
+        "target": "ES2020",
+        "module": "commonjs",
+        "sourceMap": false,
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
+        "emitDeclarationOnly": true
+    }
+}

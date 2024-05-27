@@ -20,10 +20,15 @@ export class BlockDateResolver {
 
     }
 
+    async getDate (blockNumber: number): Promise<Date> {
+        let block = await this.client.getBlock(blockNumber);
+        return new Date(block.timestamp * 1000);
+    }
+
     async getBlockNumberFor (date: Date): Promise<number> {
         this.q = date;
 
-        let avg = this.AVG_INITIAL[this.client.platform] ?? this.AVG_INITIAL['eth'];
+        let avg = this.AVG_INITIAL[this.client.platform] ?? this.client.blockTimeAvg ?? this.AVG_INITIAL['eth'];
         let now = new Date();
         let topBlock = <IKnownBlock> {
             blockNumber: await this.client.getBlockNumberCached(),

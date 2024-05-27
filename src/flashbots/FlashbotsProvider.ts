@@ -1,10 +1,7 @@
 import { Config } from '@dequanto/Config';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { IWeb3EndpointOptions } from '@dequanto/clients/interfaces/IWeb3EndpointOptions';
 import { EoAccount, IAccount } from '@dequanto/models/TAccount';
 import { TEth } from '@dequanto/models/TEth';
-import { TPlatform } from '@dequanto/models/TPlatform';
 import { Rpc, RpcTypes } from '@dequanto/rpc/Rpc';
 import { $contract } from '@dequanto/utils/$contract';
 import { $hex } from '@dequanto/utils/$hex';
@@ -14,6 +11,7 @@ import { DeepPartial } from '@dequanto/utils/types';
 
 import { $buffer } from '@dequanto/utils/$buffer';
 import { $crypto } from '@dequanto/utils/$crypto';
+import { IConfigData } from '@dequanto/config/interface/IConfigData';
 
 /**
  * Submits transaction to Flashbots network
@@ -32,11 +30,9 @@ export class FlashbotsProvider {
 
     protected constructor (
         public account: EoAccount,
-        public config: Config['flashbots'][''],
+        public config: IConfigData['flashbots'][''],
         private client: Web3Client
     ) {
-
-
 
         this.rpc = new Rpc({
             url: this.config.url,

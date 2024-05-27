@@ -51,6 +51,9 @@ export abstract class Web3Client implements IWeb3Client {
     defaultTxType: 0 | 1 | 2 = 2;
     defaultGasPriceRatio = 1.4;
 
+    // block time in ms
+    blockTimeAvg = 12_000;
+
     get network (): TPlatform {
         return this.forked?.platform ?? this.platform;
     }
@@ -87,6 +90,9 @@ export abstract class Web3Client implements IWeb3Client {
         if (this.options.defaultGasPriceRatio != null) {
             this.defaultGasPriceRatio = this.options.defaultGasPriceRatio;
         }
+        if (this.options.blockTimeAvg != null) {
+            this.blockTimeAvg = this.options.blockTimeAvg;
+        }
     }
 
     async request<TResult = any>(req: TRpc.IRpcAction): Promise<TResult> {
@@ -95,9 +101,9 @@ export abstract class Web3Client implements IWeb3Client {
         });
     }
 
-    async batch(arr: TRpc.IRpcAction[]): Promise<any[]> {
-        return this.with (async wClient => {
-            return wClient.rpc.batch(arr);
+    async batch(requests: TRpc.IRpcAction[]): Promise<any[]> {
+        return this.with (async web3 => {
+            return web3.callBatched(requests);
         });
     }
 
@@ -232,7 +238,7 @@ export abstract class Web3Client implements IWeb3Client {
             let requests = txHashes.map(hash => {
                 return rpc.req.eth_getTransactionByHash(hash);
             });
-            return rpc.batch(requests);
+            return web3.callBatched(requests);
         }, {
             ...(opts ?? {}),
             batchRequestCount: txHashes.length
@@ -249,7 +255,7 @@ export abstract class Web3Client implements IWeb3Client {
             let requests = hashes.map(hash => {
                 return rpc.req.eth_getTransactionReceipt(hash);
             });
-            return rpc.batch(requests);
+            return web3.callBatched(requests);
         }, { batchRequestCount: hashes.length });
     }
     getTransactionTrace(hash: string) {
@@ -283,7 +289,7 @@ export abstract class Web3Client implements IWeb3Client {
             let requests = nrs.map(nr => {
                 return rpc.req.eth_getBlockByNumber($hex.ensure(nr), false);
             });
-            return rpc.batch(requests);
+            return web3.callBatched(requests);
         }, {
             batchRequestCount: nrs.length
         });

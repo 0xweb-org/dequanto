@@ -103,6 +103,32 @@ export namespace $number {
         throw new Error('Unsupported type to convert to number ' + typeof mix);
     }
 
+    /**
+     * - abbreviation: Format number to *B, *M, *K
+     * - maximumFractionDigits: Parameter for toLocaleString
+     */
+    export function format (num: number, options?: { abbreviation?: boolean, maximumFractionDigits?: number }) {
+        if (options?.abbreviation) {
+            const K = 10 ** 3;
+            const M = 10 ** 6;
+            const B = 10 ** 9;
+            if (num >= B) {
+                return format(num / B, { maximumFractionDigits: options.maximumFractionDigits ?? 2 }) + 'B';
+            }
+            if (num >= M) {
+                return format(num / M, { maximumFractionDigits: options.maximumFractionDigits ?? 2 }) + 'M';
+            }
+            if (num >= K) {
+                return format(num / K, { maximumFractionDigits: options.maximumFractionDigits ?? 2 }) + 'K';
+            }
+
+            return format(num, { maximumFractionDigits: options.maximumFractionDigits ?? 2 });
+        }
+        return num.toLocaleString('en-US', {
+            maximumFractionDigits: options.maximumFractionDigits ?? 4
+        });
+    }
+
     export function toHex (num: string | number | TEth.Hex | bigint) {
         return `0x` + Number(num).toString(16);
     }

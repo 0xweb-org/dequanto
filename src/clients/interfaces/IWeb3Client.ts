@@ -27,6 +27,9 @@ export interface IWeb3ClientOptions {
     defaultTxType?: 0 | 1 | 2;
     defaultGasPriceRatio?: number;
 
+    // block time in ms
+    blockTimeAvg?: number;
+
     debug?: {
         setStorageAt?: {
             call: 'hardhat_setStorageAt' | string

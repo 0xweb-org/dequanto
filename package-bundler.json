@@ -1,0 +1,156 @@
+{
+    "apps": {
+        "umd": {
+            "outputMain": "lib/umd/dequanto.js",
+            "js": [],
+            "package": {
+                "module": "commonjs",
+                "moduleName": "dequanto",
+                "moduleWrapper": "umd",
+                "commonjs": {
+                    "output": "simplified"
+                }
+            },
+
+            "mappings": {
+                "ConfigProviderNode": "ConfigProviderBrowser"
+            },
+            "extensions": {
+                "yml": { "type": "js" }
+            },
+            "settings": {
+                "atma-io-middleware-condcomments": {
+                    "defines": {
+                        "BROWSER": true
+                    }
+                },
+                "atma-loader-ts": {
+                    "sourceMap": true,
+                    "typescript": {
+                        "compilerOptions": {
+                            "paths": {
+                                "@dequanto/*": [
+                                    "src/*"
+                                ],
+                                "@dequanto-contracts/*": [
+                                    "contracts/*"
+                                ]
+                            },
+                            "module": "CommonJS",
+                            "experimentalDecorators": true,
+                            "target": "ES2022",
+                            "esModuleInterop": true,
+                            "allowSyntheticDefaultImports": true
+                        }
+                    }
+                }
+            }
+        },
+        "esm": {
+            "outputMain": "lib/esm/exp.js",
+            "js": [],
+            "package": {
+                "module": "import"
+            },
+
+            "mappings": {
+                "ConfigProviderNode": "ConfigProviderBrowser"
+            },
+            "extensions": {
+                "yml": { "type": "js" }
+            },
+            "settings": {
+                "atma-io-middleware-condcomments": {
+                    "defines": {
+                        "BROWSER": true
+                    }
+                },
+                "atma-loader-ts": {
+                    "sourceMap": true,
+                    "typescript": {
+                        "compilerOptions": {
+                            "paths": {
+                                "@dequanto/*": [
+                                    "src/*"
+                                ],
+                                "@dequanto-contracts/*": [
+                                    "src/prebuilt/*"
+                                ]
+                            },
+                            "module": "ES2022",
+                            "experimentalDecorators": true,
+                            "target": "es2021",
+                            "lib": ["dom", "es2021"],
+                            "esModuleInterop": true,
+                            "allowSyntheticDefaultImports": true
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "common": {
+        "file2": "build/exports.lib.ts",
+        "file": "src/exp-b.ts",
+        "defaultExtensions": {
+            "js": "ts"
+        },
+        "options": {
+            "include": {
+                "amd": true,
+                "extensionDefault": {
+                    "js": "ts"
+                },
+                "routes": {
+                    "@dequanto/*": [
+                        "src/*"
+                    ],
+                    "@dequanto-contracts/*": [
+                        "contracts/*"
+                    ]
+                },
+                "map": {}
+            }
+        },
+        "dynamicDependencies": [
+            "^readline$",
+            "^https?$",
+            "atma-io",
+            "atma-server",
+            "atma-logger",
+            "class-json",
+            "atma-formatter",
+            "appcfg",
+            "everlog",
+            "^@noble",
+            "^@scure",
+            "^debug$",
+            "^hardhat$",
+            "^child_process$",
+            "^crypto$",
+            "^fs$",
+            "^os$",
+            "^path$",
+            "^assert$",
+            "^stream$",
+            "^papaparse$",
+            "^ws$",
+            "^@slack",
+            "^@solidity-parser",
+            "^signal-exit$"
+        ],
+        "middlewares": {
+            "jss": [
+                "atma-io-middleware-uglify:write"
+            ],
+            "ts": [
+                "atma-io-middleware-condcomments:read",
+                "atma-io-middleware-importer:read",
+                "atma-loader-ts:read"
+            ],
+            "yml": [
+                "atma-io-middleware-yml:read"
+            ]
+        }
+    }
+}
