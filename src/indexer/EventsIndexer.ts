@@ -60,7 +60,7 @@ export class EventsIndexer <T extends ContractBase> {
     /** @deprecated For migration only */
     async fsEnsureMigrated () {
         $require.True(this.store instanceof FsEventsIndexerStore);
-        $require.True(this.store instanceof FsEventsMetaStore);
+        $require.True(this.storeMeta instanceof FsEventsMetaStore);
 
         await (this.store as FsEventsIndexerStore<T>).ensureMigrated();
         await (this.storeMeta as FsEventsMetaStore<T>).ensureMigrated();

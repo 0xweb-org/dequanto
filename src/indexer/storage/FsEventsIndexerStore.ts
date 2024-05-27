@@ -56,8 +56,8 @@ export class FsEventsIndexerStore <T extends ContractBase> implements IEventsInd
         this.store = new JsonArrayMultiStore<ITxLogItem<any>>({
             path: path,
             key: x => x.id,
-            map: this.map,
-            serialize: this.serialize,
+            map: x => this.map(x),
+            serialize: x => this.serialize(x),
             groupKey: x => x.blockNumber,
             groupSize: this.range
         });
@@ -65,8 +65,8 @@ export class FsEventsIndexerStore <T extends ContractBase> implements IEventsInd
         this.storeV0 = new JsonArrayStore<ITxLogItem<any>>({
             path: path.replace(/\/$/, '.json'),
             key: x => x.id,
-            map: this.map,
-            serialize: this.serialize,
+            map: x => this.map(x),
+            serialize: x => this.serialize(x),
         });
     }
     async upsertMany(logs: ITxLogItem<any, string>[]): Promise<ITxLogItem<any, string>[]> {
