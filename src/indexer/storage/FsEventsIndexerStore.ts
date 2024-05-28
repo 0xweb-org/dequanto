@@ -99,7 +99,7 @@ export class FsEventsIndexerStore <T extends ContractBase> implements IEventsInd
         let abi = this.abi[x.event];
         $require.notNull(abi, `Abi for ${x.event} not found.`)
 
-        let blockNumber = Number(x.id / 100000);
+        let blockNumber = Math.floor(x.id / 100000);
         let logIndex = x.id % 100000;
         x.params = EventAbiInputs.deserialize(x.params, abi);
         return {
