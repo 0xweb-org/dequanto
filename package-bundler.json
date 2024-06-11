@@ -106,7 +106,7 @@
                         "src/*"
                     ],
                     "@dequanto-contracts/*": [
-                        "contracts/*"
+                        "src/prebuilt/*"
                     ]
                 },
                 "map": {}

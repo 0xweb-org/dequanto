@@ -30,6 +30,7 @@ import { FnSignedWrapper } from './wrappers/FnSignedWrapper';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { $is } from '@dequanto/utils/$is';
 import { FnRequestWrapper } from './wrappers/FnRequestWrapper';
+import { WClient } from '@dequanto/clients/ClientPool';
 
 
 export abstract class ContractBase {
@@ -416,6 +417,8 @@ export abstract class ContractBase {
         return parsed;
     }
     protected async $getPastLogs(filters: RpcTypes.Filter, options?: {
+        streamed?: boolean
+        blockRangeLimits?: WClient['blockRangeLimits']
         onProgress? (info: TLogsRangeProgress<TEth.Log>)
     }) {
         return this.getContractReader().getLogs(filters, options);
@@ -428,23 +431,34 @@ export abstract class ContractBase {
             [key: string]: any
         }
         onProgress? (info: TLogsRangeProgress<ITxLogItem>)
+
+        /** if TRUE the data will be only forwarded via onProgress callback.
+         * And the final array will be undefined.
+         * This will handle big queries to hold huge arrays in memory
+         * */
+        streamed?: boolean
+
+        blockRangeLimits?: WClient['blockRangeLimits']
     }) {
         let filters = await this.$getPastLogsFilters(mix, {
             ...options
         });
         let logs = await this.$getPastLogs(filters, {
-            onProgress: (info) => {
+            streamed: options?.streamed,
+            blockRangeLimits: options?.blockRangeLimits,
+            onProgress: async (info) => {
                 if (options?.onProgress == null) {
                     return;
                 }
                 let paged = info.paged.map(log => this.$extractLog(log, mix));
-                options.onProgress({
+                await options.onProgress({
                     ...info,
+                    logs: paged,
                     paged
                 });
             }
         });
-        return logs.map(log => this.$extractLog(log, mix)) as any;
+        return logs?.map(log => this.$extractLog(log, mix)) as any;
     }
     protected async $getPastLogsFilters(mix: string | TAbiItem | string[] | TAbiItem[], options: {
         addresses?: TAddress[]
@@ -571,12 +585,14 @@ type TEventsBase = {
     }
 }
 
-type TEventLogOptions<TParams> = {
+export type TEventLogOptions<TParams> = {
     addresses?: TAddress[]
     fromBlock?: number | Date
     toBlock?: number | Date
     params?: TParams
+    streamed?: boolean
     onProgress? (info: TLogsRangeProgress<ITxLogItem>)
+    blockRangeLimits?: WClient['blockRangeLimits']
 }
 
 type TEventParams<TEvents extends TEventsBase, TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;

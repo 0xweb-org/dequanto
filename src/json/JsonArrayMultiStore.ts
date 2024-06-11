@@ -147,6 +147,7 @@ export class JsonArrayMultiStore<T> {
             .groupBy(entry => {
                 let key = this.options.groupKey(entry as T);
                 let start = key - key % groupSize;
+                // "end" block is excluded (Exclusive Upper Bound)
                 let end = start + groupSize;
                 return `${start}-${end}`;
             })

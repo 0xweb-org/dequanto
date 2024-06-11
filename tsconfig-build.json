@@ -3,7 +3,7 @@
         "baseUrl": "./",
         "paths": {
             "@dequanto/*": [ "src/*" ],
-            "@dequanto-contracts/*": [ "contracts/*" ]
+            "@dequanto-contracts/*": [ "src/prebuilt/*" ]
         },
         "outDir": "./dist",
         "module": "AMD",

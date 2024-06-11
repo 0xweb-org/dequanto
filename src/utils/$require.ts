@@ -180,6 +180,13 @@ export namespace $require {
     export function gt<T = number | bigint> (a: T, b: T, message: string = '') {
         Numeric(a);
         Numeric(b);
+        if (a <= b) {
+            throw new Error(`Expected a(${a}) > b(${b}). ${message}`);
+        }
+    }
+    export function gte<T = number | bigint> (a: T, b: T, message: string = '') {
+        Numeric(a);
+        Numeric(b);
         if (a < b) {
             throw new Error(`Expected a(${a}) > b(${b}). ${message}`);
         }
@@ -192,6 +199,13 @@ export namespace $require {
         Numeric(a);
         Numeric(b);
         if (a >= b) {
+            throw new Error(`Expected a(${a}) > b(${b}). ${message}`);
+        }
+    }
+    export function lte<T = number | bigint> (a: T, b: T, message: string = '') {
+        Numeric(a);
+        Numeric(b);
+        if (a > b) {
             throw new Error(`Expected a(${a}) > b(${b}). ${message}`);
         }
     }

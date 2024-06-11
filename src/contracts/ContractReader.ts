@@ -20,6 +20,7 @@ import { $array } from '@dequanto/utils/$array';
 import { RpcTypes } from '@dequanto/rpc/Rpc';
 import { TEth } from '@dequanto/models/TEth';
 import { TRpcContractCall } from '@dequanto/rpc/RpcContract';
+import { WClient } from '@dequanto/clients/ClientPool';
 
 
 
@@ -149,6 +150,8 @@ export class ContractReader implements IContractReader {
     }
 
     async getLogs (filters: RpcTypes.Filter, options?: {
+        streamed?: boolean
+        blockRangeLimits?: WClient['blockRangeLimits']
         onProgress? (info: TLogsRangeProgress<TEth.Log>)
     }) {
         return this.client.getPastLogs(filters, options);

@@ -110,5 +110,61 @@ UTest({
 
         let storageData3rdWeek = await File.readAsync<any[]>(`${BASE_DIR}${WEEK_SECONDS * 3}-${WEEK_SECONDS * 4}.json`);
         eq_(storageData3rdWeek.length, 1);
+    },
+    async 'fetch events streamed' () {
+
+
+        let hh = new HardhatProvider();
+        let deployer = hh.deployer();
+        let client = hh.client();
+        let code = `
+            contract Foo {
+                event Number (uint256 num);
+                event String (string str);
+
+                function emitNumber(uint num) external {
+                    emit Number(num);
+                }
+                function emitString(string memory str) external  {
+                    emit String(str);
+                }
+            }
+        `;
+        let { contract } = await hh.deployCode(code, {
+            client
+        });
+
+
+        let fromBlock = await client.getBlockNumber() + 1;
+
+        await contract.$receipt().emitNumber(deployer, 1);
+        await contract.$receipt().emitNumber(deployer, 2);
+        await contract.$receipt().emitNumber(deployer, 3);
+        await contract.$receipt().emitNumber(deployer, 4);
+        await contract.$receipt().emitNumber(deployer, 5);
+
+
+        let indexer = new EventsIndexer(contract, {
+            name: 'FooTest',
+            fs: {
+                directory: FS_DIR,
+                blockTimeAvg: 1,
+            }
+        });
+
+
+        let step = 1;
+        for await (let cursor of indexer.getPastLogsStream('Number', {
+            fromBlock,
+            blockRangeLimits: {
+                blocks: 1
+            }
+        })) {
+
+            eq_(cursor.logs.length, 1);
+            eq_(cursor.logs[0].params.num, step);
+            step += 1;
+        }
+
     }
 });

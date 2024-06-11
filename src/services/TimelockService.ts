@@ -38,9 +38,10 @@ interface ITimelockTx {
     createdAt: number
     validAt: number
 
-    status: 'pending' | 'completed'
+    status: 'pending' | 'completed' | 'canceled'
     txSchedule: TEth.Hex
     txExecute?: TEth.Hex
+    txCancel?: TEth.Hex
 }
 
 interface ITimelockTxParams {
@@ -74,7 +75,7 @@ export enum ETimelockTxStatus {
 }
 
 type TTimelockController = ContractBase & Pick<TimelockController,
-    'schedule' | 'scheduleBatch' | 'execute' | 'executeBatch' | 'getMinDelay'
+    'schedule' | 'scheduleBatch' | 'execute' | 'executeBatch' | 'getMinDelay' | 'cancel'
 >;
 
 export class TimelockService {
@@ -412,10 +413,32 @@ export class TimelockService {
         };
     }
 
+    async cancel (sender: IAccount, id: TEth.Hex, opts?: { storage?: boolean}) {
+        let store = await this.getStore();
+        let schedule: ITimelockTx;
+        if (opts?.storage !== false) {
+            schedule = await store.getSingle(id);
+            $require.notNull(schedule, `Schedule not found: ${id}`);
+        }
+        let tx = await this.timelock.$receipt().cancel(sender, id);
+        if (opts?.storage !== false) {
+            schedule = await store.upsert({
+                id: id,
+                status: 'canceled',
+                txCancel: tx.receipt.transactionHash,
+            });
+        }
+        return {
+            tx,
+            schedule
+        };
+    }
+
     public async clearSchedules () {
         let store = await this.getStore();
         await store.saveAll([]);
     }
+
     public async updateSchedule(txInfo: Partial<ITimelockTx>) {
         $require.notNull(txInfo.id, `ID is required`);
         let store = await this.getStore();

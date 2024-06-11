@@ -439,8 +439,27 @@ export abstract class Web3Client implements IWeb3Client {
     }
 
     async getPastLogs(filter: RpcTypes.Filter, options?: {
+        /**
+         * For large block ranges and huge amounts of logs, streaming should be used, we pass the loaded logs in batches direct to onProgress
+         * and do not aggregate to a final logs array to prevent memory issues.
+         */
+        streamed?: boolean
+        /**
+         * Override the default block range limits for all underlying RPC clients, otherwise the config will be used or
+         * the RPC exception will be parsed.
+         */
+        blockRangeLimits?: WClient['blockRangeLimits']
+
+        /**
+         * When loading in batches the cb will be called with fetched and parsed logs on each iteration
+         */
         onProgress? (info: TLogsRangeProgress<TEth.Log>): void
     }): Promise<TEth.Log[]> {
+
+        if (options?.blockRangeLimits?.blocks != null) {
+            this.pool.MINIMUM_BLOCK_RANGE = Math.min(this.pool.MINIMUM_BLOCK_RANGE, options.blockRangeLimits.blocks);
+        }
+
         // ensure numbers, bigints, bools are in HEX
         filter.topics = filter.topics?.map(mix => {
             if (mix != null && Array.isArray(mix) === false) {
@@ -452,16 +471,17 @@ export abstract class Web3Client implements IWeb3Client {
         // ensure all topics are in 32-byte
         filter.topics = filter.topics?.map(topic => {
             if (typeof topic === 'string' && topic.startsWith('0x')) {
-                return $hex.padBytes(topic, 32); // `0x${topic.substring(2).padStart(64, '0')}`;
+                return $hex.padBytes(topic, 32);
             }
             return topic;
         });
-
-        let MAX = this.pool.getOptionForFetchableRange();
-        let [fromBlock, toBlock] = await Promise.all([
+        let MAX = this.pool.getOptionForFetchableRange(options?.blockRangeLimits);
+        let [fromBlock, toBlockExcluded] = await Promise.all([
             Blocks.getBlock(this, filter.fromBlock, 0),
             Blocks.getBlock(this, filter.toBlock, 'latest'),
         ]);
+
+        let toBlock = toBlockExcluded + 1;
 
         let logs = await RangeWorker.fetchWithLimits(this, filter, {
             maxBlockRange: MAX,
@@ -470,11 +490,12 @@ export abstract class Web3Client implements IWeb3Client {
             fromBlock,
             toBlock
         }, {
+            streamed: options?.streamed,
             onProgress: options?.onProgress
         });
 
-        let removedLogs = logs.filter(x => x.removed === true);
-        if (removedLogs.length > 0) {
+        let removedLogs = logs?.filter(x => x.removed === true);
+        if (removedLogs?.length > 0) {
             console.error(`Caution: There are ${removedLogs.length} removed Logs. But @dequanto didn't handle this as they are not expected to be present in past logs.`);
         }
 
@@ -513,7 +534,9 @@ export abstract class Web3Client implements IWeb3Client {
 }
 
 export type TLogsRangeProgress<TLogParsed> = {
-    logs: TEth.Log[]
+    logs: TLogParsed[]
+
+    /** @deprecated Use logs for current logs buffer */
     paged: TLogParsed[]
     latestBlock: number
     blocks: {
@@ -522,6 +545,7 @@ export type TLogsRangeProgress<TLogParsed> = {
     }
     blocksPerSecond: number
     timeLeftSeconds: number
+    completed: boolean
 }
 
 namespace RangeWorker {
@@ -534,6 +558,7 @@ namespace RangeWorker {
         limits: { maxBlockRange?: number, maxResultCount?: number },
         ranges: { fromBlock: number, toBlock: number },
         options?: {
+            streamed?: boolean
             onProgress? (info: TLogsRangeProgress<TEth.Log>)
         }
     ) {
@@ -541,9 +566,12 @@ namespace RangeWorker {
 
         $require.Number(fromBlock, `FromBlock must be a number`);
         $require.Number(toBlock, `ToBlock must be a number`);
+        if (options?.streamed) {
+            $require.Function(options.onProgress, `onProgress must be a function when streaming past logs`);
+        }
 
         let range = toBlock - fromBlock;
-        let logs = [];
+        let logs = options?.streamed ? null : [];
         let cursor = fromBlock;
         let perf = {
             start: Date.now(),
@@ -553,14 +581,20 @@ namespace RangeWorker {
             }
         };
         let nodeStats = Date.now();
-        while (cursor <= toBlock) {
+        let loadedCount = 0;
+        while (cursor < toBlock) {
+
             let paged = await fetchPaged(client, filter, {
                 fromBlock: cursor,
                 toBlock: toBlock,
             }, limits);
 
-            logs.push(...paged.result);
-            cursor += paged.range.count + 1;
+            if (logs != null) {
+                logs.push(...paged.result);
+            }
+
+            cursor += paged.range.count;
+            loadedCount += paged.result.length;
 
             perf.blocks.loaded += paged.range.count;
             let now = Date.now();
@@ -569,15 +603,16 @@ namespace RangeWorker {
             let leftSeconds = (toBlock - cursor) / blocksPerSec;
             let leftTimeFormatted = $date.formatTimespan(leftSeconds * 1000);
 
-            $logger.log(`Blocks walked: ${perf.blocks.loaded}/${perf.blocks.total}. Latest range: ${paged.range.count}. BPS: ${blocksPerSecFormatted}. Estimated: ${leftTimeFormatted}. Loaded ${logs.length}`);
+            $logger.log(`Blocks walked: ${perf.blocks.loaded}/${perf.blocks.total}. Latest range: ${paged.range.count}. BPS: ${blocksPerSecFormatted}. Estimated: ${leftTimeFormatted}. Loaded ${loadedCount}`);
 
-            options?.onProgress?.({
+            await options?.onProgress?.({
                 logs: logs,
                 paged: paged.result as RpcTypes.Log[],
                 latestBlock: paged.range.toBlock,
                 blocks: perf.blocks,
                 blocksPerSecond: Number(blocksPerSecFormatted),
                 timeLeftSeconds: leftSeconds,
+                completed: cursor >= toBlock
             });
 
             let lastNodeStats = Date.now() - nodeStats;
@@ -613,26 +648,38 @@ namespace RangeWorker {
         let blockRange = range.toBlock - range.fromBlock;
         try {
 
-            let paged = await client.pool.call((wClient) => {
+            let result = await client.pool.call(async (wClient) => {
+
                 currentWClient = wClient;
                 blockRange = Math.min(
                     blockRange,
-                    currentWClient.blockRangeLimits.blocks ?? Infinity
+                    currentWClient.blockRangeLimits.blocks ?? Infinity,
+                    knownLimits?.maxBlockRange ?? Infinity,
                 );
-                return wClient.rpc.eth_getLogs({
+
+                let fromBlock = range.fromBlock;
+                let toBlockExcluded = fromBlock + blockRange - 1;
+
+                let arr = await wClient.rpc.eth_getLogs({
                     ...filter,
-                    fromBlock: $hex.ensure(range.fromBlock),
-                    toBlock: $hex.ensure(range.fromBlock + blockRange),
+                    fromBlock: $hex.ensure(fromBlock),
+                    toBlock: $hex.ensure(toBlockExcluded),
                 });
+                return {
+                    paged: arr,
+                    fromBlock,
+                    toBlockExcluded: toBlockExcluded,
+                    blockRange
+                }
             }, {
                 blockRangeCount: blockRange
             });
             return {
-                result: paged,
+                result: result.paged,
                 range: {
-                    fromBlock: range.fromBlock,
-                    toBlock: range.fromBlock + blockRange,
-                    count: blockRange
+                    fromBlock: result.fromBlock,
+                    toBlock: result.toBlockExcluded,
+                    count: result.blockRange
                 }
             };
         } catch (error) {

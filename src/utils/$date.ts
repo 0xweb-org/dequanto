@@ -1,3 +1,5 @@
+import { l } from './$logger';
+
 export class DateTool {
     protected constructor(public date: Date = new Date()) {
 
@@ -113,6 +115,46 @@ export class DateTool {
         return $date.toUnixTimestamp(this.date);
     }
 }
+
+class Timer {
+    private paused = false;
+    private from = Date.now();
+    private pausedAt: number;
+
+    constructor (private name?: string) {
+
+    }
+    log (msg?: string): this {
+        let str = this.name ? `"${this.name}"` : '';
+        if (msg) {
+            str += ` - ${msg}`;
+        }
+        let ms = $date.formatTimespan(Date.now() - this.from);
+        l`Timer ${str}: ${ms}`;
+        return this;
+    }
+    pause (): this {
+        if (this.pausedAt == null) {
+            this.pausedAt = Date.now();
+        }
+        return this;
+    }
+    resume (): this {
+        if (this.pausedAt != null) {
+            let pauseTime = Date.now() - this.pausedAt;
+            this.pausedAt = null;
+            this.from += pauseTime;
+        }
+        return this;
+    }
+    restart (name?: string) {
+        this.pausedAt = null;
+        this.from = Date.now();
+        this.name = name ?? this.name;
+        return this;
+    }
+}
+
 export namespace $date {
 
     export function tool(dateStr: string): DateTool
@@ -123,6 +165,11 @@ export namespace $date {
             date = parse(date);
         }
         return DateTool.with(date);
+    }
+
+    export function timer (name?: string) {
+        let timer = new Timer(name);
+        return timer;
     }
 
     /** e.g. yyyy-MM-dd HH:mm */

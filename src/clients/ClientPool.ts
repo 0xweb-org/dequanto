@@ -93,6 +93,9 @@ export class ClientPool {
     private clients: WClient[];
     private ws: WClient;
 
+    /** Minimum rate limit range to assume the RPC is alive */
+    MINIMUM_BLOCK_RANGE = 200
+
     constructor(config: IWeb3ClientOptions) {
 
         if (config.endpoints != null && config.endpoints.length > 0) {
@@ -224,11 +227,14 @@ export class ClientPool {
 
     }
 
-    getOptionForFetchableRange(): number {
-        const DEFAULT = null;
+    getOptionForFetchableRange(blockRangeLimits?: WClient['blockRangeLimits']): number {
+        const DEFAULT = blockRangeLimits?.blocks;
         let max = alot(this.clients).max(x => x.config?.fetchableBlockRange ?? 0);
         if (max === 0) {
             return DEFAULT;
+        }
+        if (typeof DEFAULT === 'number') {
+            return Math.min(DEFAULT, max);
         }
         return max;
     }
@@ -504,8 +510,7 @@ export class ClientPool {
                     // Block limit is unknown yet
                     return true;
                 }
-                const MINIMUM_BLOCK_RANGE = 200;
-                if (blocks < MINIMUM_BLOCK_RANGE) {
+                if (blocks < this.MINIMUM_BLOCK_RANGE) {
                     // Was not possible to load a minimum amount of blocks
                     return false;
                 }
