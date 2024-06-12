@@ -52,7 +52,6 @@ export class FsEventsIndexerStore <T extends ContractBase> implements IEventsInd
             directory: options.fs?.directory,
         });
 
-
         this.store = new JsonArrayMultiStore<ITxLogItem<any>>({
             path: path,
             key: x => x.id,

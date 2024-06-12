@@ -229,6 +229,10 @@ export class EventsIndexer <T extends ContractBase> {
                     }
 
                     if (options?.onProgress) {
+                        // completed must be set to true only when the last Range completes
+                        info.completed = i < ranges.length - 1
+                            ? false
+                            : info.completed;
                         await options.onProgress(info);
                     }
 
