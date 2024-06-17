@@ -9,10 +9,14 @@ export type TEventsIndexerMeta = {
 
 export interface IEventsIndexerStore {
     upsertMany(logs: TItem[]): Promise<TItem[]>
+    removeMany(logs: TItem[]): Promise<any>
+
     fetch (options?: {
         fromBlock?: number
         toBlock?: number
     }): Promise<TItem[]>
+
+
 }
 
 export interface IEventsIndexerMetaStore {

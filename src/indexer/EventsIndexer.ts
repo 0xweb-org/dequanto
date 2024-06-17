@@ -14,6 +14,7 @@ import { class_Dfr } from 'atma-utils';
 import { TLogsRangeProgress } from '@dequanto/clients/Web3Client';
 import { WClient } from '@dequanto/clients/ClientPool';
 import { TEth } from '@dequanto/models/TEth';
+import { l } from '@dequanto/utils/$logger';
 
 
 export class EventsIndexer <T extends ContractBase> {
@@ -87,7 +88,7 @@ export class EventsIndexer <T extends ContractBase> {
         let client = contract.client;
         let toBlock = filter?.toBlock ?? await client.getBlockNumber();
         let events = Array.isArray(event) ? event as string[] : [ event as string ];
-        let ranges = await this.getRanges(events, this.options.initialBlockNumber, toBlock)
+        let ranges = await this.getRanges(events, this.options.initialBlockNumber, toBlock);
         let logs = await this.getPastLogsRanges(ranges, events, toBlock, filter?.fromBlock);
 
         return {
@@ -149,6 +150,21 @@ export class EventsIndexer <T extends ContractBase> {
                 break;
             }
         }
+    }
+
+    async removeCached (params: {
+        fromBlock: number
+    }) {
+        let events = await this.store.fetch({ fromBlock: params.fromBlock });
+        l`Removing ${events.length} from Block #${params.fromBlock}...`;
+        await this.store.removeMany(events);
+
+        let lastBlock = params.fromBlock - 1;
+        let meta = await this.storeMeta.fetch();
+        meta.forEach(x => {
+            x.lastBlock = Math.min(x.lastBlock, lastBlock);
+        });
+        await this.storeMeta.upsertMany(meta);
     }
 
     private async getRanges (events: string[], initialBlockNumber: number, toBlock: number, fromBlock?: number): Promise<TRange[]> {

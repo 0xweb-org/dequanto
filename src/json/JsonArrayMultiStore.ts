@@ -140,6 +140,23 @@ export class JsonArrayMultiStore<T> {
         return store.getSingle(key);
     }
 
+    async removeMany(arr: Partial<T>[]): Promise<void> {
+        let groupSize = this.options.groupSize;
+        await alot(arr)
+            .groupBy(entry => {
+                let key = this.options.groupKey(entry as T);
+                let start = key - key % groupSize;
+                // "end" block is excluded (Exclusive Upper Bound)
+                let end = start + groupSize;
+                return `${start}-${end}`;
+            })
+            .mapAsync(async group => {
+                let store = this.getStore(group.key);
+                let ids = group.values.map(x => this.options.key(x));
+                await store.removeMany(ids);
+            })
+            .toArrayAsync();
+    }
 
     async upsertMany(arr: Partial<T>[]): Promise<T[]> {
         let groupSize = this.options.groupSize;

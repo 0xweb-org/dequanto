@@ -603,7 +603,13 @@ namespace RangeWorker {
             let leftSeconds = (toBlock - cursor) / blocksPerSec;
             let leftTimeFormatted = $date.formatTimespan(leftSeconds * 1000);
 
-            $logger.log(`Blocks walked: ${perf.blocks.loaded}/${perf.blocks.total}. Latest range: ${paged.range.count}. BPS: ${blocksPerSecFormatted}. Estimated: ${leftTimeFormatted}. Loaded ${loadedCount}`);
+
+            let strLatestRange = `Latest range: ${paged.range.count}.`;
+            let strBlocksWalked = `Blocks walked: ${perf.blocks.loaded}(${paged.range.fromBlock}-${paged.range.toBlock})/${perf.blocks.total}.`;
+            let strBPS = `b/s: ${blocksPerSecFormatted}.`;
+            let strEstimated = leftTimeFormatted ? `~${leftTimeFormatted}.` : '';
+            let strLoaded = `∑: ${loadedCount}.`;
+            $logger.log(`${strBlocksWalked} ${strLatestRange} ${strBPS} ${strEstimated} ${strLoaded}`);
 
             await options?.onProgress?.({
                 logs: logs,

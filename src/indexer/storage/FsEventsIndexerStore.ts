@@ -71,6 +71,9 @@ export class FsEventsIndexerStore <T extends ContractBase> implements IEventsInd
     async upsertMany(logs: ITxLogItem<any, string>[]): Promise<ITxLogItem<any, string>[]> {
         return await this.store.upsertMany(logs);
     }
+    async removeMany(logs: ITxLogItem<any, string>[]): Promise<any> {
+        return await this.store.removeMany(logs);
+    }
 
     async fetch(filter?: {
         fromBlock?: number

@@ -1030,7 +1030,10 @@ export class WClient {
     private getSpanLimit(requestCount: number) {
         let a = this.rateLimitGuard?.getSpanLimit() ?? Infinity;
         let b = this.batchLimit ?? Infinity;
-        let min = Math.min(a, b, requestCount);
+
+        let min = requestCount === 0
+            ? Math.min(a, b)
+            : Math.min(a, b, requestCount);
         $require.gt(min, 0, `Span-limit must be > 0. ${a}/${b}/${requestCount}`);
         return min;
     }
