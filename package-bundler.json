@@ -47,11 +47,24 @@
             }
         },
         "esm": {
-            "outputMain": "lib/esm/exp.js",
+            "file": "**.ts",
+            "ignore": [
+                "bridges/.+",
+                "config/dequanto.d.ts",
+                "tokens/TokenSwapService.ts",
+                "tokens/defi/paraswap",
+                "exp.ts",
+                ".spec.ts$"
+            ],
+            "combine": [
+                "prebuilt/openzeppelin/**.ts"
+            ],
+            "base": "/src/",
+            "outputBase": "/lib/esm/",
+            "outputSources": "",
+
             "js": [],
-            "package": {
-                "module": "import"
-            },
+
 
             "mappings": {
                 "ConfigProviderNode": "ConfigProviderBrowser"
@@ -118,6 +131,7 @@
             "atma-io",
             "atma-server",
             "atma-logger",
+            "atma-utils",
             "class-json",
             "atma-formatter",
             "appcfg",

@@ -1,8 +1,7 @@
 import alot from 'alot';
 import { keccak_256 } from '@noble/hashes/sha3';
 
-import type { TAbiInput, TAbiItem } from '@dequanto/types/TAbi';
-
+import type { TAbiItem } from '@dequanto/types/TAbi';
 
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { TBufferLike } from '@dequanto/models/TBufferLike';

@@ -1,8 +1,5 @@
-import memd from 'memd'
-import { File } from 'atma-io'
-import { class_Dfr, Constructor } from 'atma-utils'
+import { Constructor } from 'atma-utils'
 import { JsonConvert } from 'class-json'
-import { $csv } from '@dequanto/utils/$csv';
 import { JsonStoreFs } from './JsonStoreFs';
 
 export interface IStoreOptions<T, TOut = T> {

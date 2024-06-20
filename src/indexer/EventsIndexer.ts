@@ -241,24 +241,25 @@ export class EventsIndexer <T extends ContractBase> {
                 blockRangeLimits: options?.blockRangeLimits,
                 onProgress: async info => {
                     if (options?.streamed !== true) {
-                        buffer.push(...info.paged);
+                        buffer.push(...info.logs);
+                    }
+
+                    let isCompleted = i < ranges.length - 1
+                        ? false
+                        : info.completed;
+
+                    let now = Date.now();
+                    if (buffer.length > 0 && (isCompleted || (now - time) > PERSIST_INTERVAL)) {
+                        let cloned = buffer.slice();
+                        buffer = [];
+                        time = now;
+                        await this.upsert(cloned, events, info.latestBlock);
                     }
 
                     if (options?.onProgress) {
                         // completed must be set to true only when the last Range completes
-                        info.completed = i < ranges.length - 1
-                            ? false
-                            : info.completed;
+                        info.completed = isCompleted;
                         await options.onProgress(info);
-                    }
-
-                    let now = Date.now();
-                    if (buffer.length > 0 && now - time > PERSIST_INTERVAL) {
-                        let cloned = buffer.slice();
-                        buffer = [];
-                        time = now;
-
-                        await this.upsert(cloned, events, info.latestBlock);
                     }
                 }
             });

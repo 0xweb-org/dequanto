@@ -2,7 +2,6 @@ import { $bytecode } from '@dequanto/evm/utils/$bytecode';
 import type { IWeb3ClientOptions } from '../interfaces/IWeb3Client';
 import type { Web3Client } from '../Web3Client';
 import { TAddress } from '@dequanto/models/TAddress'
-import { TBufferLike } from '@dequanto/models/TBufferLike'
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $hex } from '@dequanto/utils/$hex';
 import { TEth } from '@dequanto/models/TEth';

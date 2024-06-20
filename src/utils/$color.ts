@@ -1,11 +1,13 @@
+import { $config } from './$config';
 import { is_BROWSER } from './$const';
+
 
 
 let COLOR: typeof ColorData.ColorAscii;
 
 export function $color (str: string) {
     if (COLOR == null) {
-        COLOR = is_BROWSER
+        COLOR = is_BROWSER || $config.get<boolean>('no-color', false) === true
             ? ColorData.ColorNone
             : ColorData.ColorAscii;
     }
