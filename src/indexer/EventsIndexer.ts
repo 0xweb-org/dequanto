@@ -204,12 +204,16 @@ export class EventsIndexer <T extends ContractBase> {
     }
     private async getPastLogsRanges (ranges: TRange[], events: string[], toBlock: number, fromBlock?: number, options?: TEventLogOptions<TEth.Log>) {
         // Save indexed logs every 2 minutes
-        let PERSIST_INTERVAL = $date.parseTimespan('2min');
+        const PERSIST_INTERVAL = $date.parseTimespan('2min');
+        // Save indexed logs every 10k logs
+        const PERSIST_COUNT = 10_000;
+
         let time = Date.now();
         let contract = this.contract;
         let buffer = [] as ITxLogItem<any>[];
+        let isStreamed = options?.streamed ?? false
 
-        if (options?.streamed === true) {
+        if (isStreamed && typeof options?.onProgress === 'function') {
             let arr = await this.getItemsFromStore({
                 fromBlock: fromBlock,
                 toBlock: toBlock,
@@ -226,6 +230,14 @@ export class EventsIndexer <T extends ContractBase> {
                     timeLeftSeconds: 0,
                     latestBlock: latestBlock
                 });
+                if (fromBlock != null) {
+                    let latestFromStorage = alot(arr).max(x => x.blockNumber);
+                    fromBlock = latestFromStorage + 1;
+                    if (toBlock != null && fromBlock >= toBlock) {
+                        // we got all from storage
+                        return;
+                    }
+                }
             }
         }
 
@@ -240,20 +252,24 @@ export class EventsIndexer <T extends ContractBase> {
                 toBlock: toBlock,
                 blockRangeLimits: options?.blockRangeLimits,
                 onProgress: async info => {
-                    if (options?.streamed !== true) {
-                        buffer.push(...info.logs);
-                    }
+
+                    buffer.push(...info.logs);
 
                     let isCompleted = i < ranges.length - 1
                         ? false
                         : info.completed;
 
                     let now = Date.now();
-                    if (buffer.length > 0 && (isCompleted || (now - time) > PERSIST_INTERVAL)) {
-                        let cloned = buffer.slice();
+
+                    let shouldPersist = isCompleted === true;
+                    let shouldTimePersist = now - time >= PERSIST_INTERVAL;
+                    let shouldCountPersist = buffer.length >= PERSIST_COUNT;
+
+                    if (buffer.length > 0 && (shouldPersist || shouldTimePersist || shouldCountPersist)) {
+                        let arr = buffer.slice();
                         buffer = [];
                         time = now;
-                        await this.upsert(cloned, events, info.latestBlock);
+                        await this.upsert(arr, events, info.latestBlock);
                     }
 
                     if (options?.onProgress) {
@@ -264,8 +280,8 @@ export class EventsIndexer <T extends ContractBase> {
                 }
             });
 
-            if (fetched?.length > 0) {
-                await this.upsert(fetched, events, toBlock);
+            if (buffer.length > 0) {
+                await this.upsert(buffer, events, toBlock);
             }
         }
 
@@ -273,7 +289,7 @@ export class EventsIndexer <T extends ContractBase> {
         // Upsert final, if buffer is empty, we still persist the toBlock
         await this.upsert(buffer, events, toBlock);
 
-        if (options?.streamed === true) {
+        if (isStreamed === true) {
             return;
         }
 
