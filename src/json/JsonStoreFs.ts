@@ -79,6 +79,10 @@ export class JsonStoreFs<T> {
 
     @memd.deco.memoize({ perInstance: true })
     private async readInner () {
+        let exists = await File.existsAsync (this.path);
+        if (exists === false) {
+            return this.$default;
+        }
         let str = await this.file.readAsync <string> ({ skipHooks: true, encoding: 'utf8' });
         if (str == null) {
             return this.$default;
