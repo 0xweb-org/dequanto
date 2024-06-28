@@ -6,7 +6,7 @@ import { TokensServicePolygon } from './TokensServicePolygon';
 import { TokensServiceXDai } from './TokensServiceXDai';
 import { TokensServiceArbitrum } from '@dequanto/chains/arbitrum/TokensServiceArbitrum';
 import { TokensService } from './TokensService';
-import { config } from '@dequanto/Config';
+import { config } from '@dequanto/config/Config';
 import { TokenDataProvider } from './TokenDataProvider';
 
 export namespace TokensServiceFactory {

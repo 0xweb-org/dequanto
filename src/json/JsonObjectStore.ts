@@ -5,6 +5,7 @@ import { JsonStoreFs } from './JsonStoreFs';
 export interface IStoreOptions<T, TOut = T> {
     path: string
     map? (x: T): TOut
+    serialize? (x: T): any
     Type?: Constructor<T>
     format?: boolean
     default?: TOut
@@ -26,6 +27,7 @@ export class JsonObjectStore<T> {
             , this.options.map as any
             , this.options.format
             , this.options.default ?? {} as any
+            , this.options.serialize as any
         );
 
         if (this.options?.watchFs) {

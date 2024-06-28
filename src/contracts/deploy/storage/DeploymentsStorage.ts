@@ -103,7 +103,6 @@ export class  DeploymentsStorage {
         let deployment = await store.getSingle(id);
         if (opts?.version != null) {
             let history = deployment.history?.find(x => x.version === opts.version);
-            console.log(deployment, 'history', history);
             if (history == null) {
                 return null;
             }

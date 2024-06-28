@@ -6,7 +6,7 @@ import { $require } from '@dequanto/utils/$require';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-import { config } from '@dequanto/Config';
+import { config } from '@dequanto/config/Config';
 import { MultiSend } from '@dequanto-contracts/safe/MultiSend';
 import { ISafeServiceTransport } from './transport/ISafeServiceTransport';
 import { $hex } from '@dequanto/utils/$hex';

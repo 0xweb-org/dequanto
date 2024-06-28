@@ -1,4 +1,4 @@
-import { Config } from '@dequanto/Config';
+import { Config } from '@dequanto/config/Config';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { EoAccount, IAccount } from '@dequanto/models/TAccount';
 import { TEth } from '@dequanto/models/TEth';

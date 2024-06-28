@@ -1,4 +1,4 @@
-import { Constructor, class_Dfr, class_EventEmitter, mixin } from 'atma-utils';
+import { class_Dfr, class_EventEmitter } from 'atma-utils';
 
 /** web3js compat */
 export class PromiseEvent<TResult> extends class_Dfr<TResult> {

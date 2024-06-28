@@ -1,6 +1,7 @@
 {
     "apps": {
         "umd": {
+            "file": "exports/core.lib.ts",
             "outputMain": "lib/umd/dequanto.js",
             "js": [],
             "package": {
@@ -11,15 +12,35 @@
                     "output": "simplified"
                 }
             },
+            "dynamicDependencies": [
+                "^readline$",
+                "^https?$",
+                "atma-io",
+                "atma-utils",
+                "class-json",
+                "appcfg",
+                "everlog",
+                "^@noble",
+                "^@scure",
+                "^debug$",
+                "^hardhat$",
+                "^child_process$",
+                "^crypto$",
+                "^fs$",
+                "^os$",
+                "^path$",
+                "^assert$",
+                "^stream$",
+                "^papaparse$",
+                "^ws$",
+                "^@solidity-parser"
+            ],
 
-            "mappings": {
-                "ConfigProviderNode": "ConfigProviderBrowser"
-            },
             "extensions": {
                 "yml": { "type": "js" }
             },
             "settings": {
-                "atma-io-middleware-condcomments": {
+                "//atma-io-middleware-condcomments": {
                     "defines": {
                         "BROWSER": true
                     }
@@ -60,20 +81,17 @@
                 "prebuilt/openzeppelin/**.ts"
             ],
             "base": "/src/",
-            "outputBase": "/lib/esm/",
+            "outputBase": "/lib/esm",
+            "outputExtension": "mjs",
             "outputSources": "",
 
             "js": [],
 
-
-            "mappings": {
-                "ConfigProviderNode": "ConfigProviderBrowser"
-            },
             "extensions": {
                 "yml": { "type": "js" }
             },
             "settings": {
-                "atma-io-middleware-condcomments": {
+                "//atma-io-middleware-condcomments": {
                     "defines": {
                         "BROWSER": true
                     }
@@ -103,8 +121,6 @@
         }
     },
     "common": {
-        "file2": "build/exports.lib.ts",
-        "file": "src/exp-b.ts",
         "defaultExtensions": {
             "js": "ts"
         },
@@ -135,6 +151,8 @@
             "class-json",
             "atma-formatter",
             "appcfg",
+            "alot",
+            "memd",
             "everlog",
             "^@noble",
             "^@scure",

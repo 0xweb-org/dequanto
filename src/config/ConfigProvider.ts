@@ -1,4 +1,4 @@
-import { ConfigProviderPlatform } from './ConfigProviderNode'
+import { ConfigProviderPlatform } from './ConfigProviderIsoPlatform'
 
 
 export const ConfigProvider = ConfigProviderPlatform;

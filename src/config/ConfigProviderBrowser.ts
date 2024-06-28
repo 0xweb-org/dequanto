@@ -11,7 +11,6 @@ export class ConfigProviderPlatform implements IConfigProvider {
     config: AppConfig<IConfigData>
 
     async fetch (parameters?: TConfigParamsBrowser): Promise<IConfigData> {
-
         return configDefault;
     }
 

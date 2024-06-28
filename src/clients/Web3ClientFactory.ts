@@ -7,7 +7,7 @@ import { PolyWeb3Client } from './PolyWeb3Client';
 import { ArbWeb3Client } from '@dequanto/chains/arbitrum/ArbWeb3Client';
 import { XDaiWeb3Client } from '@dequanto/chains/xdai/XDaiWeb3Client';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { Config, config } from '@dequanto/Config';
+import { Config, config } from '@dequanto/config/Config';
 import { EvmWeb3Client } from './EvmWeb3Client';
 import alot from 'alot';
 

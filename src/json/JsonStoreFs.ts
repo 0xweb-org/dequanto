@@ -1,7 +1,6 @@
 import memd from 'memd';
-import { $promise } from '@dequanto/utils/$promise';
 import { $require } from '@dequanto/utils/$require';
-import { File } from 'atma-io';
+import { File, FileSafe } from 'atma-io';
 import { class_Dfr } from 'atma-utils';
 import { JsonConvert } from 'class-json';
 import type { IConstructor } from 'class-json/JsonSettings'
@@ -15,10 +14,9 @@ export class JsonStoreFs<T> {
     private data: T;
     private pending: T;
     private busy = false;
-    private pathBak: string;
-    private pathFilename: string;
     private watcherFn: (path?: string) => any
     private watching = false;
+    private file: InstanceType<typeof FileSafe>;
 
     public lock = new class_Dfr;
 
@@ -31,8 +29,10 @@ export class JsonStoreFs<T> {
         , public serializeFn?: (x: T) => any
     ) {
         this.lock.resolve();
-        this.pathBak = this.path + '.bak';
-        this.pathFilename = this.path.substring(this.path.lastIndexOf('/') + 1);
+        this.file = new FileSafe(this.path, {
+            cached: true,
+            processSafe: true
+        });
     }
 
     public watch (cb: typeof this.watcherFn) {
@@ -78,28 +78,10 @@ export class JsonStoreFs<T> {
 
     @memd.deco.memoize({ perInstance: true })
     private async readInner () {
-        let existsBak = await File.existsAsync (this.pathBak);
-        if (existsBak) {
-            let str = await File.readAsync<string>(this.pathBak, { skipHooks: true, encoding: 'utf8'  });
-            if (this.data) {
-                // When `write` was called between `exists` check and now
-                return this.data;
-            }
-            if (str) {
-                await File.renameAsync(this.pathBak, this.pathFilename);
-                return this.decode(str);
-            } else {
-                await File.removeAsync(this.pathBak);
-            }
-        }
-        let exists = await File.existsAsync (this.path);
-        if (exists === false) {
+        let str = await this.file.readAsync <string> ({ skipHooks: true, encoding: 'utf8' });
+        if (str == null) {
             return this.$default;
         }
-        if (!this.path) {
-            throw new Error(`Read inner: ${this.path}/${this.pathBak} is undefined`);
-        }
-        let str = await File.readAsync <string> (this.path, { skipHooks: true, encoding: 'utf8' });
         let data = this.decode(str);
         if (this.watcherFn != null && this.watching === false) {
             File.watch(this.path, this.watcherFn);
@@ -112,8 +94,8 @@ export class JsonStoreFs<T> {
         try {
             let v = this.version;
             let str = this.encode(data);
-            await File.writeAsync(this.pathBak, str);
-            await this.renameFileAsync(this.pathBak, this.pathFilename);
+
+            await this.file.writeAsync(str, { skipHooks: true });
             this.callWriteListeners(v, null);
         } catch (error) {
             console.error(`JsonStoreFs.WriteInner> ${this.path}`, error);
@@ -121,31 +103,11 @@ export class JsonStoreFs<T> {
         } finally {
             if (this.pending == null) {
                 this.busy = false;
-                this.lock.resolve();
                 return;
             }
             let next = this.pending;
             this.pending = null;
             this.writeInner(next);
-        }
-    }
-    private async renameFileAsync (pathBak: string, pathFilename: string, opts?: { retries: number }) {
-        opts ??= { retries: 0 };
-
-        try {
-            await File.renameAsync(pathBak, pathFilename);
-        } catch (error) {
-            let isPERM = error.message.includes('EPERM') || error.code === 'EPERM';
-            if (isPERM === false) {
-                throw error;
-            }
-            if (opts.retries > 5) {
-                error.message = `After ${opts.retries} retries: ${ error.message}`;
-                throw error;
-            }
-            await File.removeAsync(pathFilename);
-            await $promise.wait(150);
-            await this.renameFileAsync(pathBak, pathFilename, opts);
         }
     }
 

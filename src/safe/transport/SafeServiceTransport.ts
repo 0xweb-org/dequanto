@@ -6,7 +6,7 @@ import memd from 'memd';
 import { ISafeServiceTransport } from './ISafeServiceTransport';
 import { $http } from '@dequanto/utils/$http';
 import { TPlatform } from '@dequanto/models/TPlatform';
-import { config } from '@dequanto/Config';
+import { config } from '@dequanto/config/Config';
 import { $require } from '@dequanto/utils/$require';
 import { SafeServiceTypes } from '../types/SafeServiceTypes';
 import { $bigint } from '@dequanto/utils/$bigint';

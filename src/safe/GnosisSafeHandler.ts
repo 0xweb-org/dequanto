@@ -26,7 +26,7 @@ import { TEth } from '@dequanto/models/TEth';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $require } from '@dequanto/utils/$require';
 import { ChainAccountService } from '@dequanto/ChainAccountService';
-import { config } from '@dequanto/Config';
+import { config } from '@dequanto/config/Config';
 
 export class GnosisSafeHandler {
 

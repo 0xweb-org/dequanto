@@ -9,7 +9,7 @@ import { ITokenProvider } from './ITokenProvider';
 import { ATokenProvider } from './ATokenProvider';
 import { $path } from '@dequanto/utils/$path';
 import alot from 'alot';
-import { Config } from '@dequanto/Config';
+import { Config } from '@dequanto/config/Config';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { $http } from '@dequanto/utils/$http';
 

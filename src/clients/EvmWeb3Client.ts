@@ -1,4 +1,4 @@
-import { config } from '@dequanto/Config';
+import { config } from '@dequanto/config/Config';
 import { $require } from '@dequanto/utils/$require';
 import { EthWeb3Client } from './EthWeb3Client'
 import { IWeb3EndpointOptions } from './interfaces/IWeb3EndpointOptions'

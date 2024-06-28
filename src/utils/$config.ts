@@ -1,4 +1,4 @@
-import { config } from '@dequanto/Config';
+import { config } from '@dequanto/config/Config';
 import { obj_getProperty, obj_setProperty } from 'atma-utils';
 
 const $global = typeof global === 'undefined'

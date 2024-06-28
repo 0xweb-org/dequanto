@@ -1,5 +1,5 @@
-import { $wallet } from '@dequanto/utils/$wallet'
-import { $txData } from '../src/utils/$txData'
+export { $wallet } from '../src/utils/$wallet'
+export { $txData } from '../src/utils/$txData'
 
 export { $signSerializer } from '../src/utils/$signSerializer'
 export { $sig } from '../src/utils/$sig'
@@ -26,7 +26,7 @@ export { $csv } from '../src/utils/$csv'
 export { $crypto } from '../src/utils/$crypto'
 export { $contract } from '../src/utils/$contract'
 export { $config } from '../src/utils/$config'
-export { $color } from '../src/utils/$color'
+export { $color, $color_options } from '../src/utils/$color'
 export { $cli } from '../src/utils/$cli'
 export { $class } from '../src/utils/$class'
 export { $cache } from '../src/utils/$cache'
@@ -46,8 +46,9 @@ export { $rlp } from '../src/abi/$rlp'
 
 export { is_BROWSER } from '../src/utils/$const'
 
+export { BigFloat } from '../src/utils/$bigfloat'
 
-export { Config } from '../src/Config'
+export { Config } from '../src/config/Config'
 
 export { ChainAccountService } from '../src/ChainAccountService';
 
@@ -92,6 +93,7 @@ export { HardhatProvider} from '../src/hardhat/HardhatProvider';
 
 export { BlocksTxIndexer } from '../src/indexer/BlocksTxIndexer';
 export { PendingTxIndexer } from '../src/indexer/PendingTxIndexer';
+export { EventsIndexer } from '../src/indexer/EventsIndexer';
 
 
 export { TxLoggerService } from '../src/loggers/TxLoggerService'
@@ -99,9 +101,3 @@ export { LoggerService } from '../src/loggers/LoggerService'
 
 export { NameService } from '../src/ns/NameService';
 
-
-function foo () {
-    return $txData.getJson({} as any);
-}
-
-export { $wallet, foo }

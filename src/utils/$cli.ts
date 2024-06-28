@@ -12,11 +12,13 @@ export namespace $cli {
                 return parameters[k2];
             }
         }
-        let args = process.argv;
-        for (let i = 0; i < args.length - 1; i++) {
-            let key = args[i].replace(/^\-+/, '');
-            if (key === k1 || key === k2) {
-                return args[i + 1] as T;
+        if (typeof process !== 'undefined' && process.argv != null) {
+            let args = process.argv;
+            for (let i = 0; i < args.length - 1; i++) {
+                let key = args[i].replace(/^\-+/, '');
+                if (key === k1 || key === k2) {
+                    return args[i + 1] as T;
+                }
             }
         }
         return null;

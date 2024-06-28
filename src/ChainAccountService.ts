@@ -1,6 +1,6 @@
 import alot from 'alot';
 import type { Config as Appcfg } from 'appcfg/Config';
-import { Config } from './Config';
+import { Config } from './config/Config';
 
 import { IAccount } from "./models/TAccount";
 import { JsonArrayStore } from './json/JsonArrayStore';

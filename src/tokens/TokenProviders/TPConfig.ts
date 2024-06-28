@@ -2,7 +2,7 @@ import { IToken } from '@dequanto/models/IToken';
 import { ITokenGlob } from '@dequanto/models/ITokenGlob';
 import { ITokenProvider } from './ITokenProvider';
 import { ATokenProvider } from './ATokenProvider';
-import { Config, config } from '@dequanto/Config';
+import { Config, config } from '@dequanto/config/Config';
 import { $require } from '@dequanto/utils/$require';
 
 
