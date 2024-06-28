@@ -31,7 +31,8 @@ export class JsonStoreFs<T> {
         this.lock.resolve();
         this.file = new FileSafe(this.path, {
             cached: true,
-            processSafe: true
+            processSafe: true,
+            threadSafe: true,
         });
     }
 
