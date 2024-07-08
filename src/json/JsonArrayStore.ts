@@ -7,6 +7,7 @@ import type { IConstructor } from 'class-json/JsonSettings'
 export interface IStoreOptions<T, TStorage = T> {
     path: string
     watchFs?: boolean
+    onFsChanged?: () => any
 
     key: (x: Partial<T>) => string | number
     map? (x: TStorage): T
@@ -134,6 +135,7 @@ export class JsonArrayStore<T> {
         this.array = null;
         this.hash = null;
         this.fs.cleanCache();
+        this.options.onFsChanged?.();
     }
 
     private async restore () {

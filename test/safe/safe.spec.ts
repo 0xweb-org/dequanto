@@ -15,7 +15,7 @@ import { GnosisSafeService } from '@dequanto/safe/GnosisSafeService';
 import { $sig } from '@dequanto/utils/$sig';
 import { l } from '@dequanto/utils/$logger';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { Config } from '@dequanto/Config';
+import { Config } from '@dequanto/config/Config';
 import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
 import { $http } from '@dequanto/utils/$http';
 import { TEth } from '@dequanto/models/TEth';

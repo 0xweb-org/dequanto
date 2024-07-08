@@ -1,6 +1,6 @@
 import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20'
 import { ChainAccountService } from '@dequanto/ChainAccountService';
-import { Config } from '@dequanto/Config';
+import { Config } from '@dequanto/config/Config';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { FlashbotsProvider } from '@dequanto/flashbots/FlashbotsProvider';
 import { EoAccount } from '@dequanto/models/TAccount';

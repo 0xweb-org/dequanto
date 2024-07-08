@@ -1,5 +1,5 @@
 import { BlockChainExplorerStorage } from '@dequanto/explorer/BlockChainExplorerStorage';
-import { Config } from '@dequanto/Config';
+import { Config } from '@dequanto/config/Config';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { SlotsDump } from '@dequanto/solidity/SlotsDump';
 import { SlotsParser } from '@dequanto/solidity/SlotsParser';

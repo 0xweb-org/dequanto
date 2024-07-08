@@ -11,7 +11,7 @@ import { $abiParser } from '@dequanto/utils/$abiParser';
 import { $erc4337 } from '@dequanto/erc4337/utils/$erc4337';
 import { Erc4337Account } from '@dequanto/models/TAccount';
 import { $is } from '@dequanto/utils/$is';
-import { Config } from '@dequanto/Config';
+import { Config } from '@dequanto/config/Config';
 import { $config } from '@dequanto/utils/$config';
 import { EntryPoint } from '@dequanto-contracts/erc4337/EntryPoint/EntryPoint';
 import { SimpleAccount } from '@dequanto-contracts/erc4337/SimpleAccount/SimpleAccount';
