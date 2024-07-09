@@ -30,7 +30,7 @@ export class JsonStoreFs<T> {
     ) {
         this.lock.resolve();
         this.file = new FileSafe(this.path, {
-            cached: true,
+            cached: false,
             processSafe: true,
             threadSafe: true,
         });
@@ -46,6 +46,9 @@ export class JsonStoreFs<T> {
     }
     public cleanCache () {
         this.data = null;
+        this.file.pending = null;
+        this.file.content = null;
+
         memd.fn.clearMemoized(this.readInner);
         File.clearCache(this.path);
     }
@@ -83,7 +86,11 @@ export class JsonStoreFs<T> {
         if (exists === false) {
             return this.$default;
         }
-        let str = await this.file.readAsync <string> ({ skipHooks: true, encoding: 'utf8' });
+        let str = await this.file.readAsync <string> ({
+            skipHooks: true,
+            encoding: 'utf8',
+            cached: false
+        });
         if (str == null) {
             return this.$default;
         }
