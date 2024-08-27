@@ -60,6 +60,12 @@ export interface IPoolClientConfig {
 
     // maximum of requests to be batched, otherwise batches will be paginated
     batchLimit?: number
+
+    // Will be used only for the specified methods
+    methods?: {
+        exclude?: string[]
+        only?: string[]
+    }
 }
 export interface IPoolWeb3Request {
     ws?: boolean
@@ -78,6 +84,9 @@ export interface IPoolWeb3Request {
         /** Supports traceTransaction */
         traceable?: boolean
     }
+
+    /** RPC method - will find the node that has the configuration */
+    method?: string
 
     // Amount of batch requests to be performed, sothat we can choose the appropriate wClient and handle the rate limits correctly
     batchRequestCount?: number
@@ -430,6 +439,24 @@ export class ClientPool {
         let clients = this.clients;
         if (params?.manual !== true) {
             clients = clients.filter(x => x.config.manual !== true);
+        }
+        if (opts?.method != null) {
+            clients = clients.filter(x => {
+                let methods = x.config.methods;
+                if (methods == null) {
+                    return false;
+                }
+                if (methods.exclude?.includes(opts.method) === true) {
+                    return false;
+                }
+                if (methods.only != null) {
+                    return methods.only.includes(opts.method) === true;
+                }
+                return true;
+            });
+        } else {
+            // Unspecified method, so exclude clients with specific methods
+            clients = clients.filter(x => x.config.methods == null);
         }
 
         if (opts?.ws === true) {
@@ -916,6 +943,9 @@ export class WClient {
                         status = ClientStatus.RateLimited;
 
                         let rateLimitInfo = RateLimitGuard.extractRateLimitFromError(error);
+                        if (rateLimitInfo == null) {
+                            l`RateLimit not extracted: ${error.message}`;
+                        }
                         this.updateRateLimitInfo(rateLimitInfo);
                     } else if (RateLimitGuard.isBatchLimit(error)) {
                         status = ClientStatus.RateLimited;

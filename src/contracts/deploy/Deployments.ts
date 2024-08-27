@@ -78,6 +78,8 @@ export class Deployments {
             BeaconProxy: Constructor<IBeaconProxy>
         }
 
+        verification?: boolean
+
     } = {}) {
         this._config.TransparentProxy.Proxy = opts?.Proxy;
         this._config.TransparentProxy.ProxyAdmin = opts?.ProxyAdmin;
@@ -445,7 +447,7 @@ export class Deployments {
 
 
     private async ensureVerification <T extends TContract> (Ctor: Constructor<T>, deployment: IDeployment, opts: TVerificationOptions) {
-        if (this.client.platform === 'hardhat' || opts?.verification === false) {
+        if (this.client.platform === 'hardhat' || opts?.verification === false || this.opts.verification === false) {
             return;
         }
 

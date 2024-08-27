@@ -608,7 +608,7 @@ namespace RangeWorker {
             let strBlocksWalked = `Blocks walked: ${perf.blocks.loaded}(${paged.range.fromBlock}-${paged.range.toBlock})/${perf.blocks.total}.`;
             let strBPS = `b/s: ${blocksPerSecFormatted}.`;
             let strEstimated = leftTimeFormatted ? `~${leftTimeFormatted}.` : '';
-            let strLoaded = `∑: ${loadedCount}.`;
+            let strLoaded = `∑: ${loadedCount}. Current: ${paged.result.length}`;
             $logger.log(`${strBlocksWalked} ${strLatestRange} ${strBPS} ${strEstimated} ${strLoaded}`);
 
             await options?.onProgress?.({
@@ -678,7 +678,8 @@ namespace RangeWorker {
                     blockRange
                 }
             }, {
-                blockRangeCount: blockRange
+                blockRangeCount: blockRange,
+                method: 'eth_getLogs',
             });
             return {
                 result: result.paged,

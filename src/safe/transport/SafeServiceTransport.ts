@@ -118,8 +118,8 @@ class SafeServiceClientInner {
 
     async proposeTransaction({ safeAddress, senderAddress, safeTransaction, safeTxHash, origin,  }: SafeServiceTypes.ProposeTransactionProps): Promise<void> {
         let url = `${this.params.txServiceUrl}/api/v1/safes/${safeAddress}/multisig-transactions/`;
-
         let txData = safeTransaction.data;
+
         let { data } = await $http.post({
             url,
             body: {

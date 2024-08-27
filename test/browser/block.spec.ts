@@ -14,7 +14,8 @@ UTest({
         //debugger;
         console.log('>>>>', Web3ClientFactory, Web3ClientFactory?.getAsync, Web3ClientFactory?.foo);
         //debugger;
-        // let client = await Web3ClientFactory.getAsync('eth');
-        // let block = await client.getBlockNumber();
+        let client = await Web3ClientFactory.getAsync('eth');
+        let block = await client.getBlockNumber();
+        console.log('block', block);
     }
 })

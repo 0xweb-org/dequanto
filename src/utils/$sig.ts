@@ -690,7 +690,8 @@ namespace KeyUtils {
             return fn(account);
         }
         let secret = resolveSecret();
-        let key = await $crypto.decrypt(account.key.substring(encryptionMatch[0].length) as TEth.Hex, {
+        let hex = account.key.substring(encryptionMatch[0].length) as TEth.Hex;
+        let key = await $crypto.decrypt(hex, {
             secret,
             encoding: 'hex',
         });

@@ -62,6 +62,10 @@ export class EventsIndexer <T extends ContractBase> {
         });
     }
 
+    async mergeStorages (store: IEventsIndexerStore) {
+        this.store.merge(store);
+    }
+
     /** @deprecated For migration only */
     async fsEnsureMigrated () {
         $require.True(this.store instanceof FsEventsIndexerStore);
@@ -241,6 +245,13 @@ export class EventsIndexer <T extends ContractBase> {
             }
         }
 
+        let bufferCount = 0;
+        let savedCount = 0;
+        let onProgressCount = 0;
+        let nodeStats = Date.now();
+        let uniqueCount = 0;
+        let unique = {};
+
         for (let i = 0; i < ranges.length; i++) {
             let range = ranges[i];
             let { fromBlock, toBlock, events } = range;
@@ -252,8 +263,25 @@ export class EventsIndexer <T extends ContractBase> {
                 toBlock: toBlock,
                 blockRangeLimits: options?.blockRangeLimits,
                 onProgress: async info => {
+                    onProgressCount++;
 
                     buffer.push(...info.logs);
+                    bufferCount += info.logs.length;
+
+                    for (let log of info.logs) {
+                        let key = log.id + '';
+                        if (key in unique) {
+                            uniqueCount += 1;
+                        }
+                        unique[key] = 1;
+                    }
+
+                    let lastNodeStats = Date.now() - nodeStats;
+                    if (lastNodeStats > 10 * 1000) {
+                        nodeStats = Date.now();
+
+                        l`OnProgressCalled cyan<${ onProgressCount}> BufferCount cyan<${bufferCount}> SavedCount cyan<${savedCount}> Unique `
+                    }
 
                     let isCompleted = i < ranges.length - 1
                         ? false
@@ -269,6 +297,7 @@ export class EventsIndexer <T extends ContractBase> {
                         let arr = buffer.slice();
                         buffer = [];
                         time = now;
+                        savedCount += arr.length;
                         await this.upsert(arr, events, info.latestBlock);
                     }
 

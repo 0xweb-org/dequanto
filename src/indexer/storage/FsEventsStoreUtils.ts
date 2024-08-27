@@ -5,13 +5,20 @@ import { $is } from '@dequanto/utils/$is';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
 import { $contract } from '@dequanto/utils/$contract';
 import { TAddress } from '@dequanto/models/TAddress';
+import { $require } from '@dequanto/utils/$require';
 
 export namespace FsEventsStoreUtils {
     export function getDirectory (contract: ContractBase, options?: {
+        path?: string
         name?: string
-        directory?: string,
+        directory?: string
         addresses?: TAddress[]
     }): string {
+        if (options?.path) {
+            $require.True(options.path.endsWith('/'), `Path for the events store should end with '/'`);
+            return options.path;
+        }
+
         let key = contract.client.network.replace(':', '-');
         let directly = options?.directory ?? `./data/tx-logs/`;
 

@@ -16,7 +16,7 @@ export class JsonStoreFs<T> {
     private busy = false;
     private watcherFn: (path?: string) => any
     private watching = false;
-    private file: InstanceType<typeof FileSafe>;
+    private file: InstanceType<typeof File>;
 
     public lock = new class_Dfr;
 
@@ -29,7 +29,9 @@ export class JsonStoreFs<T> {
         , public serializeFn?: (x: T) => any
     ) {
         this.lock.resolve();
-        this.file = new FileSafe(this.path, {
+
+        const FileCtor = FileSafe ?? File;
+        this.file = new FileCtor(this.path, {
             cached: false,
             processSafe: true,
             threadSafe: true,

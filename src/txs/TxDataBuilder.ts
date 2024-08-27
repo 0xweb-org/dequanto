@@ -179,7 +179,6 @@ export class TxDataBuilder {
             $gasLimitRatio = 1.5;
         }
         this.data.gas = gasLimit ?? Math.floor(Number(gasUsage) * $gasLimitRatio);
-
         return this;
     }
 

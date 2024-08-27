@@ -16,7 +16,7 @@ export interface IEventsIndexerStore {
         toBlock?: number
     }): Promise<TItem[]>
 
-
+    merge (store: IEventsIndexerStore): Promise<any>
 }
 
 export interface IEventsIndexerMetaStore {

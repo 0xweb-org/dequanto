@@ -40,7 +40,7 @@ export class ContractDeployment {
         let builder = new TxDataBuilder(client, account, {
             type: client.defaultTxType ?? 2,
             data: bytecode
-        })
+        });
         let tx = TxWriter.create(client, builder, account);
         return tx;
     }

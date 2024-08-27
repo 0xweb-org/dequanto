@@ -179,6 +179,7 @@ export class TokenTransferService {
         });
 
         if (sender.address) {
+
             await Promise.all([
                 txBuilder.setGas({ priceRatio: this.gasPriorityFee, gasEstimation: true, gasLimitRatio: 1, }),
                 txBuilder.setNonce(),

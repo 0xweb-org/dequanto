@@ -264,7 +264,12 @@ export namespace BlockChainExplorerFactory {
                 let result = await client.get(url);
                 let json = Array.isArray(result) ? result[0] : result;
 
-                function parseSourceCode (contractName: string, code: string): {
+                function parseSourceCode (
+                    contractName: string
+                    , code: string
+                    , filename?: string
+                    , additionalSources?: {SourceCode: string , Filename: string }[]
+                ): {
                     contractName: string
                     files: {
                         [filename: string]: {
@@ -277,13 +282,19 @@ export namespace BlockChainExplorerFactory {
                     }
 
                     if (/^\s*\{/.test(code) === false) {
+                        filename ??= `${contractName}.sol`;
+                        let additionalSourcesDict = alot(additionalSources ?? []).toDictionary(
+                            x => x.Filename,
+                            x => ({ content: x.SourceCode })
+                        );
                         // single source code (not a serialized JSON)
                         return {
                             contractName: contractName,
                             files: {
-                                [`${contractName}.sol`]: {
+                                [filename]: {
                                     content: code
-                                }
+                                },
+                                ...additionalSourcesDict
                             }
                         };
                     }
@@ -314,7 +325,7 @@ export namespace BlockChainExplorerFactory {
 
                 return {
                     ...json,
-                    SourceCode: parseSourceCode(json.ContractName, json.SourceCode)
+                    SourceCode: parseSourceCode(json.ContractName, json.SourceCode, json.FileName, json.AdditionalSources)
                 };
             }
 

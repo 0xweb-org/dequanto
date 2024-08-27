@@ -27,7 +27,11 @@ export class FsEventsIndexerStore <T extends ContractBase> implements IEventsInd
         name?: string
         initialBlockNumber?: number
         fs?: {
+            /** Base directory, in case the path is calculated from chain, name and addresses */
             directory?: string
+
+            /** Relative final directory path to be used as is for store files */
+            path?: string
 
             // the events will be splitted into multiple files by block range
             // default ~1week
@@ -49,6 +53,7 @@ export class FsEventsIndexerStore <T extends ContractBase> implements IEventsInd
         let path = FsEventsStoreUtils.getDirectory(contract, {
             name: options.name,
             addresses: options.addresses,
+            path: options.fs?.path,
             directory: options.fs?.directory,
         });
 
@@ -85,6 +90,11 @@ export class FsEventsIndexerStore <T extends ContractBase> implements IEventsInd
                 to: filter?.toBlock
             }
         });
+    }
+
+    async merge (store: IEventsIndexerStore) {
+        let arr = await store.fetch();
+        await this.upsertMany(arr);
     }
 
     /** @deprecated For migration only */

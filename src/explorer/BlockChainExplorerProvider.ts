@@ -31,6 +31,7 @@ export namespace BlockChainExplorerProvider {
                 return Evmscan({ platform });
             default:
                 let cfg = $config.get(`blockchainExplorer.${platform}`);
+
                 let Mix = registry[platform];
                 if (Mix != null) {
                     if (typeof Mix === 'function') {

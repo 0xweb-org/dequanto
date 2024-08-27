@@ -120,7 +120,6 @@ export class GnosisSafeHandler {
         let value = BigInt(writer.builder.data.value?.toString() ?? 0);
 
         let { safeTxHash, threshold, safeTxData } = await this.createTransaction(writer, value, safeTxParams);
-
         if (writer.options?.txOutput != null) {
             await writer.saveTxAndExit({ safeTxHash, safeTxData });
             return;
