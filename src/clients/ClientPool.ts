@@ -441,7 +441,7 @@ export class ClientPool {
             clients = clients.filter(x => x.config.manual !== true);
         }
         if (opts?.method != null) {
-            clients = clients.filter(x => {
+            let clientsWithSupportedMethod = clients.filter(x => {
                 let methods = x.config.methods;
                 if (methods == null) {
                     return false;
@@ -454,6 +454,10 @@ export class ClientPool {
                 }
                 return true;
             });
+            if (clientsWithSupportedMethod.length > 0) {
+                // if there are no clients with manually specified method, use all clients
+                clients = clientsWithSupportedMethod;
+            }
         } else {
             // Unspecified method, so exclude clients with specific methods
             clients = clients.filter(x => x.config.methods == null);
