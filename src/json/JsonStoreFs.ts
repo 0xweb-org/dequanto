@@ -78,8 +78,13 @@ export class JsonStoreFs<T> {
         if (this.data != null) {
             return Promise.resolve(this.data);
         }
-        let data = await this.readInner();
-        return this.data = data;
+        try {
+            let data = await this.readInner();
+            return this.data = data;
+        } catch (error) {
+            error.message = `${this.path}: ${error.message}`;
+            throw error;
+        }
     }
 
     @memd.deco.memoize({ perInstance: true })
