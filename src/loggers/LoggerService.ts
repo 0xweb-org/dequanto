@@ -1,5 +1,5 @@
 import { $date } from '@dequanto/utils/$date';
-import { Everlog } from 'everlog';
+import { Everlog } from '@everlog/core';
 import { ILogger } from './ILogger';
 import memd from 'memd';
 import { $logger } from '@dequanto/utils/$logger';

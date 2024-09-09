@@ -5,7 +5,7 @@ import { TokenTransferService } from '@dequanto/tokens/TokenTransferService';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $logger } from '@dequanto/utils/$logger';
-import { Everlog } from 'everlog';
+import { Everlog } from '@everlog/core';
 import { ILogger } from 'everlog/interfaces/ILogger';
 import { ICsvColumnValue } from 'everlog/model/ICsvColumn';
 import { TEth } from '@dequanto/models/TEth';

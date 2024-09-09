@@ -65,12 +65,9 @@ export namespace $is {
         return $Array.isArray(val) && val.length > 0 && val.every(x => typeof x ==='string');
     }
 
-    //# if (!BROWSER)
-    export const NODE = true;
-    //# endif
 
-    /*# if (BROWSER)
-    export const NODE = false;
-    */
+    export const BROWSER = typeof location !== 'undefined' && typeof location.reload === 'function';
+    export const NODE = !BROWSER;
+
 
 }

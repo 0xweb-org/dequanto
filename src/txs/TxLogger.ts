@@ -1,5 +1,5 @@
 import { $logger } from '@dequanto/utils/$logger';
-import { Everlog } from'everlog';
+import { Everlog } from'@everlog/core';
 import { TxDataBuilder } from './TxDataBuilder';
 import { TEth } from '@dequanto/models/TEth';
 

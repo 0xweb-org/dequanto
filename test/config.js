@@ -33,6 +33,7 @@ module.exports = {
                             "@scure/bip39": "./node_modules/@scure/bip39/esm/index.js",
                             "@scure/base": "./node_modules/@scure/base/lib/esm/index.js",
                             "class-json": "./node_modules/class-json/lib/esm/json.mjs",
+                            "@everlog/core": "./node_modules/@everlog/core/lib/esm/browser/everlog.mjs",
                         }
                     })
                     document.head.appendChild(tag);

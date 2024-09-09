@@ -1,10 +1,9 @@
 import { class_Uri } from 'atma-utils';
 import { $path } from './$path';
 import { $require } from './$require';
-import * as fs from 'fs';
-import * as stream from 'stream';
-import { Directory } from 'atma-io';
 import { $logger } from './$logger';
+import { Directory, File } from 'atma-io';
+import { $is } from './$is';
 
 
 interface THttpResponse<T> {
@@ -149,6 +148,28 @@ export namespace $http {
             $require.notEmpty(filename, `There is no filename with extension in source url. To save a file, you must specify the filename in "output"`);
             output = class_Uri.combine(output, filename);
         }
+
+        return $is.NODE
+            ? $httpNode.download(url, output, config)
+            : $httpBrowser.download(url, output, config)
+            ;
+    }
+
+    class HttpError extends Error {
+        constructor (public response: { status: number, data: any}) {
+            super(`HTTP Error ${response.status}. ${typeof response.data === 'string' ? response.data : ''}`);
+        }
+    }
+}
+
+
+
+namespace $httpNode {
+    /**
+     *  output: Directory or File
+     */
+    export async function download(url: string, output: string, config?: RequestInit){
+
         if ($path.isAbsolute(output) === false) {
             output = class_Uri.combine(`file://`, process.cwd(), output);
         }
@@ -158,35 +179,41 @@ export namespace $http {
 
         await Directory.ensureAsync(fileUri.toDir());
 
-        const writer = fs.createWriteStream(filepath);
-        const response = await doFetch <ReadableStream<Uint8Array>> ({
-            url: url,
-            responseType: 'stream',
-            ...config
-        });
 
-        return new Promise((resolve, reject) => {
-            stream.Readable.from(response.data as any).pipe(writer);
+        const response = await fetch (url,  config);
+        const buffer = await response.arrayBuffer();
 
-            let error = null;
-            writer.on('error', err => {
-                error = err;
-                writer.close();
-                reject(err);
-            });
-            writer.on('close', () => {
-                if (error == null) {
-                    resolve(response);
-                }
-                // ...otherwise was rejected in `error` callback
-            });
-        });
+        await File.writeAsync(output, buffer, { skipHooks: true})
     }
 
+}
 
-    class HttpError extends Error {
-        constructor (public response: { status: number, data: any}) {
-            super(`HTTP Error ${response.status}. ${typeof response.data === 'string' ? response.data : ''}`);
+
+
+export namespace $httpBrowser {
+    /**
+     *  output: Directory or File
+     */
+    export async function download(url: string, output: string, config?: RequestInit){
+
+        if ($path.isAbsolute(output) === false) {
+            output = class_Uri.combine(`file://`, process.cwd(), output);
         }
+
+        const fileUri = new class_Uri(output);
+        const filepath = fileUri.toLocalFile();
+
+        await Directory.ensureAsync(fileUri.toDir());
+
+        const response = await fetch (url,  config);
+        const blob = await response.blob();
+
+        const uri = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = uri;
+        a.download = output;
+        document.body.appendChild(a);
+        a.click();
     }
+
 }

@@ -31,7 +31,6 @@
                 "^path$",
                 "^assert$",
                 "^stream$",
-                "^papaparse$",
                 "^ws$",
                 "^@solidity-parser"
             ],
@@ -153,7 +152,7 @@
             "appcfg",
             "alot",
             "memd",
-            "everlog",
+            "^@everlog",
             "^@noble",
             "^@scure",
             "^debug$",
@@ -165,9 +164,7 @@
             "^path$",
             "^assert$",
             "^stream$",
-            "^papaparse$",
             "^ws$",
-            "^@slack",
             "^@solidity-parser",
             "^signal-exit$"
         ],

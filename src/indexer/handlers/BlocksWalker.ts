@@ -1,6 +1,6 @@
 import alot from 'alot';
 import memd from 'memd';
-import { Everlog } from 'everlog';
+import { Everlog } from '@everlog/core';
 import { FileSafe } from 'atma-io';
 import { class_Dfr } from 'atma-utils';
 import { PackedRanges } from '../../class/PackedRanges';
@@ -13,7 +13,8 @@ import { $require } from '@dequanto/utils/$require';
 
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TEth } from '@dequanto/models/TEth';
-import { ILogger } from 'everlog/interfaces/ILogger';
+import type { ILogger } from '@everlog/core/interfaces/ILogger';
+
 
 interface IBlockIndexer {
     name: string
