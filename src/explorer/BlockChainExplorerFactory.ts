@@ -18,14 +18,29 @@ import type { TAbiItem } from '@dequanto/types/TAbi';
 import { TEth } from '@dequanto/models/TEth';
 import { $is } from '@dequanto/utils/$is';
 import { $http } from '@dequanto/utils/$http';
+import { IVerifier } from './verifiers/IVerifier';
+import { FsHtmlVerifier } from './verifiers/FsHtmlVerifier';
 
-export interface IBlockChainExplorerParams {
+export interface IBlockChainExplorerFactoryParams {
 
     platform?: string
     ABI_CACHE?: string
     CONTRACTS?: IContractDetails[]
     getWeb3?: (platform?: TPlatform) => Web3Client
-    getConfig?: (platform?: TPlatform) => { key: string, host: string, www: string }
+    getConfig?: (platform?: TPlatform) => IBlockChainExplorerConfig
+}
+
+export interface IBlockChainExplorerConfig {
+    key: string
+    api?: string
+    host: string
+    www: string
+    verification?: boolean | 'fs'
+    explorers?: {
+        api: string
+        apiKey?: string
+        verification?: boolean | 'fs'
+    }[]
 }
 
 export namespace BlockChainExplorerFactory {
@@ -38,16 +53,17 @@ export namespace BlockChainExplorerFactory {
         sort?: 'asc' | 'desc'
     }
 
-    export function create (opts: IBlockChainExplorerParams): Constructor<IBlockChainExplorer> {
+    export function create (opts: IBlockChainExplorerFactoryParams): Constructor<IBlockChainExplorer> {
 
-        const client = new Client();
+        const client = new HttpClient();
 
         opts = ensureDefaults(opts);
 
         return class implements IBlockChainExplorer {
 
             localDb: IContractDetails[] = opts.CONTRACTS
-            config: { key: string, host: string, www: string };
+            config: IBlockChainExplorerConfig;
+            fsVerification: IVerifier
 
             constructor (public platform?: TPlatform) {
 
@@ -67,6 +83,7 @@ export namespace BlockChainExplorerFactory {
                         })
                     });
                 }
+                this.fsVerification = new FsHtmlVerifier(this.platform, this.config);
             }
 
             async getContractMeta (name: string)
@@ -189,6 +206,8 @@ export namespace BlockChainExplorerFactory {
                 },
                 arguments: TEth.Hex
             }) {
+                await this.fsVerification.submitContractVerification(contractData);
+
                 let url = `${this.config.host}/api`;
                 let body = {
                     apikey: this.config.key,
@@ -224,6 +243,8 @@ export namespace BlockChainExplorerFactory {
                 address: TEth.Address
                 expectedImplementation?: TEth.Address
             }): Promise<string> {
+                await this.fsVerification.submitContractProxyVerification(contractData);
+
                 let url = `${this.config.host}/api`;
                 let guid = await client.post(url, {
                     body: {
@@ -481,7 +502,7 @@ function hasMethod (abi: TAbiItem[], name: string) {
     return abi.some(item => item.type === 'function' && item.name === name);
 }
 
-function ensureDefaults (opts: IBlockChainExplorerParams) {
+function ensureDefaults (opts: IBlockChainExplorerFactoryParams) {
     opts ??= {};
 
     let hasNull = opts.ABI_CACHE == null
@@ -522,7 +543,7 @@ function ensureDefaults (opts: IBlockChainExplorerParams) {
 }
 
 
-class Client {
+class HttpClient {
 
     @memd.deco.queued({ throttle: 1000 / 5 })
     async get <TOut> (url: string, params?) {

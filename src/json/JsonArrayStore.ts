@@ -2,7 +2,7 @@ import alot from 'alot'
 import { JsonConvert } from 'class-json'
 import { Alot } from 'alot/alot'
 import { JsonStoreFs } from './JsonStoreFs'
-import type { IConstructor } from 'class-json/JsonSettings'
+import type { Constructor } from 'atma-utils'
 
 export interface IStoreOptions<T, TStorage = T> {
     path: string
@@ -12,7 +12,7 @@ export interface IStoreOptions<T, TStorage = T> {
     key: (x: Partial<T>) => string | number
     map? (x: TStorage): T
     serialize? (x: T): TStorage
-    Type?: IConstructor
+    Type?: Constructor
     format?: boolean
 }
 
@@ -171,7 +171,7 @@ export class JsonArrayStore<T> {
         let entry = x as T;
         let Type = this.options.Type;
         if (Type != null && entry instanceof Type === false) {
-            entry = new Type(x);
+            entry = new Type(x) as T;
         }
         this.array.push(entry);
         this.hash[key] = entry;

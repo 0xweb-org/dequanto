@@ -582,7 +582,7 @@ class AmmPairV3ContractStorageReader extends ContractStorageReaderBase {
         return this.$storage.get(['positions', key]);
     }
 
-    async observations(): Promise<{ blockTimestamp: number, tickCumulative: number, secondsPerLiquidityCumulativeX128: bigint, initialized: boolean }[65535]> {
+    async observations(): Promise<{ blockTimestamp: number, tickCumulative: number, secondsPerLiquidityCumulativeX128: bigint, initialized: boolean }[]> {
         return this.$storage.get(['observations', ]);
     }
 

@@ -305,7 +305,7 @@ export class  DeploymentsStorage {
             store
         ] = await Promise.all([
             this.client.getBlockNumber(),
-            this.client.getBlock(0),
+            this.client.getBlock('earliest'),
             this.getDeploymentsStore()
         ]);
         let deployments = await store.getAll();
@@ -313,6 +313,10 @@ export class  DeploymentsStorage {
             // Nothing to remove: No deployments
             return;
         }
+        if (block0 == null) {
+            block0 = { timestamp: 0 } as any;
+        }
+
         let stale = deployments.filter(x => {
             return x.timestamp == null
                 // was deployed earlier as current genesis block

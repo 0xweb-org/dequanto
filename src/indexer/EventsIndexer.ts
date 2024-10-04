@@ -254,9 +254,9 @@ export class EventsIndexer <T extends ContractBase> {
 
         for (let i = 0; i < ranges.length; i++) {
             let range = ranges[i];
-            let { fromBlock, toBlock, events } = range;
+            let { fromBlock, toBlock, events: rangeEvents } = range;
 
-            let fetched = await contract.getPastLogs(events, {
+            let fetched = await contract.getPastLogs(rangeEvents?.length > 0 ? rangeEvents : events, {
                 streamed: options?.streamed,
                 addresses: this.options.addresses,
                 fromBlock: fromBlock,

@@ -1,9 +1,8 @@
 import memd from 'memd';
 import { $require } from '@dequanto/utils/$require';
 import { File, FileSafe } from 'atma-io';
-import { class_Dfr } from 'atma-utils';
+import { class_Dfr, type Constructor } from 'atma-utils';
 import { JsonConvert } from 'class-json';
-import type { IConstructor } from 'class-json/JsonSettings'
 
 
 export class JsonStoreFs<T> {
@@ -22,7 +21,7 @@ export class JsonStoreFs<T> {
 
     constructor (
         public path: string
-        , public Type?: IConstructor
+        , public Type?: Constructor
         , public mapFn?: (x: T) => any
         , public format?: boolean
         , public $default?: T
@@ -48,7 +47,8 @@ export class JsonStoreFs<T> {
     }
     public cleanCache () {
         this.data = null;
-        this.file.pending = null;
+        // Should we do this? clear pending promise
+        (this.file as any).pending = null;
         this.file.content = null;
 
         memd.fn.clearMemoized(this.readInner);

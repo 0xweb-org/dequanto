@@ -6,14 +6,13 @@ import { TxWriter } from '@dequanto/txs/TxWriter';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $logger } from '@dequanto/utils/$logger';
 import { Everlog } from '@everlog/core';
-import { ILogger } from 'everlog/interfaces/ILogger';
-import { ICsvColumnValue } from 'everlog/model/ICsvColumn';
 import { TEth } from '@dequanto/models/TEth';
 import { $account } from '@dequanto/utils/$account';
+import { IChannel } from '@everlog/core/interfaces/IChannel';
 
 
 export class TxLoggerService {
-    logs: ILogger;
+    logs: IChannel;
 
     constructor(public name: string) {
         this.logs = Everlog.createChannel(name, {
@@ -90,7 +89,7 @@ export class TxLoggerService {
         });
     }
 
-    async logTransaction (action: string, tx: TxWriter, onReceipt?: (receipt: TEth.TxReceipt) => Promise<ICsvColumnValue[]> ) {
+    async logTransaction (action: string, tx: TxWriter, onReceipt?: (receipt: TEth.TxReceipt) => Promise<any[]> ) {
         if (tx == null) {
             $logger.log(`TxLogger - Tx is undefined, possible reason: was not sent`);
             this.logs.writeRow([
@@ -132,7 +131,8 @@ export class TxLoggerService {
             receipt.status,
             Math.round((Date.now() - started) / 1000) + 's',
             receipt.gasUsed,
-        ], params);
+            ...params
+        ]);
 
         return receipt;
     }

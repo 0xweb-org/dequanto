@@ -599,10 +599,10 @@ namespace Gen {
         return { fnInputArguments, callInputArguments, fnResult };
     }
 
-    function isObjectParams (params: { name, type }[]) {
+    function isObjectParams (params: { name?, type }[]) {
         return params?.every(x => Boolean(x.name));
     }
-    function serializeMethodAbiReturns (params: { name, type, components? }[]) {
+    function serializeMethodAbiReturns (params: { name?, type, components? }[]) {
         if (params == null) {
             return '';
         }
@@ -611,7 +611,7 @@ namespace Gen {
         // }
         return params?.map(x => serializeMethodAbiReturnsSingle(x)).join(',');
     }
-    function serializeMethodAbiReturnsSingle (param: { name, type, components? }) {
+    function serializeMethodAbiReturnsSingle (param: { name?, type, components? }) {
         if (param == null) {
             return null;
         }
@@ -625,7 +625,7 @@ namespace Gen {
         // }
         return param.type;
     }
-    function serializeMethodTsReturns (params: { name, type }[]) {
+    function serializeMethodTsReturns (params: { name?, type }[]) {
         if (params == null || params.length === 0) {
             params = [ { name: '', type: 'uint256' } ];
         }

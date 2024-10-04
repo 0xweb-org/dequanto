@@ -3,7 +3,7 @@
         "baseUrl": "./",
         "paths": {
             "@dequanto/*": [ "src/*" ],
-            "@dequanto-contracts/*": [ "contracts/*" ]
+            "@dequanto-contracts/*": [ "src/prebuilt/*" ]
         },
         "typeRoots": [
             "node_modules/@types",
@@ -11,14 +11,16 @@
         ],
         "types": ["node", "assertion"],
 
-        "outDir": "dist",
+        "outDir": "./lib/types",
         "module": "CommonJS",
         "moduleResolution": "node",
         "experimentalDecorators": true,
-        "target": "es2020",
-        "lib": ["dom", "es2018"],
+        "target": "es2021",
+        "lib": ["dom", "es2021"],
         "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true
+        "allowSyntheticDefaultImports": true,
+        "emitDeclarationOnly": true,
+        "declaration": true
     },
     "transformers": {
         "before": ["ts-nameof"]
@@ -32,6 +34,8 @@
         "test",
         "**/*.spec.ts",
         "**/*.act.ts",
+        "src/tokens/TokenSwapService.ts",
+        "src/tokens/defi/paraswap/*",
         "src/gen/ContractTemplate.ts",
         "src/gen/ContractStorageReaderTemplate.ts",
         "src/bridges/hop/HopBridge.ts",

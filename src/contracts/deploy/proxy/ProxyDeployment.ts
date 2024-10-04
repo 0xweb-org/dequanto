@@ -7,7 +7,7 @@ import { Constructor } from 'atma-utils';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
 import { $require } from '@dequanto/utils/$require';
 import { $address } from '@dequanto/utils/$address';
-import { l } from '@dequanto/utils/$logger';
+import { $logger, l } from '@dequanto/utils/$logger';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import { DeploymentsStorage } from '../storage/DeploymentsStorage';
 import { $proxyDeploy } from './$proxyDeploy';
@@ -193,7 +193,7 @@ export class ProxyDeployment {
             if ($address.eq(address, implAddress) === false) {
                 await this.requireCompatibleStorageLayout(proxyId, ctx);
 
-                console.log(`Upgrading ProxyAdmin(${contractProxyAdmin.address}) to ${implAddress} (${v}) from ${address}`);
+                $logger.log(`Upgrading ProxyAdmin(${contractProxyAdmin.address}) to ${implAddress} (${v}) from ${address}`);
                 let receipt = await Interfaces.call(
                     deployer,
                     contractProxyAdmin,

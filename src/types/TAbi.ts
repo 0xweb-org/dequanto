@@ -17,7 +17,7 @@ export interface TAbiItem {
 }
 
 export interface TAbiInput {
-    name: string;
+    name?: string;
     type: string;
     indexed?: boolean;
 	components?: TAbiInput[];
@@ -25,7 +25,7 @@ export interface TAbiInput {
 }
 
 export interface TAbiOutput {
-    name: string;
+    name?: string;
     type: string;
 	components?: TAbiOutput[];
     internalType?: string;

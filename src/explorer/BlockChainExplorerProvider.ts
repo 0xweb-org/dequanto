@@ -6,7 +6,7 @@ import { Etherscan } from './Etherscan';
 import { Polyscan } from './Polyscan';
 import { XDaiscan } from '@dequanto/chains/xdai/XDaiscan';
 import { $config } from '@dequanto/utils/$config';
-import { BlockChainExplorerFactory, IBlockChainExplorerParams } from './BlockChainExplorerFactory';
+import { BlockChainExplorerFactory, IBlockChainExplorerFactoryParams } from './BlockChainExplorerFactory';
 import { Evmscan } from './Evmscan';
 import { IBlockChainExplorer } from './IBlockChainExplorer';
 import { Constructor } from 'atma-utils';
@@ -18,13 +18,13 @@ export namespace BlockChainExplorerProvider {
     export function get (platform: TPlatform): IBlockChainExplorer {
         switch (platform) {
             case 'bsc':
-                return di.resolve(Bscscan);
+                return di.resolve(Bscscan, 'bsc');
             case 'eth':
-                return di.resolve(Etherscan);
+                return di.resolve(Etherscan, 'eth');
             case 'polygon':
-                return di.resolve(Polyscan);
+                return di.resolve(Polyscan, 'polygon');
             case 'arbitrum':
-                return di.resolve(Arbiscan);
+                return di.resolve(Arbiscan, 'arbitrum');
             case 'xdai':
                 return di.resolve(XDaiscan);
             case 'hardhat':
@@ -50,7 +50,7 @@ export namespace BlockChainExplorerProvider {
         registry[platform] = explorer;
     }
 
-    export function create(options: IBlockChainExplorerParams) {
+    export function create(options: IBlockChainExplorerFactoryParams) {
         return BlockChainExplorerFactory.create(options);
     }
 }

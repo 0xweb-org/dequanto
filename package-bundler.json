@@ -1,42 +1,28 @@
 {
     "apps": {
-        "umd": {
-            "file": "exports/core.lib.ts",
-            "outputMain": "lib/umd/dequanto.js",
-            "js": [],
-            "package": {
-                "module": "commonjs",
-                "moduleName": "dequanto",
-                "moduleWrapper": "umd",
-                "commonjs": {
-                    "output": "simplified"
-                }
-            },
-            "dynamicDependencies": [
-                "^readline$",
-                "^https?$",
-                "atma-io",
-                "atma-utils",
-                "class-json",
-                "appcfg",
-                "everlog",
-                "^@noble",
-                "^@scure",
-                "^debug$",
-                "^hardhat$",
-                "^child_process$",
-                "^crypto$",
-                "^fs$",
-                "^os$",
-                "^path$",
-                "^assert$",
-                "^stream$",
-                "^ws$",
-                "^@solidity-parser"
+        "cjs": {
+            "//file": "**.ts",
+            "file": "blocks/**.ts",
+            "ignore": [
+                "bridges/.+",
+                "config/dequanto.d.ts",
+                "tokens/TokenSwapService.ts",
+                "tokens/defi/paraswap",
+                "exp.ts",
+                ".spec.ts$"
             ],
-
+            "combine": [
+                "prebuilt/openzeppelin/**.ts"
+            ],
+            "base": "/src/",
+            "outputBase": "/lib/cjs",
+            "outputExtension": "js",
+            "outputSources": "",
+            "js": [],
             "extensions": {
-                "yml": { "type": "js" }
+                "yml": {
+                    "type": "js"
+                }
             },
             "settings": {
                 "//atma-io-middleware-condcomments": {
@@ -53,12 +39,16 @@
                                     "src/*"
                                 ],
                                 "@dequanto-contracts/*": [
-                                    "contracts/*"
+                                    "src/prebuilt/*"
                                 ]
                             },
                             "module": "CommonJS",
                             "experimentalDecorators": true,
-                            "target": "ES2022",
+                            "target": "es2021",
+                            "lib": [
+                                "dom",
+                                "es2021"
+                            ],
                             "esModuleInterop": true,
                             "allowSyntheticDefaultImports": true
                         }
@@ -68,6 +58,7 @@
         },
         "esm": {
             "file": "**.ts",
+            "//file": "blocks/**.ts",
             "ignore": [
                 "bridges/.+",
                 "config/dequanto.d.ts",
@@ -83,11 +74,11 @@
             "outputBase": "/lib/esm",
             "outputExtension": "mjs",
             "outputSources": "",
-
             "js": [],
-
             "extensions": {
-                "yml": { "type": "js" }
+                "yml": {
+                    "type": "js"
+                }
             },
             "settings": {
                 "//atma-io-middleware-condcomments": {
@@ -110,7 +101,10 @@
                             "module": "ES2022",
                             "experimentalDecorators": true,
                             "target": "es2021",
-                            "lib": ["dom", "es2021"],
+                            "lib": [
+                                "dom",
+                                "es2021"
+                            ],
                             "esModuleInterop": true,
                             "allowSyntheticDefaultImports": true
                         }
@@ -166,7 +160,8 @@
             "^stream$",
             "^ws$",
             "^@solidity-parser",
-            "^signal-exit$"
+            "^signal-exit$",
+            "^papaparse$"
         ],
         "middlewares": {
             "jss": [

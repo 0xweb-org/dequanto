@@ -401,18 +401,14 @@ export abstract class ContractBase {
     }
     protected $extractLog (log: TEth.Log, mix: string | string[] | TAbiItem | TAbiItem[] | '*') {
         let abi: TAbiItem | TAbiItem[];
-        if (typeof mix === 'string') {
-            abi = mix === '*' ? this.abi : this.$getAbiItem('event', mix)
+
+        let mixArr = typeof mix === 'string' ? [ mix ] : ((mix as TAbiItem[] | string[])  ?? []);
+        if (mixArr.length === 0 || (mixArr.length === 1 && mixArr[0] === '*')) {
+            abi = this.abi;
         } else {
-            if ($is.ArrayOfStrings(mix)) {
-                if (mix.length === 1 && mix[0] === '*') {
-                    return this.$extractLog(log, '*');
-                }
-                abi = mix.map(x => this.$getAbiItem('event', x));
-            } else {
-                abi = mix;
-            }
+            abi = mixArr.map(x => typeof x === 'string' ? this.$getAbiItem('event', x) : x);
         }
+
         let parsed = $contract.parseLogWithAbi(log, abi);
         return parsed;
     }

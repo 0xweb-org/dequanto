@@ -278,9 +278,10 @@ export abstract class Web3Client implements IWeb3Client {
             }
         });
     }
-    getBlock(nr: number): Promise<TEth.Block> {
+    getBlock(nr: number | "earliest" | "latest" | "pending" | "safe" | "finalized"): Promise<TEth.Block> {
         return this.pool.call(web3 => {
-            return web3.rpc.eth_getBlockByNumber($hex.ensure(nr), false);
+            let mix = typeof nr === 'number' ? $hex.ensure(nr) : nr;
+            return web3.rpc.eth_getBlockByNumber(mix, false);
         });
     }
     getBlocks(nrs: number[]): Promise<TEth.Block<TEth.Hex>[]> {

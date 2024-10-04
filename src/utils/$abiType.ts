@@ -90,7 +90,7 @@ export namespace $abiType {
         }
         return getTsType(type);
     }
-    export function getTsType ($abiType: TAbiInput['type'], $abi?: { name, components? }) {
+    export function getTsType ($abiType: TAbiInput['type'], $abi?: { name?, components? }) {
         let rgxArray = /\[(?<size>\d+)?\]$/
         let isArray = rgxArray.test($abiType);
         if (isArray) {

@@ -13,7 +13,7 @@ import { $require } from '@dequanto/utils/$require';
 
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TEth } from '@dequanto/models/TEth';
-import type { ILogger } from '@everlog/core/interfaces/ILogger';
+import { IChannel } from '@everlog/core/interfaces/IChannel';
 
 
 interface IBlockIndexer {
@@ -41,7 +41,7 @@ export class BlocksWalker {
     };
 
     private cachedState: InstanceType<typeof FileSafe>
-    private everlog: ILogger;
+    private everlog: IChannel;
 
     private ranges: PackedRanges;
     private walker: RangeWalker;

@@ -1,5 +1,6 @@
 import alot from 'alot';
 import { File } from 'atma-io';
+import { Constructor, class_Uri } from 'atma-utils';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
 import { ContractDeployer } from '@dequanto/contracts/deploy/ContractDeployer';
 import { Deployments } from '@dequanto/contracts/deploy/Deployments';
@@ -10,7 +11,6 @@ import { $is } from '@dequanto/utils/$is';
 import { $path } from '@dequanto/utils/$path';
 import { $promise } from '@dequanto/utils/$promise';
 import { $require } from '@dequanto/utils/$require';
-import { Constructor, class_Uri } from 'atma-utils';
 import { IBlockChainExplorer } from './IBlockChainExplorer';
 import { $contract } from '@dequanto/utils/$contract';
 import { $abiCoder } from '@dequanto/abi/$abiCoder';
@@ -114,6 +114,7 @@ export class ContractVerifier {
         if (ctorAbi?.inputs?.length > 0) {
             if (opts?.constructorParams == null) {
                 let tx = await this.deployments.client.getTransaction(deployment.tx);
+                $require.notNull(tx, `Tx ${deployment.tx} not found in ${this.deployments.client.network}`);
                 let parsedArguments = $contract.decodeDeploymentArguments(tx.input, ctorAbi);
                 constructorArguments = parsedArguments.encoded;
             } else {
@@ -174,6 +175,9 @@ export class ContractVerifier {
                 arguments: constructorArguments,
                 sourceCode: sourcesSerializedWrapped
             });
+            if (guid == null) {
+                return { status: 'verified' };
+            }
 
             return {
                 status: 'pending',
@@ -233,6 +237,10 @@ export class ContractVerifier {
                 address: address,
                 expectedImplementation: proxyFor
             });
+            if (guid == null) {
+                return { status: 'verified' };
+            }
+
             return {
                 status: 'pending',
                 guid
