@@ -92,10 +92,14 @@ export class ContractVerifier {
         $require.notNull(deployment, `Deployment not found for ${opts?.id ?? contractName}`);
         let address = opts?.address ?? deployment.implementation ?? deployment.address;
 
-        this.logger.log(`Checking if already verified ${address}`);
-        let currentSources = await this.explorer.getContractSource(address);
-        if ($is.notEmpty(currentSources?.ContractName)) {
-            return { status:'verified' };
+        try {
+            this.logger.log(`Checking if already verified ${address}`);
+            let currentSources = await this.explorer.getContractSource(address);
+            if ($is.notEmpty(currentSources?.ContractName)) {
+                return { status:'verified' };
+            }
+        } catch (error) {
+            // ignore any pre-check error and continue with the verification
         }
 
         let deployedBytecode = await client.getCode(address);
