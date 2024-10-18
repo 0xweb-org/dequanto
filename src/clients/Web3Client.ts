@@ -667,17 +667,8 @@ namespace RangeWorker {
                 let fromBlock = range.fromBlock;
                 let toBlockExcluded = fromBlock + blockRange - 1;
 
-                let arr = await wClient.rpc.eth_getLogs({
-                    ...filter,
-                    fromBlock: $hex.ensure(fromBlock),
-                    toBlock: $hex.ensure(toBlockExcluded),
-                });
-                return {
-                    paged: arr,
-                    fromBlock,
-                    toBlockExcluded: toBlockExcluded,
-                    blockRange
-                }
+                let { result } = await LogsFetcher.fetch(wClient, fromBlock, toBlockExcluded, blockRange, filter);
+                return result;
             }, {
                 blockRangeCount: blockRange,
                 method: 'eth_getLogs',
@@ -737,6 +728,36 @@ namespace RangeWorker {
             });
             return fetchPaged(client, filter, range, knownLimits);
         }
+    }
+}
+
+namespace LogsFetcher {
+    export async function fetch (client: WClient, fromBlock: number, toBlockExcluded: number, blockRange: number, filter: RpcTypes.Filter) {
+
+        const MAX_RESULTS = client.blockRangeLimits?.results ?? 10_000;
+        return await client.call(async wClient => {
+            let arr = await wClient.rpc.eth_getLogs({
+                ...filter,
+                fromBlock: $hex.ensure(fromBlock),
+                toBlock: $hex.ensure(toBlockExcluded),
+            }) as RpcTypes.Log[];
+            if (arr.length > 0 && arr.length % MAX_RESULTS === 0) {
+                $logger.log(`Too many results: ${arr.length} at block ${fromBlock} to ${toBlockExcluded}. Fetching sub-ranges.`);
+                let lastBlock = arr[arr.length - 1].blockNumber;
+
+                let { result } = await fetch (client, lastBlock, toBlockExcluded, blockRange, filter);
+
+                // The sub-range query includes the last block, as some results might be skipped that are in the same block.
+                arr = arr.filter(x => x.blockNumber !== lastBlock);
+                arr = arr.concat(result.paged);
+            }
+            return {
+                paged: arr,
+                fromBlock,
+                toBlockExcluded: toBlockExcluded,
+                blockRange
+            }
+        });
     }
 }
 
