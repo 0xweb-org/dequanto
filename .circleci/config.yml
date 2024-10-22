@@ -13,7 +13,7 @@ jobs:
     docker:
       - image: cimg/node:20.4.0-browsers
     steps:
-      - browser-tools/install-chrome
+      - browser-tools/install-firefox
       - checkout
       - run:
           name: NPM Install
@@ -29,7 +29,7 @@ jobs:
           command: sleep 5;
       - run:
           name: Launch Web
-          command: google-chrome http://localhost:5777/utest/
+          command: sleep 10 && firefox "http://127.0.0.1:5777/utest/"
           background: true
       - run:
           command: sleep 5;
