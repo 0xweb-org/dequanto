@@ -310,7 +310,7 @@ export namespace $date {
             return new Date(mix);
         }
         if (mix == null || mix === '') {
-            return null;
+            return default_;
         }
         if (mix.includes('T') || mix.includes('Z')) {
             return new Date(mix);

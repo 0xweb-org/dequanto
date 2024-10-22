@@ -667,7 +667,10 @@ namespace RangeWorker {
                 let fromBlock = range.fromBlock;
                 let toBlockExcluded = fromBlock + blockRange - 1;
 
-                let { result } = await LogsFetcher.fetch(wClient, fromBlock, toBlockExcluded, blockRange, filter);
+                let { result, error } = await LogsFetcher.fetch(wClient, fromBlock, toBlockExcluded, blockRange, filter);
+                if (error != null) {
+                    throw error;
+                }
                 return result;
             }, {
                 blockRangeCount: blockRange,

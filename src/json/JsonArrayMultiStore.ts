@@ -140,6 +140,44 @@ export class JsonArrayMultiStore<T> {
         return store.getSingle(key);
     }
 
+    async getLatest (groupValue?: number) {
+        let groups = await this.getGroupedFiles();
+        if (groupValue == null) {
+            groupValue = alot(groups)
+                .sortBy(x => x.range.start, 'desc')
+                .first()
+                ?.range
+                .end;
+        }
+        if (groupValue == null) {
+            return null;
+        }
+
+        let before = alot(groups)
+            .filter(x => x.range?.start <= groupValue)
+            .sortBy(x => x.range.start, 'desc')
+            .toArray();
+        for (let group of before) {
+            let store = this.getStore(`${group.range.start}-${group.range.end}`);
+            let arr = await store.getAll();
+            let latest = alot(arr)
+                .map(item => {
+                    return {
+                        key: this.options.groupKey(item),
+                        item: item
+                    };
+                })
+                .filter(x => x.key <= groupValue)
+                .sortBy(x => x.key, 'desc')
+                .first();
+
+            if (latest) {
+                return latest.item;
+            }
+        }
+        return null;
+    }
+
     async removeMany(arr: Partial<T>[]): Promise<void> {
         let groupSize = this.options.groupSize;
         await alot(arr)
