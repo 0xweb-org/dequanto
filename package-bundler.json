@@ -1,8 +1,8 @@
 {
     "apps": {
         "cjs": {
-            "//file": "**.ts",
-            "file": "blocks/**.ts",
+            "file": "**.ts",
+            "//file": "blocks/**.ts",
             "ignore": [
                 "bridges/.+",
                 "config/dequanto.d.ts",
@@ -137,6 +137,7 @@
         "dynamicDependencies": [
             "^readline$",
             "^https?$",
+            "a-di",
             "atma-io",
             "atma-server",
             "atma-logger",

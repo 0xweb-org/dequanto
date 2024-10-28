@@ -35,7 +35,7 @@ module.exports = {
                             "class-json": "./node_modules/class-json/lib/esm/json.mjs",
                             "@everlog/core": "./node_modules/@everlog/core/lib/esm/browser/everlog.mjs",
                         }
-                    })
+                    });
                     document.head.appendChild(tag);
                 },
 
@@ -43,9 +43,12 @@ module.exports = {
             },
             tests: 'test/browser/**.spec.ts'
         },
-        // node : {
-        //     tests: 'test/**.spec.ts'
-        // }
+        node : {
+            $config: {
+                includejs: includeSettings(),
+            },
+            tests: 'test/**.spec.ts'
+        }
     }
 };
 
@@ -53,7 +56,14 @@ module.exports = {
 function includeSettings() {
 
     return {
-        extentionDefault: { js: 'ts' },
+        extentionDefault: {
+            js: ['ts', 'mjs'],
+            mjs: 'js'
+        },
+        extensionDefault: {
+            js: ['ts', 'mjs'],
+            mjs: 'js'
+        },
         amd: true,
         routes: {
             "@dequanto": "/src/{0}"

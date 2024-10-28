@@ -1,7 +1,7 @@
 //import Foo from '../lib/umd/dequanto.js'
 //const foo = require('../lib/umd/dequanto.js');
 //import { Web3ClientFactory } from '../../src/exports.lib.ts'
-import { $abiCoder, $txData  } from '../../lib/umd/dequanto.js'
+import { $abiCoder, $txData  } from '../../dist/umd/dequanto.js'
 
 // import { class_Dfr } from 'atma-utils';
 // console.log('class_Dfr', class_Dfr);
