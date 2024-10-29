@@ -56,14 +56,6 @@ module.exports = {
 function includeSettings() {
 
     return {
-        extentionDefault: {
-            js: ['ts', 'mjs'],
-            mjs: 'js'
-        },
-        extensionDefault: {
-            js: ['ts', 'mjs'],
-            mjs: 'js'
-        },
         amd: true,
         routes: {
             "@dequanto": "/src/{0}"
