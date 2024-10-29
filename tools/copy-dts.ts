@@ -43,6 +43,8 @@ async function process () {
         }
 
     }).toArrayAsync();
+
+    await Directory.removeAsync(`./lib/types/`);
 }
 
 export { process }

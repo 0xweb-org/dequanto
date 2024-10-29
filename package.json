@@ -1,6 +1,6 @@
 {
     "name": "dequanto",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "author": {
         "name": "Alex Kit",
         "email": "alex.kit@atmajs.com"
@@ -21,8 +21,7 @@
         "build": "app-bundler",
         "build-cjs": "app-bundler --app cjs",
         "build-esm": "app-bundler --app esm",
-        "build-dts": "tsc -p tsconfig.umd.json && atma run tools/build-dts",
-        "build-types": "tsc -p tsconfig-src.json",
+        "build-types": "tsc -p tsconfig-src.json && atma run tools/copy-dts",
         "watch": "app-bundler --watch",
         "server": "atma server --TEST",
         "test": "atma --openssl-legacy-provider test --config='settings.base=./' --TEST",
