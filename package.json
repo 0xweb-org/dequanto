@@ -1,6 +1,14 @@
 {
     "name": "dequanto",
     "version": "0.1.2",
+    "author": {
+        "name": "Alex Kit",
+        "email": "alex.kit@atmajs.com"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/0xweb-org/dequanto"
+    },
     "main": "./lib/umd/dequanto.js",
     "types": "./lib/umd/dequanto.d.ts",
     "exports": {
