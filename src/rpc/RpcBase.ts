@@ -42,12 +42,16 @@ export abstract class RpcBase {
     async batch (arr: TRpc.IRpcAction[]): Promise<any[]> {
         let body = arr.map(req => this._wrapBody(req));
         let resp = await this._transport.request(body);
+        if (Array.isArray(resp) === false && arr.length === 1 && 'error' in resp === false && 'result' in resp === true) {
+            // Some RPCs return a single response instead of an array for 1 RpcAction in Batch
+            resp = [ resp ];
+        }
         if (Array.isArray(resp) === false) {
             if ('error' in resp) {
                 let error = (resp as any).error;
                 throw new RpcError(error);
             }
-            throw new Error(`Invalid response, though no error is returned`);
+            throw new Error(`RpcBatch: invalid response, array expected: ${ JSON.stringify(resp) }`);
         }
         return resp.map((resp, i) => {
             let req = arr[i];
