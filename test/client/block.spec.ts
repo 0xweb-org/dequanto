@@ -12,8 +12,8 @@ UTest({
     async 'fetch block by time' () {
         let client = await Web3ClientFactory.getAsync('eth');
         let block = new BlockDateResolver(client);
-        let nr = await block.getBlockNumberFor($date.parse('03-03-2024 10:20'));
-        eq_(nr, 19353706);
+        let nr = await block.getBlockNumberFor(new Date('2024-03-03T10:20:00Z'));
+        eq_(nr, 19354006);
     },
 
 })
