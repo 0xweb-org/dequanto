@@ -27,7 +27,7 @@
         "@openzeppelin/contracts": "^4.9.3",
         "@types/node": "^20.12.11",
         "@types/sinon": "^10.0.13",
-        "app-bundler": "^0.2.12",
+        "app-bundler": "^0.2.13",
         "atma-io-middleware-base": "^1.0.51",
         "atma-io-middleware-importer": "^1.1.38",
         "atma-io-middleware-uglify": "^1.1.25",
