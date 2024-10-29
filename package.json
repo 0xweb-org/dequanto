@@ -1,6 +1,6 @@
 {
     "name": "dequanto",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "main": "./lib/umd/dequanto.js",
     "types": "./lib/umd/dequanto.d.ts",
     "exports": {
@@ -19,7 +19,8 @@
         "server": "atma server --TEST",
         "test": "atma --openssl-legacy-provider test --config='settings.base=./' --TEST",
         "contracts": "atma act ./actions/contracts.act.ts",
-        "typecheck": "tsc --project tsconfig-src.json --noEmit"
+        "typecheck": "tsc --project tsconfig-src.json --noEmit",
+        "release": "atma bump && npm run build && git add -A && git commit -am 'bump' && git push && git push origin master:release"
     },
     "devDependencies": {
         "@0xweb/hardhat": "^0.1.15",
