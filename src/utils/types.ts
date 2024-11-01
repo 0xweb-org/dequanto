@@ -1,4 +1,6 @@
+import { IAccount } from '@dequanto/models/TAccount';
 import { TEth } from '@dequanto/models/TEth';
+import { TxWriter } from '@dequanto/txs/TxWriter';
 
 type NoneMethodKeys<T> = {
     [P in keyof T]: T[P] extends ((...args) => any) ? never : P;
@@ -31,10 +33,8 @@ export type ThenArg<T> = T extends PromiseLike<infer U> ? U : T
 
 export type ParametersFromSecond<T extends (x, ...args: any) => any> = T extends (x, ...args: infer P) => any ? P : never;
 
-
 export type TCallback<TResult = any> = (error: Error, result?: TResult) => void
 export type TFnWithCallback<TArgs extends any[], TResult> = (...args: [...TArgs, TCallback<TResult>]) => void
-
 
 export type DataLike<T> = T extends bigint
     ? bigint | number | TEth.Hex
@@ -49,10 +49,12 @@ export type DataLike<T> = T extends bigint
         )
     );
 
-
-
 export type TOverrideReturns<TObject extends { }, TReturn> = {
     [P in keyof TObject]: TObject[P] extends (...args: infer TParams) => any
         ? (...args: TParams) => TReturn
         : never;
 }
+
+export type TTxWriteMethodKeys<T> = {
+    [P in keyof T]: T[P] extends ((sender: IAccount, ...args) => (Promise<TxWriter>)) ? P : never;
+}[keyof T];

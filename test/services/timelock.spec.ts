@@ -1,6 +1,6 @@
 import { TimelockController } from '@dequanto-contracts/openzeppelin/TimelockController';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider'
-import { TimelockService } from '@dequanto/services/TimelockService';
+import { TimelockService } from '@dequanto/services/TimelockService/TimelockService';
 import { $address } from '@dequanto/utils/$address';
 import { $date } from '@dequanto/utils/$date';
 import { l } from '@dequanto/utils/$logger';

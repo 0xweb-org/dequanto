@@ -1,5 +1,5 @@
+import memd from 'memd';
 import { TimelockController } from '@dequanto-contracts/openzeppelin/TimelockController';
-import { Web3Client } from '@dequanto/clients/Web3Client';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
 import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
 import { IAccount } from '@dequanto/models/TAccount';
@@ -16,69 +16,16 @@ import { $number } from '@dequanto/utils/$number';
 import { $platform } from '@dequanto/utils/$platform';
 import { $require } from '@dequanto/utils/$require';
 import { File } from 'atma-io';
-import memd from 'memd';
+import { ITimelockTx, ITimelockTxParamsNormalized, ITimelockTxParams, ITimelockService, ETimelockTxStatus } from './ITimelockService';
+import { TTxWriteMethodKeys } from '@dequanto/utils/types';
 
 
-interface ITimelockTx {
-    // operation hash, unique as includes random salt
-    id: TEth.Hex
-    // operation key, should be unique only within pending operations
-    key: TEth.Hex
-
-    salt: TEth.Hex
-
-    title?: string
-    sender: string | TAddress
-
-    to: TAddress | TAddress[]
-    data: TEth.Hex | TEth.Hex[]
-    value?: TEth.Hex | TEth.Hex[]
-    predecessor?: TEth.Hex
-
-    createdAt: number
-    validAt: number
-
-    status: 'pending' | 'completed' | 'canceled'
-    txSchedule: TEth.Hex
-    txExecute?: TEth.Hex
-    txCancel?: TEth.Hex
-}
-
-interface ITimelockTxParams {
-    title?: string
-
-    sender: IAccount
-    to: TAddress | TAddress[]
-    data: TEth.Hex | TEth.Hex[]
-
-    value?: bigint | bigint[]
-    predecessor?: TEth.Hex
-    delay?: bigint
-}
-
-interface ITimelockTxParamsNormalized {
-    sender: IAccount
-    to: TAddress | TAddress[]
-    data: TEth.Hex | TEth.Hex[]
-
-    title: string
-    value: bigint | bigint[]
-    predecessor: TEth.Hex
-    delay: bigint
-}
-
-export enum ETimelockTxStatus {
-    None = 'none',
-    Pending = 'pending',
-    Ready = 'ready',
-    Executed = 'completed',
-}
 
 type TTimelockController = ContractBase & Pick<TimelockController,
     'schedule' | 'scheduleBatch' | 'execute' | 'executeBatch' | 'getMinDelay' | 'cancel'
 >;
 
-export class TimelockService {
+export class TimelockService implements ITimelockService {
 
 
     constructor(
@@ -90,7 +37,7 @@ export class TimelockService {
             // Only for hardhat client. Default: false
             execute?: boolean
 
-            // Directory to store the submitted schedules, default: `./data/0x/`
+            // Directory to store the submitted schedules, default: `./0x/data/`
             dir?: string
         }
     ) {
@@ -143,7 +90,7 @@ export class TimelockService {
     */
     async process <
         T extends ContractBase,
-        TMethodName extends WriteMethodKeys<T>,
+        TMethodName extends TTxWriteMethodKeys<T>,
     > (
         uniqueTaskName: string,
         sender: IAccount,
@@ -170,7 +117,7 @@ export class TimelockService {
     */
     async processBatch <
         T extends ContractBase,
-        TMethodName extends WriteMethodKeys<T>,
+        TMethodName extends TTxWriteMethodKeys<T>,
     > (
         uniqueTaskName: string,
         sender: IAccount,
@@ -225,7 +172,7 @@ export class TimelockService {
 
     async scheduleCall <
         T extends ContractBase,
-        TMethodName extends WriteMethodKeys<T>,
+        TMethodName extends TTxWriteMethodKeys<T>,
     > (
         sender: IAccount,
         contract: T,
@@ -253,7 +200,7 @@ export class TimelockService {
 
     async executeCall <
         T extends ContractBase,
-        TMethodName extends WriteMethodKeys<T>,
+        TMethodName extends TTxWriteMethodKeys<T>,
     > (
         sender: IAccount,
         contract: T,
@@ -587,7 +534,7 @@ export class TimelockService {
     }
     private async getTxParamsNormalizedFromContract <
         T extends ContractBase,
-        TMethodName extends WriteMethodKeys<T>,
+        TMethodName extends TTxWriteMethodKeys<T>,
     > (
         title: string | '' | null,
         sender: IAccount,
@@ -630,7 +577,7 @@ export class TimelockService {
     @memd.deco.memoize({ perInstance: true })
     private async getStore () {
         let { platform, network } = this.timelock.client;
-        let dir = this.options?.dir ?? `data/0x`;
+        let dir = this.options?.dir ?? `0x/data`;
 
         let path = getPath(platform, dir);
         if (platform === 'hardhat' && network !== platform) {
@@ -641,7 +588,7 @@ export class TimelockService {
             }
         }
         function getPath (p: TPlatform, directory: string) {
-            return `/${directory}/timelocks-${ $platform.toPath(p) }.json`
+            return `/${directory}/timelocks/${ $platform.toPath(p) }.json`
         }
         return new JsonArrayStore<ITimelockTx>({
             path,
@@ -649,12 +596,6 @@ export class TimelockService {
         });
     }
 }
-
-type WriteMethodKeys<T> = {
-    [P in keyof T]: T[P] extends ((sender: IAccount, ...args) => (Promise<TxWriter>)) ? P : never;
-}[keyof T];
-
-
 
 namespace util {
     export function toBigInt (mix: string | string[]) {
