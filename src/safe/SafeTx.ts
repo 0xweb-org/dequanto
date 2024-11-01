@@ -48,7 +48,7 @@ export class SafeTx {
                 [`uint8`, tx.operation ],
                 [`address`, tx.to],
                 [`uint256`, tx.value],
-                [`uint256`, $hex.getBytesLength(tx.data)],
+                [`uint256`, $hex.getBytesLength(tx.data ?? '0x')],
                 [`bytes`, tx.data]
             );
         });

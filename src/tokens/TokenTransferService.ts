@@ -83,7 +83,7 @@ export class TokenTransferService {
         token = await this.getToken(token);
         amount = this.getAmount(amount, token);
 
-        let isNative = this.tokenService.isNative(token.address);
+        let isNative = this.tokenService.isNative(token);
         if (isNative) {
             return this.transferNative(from, to, amount);
         }
@@ -98,7 +98,7 @@ export class TokenTransferService {
         return token;
     }
     isNativeToken (token: string | IToken): boolean {
-        return this.tokenService.isNative(typeof token === 'string' ? token : token.address);
+        return this.tokenService.isNative(typeof token === 'string' ? token : (token.address ?? token.symbol));
     }
 
     private async transferNativeAll (from: EoAccount, to: TAddress, opts?: { remainder: number | bigint }): Promise<TxWriter> {

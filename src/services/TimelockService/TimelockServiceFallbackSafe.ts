@@ -11,7 +11,7 @@ import memd from 'memd';
 import { ETimelockTxStatus, ITimelockTx, ITimelockTxParamsNormalized, ITimelockTxParams, ITimelockService } from './ITimelockService';
 
 
-export class TimelockService implements ITimelockService {
+export class TimelockServiceFallbackSafe implements ITimelockService {
 
 
     constructor(
@@ -209,11 +209,11 @@ export class TimelockService implements ITimelockService {
                 }
             );
 
-
+        let receipt = await tx.wait();
         return {
-            tx,
+            tx: tx,
             schedule: {
-                txExecute: tx.receipt.transactionHash,
+                txExecute: receipt.transactionHash,
                 status: ETimelockTxStatus.Executed,
             } as ITimelockTx
         };
