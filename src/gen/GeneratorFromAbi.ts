@@ -1,7 +1,7 @@
 import alot from 'alot';
 import { type TAbiItem } from '@dequanto/types/TAbi';
 import { TAddress } from '@dequanto/models/TAddress';
-import { File } from 'atma-io';
+import { env, File } from 'atma-io';
 import { class_Uri } from 'atma-utils';
 import { $abiType } from '@dequanto/utils/$abiType';
 import { $date } from '@dequanto/utils/$date';
@@ -296,6 +296,10 @@ export class GeneratorFromAbi {
             sourceFiles = await alot.fromObject(sources).mapAsync(async entry => {
                 let sourceFilename = /\/?([^/]+$)/.exec(entry.key)[1];
                 let sourcePath = entry.key;
+                let cwd = env.currentDir.toString().toLowerCase();
+                if (sourcePath.toLowerCase().startsWith(cwd)) {
+                    sourcePath = sourcePath.substring(cwd.length + 1);
+                }
                 // Remove: solc should load deps also from the root directory
                 // if (sourcePath.startsWith('@')) {
                 //     // handle @openzeppelin and other npm packages
