@@ -30,6 +30,8 @@ import { $address } from '@dequanto/utils/$address';
 import { $promise } from '@dequanto/utils/$promise';
 import { $date } from '@dequanto/utils/$date';
 import { $hex } from '@dequanto/utils/$hex';
+import { TAddress } from '@dequanto/models/TAddress';
+import { $contract } from '@dequanto/utils/$contract';
 
 export class HardhatProvider {
 
@@ -272,6 +274,7 @@ export class HardhatProvider {
         artifact: string
         source: IGeneratorSources
         ContractCtor: Constructor<T>
+        linkReferences?: Record<string /* path */, Record<string /* name */, any>>
     }> {
 
         solContractPath = $path.normalize(solContractPath);
@@ -353,7 +356,12 @@ export class HardhatProvider {
             });
         }
 
-        let { abi, bytecode, contractName } = await File.readAsync<{ abi, bytecode, contractName }> (output);
+        let { abi, bytecode, contractName, linkReferences } = await File.readAsync<{
+            abi,
+            bytecode,
+            contractName,
+            linkReferences: Record<string /* path */, Record<string /* name */, any>>
+        }> (output);
         let files = await Directory.readFilesAsync(dir, '*.sol');
         let { contract, ContractCtor } = ContractClassFactory.fromAbi<T>(null, abi, null, null, {
             $meta: {
@@ -379,6 +387,7 @@ export class HardhatProvider {
                 contractName: contractName ?? options?.contractName,
                 files: fileMap
             },
+            linkReferences,
             ContractCtor
         };
     }
@@ -397,6 +406,25 @@ export class HardhatProvider {
                 await Directory.removeAsync(tmpDir);
             } catch (_) { }
         }
+    }
+
+    async linkReferences (
+        bytecode: TEth.Hex,
+        linkReferences: Record<string /* path */, Record<string /* name */, any>>,
+        addresses: Record<string /* name */, TAddress>
+    ): Promise<TEth.Hex> {
+        for (let path in linkReferences) {
+            for (let name in linkReferences[path]) {
+                let address = addresses[name];
+                $require.AddressNotEmpty(address, `Address for "${path}:${name}" not found`);
+
+                let str = `${path}:${name}`;
+                let hash = $contract.keccak256(str, 'hex').substring(2, 34 + 2);
+                let placeholder = `__$${hash}$__`;
+                bytecode = bytecode.replaceAll(placeholder, address.substring(2)) as TEth.Hex;
+            }
+        }
+        return bytecode;
     }
 
     async compileCode (solidityCode: string, options: Parameters<HardhatProvider['deploySol']>[1] = {}) {

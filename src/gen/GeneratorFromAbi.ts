@@ -19,11 +19,11 @@ import { $str } from '@dequanto/solidity/utils/$str';
 
 export class GeneratorFromAbi {
 
-    static get Gen () {
+    static get Gen() {
         return Gen;
     }
 
-    async generate (abiJson: TAbiItem[], opts: {
+    async generate(abiJson: TAbiItem[], opts: {
         network: TPlatform
         name: string
         contractName: string
@@ -88,7 +88,6 @@ export class GeneratorFromAbi {
             .map(x => Gen.serializeEvent(x))
             .filter(Boolean)
             .map(Str.formatMethod);
-            ;
 
         let eventTypes = alot(abiJson)
             .filter(x => x.type === 'event')
@@ -120,7 +119,6 @@ export class GeneratorFromAbi {
         //     .map(x => Gen.serializeEventInterface(x))
         //     .filter(Boolean)
         //     .map(Str.formatMethod);
-            ;
 
         let methods = methodsArr.join('\n\n');
         let events = eventsArr.join('\n\n');
@@ -223,7 +221,7 @@ export class GeneratorFromAbi {
                 : void 0,
             class: this.getRelativePath(outputPath)
         };
-        let metaProperty = `$meta = ${ JSON.stringify(meta, null, 4) }` ;
+        let metaProperty = `$meta = ${JSON.stringify(meta, null, 4)}`;
 
 
         let storageReaderInitializer = '';
@@ -297,7 +295,13 @@ export class GeneratorFromAbi {
         if (sources && opts.saveSources !== false) {
             sourceFiles = await alot.fromObject(sources).mapAsync(async entry => {
                 let sourceFilename = /\/?([^/]+$)/.exec(entry.key)[1];
-                let path = class_Uri.combine(opts.output, outputDirectory, outputFilename, sourceFilename);
+                let sourcePath = entry.key;
+                // Remove: solc should load deps also from the root directory
+                // if (sourcePath.startsWith('@')) {
+                //     // handle @openzeppelin and other npm packages
+                //     sourcePath = `node_modules/${ sourcePath }`;
+                // }
+                let path = class_Uri.combine(opts.output, outputDirectory, outputFilename, sourcePath);
                 await File.writeAsync(path, entry.value.content, { skipHooks: true });
 
                 $logger.log(`Source code saved: ${path}`);
@@ -315,7 +319,7 @@ export class GeneratorFromAbi {
     }
 
 
-    private getRelativePath (path: string) {
+    private getRelativePath(path: string) {
         if (path == null) {
             return path;
         }
@@ -330,7 +334,7 @@ export class GeneratorFromAbi {
 
 namespace Gen {
 
-    export function serializeMethodTs (abi: TAbiItem) {
+    export function serializeMethodTs(abi: TAbiItem) {
         if (abi.type === 'constructor') {
             return serializeConstructorMethodTs(abi);
         }
@@ -340,7 +344,7 @@ namespace Gen {
         }
         return serializeWriteMethodTs(abi);
     }
-    export function serializeMethodTsOverloads (abis: TAbiItem[]) {
+    export function serializeMethodTsOverloads(abis: TAbiItem[]) {
         let isRead = abis.every(abi => $abiUtils.isReadMethod(abi));
         if (isRead) {
             return serializeReadMethodTsOverloads(abis);
@@ -349,7 +353,7 @@ namespace Gen {
     }
 
     // abi.length > 1 if has method overloads
-    export function serializeMethodInterfacesTs (name: string, abis: TAbiItem[]) {
+    export function serializeMethodInterfacesTs(name: string, abis: TAbiItem[]) {
         let args = abis.map(abi => {
             let { fnInputArguments } = serializeArgumentsTs(abi);
             return `[ ${fnInputArguments} ]`;
@@ -369,7 +373,7 @@ namespace Gen {
         };
     }
 
-    export function serializeMethodTypeTs (name: string, abis: TAbiItem[]) {
+    export function serializeMethodTypeTs(name: string, abis: TAbiItem[]) {
         let args = abis.map(abi => {
             let { fnInputArguments } = serializeArgumentsTs(abi);
             return `[ ${fnInputArguments} ]`;
@@ -389,7 +393,7 @@ namespace Gen {
         };
     }
 
-    export function serializeMethodInterfacesAllTs (methods: { method: string, interface: string }[] ) {
+    export function serializeMethodInterfacesAllTs(methods: { method: string, interface: string }[]) {
         let fields = methods.map(method => {
             return `  ${method.method}: ${method.interface}`;
         });
@@ -403,7 +407,7 @@ namespace Gen {
             code: code.join('\n')
         };
     }
-    export function serializeEventsInterfacesAllTs (events: TAbiItem[] ) {
+    export function serializeEventsInterfacesAllTs(events: TAbiItem[]) {
         let fields = events.map(item => {
             return `  ${item.name}: TLog${item.name}Parameters`;
         });
@@ -417,14 +421,14 @@ namespace Gen {
             code: code.join('\n')
         };
     }
-    export function serializeEventType (event: TAbiItem ) {
+    export function serializeEventType(event: TAbiItem) {
         let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(event);
         let outputParams = `{ ${fnInputArguments} }`;
         let outputArgs = `[ ${fnInputArguments.replace('\n', '')} ]`;
         let code = [
             `${event.name}: {`,
-            `    outputParams: ${ outputParams },`,
-            `    outputArgs:   ${ outputArgs },`,
+            `    outputParams: ${outputParams},`,
+            `    outputArgs:   ${outputArgs},`,
             `}`
         ];
         return {
@@ -432,7 +436,7 @@ namespace Gen {
         };
     }
 
-    export function serializeEvent (abi: TAbiItem) {
+    export function serializeEvent(abi: TAbiItem) {
         let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
         return `
             on${abi.name} (fn?: (event: TClientEventsStreamData<TEventArguments<'${abi.name}'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'${abi.name}'>>> {
@@ -440,7 +444,7 @@ namespace Gen {
             }
         `;
     }
-    export function serializeEventExtractor (abi: TAbiItem) {
+    export function serializeEventExtractor(abi: TAbiItem) {
         return `
             extractLogs${abi.name} (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'${abi.name}'>>[] {
                 let abi = this.$getAbiItem('event', '${abi.name}');
@@ -448,10 +452,10 @@ namespace Gen {
             }
         `;
     }
-    export function serializeEventFetcher (abi: TAbiItem) {
+    export function serializeEventFetcher(abi: TAbiItem) {
         let inputs = abi.inputs;
         let indexed = alot(inputs).takeWhile(x => x.indexed).toArray();
-        let indexedParams = indexed.map(param => `${param.name}?: ${ $abiType.getTsType(param.type, param) }`)
+        let indexedParams = indexed.map(param => `${param.name}?: ${$abiType.getTsType(param.type, param)}`)
         return `
             async getPastLogs${abi.name} (options?: {
                 fromBlock?: number | Date
@@ -488,7 +492,7 @@ namespace Gen {
         return `function ${abi.name}(${params}) ${returnsStr}`.trim();
     }
 
-    function serializeReadMethodTs (abi: TAbiItem) {
+    function serializeReadMethodTs(abi: TAbiItem) {
         let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
         if (callInputArguments) {
             callInputArguments = `, ${callInputArguments}`;
@@ -500,7 +504,7 @@ namespace Gen {
             }
         `;
     }
-    function serializeReadMethodTsOverloads (abis: TAbiItem[]) {
+    function serializeReadMethodTsOverloads(abis: TAbiItem[]) {
         let overrides = abis.map(abi => {
             let { fnInputArguments, fnResult } = serializeArgumentsTs(abi);
             return `
@@ -513,7 +517,7 @@ namespace Gen {
         let { fnResult } = serializeArgumentsTs(abi);
         let sigs = abis.map(abi => serializeMethodAbi(abi)).map(x => `'${x}'`).join(', ');
         return `
-            ${ overrides }
+            ${overrides}
             async ${abi.name} (...args): ${fnResult} {
                 let abi = this.$getAbiItemOverload([ ${sigs} ], args);
                 return this.$read(abi, ...args);
@@ -521,7 +525,7 @@ namespace Gen {
         `;
     }
 
-    function serializeWriteMethodTs (abi: TAbiItem) {
+    function serializeWriteMethodTs(abi: TAbiItem) {
         let { fnInputArguments, callInputArguments } = serializeArgumentsTs(abi);
         if (callInputArguments) {
             callInputArguments = `, ${callInputArguments}`;
@@ -534,7 +538,7 @@ namespace Gen {
             }
         `;
     }
-    function serializeConstructorMethodTs (abi: TAbiItem) {
+    function serializeConstructorMethodTs(abi: TAbiItem) {
         let { fnInputArguments, callInputArguments } = serializeArgumentsTs(abi);
         if (callInputArguments) {
             callInputArguments = `, ${callInputArguments}`;
@@ -545,7 +549,7 @@ namespace Gen {
             }
         `;
     }
-    function serializeWriteMethodTsOverloads (abis: TAbiItem[]) {
+    function serializeWriteMethodTsOverloads(abis: TAbiItem[]) {
         let overrides = abis.map(abi => {
             let { fnInputArguments, fnResult } = serializeArgumentsTs(abi);
             return `
@@ -557,7 +561,7 @@ namespace Gen {
         let abi = abis[0];
         let sigs = abis.map(abi => serializeMethodAbi(abi)).map(x => `'${x}'`).join(', ');
         return `
-            ${ overrides }
+            ${overrides}
             async ${abi.name} (sender: TSender, ...args): Promise<TxWriter> {
                 let abi = this.$getAbiItemOverload([ ${sigs} ], args);
                 return this.$write(abi, sender, ...args);
@@ -565,7 +569,7 @@ namespace Gen {
         `;
     }
 
-    function serializeArgumentsTs (abi: TAbiItem) {
+    function serializeArgumentsTs(abi: TAbiItem) {
         let inputs = abi.inputs.map((input, i) => {
             let result = { ...input };
             if (result.name == null || result.name === '') {
@@ -599,10 +603,10 @@ namespace Gen {
         return { fnInputArguments, callInputArguments, fnResult };
     }
 
-    function isObjectParams (params: { name?, type }[]) {
+    function isObjectParams(params: { name?, type }[]) {
         return params?.every(x => Boolean(x.name));
     }
-    function serializeMethodAbiReturns (params: { name?, type, components? }[]) {
+    function serializeMethodAbiReturns(params: { name?, type, components?}[]) {
         if (params == null) {
             return '';
         }
@@ -611,23 +615,23 @@ namespace Gen {
         // }
         return params?.map(x => serializeMethodAbiReturnsSingle(x)).join(',');
     }
-    function serializeMethodAbiReturnsSingle (param: { name?, type, components? }) {
+    function serializeMethodAbiReturnsSingle(param: { name?, type, components?}) {
         if (param == null) {
             return null;
         }
         if (param.components) {
             // tuple, tuple[]
             let fields = serializeMethodAbiReturns(param.components);
-            return `[${fields}]${ param.type === 'tuple[]' ? '[]' : '' }`;
+            return `[${fields}]${param.type === 'tuple[]' ? '[]' : ''}`;
         }
         // if (param.name && param.type) {
         //     return `${param.type} ${param.name}`;
         // }
         return param.type;
     }
-    function serializeMethodTsReturns (params: { name?, type }[]) {
+    function serializeMethodTsReturns(params: { name?, type }[]) {
         if (params == null || params.length === 0) {
-            params = [ { name: '', type: 'uint256' } ];
+            params = [{ name: '', type: 'uint256' }];
         }
 
         let tsTypes = params.map(param => {
@@ -668,19 +672,19 @@ namespace Gen {
             lines.push(`        type: '${error.name}'`);
             lines.push(`        params: {`);
             error.inputs.forEach(input => {
-                lines.push(`            ${input.name}: ${ $abiType.getTsType( input.type, input ) }`);
+                lines.push(`            ${input.name}: ${$abiType.getTsType(input.type, input)}`);
             });
             lines.push(`        }`);
             lines.push(`    }`);
         });
 
-        lines.push(`    export type Error = ${ errors.map(x => x.name).join(' | ') }`);
+        lines.push(`    export type Error = ${errors.map(x => x.name).join(' | ')}`);
         lines.push(`}`);
 
         return lines.join('\n');
     }
 
-    export function serializeTxCallerMethods (className: string, abiJson: TAbiItem[]): string {
+    export function serializeTxCallerMethods(className: string, abiJson: TAbiItem[]): string {
         let methods = abiJson.filter(x => x.type === 'function');
         let writeMethods = methods.filter(abi => $abiUtils.isReadMethod(abi) === false);
         let lines = [];
@@ -691,16 +695,16 @@ namespace Gen {
         return lines.join('\n');
 
 
-        function serializeMethodTs (abi: TAbiItem) {
+        function serializeMethodTs(abi: TAbiItem) {
             let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
             if (callInputArguments) {
                 callInputArguments = `, ${callInputArguments}`;
             }
-            return  `    ${abi.name} (sender: TSender, ${fnInputArguments}): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>`;
+            return `    ${abi.name} (sender: TSender, ${fnInputArguments}): Promise<{ error?: Error & { data?: { type: string, params } }, result? }>`;
         }
     }
 
-    export function serializeTxDataMethods (className: string, abiJson: TAbiItem[]): string {
+    export function serializeTxDataMethods(className: string, abiJson: TAbiItem[]): string {
         let methods = abiJson.filter(x => x.type === 'function');
         let writeMethods = methods.filter(abi => $abiUtils.isReadMethod(abi) === false);
         let lines = [];
@@ -711,7 +715,7 @@ namespace Gen {
         return lines.join('\n');
 
 
-        function serializeInterfaceMethodTs (abi: TAbiItem) {
+        function serializeInterfaceMethodTs(abi: TAbiItem) {
             let { fnInputArguments, callInputArguments, fnResult } = serializeArgumentsTs(abi);
             if (callInputArguments) {
                 callInputArguments = `, ${callInputArguments}`;

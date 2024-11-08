@@ -12,7 +12,7 @@ async function process () {
     await await alot(files).forEachAsync(async (file, i) => {
 
         let path = file.uri.toString();
-        let typesRoot = path.replace(/\/lib\/types\/.$/, '/lib/types/');
+        let typesRoot = path.replace(/\/lib\/types\/.+$/, '/lib/types/');
         let cjsFile = path.replace('/lib/types/', '/lib/cjs/').replace(/\.d\.ts$/, '.js');
         let mjsFile = path.replace('/lib/types/', '/lib/esm/').replace(/\.d\.ts$/, '.mjs');
 
@@ -28,8 +28,10 @@ async function process () {
 
         content = content.replace(/from (?<q>['"])(?<path>@dequanto\/[^'"]+)['"]/g, (match, q, importPath) => {
             let importPathFull = importPath.replace(/^@dequanto\//, typesRoot);
-            let importPathRelative = new class_Uri(importPathFull).toRelativeString(typesRoot);
-
+            let importPathRelative = new class_Uri(importPathFull).toRelativeString(path + '.js');
+            if (importPathRelative.startsWith('.') === false) {
+                importPathRelative = './' + importPathRelative;
+            }
             return `from ${q}${importPathRelative}${q}`;
         });
 

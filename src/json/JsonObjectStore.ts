@@ -1,4 +1,4 @@
-import { Constructor } from 'atma-utils'
+import type { Constructor } from 'atma-utils'
 import { JsonConvert } from 'class-json'
 import { JsonStoreFs } from './JsonStoreFs';
 
