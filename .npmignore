@@ -1,0 +1,15 @@
+.circleci/
+.vscode/
+.github/
+
+/assets/
+/artifacts/
+/test/
+/bin/
+/tools/
+/actions/
+/exports/
+/configs/
+/0xc/
+
+.gitmodules

@@ -7,8 +7,8 @@ import { $cli } from '../utils/$cli';
 import { $secret } from '../utils/$secret';
 import { $require } from '@dequanto/utils/$require';
 import { is_BROWSER } from '@dequanto/utils/$const';
+import { ConfigDefaults } from './ConfigDefaults';
 
-import CONFIG_DEFAULT from '../../configs/dequanto.yml';
 
 export class ConfigProviderPlatform implements IConfigProvider {
 
@@ -45,7 +45,7 @@ export class ConfigProviderPlatform implements IConfigProvider {
 
         return [
             {
-                config: CONFIG_DEFAULT,
+                config: ConfigDefaults,
             },
             {
                 path: `./configs/dequanto.yml`,
@@ -82,7 +82,7 @@ export class ConfigProviderPlatform implements IConfigProvider {
     private async getSourcesBrowser (parameters: TConfigParamsNode) {
         return [
             {
-                config: CONFIG_DEFAULT
+                config: ConfigDefaults
             }
         ];
     }
