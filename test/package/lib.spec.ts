@@ -31,7 +31,7 @@ UTest({
         // });
 
         let resultCommand = await run({
-            'command': 'node ./check.js',
+            'command': 'node ./check.mjs',
             cwd: path
         });
 
