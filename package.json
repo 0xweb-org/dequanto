@@ -9,11 +9,11 @@
         "type": "git",
         "url": "https://github.com/0xweb-org/dequanto"
     },
-    "main": "./lib/umd/dequanto.js",
-    "types": "./lib/umd/dequanto.d.ts",
     "exports": {
-        "import": "./lib/esm/",
-        "require": "./lib/cjs/"
+        "./*": {
+            "import": "./lib/esm/*.mjs",
+            "require": "./lib/cjs/*.js"
+        }
     },
     "scripts": {
         "hardhat": "node --openssl-legacy-provider ./node_modules/hardhat/internal/cli/cli.js node --hostname 127.0.0.1 --verbose",
@@ -64,7 +64,7 @@
         "atma-utils": "^0.2.65",
         "class-json": "^0.4.1",
         "includejs": "^0.17.4",
-        "memd": "^0.3.14",
+        "memd": "^0.3.15",
         "typescript": "^5.3.3",
         "ws": "^8.16.0"
     },

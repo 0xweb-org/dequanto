@@ -1,12 +1,14 @@
 /node_modules
 /test/tmp
-/cache/
+/cache
 /artifacts/
 /0xweb/
 /0xc/
 /dist/
 /lib/
 /ts-temp
+/test/fixtures/package/simple/*
+!/test/fixtures/package/simple/check.js
 0xweb.json
 hardhat-*.config.js
 del.act.ts

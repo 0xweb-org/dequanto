@@ -11,5 +11,6 @@
 /exports/
 /configs/
 /0xc/
+/cache/
 
 .gitmodules

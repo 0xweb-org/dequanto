@@ -1,3 +1,4 @@
+import { TAddress } from '@dequanto/models/TAddress';
 import { $address } from '@dequanto/utils/$address';
 
 UTest({
@@ -62,5 +63,25 @@ UTest({
                 eq_(checksum, address);
             })
         });
+    },
+    '!compare address' () {
+        let x = '0xd93a53B5F382F2a51A4AE3879ABC8F789Bd60e6b';
+        let x1 = $address.toChecksum(x.toLowerCase());
+        let x2 = $address.toChecksum(x.toLowerCase(), 1);
+        console.log(x, '\n', x1, '\n', x2);
+        console.log(x === x1);
+        console.log(x === x2);
+
+        let l = x.toLowerCase();
+        for (let i = 0; i < 500000; i++) {
+            let y = $address.toChecksum(l, i);
+            if (y === x) {
+                console.log(`Chain found`, i);
+                break;
+            }
+            if (i % 1000 === 0) {
+                console.log(i);
+            }
+        }
     }
 })
