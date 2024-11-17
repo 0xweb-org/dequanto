@@ -4,6 +4,8 @@ import { WsTransport } from './WsTransport';
 import { TTransport } from './ITransport';
 import { EIP1193Transport, IEip1193Provider } from './compatibility/EIP1193Transport';
 import { Web3Transport } from './compatibility/Web3Transport';
+import { $is } from '@dequanto/utils/$is';
+import { DeferredTransport } from './DeferredTransport';
 
 export namespace RpcTransport {
 
@@ -40,6 +42,9 @@ export namespace RpcTransport {
             return mix;
         }
         if ('web3' in mix && mix.web3 != null) {
+            if ($is.Promise(mix.web3)) {
+                return new DeferredTransport(mix.web3, create);
+            }
             if ('currentProvider' in mix.web3 && 'eth' in mix.web3) {
                 return new Web3Transport(mix.web3);
             }

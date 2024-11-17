@@ -115,6 +115,7 @@ export class JsonStoreFs<T> {
             let str = this.encode(data);
 
             await this.file.writeAsync(str, { skipHooks: true });
+            this.lock.resolve();
             this.callWriteListeners(v, null);
         } catch (error) {
             console.error(`JsonStoreFs.WriteInner> ${this.path}`, error);

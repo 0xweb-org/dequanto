@@ -13,7 +13,7 @@ const Accounts = [
 ] as const;
 
 const provider = new HardhatProvider();
-const client = provider.client('hardhat');
+const client = await provider.client('hardhat');
 
 UTest({
     async 'get block' () {

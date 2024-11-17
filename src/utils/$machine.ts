@@ -1,26 +1,28 @@
+import { $dependency } from './$dependency';
 
 
 
 export namespace $machine {
 
     export function id(original: boolean = false): Promise<string> {
-        return new Promise((resolve: Function, reject: Function): Object => {
+        return new Promise(async (resolve: Function, reject: Function): Promise<Object> => {
+            const { exec } = await $dependency.load<typeof import('child_process')>('child_process');
 
-            const { exec } = require('child_process');
-            return exec(getCommand(), {}, (err: any, stdout: any, stderr: any) => {
+            return exec(getCommand(), {}, async (err: any, stdout: any, stderr: any) => {
                 if (err) {
                     return reject(
                         new Error(`Error while obtaining machine id: ${err.stack}`)
                     );
                 }
                 let id: string = extractId(stdout.toString());
-                return resolve(original ? id : hash(id));
+                let result = original ? id : await hash(id);
+                return resolve(result);
             });
         });
     }
 
-    function hash(guid: string): string {
-        const { createHash } = require('crypto');
+    async function hash(guid: string): Promise<string> {
+        const { createHash } = await $dependency.load<typeof import('crypto')>('crypto');
         return createHash('sha256').update(guid).digest('hex');
     }
 

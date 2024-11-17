@@ -1,4 +1,5 @@
-import { TEth } from '@dequanto/models/TEth';
+import type { IWeb3EndpointOptions } from '@dequanto/clients/interfaces/IWeb3EndpointOptions';
+import type { TEth } from '@dequanto/models/TEth';
 import type { ClientOptions } from 'ws'
 
 export namespace TTransport {
@@ -56,7 +57,7 @@ export namespace TTransport {
         }
 
         export type Web3Wrapper = {
-            web3
+            web3: IWeb3EndpointOptions['web3']
         }
     }
 }

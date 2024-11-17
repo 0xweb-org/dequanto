@@ -20,8 +20,8 @@ import { $sig } from '@dequanto/utils/$sig';
 
 
 const provider = new HardhatProvider();
-const client = provider.client();
-const explorer = provider.explorer();
+const client = await provider.client();
+const explorer = await provider.explorer();
 
 UTest({
     async 'check handleOps method sig'() {

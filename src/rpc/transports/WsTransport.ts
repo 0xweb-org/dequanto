@@ -1,5 +1,5 @@
 import memd from 'memd';
-import WebSocket from './WsTransportIsomorphic'
+import { WebSocketProvider } from './WsTransportIsomorphic'
 import { TTransport } from './ITransport';
 import { MessageBasedTransport } from './MessageBasedTransport';
 import { RpcSubscription } from '../RpcSubscription';
@@ -52,6 +52,7 @@ class WsTransportSingleton extends MessageBasedTransport {
     @memd.deco.memoize({ perInstance: true })
     private async connect() {
         const { url, clientConfig } = this.options
+        const WebSocket = await WebSocketProvider.get();
         const ws = new WebSocket(url, clientConfig ?? {});
 
         const onMessage = ({ data }) => {

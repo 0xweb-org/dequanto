@@ -36,6 +36,9 @@ export namespace $is {
         // Make addresses like `0x0` also valid (assumed zeros)
         return /^0x[a-fA-F0-9]{1,40}$/g.test(val);
     }
+    export function Promise(val): val is Promise<any> {
+        return typeof val === 'object' && val!== null && 'then' in val;
+    }
 
     export function TxHash (val: string | TEth.Hex): boolean {
         if (Hex(val) === false) {

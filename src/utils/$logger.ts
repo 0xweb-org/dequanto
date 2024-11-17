@@ -2,6 +2,7 @@ import memd from 'memd';
 import { $color } from './$color';
 import { $date } from './$date';
 import alot from 'alot';
+import { $dependency } from './$dependency';
 
 
 export enum ELogLevel {
@@ -17,7 +18,9 @@ interface ILoggerOptions {
     level?: ELogLevel
 }
 class Logger {
-    private stdcalls = [];
+    private stdCalls = [];
+    private stdOnHold = false;
+    private stdQueue = [];
 
     constructor(private options?: ILoggerOptions) {
         this.options ??= {};
@@ -122,16 +125,36 @@ class Logger {
     }
 
     private print(row: (string | any)[], params: { method: 'log' | 'warn' | 'error', isToast?: boolean }) {
-        if (this.stdcalls[0]?.isToast) {
+        if (params?.isToast) {
+            if (StdToast.isLoaded !== true) {
+                this.stdOnHold = true;
+                StdToast.initialize().then(x => {
+                    let arr = this.stdQueue;
+                    this.stdOnHold = false;
+                    this.stdQueue = [];
+                    arr.map(([row, params]) => {
+                        this.print(row, params);
+                    });
+
+
+                });
+            }
+        }
+        if (this.stdOnHold) {
+            this.stdQueue.push([row, params]);
+            return;
+        }
+
+        if (this.stdCalls[0]?.isToast) {
             // Last print is the toast, clear it
             StdToast.clean();
         }
 
         console[params.method](...row);
 
-        this.stdcalls.unshift(params);
-        if (this.stdcalls.length > 100) {
-            this.stdcalls.splice(50);
+        this.stdCalls.unshift(params);
+        if (this.stdCalls.length > 100) {
+            this.stdCalls.splice(50);
         }
 
     }
@@ -186,7 +209,7 @@ export function l(strings: TemplateStringsArray, ...values: any[]) {
             case 'bigint':
                 break;
             default:
-                // skip all non-value types.
+                // skip colorizing all non-value types.
                 continue;
         }
         args[i - 1] = `${before}${value}${after}`;
@@ -197,20 +220,21 @@ export function l(strings: TemplateStringsArray, ...values: any[]) {
     $logger.log(...args);
 }
 
-class StdToast {
+namespace StdToast {
 
-    static clean() {
-        let rl = StdToast.getRl();
+    let rl: typeof import('readline');
+
+    export let isLoaded = false;
+    export function clean() {
         rl.clearLine(process.stdout, 0);
         rl.cursorTo(process.stdout, 0, null);
 
         rl.moveCursor(process.stdout, 0, -1);
         rl.clearLine(process.stdout, 0);
     }
-
-    @memd.deco.memoize()
-    static getRl() {
+    export async function initialize() {
         /** lazy */
-        return require('readline')
+        rl = await $dependency.load('readline');
+        isLoaded = true;
     }
 }

@@ -1,3 +1,5 @@
+import { $dependency } from '@dequanto/utils/$dependency';
+
 declare var MozWebSocket;
 declare var window;
 
@@ -19,8 +21,12 @@ if (ws == null && typeof window !== 'undefined') {
 if (ws == null && typeof self !== 'undefined') {
     ws = self.WebSocket || (self as any).MozWebSocket
 }
-if (ws == null) {
-    ws = require('ws');
-}
 
-export default ws;
+export namespace WebSocketProvider {
+    export async function get (): Promise<typeof ws> {
+        if (ws != null) {
+            return ws;
+        }
+        return $dependency.load('ws');
+    }
+}

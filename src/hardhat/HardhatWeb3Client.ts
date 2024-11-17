@@ -3,6 +3,7 @@ import { Web3Client } from '../clients/Web3Client';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { IWeb3EndpointOptions } from '../clients/interfaces/IWeb3EndpointOptions';
 import { ClientEndpoints } from '../clients/utils/ClientEndpoints';
+import { IWeb3ClientOptions } from '@dequanto/clients/interfaces/IWeb3Client';
 
 
 // https://hardhat.org/hardhat-network/reference/
@@ -18,7 +19,7 @@ export class HardhatWeb3Client extends Web3Client {
     defaultGasLimit = 2_000_000
 
     constructor (opts?: IWeb3EndpointOptions) {
-        super({
+        super(<IWeb3ClientOptions> {
             ...(opts ?? {}),
             endpoints: ClientEndpoints.filterEndpoints($config.get('web3.hardhat.endpoints'), opts),
             debug: {

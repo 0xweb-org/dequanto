@@ -7,11 +7,9 @@ interface Web3 {
     eth
 }
 
-
 export class Web3Transport implements TTransport.Transport {
 
     private provider
-
 
     constructor (private mix: Web3) {
         this.provider = 'currentProvider' in mix ? mix.currentProvider : mix;
@@ -30,6 +28,4 @@ export class Web3Transport implements TTransport.Transport {
     unsubscribe(req: TTransport.Request & { method: 'eth_unsubscribe'; params: [number]; }): Promise<RpcSubscription<any>> {
         throw new Error('Method not implemented.');
     }
-
-
 }

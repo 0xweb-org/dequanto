@@ -22,8 +22,8 @@ import { TEth } from '@dequanto/models/TEth';
 import { SafeTx } from '@dequanto/safe/SafeTx';
 
 const provider = new HardhatProvider();
-const client = provider.client();
-const explorer = provider.explorer();
+const client = await provider.client();
+const explorer = await provider.explorer();
 
 
 UTest({

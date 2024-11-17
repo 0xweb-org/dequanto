@@ -32,11 +32,12 @@ import { $date } from '@dequanto/utils/$date';
 import { $hex } from '@dequanto/utils/$hex';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $contract } from '@dequanto/utils/$contract';
+import { $dependency } from '@dequanto/utils/$dependency';
+import { TTransport } from '@dequanto/rpc/transports/ITransport';
+
+type THardhatLib = typeof import('hardhat');
 
 export class HardhatProvider {
-
-    /* lazy load */
-    hh = require('hardhat');
 
     @memd.deco.memoize()
     client(network: 'hardhat' | 'localhost' = 'hardhat', opts: IWeb3EndpointOptions = null) {
@@ -51,7 +52,7 @@ export class HardhatProvider {
                     { url: 'ws://127.0.0.1:8545' },
                 ];
             } else {
-                opts.web3 = this.hh.network.provider;
+                opts.web3 = this.getHardhatProvider();
             }
         }
         const client = new HardhatWeb3Client(opts);
@@ -59,7 +60,7 @@ export class HardhatProvider {
     }
 
     async forked (params: { platform?: TPlatform, url?: string, block?: number | 'latest' } = {}) {
-        const client = this.client('hardhat');
+        const client = await this.client('hardhat');
         let { url, block } = params;
         if (url == null) {
             let platform = params.platform;
@@ -88,8 +89,8 @@ export class HardhatProvider {
     }
 
     @memd.deco.memoize()
-    explorer (network: 'hardhat' | 'localhost' = 'hardhat') {
-        let client = this.client(network);
+    async explorer (network: 'hardhat' | 'localhost' = 'hardhat') {
+        let client = await this.client(network);
         let Ctor = BlockChainExplorerProvider.create({
             platform: 'hardhat',
             getWeb3: () => client,
@@ -101,8 +102,10 @@ export class HardhatProvider {
 
     @memd.deco.memoize()
     deployer(index: number = 0): EoAccount {
-        const accounts: any = this.hh.config.networks.hardhat.accounts;
-        const account = $sig.$account.fromMnemonic(accounts.mnemonic, index);
+        // const hh = await this.getHardhat();
+        // const accounts: any = hh.config.networks.hardhat.accounts;
+        const mnemonic = `test test test test test test test test test test test junk`;
+        const account = $sig.$account.fromMnemonic(mnemonic, index);
         return {
             key: account.key,
             address: account.address,
@@ -208,7 +211,7 @@ export class HardhatProvider {
 
         const receipt = await Factory.deploy();
         const { contract, ContractCtor } = await ContractClassFactory.fromAbi<TReturn>(receipt.contractAddress, abi, client, null);
-        const explorer = this.explorer();
+        const explorer = await this.explorer();
         explorer.localDb.push({ name: '', abi: abi, address: receipt.contractAddress });
 
         return {
@@ -249,7 +252,7 @@ export class HardhatProvider {
         const receipt = await Factory.deploy();
         const { contract, ContractCtor } = await ContractClassFactory.fromAbi<TReturn>(receipt.contractAddress, abi, client, null);
 
-        const explorer = this.explorer();
+        const explorer = await this.explorer();
         explorer.localDb.push({ name: '', abi: abi, address: receipt.contractAddress });
         return {
             contract,
@@ -297,8 +300,8 @@ export class HardhatProvider {
             artifacts,
             tsgen: false,
         };
-
-        await this.hh.run('compile', hhOptions);
+        const hh = await this.getHardhat();
+        await hh.run('compile', hhOptions);
 
         if (root == null) {
             root = 'file://' + $path.normalize(process.cwd());
@@ -492,6 +495,16 @@ export class HardhatProvider {
             abi,
             params
         })
+    }
+
+    @memd.deco.memoize()
+    private async getHardhat (): Promise<THardhatLib> {
+        return await $dependency.load<THardhatLib>('hardhat');
+    }
+
+    private async getHardhatProvider (): Promise<TTransport.Transport> {
+        const hh = await this.getHardhat();
+        return hh.network.provider as any as TTransport.Transport;
     }
 
 }

@@ -9,7 +9,7 @@ export interface IWeb3EndpointOptions {
     ws?: boolean
 
     endpoints?: IConfigData['web3']['eth']['endpoints']
-    web3?: TTransport.Transport
+    web3?: TTransport.Transport | Promise<TTransport.Transport>
     platform?: TPlatform
     chainId?: number
     chainToken?: string
