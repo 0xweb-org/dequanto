@@ -7,9 +7,10 @@
         },
         "typeRoots": [
             "node_modules/@types",
-            "typings/globals"
+            "typings/globals",
+            "typings"
         ],
-        "types": ["node", "assertion"],
+        "types": ["node", "assertion", "mocha"],
 
         "outDir": "./lib/types",
         "module": "CommonJS",

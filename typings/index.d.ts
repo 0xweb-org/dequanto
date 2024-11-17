@@ -3,4 +3,3 @@
 /// <reference path="globals/mask/index.d.ts" />
 /// <reference path="globals/axios/index.d.ts" />
 
-

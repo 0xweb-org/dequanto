@@ -21,7 +21,7 @@ export interface IWeb3ClientOptions {
     // Token symbol: e.g. ETH
     chainToken?: string
     // alias to `provider`
-    web3?: TTransport.Transport
+    web3?: TTransport.Transport | Promise<TTransport.Transport>
     provider?: TTransport.Transport
 
     defaultTxType?: 0 | 1 | 2;

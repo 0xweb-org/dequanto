@@ -25,9 +25,10 @@
                 }
             },
             "settings": {
-                "//atma-io-middleware-condcomments": {
+                "atma-io-middleware-condcomments": {
                     "defines": {
-                        "BROWSER": true
+                        "CJS": true,
+                        "ESM": false
                     }
                 },
                 "atma-loader-ts": {
@@ -81,9 +82,10 @@
                 }
             },
             "settings": {
-                "//atma-io-middleware-condcomments": {
+                "atma-io-middleware-condcomments": {
                     "defines": {
-                        "BROWSER": true
+                        "CJS": false,
+                        "ESM": true
                     }
                 },
                 "atma-loader-ts": {

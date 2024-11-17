@@ -40,7 +40,7 @@ export interface IPoolClientConfig {
     safe?: boolean
     distinct?: boolean
 
-    web3?: TTransport.Transport
+    web3?: TTransport.Transport | Promise<TTransport.Transport>
 
     name?: string
     /** Will be used only if manually requested with .getWeb3, or .getNodeUrl */
