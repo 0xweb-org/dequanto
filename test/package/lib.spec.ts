@@ -15,7 +15,7 @@ UTest({
             }
         }
         await File.writeAsync(`${path}/package.json`, JSON.stringify(pkgJson, null, 2));
-        let resultInstall = await run({
+        await run({
             'command': 'npm install dequanto',
             cwd: `${path}/`
         });
@@ -25,10 +25,6 @@ UTest({
     },
     async 'should install latest dequanto' () {
         let path = `./test/fixtures/package/simple/`
-        // let resultInstall = await run({
-        //     'command': 'npm install dequanto',
-        //     cwd: path
-        // });
 
         let resultCommand = await run({
             'command': 'node ./check.mjs',
