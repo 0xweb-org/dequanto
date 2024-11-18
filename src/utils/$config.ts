@@ -1,4 +1,5 @@
 import { config } from '@dequanto/config/Config';
+import { ConfigDefaults } from '@dequanto/config/ConfigDefaults';
 import { obj_getProperty, obj_setProperty } from 'atma-utils';
 
 const $global = typeof global === 'undefined'
@@ -16,6 +17,9 @@ export namespace $config {
         if (value == null && envOptions == null) {
             envOptions = reloadEnv();
             return get(path, $default);
+        }
+        if (value == null) {
+            value = obj_getProperty(ConfigDefaults, path);
         }
         return value ?? $default;
     }
