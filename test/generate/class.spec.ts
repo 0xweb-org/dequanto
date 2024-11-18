@@ -64,7 +64,6 @@ UTest({
 
         let nameFromSlot = await weth.storage._name();
         eq_(nameFromSlot, name);
-
     },
     async 'generate from class meta comments and check the sources' () {
         let genPath = `/test/tmp/polygon/DaiTokenContractBase/DaiTokenContractBase.ts`

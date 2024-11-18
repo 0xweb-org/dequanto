@@ -4,6 +4,7 @@ import { TConfigParamsBrowser, TConfigParamsNode } from './AConfigBase';
 import { IConfigData } from './interface/IConfigData';
 import { ConfigProvider } from './ConfigProvider';
 import { $logger } from '../utils/$logger';
+import { ConfigDefaults } from './ConfigDefaults';
 
 export class Config {
 
@@ -39,7 +40,7 @@ export class Config {
     }
 }
 
-export const config = {} as IConfigData;
+export const config = ConfigDefaults as IConfigData;
 
 let provider = new ConfigProvider();
 let singleton: class_Dfr<IConfigData> = null;

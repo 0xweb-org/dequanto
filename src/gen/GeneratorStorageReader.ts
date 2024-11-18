@@ -14,6 +14,8 @@ import { ISlotVarDefinition } from '@dequanto/solidity/SlotsParser/models'
 export class GeneratorStorageReader {
 
     async generate(opts: {
+        target?: 'js' | 'ts'
+
         network: TPlatform
         name: string
         contractName: string
@@ -24,6 +26,7 @@ export class GeneratorStorageReader {
         client?: Web3Client
     }): Promise<{ code?: string, className?: string, sourcePath?: string, error?: Error }> {
 
+        let targetType = opts.target ?? 'ts';
         let { client, sources, contractName, address } = opts;
         let files = alot.fromObject(sources ?? {}).map(x => {
             return {
@@ -56,9 +59,9 @@ export class GeneratorStorageReader {
         let slots = await SlotsParser.slots({ code: file.content, path: file.path }, contractName, { files })
 
         let methods = this.serializeSlots(slots);
-        let codeMethods = methods.join('\n\n');
+        let codeMethods = methods.map(x => x[targetType]).join('\n\n');
 
-        let templatePath = $path.resolve(`/src/gen/ContractStorageReaderTemplate.ts`);
+        let templatePath = $path.resolve(`/src/gen/ContractStorageReaderTemplate.${targetType}`);
         let template = await File.readAsync<string>(templatePath, { skipHooks: true });
         let className = $gen.toClassName(opts.name + 'StorageReader');
         let code = template
@@ -77,22 +80,34 @@ export class GeneratorStorageReader {
     private serializeSlots (slots: ISlotVarDefinition[]) {
         return slots
             .map(slot => this.serializeSlot(slot))
-            .map(Str.formatMethod);
+            .map(entry => {
+                return {
+                    ts: Str.formatMethod(entry.ts),
+                    js: Str.formatMethod(entry.js),
+                }
+            });
     }
 
     private serializeSlot (slot: ISlotVarDefinition) {
         let name = slot.name;
         let type = slot.type;
         let { parametersTypes, parametersCall, returnType } = this.getParameters(type);
-
-        return `
-            async ${name}(${parametersTypes ?? ''}): Promise<${returnType}> {
-                return this.$storage.get(['${name}', ${ parametersCall ?? '' }]);
-            }
-        `;
+        return {
+            ts: `
+                async ${name}(${parametersTypes?.ts ?? ''}): Promise<${returnType}> {
+                    return this.$storage.get(['${name}', ${ parametersCall ?? '' }]);
+                }
+            `,
+            js: `
+                async ${name}(${parametersTypes?.js ?? ''}) {
+                    return this.$storage.get(['${name}', ${ parametersCall ?? '' }]);
+                }
+            `
+        };
     }
 
-    private getParameters (type: string): { parametersTypes?, parametersCall?, returnType } {
+    private getParameters (type: string): { parametersTypes?: { ts, js}, parametersCall?, returnType } {
+
         if (type.startsWith('mapping')) {
             let valueType = $abiType.mapping.getValueType(type);
             let keyType = $abiType.mapping.getKeyType(type);
@@ -100,7 +115,10 @@ export class GeneratorStorageReader {
             let keyTsType = $abiType.getTsTypeFromDefinition(keyType);
             let valueTsType = $abiType.getTsTypeFromDefinition(valueType);
             return {
-                parametersTypes: `key: ${keyTsType}`,
+                parametersTypes: {
+                    ts: `key: ${keyTsType}`,
+                    js: `key`
+                },
                 returnType: `${valueTsType}`,
                 parametersCall: 'key',
             }

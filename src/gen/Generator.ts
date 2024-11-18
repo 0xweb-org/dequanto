@@ -23,6 +23,8 @@ import { SolidityParser } from '@dequanto/solidity/SolidityParser';
 export interface IGenerateOptions {
     platform: TPlatform
 
+    target?: 'js' | 'ts'
+
     // Class name to create
     name: string
 
@@ -208,6 +210,7 @@ export class Generator {
         let generator = di.resolve(GeneratorFromAbi);
         let address = this.options.defaultAddress;
         return await generator.generate(abi, {
+            target: this.options.target,
             network: network,
             name: name,
             contractName: sources?.contractName,
