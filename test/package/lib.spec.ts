@@ -38,7 +38,7 @@ UTest({
         let str = resultCommand.std.join('\n');
         has_(str, /Current Ethereum block number: \d+/);
     },
-    async '!should load the generated contract' () {
+    async 'should load the generated contract' () {
         const gen = new Generator({
             target: 'js',
             name: 'WETH',

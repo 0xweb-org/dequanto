@@ -40,7 +40,7 @@ export class Config {
     }
 }
 
-export const config = ConfigDefaults as IConfigData;
+export const config = { ...ConfigDefaults } as IConfigData;
 
 let provider = new ConfigProvider();
 let singleton: class_Dfr<IConfigData> = null;
