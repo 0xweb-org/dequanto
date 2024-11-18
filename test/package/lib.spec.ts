@@ -41,6 +41,7 @@ UTest({
     async 'should load the generated contract' () {
         const gen = new Generator({
             target: 'js',
+            outputFileExt: 'mjs',
             name: 'WETH',
             platform: 'polygon',
             source: {

@@ -45,6 +45,8 @@ export interface IGenerateOptions {
 
     output?: string
 
+    outputFileExt?: string
+
     location?: string
 
     /**
@@ -216,6 +218,7 @@ export class Generator {
             contractName: sources?.contractName,
             address: address,
             output: output,
+            outputFileExt: this.options.outputFileExt,
             implementation: implementation,
             sources: sources?.files,
             sourceMain: sourceMain,

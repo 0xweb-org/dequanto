@@ -30,6 +30,7 @@ export class GeneratorFromAbi {
         contractName: string
         address: TAddress
         output: string
+        outputFileExt?: string
         implementation: TAddress
         saveAbi?: boolean
         saveSources?: boolean
@@ -204,7 +205,7 @@ export class GeneratorFromAbi {
         let outputFilename = /[^\\/]+$/.exec(name)[0];
         let outputPath = /\.(ts|js)$/.test(opts.output)
             ? opts.output
-            : class_Uri.combine(opts.output, outputDirectory, `${outputFilename}.${targetType}`);
+            : class_Uri.combine(opts.output, outputDirectory, `${outputFilename}.${opts.outputFileExt ?? targetType}`);
 
         let meta = {
             artifact: opts.artifact
