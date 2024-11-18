@@ -9,6 +9,7 @@
 /ts-temp
 /test/fixtures/package/simple/*
 !/test/fixtures/package/simple/check.mjs
+!/test/fixtures/package/simple/checkGen.mjs
 0xweb.json
 hardhat-*.config.js
 del.act.ts
