@@ -53,6 +53,8 @@ export abstract class ContractBase {
         class?: string
         // Path to the SOL file (exists when the contract was generated from SOL)
         source?: string
+        // Contract name
+        name?: string
     }
 
     storage?: ContractStorageReaderBase

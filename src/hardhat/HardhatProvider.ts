@@ -269,6 +269,7 @@ export class HardhatProvider {
             artifacts?: string
         },
         contractName?: string
+        tsgen?: boolean
     }): Promise<{
         abi: TAbiItem[]
         bytecode: TEth.Hex
@@ -298,7 +299,7 @@ export class HardhatProvider {
             sources: dir,
             root,
             artifacts,
-            tsgen: false,
+            tsgen: options?.tsgen ?? false,
         };
         const hh = await this.getHardhat();
         await hh.run('compile', hhOptions);
