@@ -124,12 +124,17 @@ export namespace $contract {
         let evm = new EvmBytecode(input, { withConstructorCode: true });
         let opcodes = evm.getOpcodes();
         let codeSize = opcodes.findIndex(x => x.name === 'CODESIZE');
+        if (codeSize === -1) {
+            return {
+                bytecode: input,
+                arguments: '0x',
+            };
+        }
         let prev = opcodes[codeSize - 1];
         $require.True(/PUSH/.test(prev.name), `PUSH expected but got ${prev.name}`);
 
         let codeSizeValue = $buffer.toBigInt(prev.pushData) * 2n;
         let inputCursor = 2 /*0x*/ + Number(codeSizeValue);
-
         return {
             bytecode: input.substring(0, inputCursor),
             arguments: '0x' + input.substring(inputCursor),
