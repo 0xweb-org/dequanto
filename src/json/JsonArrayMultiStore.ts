@@ -89,14 +89,16 @@ export class JsonArrayMultiStore<T> {
     private async getGroupedFiles () {
         try {
             let files = await Directory.readFilesAsync(this.options.path, '*.json');
-            let rangeFiles = files
+            let rangeFiles = alot(files)
             .map(file => {
                 return {
                     file,
                     range: this.parseRangeFilename(file.uri.file)
                 };
             })
-            .filter(x => x.range != null);
+            .filter(x => x.range != null)
+            .sortBy(x => x.range.start, 'asc')
+            .toArray();
             return rangeFiles;
         } catch (e) {
             return [];
