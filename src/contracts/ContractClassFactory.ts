@@ -29,6 +29,7 @@ export namespace ContractClassFactory {
         , client: Web3Client
         , explorer?: IBlockChainExplorer
         , opts?: {
+            contractName?: string
             $meta?: ContractBase['$meta']
         }
     ): {
@@ -49,6 +50,7 @@ export namespace ContractClassFactory {
 class ClassBuilder<T = ContractBase> {
 
     constructor (private abi: TAbiItem[], private opts?: {
+        contractName?: string
         $meta?: ContractBase['$meta']
     }) {
 
@@ -68,11 +70,15 @@ class ClassBuilder<T = ContractBase> {
 
     private createClass (abi: TAbiItem[]) {
         let $meta = this.opts?.$meta;
-        return class extends ContractBase {
+        let Ctor = class extends ContractBase {
             abi = abi
             $meta = $meta
             Types = null
         };
+        if (this.opts?.contractName) {
+            Object.defineProperty(Ctor, 'name', { value: this.opts.contractName });
+        }
+        return Ctor;
     }
 
     private defineMethods (Ctor, abi: TAbiItem[]) {
