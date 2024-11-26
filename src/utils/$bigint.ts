@@ -48,6 +48,45 @@ export namespace $bigint {
         return BigInt(Math.round(amount));
     }
 
+    /**
+     * @param amount e.g "2.4 ether", "10 gwei", "1.7^18", "123456"
+     */
+    export function parse (amount: string) {
+        if (/^\d+$/.test(amount)) {
+            return BigInt(amount);
+        }
+        let rgxName = /^(?<number>[\d.])+\s*(?<name>ether|gwei|wei)$/;
+        let rgxMatch = rgxName.exec(amount);
+        if (rgxMatch) {
+            let number = Number(rgxMatch.groups.number);
+            if (isNaN(number)) {
+                throw new Error(`Invalid format: ${amount}`);
+            }
+            let name = rgxMatch.groups.name;
+            if (name === 'ether') {
+                return toWei(number, ETHER_DECIMALS);
+            }
+            if (name === 'gwei') {
+                return toWei(number, GWEI_DECIMALS);
+            }
+            if (name === 'wei') {
+                return number;
+            }
+        }
+
+        let rgxMantissa = /^(?<number>[\d.])+\s*\^\s*(?<decimals>\d+)$/;
+        let rgxMantissaMatch = rgxMantissa.exec(amount);
+        if (rgxMantissaMatch) {
+            let number = Number(rgxMantissaMatch.groups.number);
+            let decimals = Number(rgxMantissaMatch.groups.decimals);
+            if (isNaN(number) || isNaN(decimals)) {
+                throw new Error(`Invalid format: ${amount}`);
+            }
+            return toWei(number, decimals);
+        }
+        throw new Error(`Unsupported format: ${amount}`);
+    }
+
     export function ensureWei (amount: number | bigint, decimals: number) {
         if (typeof amount === 'number') {
             return toWei(amount, decimals);
