@@ -51,13 +51,13 @@ export namespace $bigint {
     /**
      * @param amount e.g "2.4 ether", "10 gwei", "1.7^18", "123456"
      */
-    export function parse (amount: string) {
+    export function parse (amount: string): bigint {
         if (/^\d+$/.test(amount)) {
             return BigInt(amount);
         }
-        let rgxName = /^(?<number>[\d.])+\s*(?<name>ether|gwei|wei)$/;
+        let rgxName = /^(?<number>[\d.])+\s*(?<name>ether|gwei|wei)$/i;
         let rgxMatch = rgxName.exec(amount);
-        if (rgxMatch) {
+        if (rgxMatch != null) {
             let number = Number(rgxMatch.groups.number);
             if (isNaN(number)) {
                 throw new Error(`Invalid format: ${amount}`);
@@ -70,13 +70,14 @@ export namespace $bigint {
                 return toWei(number, GWEI_DECIMALS);
             }
             if (name === 'wei') {
-                return number;
+                return BigInt(number);
             }
         }
 
+        // 2.5^18
         let rgxMantissa = /^(?<number>[\d.])+\s*\^\s*(?<decimals>\d+)$/;
         let rgxMantissaMatch = rgxMantissa.exec(amount);
-        if (rgxMantissaMatch) {
+        if (rgxMantissaMatch != null) {
             let number = Number(rgxMantissaMatch.groups.number);
             let decimals = Number(rgxMantissaMatch.groups.decimals);
             if (isNaN(number) || isNaN(decimals)) {
