@@ -35,5 +35,18 @@ UTest({
             let val = $bigint.toWei(0.51, 6)
             eq_(val, 51_0000);
         },
+    },
+    'parse' () {
+        let arr = [
+            [ '2.34^2', 234n ],
+            [ '.5 ether', 5n * 10n**18n / 10n],
+            [ '1.2 gwei', 12n * 10n**9n / 10n],
+            [ '0.123^3', 123n],
+        ] as const;
+
+        for (let [ input, expected ] of arr) {
+            let val = $bigint.parse(input);
+            eq_(val, expected);
+        }
     }
 })

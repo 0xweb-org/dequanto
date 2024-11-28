@@ -55,7 +55,7 @@ export namespace $bigint {
         if (/^\d+$/.test(amount)) {
             return BigInt(amount);
         }
-        let rgxName = /^(?<number>[\d.])+\s*(?<name>ether|gwei|wei)$/i;
+        let rgxName = /^(?<number>[\d.]+)\s*(?<name>ether|gwei|wei)$/i;
         let rgxMatch = rgxName.exec(amount);
         if (rgxMatch != null) {
             let number = Number(rgxMatch.groups.number);
@@ -75,7 +75,7 @@ export namespace $bigint {
         }
 
         // 2.5^18
-        let rgxMantissa = /^(?<number>[\d.])+\s*\^\s*(?<decimals>\d+)$/;
+        let rgxMantissa = /^(?<number>[\d.]+)\s*\^\s*(?<decimals>\d+)$/;
         let rgxMantissaMatch = rgxMantissa.exec(amount);
         if (rgxMantissaMatch != null) {
             let number = Number(rgxMantissaMatch.groups.number);
