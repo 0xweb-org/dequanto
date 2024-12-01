@@ -1,5 +1,4 @@
 import { $abiParser } from '@dequanto/utils/$abiParser';
-import alot from 'alot';
 import { Fixtures } from '../Fixtures';
 
 UTest({
@@ -51,6 +50,27 @@ UTest({
                         {
                             name: 'user',
                             type: 'tuple',
+                            components: [
+                                {
+                                    name: 'foo',
+                                    type: 'uint256'
+                                },
+                                {
+                                    name: 'bar',
+                                    type: 'uint256'
+                                }
+                            ]
+                        }
+                    ]
+                ],
+            ],
+            'simple array tuple': [
+                [
+                    ['(uint256 foo, uint256 bar)[] users'],
+                    [
+                        {
+                            name: 'users',
+                            type: 'tuple[]',
                             components: [
                                 {
                                     name: 'foo',

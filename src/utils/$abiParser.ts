@@ -124,10 +124,17 @@ export namespace $abiParser {
             }
             let tupleName = line.substring(end + 1, delimiter).trim();
             if (tupleName) {
+                let type = 'tuple';
+                // e.g. tupleName "[] users" from (uint256 foo, uint256 bar)[] users
+                let arrMatch = /\[(\d+)?\]/.exec(tupleName);
+                if (arrMatch != null) {
+                    type = type + arrMatch[0];
+                    tupleName = tupleName.substring(arrMatch[0].length).trim();
+                }
                 return [
                     {
                         name: tupleName,
-                        type: `tuple`,
+                        type,
                         components: params
                     }
                 ];
