@@ -1,6 +1,7 @@
 import { TEth } from '@dequanto/models/TEth';
 import { $buffer } from './$buffer';
 import { $require } from './$require';
+import { $is } from '@dequanto/utils/$is';
 
 export namespace $bigint {
 
@@ -52,7 +53,7 @@ export namespace $bigint {
      * @param amount e.g "2.4 ether", "10 gwei", "1.7^18", "123456"
      */
     export function parse (amount: string): bigint {
-        if (/^\d+$/.test(amount)) {
+        if (/^\d+$/.test(amount) || $is.Hex(amount) ) {
             return BigInt(amount);
         }
         let rgxName = /^(?<number>[\d.]+)\s*(?<name>ether|gwei|wei)$/i;
