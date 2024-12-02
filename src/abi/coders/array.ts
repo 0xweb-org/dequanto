@@ -28,7 +28,7 @@ export function pack(writer: Writer, coders: ReadonlyArray<Coder>, values: Array
         throw new Error("invalid tuple value" + JSON.stringify(values));
     }
 
-    $require.True(coders.length === arrayValues.length, "types/value length mismatch" + values);
+    $require.eq(coders.length, arrayValues.length, "types/value length mismatch");
 
     let staticWriter = new Writer();
     let dynamicWriter = new Writer();
