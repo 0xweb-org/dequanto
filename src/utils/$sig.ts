@@ -681,7 +681,7 @@ export namespace $sig {
 
 type TKey = TEth.Hex | `p1:0x${string}`;
 
-namespace KeyUtils {
+export namespace KeyUtils {
     const rgx = /^p1:/
 
     export async function withKey <TReturn> (account: TEth.EoAccount, fn: (account: TEth.EoAccount) => TReturn): Promise<TReturn> {
