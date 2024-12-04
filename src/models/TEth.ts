@@ -201,7 +201,7 @@ export namespace TEth {
         }
 
         export interface Input {
-            name: string;
+            name?: string;
             type: string;
             indexed?: boolean;
             components?: Input[];
@@ -209,7 +209,7 @@ export namespace TEth {
         }
 
         export interface Output {
-            name: string;
+            name?: string;
             type: string;
             components?: Output[];
             internalType?: string;

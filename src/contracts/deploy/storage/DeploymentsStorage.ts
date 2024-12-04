@@ -1,9 +1,9 @@
+import memd from 'memd';
+import alot from 'alot';
 import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
 import { $require } from '@dequanto/utils/$require';
-import { Constructor, class_Uri } from 'atma-utils';
-import memd from 'memd';
-
-import alot from 'alot';
+import { class_Uri } from 'atma-utils';
+import { Constructor } from '@dequanto/utils/types';
 import { File } from 'atma-io';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -214,7 +214,7 @@ export class  DeploymentsStorage {
 
     @memd.deco.memoize({ perInstance: true })
     private async getDeploymentsStore() {
-        let directory = this.opts.directory ?? './deploy';
+        let directory = this.opts.directory ?? './0xc/deployments';
         let filenamePrefix = `deployments-` + (this.opts.name ? `${this.opts.name}-` : '');
         let path: string;
         let platformPathNormalized = this.client.platform.replace(/[:]/g, '-');

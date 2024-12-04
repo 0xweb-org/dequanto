@@ -7,7 +7,8 @@ import { SlotDynamicArrayHandler } from './storage/handlers/SlotDynamicArrayHand
 import { SlotsStorageTransport, ISlotsStorageTransport, SlotsCursorTransport } from './storage/SlotsStorageTransport';
 import { TAddress } from '@dequanto/models/TAddress';
 import { ASlotsStorageHandler } from './storage/SlotsStorageHandler';
-import { Constructor, is_Object } from 'atma-utils';
+import { Constructor } from '@dequanto/utils/types';
+import { is_Object } from 'atma-utils';
 import { SlotMappingHandler } from './storage/handlers/SlotMappingHandler';
 import { SlotStringHandler } from './storage/handlers/SlotStringHandler';
 import { Accessor, IAccessorItem } from './storage/Accessor';

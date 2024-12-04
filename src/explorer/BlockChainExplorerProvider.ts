@@ -9,7 +9,7 @@ import { $config } from '@dequanto/utils/$config';
 import { BlockChainExplorerFactory, IBlockChainExplorerFactoryParams } from './BlockChainExplorerFactory';
 import { Evmscan } from './Evmscan';
 import { IBlockChainExplorer } from './IBlockChainExplorer';
-import { Constructor } from 'atma-utils';
+import { Constructor } from '@dequanto/utils/types';
 
 export namespace BlockChainExplorerProvider {
 

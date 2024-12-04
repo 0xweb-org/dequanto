@@ -279,7 +279,7 @@ export class GeneratorFromAbi {
         await File.writeAsync(outputPath, code, { skipHooks: true });
 
         if (opts.saveAbi) {
-            let path = class_Uri.combine(opts.output, outputDirectory, `${outputFilename}.json`);
+            let path = class_Uri.combine(opts.output, outputDirectory, `${outputFilename}Abi.json`);
             await File.writeAsync(path, abiJson);
         }
 

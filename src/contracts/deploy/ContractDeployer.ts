@@ -6,7 +6,7 @@ import { $require } from '@dequanto/utils/$require';
 import { ContractDeployment } from './ContractDeployment';
 import { $is } from '@dequanto/utils/$is';
 import { Directory, File } from 'atma-io';
-import { Constructor } from 'atma-utils';
+import { Constructor } from '@dequanto/utils/types';
 import { ContractBase } from '../ContractBase';
 
 

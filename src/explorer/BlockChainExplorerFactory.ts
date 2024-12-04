@@ -11,7 +11,7 @@ import { $address } from '@dequanto/utils/$address';
 import { $require } from '@dequanto/utils/$require';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { $config } from '@dequanto/utils/$config';
-import { Constructor } from 'atma-utils';
+import { Constructor } from '@dequanto/utils/types';
 import { $str } from '@dequanto/solidity/utils/$str';
 import { $platform } from '@dequanto/utils/$platform';
 import type { TAbiItem } from '@dequanto/types/TAbi';

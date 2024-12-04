@@ -20,13 +20,13 @@ export interface TAbiInput {
     name?: string;
     type: string;
     indexed?: boolean;
-	components?: TAbiInput[];
+    components?: TAbiInput[];
     internalType?: string;
 }
 
 export interface TAbiOutput {
     name?: string;
     type: string;
-	components?: TAbiOutput[];
+    components?: TAbiOutput[];
     internalType?: string;
 }

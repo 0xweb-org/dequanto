@@ -4,7 +4,7 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
 import { ContractBase } from './ContractBase';
 import { $abiParser } from '@dequanto/utils/$abiParser';
-import { Constructor } from 'atma-utils';
+import { Constructor } from '@dequanto/utils/types';
 import alot from 'alot';
 
 

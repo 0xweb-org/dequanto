@@ -3,7 +3,7 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TEth } from '@dequanto/models/TEth';
 import { IAccount } from '@dequanto/models/TAccount';
 import { $contract } from '@dequanto/utils/$contract';
-import { Constructor } from 'atma-utils';
+import { Constructor } from '@dequanto/utils/types';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
 import { $require } from '@dequanto/utils/$require';
 import { $address } from '@dequanto/utils/$address';

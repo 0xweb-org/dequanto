@@ -17,6 +17,9 @@ export type DeepPartial<T> = {
         DeepPartial<T[P]> | T[P]
 };
 
+export type Constructor<T = {}> = {
+    new (...args: any[]): T;
+};
 
 
 export type IntersectionTypeWithArrays<T1, T2, arrayKeys extends (keyof T1 & keyof T2)> = (

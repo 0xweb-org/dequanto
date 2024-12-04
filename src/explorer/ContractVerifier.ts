@@ -1,6 +1,7 @@
 import alot from 'alot';
 import { File } from 'atma-io';
-import { Constructor, class_Uri } from 'atma-utils';
+import { Constructor } from '@dequanto/utils/types';
+import { class_Uri } from 'atma-utils';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
 import { ContractDeployer } from '@dequanto/contracts/deploy/ContractDeployer';
 import { Deployments } from '@dequanto/contracts/deploy/Deployments';

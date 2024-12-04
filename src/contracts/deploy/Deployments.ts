@@ -8,7 +8,7 @@ import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $contract } from '@dequanto/utils/$contract';
 import { $require } from '@dequanto/utils/$require';
 import { ParametersFromSecond } from '@dequanto/utils/types';
-import { Constructor } from 'atma-utils';
+import { Constructor } from '@dequanto/utils/types';
 
 import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
 import { ContractVerifier } from '@dequanto/explorer/ContractVerifier';

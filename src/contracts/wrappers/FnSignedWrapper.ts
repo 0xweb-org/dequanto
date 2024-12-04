@@ -1,4 +1,4 @@
-import { Constructor } from 'atma-utils';
+import { Constructor } from '@dequanto/utils/types';
 import type { ContractBase } from '../ContractBase';
 import { TAbiItem } from '@dequanto/types/TAbi';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
