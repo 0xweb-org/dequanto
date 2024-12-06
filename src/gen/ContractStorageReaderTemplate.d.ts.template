@@ -1,0 +1,14 @@
+
+
+declare class $NAME$ extends ContractStorageReaderBase {
+    constructor(
+        public address,
+        public client,
+        public explorer,
+    )
+
+/* METHODS */
+
+    $slots: $SLOTS$
+
+}

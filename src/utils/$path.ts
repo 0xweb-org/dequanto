@@ -45,6 +45,24 @@ export namespace $path {
         }
         return path;
     }
+    export function getDirectory (path: string) {
+        const dir = path.replace(/[^\/\\]+$/, '');
+        return dir;
+    }
+
+    export function getFilename (path: string) {
+        const match = /(?<filename>[^\/\\]+)\.(?<extension>\w+)$/.exec(path);
+        const { filename, extension } = match?.groups ?? { filename: null, extension: null };
+        return { filename, extension };
+    }
+
+    export function getRelativePath (path: string, base: string) {
+        let i = path.toLowerCase().indexOf(base.toLowerCase());
+        if (i > -1) {
+            return path.substring(i + base.length);
+        }
+        return path;
+    }
 
     function getRoot () {
         let base = $config.get('settings.base');

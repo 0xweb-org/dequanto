@@ -480,6 +480,15 @@ namespace Gen {
                     return await this.$getPastLogsParsed('${abi.name}', options) as any;
                 }
             `,
+            types: `
+                async getPastLogs${abi.name} (options?: {
+                    fromBlock?: number | Date
+                    toBlock?: number | Date
+                    params?: { ${indexedParams} }
+                }): Promise<ITxLogItem<TEventParams<'${abi.name}'>>[]> {
+                    return await this.$getPastLogsParsed('${abi.name}', options) as any;
+                }
+            `,
             js: `
                 async getPastLogs${abi.name} (options) {
                     return await this.$getPastLogsParsed('${abi.name}', options);
@@ -525,6 +534,10 @@ namespace Gen {
                     return this.$read(this.$getAbiItem('function', '${abi.name}')${callInputArguments});
                 }
             `,
+            types: `
+                // ${$abiUtils.getMethodSignature(abi)}
+                async ${abi.name} (${fnInputArgumentsTargets.ts}): ${fnResult}
+            `,
             js: `
                 // ${$abiUtils.getMethodSignature(abi)}
                 async ${abi.name} (${fnInputArgumentsTargets.js}) {
@@ -553,6 +566,10 @@ namespace Gen {
                     return this.$read(abi, ...args);
                 }
             `,
+            types: `
+                ${overrides}
+                async ${abi.name} (...args): ${fnResult}
+            `,
             js: `
                 async ${abi.name} (...args) {
                     let abi = this.$getAbiItemOverload([ ${sigs} ], args);
@@ -575,6 +592,10 @@ namespace Gen {
                     return this.$write(this.$getAbiItem('function', '${abi.name}'), sender${callInputArguments});
                 }
             `,
+            types: `
+                // ${$abiUtils.getMethodSignature(abi)}
+                async ${abi.name} (sender: TSender, ${fnInputArgumentsTargets.ts}): Promise<TxWriter>
+            `,
             js: `
                 // ${$abiUtils.getMethodSignature(abi)}
                 async ${abi.name} (sender, ${fnInputArgumentsTargets.js}) {
@@ -593,6 +614,9 @@ namespace Gen {
                 async $constructor (deployer: TSender, ${fnInputArgumentsTargets.ts}): Promise<TxWriter> {
                     throw new Error('Not implemented. Typing purpose. Use the ContractDeployer class to deploy the contract');
                 }
+            `,
+            types: `
+                async $constructor (deployer: TSender, ${fnInputArgumentsTargets.ts}): Promise<TxWriter>
             `,
             js: `
                 async $constructor (deployer, ${fnInputArgumentsTargets.js}) {
@@ -619,6 +643,10 @@ namespace Gen {
                     let abi = this.$getAbiItemOverload([ ${sigs} ], args);
                     return this.$write(abi, sender, ...args);
                 }
+            `,
+            types: `
+                ${overrides}
+                async ${abi.name} (sender: TSender, ...args): Promise<TxWriter>
             `,
             js: `
                 async ${abi.name} (sender, ...args) {

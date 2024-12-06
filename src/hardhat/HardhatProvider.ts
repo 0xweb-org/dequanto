@@ -4,11 +4,11 @@ import { class_Uri } from 'atma-utils';
 import { File, env, Directory } from 'atma-io';
 
 import type { ContractBase } from '@dequanto/contracts/ContractBase';
-import type { Constructor } from 'atma-utils/mixin';
+
 import type { TAbiItem } from '@dequanto/types/TAbi';
 import type { TEth } from '@dequanto/models/TEth';
 
-import { EoAccount } from "@dequanto/models/TAccount";
+import { EoAccount } from '@dequanto/models/TAccount';
 import { HardhatWeb3Client } from '@dequanto/hardhat/HardhatWeb3Client';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 
@@ -34,6 +34,7 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { $contract } from '@dequanto/utils/$contract';
 import { $dependency } from '@dequanto/utils/$dependency';
 import { TTransport } from '@dequanto/rpc/transports/ITransport';
+import { Constructor } from '@dequanto/utils/types';
 
 type THardhatLib = typeof import('hardhat');
 
@@ -263,6 +264,52 @@ export class HardhatProvider {
         };
     }
 
+    async compileSolDirectory (dir: string, options?: {
+        paths?: {
+            root?: string
+            artifacts?: string
+        },
+        contractName?: string
+        tsgen?: boolean
+        install?: string
+    }): Promise<{
+        abi: TAbiItem[]
+        bytecode: TEth.Hex
+        output: string
+        // renamed output
+        artifact: string
+        source: IGeneratorSources
+        ContractCtor: Constructor<IContractWrapped>
+        linkReferences?: Record<string /* path */, Record<string /* name */, any>>
+    }[]> {
+
+        dir = $path.normalize(dir);
+        if (await Directory.existsAsync(dir) === false) {
+            throw new Error(`Directory "${dir}" does not exist.`);
+        }
+        const paths = {
+            sources: dir,
+            root: options?.paths?.root,
+            artifacts: options?.paths?.artifacts,
+        };
+        const hhOptions = {
+            ...paths,
+            tsgen: options?.tsgen ?? false,
+            install: options?.install ?? null
+        };
+        const hh = await this.getHardhat();
+        await hh.run('compile', hhOptions);
+
+        const files = await Directory.readFilesAsync(paths.sources, '*.sol');
+
+        return await alot(files).mapAsync(async file => {
+            let solContractPath = file.uri.toLocalFile();
+            return await this.getContractFromSolPath(solContractPath, {
+                paths
+            });
+        }).toArrayAsync();
+    }
+
     async compileSol<T extends ContractBase = IContractWrapped> (solContractPath: string, options?: {
         paths?: {
             root?: string
@@ -270,6 +317,7 @@ export class HardhatProvider {
         },
         contractName?: string
         tsgen?: boolean
+        install?: string
     }): Promise<{
         abi: TAbiItem[]
         bytecode: TEth.Hex
@@ -283,120 +331,27 @@ export class HardhatProvider {
 
         solContractPath = $path.normalize(solContractPath);
 
-        const dir = solContractPath.replace(/[^\/]+$/, '');
-        const filename = /(?<filename>[^\/]+)\.\w+$/.exec(solContractPath)?.groups.filename;
-        // Filename could contain have random number, extract main-name
-        const filenameRndSuffix = filename.replace(/_\d+$/, '');
-
-        let root = options?.paths?.root;
-        let artifacts = options?.paths?.artifacts;
-
-        if (filename == null) {
-            throw new Error(`Filename not extracted from ${solContractPath}`);
-        }
+        const dir = $path.getDirectory(solContractPath);
+        const paths = {
+            sources: dir,
+            root: options?.paths?.root,
+            artifacts: options?.paths?.artifacts,
+        };
 
         let hhOptions = {
-            sources: dir,
-            root,
-            artifacts,
+            ...paths,
+
             tsgen: options?.tsgen ?? false,
+            install: options?.install ?? null
         };
         const hh = await this.getHardhat();
         await hh.run('compile', hhOptions);
 
-        if (root == null) {
-            root = 'file://' + $path.normalize(process.cwd());
-        }
-        if (artifacts == null && root != null) {
-            artifacts = class_Uri.combine(root, 'artifacts/');
-        }
 
-        if (solContractPath.toLowerCase().includes(root.toLowerCase())) {
-            let i = solContractPath.toLowerCase().indexOf(root.toLowerCase());
-            solContractPath = solContractPath.substring(i + root.length);
-        }
-
-        let outputDir = class_Uri.combine(artifacts, solContractPath);
-        let output = class_Uri.combine(outputDir, `${filename}.json`);
-        if (await File.existsAsync(output) === false) {
-            let path = `${outputDir}/`;
-            if (await Directory.existsAsync(path) === false) {
-                throw new Error(`No JSONs found in ${outputDir}, nor ${output}`);
-            }
-            let files = await Directory.readFilesAsync(path);
-            let jsons = files.filter(x => /(?<!dbg)\.json$/.test(x.uri.file));
-            if (jsons.length === 0) {
-                throw new Error(`No JSONs output found in "${outputDir}/"`);
-            }
-            if (jsons.length === 1) {
-                output = jsons[0].uri.toString();
-            } else {
-                let jsonFile = getJsonFile(jsons, filename);
-                if (jsonFile == null) {
-                    jsonFile = getJsonFile(jsons, filenameRndSuffix);
-                }
-                if (jsonFile == null) {
-                    let contractName = options?.contractName;
-                    if (contractName == null) {
-                        let source = await File.readAsync<string>(solContractPath);
-                        let rgx = /contract \s*(?<contractName>[\w_]+)/ig;
-                        let matches = Array.from(source.matchAll(rgx));
-                        contractName = matches[matches.length - 1]?.groups?.contractName;
-                        options.contractName = contractName;
-                    }
-                    jsonFile = getJsonFile(jsons, contractName);
-                }
-
-                if (jsonFile == null) {
-                    $logger.log(`Files: ${ files.map(file => file.uri.file ).join(', ')}`);
-                    throw new Error(`Compiled JSON data not found for "${filename}" in "${outputDir}/"`);
-                }
-                output = jsonFile.uri.toString();
-            }
-        }
-        function getJsonFile (files: InstanceType<typeof File>[], filename: string) {
-            return files.find(file => {
-                return file.uri.file === `${filename}.json`;
-            });
-        }
-
-        let { abi, bytecode, contractName, linkReferences } = await File.readAsync<{
-            abi,
-            bytecode,
-            contractName,
-            linkReferences: Record<string /* path */, Record<string /* name */, any>>
-        }> (output);
-        let files = await Directory.readFilesAsync(dir, '*.sol');
-        let { contract, ContractCtor } = ContractClassFactory.fromAbi<T>(null, abi, null, null, {
-            contractName,
-            $meta: {
-                name: contractName,
-                source: solContractPath,
-                artifact: output
-            }
-        })
-
-        let fileMap = await alot(files)
-        .mapAsync(async file => {
-            return {
-                key: file.uri.toString(),
-                content: await file.readAsync<string>()
-            };
-        })
-        .toDictionaryAsync(x => x.key, x => ({ content: x.content }));
-
-        return {
-            abi,
-            bytecode,
-            output,
-            artifact: output,
-            source: {
-                contractName: contractName ?? options?.contractName,
-                files: fileMap
-            },
-            linkReferences,
-            ContractCtor
-        };
+        return await this.getContractFromSolPath<T> (solContractPath, {
+            contractName: options?.contractName,
+            paths
+        });
     }
 
     async deployCode <TReturn extends ContractBase = IContractWrapped> (
@@ -511,4 +466,167 @@ export class HardhatProvider {
         return hh.network.provider as any as TTransport.Transport;
     }
 
+
+    private async getArtifactJsonPath (solContractPath: string, options: {
+        contractName?: string
+        paths: {
+            root: string
+            artifacts: string
+        }
+    }) {
+        let outputDir = class_Uri.combine(options.paths.artifacts, solContractPath, '/');
+        if (await Directory.existsAsync(outputDir) === false) {
+            throw new Error(`No JSONs found in ${outputDir} for ${solContractPath}`);
+        }
+
+        if (options.contractName != null) {
+            let artifactJsonPath = class_Uri.combine(outputDir, `${options.contractName}.json`);
+            if (await File.existsAsync(artifactJsonPath)) {
+                return artifactJsonPath;
+            }
+        }
+        const { filename } = $path.getFilename(solContractPath);
+
+        if (filename != null) {
+            let artifactJsonPath = class_Uri.combine(outputDir, `${filename}.json`);
+            if (await File.existsAsync(artifactJsonPath)) {
+                return artifactJsonPath;
+            }
+        }
+        if (filename == null) {
+            throw new Error(`Filename not extracted from ${solContractPath}`);
+        }
+
+
+        // Filename could contain random number, extract main-name
+
+
+        let files = await Directory.readFilesAsync(outputDir);
+        let jsons = files.filter(x => /(?<!dbg)\.json$/.test(x.uri.file));
+        if (jsons.length === 0) {
+            throw new Error(`No JSONs output found in "${outputDir}/"`);
+        }
+        if (jsons.length === 1) {
+            // Only one JSON artifact found, assume it's the main contract
+            let artifactJsonPath = jsons[0].uri.toString();
+            return artifactJsonPath;
+        }
+
+
+        let jsonFile = getJsonFile(jsons, filename);
+        if (jsonFile == null) {
+            const filenameRndSuffix = filename.replace(/_\d+$/, '');
+            if (filenameRndSuffix != null) {
+                jsonFile = getJsonFile(jsons, filenameRndSuffix);
+            }
+        }
+        if (jsonFile == null) {
+            let sourceFile = solContractPath;
+            if (await File.existsAsync(sourceFile) === false) {
+                sourceFile = class_Uri.combine(options.paths.root, sourceFile);
+            }
+            if (await File.existsAsync(sourceFile) === false) {
+                throw new Error(`Source file "${solContractPath}" not found in ${options.paths.root}`);
+            }
+
+
+            let source = await File.readAsync<string>(sourceFile);
+            let rgx = /contract \s*(?<contractName>[\w_]+)/ig;
+            let matches = Array.from(source.matchAll(rgx));
+            let contractName = matches[matches.length - 1]?.groups?.contractName;
+            options.contractName = contractName;
+            jsonFile = getJsonFile(jsons, contractName);
+        }
+
+        if (jsonFile == null) {
+            $logger.log(`Files: ${ files.map(file => file.uri.file ).join(', ')}`);
+            throw new Error(`Compiled JSON data not found for "${filename}" in "${outputDir}/"`);
+        }
+        let artifactJsonPath = jsonFile.uri.toString();
+        return artifactJsonPath;
+
+
+        function getJsonFile (files: InstanceType<typeof File>[], filename: string) {
+            return files.find(file => {
+                return file.uri.file === `${filename}.json`;
+            });
+        }
+    }
+
+    private async getPaths (paths?: { root?: string, artifacts?: string }) {
+        let root = paths?.root;
+        let artifacts = paths?.artifacts;
+
+        if (root == null) {
+            root = 'file://' + $path.normalize(process.cwd());
+        }
+        if (artifacts == null) {
+            artifacts = class_Uri.combine(root, 'artifacts/');
+        }
+
+        return { root, artifacts };
+    }
+
+
+    private async getContractFromSolPath <T extends ContractBase = IContractWrapped>  (solContractPath, options: {
+        contractName?: string
+        paths: {
+            sources: string
+            root?: string;
+            artifacts?: string;
+        };
+    }) {
+
+        let { root, artifacts } = await this.getPaths (options?.paths);
+        let solContractPathRootRelative = $path.getRelativePath(solContractPath, root);
+
+        let artifactJsonPath = await this.getArtifactJsonPath(solContractPathRootRelative, {
+            contractName: options?.contractName,
+            paths: {
+                root,
+                artifacts,
+            },
+        })
+
+        let { abi, bytecode, contractName, linkReferences } = await File.readAsync<IJsonArtifact> (artifactJsonPath);
+        let { contract, ContractCtor } = ContractClassFactory.fromAbi<T>(null, abi, null, null, {
+            contractName,
+            $meta: {
+                name: contractName,
+                source: solContractPathRootRelative,
+                artifact: artifactJsonPath
+            }
+        })
+
+        let files = await Directory.readFilesAsync(options.paths.sources, '*.sol');
+        let fileMap = await alot(files)
+            .mapAsync(async file => {
+                return {
+                    key: file.uri.toString(),
+                    content: await file.readAsync<string>()
+                };
+            })
+            .toDictionaryAsync(x => x.key, x => ({ content: x.content }));
+
+        return {
+            abi,
+            bytecode,
+            output: artifactJsonPath,
+            artifact: artifactJsonPath,
+            source: {
+                contractName: contractName ?? options?.contractName,
+                files: fileMap
+            },
+            linkReferences,
+            ContractCtor
+        };
+    }
+}
+
+
+interface IJsonArtifact {
+    abi: TEth.Abi.Item[]
+    bytecode: TEth.Hex
+    contractName: string
+    linkReferences: Record<string /* path */, Record<string /* name */, any>>
 }

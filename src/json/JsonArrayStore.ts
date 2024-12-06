@@ -2,7 +2,7 @@ import alot from 'alot'
 import { JsonConvert } from 'class-json'
 import { Alot } from 'alot/alot'
 import { JsonStoreFs } from './JsonStoreFs'
-import type { Constructor } from 'atma-utils'
+import { Constructor } from '@dequanto/utils/types'
 
 export interface IStoreOptions<T, TStorage = T> {
     path: string
