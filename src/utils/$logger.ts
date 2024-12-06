@@ -72,6 +72,10 @@ class Logger {
     table(arr: (string | number | bigint)[][]) {
 
         arr = arr.filter(x => x != null && x.length > 0);
+        if (arr.length === 0) {
+            // No rows
+            return;
+        }
 
         let lengths = arr[0].map((_, i) => {
             let size = alot(arr).max(x => {

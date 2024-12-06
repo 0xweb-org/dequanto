@@ -574,10 +574,10 @@ export class HardhatProvider {
         return source;
     }
 
-    private async getContractFromSolPath <T extends ContractBase = IContractWrapped>  (solContractPath, options: {
+    public async getContractFromSolPath <T extends ContractBase = IContractWrapped>  (solContractPath: string, options?: {
         contractName?: string
         paths: {
-            sources: string
+            sources?: string
             root?: string;
             artifacts?: string;
         };
@@ -607,7 +607,9 @@ export class HardhatProvider {
             }
         })
 
-        let files = await Directory.readFilesAsync(options.paths.sources, '*.sol');
+        let files = options?.paths?.sources
+            ? await Directory.readFilesAsync(options.paths.sources, '*.sol')
+            : [];
         let fileMap = await alot(files)
             .mapAsync(async file => {
                 return {

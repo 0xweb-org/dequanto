@@ -4,6 +4,8 @@ import { IBeacon, IBeaconProxy, IProxyAdmin } from '@dequanto/contracts/deploy/p
 import { IDeployment, IProxyStorageLayout } from '@dequanto/contracts/deploy/storage/DeploymentsStorage';
 import { Generator } from '@dequanto/gen/Generator';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
+import { $address } from '@dequanto/utils/$address';
+import { $buffer } from '@dequanto/utils/$buffer';
 import { l } from '@dequanto/utils/$logger';
 import { File } from 'atma-io';
 
@@ -57,6 +59,29 @@ export default UTest({
     },
     async 'should deploy the generated contract'() {
         return UTest({
+            async 'should get and deploy openzeppelin proxy' () {
+                let source = '@openzeppelin/contracts/governance/TimelockController.sol';
+                let wrapperPath = './test/tmp/wrappers/TimelockController.sol';
+                await File.writeAsync(wrapperPath, `import "${source}";`);
+                await hh.compileSol(wrapperPath);
+
+                let result = await hh.getContractFromSolPath(source);
+                has_(result.artifact, 'artifacts/@openzeppelin/contracts/governance/TimelockController.sol/TimelockController.json');
+
+                let timelock = new result.ContractCtor();
+                eq_(timelock.$meta.name, 'TimelockController');
+                eq_(timelock.$meta.artifact, result.artifact);
+                eq_(timelock.$meta.source, source);
+
+
+                let deployment = await hh.deployClass(result.ContractCtor, {
+                    deployer,
+                    arguments: [ 12, [deployer.address], [], deployer.address]
+                });
+
+                let delay = await deployment.contract.getMinDelay();
+                eq_(delay, 12n);
+            },
             async 'is new installation' () {
                 eq_(await File.existsAsync(deploymentsOutput), false);
                 eq_(await File.existsAsync(deploymentsProxyOutput), false);
