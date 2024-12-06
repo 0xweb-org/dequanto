@@ -57,9 +57,11 @@ export namespace $path {
     }
 
     export function getRelativePath (path: string, base: string) {
-        let i = path.toLowerCase().indexOf(base.toLowerCase());
+        let path_ = normalize(path).replace('file://', '');
+        let base_ = normalize(base).replace('file://', '');
+        let i = path_.toLowerCase().indexOf(base_.toLowerCase());
         if (i > -1) {
-            return path.substring(i + base.length);
+            return path_.substring(i + base_.length);
         }
         return path;
     }

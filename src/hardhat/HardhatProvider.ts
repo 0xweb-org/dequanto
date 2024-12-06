@@ -38,6 +38,8 @@ import { Constructor } from '@dequanto/utils/types';
 
 type THardhatLib = typeof import('hardhat');
 
+const rgx_CONTRACT_NAME = /contract\s+(?<contractName>[\w_]+)/ig;
+
 export class HardhatProvider {
 
     @memd.deco.memoize()
@@ -302,12 +304,14 @@ export class HardhatProvider {
 
         const files = await Directory.readFilesAsync(paths.sources, '*.sol');
 
-        return await alot(files).mapAsync(async file => {
+        const results = await alot(files).mapAsync(async file => {
             let solContractPath = file.uri.toLocalFile();
             return await this.getContractFromSolPath(solContractPath, {
                 paths
             });
         }).toArrayAsync();
+
+        return results.filter(x => x != null);
     }
 
     async compileSol<T extends ContractBase = IContractWrapped> (solContractPath: string, options?: {
@@ -476,6 +480,10 @@ export class HardhatProvider {
     }) {
         let outputDir = class_Uri.combine(options.paths.artifacts, solContractPath, '/');
         if (await Directory.existsAsync(outputDir) === false) {
+            let content = await this.getSolFileContent(solContractPath, options);
+            if (rgx_CONTRACT_NAME.test(content) === false) {
+                return null;
+            }
             throw new Error(`No JSONs found in ${outputDir} for ${solContractPath}`);
         }
 
@@ -496,11 +504,6 @@ export class HardhatProvider {
         if (filename == null) {
             throw new Error(`Filename not extracted from ${solContractPath}`);
         }
-
-
-        // Filename could contain random number, extract main-name
-
-
         let files = await Directory.readFilesAsync(outputDir);
         let jsons = files.filter(x => /(?<!dbg)\.json$/.test(x.uri.file));
         if (jsons.length === 0) {
@@ -515,24 +518,15 @@ export class HardhatProvider {
 
         let jsonFile = getJsonFile(jsons, filename);
         if (jsonFile == null) {
+            // Filename could contain random number, extract main-name
             const filenameRndSuffix = filename.replace(/_\d+$/, '');
             if (filenameRndSuffix != null) {
                 jsonFile = getJsonFile(jsons, filenameRndSuffix);
             }
         }
         if (jsonFile == null) {
-            let sourceFile = solContractPath;
-            if (await File.existsAsync(sourceFile) === false) {
-                sourceFile = class_Uri.combine(options.paths.root, sourceFile);
-            }
-            if (await File.existsAsync(sourceFile) === false) {
-                throw new Error(`Source file "${solContractPath}" not found in ${options.paths.root}`);
-            }
-
-
-            let source = await File.readAsync<string>(sourceFile);
-            let rgx = /contract \s*(?<contractName>[\w_]+)/ig;
-            let matches = Array.from(source.matchAll(rgx));
+            let source = await this.getSolFileContent(solContractPath, options);
+            let matches = Array.from(source.matchAll(rgx_CONTRACT_NAME));
             let contractName = matches[matches.length - 1]?.groups?.contractName;
             options.contractName = contractName;
             jsonFile = getJsonFile(jsons, contractName);
@@ -567,6 +561,18 @@ export class HardhatProvider {
         return { root, artifacts };
     }
 
+    private async getSolFileContent (solContractPath, options: { paths: { root }}) {
+        let sourceFile = solContractPath;
+        if (await File.existsAsync(sourceFile) === false) {
+            sourceFile = class_Uri.combine(options.paths.root, sourceFile);
+        }
+        if (await File.existsAsync(sourceFile) === false) {
+            throw new Error(`Source file "${solContractPath}" not found in ${options.paths.root}`);
+        }
+
+        let source = await File.readAsync<string>(sourceFile);
+        return source;
+    }
 
     private async getContractFromSolPath <T extends ContractBase = IContractWrapped>  (solContractPath, options: {
         contractName?: string
@@ -586,7 +592,10 @@ export class HardhatProvider {
                 root,
                 artifacts,
             },
-        })
+        });
+        if (artifactJsonPath == null) {
+            return null;
+        }
 
         let { abi, bytecode, contractName, linkReferences } = await File.readAsync<IJsonArtifact> (artifactJsonPath);
         let { contract, ContractCtor } = ContractClassFactory.fromAbi<T>(null, abi, null, null, {
