@@ -102,6 +102,8 @@ export const ConfigDefaults = <IConfigData> {
     },
     "web3": {
         "eth": {
+            "chainId": 1,
+            "chainToken": "ETH",
             "endpoints": [
                 {
                     "url": "https://eth.public-rpc.com"
@@ -117,6 +119,8 @@ export const ConfigDefaults = <IConfigData> {
             ]
         },
         "eth:goerli": {
+            "chainId": 5,
+            "chainToken": "ETH",
             "endpoints": [
                 {
                     "url": "https://goerli.infura.io/v3/a83f91c556054576a4c608ad4312720b"
@@ -128,6 +132,7 @@ export const ConfigDefaults = <IConfigData> {
         },
         "eth:sepolia": {
             "chainId": 11155111,
+            "chainToken": "ETH",
             "endpoints": [
                 {
                     "url": "https://1rpc.io/sepolia"
@@ -138,6 +143,8 @@ export const ConfigDefaults = <IConfigData> {
             ]
         },
         "polygon": {
+            "chainId": 137,
+            "chainToken": "POL",
             "endpoints": [
                 {
                     "url": "https://polygon-rpc.com"
@@ -146,6 +153,7 @@ export const ConfigDefaults = <IConfigData> {
         },
         "polygon:mumbai": {
             "chainId": 80001,
+            "chainToken": "POL",
             "endpoints": [
                 {
                     "url": "https://rpc-mumbai.maticvigil.com"
@@ -153,6 +161,8 @@ export const ConfigDefaults = <IConfigData> {
             ]
         },
         "bsc": {
+            "chainId": 56,
+            "chainToken": "BNB",
             "endpoints": [
                 {
                     "url": "https://bscrpc.com"
@@ -169,6 +179,8 @@ export const ConfigDefaults = <IConfigData> {
             ]
         },
         "xdai": {
+            "chainId": 100,
+            "chainToken": "XDAI",
             "endpoints": [
                 {
                     "url": "https://rpc.gnosischain.com/"
@@ -192,6 +204,7 @@ export const ConfigDefaults = <IConfigData> {
         },
         "arbitrum": {
             "chainId": 42161,
+            "chainToken": "ETH",
             "endpoints": [
                 {
                     "url": "https://arbitrum.public-rpc.com"
@@ -200,6 +213,7 @@ export const ConfigDefaults = <IConfigData> {
         },
         "optimism": {
             "chainId": 10,
+            "chainToken": "ETH",
             "endpoints": [
                 {
                     "url": "https://mainnet.optimism.io"

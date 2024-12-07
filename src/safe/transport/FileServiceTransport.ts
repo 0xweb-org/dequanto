@@ -1,4 +1,4 @@
-import { GnosisSafe } from '@dequanto-contracts/safe/GnosisSafe';
+import { GnosisSafe } from '@dequanto/prebuilt/safe/GnosisSafe';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { EoAccount } from '@dequanto/models/TAccount';
 import { TAddress } from '@dequanto/models/TAddress';

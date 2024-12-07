@@ -21,6 +21,6 @@ function resolveOptions (options: IWeb3EndpointOptions) {
             }
         }
     }
-    $require.Numeric(options.chainId, `ChainID should be numeric. Got ${options.chainId}`);
+    $require.Numeric(options.chainId, `ChainID should be numeric. Got ${options.chainId} for ${options.platform}`);
     return options;
 }

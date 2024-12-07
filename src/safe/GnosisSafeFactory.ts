@@ -2,10 +2,10 @@ import { EoAccount } from "@dequanto/models/TAccount";
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
 import { GnosisSafeHandler } from './GnosisSafeHandler';
-import { Safe } from '@dequanto-contracts/safe/Safe';
+import { Safe } from '@dequanto/prebuilt/safe/Safe';
 import { config } from '@dequanto/config/Config';
 import { $require } from '@dequanto/utils/$require';
-import { SafeProxyFactory } from '@dequanto-contracts/safe/SafeProxyFactory';
+import { SafeProxyFactory } from '@dequanto/prebuilt/safe/SafeProxyFactory';
 import { TEth } from '@dequanto/models/TEth';
 import { TAbiItem } from '@dequanto/types/TAbi';
 

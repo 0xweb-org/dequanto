@@ -1,4 +1,4 @@
-import { TimelockController } from '@dequanto-contracts/openzeppelin/TimelockController';
+import { TimelockController } from '@dequanto/prebuilt/openzeppelin/TimelockController';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
 import { IAccount } from '@dequanto/models/TAccount';
 import { TAddress } from '@dequanto/models/TAddress';

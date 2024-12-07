@@ -12,10 +12,10 @@ import { TokensServiceBsc } from '../TokensServiceBsc';
 import { $address } from '@dequanto/utils/$address';
 import { $require } from '@dequanto/utils/$require';
 import { $cache } from '@dequanto/utils/$cache';
-import { AmmFactoryV2Contract } from '@dequanto-contracts/amm/AmmFactoryV2Contract/AmmFactoryV2Contract';
-import { AmmMasterChefV2Contract } from '@dequanto-contracts/amm/AmmMasterChefV2Contract/AmmMasterChefV2Contract';
-import { AmmVaultV2Contract } from '@dequanto-contracts/amm/AmmVaultV2Contract/AmmVaultV2Contract';
-import { AmmPairV2Contract } from '@dequanto-contracts/amm/AmmPairV2Contract/AmmPairV2Contract';
+import { AmmFactoryV2Contract } from '@dequanto/prebuilt/amm/AmmFactoryV2Contract/AmmFactoryV2Contract';
+import { AmmMasterChefV2Contract } from '@dequanto/prebuilt/amm/AmmMasterChefV2Contract/AmmMasterChefV2Contract';
+import { AmmVaultV2Contract } from '@dequanto/prebuilt/amm/AmmVaultV2Contract/AmmVaultV2Contract';
+import { AmmPairV2Contract } from '@dequanto/prebuilt/amm/AmmPairV2Contract/AmmPairV2Contract';
 
 
 interface ILPPair extends IToken {

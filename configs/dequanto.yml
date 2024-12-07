@@ -87,6 +87,8 @@ blockchainExplorer:
 
 web3:
   eth:
+    chainId: 1
+    chainToken: ETH
     endpoints:
       # public rpc (ankr, linkpool)
       - url: 'https://eth.public-rpc.com'
@@ -100,18 +102,23 @@ web3:
       # - url: 'wss://mainnet.infura.io/ws/v3/a83f91c556054576a4c608ad4312720b'
 
   eth:goerli:
+    chainId: 5
+    chainToken: ETH
     endpoints:
       - url: 'https://goerli.infura.io/v3/a83f91c556054576a4c608ad4312720b'
       - url: 'wss://goerli.infura.io/ws/v3/a83f91c556054576a4c608ad4312720b'
 
   eth:sepolia:
     chainId: 11155111
+    chainToken: ETH
     endpoints:
       - url: 'https://1rpc.io/sepolia'
       - url: 'wss://ethereum-sepolia.publicnode.com'
 
   # semi-private accounts at https://rpc.maticvigil.com/
   polygon:
+    chainId: 137
+    chainToken: POL
     endpoints:
       - url: 'https://polygon-rpc.com'
       #- url: 'https://rpc-mainnet.maticvigil.com/v1/d41908ce4587e7646e975270498ce8da070112a2'
@@ -119,11 +126,14 @@ web3:
 
   polygon:mumbai:
     chainId: 80001
+    chainToken: POL
     endpoints:
       - url: 'https://rpc-mumbai.maticvigil.com'
 
   # from https://docs.binance.org/smart-chain/developer/rpc.html
   bsc:
+    chainId: 56
+    chainToken: BNB
     endpoints:
       - url: 'https://bscrpc.com'
       - url: 'https://bsc-dataseed.binance.org/'
@@ -131,6 +141,8 @@ web3:
       - url: 'wss://bsc-ws-node.nariox.org:443'
 
   xdai:
+    chainId: 100
+    chainToken: XDAI
     endpoints:
       - url: 'https://rpc.gnosischain.com/'
       - url: 'wss://rpc.gnosischain.com/wss'
@@ -144,11 +156,13 @@ web3:
 
   arbitrum:
     chainId: 42161
+    chainToken: ETH
     endpoints:
       - url: 'https://arbitrum.public-rpc.com'
 
   optimism:
     chainId: 10
+    chainToken: ETH
     endpoints:
       - url: 'https://mainnet.optimism.io'
 

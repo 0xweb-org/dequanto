@@ -24,7 +24,7 @@ export class GeneratorStorageReader {
             [file: string]: { content: string }
         },
         client?: Web3Client
-    }): Promise<{ code?: string, className?: string, sourcePath?: string, error?: Error }> {
+    }): Promise<{ code?: string, types?: string, className?: string, sourcePath?: string, error?: Error }> {
 
         let targetType = opts.target ?? 'ts';
         let { client, sources, contractName, address } = opts;
@@ -60,19 +60,29 @@ export class GeneratorStorageReader {
 
         let methods = this.serializeSlots(slots);
         let codeMethods = methods.map(x => x[targetType]).join('\n\n');
+        let codeMethodsTypings = methods.map(x => x.types).join('\n\n');
 
-        let templatePath = $path.resolve(`/src/gen/ContractStorageReaderTemplate.${targetType}`);
+        let templatePath = $path.resolve(`/src/gen/templates/ContractStorageReaderTemplate.${targetType}.tmpl`);
         let template = await File.readAsync<string>(templatePath, { skipHooks: true });
+
+        let templateTypingsPath = $path.resolve(`/src/gen/templates/ContractStorageReaderTemplate.d.ts.tmpl`);
+        let templateTypings = await File.readAsync<string>(templateTypingsPath, { skipHooks: true });
+
         let className = $gen.toClassName(opts.name + 'StorageReader');
         let code = template
             .replace(`$NAME$`, className)
             .replace(`/* METHODS */`, () => codeMethods)
             .replace(`$SLOTS$`, () => JSON.stringify(slots, null, '    '))
 
+        let codeTypings = templateTypings
+            .replace(`$NAME$`, className)
+            .replace(`/* METHODS */`, () => codeMethodsTypings)
+            .replace(`$SLOTS$`, () => JSON.stringify(slots, null, '    '))
 
         return {
             className: className,
             code: code,
+            types: codeTypings,
             sourcePath: file.path
         };
     }
@@ -84,6 +94,7 @@ export class GeneratorStorageReader {
                 return {
                     ts: Str.formatMethod(entry.ts),
                     js: Str.formatMethod(entry.js),
+                    types: Str.formatMethod(entry.types),
                 }
             });
     }
@@ -97,6 +108,9 @@ export class GeneratorStorageReader {
                 async ${name}(${parametersTypes?.ts ?? ''}): Promise<${returnType}> {
                     return this.$storage.get(['${name}', ${ parametersCall ?? '' }]);
                 }
+            `,
+            types: `
+                ${name}(${parametersTypes?.ts ?? ''}): Promise<${returnType}>
             `,
             js: `
                 async ${name}(${parametersTypes?.js ?? ''}) {

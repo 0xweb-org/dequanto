@@ -25,7 +25,7 @@ import { RpcLogFilterOptions, RpcSubscription } from '@dequanto/rpc/RpcSubscript
 import { TEth } from '@dequanto/models/TEth';
 
 import { PromiseEvent } from '@dequanto/class/PromiseEvent';
-import { RpcTypes } from '@dequanto/rpc/Rpc';
+import { Rpc, RpcTypes } from '@dequanto/rpc/Rpc';
 import { TRpc } from '@dequanto/rpc/RpcBase';
 import { $sig } from '@dequanto/utils/$sig';
 import { DataLike } from '@dequanto/utils/types';
@@ -137,7 +137,7 @@ export abstract class Web3Client implements IWeb3Client {
     async getWeb3(options?: IPoolWeb3Request) {
         throw new Error(`To get the web3 initialize the Web3 compatibility class ('compatibility/Web3.ts') instead`)
     }
-    async getRpc(options?: IPoolWeb3Request) {
+    async getRpc(options?: IPoolWeb3Request): Promise<Rpc> {
         return await this.pool.getRpc(options);
     }
     async getNodeURL(options?: IPoolWeb3Request) {

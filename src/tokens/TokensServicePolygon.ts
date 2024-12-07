@@ -2,7 +2,7 @@ import di from 'a-di';
 import { TokensService } from './TokensService';
 import { TAddress } from '@dequanto/models/TAddress';
 import { Polyscan } from '@dequanto/explorer/Polyscan';
-import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
+import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
 
 export class TokensServicePolygon extends TokensService {
     constructor () {

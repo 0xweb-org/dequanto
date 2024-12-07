@@ -8,7 +8,7 @@ import { $bigint } from '@dequanto/utils/$bigint';
 import { TokensServiceFactory } from './TokensServiceFactory';
 import { $require } from '@dequanto/utils/$require';
 import { TokensService } from './TokensService';
-import { WETH } from '@dequanto-contracts/weth/WETH/WETH';
+import { WETH } from '@dequanto/prebuilt/weth/WETH/WETH';
 import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
 
 

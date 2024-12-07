@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./",
+        "module": "es2022",
+        "moduleResolution": "node",
+        "experimentalDecorators": true,
+        "target": "es2022",
+        "lib": ["dom", "es2022"],
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
+        "paths": {
+            "dequanto/*": ["./node_modules/dequanto/lib/esm/*"]
+        }
+    }
+}

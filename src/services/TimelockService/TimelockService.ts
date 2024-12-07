@@ -1,5 +1,5 @@
 import memd from 'memd';
-import { TimelockController } from '@dequanto-contracts/openzeppelin/TimelockController';
+import { TimelockController } from '@dequanto/prebuilt/openzeppelin/TimelockController';
 import { ContractBase } from '@dequanto/contracts/ContractBase';
 import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
 import { IAccount } from '@dequanto/models/TAccount';

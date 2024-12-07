@@ -1,5 +1,5 @@
 import alot from 'alot';
-import { GnosisSafe } from '@dequanto-contracts/safe/GnosisSafe';
+import { GnosisSafe } from '@dequanto/prebuilt/safe/GnosisSafe';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import type { EoAccount } from '@dequanto/models/TAccount';
 import type { TAddress } from '@dequanto/models/TAddress';

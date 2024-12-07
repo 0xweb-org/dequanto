@@ -6,6 +6,7 @@
         "baseUrl": "./",
         "paths": {
             "@dequanto/*": [ "src/*" ],
+            "dequanto/*": [ "src/*" ],
             "@dequanto-contracts/*": [ "src/prebuilt/*" ]
         },
         "typeRoots": [

@@ -4,7 +4,7 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { XDaiscan } from '@dequanto/chains/xdai/XDaiscan';
 import { IToken } from '@dequanto/models/IToken';
 import { ITokenProvider } from './TokenProviders/ITokenProvider';
-import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
+import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
 
 export class TokensServiceXDai extends TokensService {
     constructor () {

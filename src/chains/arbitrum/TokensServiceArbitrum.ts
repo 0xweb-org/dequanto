@@ -3,7 +3,7 @@ import di from 'a-di';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TokensService } from '@dequanto/tokens/TokensService';
 import { Arbiscan } from './Arbiscan';
-import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
+import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
 
 
 export class TokensServiceArbitrum extends TokensService {

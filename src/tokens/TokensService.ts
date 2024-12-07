@@ -8,7 +8,7 @@ import { ITokenProvider } from './TokenProviders/ITokenProvider';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
 import { TokenDataProvider } from './TokenDataProvider';
-import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
+import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
 
 
 export class TokensService {

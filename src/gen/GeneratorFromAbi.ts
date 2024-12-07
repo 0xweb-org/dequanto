@@ -59,27 +59,36 @@ export class GeneratorFromAbi {
                 return null;
             })
             .filter(Boolean)
-            .map(x => x[ opts?.target ?? 'ts' ])
-            .map(Str.formatMethod)
-            .toArray();
+            .mapFull(arr => {
+                return {
+                    ts: arr.map(x => Str.formatMethod(x.ts)),
+                    js: arr.map(x => Str.formatMethod(x.js)),
+                    types: arr.map(x => Str.formatMethod(x.types)),
+                }
+            });
 
 
-        let methodTypes = alot(abiJson)
+        let methodTypings = alot(abiJson)
             .filter(x => x.type === 'function')
             .groupBy(x => x.name)
             .map(group => {
                 let item = group.values[0];
-                return Gen.serializeMethodTypeTs(item.name, group.values);
+                return Gen.serializeMethodTypingsTs(item.name, group.values);
             })
             .filter(Boolean)
             .toArray();
 
-        let eventsArr = abiJson
+        let eventsArr = alot(abiJson)
             .filter(x => x.type === 'event')
             .map(x => Gen.serializeEvent(x))
             .filter(Boolean)
-            .map(x => x[ opts?.target ?? 'ts' ])
-            .map(Str.formatMethod);
+            .mapFull(arr => {
+                return {
+                    ts: arr.map(x => Str.formatMethod(x.ts)),
+                    js: arr.map(x => Str.formatMethod(x.js)),
+                    types: arr.map(x => Str.formatMethod(x.types)),
+                }
+            })
 
         let eventTypes = alot(abiJson)
             .filter(x => x.type === 'event')
@@ -94,19 +103,29 @@ export class GeneratorFromAbi {
 
         //let eventInterfacesAll = Gen.serializeEventsInterfacesAllTs(abiJson.filter(x => x.type === 'event'));
 
-        let eventsExtractorsArr = abiJson
+        let eventsExtractorsArr = alot(abiJson)
             .filter(x => x.type === 'event')
             .map(x => Gen.serializeEventExtractor(x))
             .filter(Boolean)
-            .map(x => x[ opts?.target ?? 'ts' ])
-            .map(Str.formatMethod);
+            .mapFull(arr => {
+                return {
+                    ts: arr.map(x => Str.formatMethod(x.ts)),
+                    js: arr.map(x => Str.formatMethod(x.js)),
+                    types: arr.map(x => Str.formatMethod(x.types)),
+                }
+            });
 
-        let eventsFetchersArr = abiJson
+        let eventsFetchersArr = alot(abiJson)
             .filter(x => x.type === 'event')
             .map(x => Gen.serializeEventFetcher(x))
             .filter(Boolean)
-            .map(x => x[ opts?.target ?? 'ts' ])
-            .map(Str.formatMethod);
+            .mapFull(arr => {
+                return {
+                    ts: arr.map(x => Str.formatMethod(x.ts)),
+                    js: arr.map(x => Str.formatMethod(x.js)),
+                    types: arr.map(x => Str.formatMethod(x.types)),
+                }
+            });
 
         // let eventInterfaces = abiJson
         //     .filter(x => x.type === 'event')
@@ -114,15 +133,22 @@ export class GeneratorFromAbi {
         //     .filter(Boolean)
         //     .map(Str.formatMethod);
 
-        let methods = methodsArr.join('\n\n');
-        let events = eventsArr.join('\n\n');
-        let eventsExtractors = eventsExtractorsArr.join('\n\n');
-        let eventsFetchers = eventsFetchersArr.join('\n\n');
+        let methods = methodsArr[targetType].join('\n\n');
+        let methodsTypings = methodsArr.types.join('\n\n');
+        let events = eventsArr[targetType].join('\n\n');
+        let eventsTypings = eventsArr.types.join('\n\n');
+
+        let eventsExtractors = eventsExtractorsArr[targetType].join('\n\n');
+        let eventsExtractorsTypings = eventsExtractorsArr.types.join('\n\n');
+
+        let eventsFetchers = eventsFetchersArr[targetType].join('\n\n');
+        let eventsFetchersTypings = eventsFetchersArr.types.join('\n\n');
 
         let name = opts.name;
-        let templatePath = $path.resolve(`/src/gen/ContractTemplate.${ targetType }`);
+        let templatePath = $path.resolve(`/src/gen/templates/ContractTemplate.${ targetType }.tmpl`);
         let template = await File.readAsync<string>(templatePath, { skipHooks: true });
-
+        let templateDtsPath = $path.resolve(`/src/gen/templates/ContractTemplate.d.ts.tmpl`);
+        let templateDts = await File.readAsync<string>(templateDtsPath, { skipHooks: true });
 
         let EtherscanStr;
         let EthWeb3ClientStr;
@@ -130,53 +156,8 @@ export class GeneratorFromAbi {
         let sourceUri: string;
         let Web3ClientOptions = '';
         let EvmScanOptions = '';
-        let importPfx = targetType === 'js' ? 'dequanto' : '@dequanto';
+        let importPfx = true /* always */ ? 'dequanto' : '@dequanto';
         switch (opts.network) {
-            case 'bsc':
-                EtherscanStr = 'Bscscan';
-                EthWeb3ClientStr = 'BscWeb3Client';
-                imports = [
-                    `import { Bscscan } from '${importPfx}/explorer/Bscscan'`,
-                    `import { BscWeb3Client } from '${importPfx}/clients/BscWeb3Client'`,
-                ];
-                sourceUri = `https://bscscan.com/address/${opts.address}#code`;
-                break;
-            case 'polygon':
-                EtherscanStr = 'Polyscan';
-                EthWeb3ClientStr = 'PolyWeb3Client';
-                imports = [
-                    `import { Polyscan } from '${importPfx}/explorer/Polyscan'`,
-                    `import { PolyWeb3Client } from '${importPfx}/clients/PolyWeb3Client'`,
-                ];
-                sourceUri = `https://polygonscan.com/address/${opts.address}#code`;
-                break;
-            case 'xdai':
-                EtherscanStr = 'XDaiscan';
-                EthWeb3ClientStr = 'XDaiWeb3Client';
-                imports = [
-                    `import { XDaiscan } from '${importPfx}/chains/xdai/XDaiscan'`,
-                    `import { XDaiWeb3Client } from '${importPfx}/chains/xdai/XDaiWeb3Client'`,
-                ];
-                sourceUri = `https://blockscout.com/xdai/mainnet/address/${opts.address}/contracts`;
-                break;
-            case 'eth':
-                EtherscanStr = 'Etherscan';
-                EthWeb3ClientStr = 'EthWeb3Client';
-                imports = [
-                    `import { Etherscan } from '${importPfx}/explorer/Etherscan'`,
-                    `import { EthWeb3Client } from '${importPfx}/clients/EthWeb3Client'`,
-                ];
-                sourceUri = `https://etherscan.io/address/${opts.address}#code`;
-                break;
-            case 'hardhat':
-                EtherscanStr = 'Etherscan';
-                EthWeb3ClientStr = 'HardhatWeb3Client';
-                imports = [
-                    `import { Etherscan } from '${importPfx}/explorer/Etherscan'`,
-                    `import { HardhatWeb3Client } from '${importPfx}/hardhat/HardhatWeb3Client'`,
-                ];
-                sourceUri = ``;
-                break;
             default: {
                 let web3Config = $config.get(`web3.${opts.network}`);
                 if (web3Config) {
@@ -222,6 +203,7 @@ export class GeneratorFromAbi {
         let storageReaderInitializer = '';
         let storageReaderProperty = '';
         let storageReaderClass = '';
+        let storageReaderClassTypings = '';
         try {
             let storageReaderGenerator = new GeneratorStorageReader();
             let reader = await storageReaderGenerator.generate({ ...opts, target: targetType });
@@ -231,6 +213,7 @@ export class GeneratorFromAbi {
             }
             if (reader.className) {
                 storageReaderClass = reader.code;
+                storageReaderClassTypings = reader.types;
                 storageReaderProperty = targetType === 'ts' ? `declare storage: ${reader.className}` : '';
                 storageReaderInitializer = `this.storage = new ${reader.className}(this.address, this.client, this.explorer);`;
                 $logger.log(`green<StorageReader> was generated`);
@@ -270,13 +253,43 @@ export class GeneratorFromAbi {
 
 
             .replace(`/* $EVENT_TYPES$ */`, () => Str.indent(eventTypes.map(x => x.code).join('\n'), '        '))
-            .replace(`/* $METHOD_TYPES$ */`, () => Str.indent(methodTypes.map(x => x.code).join('\n'), '        '))
+            .replace(`/* $METHOD_TYPES$ */`, () => Str.indent(methodTypings.map(x => x.code).join('\n'), '        '))
             //.replace(`/* $METHOD_INTERFACES$ */`, () => methodInterfacesArr.map(x => x.code).join('\n\n') + '\n\n' + methodInterfacesAll.code + '\n\n')
             ;
 
+        let codeDts = templateDts
+
+            .replace(`/* IMPORTS */`, () => imports.join('\n'))
+            .replace(`/* ERRORS */`, () => Gen.serializeErrors(className, abiJson))
+            .replace(/\$NAME\$/g, className)
+            .replace(`$ADDRESS$`, opts.address ? `'${opts.address}'` : 'null')
+            .replace(`/* METHODS */`, methodsTypings)
+            .replace(`/* EVENTS */`, eventsTypings)
+            .replace(`/* EVENTS_EXTRACTORS */`, eventsExtractorsTypings)
+            .replace(`/* EVENTS_FETCHERS */`, eventsFetchersTypings)
+            .replace(`$ABI$`, () => JSON.stringify(abiJson))
+            .replace(`$DATE$`, $date.format(new Date(), 'yyyy-MM-dd HH:mm'))
+            .replace(`$EXPLORER_URL$`, sourceUri)
+            //.replace(`/* $EVENT_INTERFACES$ */`, () => eventInterfaces.join('\n') + '\n\n' + eventInterfacesAll.code + '\n\n')
+
+            .replace(`/* STORAGE_READER_INITIALIZER */`, storageReaderInitializer)
+            .replace(`/* STORAGE_READER_PROPERTY */`, storageReaderProperty)
+            .replace(`/* STORAGE_READER_CLASS */`, () => storageReaderClassTypings)
+            .replace(`/* TX_CALLER_METHODS */`, () => Gen.serializeTxCallerMethods(className, abiJson)[targetType])
+            .replace(`/* TX_DATA_METHODS */`, () => Gen.serializeTxDataMethods(className, abiJson)[targetType])
+
+
+            .replace(`/* $EVENT_TYPES$ */`, () => Str.indent(eventTypes.map(x => x.code).join('\n'), '        '))
+            .replace(`/* $METHOD_TYPES$ */`, () => Str.indent(methodTypings.map(x => x.code).join('\n'), '        '))
+            ;
 
 
         await File.writeAsync(outputPath, code, { skipHooks: true });
+        if (targetType === 'js') {
+            let outputPathDts = outputPath.replace(/\.\w+$/, '.d.ts');
+            await File.writeAsync(outputPathDts, codeDts, { skipHooks: true });
+        }
+
 
         if (opts.saveAbi) {
             let path = class_Uri.combine(opts.output, outputDirectory, `${outputFilename}Abi.json`);
@@ -372,7 +385,7 @@ namespace Gen {
         };
     }
 
-    export function serializeMethodTypeTs(name: string, abis: TAbiItem[]) {
+    export function serializeMethodTypingsTs(name: string, abis: TAbiItem[]) {
         let args = abis.map(abi => {
             let { fnInputArgumentsTargets } = serializeArgumentsTs(abi);
             return `[ ${fnInputArgumentsTargets.ts} ]`;
@@ -443,6 +456,9 @@ namespace Gen {
                     return this.$onLog('${abi.name}', fn);
                 }
             `,
+            types: `
+                on${abi.name} (fn?: (event: TClientEventsStreamData<TEventArguments<'${abi.name}'>>) => void): ClientEventsStream<TClientEventsStreamData<TEventArguments<'${abi.name}'>>>
+            `,
             js: `
                 on${abi.name} (fn) {
                     return this.$onLog('${abi.name}', fn);
@@ -457,6 +473,9 @@ namespace Gen {
                     let abi = this.$getAbiItem('event', '${abi.name}');
                     return this.$extractLogs(tx, abi) as any as ITxLogItem<TEventParams<'${abi.name}'>>[];
                 }
+            `,
+            types: `
+                extractLogs${abi.name} (tx: TEth.TxReceipt): ITxLogItem<TEventParams<'${abi.name}'>>[]
             `,
             js: `
                 extractLogs${abi.name} (tx) {
@@ -481,13 +500,11 @@ namespace Gen {
                 }
             `,
             types: `
-                async getPastLogs${abi.name} (options?: {
+                getPastLogs${abi.name} (options?: {
                     fromBlock?: number | Date
                     toBlock?: number | Date
                     params?: { ${indexedParams} }
-                }): Promise<ITxLogItem<TEventParams<'${abi.name}'>>[]> {
-                    return await this.$getPastLogsParsed('${abi.name}', options) as any;
-                }
+                }): Promise<ITxLogItem<TEventParams<'${abi.name}'>>[]>
             `,
             js: `
                 async getPastLogs${abi.name} (options) {
@@ -536,7 +553,7 @@ namespace Gen {
             `,
             types: `
                 // ${$abiUtils.getMethodSignature(abi)}
-                async ${abi.name} (${fnInputArgumentsTargets.ts}): ${fnResult}
+                ${abi.name} (${fnInputArgumentsTargets.ts}): ${fnResult}
             `,
             js: `
                 // ${$abiUtils.getMethodSignature(abi)}
@@ -568,7 +585,7 @@ namespace Gen {
             `,
             types: `
                 ${overrides}
-                async ${abi.name} (...args): ${fnResult}
+                ${abi.name} (...args): ${fnResult}
             `,
             js: `
                 async ${abi.name} (...args) {
@@ -594,7 +611,7 @@ namespace Gen {
             `,
             types: `
                 // ${$abiUtils.getMethodSignature(abi)}
-                async ${abi.name} (sender: TSender, ${fnInputArgumentsTargets.ts}): Promise<TxWriter>
+                ${abi.name} (sender: TSender, ${fnInputArgumentsTargets.ts}): Promise<TxWriter>
             `,
             js: `
                 // ${$abiUtils.getMethodSignature(abi)}
@@ -616,7 +633,7 @@ namespace Gen {
                 }
             `,
             types: `
-                async $constructor (deployer: TSender, ${fnInputArgumentsTargets.ts}): Promise<TxWriter>
+                $constructor (deployer: TSender, ${fnInputArgumentsTargets.ts}): Promise<TxWriter>
             `,
             js: `
                 async $constructor (deployer, ${fnInputArgumentsTargets.js}) {
@@ -646,7 +663,7 @@ namespace Gen {
             `,
             types: `
                 ${overrides}
-                async ${abi.name} (sender: TSender, ...args): Promise<TxWriter>
+                ${abi.name} (sender: TSender, ...args): Promise<TxWriter>
             `,
             js: `
                 async ${abi.name} (sender, ...args) {

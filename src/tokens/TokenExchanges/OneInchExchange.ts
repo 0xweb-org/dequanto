@@ -11,7 +11,7 @@ import { TxWriter } from '@dequanto/txs/TxWriter';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
-import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
+import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
 import { $http } from '@dequanto/utils/$http';
 
 const PLATFORMS = {
