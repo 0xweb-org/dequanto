@@ -73,7 +73,7 @@ UTest({
         let existsBase = await File.exists(genPath);
         eq_(existsBase, false);
 
-        let templatePath = $path.resolve(`/src/gen/ContractTemplate.ts`);
+        let templatePath = $path.resolve(`/src/gen/templates/ContractTemplate.ts.tmpl`);
         let exists = await File.exists(templatePath);
         eq_(exists, true, `Path 404: ${templatePath}`);
         await Generator.generateForClass('/test/fixtures/DaiTokenContract.ts');

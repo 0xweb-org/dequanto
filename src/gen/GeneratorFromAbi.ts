@@ -158,6 +158,15 @@ export class GeneratorFromAbi {
         let EvmScanOptions = '';
         let importPfx = true /* always */ ? 'dequanto' : '@dequanto';
         switch (opts.network) {
+            case 'hardhat':
+                EtherscanStr = 'Etherscan';
+                EthWeb3ClientStr = 'HardhatWeb3Client';
+                imports = [
+                    `import { Etherscan } from '${importPfx}/explorer/Etherscan'`,
+                    `import { HardhatWeb3Client } from '${importPfx}/hardhat/HardhatWeb3Client'`,
+                ];
+                sourceUri = ``;
+                break;
             default: {
                 let web3Config = $config.get(`web3.${opts.network}`);
                 if (web3Config) {
