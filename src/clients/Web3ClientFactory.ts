@@ -1,4 +1,5 @@
 import di from 'a-di';
+import alot from 'alot';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { BscWeb3Client } from './BscWeb3Client';
 import { EthWeb3Client } from './EthWeb3Client';
@@ -9,7 +10,6 @@ import { XDaiWeb3Client } from '@dequanto/chains/xdai/XDaiWeb3Client';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { Config, config } from '@dequanto/config/Config';
 import { EvmWeb3Client } from './EvmWeb3Client';
-import alot from 'alot';
 
 export namespace Web3ClientFactory {
 

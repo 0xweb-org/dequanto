@@ -58,7 +58,8 @@ function includeSettings() {
     return {
         amd: true,
         routes: {
-            "@dequanto": "/src/{0}"
+            "@dequanto": "/src/{0}",
+            "dequanto": "/src/{0}"
         },
         "lazy": {
 

@@ -38,13 +38,11 @@ UTest({
         await gen.generate();
 
         let { WETH } = await include.js('/test/tmp/polygon/WETH/WETH.ts');
-
-
         let weth: ERC20 & { storage } = new WETH.WETH();
         let decimals = await weth.decimals();
         eq_(decimals, 18);
 
-        '> read in batch'
+        l`> read in batch`
 
         let nameReq = await weth
             .$config({ send: 'manual' })
