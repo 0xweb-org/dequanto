@@ -5,6 +5,8 @@ import { class_Uri } from 'atma-utils';
 
 async function process () {
 
+    /** Transforms "@dequanto" namespace to relative paths */
+
     let files = await Directory.readFilesAsync(`./lib/types/`, `**.d.ts`);
     console.log(`Files`, files.length);
 
@@ -35,18 +37,22 @@ async function process () {
             return `from ${q}${importPathRelative}${q}`;
         });
 
-        if (cjsFileExists) {
-            let cjsFileTarget = cjsFile.replace(/.js$/, '.d.ts');
-            await File.writeAsync(cjsFileTarget, content, { skipHooks: true });
-        }
-        if (mjsFileExists) {
-            let mjsFileTarget = mjsFile.replace(/.mjs$/, '.d.ts');
-            await File.writeAsync(mjsFileTarget, content, { skipHooks: true });
-        }
+        /* Do not copy inside the cjs/* and esm/* folders, TypeScript should rely on exports.types in package.json */
+        // if (cjsFileExists) {
+        //     let cjsFileTarget = cjsFile.replace(/.js$/, '.d.ts');
+        //     await File.writeAsync(cjsFileTarget, content, { skipHooks: true });
+        // }
+        // if (mjsFileExists) {
+        //     let mjsFileTarget = mjsFile.replace(/.mjs$/, '.d.ts');
+        //     await File.writeAsync(mjsFileTarget, content, { skipHooks: true });
+        // }
+
+        // overwrite original
+        await file.writeAsync(content, { skipHooks: true });
 
     }).toArrayAsync();
 
-    await Directory.removeAsync(`./lib/types/`);
+    //await Directory.removeAsync(`./lib/types/`);
 }
 
 export { process }

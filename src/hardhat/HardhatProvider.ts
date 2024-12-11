@@ -297,7 +297,7 @@ export class HardhatProvider {
         const hhOptions = {
             ...paths,
             tsgen: options?.tsgen ?? false,
-            install: options?.install ?? null
+            install: options?.install ?? void 0
         };
         const hh = await this.getHardhat();
         await hh.run('compile', hhOptions);
@@ -346,7 +346,7 @@ export class HardhatProvider {
             ...paths,
 
             tsgen: options?.tsgen ?? false,
-            install: options?.install ?? null
+            install: options?.install ?? void 0
         };
         const hh = await this.getHardhat();
         await hh.run('compile', hhOptions);

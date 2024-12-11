@@ -12,6 +12,7 @@
     "exports": {
         "./*": {
             "import": "./lib/esm/*.mjs",
+            "types": "./lib/types/*.d.ts",
             "require": "./lib/cjs/*.js"
         }
     },

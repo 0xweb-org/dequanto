@@ -45,7 +45,11 @@ export class ConfigProvider implements IConfigProvider {
 
         return [
             {
-                config: ConfigDefaults,
+                config: {
+                    ...ConfigDefaults,
+                    pin: unlockedAccountsKey ?? void 0,
+                    ...(parameters?.config ?? {}),
+                }
             },
             {
                 path: `./configs/dequanto.yml`,
@@ -82,8 +86,11 @@ export class ConfigProvider implements IConfigProvider {
     private async getSourcesBrowser (parameters: TConfigParamsNode) {
         return [
             {
-                config: ConfigDefaults
-            }
+                config: {
+                    ...ConfigDefaults,
+                    ...(parameters?.config ?? {}),
+                }
+            },
         ];
     }
 }
