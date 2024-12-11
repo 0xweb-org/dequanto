@@ -14,6 +14,7 @@ import { GeneratorStorageReader } from './GeneratorStorageReader';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { Str } from './utils/Str';
 import { $gen } from './utils/$gen';
+import { IConfigData } from '@dequanto/config/interface/IConfigData';
 
 
 
@@ -24,7 +25,7 @@ export class GeneratorFromAbi {
     }
 
     async generate(abiJson: TAbiItem[], opts: {
-        target?: 'js' | 'ts'
+        target?: 'js' | 'mjs' | 'ts'
         network: TPlatform
         name: string
         contractName: string
@@ -42,8 +43,14 @@ export class GeneratorFromAbi {
         artifact?: string
         client?: Web3Client
     }) {
+        let settings = $config.get<IConfigData['settings']['generate']> ('settings.generate');
+        let target = opts.target ?? settings?.target ?? 'ts';
+        let outputSourceType = {
+            mjs: 'js',
+        }[target] ?? target;
 
-        let targetType = opts.target ?? 'ts';
+        let outputFileExt = opts?.outputFileExt ?? outputSourceType;
+
         let methodsArr = alot(abiJson)
             .filter(x => x.type === 'function' || x.type === 'constructor')
             .groupBy(x => x.name)
@@ -133,19 +140,19 @@ export class GeneratorFromAbi {
         //     .filter(Boolean)
         //     .map(Str.formatMethod);
 
-        let methods = methodsArr[targetType].join('\n\n');
+        let methods = methodsArr[outputSourceType].join('\n\n');
         let methodsTypings = methodsArr.types.join('\n\n');
-        let events = eventsArr[targetType].join('\n\n');
+        let events = eventsArr[outputSourceType].join('\n\n');
         let eventsTypings = eventsArr.types.join('\n\n');
 
-        let eventsExtractors = eventsExtractorsArr[targetType].join('\n\n');
+        let eventsExtractors = eventsExtractorsArr[outputSourceType].join('\n\n');
         let eventsExtractorsTypings = eventsExtractorsArr.types.join('\n\n');
 
-        let eventsFetchers = eventsFetchersArr[targetType].join('\n\n');
+        let eventsFetchers = eventsFetchersArr[outputSourceType].join('\n\n');
         let eventsFetchersTypings = eventsFetchersArr.types.join('\n\n');
 
         let name = opts.name;
-        let templatePath = $path.resolve(`/src/gen/templates/ContractTemplate.${ targetType }.tmpl`);
+        let templatePath = $path.resolve(`/src/gen/templates/ContractTemplate.${ outputSourceType }.tmpl`);
         let template = await File.readAsync<string>(templatePath, { skipHooks: true });
         let templateDtsPath = $path.resolve(`/src/gen/templates/ContractTemplate.d.ts.tmpl`);
         let templateDts = await File.readAsync<string>(templateDtsPath, { skipHooks: true });
@@ -191,11 +198,12 @@ export class GeneratorFromAbi {
             }
         }
 
+
         let outputDirectory = name;
         let outputFilename = /[^\\/]+$/.exec(name)[0];
-        let outputPath = /\.(ts|js)$/.test(opts.output)
+        let outputPath = $path.hasExt(opts.output)
             ? opts.output
-            : class_Uri.combine(opts.output, outputDirectory, `${outputFilename}.${opts.outputFileExt ?? targetType}`);
+            : class_Uri.combine(opts.output, outputDirectory, `${outputFilename}.${outputFileExt}`);
 
         let meta = {
             artifact: opts.artifact
@@ -215,7 +223,7 @@ export class GeneratorFromAbi {
         let storageReaderClassTypings = '';
         try {
             let storageReaderGenerator = new GeneratorStorageReader();
-            let reader = await storageReaderGenerator.generate({ ...opts, target: targetType });
+            let reader = await storageReaderGenerator.generate({ ...opts, target: outputSourceType });
 
             if (reader.sourcePath != null && opts.address == null) {
                 sourceUri = this.getRelativePath(reader.sourcePath);
@@ -223,7 +231,7 @@ export class GeneratorFromAbi {
             if (reader.className) {
                 storageReaderClass = reader.code;
                 storageReaderClassTypings = reader.types;
-                storageReaderProperty = targetType === 'ts' ? `declare storage: ${reader.className}` : '';
+                storageReaderProperty = outputSourceType === 'ts' ? `declare storage: ${reader.className}` : '';
                 storageReaderInitializer = `this.storage = new ${reader.className}(this.address, this.client, this.explorer);`;
                 $logger.log(`green<StorageReader> was generated`);
             } else {
@@ -257,8 +265,8 @@ export class GeneratorFromAbi {
             .replace(`/* STORAGE_READER_INITIALIZER */`, storageReaderInitializer)
             .replace(`/* STORAGE_READER_PROPERTY */`, storageReaderProperty)
             .replace(`/* STORAGE_READER_CLASS */`, () => storageReaderClass)
-            .replace(`/* TX_CALLER_METHODS */`, () => Gen.serializeTxCallerMethods(className, abiJson)[targetType])
-            .replace(`/* TX_DATA_METHODS */`, () => Gen.serializeTxDataMethods(className, abiJson)[targetType])
+            .replace(`/* TX_CALLER_METHODS */`, () => Gen.serializeTxCallerMethods(className, abiJson)[outputSourceType])
+            .replace(`/* TX_DATA_METHODS */`, () => Gen.serializeTxDataMethods(className, abiJson)[outputSourceType])
 
 
             .replace(`/* $EVENT_TYPES$ */`, () => Str.indent(eventTypes.map(x => x.code).join('\n'), '        '))
@@ -284,8 +292,8 @@ export class GeneratorFromAbi {
             .replace(`/* STORAGE_READER_INITIALIZER */`, storageReaderInitializer)
             .replace(`/* STORAGE_READER_PROPERTY */`, storageReaderProperty)
             .replace(`/* STORAGE_READER_CLASS */`, () => storageReaderClassTypings)
-            .replace(`/* TX_CALLER_METHODS */`, () => Gen.serializeTxCallerMethods(className, abiJson)[targetType])
-            .replace(`/* TX_DATA_METHODS */`, () => Gen.serializeTxDataMethods(className, abiJson)[targetType])
+            .replace(`/* TX_CALLER_METHODS */`, () => Gen.serializeTxCallerMethods(className, abiJson)[outputSourceType])
+            .replace(`/* TX_DATA_METHODS */`, () => Gen.serializeTxDataMethods(className, abiJson)[outputSourceType])
 
 
             .replace(`/* $EVENT_TYPES$ */`, () => Str.indent(eventTypes.map(x => x.code).join('\n'), '        '))
@@ -294,7 +302,7 @@ export class GeneratorFromAbi {
 
 
         await File.writeAsync(outputPath, code, { skipHooks: true });
-        if (targetType === 'js') {
+        if (outputSourceType === 'js') {
             let outputPathDts = outputPath.replace(/\.\w+$/, '.d.ts');
             await File.writeAsync(outputPathDts, codeDts, { skipHooks: true });
         }

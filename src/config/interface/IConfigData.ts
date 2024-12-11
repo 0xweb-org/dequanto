@@ -9,6 +9,11 @@ export interface IConfigData {
     settings: {
         /** Root path of the dequanto library */
         base?: string;
+
+        /** Default generator options */
+        generate?: {
+            target?: 'js' | 'mjs' | 'ts'
+        }
     };
     accounts: {
         [platform in TPlatform]: {

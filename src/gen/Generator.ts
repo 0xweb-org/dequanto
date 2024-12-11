@@ -167,6 +167,7 @@ export class Generator {
         }
         let generator = new Generator({
             ...options,
+            target: 'ts',
             location: new class_Uri(path).toDir().toString()
         });
         await generator.generate();

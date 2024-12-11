@@ -1,7 +1,11 @@
 import { IConfigData } from './interface/IConfigData';
 export const ConfigDefaults = <IConfigData> {
     "accounts": null,
-    "settings": null,
+    "settings": {
+        "generate": {
+            "target": "ts"
+        }
+    },
     "tokens": null,
     "blockchainExplorer": {
         "bsc": {

@@ -1,6 +1,10 @@
 accounts:
 
 settings:
+  generate:
+    # js | mjs | ts
+    target: ts
+
 
 tokens:
 
