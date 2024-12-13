@@ -110,16 +110,16 @@ export class JsonStoreFs<T> {
     }
 
     private async writeInner (data: T) {
+        let v = this.version;
+        let str = this.encode(data);
         try {
-            let v = this.version;
-            let str = this.encode(data);
-
             await this.file.writeAsync(str, { skipHooks: true });
             this.lock.resolve();
             this.callWriteListeners(v, null);
         } catch (error) {
             console.error(`JsonStoreFs.WriteInner> ${this.path}`, error);
             this.errored = error;
+            this.callWriteListeners(v, error);
         } finally {
             if (this.pending == null) {
                 this.busy = false;
