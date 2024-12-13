@@ -75,7 +75,8 @@ export class RpcContract {
                     return resp;
                 }
                 let outputs = abi.outputs;
-                let result = utils.deserializeOutput(resp, outputs);
+                let hex = typeof resp === 'string' ? resp : resp.data;
+                let result = utils.deserializeOutput(hex, outputs);
                 return result;
             });
 
