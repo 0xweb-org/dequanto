@@ -91,6 +91,9 @@ blockchainExplorer:
 
   hardhat:
     api:
+    key:
+    host:
+    www:
 
 web3:
   eth:
