@@ -89,6 +89,9 @@ blockchainExplorer:
     host: 'https://api-goerli.basescan.org'
     www: 'https://goerli.basescan.org'
 
+  hardhat:
+    api:
+
 web3:
   eth:
     chainId: 1

@@ -102,6 +102,9 @@ export const ConfigDefaults = <IConfigData> {
             "key": "GS1M3QWY41Z36RTV56MV3N1BRKCJ9GWI3C",
             "host": "https://api-goerli.basescan.org",
             "www": "https://goerli.basescan.org"
+        },
+        "hardhat": {
+            "api": null
         }
     },
     "web3": {
