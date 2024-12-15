@@ -1,14 +1,14 @@
 import di from 'a-di';
 import alot from 'alot';
 import { type TAbiItem } from '@dequanto/types/TAbi';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { $address } from '@dequanto/utils/$address';
 import { $require } from '@dequanto/utils/$require';
 import { GeneratorFromAbi } from './GeneratorFromAbi';
 import { TAddress } from '@dequanto/models/TAddress';
 import { File, Directory } from 'atma-io';
 import { class_Uri, obj_setProperty } from 'atma-utils';
-import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
+import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { $path } from '@dequanto/utils/$path';
 import { $logger, l } from '@dequanto/utils/$logger';
@@ -75,7 +75,7 @@ const KEYS = {
 
 export class Generator {
 
-    explorer: IBlockChainExplorer;
+    explorer: IBlockchainExplorer;
     client: Web3Client;
 
     constructor (public options: IGenerateOptions) {
@@ -83,7 +83,7 @@ export class Generator {
             platform,
         } = options;
 
-        this.explorer = BlockChainExplorerProvider.get(platform);
+        this.explorer = BlockchainExplorerProvider.get(platform);
         this.client = Web3ClientFactory.get(platform);
 
         if (options.defaultAddress == null && $address.isValid(options.source.abi)) {

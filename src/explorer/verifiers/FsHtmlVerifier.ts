@@ -1,9 +1,9 @@
 import { File } from 'atma-io';
 import { $require } from '@dequanto/utils/$require';
 import { TEth } from '@dequanto/models/TEth';
-import { IBlockChainExplorerConfig } from '../BlockChainExplorerFactory';
+import { IBlockchainExplorerConfig } from '../BlockchainExplorerFactory';
 import { IVerifier } from './IVerifier';
-import { IBlockChainTransferEvent } from '../IBlockChainExplorer';
+import { IBlockchainTransferEvent } from '../IBlockchainExplorer';
 import { $platform } from '@dequanto/utils/$platform';
 
 const PATH_ROOT = `./data/0xc/verification`;
@@ -65,7 +65,9 @@ export class FsHtmlVerifier implements IVerifier {
     private key: string;
     private enabled: boolean;
 
-    constructor (public platform, public config: IBlockChainExplorerConfig) {
+    constructor (public platform, public config: IBlockchainExplorerConfig) {
+        $require.notEmpty(platform, `Argument platform is required`);
+        $require.notNull(config, `Config is required for ${platform}`);
         this.enabled = Boolean(config.api);
         this.key = $platform.toPath(platform ?? /** fallback */ 'eth');
     }
@@ -132,6 +134,22 @@ export class FsHtmlVerifier implements IVerifier {
         }
         return null;
     }
+
+    getContractSource (address: TEth.Address): Promise<{
+        SourceCode: {
+            contractName: string
+            files: {
+                [filename: string]: {
+                    content: string
+                }
+            }
+        }
+        ContractName: string
+        ABI: string
+    }> {
+        return null;
+    }
+
     private async saveProxyVerification (contractData: { address: `0x${string}`; expectedImplementation?: `0x${string}`; }) {
         let hostKey = this.extractHostKey(this.config);
         let template = await await File.existsAsync(PATH_TEMPLATE_PROXY)
@@ -168,17 +186,17 @@ export class FsHtmlVerifier implements IVerifier {
     getInternalTransactionsAll(address: `0x${string}`): Promise<TEth.DataLike<TEth.Tx>[]> {
         throw new Error('Method not implemented.');
     }
-    getErc20Transfers(address: `0x${string}`, fromBlockNumber?: number): Promise<IBlockChainTransferEvent[]> {
+    getErc20Transfers(address: `0x${string}`, fromBlockNumber?: number): Promise<IBlockchainTransferEvent[]> {
         throw new Error('Method not implemented.');
     }
-    getErc20TransfersAll(address: `0x${string}`, fromBlockNumber?: number): Promise<IBlockChainTransferEvent[]> {
+    getErc20TransfersAll(address: `0x${string}`, fromBlockNumber?: number): Promise<IBlockchainTransferEvent[]> {
         throw new Error('Method not implemented.');
     }
     registerAbi(abis: { name: any; address: any; abi: any; }[]) {
         throw new Error('Method not implemented.');
     }
 
-    private extractHostKey (config: IBlockChainExplorerConfig) {
+    private extractHostKey (config: IBlockchainExplorerConfig) {
         let hostKey = /\.(?<hostkey>[\w\-]+)\.\w+($|\/)/.exec(config.api ?? config.host).groups.hostkey;
         return hostKey;
     }

@@ -13,7 +13,7 @@ import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageRe
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
 
@@ -32,11 +32,11 @@ export class IERC1363Spender extends ContractBase {
     constructor(
         public address: TEth.Address = null,
         public client: Web3Client = di.resolve(EthWeb3Client, ),
-        public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
+        public explorer: IBlockchainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
 
-        
+
     }
 
     Types: TIERC1363SpenderTypes;
@@ -101,7 +101,7 @@ export class IERC1363Spender extends ContractBase {
 
     abi: TAbiItem[] = [{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"onApprovalReceived","outputs":[{"internalType":"bytes4","name":"","type":"bytes4"}],"stateMutability":"nonpayable","type":"function"}]
 
-    
+
 }
 
 type TSender = TAccount & {
@@ -116,7 +116,7 @@ type TEventLogOptions<TParams> = {
 
 export type TIERC1363SpenderTypes = {
     Events: {
-        
+
     },
     Methods: {
         onApprovalReceived: {

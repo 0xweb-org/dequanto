@@ -6,8 +6,8 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAbiItem } from '@dequanto/types/TAbi';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { HopAddresses } from '@dequanto/bridges/hop/HopAddresses';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
-import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
+import { IBlockChainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
+import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
 import { $platform } from '@dequanto/utils/$platform';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 

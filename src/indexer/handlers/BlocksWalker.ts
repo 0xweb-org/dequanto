@@ -18,7 +18,7 @@ import { IChannel } from '@everlog/core/interfaces/IChannel';
 
 interface IBlockIndexer {
     name: string
-    persistance?: boolean
+    persistence?: boolean
     blocks?: {
         from: number
         to?: number
@@ -124,7 +124,7 @@ export class BlocksWalker {
     @memd.deco.memoize({ perInstance: true })
     private async restore () {
         try {
-            if (this.params.persistance !== false) {
+            if (this.params.persistence !== false) {
                 let json = await this.cachedState.readAsync<string>();
                 let ranges = JSON.parse(json);
                 if (ranges != null) {
@@ -208,7 +208,7 @@ export class BlocksWalker {
 
     @memd.deco.throttle(1000 * 4)
     private async save () {
-        if (this.params.persistance !== false) {
+        if (this.params.persistence !== false) {
             let json = this.ranges.serialize();
             await this.cachedState?.writeAsync(json);
         }

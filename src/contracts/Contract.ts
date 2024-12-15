@@ -1,6 +1,6 @@
 import di from 'a-di'
 import alot from 'alot'
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer'
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer'
 import { IContractDetails } from '@dequanto/models/IContractDetails'
 import { ContractProvider, IContractProvider } from './ContractProvider'
 import { IContractReader } from './ContractReader'
@@ -17,7 +17,7 @@ import { TEth } from '@dequanto/models/TEth'
 
 export interface IContractInit {
     Ctor?:  new (...args) => any
-    explorer?: IBlockChainExplorer
+    explorer?: IBlockchainExplorer
     client?: Web3Client
 
     refAbi?: string
@@ -35,7 +35,7 @@ export abstract class Contract {
     protected abstract client: Web3Client
     protected abstract runner: IContractReader
     protected abstract provider: IContractProvider
-    protected abstract explorer: IBlockChainExplorer
+    protected abstract explorer: IBlockchainExplorer
 
     constructor (data: Partial<IContractDetails>, opts: IContractInit) {
         this.name = data.name;

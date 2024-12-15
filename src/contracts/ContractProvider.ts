@@ -1,5 +1,5 @@
 import { Etherscan } from '@dequanto/explorer/Etherscan';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { IContractDetails } from '@dequanto/models/IContractDetails';
 import { TAddress } from '@dequanto/models/TAddress';
 import di from 'a-di';
@@ -18,12 +18,12 @@ export interface IContractProvider {
 
 export class ContractProvider implements IContractProvider {
 
-    constructor (public api: IBlockChainExplorer = di.resolve(Etherscan)) {
+    constructor (public api: IBlockchainExplorer = di.resolve(Etherscan)) {
 
     }
 
     async getByName(name: string): Promise<IContract> {
-        let info = this.api.localDb.find(x => x.name === name);
+        let info = this.api.inMemoryDb.find(x => x.name === name);
         let { abi } = await this.api.getContractAbi(info.address);
 
         return {

@@ -82,7 +82,7 @@ export class ChainlinkOracle implements IOracle {
             let key = `cl_feed_${feed.address}`;
             return key;
         },
-        persistance: new memd.FsTransport({ path:  CACHE_PATH })
+        persistence: new memd.FsTransport({ path:  CACHE_PATH })
     })
     private async config (feed: IChainlinkFeedInfo) {
         let reader = this.getReader(feed.platform)

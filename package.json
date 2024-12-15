@@ -67,7 +67,7 @@
         "atma-utils": "^0.2.65",
         "class-json": "^0.4.1",
         "includejs": "^0.17.6",
-        "memd": "^0.3.15",
+        "memd": "^0.3.16",
         "ws": "^8.16.0"
     },
     "app-bundler": {

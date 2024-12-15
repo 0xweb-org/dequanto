@@ -1,5 +1,5 @@
-import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $require } from '@dequanto/utils/$require';
@@ -8,7 +8,7 @@ import memd from 'memd';
 
 export class SourceCodeProvider {
 
-    constructor(private client: Web3Client, private explorer: IBlockChainExplorer = BlockChainExplorerProvider.get(client.platform)) {
+    constructor(private client: Web3Client, private explorer: IBlockchainExplorer = BlockchainExplorerProvider.get(client.platform)) {
 
     }
 

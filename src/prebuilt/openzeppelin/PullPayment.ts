@@ -13,7 +13,7 @@ import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageRe
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
 
@@ -32,11 +32,11 @@ export class PullPayment extends ContractBase {
     constructor(
         public address: TEth.Address = null,
         public client: Web3Client = di.resolve(EthWeb3Client, ),
-        public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
+        public explorer: IBlockchainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
 
-        
+
     }
 
     Types: TPullPaymentTypes;
@@ -106,7 +106,7 @@ export class PullPayment extends ContractBase {
 
     abi: TAbiItem[] = [{"inputs":[{"internalType":"address","name":"dest","type":"address"}],"name":"payments","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address payable","name":"payee","type":"address"}],"name":"withdrawPayments","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 
-    
+
 }
 
 type TSender = TAccount & {
@@ -121,7 +121,7 @@ type TEventLogOptions<TParams> = {
 
 export type TPullPaymentTypes = {
     Events: {
-        
+
     },
     Methods: {
         payments: {

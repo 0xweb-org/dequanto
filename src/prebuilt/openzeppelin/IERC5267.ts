@@ -13,7 +13,7 @@ import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageRe
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
 
@@ -32,11 +32,11 @@ export class IERC5267 extends ContractBase {
     constructor(
         public address: TEth.Address = null,
         public client: Web3Client = di.resolve(EthWeb3Client, ),
-        public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
+        public explorer: IBlockchainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
 
-        
+
     }
 
     Types: TIERC5267Types;
@@ -112,7 +112,7 @@ export class IERC5267 extends ContractBase {
 
     abi: TAbiItem[] = [{"anonymous":false,"inputs":[],"name":"EIP712DomainChanged","type":"event"},{"inputs":[],"name":"eip712Domain","outputs":[{"internalType":"bytes1","name":"fields","type":"bytes1"},{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"version","type":"string"},{"internalType":"uint256","name":"chainId","type":"uint256"},{"internalType":"address","name":"verifyingContract","type":"address"},{"internalType":"bytes32","name":"salt","type":"bytes32"},{"internalType":"uint256[]","name":"extensions","type":"uint256[]"}],"stateMutability":"view","type":"function"}]
 
-    
+
 }
 
 type TSender = TAccount & {

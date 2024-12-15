@@ -13,7 +13,7 @@ import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageRe
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
 
@@ -32,11 +32,11 @@ export class SafeProxyFactory extends ContractBase {
     constructor(
         public address: TEth.Address = null,
         public client: Web3Client = di.resolve(EthWeb3Client, ),
-        public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
+        public explorer: IBlockchainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
 
-        
+
     }
 
     Types: TSafeProxyFactoryTypes;
@@ -132,7 +132,7 @@ export class SafeProxyFactory extends ContractBase {
 
     abi: TAbiItem[] = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"contract SafeProxy","name":"proxy","type":"address"},{"indexed":false,"internalType":"address","name":"singleton","type":"address"}],"name":"ProxyCreation","type":"event"},{"inputs":[{"internalType":"address","name":"_singleton","type":"address"},{"internalType":"bytes","name":"initializer","type":"bytes"},{"internalType":"uint256","name":"saltNonce","type":"uint256"}],"name":"createChainSpecificProxyWithNonce","outputs":[{"internalType":"contract SafeProxy","name":"proxy","type":"address"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_singleton","type":"address"},{"internalType":"bytes","name":"initializer","type":"bytes"},{"internalType":"uint256","name":"saltNonce","type":"uint256"},{"internalType":"contract IProxyCreationCallback","name":"callback","type":"address"}],"name":"createProxyWithCallback","outputs":[{"internalType":"contract SafeProxy","name":"proxy","type":"address"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_singleton","type":"address"},{"internalType":"bytes","name":"initializer","type":"bytes"},{"internalType":"uint256","name":"saltNonce","type":"uint256"}],"name":"createProxyWithNonce","outputs":[{"internalType":"contract SafeProxy","name":"proxy","type":"address"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"getChainId","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"proxyCreationCode","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"pure","type":"function"}]
 
-    
+
 }
 
 type TSender = TAccount & {

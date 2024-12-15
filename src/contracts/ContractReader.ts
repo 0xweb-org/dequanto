@@ -12,7 +12,7 @@ import { $abiParser } from '../utils/$abiParser';
 import { $block } from '@dequanto/utils/$block';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { ContractCreationResolver } from './ContractCreationResolver';
-import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
+import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { $contract } from '@dequanto/utils/$contract';
 import { $require } from '@dequanto/utils/$require';
@@ -179,7 +179,7 @@ export class ContractReader implements IContractReader {
                 }
                 $require.Address(options.address, `No contract address provided, but the "fromBlock" is "deployment"`)
                 try {
-                    let explorer = BlockChainExplorerProvider.get(this.client.platform);
+                    let explorer = BlockchainExplorerProvider.get(this.client.platform);
                     let dateResolver = new ContractCreationResolver(this.client, explorer);
                     let info = await dateResolver.getInfo(options.address);
                     filters.fromBlock = info.block - 1;

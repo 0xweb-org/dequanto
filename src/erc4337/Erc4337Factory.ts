@@ -1,5 +1,5 @@
-import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { TPlatform } from '@dequanto/models/TPlatform';
@@ -13,14 +13,14 @@ export class Erc4337Factory {
     static createService (opts?: {
         platform: TPlatform
         client?: Web3Client
-        explorer?: IBlockChainExplorer
+        explorer?: IBlockchainExplorer
         /** default: default */
         name?: string
     }) {
         let platform = opts.platform;
         let name = opts.name ?? 'default';
         let client = opts.client ?? Web3ClientFactory.get(platform);
-        let explorer = opts.explorer ?? BlockChainExplorerProvider.get(platform);
+        let explorer = opts.explorer ?? BlockchainExplorerProvider.get(platform);
 
         let providers = $config.get('erc4337') as IConfigData['erc4337'];
         let provider = providers.find(x => (x.name === name || (name === 'default' && !x.name)) && x.platforms.includes(platform));
@@ -39,7 +39,7 @@ export class Erc4337Factory {
     static createWriter (opts?: {
         platform: TPlatform
         client?: Web3Client
-        explorer?: IBlockChainExplorer
+        explorer?: IBlockchainExplorer
         /** default: default */
         name?: string
     }) {

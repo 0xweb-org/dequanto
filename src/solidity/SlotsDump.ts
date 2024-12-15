@@ -1,7 +1,7 @@
 import alot from 'alot';
 import memd from 'memd';
-import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -26,7 +26,7 @@ export class SlotsDump {
     private contractName: string
 
     private client: Web3Client
-    private explorer: IBlockChainExplorer
+    private explorer: IBlockchainExplorer
     private sourceCodeProvider: SourceCodeProvider
 
     private logger: typeof $logger
@@ -42,7 +42,7 @@ export class SlotsDump {
 
         platform?: TPlatform
         client?: Web3Client
-        explorer?: IBlockChainExplorer
+        explorer?: IBlockchainExplorer
         sourceCodeProvider?: SourceCodeProvider
         logger?: typeof $logger
         fields?: string[],
@@ -60,7 +60,7 @@ export class SlotsDump {
         this.contractName = params.contractName;
 
         this.client = params.client ?? Web3ClientFactory.get(params.platform ?? 'eth')
-        this.explorer = params.explorer ?? BlockChainExplorerProvider.get(this.client.platform)
+        this.explorer = params.explorer ?? BlockchainExplorerProvider.get(this.client.platform)
         this.sourceCodeProvider = params.sourceCodeProvider ?? new SourceCodeProvider(this.client, this.explorer)
 
         this.logger = params.logger ?? $logger;

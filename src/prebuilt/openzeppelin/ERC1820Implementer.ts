@@ -13,7 +13,7 @@ import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageRe
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
 
@@ -32,11 +32,11 @@ export class ERC1820Implementer extends ContractBase {
     constructor(
         public address: TEth.Address = null,
         public client: Web3Client = di.resolve(EthWeb3Client, ),
-        public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
+        public explorer: IBlockchainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
 
-        
+
     }
 
     Types: TERC1820ImplementerTypes;
@@ -101,7 +101,7 @@ export class ERC1820Implementer extends ContractBase {
 
     abi: TAbiItem[] = [{"inputs":[{"internalType":"bytes32","name":"interfaceHash","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"canImplementInterfaceForAddress","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"}]
 
-    
+
 }
 
 type TSender = TAccount & {
@@ -116,7 +116,7 @@ type TEventLogOptions<TParams> = {
 
 export type TERC1820ImplementerTypes = {
     Events: {
-        
+
     },
     Methods: {
         canImplementInterfaceForAddress: {

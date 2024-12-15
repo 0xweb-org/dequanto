@@ -4,7 +4,7 @@ import { EoAccount, Erc4337Account } from '@dequanto/models/TAccount';
 import { Erc4337Service } from './Erc4337Service';
 import { $require } from '@dequanto/utils/$require';
 import { UserOperation } from './models/UserOperation';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $is } from '@dequanto/utils/$is';
 import { TxWriter } from '@dequanto/txs/TxWriter';
@@ -13,7 +13,7 @@ import { TEth } from '@dequanto/models/TEth';
 export class Erc4337TxWriter {
     public service: Erc4337Service;
 
-    constructor(public client: Web3Client, public explorer: IBlockChainExplorer, public info: IErc4337Info) {
+    constructor(public client: Web3Client, public explorer: IBlockchainExplorer, public info: IErc4337Info) {
         this.service = new Erc4337Service(client, explorer, info);
     }
 

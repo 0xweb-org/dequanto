@@ -1,7 +1,7 @@
 import di from 'a-di';
 import alot from 'alot';
 import { Etherscan } from '@dequanto/explorer/Etherscan';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { ITransactionDetails } from '@dequanto/models/ITransactionDetails';
 import { ContractProvider } from './ContractProvider';
 import { TEth } from '@dequanto/models/TEth';
@@ -11,7 +11,7 @@ export class TxContract {
 
     private provider: ContractProvider;
 
-    constructor (private explorer: IBlockChainExplorer = di.resolve(Etherscan)) {
+    constructor (private explorer: IBlockchainExplorer = di.resolve(Etherscan)) {
         this.provider = di.resolve(ContractProvider, this.explorer);
     }
 

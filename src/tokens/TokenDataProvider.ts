@@ -1,6 +1,6 @@
 import alot from 'alot';
 import memd from 'memd';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { ArbTokenProvider } from '@dequanto/chains/arbitrum/ArbTokenProvider';
 import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -27,7 +27,7 @@ export class TokenDataProvider {
 
     constructor(
         private platform: TPlatform
-        , private explorer?: IBlockChainExplorer
+        , private explorer?: IBlockchainExplorer
         , private client?: Web3Client
         , private forked?: TokenDataProvider
     ) {

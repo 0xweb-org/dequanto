@@ -5,7 +5,7 @@ import alot from 'alot';
  *
  * - Walking/Iterating/Visiting through the range marks the visited number as ADD.
  *
- * - Possible to ADD the number manually, for example for persistance/restore properties
+ * - Possible to ADD the number manually, for example for persistence/restore properties
  *
  * - Check if NUMBER was already visited/iterated
  *

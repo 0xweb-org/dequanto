@@ -1,5 +1,5 @@
 import { GnosisSafe } from '@dequanto/prebuilt/safe/GnosisSafe';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { ContractAbiProvider } from '@dequanto/contracts/ContractAbiProvider';
 import { TEth } from '@dequanto/models/TEth';
@@ -12,7 +12,7 @@ import { $require } from '@dequanto/utils/$require';
 import alot from 'alot';
 
 export class GnosisSafeService {
-    constructor(public client: Web3Client, public explorer: IBlockChainExplorer) {
+    constructor(public client: Web3Client, public explorer: IBlockchainExplorer) {
 
     }
 

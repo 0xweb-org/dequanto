@@ -1,36 +1,32 @@
 import memd from 'memd';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { $block } from '@dequanto/utils/$block';
 import { $cache } from '@dequanto/utils/$cache';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
+import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
 import { $require } from '@dequanto/utils/$require';
 import { $promise } from '@dequanto/utils/$promise';
 import { TEth } from '@dequanto/models/TEth';
 
 export class ContractCreationResolver {
 
-    constructor (public client: Web3Client, public explorer: IBlockChainExplorer) {
+    constructor (public client: Web3Client, public explorer: IBlockchainExplorer) {
         $require.notNull(client, 'Web3Client is undefined');
         $require.notNull(explorer, 'Explorer is undefined');
     }
 
     static get (platform: TPlatform) {
         let client = Web3ClientFactory.get(platform);
-        let explorer = BlockChainExplorerProvider.get(platform);
+        let explorer = BlockchainExplorerProvider.get(platform);
         return new ContractCreationResolver(client, explorer);
     }
 
     @memd.deco.memoize({
         trackRef: true,
-        key: (ctx, address: TEth.Address) => {
-            let self = ctx.this as ContractCreationResolver;
-            let key = `${self.client.platform}:${address}`;
-            return key;
-        },
-        persistance: new memd.FsTransport({ path:  $cache.file('contract-dates.json') })
+        keyPfx: (self: ContractCreationResolver) => self.client.platform,
+        persistence: new memd.FsTransport({ path:  $cache.file('contract-dates.json') })
     })
     async getInfo (address: TEth.Address): Promise<{
         block: number
@@ -59,7 +55,7 @@ class OnchainDateResolver {
 }
 
 class BlockchainExplorerDateResolver {
-    constructor (public client: Web3Client, public explorer: IBlockChainExplorer) {
+    constructor (public client: Web3Client, public explorer: IBlockchainExplorer) {
 
     }
 

@@ -9,7 +9,7 @@ import { UserOperation, UserOperationDefaults } from './models/UserOperation';
 import { EoAccount } from '@dequanto/models/TAccount';
 import { obj_extendDefaults } from 'atma-utils';
 import { $require } from '@dequanto/utils/$require';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { ContractAbiProvider } from '@dequanto/contracts/ContractAbiProvider';
 import { $erc4337 } from './utils/$erc4337';
 import { $hex } from '@dequanto/utils/$hex';
@@ -26,7 +26,7 @@ export class Erc4337Service {
     private accountContract: IContractWrapped
     private entryPointContract: IContractWrapped
 
-    constructor(public client: Web3Client, public explorer: IBlockChainExplorer, public info: {
+    constructor(public client: Web3Client, public explorer: IBlockchainExplorer, public info: {
         addresses: {
             entryPoint: TAddress
             accountFactory: TAddress

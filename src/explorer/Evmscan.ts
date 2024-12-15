@@ -1,8 +1,8 @@
 import { TPlatform } from '@dequanto/models/TPlatform';
-import { BlockChainExplorerFactory } from './BlockChainExplorerFactory';
+import { BlockchainExplorerFactory } from './BlockchainExplorerFactory';
 
 
 export function Evmscan (options: { platform: TPlatform }) {
-    const ClientConstructor = BlockChainExplorerFactory.create(options);
+    const ClientConstructor = BlockchainExplorerFactory.create(options);
     return new ClientConstructor(options.platform);
 }

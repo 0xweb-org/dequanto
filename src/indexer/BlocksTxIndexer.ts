@@ -12,7 +12,7 @@ export interface IBlocksTxIndexerOptions {
     name?: string
 
     /** Save indexer progress (visited blocks) to a file */
-    persistance?: boolean
+    persistence?: boolean
 
     /** Load transactions from the block and provide them to the visitor method */
     loadTransactions?: boolean
@@ -48,7 +48,7 @@ export class BlocksTxIndexer {
             client: this.client,
             loadTransactions: opts?.loadTransactions ?? true,
             loadReceipts: opts?.loadReceipts ?? false,
-            persistance: opts?.persistance ?? true,
+            persistence: opts?.persistence ?? true,
             logProgress: opts?.logProgress?? true,
 
             visitor: async (block, data) => {

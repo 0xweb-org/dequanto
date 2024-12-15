@@ -6,11 +6,11 @@ import { TokenPriceService, TokenPriceServiceCacheable } from './TokenPriceServi
 import { BscWeb3Client } from '@dequanto/clients/BscWeb3Client';
 import { Bscscan } from '@dequanto/explorer/Bscscan';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 
 export namespace TokenPriceServiceProvider {
 
-    export function create (platform: TPlatform, client?: Web3Client, explorer?: IBlockChainExplorer) {
+    export function create (platform: TPlatform, client?: Web3Client, explorer?: IBlockchainExplorer) {
         if (platform === 'eth') {
             return di.resolve(
                 TokenPriceService,
@@ -29,7 +29,7 @@ export namespace TokenPriceServiceProvider {
     }
 
     /** To boot performance use cached prices within 5 minutes interval */
-    export function createTimeRanged (platform: TPlatform, client?: Web3Client, explorer?: IBlockChainExplorer) {
+    export function createTimeRanged (platform: TPlatform, client?: Web3Client, explorer?: IBlockchainExplorer) {
         let service = TokenPriceServiceProvider.create(platform, client, explorer);
         return new TokenPriceServiceCacheable(service);
     }

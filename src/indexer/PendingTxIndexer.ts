@@ -51,7 +51,7 @@ export class PendingTxIndexer {
         this.blocks = new BlocksTxIndexer(platform, {
             name: opts.name,
             loadTransactions: false,
-            persistance: false,
+            persistence: false,
         });
         this.blocks.onBlock(async (client, block) => {
             this.onBlockLoaded(block);

@@ -1,7 +1,7 @@
 import di from 'a-di';
 import memd from 'memd';
 import alot from 'alot';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
@@ -76,7 +76,7 @@ export abstract class AmmV2ExchangeBase {
 
     constructor(
         public client: Web3Client,
-        public explorer: IBlockChainExplorer
+        public explorer: IBlockchainExplorer
     ) {
 
     }

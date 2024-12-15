@@ -5,7 +5,7 @@ import { env } from 'atma-io';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $date } from '@dequanto/utils/$date';
 
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { $address } from '@dequanto/utils/$address';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -82,7 +82,7 @@ export class AmmPairV2Service {
 
     private targetCoins: string[]
 
-    constructor(public client: Web3Client, public explorer: IBlockChainExplorer) {
+    constructor(public client: Web3Client, public explorer: IBlockchainExplorer) {
         switch (client.platform) {
             case 'bsc':
                 this.exchange = di.resolve(PancakeswapExchange, this.client, this.explorer);
@@ -112,7 +112,7 @@ export class AmmPairV2Service {
             let key = `bestRoute_${platform}_${address}`;
             return key;
         },
-        persistance: new memd.FsTransport({ path:  CACHE_PATH })
+        persistence: new memd.FsTransport({ path:  CACHE_PATH })
     })
     async resolveBestStableRoute (platform: TPlatform, address: TAddress): Promise<ISwapPoolInfo[]> {
         let pool = await alot(this.targetCoins)
@@ -170,7 +170,7 @@ export class AmmPairV2Service {
             let key = `pool_${self.client.platform}_${fromAddress}_${toSymbol}`;
             return key;
         },
-        persistance: new memd.FsTransport({ path: CACHE_PATH })
+        persistence: new memd.FsTransport({ path: CACHE_PATH })
     })
     private async getPoolInfo (fromAddress: TAddress, symbol: string): Promise<{ pair: ISwapPoolInfo, reserveTo: number }> {
         let toToken = await this.tokensService.getTokenOrDefault(symbol);

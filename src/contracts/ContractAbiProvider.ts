@@ -1,5 +1,5 @@
 import { type TAbiItem } from '@dequanto/types/TAbi';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { $address } from '@dequanto/utils/$address';
 import { $require } from '@dequanto/utils/$require';
 
@@ -14,7 +14,7 @@ import { $is } from '@dequanto/utils/$is';
 
 export class ContractAbiProvider {
 
-    constructor (public client: Web3Client, public explorer: IBlockChainExplorer) {
+    constructor (public client: Web3Client, public explorer: IBlockchainExplorer) {
 
     }
 

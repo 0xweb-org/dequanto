@@ -1,4 +1,4 @@
-import { BlockChainExplorerStorage } from '@dequanto/explorer/BlockChainExplorerStorage';
+import { BlockchainExplorerStorage } from '@dequanto/explorer/BlockchainExplorerStorage';
 import { Config } from '@dequanto/config/Config';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { SlotsDump } from '@dequanto/solidity/SlotsDump';
@@ -29,7 +29,7 @@ UTest({
         `;
         const deployer = provider.deployer();
         const { contract, abi } = await provider.deployCode(code, { client });
-        const explorer = new BlockChainExplorerStorage({
+        const explorer = new BlockchainExplorerStorage({
             contracts: {
                 [contract.address]: {
                     abi,
@@ -120,7 +120,7 @@ UTest({
             client,
             arguments: [12]
         });
-        const explorer = new BlockChainExplorerStorage({
+        const explorer = new BlockchainExplorerStorage({
             contracts: {
                 [contract.address]: {
                     abi,

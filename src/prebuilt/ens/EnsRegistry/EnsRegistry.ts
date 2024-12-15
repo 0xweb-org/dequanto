@@ -13,7 +13,7 @@ import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageRe
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
 
@@ -32,7 +32,7 @@ export class EnsRegistry extends ContractBase {
     constructor(
         public address: TEth.Address = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
         public client: Web3Client = di.resolve(EthWeb3Client, ),
-        public explorer: IBlockChainExplorer = di.resolve(Etherscan, ),
+        public explorer: IBlockchainExplorer = di.resolve(Etherscan, ),
     ) {
         super(address, client, explorer)
 
@@ -342,7 +342,7 @@ class EnsRegistryStorageReader extends ContractStorageReaderBase {
     constructor(
         public address: TAddress,
         public client: Web3Client,
-        public explorer: IBlockChainExplorer,
+        public explorer: IBlockchainExplorer,
     ) {
         super(address, client, explorer);
 

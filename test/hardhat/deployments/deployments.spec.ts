@@ -2,8 +2,11 @@ import { IContractWrapped } from '@dequanto/contracts/ContractClassFactory';
 import { Deployments  } from '@dequanto/contracts/deploy/Deployments';
 import { IBeacon, IBeaconProxy, IProxyAdmin } from '@dequanto/contracts/deploy/proxy/ProxyDeployment';
 import { IDeployment, IProxyStorageLayout } from '@dequanto/contracts/deploy/storage/DeploymentsStorage';
+import { ContractVerifier } from '@dequanto/explorer/ContractVerifier';
+import { FsHtmlVerifier } from '@dequanto/explorer/verifiers/FsHtmlVerifier';
 import { Generator } from '@dequanto/gen/Generator';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
+import { LoggerService } from '@dequanto/loggers/LoggerService';
 import { $address } from '@dequanto/utils/$address';
 import { $buffer } from '@dequanto/utils/$buffer';
 import { l } from '@dequanto/utils/$logger';
@@ -102,6 +105,23 @@ export default UTest({
 
                 //
                 eq_(await File.existsAsync(deploymentsProxyOutput), false);
+            },
+            async ']verify' () {
+                class HtmlVerifier extends FsHtmlVerifier {
+                    constructor () {
+                        super('polygon', {
+                            key: 'localhost',
+                            www: 'localhost',
+                            host: 'localhost',
+                        });
+                    }
+                }
+                const logger = new LoggerService('foo', { memory: true, fs: false, std: false });
+
+                let verification = new ContractVerifier(deployments, new HtmlVerifier(), logger);
+
+                let CtorData = await hh.getContractFromSolPath(paths.DeploymentsFoo)
+                console.log(`CtorData`, CtorData);
             },
             async 'with proxy' () {
                 return UTest({

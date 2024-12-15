@@ -1,5 +1,5 @@
 import di from 'a-di';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -37,7 +37,7 @@ export class TokenPriceService {
     private tokens: TokensService
     private oracle: AmmV2PriceQuote
 
-    constructor(private client: Web3Client, private explorer: IBlockChainExplorer) {
+    constructor(private client: Web3Client, private explorer: IBlockchainExplorer) {
         this.tokens = di.resolve(TokensService, this.client.platform, this.explorer)
         this.oracle = di.resolve(
             AmmV2PriceQuote

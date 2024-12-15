@@ -2,7 +2,7 @@ import alot from 'alot';
 import memd from 'memd';
 import type { TAbiItem } from '@dequanto/types/TAbi';
 
-import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
+import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $require } from '@dequanto/utils/$require';
 import { MappingSettersResolver } from '../SlotsParser/MappingSettersResolver';
@@ -10,7 +10,7 @@ import { SourceCodeProvider } from '../SourceCodeProvider';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { $logger } from '@dequanto/utils/$logger';
 import { ContractReader } from '@dequanto/contracts/ContractReader';
 
@@ -21,7 +21,7 @@ export class MappingKeysLoader {
     private contractName: string
 
     private client: Web3Client
-    private explorer: IBlockChainExplorer
+    private explorer: IBlockchainExplorer
     private sourceCodeProvider: SourceCodeProvider
 
     private logger: typeof $logger
@@ -34,7 +34,7 @@ export class MappingKeysLoader {
         contractName: string
         platform?: TPlatform
         client?: Web3Client
-        explorer?: IBlockChainExplorer
+        explorer?: IBlockchainExplorer
         sourceCodeProvider?: SourceCodeProvider
         logger?: typeof $logger
     }) {
@@ -45,7 +45,7 @@ export class MappingKeysLoader {
         this.contractName = params.contractName;
 
         this.client = params.client ?? Web3ClientFactory.get(params.platform ?? 'eth')
-        this.explorer = params.explorer ?? BlockChainExplorerProvider.get(this.client.platform)
+        this.explorer = params.explorer ?? BlockchainExplorerProvider.get(this.client.platform)
         this.sourceCodeProvider = params.sourceCodeProvider ?? new SourceCodeProvider(this.client, this.explorer)
         this.logger = params.logger ?? $logger;
     }

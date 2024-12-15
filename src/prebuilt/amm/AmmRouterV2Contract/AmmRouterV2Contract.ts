@@ -13,7 +13,7 @@ import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageRe
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
 
@@ -32,7 +32,7 @@ export class AmmRouterV2Contract extends ContractBase {
     constructor(
         public address: TEth.Address = '0x10ED43C718714eb63d5aA57B78B54704E256024E',
         public client: Web3Client = di.resolve(BscWeb3Client, ),
-        public explorer: IBlockChainExplorer = di.resolve(Bscscan, ),
+        public explorer: IBlockchainExplorer = di.resolve(Bscscan, ),
     ) {
         super(address, client, explorer)
 
@@ -235,7 +235,7 @@ type TEventLogOptions<TParams> = {
 
 export type TAmmRouterV2ContractTypes = {
     Events: {
-        
+
     },
     Methods: {
         WETH: {
@@ -343,7 +343,7 @@ class AmmRouterV2ContractStorageReader extends ContractStorageReaderBase {
     constructor(
         public address: TAddress,
         public client: Web3Client,
-        public explorer: IBlockChainExplorer,
+        public explorer: IBlockchainExplorer,
     ) {
         super(address, client, explorer);
 

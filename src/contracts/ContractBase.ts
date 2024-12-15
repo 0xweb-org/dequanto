@@ -6,7 +6,7 @@ import type { ITxWriterOptions, TxWriter } from '@dequanto/txs/TxWriter';
 
 import type { IAccount, TAccount } from "@dequanto/models/TAccount";
 import type { TAbiItem } from '@dequanto/types/TAbi';
-import type { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import type { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import type { TAddress } from '@dequanto/models/TAddress';
 import type { ITxBuilderOptions } from '@dequanto/txs/ITxBuilderOptions';
 
@@ -62,7 +62,7 @@ export abstract class ContractBase {
     constructor (
         public address: TAddress,
         public client: Web3Client,
-        public explorer: IBlockChainExplorer
+        public explorer: IBlockchainExplorer
     ) {
 
     }
@@ -535,7 +535,7 @@ export abstract class ContractBase {
 namespace BlockWalker {
     export interface IBlockWalkerOptions {
         name?: string,
-        persistance?: boolean,
+        persistence?: boolean,
         logProgress?: boolean
         //mempool?: boolean,
         fromBlock?: number
@@ -549,7 +549,7 @@ namespace BlockWalker {
 
     export function onBlock (client: Web3Client, options: IBlockWalkerOptions, cb: TBlockListener ) {
 
-        let key = `${client.platform}_${options?.name ?? ''}_${options?.persistance ?? false}`;
+        let key = `${client.platform}_${options?.name ?? ''}_${options?.persistence ?? false}`;
         let current = indexers[key];
         if (current) {
             current.onBlock(cb);
@@ -558,7 +558,7 @@ namespace BlockWalker {
 
         let indexer = new BlocksTxIndexer(client.platform, {
             name: options.name,
-            persistance: options.persistance,
+            persistence: options.persistence,
             loadTransactions: true,
             client: client,
             logProgress: options.logProgress,

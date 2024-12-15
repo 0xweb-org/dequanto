@@ -13,7 +13,7 @@ import { ContractStorageReaderBase } from 'dequanto/contracts/ContractStorageRea
 import { TxWriter } from 'dequanto/txs/TxWriter';
 import { ITxLogItem } from 'dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from 'dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from 'dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
 import { SubjectStream } from 'dequanto/class/SubjectStream';
 
 
@@ -31,7 +31,7 @@ export class $NAME$ extends ContractBase {
     constructor(
         public address: TEth.Address = $ADDRESS$,
         public client: Web3Client = di.resolve($EthWeb3Client$, $Web3ClientOptions$),
-        public explorer: IBlockChainExplorer = di.resolve($Etherscan$, $EvmScanOptions$),
+        public explorer: IBlockchainExplorer = di.resolve($Etherscan$, $EvmScanOptions$),
     ) {
         super(address, client, explorer)
 

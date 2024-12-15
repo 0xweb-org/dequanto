@@ -1,5 +1,5 @@
-import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { Generator } from '@dequanto/gen/Generator';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import alot from 'alot';
@@ -17,11 +17,11 @@ UAction.create({
 
             await alot.fromObject(tokenEntry.value).forEachAsync(async chainEntry => {
 
-                let scan: IBlockChainExplorer;
+                let scan: IBlockchainExplorer;
                 let platform: TPlatform;
                 if (chainEntry.key === 'polygon') {
                     platform = 'polygon';
-                    scan = BlockChainExplorerProvider.get('polygon');
+                    scan = BlockchainExplorerProvider.get('polygon');
                 }
 
                 if (scan != null) {

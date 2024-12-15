@@ -3,7 +3,7 @@ import { Bscscan } from '@dequanto/explorer/Bscscan';
 import { BscWeb3Client } from '@dequanto/clients/BscWeb3Client';
 import { $config } from '@dequanto/utils/$config';
 import { AmmV2ExchangeBase } from './AmmV2ExchangeBase';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { $require } from '@dequanto/utils/$require';
 
@@ -26,7 +26,7 @@ export class SushiswapPolygonExchange extends AmmV2ExchangeBase {
 
     constructor(
         public client: Web3Client = di.resolve(BscWeb3Client),
-        public explorer: IBlockChainExplorer = di.resolve(Bscscan)
+        public explorer: IBlockchainExplorer = di.resolve(Bscscan)
     ) {
         super(client, explorer);
     }

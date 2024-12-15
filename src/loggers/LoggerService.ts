@@ -6,11 +6,13 @@ import { $logger } from '@dequanto/utils/$logger';
 
 export class LoggerService implements ILogger {
 
-    private fs: GlobalChannel;
+    public fs: GlobalChannel;
+    public memory: any[][]
 
     constructor(public name: string = 'journal', public options?: {
         fs?: boolean
         std?: boolean
+        memory?: boolean
     }) {
         this.options ??= {};
 
@@ -39,6 +41,9 @@ export class LoggerService implements ILogger {
         }
         if (this.options.std !== false) {
             $logger[level](this.name, ...params);
+        }
+        if (this.options.memory === true) {
+            this.memory.push([ this.name, ...params ])
         }
     }
 }

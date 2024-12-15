@@ -1,11 +1,11 @@
 import di from 'a-di';
-import { BlockChainExplorerFactory } from './BlockChainExplorerFactory';
+import { BlockchainExplorerFactory } from './BlockchainExplorerFactory';
 import { $config } from '@dequanto/utils/$config';
 import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client';
 
 const contracts = $config.get('contracts.polygon', []);
 
-export class Polyscan extends BlockChainExplorerFactory.create({
+export class Polyscan extends BlockchainExplorerFactory.create({
     ABI_CACHE: `./cache/poly/abis.json`,
     CONTRACTS: contracts,
     getWeb3 () {

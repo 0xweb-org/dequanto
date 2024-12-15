@@ -1,5 +1,5 @@
 import di from 'a-di';
-import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
+import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
 import { EoAccount } from "@dequanto/models/TAccount";
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { IToken } from '@dequanto/models/IToken';
@@ -10,7 +10,7 @@ import { TokensService } from '../TokensService';
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
 import { $http } from '@dequanto/utils/$http';
 
@@ -23,11 +23,11 @@ const PLATFORMS = {
 export class OneInchExchange {
 
     client: Web3Client
-    explorer: IBlockChainExplorer
+    explorer: IBlockchainExplorer
 
     constructor(public platform: TPlatform) {
         this.client = Web3ClientFactory.get(this.platform);
-        this.explorer = BlockChainExplorerProvider.get(this.platform);
+        this.explorer = BlockchainExplorerProvider.get(this.platform);
 
     }
 

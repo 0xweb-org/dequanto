@@ -10,11 +10,11 @@ import { TResultAsync } from '@dequanto/models/TResult';
 import { $require } from '@dequanto/utils/$require';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { AmmV2PriceQuote } from '@dequanto/tokens/TokenExchanges/AmmV2PriceQuote';
-import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
+import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
 import { TokensServiceFactory } from '@dequanto/tokens/TokensServiceFactory';
 import { $cache } from '@dequanto/utils/$cache';
 import { TAddress } from '@dequanto/models/TAddress';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { $config } from '@dequanto/utils/$config';
 import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
@@ -30,7 +30,7 @@ const CACHE_PATH = $cache.file(`amm-pairs.json`);
 export class AmmV1Oracle implements IOracle {
 
     private client: Web3Client;
-    private explorer: IBlockChainExplorer;
+    private explorer: IBlockchainExplorer;
     private reader: ContractReader;
     private tokens: TokensService;
 
@@ -52,7 +52,7 @@ export class AmmV1Oracle implements IOracle {
 
     public constructor (private clients?: Web3Client[]) {
         let client = clients?.[0] ?? Web3ClientFactory.get('eth');
-        this.explorer = BlockChainExplorerProvider.get(client.platform);
+        this.explorer = BlockchainExplorerProvider.get(client.platform);
         this.client = client;
         this.reader = new ContractReader(client);
         this.tokens =  TokensServiceFactory.get(client.platform);
@@ -189,7 +189,7 @@ export class AmmV1Oracle implements IOracle {
             let key = `ammv1_pair_${self.client.platform}_${token.address}`;
             return key;
         },
-        persistance: new memd.FsTransport({ path:  $cache.file(`ammv1-pairs.json`) })
+        persistence: new memd.FsTransport({ path:  $cache.file(`ammv1-pairs.json`) })
     })
     private async getPair (token: ITokenBase) {
         let [ address, tokenDecimals ] = await Promise.all([

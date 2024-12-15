@@ -1,11 +1,11 @@
 import di from 'a-di';
-import { BlockChainExplorerFactory } from './BlockChainExplorerFactory';
+import { BlockchainExplorerFactory } from './BlockchainExplorerFactory';
 
 import { $config } from '@dequanto/utils/$config';
 import { BscWeb3Client } from '@dequanto/clients/BscWeb3Client';
 
 const contracts = $config.get('contracts.bsc', []);
-export class Bscscan extends BlockChainExplorerFactory.create({
+export class Bscscan extends BlockchainExplorerFactory.create({
     ABI_CACHE: `./cache/bsc/abis.json`,
     CONTRACTS: contracts,
     getWeb3 () {

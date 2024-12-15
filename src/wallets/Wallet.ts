@@ -1,5 +1,5 @@
 import di from 'a-di';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TokensService } from '@dequanto/tokens/TokensService';
@@ -13,7 +13,7 @@ export class Wallet {
     constructor (
         public account: { platform: TPlatform, address: TAddress },
         public client: Web3Client,
-        public explorer: IBlockChainExplorer
+        public explorer: IBlockchainExplorer
     ) {
         this.tokensService = di.resolve(TokensService, this.account.platform, this.explorer)
     }

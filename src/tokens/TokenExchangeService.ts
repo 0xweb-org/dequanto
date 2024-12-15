@@ -1,6 +1,6 @@
 import di from 'a-di';
 import alot from 'alot';
-import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
+import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { IToken } from '@dequanto/models/IToken';
 import { TPlatform } from '@dequanto/models/TPlatform';
@@ -15,12 +15,12 @@ import { SushiswapPolygonExchange } from './TokenExchanges/SushiswapPolygonExcha
 import { $logger } from '@dequanto/utils/$logger';
 import { $require } from '@dequanto/utils/$require';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 
 export class TokenExchangeService {
 
     client: Web3Client;
-    explorer: IBlockChainExplorer;
+    explorer: IBlockchainExplorer;
 
     exchange: AmmV2ExchangeBase
     stables: string[]
@@ -44,7 +44,7 @@ export class TokenExchangeService {
         }
 
         this.client = Web3ClientFactory.get(this.platform);
-        this.explorer = BlockChainExplorerProvider.get(this.platform);
+        this.explorer = BlockchainExplorerProvider.get(this.platform);
     }
 
     async calcUSD (from: string | Partial<IToken>, fromAmount: number | bigint, date?: Date): Promise<{

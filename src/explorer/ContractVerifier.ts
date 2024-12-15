@@ -12,9 +12,10 @@ import { $is } from '@dequanto/utils/$is';
 import { $path } from '@dequanto/utils/$path';
 import { $promise } from '@dequanto/utils/$promise';
 import { $require } from '@dequanto/utils/$require';
-import { IBlockChainExplorer } from './IBlockChainExplorer';
+import { IBlockchainExplorer } from './IBlockchainExplorer';
 import { $contract } from '@dequanto/utils/$contract';
 import { $abiCoder } from '@dequanto/abi/$abiCoder';
+import { IVerifier } from './verifiers/IVerifier';
 
 
 type TSubmissionStatus = {
@@ -34,7 +35,7 @@ export class ContractVerifier {
 
     constructor (
         public deployments: Deployments,
-        public explorer: IBlockChainExplorer,
+        public explorer: IVerifier,
         public logger = new LoggerService('ContractVerifier'),
     ) {
 
@@ -57,7 +58,7 @@ export class ContractVerifier {
             return;
         }
         let guid = status.guid
-        $require.True(/^\w+$/.test(guid), `Invalid guid response for submission: ${guid}`);
+        $require.True(/^[\w\-]+$/.test(guid), `Invalid guid response for submission: ${guid}`);
         await $promise.waitForTrue(async () => {
             try {
                 let result = await this.explorer.checkContractVerificationSubmission({ guid });

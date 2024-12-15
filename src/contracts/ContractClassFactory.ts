@@ -1,5 +1,5 @@
 import { type TAbiItem } from '@dequanto/types/TAbi';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TAddress } from '@dequanto/models/TAddress';
 import { ContractBase } from './ContractBase';
@@ -16,7 +16,7 @@ export interface IContractWrapped extends ContractBase {
 
 export namespace ContractClassFactory {
 
-    export async function get (client: Web3Client, explorer: IBlockChainExplorer, contractAddr: TAddress) {
+    export async function get (client: Web3Client, explorer: IBlockchainExplorer, contractAddr: TAddress) {
         let { abi } = await explorer.getContractAbi(contractAddr);
 
         let abiJson = JSON.parse(abi);
@@ -27,7 +27,7 @@ export namespace ContractClassFactory {
         contractAddr: TAddress
         , abi: (TAbiItem | string)[]
         , client: Web3Client
-        , explorer?: IBlockChainExplorer
+        , explorer?: IBlockchainExplorer
         , opts?: {
             contractName?: string
             $meta?: ContractBase['$meta']
@@ -56,7 +56,7 @@ class ClassBuilder<T = ContractBase> {
 
     }
 
-    create (contractAddr: TAddress, client: Web3Client, explorer: IBlockChainExplorer) {
+    create (contractAddr: TAddress, client: Web3Client, explorer: IBlockchainExplorer) {
         let ContractCtor = this.createClass(this.abi)
 
         this.defineMethods(ContractCtor, this.abi);

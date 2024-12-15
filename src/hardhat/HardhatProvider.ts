@@ -18,7 +18,7 @@ import { $require } from '@dequanto/utils/$require';
 import { IGeneratorSources } from '@dequanto/gen/Generator';
 import { $path } from '@dequanto/utils/$path';
 import { ContractClassFactory, IContractWrapped } from '@dequanto/contracts/ContractClassFactory';
-import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
+import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
 import { IWeb3EndpointOptions } from '@dequanto/clients/interfaces/IWeb3EndpointOptions';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
@@ -94,7 +94,7 @@ export class HardhatProvider {
     @memd.deco.memoize()
     async explorer (network: 'hardhat' | 'localhost' = 'hardhat') {
         let client = await this.client(network);
-        let Ctor = BlockChainExplorerProvider.create({
+        let Ctor = BlockchainExplorerProvider.create({
             platform: 'hardhat',
             getWeb3: () => client,
             ABI_CACHE: '',
@@ -215,7 +215,7 @@ export class HardhatProvider {
         const receipt = await Factory.deploy();
         const { contract, ContractCtor } = await ContractClassFactory.fromAbi<TReturn>(receipt.contractAddress, abi, client, null);
         const explorer = await this.explorer();
-        explorer.localDb.push({ name: '', abi: abi, address: receipt.contractAddress });
+        explorer.inMemoryDb.push({ name: '', abi: abi, address: receipt.contractAddress });
 
         return {
             contract,
@@ -256,7 +256,7 @@ export class HardhatProvider {
         const { contract, ContractCtor } = await ContractClassFactory.fromAbi<TReturn>(receipt.contractAddress, abi, client, null);
 
         const explorer = await this.explorer();
-        explorer.localDb.push({ name: '', abi: abi, address: receipt.contractAddress });
+        explorer.inMemoryDb.push({ name: '', abi: abi, address: receipt.contractAddress });
         return {
             contract,
             ContractCtor,

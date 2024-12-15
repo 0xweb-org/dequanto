@@ -1,6 +1,6 @@
 import di from 'a-di';
 import alot from 'alot';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { IToken } from '@dequanto/models/IToken';
 import { AmmV2ExchangeBase } from './AmmV2ExchangeBase';
@@ -27,7 +27,7 @@ export class AmmV2PriceQuote {
     private pairService: AmmPairV2Service
     private logger: ILogger
 
-    constructor(public client: Web3Client, public explorer: IBlockChainExplorer) {
+    constructor(public client: Web3Client, public explorer: IBlockchainExplorer) {
         switch (client.platform) {
             case 'bsc':
                 this.exchange = di.resolve(PancakeswapExchange, this.client, this.explorer);

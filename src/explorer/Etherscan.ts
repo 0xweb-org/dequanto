@@ -2,11 +2,11 @@ import di from 'a-di';
 import { $config } from '@dequanto/utils/$config';
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
 import { TPlatform } from '@dequanto/models/TPlatform';
-import { BlockChainExplorerFactory } from './BlockChainExplorerFactory';
+import { BlockchainExplorerFactory } from './BlockchainExplorerFactory';
 
 
 const contracts = $config.get('contracts.eth', [])
-export class Etherscan extends BlockChainExplorerFactory.create({
+export class Etherscan extends BlockchainExplorerFactory.create({
     ABI_CACHE: `./cache/eth/abis.json`,
     CONTRACTS: contracts,
     getWeb3 () {

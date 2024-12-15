@@ -1,13 +1,13 @@
 import di from 'a-di';
 
 import { $config } from '@dequanto/utils/$config';
-import { BlockChainExplorerFactory } from '@dequanto/explorer/BlockChainExplorerFactory';
+import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
 import { BobaWeb3Client } from './BobaWeb3Client';
 
 const config = $config.get('blockchainExplorer.boba');
 const contracts = $config.get('contracts.boba', []);
 
-export class Bobascan extends BlockChainExplorerFactory.create({
+export class Bobascan extends BlockchainExplorerFactory.create({
     ABI_CACHE: `./cache/boba/abis.json`,
     CONTRACTS: contracts,
     getWeb3 () {

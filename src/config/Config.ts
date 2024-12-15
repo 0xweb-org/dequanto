@@ -4,7 +4,6 @@ import { TConfigParamsBrowser, TConfigParamsNode } from './AConfigBase';
 import { IConfigData } from './interface/IConfigData';
 import { ConfigProvider } from './ConfigProvider';
 import { $logger } from '../utils/$logger';
-import { ConfigDefaults } from './ConfigDefaults';
 
 export class Config {
 

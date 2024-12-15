@@ -62,7 +62,7 @@ class CacheProvider {
     @memd.deco.memoize()
     static create (path) {
         let cache = new memd.Cache({
-            persistance: new memd.FsTransport({ path }),
+            persistence: new memd.FsTransport({ path }),
             trackRef: true
         });
         return cache;

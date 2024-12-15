@@ -10,7 +10,7 @@ import { $require } from '@dequanto/utils/$require';
 import { ParametersFromSecond } from '@dequanto/utils/types';
 import { Constructor } from '@dequanto/utils/types';
 
-import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
+import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
 import { ContractVerifier } from '@dequanto/explorer/ContractVerifier';
 import { HardhatWeb3Client } from '@dequanto/hardhat/HardhatWeb3Client';
 import { LoggerService } from '@dequanto/loggers/LoggerService';
@@ -22,6 +22,7 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { $promise } from '@dequanto/utils/$promise';
 import { l } from '@dequanto/utils/$logger';
 import { $bytecode } from '@dequanto/evm/utils/$bytecode';
+import { ContractVerifierHtml } from '@dequanto/explorer/ContractVerifierHtml';
 
 
 type TDeploymentOptions = {
@@ -451,7 +452,7 @@ export class Deployments {
             return;
         }
 
-        let explorer = await BlockChainExplorerProvider.get(this.client.platform);
+        let explorer = await BlockchainExplorerProvider.get(this.client.platform);
         let verifier = new ContractVerifier(this, explorer);
         if (deployment.verified != null && /Unable to locate/.test(deployment.verified) === false) {
             return;

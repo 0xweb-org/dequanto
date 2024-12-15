@@ -1,12 +1,12 @@
 import di from 'a-di';
 import memd from 'memd';
 import { TAddress } from '@dequanto/models/TAddress';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { IToken } from '@dequanto/models/IToken';
 import { ITokenProvider } from './TokenProviders/ITokenProvider';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockChainExplorerProvider';
+import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
 import { TokenDataProvider } from './TokenDataProvider';
 import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
 
@@ -16,7 +16,7 @@ export class TokensService {
 
     provider: TokenDataProvider
 
-    constructor(private platform: TPlatform, private explorer?: IBlockChainExplorer, private forked?: TokenDataProvider) {
+    constructor(private platform: TPlatform, private explorer?: IBlockchainExplorer, private forked?: TokenDataProvider) {
         this.provider = new TokenDataProvider(this.platform, this.explorer, null, this.forked);
     }
 
@@ -71,7 +71,7 @@ export class TokensService {
         platform: TPlatform
     ): Promise<ERC20> {
         let client = Web3ClientFactory.get(platform);
-        let explorer = BlockChainExplorerProvider.get(platform);
+        let explorer = BlockchainExplorerProvider.get(platform);
 
         if (typeof token === 'string') {
             let service = di.resolve(TokensService, platform, explorer);
@@ -88,7 +88,7 @@ export class TokensService {
 
         return TokensService.erc20(token, this.platform);
         // let client = Web3ClientFactory.get(this.platform);
-        // let explorer = BlockChainExplorerProvider.get(this.platform);
+        // let explorer = BlockchainExplorerProvider.get(this.platform);
 
         // let t = typeof token === 'string'
         //     ? await this.getToken(token)

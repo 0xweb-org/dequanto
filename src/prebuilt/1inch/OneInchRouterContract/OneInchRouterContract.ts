@@ -13,7 +13,7 @@ import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageRe
 import { TxWriter } from '@dequanto/txs/TxWriter';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockChainExplorer';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { SubjectStream } from '@dequanto/class/SubjectStream';
 
 
@@ -32,7 +32,7 @@ export class OneInchRouterContract extends ContractBase {
     constructor(
         public address: TEth.Address = '0x11111112542d85b3ef69ae05771c2dccff4faa26',
         public client: Web3Client = di.resolve(BscWeb3Client, ),
-        public explorer: IBlockChainExplorer = di.resolve(Bscscan, ),
+        public explorer: IBlockchainExplorer = di.resolve(Bscscan, ),
     ) {
         super(address, client, explorer)
 
@@ -260,7 +260,7 @@ class OneInchRouterContractStorageReader extends ContractStorageReaderBase {
     constructor(
         public address: TAddress,
         public client: Web3Client,
-        public explorer: IBlockChainExplorer,
+        public explorer: IBlockchainExplorer,
     ) {
         super(address, client, explorer);
 
