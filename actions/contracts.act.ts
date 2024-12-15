@@ -6,8 +6,8 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TAbiItem } from '@dequanto/types/TAbi';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { HopAddresses } from '@dequanto/bridges/hop/HopAddresses';
-import { IBlockChainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { BlockChainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
+import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
+import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
 import { $platform } from '@dequanto/utils/$platform';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 
@@ -126,11 +126,11 @@ UAction.create({
 
             await alot.fromObject(tokenEntry.value).forEachAsync(async chainEntry => {
 
-                let scan: IBlockChainExplorer;
+                let scan: IBlockchainExplorer;
                 let platform: TPlatform;
                 if (chainEntry.key === 'polygon') {
                     platform = 'polygon';
-                    scan = BlockChainExplorerProvider.get('polygon');
+                    scan = BlockchainExplorerProvider.get('polygon');
                 }
 
                 if (scan != null) {

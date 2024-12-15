@@ -43,6 +43,9 @@ export interface IBlockchainExplorerConfig {
     }[]
 }
 
+/**
+ * @obsolete Use BlockchainExplorer class instead.
+ */
 export namespace BlockchainExplorerFactory {
 
 

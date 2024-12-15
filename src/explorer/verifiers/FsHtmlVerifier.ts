@@ -5,6 +5,7 @@ import { IBlockchainExplorerConfig } from '../BlockchainExplorerFactory';
 import { IVerifier } from './IVerifier';
 import { IBlockchainTransferEvent } from '../IBlockchainExplorer';
 import { $platform } from '@dequanto/utils/$platform';
+import { TPlatform } from '@dequanto/models/TPlatform';
 
 const PATH_ROOT = `./data/0xc/verification`;
 const PATH_TEMPLATE = `${PATH_ROOT}/template.html`;
@@ -65,7 +66,7 @@ export class FsHtmlVerifier implements IVerifier {
     private key: string;
     private enabled: boolean;
 
-    constructor (public platform, public config: IBlockchainExplorerConfig) {
+    constructor (public platform: TPlatform, public config: IBlockchainExplorerConfig) {
         $require.notEmpty(platform, `Argument platform is required`);
         $require.notNull(config, `Config is required for ${platform}`);
         this.enabled = Boolean(config.api);

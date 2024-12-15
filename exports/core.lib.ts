@@ -55,8 +55,8 @@ export { ChainAccountService } from '../src/ChainAccountService';
 export { Web3Client } from '../src/clients/Web3Client'
 export { Web3ClientFactory } from '../src/clients/Web3ClientFactory'
 
-export { BlockChainExplorerFactory } from '../src/explorer/BlockChainExplorerFactory'
-export { BlockChainExplorerProvider } from '../src/explorer/BlockChainExplorerProvider'
+export { BlockchainExplorerFactory } from '../src/explorer/BlockchainExplorerFactory'
+export { BlockchainExplorerProvider } from '../src/explorer/BlockchainExplorerProvider'
 
 export { Rpc } from '../src/rpc/Rpc'
 export { RpcContract } from '../src/rpc/RpcContract'

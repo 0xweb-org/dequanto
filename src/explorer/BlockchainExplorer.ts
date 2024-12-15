@@ -70,6 +70,7 @@ export class BlockchainExplorer implements IBlockchainExplorer {
         this.opts = ensureDefaults(opts);
         this.config = opts.getConfig(this.platform)
         this.inMemoryDb = this.opts.CONTRACTS ?? [];
+        this.platform =this.opts.platform;
 
         if ($str.isNullOrWhiteSpace(opts.ABI_CACHE) === false) {
             this.getContractAbi = memd.fn.memoize(this.getContractAbi, {
