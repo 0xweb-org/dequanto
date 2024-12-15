@@ -22,7 +22,7 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { $promise } from '@dequanto/utils/$promise';
 import { l } from '@dequanto/utils/$logger';
 import { $bytecode } from '@dequanto/evm/utils/$bytecode';
-import { ContractVerifierHtml } from '@dequanto/explorer/ContractVerifierHtml';
+
 
 
 type TDeploymentOptions = {
