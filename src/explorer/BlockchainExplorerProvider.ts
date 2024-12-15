@@ -34,6 +34,7 @@ export namespace BlockchainExplorerProvider {
         registry[platform] = explorer;
     }
 
+    /** @obsolete Use BlockchainExplorer class instead */
     export function create(options: IBlockchainExplorerFactoryParams) {
         return new BlockchainExplorer(options);
     }

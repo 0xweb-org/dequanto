@@ -35,6 +35,7 @@ import { $contract } from '@dequanto/utils/$contract';
 import { $dependency } from '@dequanto/utils/$dependency';
 import { TTransport } from '@dequanto/rpc/transports/ITransport';
 import { Constructor } from '@dequanto/utils/types';
+import { BlockchainExplorer } from '@dequanto/explorer/BlockchainExplorer';
 
 type THardhatLib = typeof import('hardhat');
 
@@ -94,13 +95,11 @@ export class HardhatProvider {
     @memd.deco.memoize()
     async explorer (network: 'hardhat' | 'localhost' = 'hardhat') {
         let client = await this.client(network);
-        let Ctor = BlockchainExplorerProvider.create({
+        return new BlockchainExplorer({
             platform: 'hardhat',
             getWeb3: () => client,
             ABI_CACHE: '',
-
         });
-        return new Ctor();
     }
 
     @memd.deco.memoize()
