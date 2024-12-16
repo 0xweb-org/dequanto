@@ -1,4 +1,4 @@
-import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
+import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
 import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { ChainAccountService } from '@dequanto/ChainAccountService';
 import { IWeb3EndpointOptions } from '@dequanto/clients/interfaces/IWeb3EndpointOptions';
@@ -29,7 +29,7 @@ export class PlatformFactory {
     async get (platform: TPlatform, opts?: IWeb3EndpointOptions): Promise<IPlatformTools> {
         let client = Web3ClientFactory.get(platform, opts);
         let tokens = TokensServiceFactory.get(platform);
-        let explorer = BlockchainExplorerProvider.get(platform);
+        let explorer = BlockchainExplorerFactory.get(platform);
         let accounts = new ChainAccountService();
         let transfer = new TokenTransferService(client);
         let token = new TokenService(client);

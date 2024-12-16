@@ -1,6 +1,6 @@
 import alot from 'alot';
 import memd from 'memd';
-import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
+import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
 import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
@@ -60,7 +60,7 @@ export class SlotsDump {
         this.contractName = params.contractName;
 
         this.client = params.client ?? Web3ClientFactory.get(params.platform ?? 'eth')
-        this.explorer = params.explorer ?? BlockchainExplorerProvider.get(this.client.platform)
+        this.explorer = params.explorer ?? BlockchainExplorerFactory.get(this.client.platform)
         this.sourceCodeProvider = params.sourceCodeProvider ?? new SourceCodeProvider(this.client, this.explorer)
 
         this.logger = params.logger ?? $logger;

@@ -1,10 +1,10 @@
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { $config } from '@dequanto/utils/$config';
-import { IBlockchainExplorerFactoryParams } from './BlockchainExplorerFactory';
 import { IBlockchainExplorer } from './IBlockchainExplorer';
 import { Constructor } from '@dequanto/utils/types';
-import { BlockchainExplorer } from './BlockchainExplorer';
+import { BlockchainExplorer, IBlockchainExplorerFactoryParams } from './BlockchainExplorer';
 
+/** @obsolete Use BlockchainExplorerFactory instead */
 export namespace BlockchainExplorerProvider {
 
     const registry = {} as Record<TPlatform, IBlockchainExplorer | Constructor<IBlockchainExplorer>>;

@@ -2,7 +2,7 @@ import alot from 'alot';
 import memd from 'memd';
 import { ContractBase, TEventLogOptions } from '@dequanto/contracts/ContractBase';
 import { ContractCreationResolver } from '@dequanto/contracts/ContractCreationResolver';
-import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
+import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { $date } from '@dequanto/utils/$date';
 import { $require } from '@dequanto/utils/$require';
@@ -350,7 +350,7 @@ export class EventsIndexer <T extends ContractBase> {
     private async getInitialBlockNumber () {
         let client = this.contract.client;
         if (client.platform !== 'hardhat') {
-            let explorer = await BlockchainExplorerProvider.get(this.contract.client.platform);
+            let explorer = await BlockchainExplorerFactory.get(this.contract.client.platform);
             let deployment = new ContractCreationResolver(client, explorer);
             let contractInfo = await deployment.getInfo(this.contract.address);
             return $require.Number(contractInfo.block, `Contract deployment not resolved from the blockchain explorer`);

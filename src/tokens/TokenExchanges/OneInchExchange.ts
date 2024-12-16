@@ -1,5 +1,5 @@
 import di from 'a-di';
-import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
+import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
 import { EoAccount } from "@dequanto/models/TAccount";
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { IToken } from '@dequanto/models/IToken';
@@ -27,7 +27,7 @@ export class OneInchExchange {
 
     constructor(public platform: TPlatform) {
         this.client = Web3ClientFactory.get(this.platform);
-        this.explorer = BlockchainExplorerProvider.get(this.platform);
+        this.explorer = BlockchainExplorerFactory.get(this.platform);
 
     }
 

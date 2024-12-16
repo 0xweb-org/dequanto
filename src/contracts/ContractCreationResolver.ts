@@ -5,7 +5,7 @@ import { $block } from '@dequanto/utils/$block';
 import { $cache } from '@dequanto/utils/$cache';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
+import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
 import { $require } from '@dequanto/utils/$require';
 import { $promise } from '@dequanto/utils/$promise';
 import { TEth } from '@dequanto/models/TEth';
@@ -19,7 +19,7 @@ export class ContractCreationResolver {
 
     static get (platform: TPlatform) {
         let client = Web3ClientFactory.get(platform);
-        let explorer = BlockchainExplorerProvider.get(platform);
+        let explorer = BlockchainExplorerFactory.get(platform);
         return new ContractCreationResolver(client, explorer);
     }
 

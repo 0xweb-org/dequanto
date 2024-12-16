@@ -1,6 +1,6 @@
 import di from 'a-di';
 import alot from 'alot';
-import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
+import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { IToken } from '@dequanto/models/IToken';
 import { TPlatform } from '@dequanto/models/TPlatform';
@@ -44,7 +44,7 @@ export class TokenExchangeService {
         }
 
         this.client = Web3ClientFactory.get(this.platform);
-        this.explorer = BlockchainExplorerProvider.get(this.platform);
+        this.explorer = BlockchainExplorerFactory.get(this.platform);
     }
 
     async calcUSD (from: string | Partial<IToken>, fromAmount: number | bigint, date?: Date): Promise<{

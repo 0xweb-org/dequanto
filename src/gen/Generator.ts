@@ -8,7 +8,7 @@ import { GeneratorFromAbi } from './GeneratorFromAbi';
 import { TAddress } from '@dequanto/models/TAddress';
 import { File, Directory } from 'atma-io';
 import { class_Uri, obj_setProperty } from 'atma-utils';
-import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
+import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { $path } from '@dequanto/utils/$path';
 import { $logger, l } from '@dequanto/utils/$logger';
@@ -83,7 +83,7 @@ export class Generator {
             platform,
         } = options;
 
-        this.explorer = BlockchainExplorerProvider.get(platform);
+        this.explorer = BlockchainExplorerFactory.get(platform);
         this.client = Web3ClientFactory.get(platform);
 
         if (options.defaultAddress == null && $address.isValid(options.source.abi)) {

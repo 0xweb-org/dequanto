@@ -1,4 +1,4 @@
-import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
+import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
 import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
@@ -20,7 +20,7 @@ export class Erc4337Factory {
         let platform = opts.platform;
         let name = opts.name ?? 'default';
         let client = opts.client ?? Web3ClientFactory.get(platform);
-        let explorer = opts.explorer ?? BlockchainExplorerProvider.get(platform);
+        let explorer = opts.explorer ?? BlockchainExplorerFactory.get(platform);
 
         let providers = $config.get('erc4337') as IConfigData['erc4337'];
         let provider = providers.find(x => (x.name === name || (name === 'default' && !x.name)) && x.platforms.includes(platform));

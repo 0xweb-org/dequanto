@@ -2,7 +2,7 @@ import alot from 'alot';
 import memd from 'memd';
 import type { TAbiItem } from '@dequanto/types/TAbi';
 
-import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
+import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $require } from '@dequanto/utils/$require';
 import { MappingSettersResolver } from '../SlotsParser/MappingSettersResolver';
@@ -45,7 +45,7 @@ export class MappingKeysLoader {
         this.contractName = params.contractName;
 
         this.client = params.client ?? Web3ClientFactory.get(params.platform ?? 'eth')
-        this.explorer = params.explorer ?? BlockchainExplorerProvider.get(this.client.platform)
+        this.explorer = params.explorer ?? BlockchainExplorerFactory.get(this.client.platform)
         this.sourceCodeProvider = params.sourceCodeProvider ?? new SourceCodeProvider(this.client, this.explorer)
         this.logger = params.logger ?? $logger;
     }

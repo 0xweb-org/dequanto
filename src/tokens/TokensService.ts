@@ -6,7 +6,7 @@ import { TPlatform } from '@dequanto/models/TPlatform';
 import { IToken } from '@dequanto/models/IToken';
 import { ITokenProvider } from './TokenProviders/ITokenProvider';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
+import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
 import { TokenDataProvider } from './TokenDataProvider';
 import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
 
@@ -71,7 +71,7 @@ export class TokensService {
         platform: TPlatform
     ): Promise<ERC20> {
         let client = Web3ClientFactory.get(platform);
-        let explorer = BlockchainExplorerProvider.get(platform);
+        let explorer = BlockchainExplorerFactory.get(platform);
 
         if (typeof token === 'string') {
             let service = di.resolve(TokensService, platform, explorer);
@@ -88,7 +88,7 @@ export class TokensService {
 
         return TokensService.erc20(token, this.platform);
         // let client = Web3ClientFactory.get(this.platform);
-        // let explorer = BlockchainExplorerProvider.get(this.platform);
+        // let explorer = BlockchainExplorerFactory.get(this.platform);
 
         // let t = typeof token === 'string'
         //     ? await this.getToken(token)

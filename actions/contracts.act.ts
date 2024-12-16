@@ -7,7 +7,7 @@ import { TAbiItem } from '@dequanto/types/TAbi';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { HopAddresses } from '@dequanto/bridges/hop/HopAddresses';
 import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
+import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
 import { $platform } from '@dequanto/utils/$platform';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 
@@ -130,7 +130,7 @@ UAction.create({
                 let platform: TPlatform;
                 if (chainEntry.key === 'polygon') {
                     platform = 'polygon';
-                    scan = BlockchainExplorerProvider.get('polygon');
+                    scan = BlockchainExplorerFactory.get('polygon');
                 }
 
                 if (scan != null) {

@@ -1,4 +1,4 @@
-import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
+import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
 import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { Generator } from '@dequanto/gen/Generator';
 import { TPlatform } from '@dequanto/models/TPlatform';
@@ -21,7 +21,7 @@ UAction.create({
                 let platform: TPlatform;
                 if (chainEntry.key === 'polygon') {
                     platform = 'polygon';
-                    scan = BlockchainExplorerProvider.get('polygon');
+                    scan = BlockchainExplorerFactory.get('polygon');
                 }
 
                 if (scan != null) {

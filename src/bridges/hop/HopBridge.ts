@@ -1,5 +1,5 @@
 import di from 'a-di';
-import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
+import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
 import { EoAccount } from "@dequanto/models/TAccount";
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { IToken } from '@dequanto/models/IToken';
@@ -190,12 +190,12 @@ export class HopBridge implements IBridge {
         let depositContract = new Dai_l2AmmWrapperContract(
             l2AmmWrapperAddr,
             chainFrom.client,
-            BlockchainExplorerProvider.get(fromPlatform)
+            BlockchainExplorerFactory.get(fromPlatform)
         );
         let bridgeContract = new Dai_l2BridgeContract(
             l2BridgeAddr,
             chainFrom.client,
-            BlockchainExplorerProvider.get(fromPlatform)
+            BlockchainExplorerFactory.get(fromPlatform)
         );
 
         let deadline = bridge.defaultDeadlineSeconds; // BigInt($date.tool().add(`${bridge.defaultDeadlineSeconds}s`).toUnixTimestamp());
@@ -309,7 +309,7 @@ export class HopBridge implements IBridge {
         let bridgeContract = new Dai_l2BridgeContract(
             l2BridgeAddr,
             client,
-            BlockchainExplorerProvider.get(toPlatform)
+            BlockchainExplorerFactory.get(toPlatform)
         );
         return bridgeContract.isTransferIdSpent(transferId);
     }

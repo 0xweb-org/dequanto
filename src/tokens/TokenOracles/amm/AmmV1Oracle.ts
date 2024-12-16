@@ -10,7 +10,7 @@ import { TResultAsync } from '@dequanto/models/TResult';
 import { $require } from '@dequanto/utils/$require';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { AmmV2PriceQuote } from '@dequanto/tokens/TokenExchanges/AmmV2PriceQuote';
-import { BlockchainExplorerProvider } from '@dequanto/explorer/BlockchainExplorerProvider';
+import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
 import { TokensServiceFactory } from '@dequanto/tokens/TokensServiceFactory';
 import { $cache } from '@dequanto/utils/$cache';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -52,7 +52,7 @@ export class AmmV1Oracle implements IOracle {
 
     public constructor (private clients?: Web3Client[]) {
         let client = clients?.[0] ?? Web3ClientFactory.get('eth');
-        this.explorer = BlockchainExplorerProvider.get(client.platform);
+        this.explorer = BlockchainExplorerFactory.get(client.platform);
         this.client = client;
         this.reader = new ContractReader(client);
         this.tokens =  TokensServiceFactory.get(client.platform);
