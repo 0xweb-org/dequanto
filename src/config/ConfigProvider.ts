@@ -9,6 +9,17 @@ import { $require } from '@dequanto/utils/$require';
 import { is_BROWSER } from '@dequanto/utils/$const';
 import { ConfigDefaults } from './ConfigDefaults';
 
+const DEFAULT_PATHS = {
+    ACCOUNTS: {
+        local: `./0xc/config/accounts.json`,
+        global: `%APPDATA%/.dequanto/accounts.json`
+    },
+    CONFIG: {
+        local: `./0xc/config/config.yml`,
+        global: `%APPDATA%/.dequanto/config.yml`
+    }
+};
+
 
 export class ConfigProvider implements IConfigProvider {
 
@@ -39,9 +50,14 @@ export class ConfigProvider implements IConfigProvider {
 
 
     private async getSourcesNode (parameters: TConfigParamsNode) {
+        let isLocal = parameters?.isLocal ?? false;
+        let PATH_KEY: 'local' | 'global' = isLocal ? 'local' : 'global';
+
         let unlockedAccountsKey = await $secret.getPin(parameters);
-        let configPathAccounts = $cli.getParamValue('config-accounts', parameters) ?? '%APPDATA%/.dequanto/accounts.json';
-        let configPathGlobal = $cli.getParamValue('config-global', parameters) ?? '%APPDATA%/.dequanto/config.yml';
+        let configPathAccounts = $cli.getParamValue('config-accounts', parameters)
+            ?? DEFAULT_PATHS.ACCOUNTS[ PATH_KEY ];
+        let configPathMain = $cli.getParamValue('config-global', parameters)
+            ?? DEFAULT_PATHS.CONFIG[ PATH_KEY ];
 
         return [
             {
@@ -56,7 +72,7 @@ export class ConfigProvider implements IConfigProvider {
                 optional: true,
             },
             {
-                path: configPathGlobal,
+                path: configPathMain,
                 writable: true,
                 optional: true,
                 extendArrays: false,

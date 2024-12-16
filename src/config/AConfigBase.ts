@@ -10,6 +10,7 @@ export type TConfigParamsNode = TConfigParamsBase & {
     pin?: string
     configAccounts?: string
     configGlobal?: string
+    isLocal?: boolean
 }
 
 export type TConfigParamsBrowser = TConfigParamsBase & {
