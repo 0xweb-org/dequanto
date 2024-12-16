@@ -72,6 +72,7 @@ export class ConfigProvider implements IConfigProvider {
                 optional: true,
             },
             {
+                name: 'main',
                 path: configPathMain,
                 writable: true,
                 optional: true,
