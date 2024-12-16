@@ -1,6 +1,6 @@
 import { IBlockchainExplorer } from './IBlockchainExplorer';
 import { Constructor } from '@dequanto/utils/types';
-import { BlockchainExplorer, IBlockchainExplorerFactoryParams } from './BlockchainExplorer';
+import { BlockchainExplorer, IBlockchainExplorerConfig, IBlockchainExplorerFactoryParams } from './BlockchainExplorer';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { $config } from '@dequanto/utils/$config';
 import { Config } from '@dequanto/config/Config';
@@ -19,35 +19,27 @@ export namespace BlockchainExplorerFactory {
     }
 
     export function get (platform: TPlatform | string, opts?: IBlockchainExplorerFactoryParams) {
-        switch (platform) {
-            case 'hardhat':
-                return new BlockchainExplorer({
-                    platform,
-                    ...(opts ?? {})
-                });
-            default:
-                let cfg = $config.get(`blockchainExplorer.${platform}`);
 
-                let Mix = registry[platform];
-                if (Mix != null) {
-                    if (typeof Mix === 'function') {
-                        return new Mix(cfg);
-                    }
-                    return Mix;
-                }
-                if (cfg != null) {
-                    return new BlockchainExplorer({
-                        platform ,
-                        ...(opts ?? {})
-                    });
-                }
-                throw new Error(`Unsupported platform ${platform} for block chain explorer`);
+        let cfg = $config.get(`blockchainExplorer.${platform}`);
+        let params = {
+            platform ,
+            ...(opts ?? {}),
+            ...(cfg?? {})
+        };
+        let Ctor = registry[platform];
+        if (Ctor != null) {
+            if (typeof Ctor === 'function') {
+                return new Ctor(params);
+            }
+            return Ctor;
         }
+
+        return new BlockchainExplorer(params);
     }
 
     /** Same as sync variation, but ensures the config is being fetched */
     export async function getAsync (platform: TPlatform | string, opts?: IBlockchainExplorerFactoryParams) {
-        let cfg = await Config.get();
+        await Config.get();
         return get(platform, opts);
     }
 

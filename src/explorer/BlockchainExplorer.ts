@@ -20,7 +20,21 @@ import { $http } from '@dequanto/utils/$http';
 import { IVerifier } from './verifiers/IVerifier';
 import { FsHtmlVerifier } from './verifiers/FsHtmlVerifier';
 
-export interface IBlockchainExplorerFactoryParams {
+
+export interface IBlockchainExplorerConfig {
+    key?: string
+    api?: string
+    host?: string
+    www?: string
+    verification?: boolean | 'fs'
+    explorers?: {
+        api: string
+        apiKey?: string
+        verification?: boolean | 'fs'
+    }[]
+}
+
+export interface IBlockchainExplorerFactoryParams extends IBlockchainExplorerConfig {
 
     platform?: string
     ABI_CACHE?: string
@@ -29,18 +43,6 @@ export interface IBlockchainExplorerFactoryParams {
     getConfig?: (platform?: TPlatform) => IBlockchainExplorerConfig
 }
 
-export interface IBlockchainExplorerConfig {
-    key: string
-    api?: string
-    host: string
-    www: string
-    verification?: boolean | 'fs'
-    explorers?: {
-        api: string
-        apiKey?: string
-        verification?: boolean | 'fs'
-    }[]
-}
 
 type TxFilter = {
     fromBlockNumber?: number,
@@ -522,15 +524,10 @@ function ensureDefaults(opts: IBlockchainExplorerFactoryParams) {
     opts.getConfig ??= () => {
         let config = $config.get(`blockchainExplorer.${platform}`);
 
-        let mainnet = /(?<mainnet>\w+):/.exec(platform)?.groups?.mainnet;
-        if (mainnet != null) {
-            let mainnetConfig = $config.get(`blockchainExplorer.${mainnet}`);
-            config = {
-                ...(mainnetConfig ?? {}),
-                ...(config ?? {})
-            };
-        }
-        return config;
+        return {
+            ...(config ?? {}),
+            ...opts,
+        };
     };
     return opts;
 }
