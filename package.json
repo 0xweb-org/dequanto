@@ -41,6 +41,7 @@
         "app-bundler": "^0.2.13",
         "atma": "^0.15.22",
         "atma-io-middleware-base": "^1.0.51",
+        "atma-io-middleware-condcomments": "^1.2.8",
         "atma-io-middleware-importer": "^1.1.38",
         "atma-io-middleware-uglify": "^1.1.25",
         "atma-loader-ts": "^1.2.6",

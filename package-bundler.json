@@ -2,7 +2,6 @@
     "apps": {
         "cjs": {
             "file": "**.ts",
-            "//file": "blocks/**.ts",
             "ignore": [
                 "bridges/.+",
                 "config/dequanto.d.ts",
@@ -59,7 +58,6 @@
         },
         "esm": {
             "file": "**.ts",
-            "//file": "blocks/**.ts",
             "ignore": [
                 "bridges/.+",
                 "config/dequanto.d.ts",
