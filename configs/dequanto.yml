@@ -2,7 +2,7 @@ accounts:
 
 settings:
   generate:
-    # js | mjs | ts
+    # js | mjs | cjs | ts
     target: ts
 
 

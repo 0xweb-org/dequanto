@@ -1,0 +1,77 @@
+/**
+ *  AUTO-Generated Class: $DATE$
+ *  Implementation: $EXPLORER_URL$
+ */
+const di = require('a-di');
+const { ClientEventsStream } = require('dequanto/clients/ClientEventsStream');
+const { ContractBase } = require('dequanto/contracts/ContractBase');
+const { ContractBaseUtils } = require('dequanto/contracts/utils/ContractBaseUtils');
+const { ContractStorageReaderBase } = require('dequanto/contracts/ContractStorageReaderBase');
+const { TxWriter } = require('dequanto/txs/TxWriter');
+const { Web3Client } = require('dequanto/clients/Web3Client');
+const { SubjectStream } = require('dequanto/class/SubjectStream');
+
+
+
+/* IMPORTS */
+
+/* ERRORS */
+
+export class $NAME$ extends ContractBase {
+    constructor(
+        address = $ADDRESS$,
+        client = di.resolve($EthWeb3Client$, $Web3ClientOptions$),
+        explorer = di.resolve($Etherscan$, $EvmScanOptions$),
+    ) {
+        super(address, client, explorer)
+
+        /* STORAGE_READER_INITIALIZER */
+    }
+
+
+/* META_PROPERTY */
+
+/* METHODS */
+
+    $call () {
+        return super.$call();
+    }
+    $signed () {
+        return super.$signed();
+    }
+    $data () {
+        return super.$data();
+    }
+    $gas () {
+        return super.$gas();
+    }
+
+    onTransaction (method, options) {
+        options ??= {};
+        options.filter ??= {};
+        options.filter.method = method;
+        return this.$onTransaction(options);
+    }
+
+    onLog (event, cb) {
+        return this.$onLog(event, cb);
+    }
+
+    async getPastLogs (mix, options) {
+        return await super.getPastLogs(mix, options);
+    }
+
+/* EVENTS */
+
+/* EVENTS_EXTRACTORS */
+
+/* EVENTS_FETCHERS */
+
+    abi = $ABI$
+
+    /* STORAGE_READER_PROPERTY */
+}
+
+
+
+/* STORAGE_READER_CLASS */

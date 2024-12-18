@@ -25,7 +25,7 @@ export class GeneratorFromAbi {
     }
 
     async generate(abiJson: TAbiItem[], opts: {
-        target?: 'js' | 'mjs' | 'ts'
+        target?: 'js' | 'mjs' | 'ts' | 'cjs'
         network: TPlatform
         name: string
         contractName: string
@@ -47,9 +47,16 @@ export class GeneratorFromAbi {
         let target = opts.target ?? settings?.target ?? 'ts';
         let outputSourceType = {
             mjs: 'js',
+            cjs: 'js',
         }[target] ?? target;
 
-        let outputFileExt = opts?.outputFileExt ?? outputSourceType;
+        let outputModuleType = target === 'cjs' ? 'cjs' : 'esm';
+        let outputFileExt = opts?.outputFileExt ?? {
+            mjs: 'mjs',
+            cjs: 'js',
+            ts: 'ts',
+            js: 'js',
+        }[target];
 
         let methodsArr = alot(abiJson)
             .filter(x => x.type === 'function' || x.type === 'constructor')
@@ -152,7 +159,8 @@ export class GeneratorFromAbi {
         let eventsFetchersTypings = eventsFetchersArr.types.join('\n\n');
 
         let name = opts.name;
-        let templatePath = $path.resolve(`/src/gen/templates/ContractTemplate.${ outputSourceType }.tmpl`);
+        let contractTemplateSuffix = outputModuleType === 'cjs' ? 'cjs' : outputSourceType;
+        let templatePath = $path.resolve(`/src/gen/templates/ContractTemplate.${ contractTemplateSuffix }.tmpl`);
         let template = await File.readAsync<string>(templatePath, { skipHooks: true });
         let templateDtsPath = $path.resolve(`/src/gen/templates/ContractTemplate.d.ts.tmpl`);
         let templateDts = await File.readAsync<string>(templateDtsPath, { skipHooks: true });
@@ -168,10 +176,16 @@ export class GeneratorFromAbi {
             case 'hardhat':
                 EtherscanStr = 'Etherscan';
                 EthWeb3ClientStr = 'HardhatWeb3Client';
-                imports = [
-                    `import { Etherscan } from '${importPfx}/explorer/Etherscan'`,
-                    `import { HardhatWeb3Client } from '${importPfx}/hardhat/HardhatWeb3Client'`,
-                ];
+                imports = {
+                    esm: [
+                        `import { Etherscan } from '${importPfx}/explorer/Etherscan';`,
+                        `import { HardhatWeb3Client } from '${importPfx}/hardhat/HardhatWeb3Client';`,
+                    ],
+                    cjs: [
+                        `const { Etherscan } = require('${importPfx}/explorer/Etherscan');`,
+                        `const { HardhatWeb3Client } = require('${importPfx}/hardhat/HardhatWeb3Client');`,
+                    ],
+                }[outputModuleType];
                 sourceUri = ``;
                 break;
             default: {
@@ -179,10 +193,16 @@ export class GeneratorFromAbi {
                 if (web3Config) {
                     EtherscanStr = 'Evmscan';
                     EthWeb3ClientStr = 'EvmWeb3Client';
-                    imports = [
-                        `import { Evmscan } from '${importPfx}/explorer/Evmscan'`,
-                        `import { EvmWeb3Client } from '${importPfx}/clients/EvmWeb3Client'`,
-                    ];
+                    imports = {
+                        esm: [
+                            `import { Evmscan } from '${importPfx}/explorer/Evmscan';`,
+                            `import { EvmWeb3Client } from '${importPfx}/clients/EvmWeb3Client';`,
+                        ],
+                        cjs: [
+                            `const { Evmscan } = require('${importPfx}/explorer/Evmscan');`,
+                            `const { EvmWeb3Client } = require('${importPfx}/clients/EvmWeb3Client');`,
+                        ]
+                    }[outputModuleType];
                     Web3ClientOptions = `{ platform: '${opts.network}' }`;
                     EvmScanOptions = `{ platform: '${opts.network}' }`;
 

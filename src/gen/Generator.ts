@@ -23,7 +23,7 @@ import { SolidityParser } from '@dequanto/solidity/SolidityParser';
 export interface IGenerateOptions {
     platform: TPlatform
 
-    target?: 'js' | 'ts'
+    target?: 'js' | 'ts' | 'mjs' | 'cjs'
 
     // Class name to create
     name: string
