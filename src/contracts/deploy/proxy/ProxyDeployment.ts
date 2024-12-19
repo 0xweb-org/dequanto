@@ -1,3 +1,4 @@
+import alot from 'alot';
 import type { Deployments } from '../Deployments';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TEth } from '@dequanto/models/TEth';
@@ -11,7 +12,9 @@ import { $logger, l } from '@dequanto/utils/$logger';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';
 import { DeploymentsStorage } from '../storage/DeploymentsStorage';
 import { $proxyDeploy } from './$proxyDeploy';
-
+import { File } from 'atma-io';
+import { IContractWrapped } from '@dequanto/contracts/ContractClassFactory';
+import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 
 export interface IProxy extends ContractBase {
     changeAdmin?
@@ -118,6 +121,13 @@ export class ProxyDeployment {
             Proxy,
             ProxyAdmin,
         } = ctx.TransparentProxy ?? this.opts.TransparentProxy;
+
+        if (Proxy == null) {
+            let internal = await this.getOpenzeppelinUpgradable({ beacon: false, proxy: true });
+            Proxy = internal.TransparentUpgradeableProxy;
+            ProxyAdmin = internal.ProxyAdmin as Constructor<IProxyAdmin>;
+        }
+
         $require.notNull(Proxy, 'TransparentProxy.Proxy is required');
         $require.notNull(ProxyAdmin, 'TransparentProxy.ProxyAdmin is required');
 
@@ -214,6 +224,77 @@ export class ProxyDeployment {
             contractProxyDeployment,
             contractProxyAdmin,
         }
+    }
+
+    private async getOpenzeppelinUpgradable (opts?: { proxy?: boolean, beacon?: boolean }) {
+        // We can't compile OpenZeppelin's contracts directly from node_modules folder, so create the wrappers
+        const baseSource = `./node_modules/@openzeppelin/contracts/proxy`;
+        const baseOutput = `./contracts/oz`;
+        const deps = {
+            TransparentUpgradeableProxy: `@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol`,
+            ProxyAdmin: `@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol`,
+            Beacon: `@openzeppelin/contracts/proxy/beacon/UpgradeableBeacon.sol`,
+            BeaconProxy: `@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol`,
+        };
+        const paths = {
+            TransparentUpgradeableProxy: {
+                source: `${baseSource}/transparent/TransparentUpgradeableProxy.sol`,
+                output: `${baseOutput}/Proxy.sol`,
+                template: `
+                    import \"${deps.TransparentUpgradeableProxy}\";
+                `,
+                //install: `TransparentUpgradeableProxy,ProxyAdmin`,
+                contracts: [`TransparentUpgradeableProxy`,`ProxyAdmin`]
+            },
+            Beacon: {
+                source: `${baseSource}/beacon/UpgradeableBeacon.sol`,
+                output: `${baseOutput}/Beacon.sol`,
+                template: `
+                    import \"${deps.Beacon}\";
+                `,
+                //install: `UpgradeableBeacon,BeaconProxy`,
+                contracts: [`UpgradeableBeacon`,`BeaconProxy`],
+            }
+        };
+
+        if (opts?.beacon === false) {
+            delete paths.Beacon;
+        }
+        if (opts?.proxy === false) {
+            delete paths.TransparentUpgradeableProxy;
+        }
+
+        function fmt (template: string) {
+            let match = /^ +/m.exec(template);
+            return template.trim().replace(new RegExp(`^${match[0]}`, 'gm'), '');
+        }
+
+        let provider = new HardhatProvider();
+        let contracts = await alot.fromObject(paths).mapMany(async entry => {
+            let info = entry.value;
+            let code = fmt(info.template);
+
+            if (await File.existsAsync(info.output) === false) {
+                await File.writeAsync(info.output, code);
+            }
+            await provider.compileSol(info.output, {
+                tsgen: false,
+            });
+
+            return await alot(info.contracts)
+                .mapAsync(async key => {
+                    let compilation = await provider.getContractFromSolPath(deps[key]);
+                    return {
+                        key: key,
+                        Ctor: compilation.ContractCtor
+                    };
+                })
+                .toArrayAsync();
+        }).toArrayAsync({ threads: 1 });
+
+        return alot(contracts).toDictionary(x => x.key, x => x.Ctor) as {
+            [K in keyof typeof deps]: Constructor<IContractWrapped>
+        };
     }
 
     protected async ensureBeaconInner(ctx: IBeaconDeploymentCtx) {
