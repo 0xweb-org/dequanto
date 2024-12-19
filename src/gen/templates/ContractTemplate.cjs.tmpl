@@ -17,7 +17,7 @@ const { SubjectStream } = require('dequanto/class/SubjectStream');
 
 /* ERRORS */
 
-export class $NAME$ extends ContractBase {
+class $NAME$ extends ContractBase {
     constructor(
         address = $ADDRESS$,
         client = di.resolve($EthWeb3Client$, $Web3ClientOptions$),
@@ -72,6 +72,7 @@ export class $NAME$ extends ContractBase {
     /* STORAGE_READER_PROPERTY */
 }
 
-
-
 /* STORAGE_READER_CLASS */
+
+
+module.exports = { $NAME$ };
