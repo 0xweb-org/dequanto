@@ -115,6 +115,20 @@ export class AbiCoder {
      *
      *  @returns DataHexstring
      */
+    encodeSingle(type: string | ParamType | TAbiInput, value: any): string {
+
+        let coder = this.#getCoder(ParamType.from(type));
+
+        const writer = new Writer();
+        coder.encode(writer, value);
+        return writer.data;
+    }
+
+    /**
+     *  Encode the %%values%% as the %%types%% into ABI data.
+     *
+     *  @returns DataHexstring
+     */
     encode(types: ReadonlyArray<string | ParamType | TAbiInput>, values: ReadonlyArray<any>): string {
         $require.eq(values.length, types.length, "types/values length mismatch");
 
@@ -144,6 +158,17 @@ export class AbiCoder {
             return this.#getCoder(param, dynamic);
         });
         let coder = new TupleCoder(coders, "_");
+        let result = coder.decode(new Reader(hex, opts?.loose));
+        return result;
+    }
+
+    decodeSingle(type: string | ParamType | TAbiInput, hex: string, opts?: {
+        loose?: boolean
+        dynamic?: boolean
+    }): Result {
+
+
+        let coder: Coder = this.#getCoder(ParamType.from(type), opts?.dynamic);
         let result = coder.decode(new Reader(hex, opts?.loose));
         return result;
     }

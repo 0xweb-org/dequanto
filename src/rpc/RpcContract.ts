@@ -161,6 +161,11 @@ export class RpcContract {
 
 namespace utils {
     export function deserializeOutput(hex: string, outputs: TAbiOutput[]) {
+
+        if (outputs.length === 1) {
+            return $abiCoder.decodeSingle(outputs[0], hex);
+        }
+
         let abi = outputs;
         let isDynamic: boolean = null;
         if (outputs.length > 1) {

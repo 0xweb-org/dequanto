@@ -10,6 +10,11 @@ export namespace $abiCoder {
         let coder = new AbiCoder();
         return coder.encode(types, values) as TEth.Hex;
     }
+    export function encodeSingle(type: (string | ParamType | TAbiInput), value: any): TEth.Hex {
+        let coder = new AbiCoder();
+        return coder.encodeSingle(type, value) as TEth.Hex;
+    }
+
     export function encodePacked(types: string[], values: any[]): TEth.Hex {
         return solidityPacked(types, values) as TEth.Hex;
     }
@@ -23,6 +28,14 @@ export namespace $abiCoder {
         return arr.map((x, i) => {
             return unwrap(types[i] as TAbiInput, x);
         });
+    }
+    export function decodeSingle(type: (string | ParamType | TAbiInput), hex: string, opts?: {
+        loose?: boolean
+        dynamic?: boolean
+    }): any {
+        let coder = new AbiCoder();
+        let x = coder.decodeSingle(type, hex, opts);
+        return unwrap(type as TAbiInput, x);
     }
 
 

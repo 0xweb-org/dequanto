@@ -63,6 +63,16 @@ export namespace $hex {
         return ('0x' + arr.map(ensure).map(raw).join('')) as TEth.Hex;
     }
 
+    export function split (hex: TEth.Hex, bytes: number = 32) {
+        let str = raw(hex);
+        let args = [];
+        while (str.length > 0) {
+            args.push('0x' + str.substring(0, bytes * 2));
+            str = str.substring(bytes * 2);
+        }
+        return args;
+    }
+
     export function toHex (value: string | boolean | number | bigint): TEth.Hex {
         switch (typeof value) {
             case 'string': {
