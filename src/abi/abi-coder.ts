@@ -166,8 +166,6 @@ export class AbiCoder {
         loose?: boolean
         dynamic?: boolean
     }): Result {
-
-
         let coder: Coder = this.#getCoder(ParamType.from(type), opts?.dynamic);
         let result = coder.decode(new Reader(hex, opts?.loose));
         return result;

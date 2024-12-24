@@ -162,10 +162,6 @@ export class RpcContract {
 namespace utils {
     export function deserializeOutput(hex: string, outputs: TAbiOutput[]) {
 
-        if (outputs.length === 1) {
-            return $abiCoder.decodeSingle(outputs[0], hex);
-        }
-
         let abi = outputs;
         let isDynamic: boolean = null;
         if (outputs.length > 1) {
@@ -176,10 +172,18 @@ namespace utils {
                 isDynamic = false;
             }
         }
-        let arr = $abiCoder.decode(abi as any, hex, {
-            dynamic: isDynamic
-        });
-        let value = abi.length === 1 ? arr[0] : arr;
-        return value;
+
+        try {
+            let arr = $abiCoder.decode(abi as any, hex, {
+                dynamic: isDynamic
+            });
+            let value = abi.length === 1 ? arr[0] : arr;
+            return value;
+        } catch (error) {
+            if (outputs.length === 1) {
+                return $abiCoder.decodeSingle(abi as any, hex);
+            }
+            throw error;
+        }
     }
 }
