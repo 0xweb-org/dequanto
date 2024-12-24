@@ -180,8 +180,8 @@ namespace utils {
             let value = abi.length === 1 ? arr[0] : arr;
             return value;
         } catch (error) {
-            if (outputs.length === 1) {
-                return $abiCoder.decodeSingle(abi as any, hex);
+            if (outputs.length === 1 && abi.length === 1) {
+                return $abiCoder.decodeSingle(abi[0], hex);
             }
             throw error;
         }
