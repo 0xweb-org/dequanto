@@ -15,6 +15,7 @@ import { IAccount } from '@dequanto/models/TAccount';
 import { $date } from '@dequanto/utils/$date';
 import { $is } from '@dequanto/utils/$is';
 import { $address } from '@dequanto/utils/$address';
+import { $path } from '@dequanto/utils/$path';
 
 
 
@@ -148,7 +149,7 @@ export class  DeploymentsStorage {
         let deployment = <IDeployment> {
             id: info.id,
             name: info.name,
-            main: contract.$meta?.class,
+            main: $path.getRelativePath(contract.$meta?.class ?? contract.$meta?.artifact ?? contract.$meta.source),
             bytecodeHash: info.bytecodeHash,
             address: contract.address,
             block: receipt.blockNumber,

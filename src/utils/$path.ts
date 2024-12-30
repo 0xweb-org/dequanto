@@ -1,5 +1,6 @@
 import { class_Uri } from 'atma-utils';
 import { $config } from './$config';
+import { env } from 'atma-io';
 
 export namespace $path {
     let root: string = null;
@@ -56,7 +57,13 @@ export namespace $path {
         return { filename, extension };
     }
 
-    export function getRelativePath (path: string, base: string) {
+    export function getRelativePath (path: string, base?: string) {
+        if (path == null) {
+            return null;
+        }
+        if (base == null) {
+            base = env.currentDir.toString();
+        }
         let path_ = normalize(path).replace('file://', '');
         let base_ = normalize(base).replace('file://', '');
         let i = path_.toLowerCase().indexOf(base_.toLowerCase());
