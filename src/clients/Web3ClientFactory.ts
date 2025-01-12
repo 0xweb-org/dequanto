@@ -10,6 +10,7 @@ import { XDaiWeb3Client } from '@dequanto/chains/xdai/XDaiWeb3Client';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { Config, config } from '@dequanto/config/Config';
 import { EvmWeb3Client } from './EvmWeb3Client';
+import { $require } from '@dequanto/utils/$require';
 
 export namespace Web3ClientFactory {
 
@@ -21,33 +22,41 @@ export namespace Web3ClientFactory {
             }
             platform = chain.key
         }
-
-        switch (platform) {
-            case 'bsc':
-                return di.resolve(BscWeb3Client, opts);
-            case 'eth':
-                return di.resolve(EthWeb3Client, opts);
-            case 'eth:goerli':
-                return di.resolve(EthWeb3Client, {
-                    platform: platform,
-                    chainId: 5,
-                    ...(opts ?? {})
-                });
-            case 'polygon':
-                return di.resolve(PolyWeb3Client, opts);
-            case 'arbitrum':
-                return di.resolve(ArbWeb3Client, opts);
-            case 'xdai':
-                return di.resolve(XDaiWeb3Client, opts);
-            case 'hardhat':
-                return di.resolve(HardhatProvider).client('localhost', opts);
-            default:
-                let cfg = config.web3[platform];
-                if (cfg != null) {
-                    return new EvmWeb3Client({ platform, ...cfg });
-                }
-                throw new Error(`Unsupported platform ${platform} for web3 client`);
+        if (platform === 'hardhat' || platform.startsWith('hh:')) {
+            let client = di.resolve(HardhatProvider).client('localhost', opts);
+            if (platform.startsWith('hh:')) {
+                client.configureFork(platform.slice(3));
+            }
+            return client;
         }
+        let cfg = config.web3[platform];
+        $require.notNull(cfg, `Unsupported platform ${platform} for web3 client`)
+        return new EvmWeb3Client({ platform, ...cfg });
+
+        // switch (platform) {
+        //     case 'bsc':
+        //         return di.resolve(BscWeb3Client, opts);
+        //     case 'eth':
+        //         return di.resolve(EthWeb3Client, opts);
+        //     case 'eth:goerli':
+        //         return di.resolve(EthWeb3Client, {
+        //             platform: platform,
+        //             chainId: 5,
+        //             ...(opts ?? {})
+        //         });
+        //     case 'polygon':
+        //         return di.resolve(PolyWeb3Client, opts);
+        //     case 'arbitrum':
+        //         return di.resolve(ArbWeb3Client, opts);
+        //     case 'xdai':
+        //         return di.resolve(XDaiWeb3Client, opts);
+        //     default:
+        //         let cfg = config.web3[platform];
+        //         if (cfg != null) {
+        //             return new EvmWeb3Client({ platform, ...cfg });
+        //         }
+        //         throw new Error(`Unsupported platform ${platform} for web3 client`);
+        // }
     }
 
     /** Same as sync variation, but ensures the config is being fetched */
