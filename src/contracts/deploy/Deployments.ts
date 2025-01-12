@@ -454,7 +454,10 @@ export class Deployments {
 
         let explorer = await BlockchainExplorerFactory.get(this.client.platform);
         let verifier = new ContractVerifier(this, explorer);
-        if (deployment.verified != null && /Unable to locate/.test(deployment.verified) === false) {
+        if (deployment.verified != null
+            && /Unable to locate/.test(deployment.verified) === false
+            && /Error 429/.test(deployment.verified) === false
+            && /timeout/.test(deployment.verified) === false) {
             return;
         }
 

@@ -27,7 +27,7 @@ export class PlatformFactory {
 
     @memd.deco.memoize()
     async get (platform: TPlatform, opts?: IWeb3EndpointOptions): Promise<IPlatformTools> {
-        let client = Web3ClientFactory.get(platform, opts);
+        let client = await Web3ClientFactory.getAsync(platform, opts);
         let tokens = TokensServiceFactory.get(platform);
         let explorer = BlockchainExplorerFactory.get(platform);
         let accounts = new ChainAccountService();

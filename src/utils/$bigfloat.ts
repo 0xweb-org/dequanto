@@ -368,7 +368,7 @@ namespace math {
         let value = aCommon.value % bCommon.value;
         return new BigFloat(value, aCommon.mantissa);
     }
-    export function pow(basis: BigFloat, exponent: number | bigint) {
+    export function pow(basis: BigFloat, exponent: number | bigint): BigFloat {
         if (typeof exponent === 'number' && Math.floor(exponent) === exponent) {
             exponent = BigInt(exponent);
         }
@@ -386,7 +386,6 @@ namespace math {
             n *= 10n;
         }
         return rootNth(pow(basis, BigInt(m)), n);
-
     }
     export function rootNth(a: BigFloat, k = 2n) {
         let precision = CONFIG.DECIMAL_PLACES * 2 + 4;

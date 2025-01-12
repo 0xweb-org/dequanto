@@ -129,7 +129,7 @@ export namespace $number {
         });
     }
 
-    export function toHex (num: string | number | TEth.Hex | bigint) {
-        return `0x` + Number(num).toString(16);
+    export function toHex (num: string | number | TEth.Hex | bigint): TEth.Hex {
+        return (`0x` + Number(num).toString(16)) as TEth.Hex;
     }
 }

@@ -12,7 +12,7 @@ export interface IOracleOptions {
     date?: Date
 }
 export interface IOracleResult {
-    quote: ITokenBase
+    quote?: ITokenBase
     price: number
     date: Date
     source?: {

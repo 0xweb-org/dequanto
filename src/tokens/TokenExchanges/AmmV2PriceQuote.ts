@@ -16,11 +16,11 @@ import { TokenPriceStore } from '../TokenOracles/TokenPriceStore';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { AmmPairV2Service, ISwapPool, ISwapPoolInfo } from './AmmBase/V2/AmmPairV2Service';
 import { SushiswapPolygonExchange } from './SushiswapPolygonExchange';
-import { ISwapOptions } from '../TokenOracles/IOracle';
+import { IOracle, IOracleOptions, IOracleResult, ISwapOptions } from '../TokenOracles/IOracle';
 import { ILogger } from '@dequanto/loggers/ILogger';
 
 
-export class AmmV2PriceQuote {
+export class AmmV2PriceQuote implements IOracle {
 
     private exchange: AmmV2ExchangeBase
     private tokensService: TokensService
@@ -46,7 +46,40 @@ export class AmmV2PriceQuote {
         this.logger = di.resolve(LoggerService, 'AmmPriceV2Oracle');
     }
 
-    async getPrice (token: IToken, opts?: ISwapOptions): TResultAsync<ISwapRouted> {
+    async getPrice (token: IToken, opts?: IOracleOptions): TResultAsync<IOracleResult> {
+        let { error, result } = await this.getRoute(token, opts);
+        if (error != null) {
+            return { error };
+        }
+        let priceResult = {
+            price: result.outUsd,
+            date: new Date(),
+            pools: result.route.map(route => {
+
+                let sorted = BigInt(route.from.address) < BigInt(route.to.address);
+                let t1 = {
+                    price: sorted ? route.fromPrice : route.toPrice,
+                    decimals: sorted ? route.from.decimals : route.to.decimals,
+                    total: sorted ? route.pool.reserve0 : route.pool.reserve1,
+                };
+                let t2 = {
+                    price: sorted ? route.toPrice : route.fromPrice,
+                    decimals: sorted ? route.to.decimals : route.from.decimals,
+                    total: sorted ? route.pool.reserve1 : route.pool.reserve0,
+                };
+
+                function getTotalToken(t: { price: number, total: bigint, decimals: number }): bigint {
+                    let amount = t.total / 10n** BigInt(t.decimals);
+                    return $bigint.multWithFloat(amount, t.price);
+                }
+
+                return getTotalToken(t1) + getTotalToken(t2);
+            })
+        };
+        return { result: priceResult };
+    }
+
+    async getRoute (token: IToken, opts?: ISwapOptions): TResultAsync<ISwapRouted> {
         let amount = opts?.amountWei ?? (BigInt(opts?.amount ?? 1) * 10n ** BigInt(token.decimals));
 
         if (TokenUtils.isStable(token.symbol)) {
@@ -208,10 +241,10 @@ export class TokenRangePriceService {
     }
 
 
-    async getPrice (symbol: string, opts?: ISwapOptions): TResultAsync<ISwapRouted>
-    async getPrice (address: TAddress, opts?: ISwapOptions): TResultAsync<ISwapRouted>
-    async getPrice (token: IToken, opts?: ISwapOptions): TResultAsync<ISwapRouted>
-    async getPrice (mix: IToken | TAddress | string, opts?: ISwapOptions): TResultAsync<ISwapRouted> {
+    async getRoute (symbol: string, opts?: ISwapOptions): TResultAsync<ISwapRouted>
+    async getRoute (address: TAddress, opts?: ISwapOptions): TResultAsync<ISwapRouted>
+    async getRoute (token: IToken, opts?: ISwapOptions): TResultAsync<ISwapRouted>
+    async getRoute (mix: IToken | TAddress | string, opts?: ISwapOptions): TResultAsync<ISwapRouted> {
 
         let key: string = typeof mix === 'string'
             ? mix
@@ -243,7 +276,7 @@ export class TokenRangePriceService {
             return this.cache.get(key);
         }
 
-        let promise = this.service.getPrice(<any> mix, {
+        let promise = this.service.getRoute(<any> mix, {
             ...(opts ?? {}),
             date: byDate,
             block: byBlock

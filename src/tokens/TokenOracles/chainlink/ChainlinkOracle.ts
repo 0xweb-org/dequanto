@@ -1,7 +1,6 @@
 import di from 'a-di';
 import alot from 'alot';
 import memd from 'memd';
-import { env } from 'atma-io';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { ITokenBase } from '@dequanto/models/IToken';

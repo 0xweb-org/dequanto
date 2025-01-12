@@ -11,6 +11,10 @@ import { ISwapped, ISwapPool, ISwapRouted } from './TokenExchanges/AmmBase/V2/Am
 import { AmmV2PriceQuote } from './TokenExchanges/AmmV2PriceQuote';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $logger } from '@dequanto/utils/$logger';
+import { $require } from '@dequanto/utils/$require';
+import { IOracle } from './TokenOracles/IOracle';
+import { ChainlinkOracle } from './TokenOracles/chainlink/ChainlinkOracle';
+import { SpotPriceAggregator } from './TokenOracles/SpotPriceAggregator/SpotPriceAggregator';
 
 
 
@@ -30,20 +34,21 @@ interface ITokenPrice {
     error?: Error
     price?: number
     pools?: any[]
+    provider?: string
 }
 
 export class TokenPriceService {
 
     private tokens: TokensService
-    private oracle: AmmV2PriceQuote
+    private oracles: { provider: string, oracle: IOracle }[];
 
     constructor(private client: Web3Client, private explorer: IBlockchainExplorer) {
-        this.tokens = di.resolve(TokensService, this.client.platform, this.explorer)
-        this.oracle = di.resolve(
-            AmmV2PriceQuote
-            , this.client
-            , this.explorer
-        );
+        this.tokens = di.resolve(TokensService, this.client.network, this.explorer)
+        this.oracles = [
+            { provider: `chainlink`, oracle: new ChainlinkOracle([ client ]) },
+            { provider: `1inchAggregator-${client.network}`, oracle: new SpotPriceAggregator() },
+            { provider: `ammV2`, oracle: new AmmV2PriceQuote(this.client, this.explorer) },
+        ];
     }
 
     async getPrice (symbol: string, opts?: ITokenPriceOptions): Promise<ITokenPrice>
@@ -59,41 +64,28 @@ export class TokenPriceService {
                 : mix;
         } catch (error) {}
 
-        if (token == null) {
-            return { error: new Error(`Token ${mix} not found`) };
+        $require.notNull(token, `Token ${mix} not found`);
+        $require.Number(token.decimals, `Token has no decimals ${token.symbol}`);
+
+        let errors = [];
+        for (let oracleData of this.oracles) {
+            let oracle = oracleData.oracle;
+            let { error, result } = await oracle.getPrice(token, opts);
+            if (error) {
+                errors.push(error);
+                continue;
+            }
+            if (result.price == null || result.price === 0) {
+                errors.push(new Error(`No price`));
+                continue;
+            }
+            return {
+                provider: oracleData.provider,
+                ...result
+            };
         }
-        if (token.decimals == null) {
-            return { error: new Error(`Token has no decimals ${token.symbol}`) };
-        }
-
-        let { error, result } = await this.oracle.getPrice(token, opts);
-        if (error != null) {
-            return { error };
-        }
-        return {
-            price: result.outUsd,
-            pools: result.route.map(route => {
-
-                let sorted = BigInt(route.from.address) < BigInt(route.to.address);
-                let t1 = {
-                    price: sorted ? route.fromPrice : route.toPrice,
-                    decimals: sorted ? route.from.decimals : route.to.decimals,
-                    total: sorted ? route.pool.reserve0 : route.pool.reserve1,
-                };
-                let t2 = {
-                    price: sorted ? route.toPrice : route.fromPrice,
-                    decimals: sorted ? route.to.decimals : route.from.decimals,
-                    total: sorted ? route.pool.reserve1 : route.pool.reserve0,
-                };
-
-                function getTotalToken(t: { price: number, total: bigint, decimals: number }): bigint {
-                    let amount = t.total / 10n** BigInt(t.decimals);
-                    return $bigint.multWithFloat(amount, t.price);
-                }
-
-                return getTotalToken(t1) + getTotalToken(t2);
-            })
-        };
+        let message = errors.map(x => x.message).join('; ');
+        throw new Error(message);
     }
 }
 

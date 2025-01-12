@@ -8,7 +8,6 @@ import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
 import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $bigint } from '@dequanto/utils/$bigint';
-import { TokensServiceBsc } from '../TokensServiceBsc';
 import { $address } from '@dequanto/utils/$address';
 import { $require } from '@dequanto/utils/$require';
 import { $cache } from '@dequanto/utils/$cache';
@@ -16,6 +15,7 @@ import { AmmFactoryV2Contract } from '@dequanto/prebuilt/amm/AmmFactoryV2Contrac
 import { AmmMasterChefV2Contract } from '@dequanto/prebuilt/amm/AmmMasterChefV2Contract/AmmMasterChefV2Contract';
 import { AmmVaultV2Contract } from '@dequanto/prebuilt/amm/AmmVaultV2Contract/AmmVaultV2Contract';
 import { AmmPairV2Contract } from '@dequanto/prebuilt/amm/AmmPairV2Contract/AmmPairV2Contract';
+import { TokensService } from '../TokensService';
 
 
 interface ILPPair extends IToken {
@@ -173,7 +173,7 @@ export abstract class AmmV2ExchangeBase {
             pairContract.token1(),
         ]);
 
-        let tokensService = di.resolve(TokensServiceBsc);
+        let tokensService = di.resolve(TokensService, this.client.platform );
         let [ token0, token1 ] = await Promise.all([
             tokensService.getTokenOrDefault(token0Addr),
             tokensService.getTokenOrDefault(token1Addr),
@@ -181,7 +181,7 @@ export abstract class AmmV2ExchangeBase {
         return <ILPPair> {
             name: symbol,
             symbol: symbol,
-            platform: 'bsc',
+            platform: this.client.platform,
 
             address: pairAddress,
 

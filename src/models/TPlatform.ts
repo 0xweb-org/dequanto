@@ -13,4 +13,5 @@ export type TPlatform = 'eth'
     | 'hardhat'
     | 'optimism'
     | 'avalanche'
+    | `hh:${string}`
     | string;

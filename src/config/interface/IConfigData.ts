@@ -65,4 +65,8 @@ export interface IConfigData {
             url: string;
         };
     };
+    spotPriceAggregator?: {
+        [platform in TPlatform]: TAddress
+    };
+
 }

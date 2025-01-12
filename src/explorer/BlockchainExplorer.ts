@@ -228,10 +228,15 @@ export class BlockchainExplorer implements IBlockchainExplorer {
             runs: contractData.optimizer?.runs,
             constructorArguements: contractData.arguments?.replace('0x', '')
         };
-        let guid = await this.client.post(url, {
-            body
-        });
-        return guid;
+        try {
+            let guid = await this.client.post(url, {
+                body
+            });
+            return guid;
+        } catch (error) {
+            error.message = `${url}: ${error.message}`;
+            throw error;
+        }
     }
 
     async checkContractVerificationSubmission(submission: { guid }) {
