@@ -11,6 +11,7 @@ import { $bigfloat } from '@dequanto/utils/$bigfloat';
 import { $require } from '@dequanto/utils/$require';
 import { Web3Client } from '@dequanto/clients/Web3Client';
 
+// https://github.com/1inch/spot-price-aggregator?tab=readme-ov-file
 export class SpotPriceAggregator implements IOracle {
 
     private chainlink = new ChainlinkOracle();

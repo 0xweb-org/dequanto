@@ -41,7 +41,7 @@ export class AmmV2Oracle implements IOracle {
             throw new Error(`AmmV2Oracle: Token not found ${t} for ${platform}`);
         }
 
-        let { error, result: route } = await this.quoter.getPrice(tokenData);
+        let { error, result: route } = await this.quoter.getRoute(tokenData);
         if (error) {
             return { error };
         }
