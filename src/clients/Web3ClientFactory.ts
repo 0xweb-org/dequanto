@@ -7,11 +7,12 @@ import { Config } from '@dequanto/config/Config';
 import { EvmWeb3Client } from './EvmWeb3Client';
 import { $require } from '@dequanto/utils/$require';
 import { $config } from '@dequanto/utils/$config';
+import { IConfigData } from '@dequanto/config/interface/IConfigData';
 
 export namespace Web3ClientFactory {
 
     export function get (platform: TPlatform | string | number, opts?: IWeb3EndpointOptions) {
-        let web3 = $config.get('web3');
+        let web3 = $config.get<IConfigData['web3']>('web3');
         if (typeof platform ==='number') {
             let chain = alot.fromObject(web3).find(x => x.value.chainId === platform);
             if (chain == null) {
