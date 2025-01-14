@@ -17,3 +17,4 @@ del.act.ts
 /.dequanto
 .env
 /dequanto.yml
+/configs/local.yml

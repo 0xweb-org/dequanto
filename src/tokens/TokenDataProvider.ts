@@ -18,6 +18,7 @@ import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TPChain } from './TokenProviders/TPChain';
 import { TPCoingecko } from './TokenProviders/TPCoingecko';
 import { $config } from '@dequanto/utils/$config';
+import { TPUniswap } from './TokenProviders/TPUniswap';
 
 export class TokenDataProvider {
 
@@ -34,10 +35,9 @@ export class TokenDataProvider {
 
         this.providers =[
             this.config,
-            new TPOneInch(),
-            new TPSushiswap(),
-            // @TODO uniswap thegraph api doesn't work any more
-            // new TPUniswap(),
+            // new TPOneInch(),
+            // new TPSushiswap(),
+            new TPUniswap(),
             new TPCoinmarketcap(),
             new TPCoingecko(),
             new ArbTokenProvider(),

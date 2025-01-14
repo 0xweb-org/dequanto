@@ -70,12 +70,15 @@ export class ChainlinkFeedProvider {
         // from 'https://docs.chain.link/data-feeds/price-feeds/addresses';
         const paths = [
             { url: 'https://reference-data-directory.vercel.app/feeds-mainnet.json', platform: 'eth' },
-            { url: 'https://reference-data-directory.vercel.app/feeds-matic-mainnet.json', platform: 'polygon' }
+            { url: 'https://reference-data-directory.vercel.app/feeds-matic-mainnet.json', platform: 'polygon' },
+            { url: 'https://reference-data-directory.vercel.app/feeds-bsc-mainnet.json', platform: 'bsc' },
+            { url: 'https://reference-data-directory.vercel.app/feeds-ethereum-mainnet-base-1.json', platform: 'base' },
+            { url: 'https://reference-data-directory.vercel.app/feeds-ethereum-mainnet-optimism-1.json', platform: 'optimism' }
         ];
 
         let tokens = await alot(paths).mapManyAsync(async pathInfo => {
             return this.fetchFeed(pathInfo.url, pathInfo.platform);
-        }).toArrayAsync();
+        }).toArrayAsync({ threads: 1 });
 
 
         l`Fetched ${tokens.length} feeds`;
@@ -102,6 +105,10 @@ export class ChainlinkFeedProvider {
                 pair = [ match.groups.base, match.groups.quote];
             } else {
                 pair = feed.pair;
+            }
+            if (feed.contractType ==="verifier") {
+                // skip not onchain oracle contracts
+                return null;
             }
             switch (feed.feedCategory) {
                 case 'deprecating': {

@@ -8,6 +8,7 @@ import { TPlatform } from '@dequanto/models/TPlatform';
 import { ATokenProvider } from './ATokenProvider';
 import { ITokenProvider } from './ITokenProvider';
 import { $http } from '@dequanto/utils/$http';
+import alot from 'alot';
 
 
 const coinmarketcap = $config.get('coinmarketcap') as {
@@ -39,10 +40,15 @@ export class TPCoinmarketcap extends ATokenProvider implements ITokenProvider {
             "name": string
             "symbol": string
             "platform": {
+                "id": number
                 "name": "Binance Smart Chain" | "Ethereum" | "Polygon" | "xDai"
                 "token_address": TAddress
             }
         }[];
+
+        let names = alot(tokens).map(x => x.platform).filter(Boolean).distinctBy(x => x.name).toArray();
+        console.log(names);
+        console.log(tokens.filter(x => x.platform == null).slice(0, 20));
 
         let arr = tokens.map(token => {
             if (token.platform == null) {
@@ -78,5 +84,6 @@ export class TPCoinmarketcap extends ATokenProvider implements ITokenProvider {
 
 
         await tokensStore.saveAll(arr);
+        return arr;
     }
 }
