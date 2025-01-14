@@ -63,7 +63,9 @@ UTest({
         let service = TokenPriceServiceFactory.get();
         let ethPrice = await service.getPrice('ETH');
         let solPrice = await service.getPrice('SOL');
-        console.log(ethPrice, solPrice);
+
+        gt_(ethPrice.price, 0);
+        gt_(solPrice.price, 0);
     },
     async '//check the chainlink with multi hops' () {
         let token = 'GTC';

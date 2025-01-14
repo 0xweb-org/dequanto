@@ -11,7 +11,6 @@ import { $require } from '@dequanto/utils/$require';
 import { ITokenProvider } from './TokenProviders/ITokenProvider';
 import { TPExplorer as TPExplorer } from './TokenProviders/TPExplorer';
 import { TPCoinmarketcap } from './TokenProviders/TPCoinmarketcap';
-import { TPOneInch } from './TokenProviders/TPOneInch';
 import { TPSushiswap } from './TokenProviders/TPSushiswap';
 import { TPConfig } from './TokenProviders/TPConfig';
 import { Web3Client } from '@dequanto/clients/Web3Client';
@@ -19,6 +18,7 @@ import { TPChain } from './TokenProviders/TPChain';
 import { TPCoingecko } from './TokenProviders/TPCoingecko';
 import { $config } from '@dequanto/utils/$config';
 import { TPUniswap } from './TokenProviders/TPUniswap';
+import { TPOneInch } from './TokenProviders/TPOneInch';
 
 export class TokenDataProvider {
 
@@ -35,8 +35,8 @@ export class TokenDataProvider {
 
         this.providers =[
             this.config,
-            // new TPOneInch(),
-            // new TPSushiswap(),
+            new TPOneInch(),
+            new TPSushiswap(),
             new TPUniswap(),
             new TPCoinmarketcap(),
             new TPCoingecko(),
@@ -137,7 +137,7 @@ export class TokenDataProvider {
     }
     async getTokenBySymbol (symbol: string, chainLookup: boolean = true): Promise<[IToken, ITokenProvider]> {
         let [ token, provider ] = await alot(this.providers)
-            .mapAsync(async provider => {
+            .mapAsync(async (provider, i) => {
                 if (provider instanceof TPExplorer && chainLookup === false) {
                     return [null, null];
                 }
