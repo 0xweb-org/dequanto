@@ -1,6 +1,7 @@
 import { class_Uri } from 'atma-utils';
 import { $config } from './$config';
 import { env } from 'atma-io';
+import { $dependency } from './$dependency';
 
 export namespace $path {
     let root: string = null;
@@ -80,11 +81,12 @@ export namespace $path {
             return class_Uri.combine('file://' + cwd, base);
         }
 
-        let uri = new class_Uri('file://' + __dirname + '/');
+        let dirname = $dependency.dirname();
+        let uri = new class_Uri('file://' + dirname + '/');
         while (true) {
             let dir = getDirName(uri.path);
             if (!dir || dir === '/') {
-                throw new Error(`Root path not resolved: ${__dirname}`);
+                throw new Error(`Root path not resolved: ${dirname}`);
             }
             if (dir === 'lib' || dir === 'src') {
                 uri = uri.cdUp();

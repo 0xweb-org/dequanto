@@ -15,5 +15,18 @@ export namespace $dependency {
         //#endif
     }
 
+    export function dirname () {
+        if (typeof __dirname === 'undefined') {
+            return __dirname;
+        }
+        //#if (CJS)
+        throw new Error('__dirname is not defined in CommonJS environment');
+        //#endif
+
+        //#if (ESM)
+        // @ts-ignore: Conditional import
+        return import.meta.dirname;
+        //#endif
+    }
 }
 
