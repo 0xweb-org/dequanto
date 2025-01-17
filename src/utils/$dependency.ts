@@ -23,10 +23,9 @@ export namespace $dependency {
         throw new Error('__dirname is not defined in CommonJS environment');
         //#endif
 
-        //#if (ESM)
-        // @ts-ignore: Conditional import
+        /**#if (ESM)
         return import.meta.dirname;
-        //#endif
+        */
     }
 }
 
