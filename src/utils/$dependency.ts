@@ -16,7 +16,7 @@ export namespace $dependency {
     }
 
     export function dirname () {
-        if (typeof __dirname === 'undefined') {
+        if (typeof __dirname !== 'undefined') {
             return __dirname;
         }
         //#if (CJS)
