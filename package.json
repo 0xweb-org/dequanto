@@ -48,6 +48,7 @@
         "atma-utest": "^0.21.30",
         "dts-bundle": "^0.7.3",
         "ethers": "^5.5.1",
+        "includejs": "^0.17.6",
         "hardhat": "^2.19.2",
         "shellbee": "^0.5.29",
         "ts-nameof": "^5.0.0",
@@ -65,9 +66,9 @@
         "alot": "^0.3.12",
         "appcfg": "^0.5.4",
         "atma-io": "^1.3.7",
+        "atma-io-middleware-yml": "^1.1.25",
         "atma-utils": "^0.2.65",
         "class-json": "^0.4.1",
-        "includejs": "^0.17.6",
         "memd": "^0.3.16",
         "ws": "^8.16.0"
     },
