@@ -8,8 +8,6 @@ import { TokensService } from './TokensService';
 import { $address } from '@dequanto/utils/$address';
 import { TResultAsync } from '@dequanto/models/TResult';
 import { ISwapped, ISwapPool, ISwapRouted } from './TokenExchanges/AmmBase/V2/AmmPairV2Service';
-import { AmmV2PriceQuote } from './TokenExchanges/AmmV2PriceQuote';
-import { $bigint } from '@dequanto/utils/$bigint';
 import { $logger } from '@dequanto/utils/$logger';
 import { $require } from '@dequanto/utils/$require';
 import { IOracle } from './TokenOracles/IOracle';
@@ -47,7 +45,9 @@ export class TokenPriceService {
         this.oracles = [
             { provider: `chainlink`, oracle: new ChainlinkOracle([ client ]) },
             { provider: `1inchAggregator-${client.network}`, oracle: new SpotPriceAggregator() },
-            { provider: `ammV2`, oracle: new AmmV2PriceQuote(this.client, this.explorer) },
+
+            // AMMs are covered already by 1inchAggregator, so no need to add them here
+            // { provider: `ammV2`, oracle: new AmmV2PriceQuote(this.client, this.explorer) },
         ];
     }
 
