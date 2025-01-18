@@ -61,7 +61,7 @@ export class RateLimitGuard {
         let message = error.message;
         let hasMatches = rateLimitRgx.checks.some(checkRgxMix => {
             if (Array.isArray(checkRgxMix)) {
-                return checkRgxMix.every(rgx => rgx.test(message));
+                return checkRgxMix.some(rgx => rgx.test(message));
             }
             return checkRgxMix.test(message);
         });
