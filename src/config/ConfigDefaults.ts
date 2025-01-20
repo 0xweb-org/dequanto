@@ -498,5 +498,15 @@ export const ConfigDefaults = <IConfigData> {
                 "CreateCall": "0x392e2F66c3BBF0046c861e0065fB7C7917b18078"
             }
         }
+    },
+    "spotPriceAggregator": {
+        "eth": "0x00000000000D6FFc74A8feb35aF5827bf57f6786",
+        "bsc": "0x00000000000D6FFc74A8feb35aF5827bf57f6786",
+        "polygon": "0x00000000000D6FFc74A8feb35aF5827bf57f6786",
+        "optimism": "0x00000000000D6FFc74A8feb35aF5827bf57f6786",
+        "avalanche": "0x00000000000D6FFc74A8feb35aF5827bf57f6786",
+        "gnosis": "0x00000000000D6FFc74A8feb35aF5827bf57f6786",
+        "base": "0x00000000000D6FFc74A8feb35aF5827bf57f6786",
+        "linea": "0x00000000000D6FFc74A8feb35aF5827bf57f6786"
     }
 };
