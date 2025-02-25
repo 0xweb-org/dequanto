@@ -401,7 +401,7 @@ export abstract class Web3Client implements IWeb3Client {
     // }
 
     async sign(address: TEth.Address, message: string): Promise<string> {
-        if (this.wallet.isConnected()) {
+        if (this.wallet.isConnected(address)) {
             return this.wallet.eth_sign(address, message);
         }
         return this.pool.call(wClient => {
@@ -412,7 +412,7 @@ export abstract class Web3Client implements IWeb3Client {
     }
 
     signTypedData(address: TEth.Address, typedData: DataLike<RpcTypes.TypedData>): Promise<TEth.Hex> {
-        if (this.wallet.isConnected()) {
+        if (this.wallet.isConnected(address)) {
             return this.wallet.eth_signTypedData_v4(address, typedData);
         }
         return this.pool.call(wClient => {
@@ -423,7 +423,7 @@ export abstract class Web3Client implements IWeb3Client {
     }
 
     sendTransaction(data: TEth.TxLike): PromiseEvent<TEth.TxReceipt> {
-        if (this.wallet.isConnected()) {
+        if (this.wallet.isConnected(data.from)) {
             return this.pool.wrappedPromiEvent <TEth.TxReceipt> (async () => {
                 let client = await this.wallet.getClientFor(this.chainId);
                 return client.sendTransaction(data);

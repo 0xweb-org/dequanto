@@ -62,7 +62,7 @@ UTest({
         let onLogMethodSpy = sinon.spy();
         foo.onUpdated(onLogMethodSpy);
 
-        let writer = await foo.setName(acc1.address, 'Ipsum');
+        let writer = await foo.setName(acc1, 'Ipsum');
         let receipt = await writer.wait();
         eq_(receipt.transactionHash, writer.tx.hash);
 

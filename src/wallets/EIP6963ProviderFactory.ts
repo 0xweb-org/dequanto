@@ -1,8 +1,10 @@
 import { TAddress } from '@dequanto/models/TAddress';
 import { TEth } from '@dequanto/models/TEth';
 import { IEip1193Provider } from '@dequanto/rpc/transports/compatibility/EIP1193Transport';
+import { $address } from '@dequanto/utils/$address';
 import { $ref } from '@dequanto/utils/$ref';
 import { $require } from '@dequanto/utils/$require';
+import alot from 'alot';
 import { class_EventEmitter } from 'atma-utils';
 
 // Interface for provider information following EIP-6963.
@@ -25,6 +27,7 @@ interface EIP1193Provider {
 export interface EIP6963ProviderDetail {
     info: EIP6963ProviderInfo; // The provider's info
     provider: IEip1193Provider; // The EIP-1193 compatible provider
+    accounts?: TEth.Address[]; // Optional: Array of connected Ethereum accounts
 }
 
 // Type representing the event structure for announcing a provider based on EIP-6963.
@@ -36,8 +39,8 @@ type EIP6963AnnounceProviderEvent = {
 interface IProviderEvents {
     onProviderRegistered: (detail: EIP6963ProviderDetail) => void;
 
-    onAccountConnected: (account: TAddress) => void;
-    onAccountDisconnected: () => void;
+    onAccountsConnected: (accounts: TAddress[]) => void;
+    onAccountsDisconnected: () => void;
 
     onChainChanged: (chainId: number) => void;
 }
@@ -47,7 +50,6 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
 
     providers: EIP6963ProviderDetail[] = []
     selected: EIP6963ProviderDetail;
-    account: TAddress;
 
     global = $ref.getGlobal()
 
@@ -59,44 +61,43 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
         this.listenToNewProvider();
     }
 
-    isConnected () {
-        return this.account != null;
+    isConnected (address?: TEth.Address) {
+        let has = this.providers.some(x => {
+            return address != null
+                ? x.accounts?.some(account => $address.eq(account, address) )
+                : x.accounts?.length > 0;
+        });
+        return has;
     }
 
     async connect (uuid?: string) {
-        let arr = this.providers;
-        uuid ??= arr[0]?.info.uuid;
-
-        let providersInfoText = arr.map(x => `${x.info.name}(#${x.info.uuid})`).join(';');
-        let provider = arr.find(x => x.info.uuid === uuid);
-        $require.notNull(provider, `Wallet Provider not found ${uuid}. Available:  ${ providersInfoText }`);
+        let provider = this.getProvider(uuid);
         this.selected = provider;
-
-        let account = await this.requestAccount();
-        this.account = account;
-        this.emit('onAccountConnected', account);
-        return account;
+        let accounts = await this.requestAccounts();
+        return accounts;
     }
 
     disconnect () {
         this.selected = null;
-        this.account = null;
-        this.emit('onAccountDisconnected');
+        this.emit('onAccountsDisconnected');
     }
 
     getProviders () {
         return this.providers;
     }
 
-    async requestAccount (): Promise<TEth.Address> {
-        $require.notNull(this.selected, `Wallet is not connected`);
-
-        const accounts = await this.selected.provider.request({ method: 'eth_requestAccounts' });
-        this.account = accounts?.[0];
-        if (this.account) {
-            this.emit('onAccountConnected', this.account)
+    async requestAccounts (uuid?: string): Promise<TEth.Address[]> {
+        let provider = await this.getProvider(uuid);
+        let accounts: TEth.Address[] = await this.selected.provider.request({ method: 'eth_requestAccounts' });
+        if (accounts?.length > 0) {
+            let arr = [
+                ...(provider.accounts ?? []),
+                ...(accounts),
+            ];
+            provider.accounts = alot(arr).distinct().toArray();
+            this.emit('onAccountsConnected', provider.accounts);
         }
-        return this.account;
+        return provider.accounts;
     }
 
     private requestProvider () {
@@ -127,17 +128,27 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
         if (this.providers.some(x => x.info.uuid === info?.uuid)) {
             return;
         }
-        this.providers.push({ info, provider });
+
+        let providerDetails = { info, provider, accounts: [] };
+        this.providers.push(providerDetails);
 
         this.emit('onProviderRegistered', detail);
         try {
             const accounts = await provider.request({ method: 'eth_accounts' })
-            this.account = accounts?.[0];
-            if (this.account) {
-                this.emit('onAccountConnected', this.account)
+            if (accounts?.length > 0) {
+                providerDetails.accounts = accounts;
+                this.emit('onAccountsConnected', accounts);
             }
         } catch (error) { }
     }
 
-
+    getProvider (uuid?: string, optional?: boolean) {
+        if (uuid == null) {
+            optional !== true && $require.notNull(this.selected, `Wallet is not connected`);
+            return this.selected;
+        }
+        let provider = this.providers.find(x => x.info?.uuid === uuid);
+        optional !== true && $require.notNull(provider, `Wallet is not found by UUID ${uuid}`);
+        return provider;
+    }
 }

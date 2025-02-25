@@ -14,6 +14,9 @@ const explorer = await provider.explorer();
 const wallet = new MockWallet(client);
 
 UTest({
+    async $after () {
+        //await wallet.detach()
+    },
     async 'transfer from account1 to 2'() {
         wallet.announce();
         const account = wallet.addAccount();

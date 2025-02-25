@@ -6,7 +6,6 @@ import { DataLike } from '@dequanto/utils/types';
 import { EIP6963ProviderDetail, EIP6963ProviderFactory } from '@dequanto/wallets/EIP6963ProviderFactory';
 import { WClient } from './ClientPool';
 import { $hex } from '@dequanto/utils/$hex';
-import { TAddress } from '@dequanto/models/TAddress';
 
 /** Wallet actions, for all Node (Chain) related actions - Web3Client should be used */
 
@@ -19,9 +18,8 @@ export class WalletClient {
 
     // Client abstract methods
 
-    async getProvider (): Promise<EIP6963ProviderDetail> {
-        let { selected } = this.factory;
-        return selected;
+    async getProvider (uuid?: string): Promise<EIP6963ProviderDetail> {
+        return this.factory.getProvider(uuid, true);
     }
 
     async getProviders (): Promise<EIP6963ProviderDetail[]> {
@@ -29,15 +27,12 @@ export class WalletClient {
         return providers;
     }
 
-    async getAccount (): Promise<{ address: TAddress }> {
+    async getAccounts (uuid?: string): Promise<TEth.Address[]> {
         const accounts = await this.eth_accounts();
-        if (accounts == null || accounts.length === 0) {
-            return null;
-        }
-        return { address: accounts[0] };
+        return accounts;
     }
 
-    async connect (uuid?: string): Promise<TAddress> {
+    async connect (uuid?: string): Promise<TEth.Address[]> {
         return this.factory.connect(uuid);
     }
 
@@ -45,8 +40,8 @@ export class WalletClient {
         this.factory.disconnect();
     }
 
-    isConnected () {
-        return this.factory.isConnected();
+    isConnected (address?: TEth.Address): boolean {
+        return this.factory.isConnected(address);
     }
 
     // RPC methods
@@ -106,9 +101,6 @@ export class WalletClient {
 
         return client;
     }
-
-
-
 
     private getRpc () {
         let { selected } = this.factory;
