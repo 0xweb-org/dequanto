@@ -71,7 +71,8 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
     }
 
     async connect (uuid?: string) {
-        let provider = this.getProvider(uuid);
+        let provider = this.getProviderOrFirst(uuid);
+        $require.notNull(provider, `Wallet not found`);
         this.selected = provider;
         let accounts = await this.requestAccounts();
         return accounts;
@@ -142,6 +143,13 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
         } catch (error) { }
     }
 
+    getProviderOrFirst (uuid?: string) {
+        if (uuid == null) {
+            return this.providers[0];
+        }
+        let provider = this.providers.find(x => x.info?.uuid === uuid);
+        return provider;
+    }
     getProvider (uuid?: string, optional?: boolean) {
         if (uuid == null) {
             optional !== true && $require.notNull(this.selected, `Wallet is not connected`);
