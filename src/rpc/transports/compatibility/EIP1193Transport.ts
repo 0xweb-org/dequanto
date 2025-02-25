@@ -5,6 +5,7 @@ import alot from 'alot';
 
 export interface IEip1193Provider {
     sendAsync
+    request
 }
 
 

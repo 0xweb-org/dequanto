@@ -1,6 +1,7 @@
 import type { IWeb3EndpointOptions } from '@dequanto/clients/interfaces/IWeb3EndpointOptions';
 import type { TEth } from '@dequanto/models/TEth';
 import type { ClientOptions } from 'ws'
+import { IEip1193Provider } from './compatibility/EIP1193Transport';
 
 export namespace TTransport {
 
@@ -39,7 +40,7 @@ export namespace TTransport {
 
     export namespace Options {
 
-        export type Any = string | Http | Ws | Wrapped | Transport | Web3Wrapper;
+        export type Any = string | Http | Ws | Wrapped | Transport | Web3Wrapper | IEip1193Provider;
 
         export type Http = {
             url: string

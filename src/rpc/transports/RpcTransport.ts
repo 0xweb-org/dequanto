@@ -51,7 +51,11 @@ export namespace RpcTransport {
             if (isEIP1193Compatible(mix.web3)) {
                 return new EIP1193Transport(mix.web3);
             }
+            if (isTransport(mix.web3)) {
+                return mix.web3;
+            }
         }
+        console.error(mix);
         throw new Error(`Unknown transport: ${JSON.stringify(mix)}`);
     }
 

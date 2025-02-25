@@ -21,7 +21,7 @@ import { Web3BatchRequests } from './Web3BatchRequests';
 
 import { HttpTransport } from '@dequanto/rpc/transports/HttpTransport';
 import { WsTransport } from '@dequanto/rpc/transports/WsTransport';
-import { Rpc } from '@dequanto/rpc/Rpc';
+import { Rpc, RpcTypes } from '@dequanto/rpc/Rpc';
 
 import { Web3Transport } from '@dequanto/rpc/transports/compatibility/Web3Transport';
 import { PromiseEvent } from '@dequanto/class/PromiseEvent';
@@ -31,6 +31,7 @@ import { TRpc } from '@dequanto/rpc/RpcBase';
 import { TEth } from '@dequanto/models/TEth';
 import { $rpc } from '@dequanto/rpc/$rpc';
 import { Web3 } from './compatibility/Web3';
+import { DataLike } from '@dequanto/utils/types';
 
 export interface IPoolClientConfig {
     url?: string
@@ -39,6 +40,7 @@ export interface IPoolClientConfig {
     /** Will be a pefered node for submitting transactions */
     safe?: boolean
     distinct?: boolean
+    wallet?: boolean
 
     web3?: TTransport.Transport | Promise<TTransport.Transport>
 
@@ -70,6 +72,9 @@ export interface IPoolClientConfig {
 export interface IPoolWeb3Request {
     ws?: boolean
     preferSafe?: boolean
+
+    /** Request wallet node to submit unsigned transactions */
+    wallet?: boolean
     distinct?: boolean
     name?: string
 
@@ -248,9 +253,29 @@ export class ClientPool {
         return max;
     }
 
+    wrappedPromiEvent <T> (asyncFactory: () => Promise<T>): PromiseEvent<T> {
+        let promiEvent = new PromiseEventWrap();
+
+        asyncFactory().then(
+            (result) => {
+                promiEvent.resolve(result);
+            },
+            (error) => {
+                promiEvent.reject(error);
+            }
+        );
+        return promiEvent as any as PromiseEvent<T>;
+    }
+
     callPromiEvent<TResult extends PromiseEvent<any>>(
         fn: (web3: WClient) => TResult
-        , opts?: { preferSafe?: boolean, parallel?: number, silent?: boolean, distinct?: boolean }
+        , opts?: {
+            preferSafe?: boolean,
+            parallel?: number,
+            silent?: boolean,
+            distinct?: boolean,
+            wallet?: boolean
+        }
         , used: Map<WClient, number> = new Map<WClient, number>()
         , errors = []
         , root?: PromiseEventWrap
@@ -527,6 +552,9 @@ export class ClientPool {
             if (safe.length > 0) {
                 healthy = safe;
             }
+        }
+        if (opts?.wallet === true) {
+            healthy = healthy.filter(x => x.config.wallet === true);
         }
 
         let arr = healthy.length > 0
@@ -875,6 +903,16 @@ export class WClient {
                 promise.reject(error);
             });
         return promise;
+    }
+
+    sign (address: TEth.Address, message: string): Promise<string> {
+        return this.rpc.eth_sign(address, message);
+    }
+
+    signTypedData (address: TEth.Address, typedData: DataLike<RpcTypes.TypedData>): Promise<TEth.Hex> {
+        return this
+            .rpc
+            .eth_signTypedData_v4(address, typedData);
     }
 
     async callBatched<TResult = any>(requests: TRpc.IRpcAction[]): Promise<TResult[]> {

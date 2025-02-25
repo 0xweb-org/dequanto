@@ -10,7 +10,7 @@ export interface IWeb3Client {
     chainId: number
     defaultGasLimit: number
 
-    sign (txData: TEth.Tx, privateKey: string): Promise<TBufferLike>
+    //-signTx (txData: TEth.Tx, privateKey: string): Promise<TBufferLike>
 }
 
 

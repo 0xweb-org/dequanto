@@ -233,20 +233,21 @@ export class  DeploymentsStorage {
             path = class_Uri.combine(directory, `${filenamePrefix}${platformPathNormalized}-${upstreamPlatformNormalized}.json`);
 
             let upstreamDeploymentExists = await File.existsAsync(upstreamDeploymentsPath);
-
+            let upstreamDeployments: IDeployment[];
             let shouldCopy = true;
             if (await File.existsAsync(path)) {
                 // forked deployments path already exists, check if stale
                 let blockNumber = await this.client.getBlockNumber();
                 if (upstreamDeploymentExists) {
-                    let upstreamDeployments = await File.readAsync<IDeployment[]>(upstreamDeploymentsPath);
-
+                    upstreamDeployments = await File.readAsync<IDeployment[]>(upstreamDeploymentsPath);
                     // 1. Check if the original(upstream) network has more recent deployments
                     let hasNewDeployments = upstreamDeployments.some(x => x.block > blockNumber);
                     shouldCopy = hasNewDeployments;
                 } else {
                     shouldCopy = false;
                 }
+
+
 
                 if (shouldCopy === false) {
                     let deployments = await File.readAsync<IDeployment[]>(path);
@@ -270,6 +271,15 @@ export class  DeploymentsStorage {
                                 }
                             }
                         }
+                    }
+                    if (shouldCopy === false && upstreamDeployments?.length > 0) {
+                        // 5. Just-in-case, if there are upstream deployments with lower block number, as the current HEAD, but not in the current forked network
+                        let deploymentIds = alot(deployments).toDictionary(x => x.id);
+                        let hasNewDeployments = upstreamDeployments
+                            .filter(x => x.block <= blockNumber)
+                            .some(x => x.id in deploymentIds === false)
+
+                        shouldCopy = hasNewDeployments;
                     }
                 }
             }

@@ -31,6 +31,7 @@ import { $sig } from '@dequanto/utils/$sig';
 import { DataLike } from '@dequanto/utils/types';
 import { ErrorCode } from './ClientPoolStats';
 import { $date } from '@dequanto/utils/$date';
+import { WalletClient } from './WalletClient';
 
 export abstract class Web3Client implements IWeb3Client {
 
@@ -58,16 +59,10 @@ export abstract class Web3Client implements IWeb3Client {
         return this.forked?.platform ?? this.platform;
     }
 
-    async sign(txData: TEth.TxLike, privateKey: TEth.Hex): Promise<string> {
-        let rpc = await this.getRpc();
-        let sig = await $sig.signTx( txData, { key: privateKey }, rpc);
-        let tx = $sig.TxSerializer.serialize(txData, sig);
-        return tx;
-    }
-
     public options: IWeb3ClientOptions;
     public pool: ClientPool;
     public debug: ClientDebugMethods;
+    public wallet = di.resolve(WalletClient);
 
     constructor(options: IWeb3ClientOptions)
     constructor(endpoints: IPoolClientConfig[])
@@ -398,10 +393,49 @@ export abstract class Web3Client implements IWeb3Client {
         }, { preferSafe: true, distinct: true });
     }
 
+    // async signTx(txData: TEth.TxLike, privateKey: TEth.Hex): Promise<string> {
+    //     let rpc = await this.getRpc();
+    //     let sig = await $sig.signTx( txData, { key: privateKey }, rpc);
+    //     let tx = $sig.TxSerializer.serialize(txData, sig);
+    //     return tx;
+    // }
+
+    async sign(address: TEth.Address, message: string): Promise<string> {
+        if (this.wallet.isConnected()) {
+            return this.wallet.eth_sign(address, message);
+        }
+        return this.pool.call(wClient => {
+            return wClient.sign(address, message);
+        }, {
+            wallet: true
+        });
+    }
+
+    signTypedData(address: TEth.Address, typedData: DataLike<RpcTypes.TypedData>): Promise<TEth.Hex> {
+        if (this.wallet.isConnected()) {
+            return this.wallet.eth_signTypedData_v4(address, typedData);
+        }
+        return this.pool.call(wClient => {
+            return wClient.signTypedData(address, typedData);
+        }, {
+            wallet: true
+        });
+    }
+
     sendTransaction(data: TEth.TxLike): PromiseEvent<TEth.TxReceipt> {
+        if (this.wallet.isConnected()) {
+            return this.pool.wrappedPromiEvent <TEth.TxReceipt> (async () => {
+                let client = await this.wallet.getClientFor(this.chainId);
+                return client.sendTransaction(data);
+            });
+        }
         return this.pool.callPromiEvent(wClient => {
             return wClient.sendTransaction(data);
-        }, { preferSafe: true, distinct: true });
+        }, {
+            preferSafe: true,
+            distinct: true,
+            wallet: this.platform === 'hardhat' ? void 0 : true
+        });
     }
 
     getBlockNumber() {
