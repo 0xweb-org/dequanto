@@ -1,10 +1,10 @@
+import alot from 'alot';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TEth } from '@dequanto/models/TEth';
 import { IEip1193Provider } from '@dequanto/rpc/transports/compatibility/EIP1193Transport';
 import { $address } from '@dequanto/utils/$address';
-import { $ref } from '@dequanto/utils/$ref';
+import { $ref, TGlobal } from '@dequanto/utils/$ref';
 import { $require } from '@dequanto/utils/$require';
-import alot from 'alot';
 import { class_EventEmitter } from 'atma-utils';
 
 // Interface for provider information following EIP-6963.
@@ -51,7 +51,7 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
     providers: EIP6963ProviderDetail[] = []
     selected: EIP6963ProviderDetail;
 
-    global = $ref.getGlobal()
+    global: TGlobal = $ref.getGlobal()
 
     constructor () {
         super();

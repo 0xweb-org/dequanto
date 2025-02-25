@@ -22,6 +22,7 @@ async function process () {
             File.existsAsync(cjsFile),
             File.existsAsync(mjsFile),
         ]);
+
         if (cjsFileExists === false && mjsFileExists === false) {
             return;
         }
@@ -35,6 +36,15 @@ async function process () {
                 importPathRelative = './' + importPathRelative;
             }
             return `from ${q}${importPathRelative}${q}`;
+        });
+
+        content = content.replace(/import\((?<q>['"])(?<path>@dequanto\/[^'"]+)['"]/g, (match, q, importPath) => {
+            let importPathFull = importPath.replace(/^@dequanto\//, typesRoot);
+            let importPathRelative = new class_Uri(importPathFull).toRelativeString(path + '.js');
+            if (importPathRelative.startsWith('.') === false) {
+                importPathRelative = './' + importPathRelative;
+            }
+            return `import(${q}${importPathRelative}${q}`;
         });
 
         /* Do not copy inside the cjs/* and esm/* folders, TypeScript should rely on exports.types in package.json */
