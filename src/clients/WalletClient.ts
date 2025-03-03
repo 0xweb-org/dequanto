@@ -7,16 +7,21 @@ import { EIP6963ProviderDetail, EIP6963ProviderFactory } from '@dequanto/wallets
 import { WClient } from './ClientPool';
 import { $hex } from '@dequanto/utils/$hex';
 
-/** Wallet actions, for all Node (Chain) related actions - Web3Client should be used */
+/** Wallet actions only. For all Node (Chain) related actions - Web3Client should be used */
 
 export class WalletClient {
-    private factory: EIP6963ProviderFactory;
+    public factory: EIP6963ProviderFactory;
 
     constructor (factory?: EIP6963ProviderFactory) {
         this.factory = factory ?? di.resolve(EIP6963ProviderFactory);
     }
 
     // Client abstract methods
+
+    //Set the provider by UUID as the default one for eth_** methods
+    async useProvider (uuid: string) {
+        this.factory.useProvider(uuid);
+    }
 
     async getProvider (uuid?: string): Promise<EIP6963ProviderDetail> {
         return this.factory.getProvider(uuid, true);
@@ -28,10 +33,11 @@ export class WalletClient {
     }
 
     async getAccounts (uuid?: string): Promise<TEth.Address[]> {
-        const accounts = await this.eth_accounts();
-        return accounts;
+        let rpc = this.getRpc(uuid);
+        return rpc.eth_accounts();
     }
 
+    /** Find the provider by UUID or use the first one to connect to and to requestAccounts */
     async connect (uuid?: string): Promise<TEth.Address[]> {
         return this.factory.connect(uuid);
     }
@@ -102,10 +108,8 @@ export class WalletClient {
         return client;
     }
 
-    private getRpc () {
-        let { selected } = this.factory;
-        $require.notNull(selected, 'No selected EIP6963 provider');
-
-        return new Rpc(selected.provider)
+    private getRpc (uuid?: string) {
+        let p = this.factory.getProvider(uuid, false);
+        return new Rpc(p.provider)
     }
 }

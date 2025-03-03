@@ -57,8 +57,8 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
         super();
 
         this.onAnnounceProvider = this.onAnnounceProvider.bind(this);
-        this.requestProvider();
         this.listenToNewProvider();
+        this.requestProvider();
     }
 
     isConnected (address?: TEth.Address) {
@@ -81,6 +81,10 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
     disconnect () {
         this.selected = null;
         this.emit('onAccountsDisconnected');
+    }
+
+    useProvider (uuid: string) {
+        this.selected = this.getProvider(uuid);
     }
 
     getProviders () {
@@ -107,7 +111,7 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
                 detail: {
                     info: {
                         uuid: 'injected',
-                        name: 'injected'
+                        name: 'Injected'
                     },
                     provider: this.global.ethereum,
                 }
@@ -122,7 +126,7 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
 
     private async onAnnounceProvider (event: EIP6963AnnounceProviderEvent) {
         // Remove directly injected provider
-        this.providers = this.providers.filter(x => x.info.uuid === 'injected');
+        this.providers = this.providers.filter(x => x.info.uuid !== 'injected');
 
         let { detail } = event;
         let { info, provider } = detail;
