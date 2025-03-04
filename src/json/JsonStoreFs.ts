@@ -93,7 +93,7 @@ export class JsonStoreFs<T> {
 
     @memd.deco.memoize({ perInstance: true })
     private async readInner () {
-        let exists = await File.existsAsync (this.path);
+        let exists = await this.transport.exists();
         if (exists === false) {
             return this.$default;
         }
@@ -195,6 +195,7 @@ interface ITransport {
     unwatch (watcherFn: (path?: string) => any)
 
     cleanCache()
+    exists (): Promise<boolean>
 }
 
 class FileTransport implements ITransport {
@@ -207,6 +208,9 @@ class FileTransport implements ITransport {
             processSafe: true,
             threadSafe: true,
         });
+    }
+    async exists(): Promise<boolean> {
+        return File.existsAsync (this.path);
     }
     async writeAsync(str: string) {
         await this.file.writeAsync(str, { skipHooks: true });
@@ -242,11 +246,14 @@ class LocalStorageTransport implements ITransport {
         $require.notNull(this.global.localStorage, `LocalStorage is not available`);
     }
     async writeAsync(str: string) {
-
         this.global.localStorage.setItem(this.path, str);
     }
     async readAsync(): Promise<string> {
         return this.global.localStorage.getItem(this.path);
+    }
+    async exists (): Promise<boolean> {
+        // To prevent double load with "getItem", assume the existence of the item, later in readAsync the NULL will be handled.
+        return true;
     }
     async watch (watcherFn: (path?: string) => any) {
         this.listener ??= (event) => {
