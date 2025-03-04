@@ -2,14 +2,14 @@
  * Store data across multiple files for cases, that could contain thousands of entries
  */
 
-import { IStoreOptions, JsonArrayStore } from './JsonArrayStore';
+import { IArrayStoreOptions, JsonArrayStore } from './JsonArrayStore';
 import { Directory } from 'atma-io';
 import memd from 'memd';
 import alot from 'alot';
 import type { Alot } from 'alot/alot';
 import { $require } from '@dequanto/utils/$require';
 
-export interface  IMultiStoreOptions<T> extends IStoreOptions<T> {
+export interface  IMultiStoreOptions<T> extends IArrayStoreOptions<T> {
     groupKey: (x: T) => number
     groupSize: number
 }

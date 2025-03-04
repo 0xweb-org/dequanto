@@ -4,7 +4,7 @@ import { Alot } from 'alot/alot'
 import { JsonStoreFs } from './JsonStoreFs'
 import { Constructor } from '@dequanto/utils/types'
 
-export interface IStoreOptions<T, TStorage = T> {
+export interface IArrayStoreOptions<T, TStorage = T> {
     path: string
     watchFs?: boolean
     onFsChanged?: () => any
@@ -14,6 +14,8 @@ export interface IStoreOptions<T, TStorage = T> {
     serialize? (x: T): TStorage
     Type?: Constructor
     format?: boolean
+
+    transport?: 'file' | 'localStorage'
 }
 
 export class JsonArrayStore<T> {
@@ -22,7 +24,7 @@ export class JsonArrayStore<T> {
 
     private fs: JsonStoreFs<T[]>;
 
-    constructor (public options: IStoreOptions<T>) {
+    constructor (public options: IArrayStoreOptions<T>) {
         let keyFn = this.options.key;
         if (keyFn == null) {
             throw new Error('Key getter must be defined');
@@ -34,6 +36,7 @@ export class JsonArrayStore<T> {
             , this.options.format
             , []
             , this.options.serialize as any
+            , this.options.transport
         );
         if (this.options?.watchFs) {
             this.fs.watch(() => this.onStoreChanged());

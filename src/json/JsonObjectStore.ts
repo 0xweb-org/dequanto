@@ -2,7 +2,7 @@ import type { Constructor } from 'atma-utils'
 import { JsonConvert } from 'class-json'
 import { JsonStoreFs } from './JsonStoreFs';
 
-export interface IStoreOptions<T, TOut = T> {
+export interface IObjectStoreOptions<T, TOut = T> {
     path: string
     map? (x: T): TOut
     serialize? (x: T): any
@@ -10,6 +10,9 @@ export interface IStoreOptions<T, TOut = T> {
     format?: boolean
     default?: TOut
     watchFs?: boolean
+    onFsChanged?: () => any
+
+    transport?: 'file' | 'localStorage'
 }
 
 export class JsonObjectStore<T> {
@@ -20,7 +23,7 @@ export class JsonObjectStore<T> {
     private fs: JsonStoreFs<T>;
 
 
-    constructor (public options: IStoreOptions<T>) {
+    constructor (public options: IObjectStoreOptions<T>) {
         this.fs = new JsonStoreFs<T>(
             this.options.path
             , this.options.Type
@@ -28,14 +31,13 @@ export class JsonObjectStore<T> {
             , this.options.format
             , this.options.default ?? {} as any
             , this.options.serialize as any
+            , this.options.transport
         );
 
         if (this.options?.watchFs) {
             this.fs.watch(() => this.onStoreChanged());
         }
     }
-
-
 
     async get(opts?: { cloned?: boolean }): Promise<this['options']['default']> {
         if (this.fs.errored != null) {
@@ -64,6 +66,7 @@ export class JsonObjectStore<T> {
     private onStoreChanged () {
         this.data = null;
         this.fs.cleanCache();
+        this.options.onFsChanged?.();
     }
 
     private async restore () {
