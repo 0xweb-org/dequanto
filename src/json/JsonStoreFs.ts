@@ -3,6 +3,7 @@ import { $require } from '@dequanto/utils/$require';
 import { File, FileSafe } from 'atma-io';
 import { class_Dfr, type Constructor } from 'atma-utils';
 import { JsonConvert } from 'class-json';
+import { $ref } from '@dequanto/utils/$ref';
 
 
 export class JsonStoreFs<T> {
@@ -15,7 +16,7 @@ export class JsonStoreFs<T> {
     private busy = false;
     private watcherFn: (path?: string) => any
     private watching = false;
-    private file: InstanceType<typeof File>;
+    private transport: ITransport;
 
     public lock = new class_Dfr;
 
@@ -26,15 +27,19 @@ export class JsonStoreFs<T> {
         , public format?: boolean
         , public $default?: T
         , public serializeFn?: (x: T) => any
+        , public persistence: 'file' | 'localStorage' = 'file'
     ) {
         this.lock.resolve();
 
-        const FileCtor = FileSafe ?? File;
-        this.file = new FileCtor(this.path, {
-            cached: false,
-            processSafe: true,
-            threadSafe: true,
-        });
+        switch (persistence) {
+            case 'localStorage':
+                this.transport = new LocalStorageTransport(this.path);
+                break;
+            case 'file':
+            default:
+                this.transport = new FileTransport(this.path);
+                break;
+        }
     }
 
     public watch (cb: typeof this.watcherFn) {
@@ -42,14 +47,13 @@ export class JsonStoreFs<T> {
         this.watcherFn = cb;
     }
     public unwatch () {
-        File.unwatch(this.path, this.watcherFn);
+        this.transport.unwatch(this.watcherFn);
         this.watcherFn = null;
     }
     public cleanCache () {
         this.data = null;
         // Should we do this? clear pending promise
-        (this.file as any).pending = null;
-        this.file.content = null;
+        this.transport.cleanCache();
 
         memd.fn.clearMemoized(this.readInner);
         File.clearCache(this.path);
@@ -93,17 +97,13 @@ export class JsonStoreFs<T> {
         if (exists === false) {
             return this.$default;
         }
-        let str = await this.file.readAsync <string> ({
-            skipHooks: true,
-            encoding: 'utf8',
-            cached: false
-        });
+        let str = await this.transport.readAsync();
         if (str == null) {
             return this.$default;
         }
         let data = this.decode(str);
         if (this.watcherFn != null && this.watching === false) {
-            File.watch(this.path, this.watcherFn);
+            this.transport.watch(this.watcherFn);
             this.watching = true;
         }
         return data;
@@ -113,7 +113,7 @@ export class JsonStoreFs<T> {
         let v = this.version;
         let str = this.encode(data);
         try {
-            await this.file.writeAsync(str, { skipHooks: true });
+            await this.transport.writeAsync(str);
             this.lock.resolve();
             this.callWriteListeners(v, null);
         } catch (error) {
@@ -184,5 +184,83 @@ export class JsonStoreFs<T> {
                 : serializeFn(data);
         }
         return JSON.stringify(data, null, format ? '  ' : null)
+    }
+}
+
+interface ITransport {
+    writeAsync(str: string): Promise<void>
+    readAsync(): Promise<string>
+
+    watch (watcherFn: (path?: string) => any)
+    unwatch (watcherFn: (path?: string) => any)
+
+    cleanCache()
+}
+
+class FileTransport implements ITransport {
+    private file: InstanceType<typeof File>;
+
+    constructor (public path: string) {
+        const FileCtor = FileSafe ?? File
+        this.file = new FileCtor(this.path, {
+            cached: false,
+            processSafe: true,
+            threadSafe: true,
+        });
+    }
+    async writeAsync(str: string) {
+        await this.file.writeAsync(str, { skipHooks: true });
+    }
+    async readAsync(): Promise<string> {
+        let str = await this.file.readAsync <string> ({
+            skipHooks: true,
+            encoding: 'utf8',
+            cached: false
+        });
+        return str;
+    }
+    async watch (watcherFn: (path?: string) => any) {
+        File.watch(this.path, watcherFn);
+    }
+    async unwatch (watcherFn: (path?: string) => any) {
+        File.unwatch(this.path, watcherFn);
+    }
+
+    async cleanCache () {
+        (this.file as any).pending = null;
+        this.file.content = null;
+    }
+}
+
+
+
+class LocalStorageTransport implements ITransport {
+    private global = $ref.getGlobal();
+    private listener: (event) => void;
+
+    constructor (public path: string) {
+        $require.notNull(this.global.localStorage, `LocalStorage is not available`);
+    }
+    async writeAsync(str: string) {
+
+        this.global.localStorage.setItem(this.path, str);
+    }
+    async readAsync(): Promise<string> {
+        return this.global.localStorage.getItem(this.path);
+    }
+    async watch (watcherFn: (path?: string) => any) {
+        this.listener ??= (event) => {
+            if (event.key === this.path) {
+                watcherFn(this.path);
+            }
+        };
+        this.global.addEventListener('storage', this.listener, false);
+    }
+    async unwatch (watcherFn: (path?: string) => any) {
+        this.global.removeEventListener('storage', this.listener, false);
+    }
+
+    async cleanCache () {
+        // no cached
     }
 }

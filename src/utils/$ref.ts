@@ -5,8 +5,12 @@ import { class_EventEmitter } from 'atma-utils';
 
 export type TGlobal = {
     ethereum: IEip1193Provider;
-    addEventListener (event: string, listener: Function, options?: boolean | AddEventListenerOptions): void;
+    addEventListener: Window['addEventListener'] //(event: string, listener: Function, options?: boolean | AddEventListenerOptions): void;
+    removeEventListener: Window['removeEventListener'];
+
     dispatchEvent (event: any): void;
+
+    localStorage?: WindowLocalStorage['localStorage']
 }
 
 export namespace $ref {
@@ -20,7 +24,7 @@ export namespace $ref {
 
             if (typeof g.addEventListener !== 'function' || typeof g.dispatchEvent !== 'function') {
                 const emitter = new class_EventEmitter;
-                g.addEventListener = function (event: string, fn: Function) {
+                g.addEventListener = function (event: string, fn: (event) => any) {
                     emitter.on(event, fn);
                 };
                 g.dispatchEvent = function (event: CustomEvent) {
