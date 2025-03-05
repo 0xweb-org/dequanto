@@ -1,11 +1,11 @@
 import alot from 'alot';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TEth } from '@dequanto/models/TEth';
-import { IEip1193Provider } from '@dequanto/rpc/transports/compatibility/EIP1193Transport';
 import { $address } from '@dequanto/utils/$address';
 import { $ref, TGlobal } from '@dequanto/utils/$ref';
 import { $require } from '@dequanto/utils/$require';
 import { class_EventEmitter } from 'atma-utils';
+import { IEIP6963Provider } from '@dequanto/rpc/transports/compatibility/IEIP6963Provider';
 
 // Interface for provider information following EIP-6963.
 interface EIP6963ProviderInfo {
@@ -16,17 +16,11 @@ interface EIP6963ProviderInfo {
 }
 
 // Interface for Ethereum providers based on the EIP-1193 standard.
-interface EIP1193Provider {
-    isStatus?: boolean; // Optional: Indicates the status of the provider
-    host?: string; // Optional: Host URL of the Ethereum node
-    path?: string; // Optional: Path to a specific endpoint or service on the host
-    request: (request: { method: string, params?: Array<unknown> }) => Promise<unknown>; // Standard method for sending requests per EIP-1193
-}
 
 // Interface detailing the structure of provider information and its Ethereum provider.
 export interface EIP6963ProviderDetail {
     info: EIP6963ProviderInfo; // The provider's info
-    provider: IEip1193Provider; // The EIP-1193 compatible provider
+    provider: IEIP6963Provider; // The EIP-1193 compatible provider
     accounts?: TEth.Address[]; // Optional: Array of connected Ethereum accounts
 }
 

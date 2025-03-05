@@ -1,10 +1,11 @@
-import { IEip1193Provider } from '@dequanto/rpc/transports/compatibility/EIP1193Transport';
+
+import { IEIP6963Provider } from '@dequanto/rpc/transports/compatibility/IEIP6963Provider';
 import { class_EventEmitter } from 'atma-utils';
 
 
 
 export type TGlobal = {
-    ethereum: IEip1193Provider;
+    ethereum: IEIP6963Provider;
     addEventListener: Window['addEventListener'] //(event: string, listener: Function, options?: boolean | AddEventListenerOptions): void;
     removeEventListener: Window['removeEventListener'];
 
