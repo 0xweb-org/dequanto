@@ -9,7 +9,7 @@ import { class_EventEmitter } from 'atma-utils';
 
 // Interface for provider information following EIP-6963.
 interface EIP6963ProviderInfo {
-    walletId?: string; // Unique identifier for the wallet e.g io.metamask, io.metamask.flask
+    rdns?: string; // Unique identifier for the wallet e.g io.metamask, io.metamask.flask
     uuid: string; // Globally unique ID to differentiate between provider sessions for the lifetime of the page
     name: string; // Human-readable name of the wallet
     icon?: string; // URL to the wallet's icon
@@ -70,8 +70,8 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
         return has;
     }
 
-    async connect (uuid?: string) {
-        let provider = this.getProviderOrFirst(uuid);
+    async connect (id?: string) {
+        let provider = this.getProviderOrFirst(id);
         $require.notNull(provider, `Wallet not found`);
         this.selected = provider;
         let accounts = await this.requestAccounts();
@@ -83,16 +83,16 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
         this.emit('onAccountsDisconnected');
     }
 
-    useProvider (uuid: string) {
-        this.selected = this.getProvider(uuid);
+    useProvider (id: string) {
+        this.selected = this.getProvider(id);
     }
 
     getProviders () {
         return this.providers;
     }
 
-    async requestAccounts (uuid?: string): Promise<TEth.Address[]> {
-        let provider = await this.getProvider(uuid);
+    async requestAccounts (id?: string): Promise<TEth.Address[]> {
+        let provider = await this.getProvider(id);
         let accounts: TEth.Address[] = await this.selected.provider.request({ method: 'eth_requestAccounts' });
         if (accounts?.length > 0) {
             let arr = [
@@ -110,8 +110,9 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
             this.onAnnounceProvider({
                 detail: {
                     info: {
+                        rdns: 'injected',
                         uuid: 'injected',
-                        name: 'Injected'
+                        name: 'Browser Wallet'
                     },
                     provider: this.global.ethereum,
                 }
@@ -126,41 +127,48 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
 
     private async onAnnounceProvider (event: EIP6963AnnounceProviderEvent) {
         // Remove directly injected provider
-        this.providers = this.providers.filter(x => x.info.uuid !== 'injected');
+        this.providers = this.providers.filter(x => x.info?.rdns !== 'injected');
 
         let { detail } = event;
         let { info, provider } = detail;
-        if (this.providers.some(x => x.info.uuid === info?.uuid)) {
+        if (this.providers.some(x => this.getId(x.info) === this.getId(info))) {
             return;
         }
 
         let providerDetails = { info, provider, accounts: [] };
         this.providers.push(providerDetails);
 
-        this.emit('onProviderRegistered', detail);
         try {
             const accounts = await provider.request({ method: 'eth_accounts' })
             if (accounts?.length > 0) {
                 providerDetails.accounts = accounts;
                 this.emit('onAccountsConnected', accounts);
             }
-        } catch (error) { }
+        } catch (error) {
+            // We load the accounts just in case if user has already connected previously, otherwise silently ignore the error
+        }
+
+        this.emit('onProviderRegistered', providerDetails);
     }
 
-    getProviderOrFirst (uuid?: string) {
-        if (uuid == null) {
+    getProviderOrFirst (id?: string) {
+        if (id == null) {
             return this.providers[0];
         }
-        let provider = this.providers.find(x => x.info?.uuid === uuid);
+        let provider = this.providers.find(x => this.getId(x.info) === id);
         return provider;
     }
-    getProvider (uuid?: string, optional?: boolean) {
-        if (uuid == null) {
+    getProvider (id?: string, optional?: boolean) {
+        if (id == null) {
             optional !== true && $require.notNull(this.selected, `Wallet is not connected`);
             return this.selected;
         }
-        let provider = this.providers.find(x => x.info?.uuid === uuid);
-        optional !== true && $require.notNull(provider, `Wallet is not found by UUID ${uuid}`);
+        let provider = this.providers.find(x => this.getId(x.info) === id);
+        optional !== true && $require.notNull(provider, `Wallet is not found by ID ${id}`);
         return provider;
+    }
+
+    private getId (info: EIP6963ProviderInfo | null) {
+        return info?.rdns ?? info?.name;
     }
 }
