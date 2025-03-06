@@ -189,6 +189,7 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
         }
         const fns = {
             accountsChanged: accounts => {
+                providerDetails.accounts = accounts;
                 this.emit('onAccountsChanged', providerDetails, accounts as TEth.Address[]);
             },
             chainChanged: chainId => {
