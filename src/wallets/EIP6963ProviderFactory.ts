@@ -32,15 +32,25 @@ type EIP6963AnnounceProviderEvent = {
 
 interface IProviderEvents {
     onProviderRegistered: (detail: EIP6963ProviderDetail) => void;
+    onProviderConnected: (detail: EIP6963ProviderDetail, chainId: number) => void;
 
-    onAccountsConnected: (accounts: TAddress[]) => void;
-    onAccountsDisconnected: () => void;
+    onAccountsConnected: (detail: EIP6963ProviderDetail, accounts: TAddress[]) => void;
+    onAccountsDisconnected: (detail: EIP6963ProviderDetail) => void;
 
-    onChainChanged: (chainId: number) => void;
+
+    onChainChanged: (detail: EIP6963ProviderDetail, chainId: number) => void;
+    onAccountsChanged: (detail: EIP6963ProviderDetail, accounts: TEth.Address[]) => void;
 }
 
 
 export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> {
+
+    private listeners = {} as Record<string, {
+        accountsChanged,
+        chainChanged,
+        connect,
+        disconnect
+    }>
 
     providers: EIP6963ProviderDetail[] = []
     selected: EIP6963ProviderDetail;
@@ -73,8 +83,9 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
     }
 
     disconnect () {
+        let selected = this.selected;
         this.selected = null;
-        this.emit('onAccountsDisconnected');
+        this.emit('onAccountsDisconnected', selected);
     }
 
     useProvider (id: string) {
@@ -94,7 +105,7 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
                 ...(accounts),
             ];
             provider.accounts = alot(arr).distinct().toArray();
-            this.emit('onAccountsConnected', provider.accounts);
+            this.emit('onAccountsConnected', provider, provider.accounts);
         }
         return provider.accounts;
     }
@@ -120,8 +131,12 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
     }
 
     private async onAnnounceProvider (event: EIP6963AnnounceProviderEvent) {
-        // Remove directly injected provider
-        this.providers = this.providers.filter(x => x.info?.rdns !== 'injected');
+        let injectedProvider = this.providers.find(x => x.info?.rdns === 'injected');
+        if (injectedProvider) {
+            // Remove directly injected provider
+            this.providers = this.providers.filter(x => x.info?.rdns !== 'injected');
+            this.removeEventListeners(injectedProvider);
+        }
 
         let { detail } = event;
         let { info, provider } = detail;
@@ -131,12 +146,13 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
 
         let providerDetails = { info, provider, accounts: [] };
         this.providers.push(providerDetails);
+        this.addEventListeners(providerDetails);
 
         try {
             const accounts = await provider.request({ method: 'eth_accounts' })
             if (accounts?.length > 0) {
                 providerDetails.accounts = accounts;
-                this.emit('onAccountsConnected', accounts);
+                this.emit('onAccountsConnected', providerDetails, accounts);
             }
         } catch (error) {
             // We load the accounts just in case if user has already connected previously, otherwise silently ignore the error
@@ -164,5 +180,62 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
 
     private getId (info: EIP6963ProviderInfo | null) {
         return info?.rdns ?? info?.name;
+    }
+
+    private addEventListeners (providerDetails: EIP6963ProviderDetail) {
+        let id = this.getId(providerDetails.info);
+        if (id in this.listeners) {
+            return;
+        }
+        const fns = {
+            accountsChanged: accounts => {
+                this.emit('onAccountsChanged', providerDetails, accounts as TEth.Address[]);
+            },
+            chainChanged: chainId => {
+                this.emit('onChainChanged', providerDetails, Number(chainId));
+            },
+            disconnect: () => {
+                this.emit('onAccountsDisconnected', providerDetails);
+            },
+            connect: (info) => {
+                this.emit('onProviderConnected', providerDetails, info.chainId);
+            },
+        }
+        let boundFnKey: 'on' | 'addEventListener';
+        let provider = providerDetails.provider;
+
+        if (typeof provider.on === 'function') {
+            boundFnKey = 'on';
+        } else if (typeof (provider as any).addEventListener === 'function') {
+            boundFnKey = 'addEventListener';
+        }
+        if (boundFnKey == null) {
+            return;
+        }
+        for (let event in fns) {
+            provider[boundFnKey](event, fns[event]);
+        }
+        this.listeners[id] = fns;
+    }
+
+    private removeEventListeners (providerDetails: EIP6963ProviderDetail) {
+        let id = this.getId(providerDetails.info);
+        if (id in this.listeners === false) {
+            return;
+        }
+
+        let unboundFnKey: 'removeListener' | 'removeEventListener';
+        let provider = providerDetails.provider;
+        if (typeof provider.removeListener === 'function') {
+            unboundFnKey = 'removeListener';
+        } else if (typeof (provider as any).removeEventListener === 'function') {
+            unboundFnKey = 'removeEventListener';
+        }
+
+        let fns = this.listeners[id];
+        for (let event in fns) {
+            provider[unboundFnKey](event as any, fns[event]);
+        }
+        delete this.listeners[id];
     }
 }
