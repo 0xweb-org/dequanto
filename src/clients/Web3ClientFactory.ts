@@ -28,33 +28,17 @@ export namespace Web3ClientFactory {
             return client;
         }
         let cfg = web3[platform];
+        if (cfg == null) {
+            // Find the configuration by the alias
+            let chain = alot
+                .fromObject(web3)
+                .filter(x => Array.isArray(x.value.aliases))
+                .find(x => x.value.aliases.includes(platform));
+            cfg = chain?.value;
+        }
+
         $require.notNull(cfg, `Unsupported platform ${platform} for web3 client`)
         return new EvmWeb3Client({ platform, ...cfg });
-
-        // switch (platform) {
-        //     case 'bsc':
-        //         return di.resolve(BscWeb3Client, opts);
-        //     case 'eth':
-        //         return di.resolve(EthWeb3Client, opts);
-        //     case 'eth:goerli':
-        //         return di.resolve(EthWeb3Client, {
-        //             platform: platform,
-        //             chainId: 5,
-        //             ...(opts ?? {})
-        //         });
-        //     case 'polygon':
-        //         return di.resolve(PolyWeb3Client, opts);
-        //     case 'arbitrum':
-        //         return di.resolve(ArbWeb3Client, opts);
-        //     case 'xdai':
-        //         return di.resolve(XDaiWeb3Client, opts);
-        //     default:
-        //         let cfg = config.web3[platform];
-        //         if (cfg != null) {
-        //             return new EvmWeb3Client({ platform, ...cfg });
-        //         }
-        //         throw new Error(`Unsupported platform ${platform} for web3 client`);
-        // }
     }
 
     /** Same as sync variation, but ensures the config is being fetched */

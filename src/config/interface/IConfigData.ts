@@ -33,9 +33,10 @@ export interface IConfigData {
     };
     web3: {
         [platform in TPlatform]: {
-            chainId?: number;
-            chainToken?: string;
-            endpoints: IProviderEndpoint[];
+            chainId?: number
+            chainToken?: string
+            aliases?: string[]
+            endpoints: IProviderEndpoint[]
         };
     };
     contracts?: {

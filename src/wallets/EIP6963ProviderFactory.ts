@@ -13,6 +13,7 @@ interface EIP6963ProviderInfo {
     uuid: string; // Globally unique ID to differentiate between provider sessions for the lifetime of the page
     name: string; // Human-readable name of the wallet
     icon?: string; // URL to the wallet's icon
+    chainId?: number;
 }
 
 // Interface for Ethereum providers based on the EIP-1193 standard.
@@ -156,6 +157,12 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
             }
         } catch (error) {
             // We load the accounts just in case if user has already connected previously, otherwise silently ignore the error
+        }
+        try {
+            const chainId = await provider.request({ method: 'eth_chainId' })
+            providerDetails.info.chainId = Number(chainId);
+        } catch (error) {
+            // silently ignore the error
         }
 
         this.emit('onProviderRegistered', providerDetails);
