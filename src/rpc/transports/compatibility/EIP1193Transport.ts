@@ -26,14 +26,19 @@ export class EIP1193Transport implements TTransport.Transport {
                 return this.request(x);
             }).toArrayAsync({ threads: 5 });
         }
-        if (typeof this.provider.request === 'function') {
-            let result = await this.provider.request(req);
-            return result;
-        }
-
         if (typeof this.provider.sendAsync === 'function') {
             let result = await $promise.fromCallbackCtx(this.provider, this.provider.sendAsync, req);
+            console.log(`SendAsync result`, req, result);
             return result;
+        }
+        if (typeof this.provider.request === 'function') {
+            let result = await this.provider.request(req);
+            // Normalize response to EIP-1193 format
+            return {
+                id: req.id,
+                jsonrpc: '2.0',
+                result
+            };
         }
         throw new Error(`Invalid transport with no sendAsync, request methods`);
     }
