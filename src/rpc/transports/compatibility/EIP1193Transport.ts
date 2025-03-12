@@ -28,7 +28,6 @@ export class EIP1193Transport implements TTransport.Transport {
         }
         if (typeof this.provider.sendAsync === 'function') {
             let result = await $promise.fromCallbackCtx(this.provider, this.provider.sendAsync, req);
-            console.log(`SendAsync result`, req, result);
             return result;
         }
         if (typeof this.provider.request === 'function') {
