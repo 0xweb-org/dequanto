@@ -104,7 +104,10 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
             let arr = [
                 ...(provider.accounts ?? []),
                 ...(accounts),
-            ];
+            ]
+            .filter(Boolean)
+            .map(String) as TEth.Address[];
+
             provider.accounts = alot(arr).distinct().toArray();
             this.emit('onAccountsConnected', provider, provider.accounts);
         }

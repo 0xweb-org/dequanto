@@ -4,8 +4,11 @@ import { RpcSubscription } from '@dequanto/rpc/RpcSubscription';
 import alot from 'alot';
 
 export interface IEip1193Provider {
-    sendAsync
-    request
+    sendAsync? (request: Object, callback: Function): void;
+    request (args: {
+        method: string;
+        params?: any[];
+      }): Promise<unknown>;
 }
 
 
@@ -23,9 +26,16 @@ export class EIP1193Transport implements TTransport.Transport {
                 return this.request(x);
             }).toArrayAsync({ threads: 5 });
         }
+        if (typeof this.provider.request === 'function') {
+            let result = await this.provider.request(req);
+            return result;
+        }
 
-        let result = await $promise.fromCallbackCtx(this.provider, this.provider.sendAsync, req);
-        return result;
+        if (typeof this.provider.sendAsync === 'function') {
+            let result = await $promise.fromCallbackCtx(this.provider, this.provider.sendAsync, req);
+            return result;
+        }
+        throw new Error(`Invalid transport with no sendAsync, request methods`);
     }
 
     async subscribe(req: TTransport.Request): Promise<TTransport.Subscription<any>> {
@@ -34,6 +44,4 @@ export class EIP1193Transport implements TTransport.Transport {
     unsubscribe(req: TTransport.Request & { method: 'eth_unsubscribe'; params: [number]; }): Promise<RpcSubscription<any>> {
         throw new Error('Method not implemented.');
     }
-
-
 }
