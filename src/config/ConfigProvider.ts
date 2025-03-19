@@ -101,14 +101,18 @@ export class ConfigProvider implements IConfigProvider {
     }
 
     private async getSourcesBrowser (parameters: TConfigParamsNode) {
-        return [
+        let sources = [
             {
                 config: {
                     ...ConfigDefaults,
                     ...(parameters?.config ?? {}),
                 }
             },
+            {
+                localStorage: '0xweb/config'
+            }
         ];
+        return sources;
     }
 }
 

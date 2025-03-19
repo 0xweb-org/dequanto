@@ -38,7 +38,11 @@ export namespace Web3ClientFactory {
         }
 
         $require.notNull(cfg, `Unsupported platform ${platform} for web3 client`)
-        return new EvmWeb3Client({ platform, ...cfg });
+        return new EvmWeb3Client({
+            platform,
+            ...cfg,
+            ...(opts ?? {})
+        });
     }
 
     /** Same as sync variation, but ensures the config is being fetched */
