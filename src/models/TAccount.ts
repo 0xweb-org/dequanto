@@ -1,7 +1,7 @@
+import type { RpcTypes } from '@dequanto/rpc/Rpc'
 import { TAddress } from './TAddress';
 import { TEth } from './TEth';
 import { TPlatform } from './TPlatform';
-
 
 export interface IAccount {
     type?: 'eoa' | 'safe' | 'erc4337'
@@ -19,7 +19,15 @@ export interface IAccountTx extends IAccount {
 
 export interface EoAccount extends IAccount {
     type?: 'eoa'
-    key?: TEth.Hex | `p1:0x${string}`;
+    key?: TEth.Hex | `p1:0x${string}`
+    signer?: IRpcSigner
+}
+
+interface IRpcSigner {
+    eth_sign (account: TEth.Address, data: TEth.Hex): Promise<TEth.Hex>
+    eth_signTransaction (tx: TEth.TxLike): Promise<TEth.Hex>
+    eth_signTypedData_v4 (address: TEth.Address, typedData: Partial<RpcTypes.TypedData>): Promise<TEth.Hex>
+    personal_sign (challenge: string, address: TEth.Address): Promise<TEth.Hex>
 }
 
 export interface SafeAccount extends IAccount {

@@ -2,6 +2,7 @@ import { class_Uri } from 'atma-utils';
 import { $config } from './$config';
 import { env } from 'atma-io';
 import { $dependency } from './$dependency';
+import { $is } from './$is';
 
 export namespace $path {
     let root: string = null;
@@ -76,6 +77,14 @@ export namespace $path {
 
     function getRoot () {
         let base = $config.get('settings.base');
+        if ($is.BROWSER) {
+            let root = $dependency.dirname();
+            if (base != null && isAbsolute(base)) {
+                return base;
+            }
+            base ??= '/node_modules/dequanto/';
+            return class_Uri.combine(root, base);
+        }
         if (base != null) {
             let cwd = process.cwd();
             return class_Uri.combine('file://' + cwd, base);

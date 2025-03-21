@@ -174,7 +174,13 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         let agent = TxWriterAccountAgents.get(this.account);
         if (agent != null) {
             let sender = await this.getSender();
-            let innerWriter = await agent.process(sender, this.account, this);
+            let innerWriter: TxWriter;
+            try {
+                innerWriter = await agent.process(sender, this.account, this);
+            } catch (error) {
+                this.onCompleted.reject(error);
+                return;
+            }
             this.pipeInnerWriter(innerWriter);
             return;
         }

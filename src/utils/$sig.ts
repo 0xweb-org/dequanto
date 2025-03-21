@@ -24,30 +24,29 @@ export namespace $sig {
         if (account.key != null) {
             return await KeyUtils.withKey(account, account => $ec.$eip191.signTypedData(typedData, account));
         }
-        return $rpc.signTypedData(rpc, typedData, account);
+        let signer = await $rpc.ensureRpcSigner(account, rpc);
+        return $rpc.signTypedData(signer, typedData, account);
     }
     export async function sign(message: string | Uint8Array, account: TEth.EoAccount, rpc?: Rpc): Promise<TSignature> {
         if (account.key != null) {
             return await KeyUtils.withKey(account, account => $ec.sign(message, account));
         }
-        return $rpc.sign(rpc, message, account);
+        let signer = await $rpc.ensureRpcSigner(account, rpc);
+        return $rpc.sign(signer, message, account);
     }
     export async function signMessage(message: string | Uint8Array, account: TEth.EoAccount, mix?: Rpc | Web3Client): Promise<TSignature> {
         if (account.key != null) {
             return await KeyUtils.withKey(account, account => $ec.$eip191.signMessage(message, account));
         }
-        let rpc = 'getRpc' in mix
-            ? await mix.getRpc()
-            : mix;
-        return $rpc.signMessage(rpc, message, account);
+        let signer = await $rpc.ensureRpcSigner(account, mix);
+        return $rpc.signMessage(signer, message, account);
     }
     export async function signTx(tx: TEth.TxLike, account: TEth.EoAccount, rpc?: Rpc): Promise<TEth.Hex> {
         tx.from ??= account.address;
 
         if ($hex.isEmpty(account.key)) {
-            $require.notNull(rpc, `The account has no private key locally, and the RPC handler is not provided`);
-
-            return $rpc.signTx(rpc, tx);
+            let signer = await $rpc.ensureRpcSigner(account, rpc);
+            return $rpc.signTx(signer, tx);
         }
         return await KeyUtils.withKey(account, account => $ec.signTx(tx, account));
     }
@@ -70,6 +69,16 @@ export namespace $sig {
     }
 
     export namespace $rpc {
+
+        export async function ensureRpcSigner (account: TEth.EoAccount, mix: Rpc | Web3Client): Promise<Rpc> {
+            if (account.signer) {
+                return account.signer as any;
+            }
+            $require.notNull(mix, `Rpc signer is not provided for ${account.address}`);
+            let rpc = 'getRpc' in mix ? await mix.getRpc() : mix;
+            return rpc;
+        }
+
         export async function signTx(rpc: Rpc, tx: TEth.TxLike): Promise<TEth.Hex> {
             let body = {
                 type: $hex.ensure(tx.type),
@@ -264,7 +273,7 @@ export namespace $sig {
             let r = '0x' + signature.substring(2, 2 + 64);
             let s = '0x' + signature.substring(2 + 64, 2 + 64 + 64);
             let v = '0x' + signature.substring(2 + 64 + 64);
-            return { r, s, v } as TSignature;
+            return { r, s, v, signature } as TSignature;
         }
 
         export function toUint8Array(message: string | Uint8Array, opts?: { encoding?: 'utf8' | 'hex' }): Uint8Array {

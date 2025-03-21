@@ -213,7 +213,6 @@ export class GnosisSafeHandler {
             let {
                 signature,
             } = await this.createTxSignature(safeTxHash, owner);
-
             return {
                 address: owner.address.toLowerCase(),
                 signature: signature

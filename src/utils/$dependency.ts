@@ -1,5 +1,7 @@
 /** ESM and CJS Loader */
 
+import { $is } from './$is';
+
 export namespace $dependency {
 
     export async function load<T = any> (name: string): Promise<T> {
@@ -16,6 +18,9 @@ export namespace $dependency {
     }
 
     export function dirname () {
+        if ($is.BROWSER) {
+            return location.host;
+        }
         if (typeof __dirname !== 'undefined') {
             return __dirname;
         }
