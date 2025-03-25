@@ -1,6 +1,6 @@
-import { Bscscan } from '@dequanto/explorer/Bscscan';
 import { $http } from '@dequanto/utils/$http';
 import { File } from 'atma-io'
+import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
 
 UTest({
     async $before () {
@@ -16,7 +16,7 @@ UTest({
     },
 
     async 'should fetch ABI by similar ByteCode' () {
-        let bscscan = new Bscscan();
+        let bscscan = BlockchainExplorerFactory.get('bsc');
         let { abi } = await bscscan.getContractAbi('0xfbD2aa7efA2B46Ce3c58D7ab0D92C176c71499C0');
         eq_(typeof abi, 'string');
         has_(abi, 'uint256');

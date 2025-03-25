@@ -48,6 +48,10 @@ export namespace $config {
         } else {
             platform = mix;
         }
+        if (platform.startsWith('hh:')) {
+            // Hardhat fork
+            return { platform } as any;
+        }
 
         let web3Config = web3[platform];
         if (web3Config == null) {

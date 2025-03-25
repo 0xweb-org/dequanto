@@ -12,15 +12,16 @@ import { IConfigData } from '@dequanto/config/interface/IConfigData';
 export namespace Web3ClientFactory {
 
     export function get (platform: TPlatform | number, opts?: IWeb3EndpointOptions) {
-        let options = $config.getWeb3Options(platform);
-        if (options.platform === 'hardhat' || options.platform.startsWith('hh:')) {
+        if (typeof platform === 'string' && (platform === 'hardhat' || platform.startsWith('hh:'))) {
             let client = di.resolve(HardhatProvider).client('localhost', opts);
-            if (options.platform.startsWith('hh:')) {
-                client.configureFork(options.platform.slice(3));
+            if (platform.startsWith('hh:')) {
+                client.configureFork(platform.slice(3));
             }
             return client;
         }
 
+
+        let options = $config.getWeb3Options(platform);
         $require.notNull(options, `Unsupported platform ${platform} for web3 client`)
         return new EvmWeb3Client({
             ...options,
