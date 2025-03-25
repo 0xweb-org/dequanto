@@ -7,6 +7,7 @@ export const ConfigDefaults = <IConfigData> {
         }
     },
     "tokens": null,
+    "chains": null,
     "blockchainExplorer": {
         "bsc": {
             "key": "MB1EM53BDJFKDIHUZ5JJT946BJJUQIHFP2",
@@ -116,14 +117,10 @@ export const ConfigDefaults = <IConfigData> {
             "chainToken": "ETH",
             "endpoints": [
                 {
-                    "url": "https://eth.public-rpc.com"
+                    "url": "https://ethereum-rpc.publicnode.com"
                 },
                 {
-                    "url": "https://main-light.eth.linkpool.io",
-                    "rateLimit": "2000/5m"
-                },
-                {
-                    "url": "wss://main-light.eth.linkpool.io/ws",
+                    "url": "https://eth.drpc.org",
                     "rateLimit": "2000/5m"
                 }
             ]

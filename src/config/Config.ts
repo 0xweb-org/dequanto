@@ -4,8 +4,6 @@ import { TConfigParamsBrowser, TConfigParamsNode } from './AConfigBase';
 import { IConfigData } from './interface/IConfigData';
 import { ConfigProvider } from './ConfigProvider';
 import { $logger } from '../utils/$logger';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { TExplorer } from '@dequanto/models/TExplorer';
 
 export class Config {
 

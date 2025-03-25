@@ -109,7 +109,7 @@ class NodeBufferUtils extends BufferBase {
         if (buffer instanceof Buffer) {
             return (`0x` + buffer.toString('hex')) as TEth.Hex;
         }
-        return (`0x` + buffer.reduce((hex, x) => {
+        return (`0x` + (buffer as Uint8Array).reduce((hex, x) => {
             return hex + x.toString(16).padStart(2, '0');
         }, '')) as TEth.Hex;
     }
