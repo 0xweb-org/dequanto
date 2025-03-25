@@ -1,21 +1,16 @@
-import { TBufferLike } from '@dequanto/models/TBufferLike';
 import { TPlatform } from '@dequanto/models/TPlatform';
-
-import { IPoolClientConfig } from '../ClientPool';
-import { TEth } from '@dequanto/models/TEth';
+import { IRpcConfig } from '../ClientPool';
 import { TTransport } from '@dequanto/rpc/transports/ITransport';
 
 export interface IWeb3Client {
     platform: string
     chainId: number
     defaultGasLimit: number
-
-    //-signTx (txData: TEth.Tx, privateKey: string): Promise<TBufferLike>
 }
 
 
 export interface IWeb3ClientOptions {
-    endpoints: IPoolClientConfig[]
+    endpoints: IRpcConfig[]
     platform?: TPlatform
     chainId?: number
     // Token symbol: e.g. ETH

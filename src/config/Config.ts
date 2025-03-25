@@ -4,6 +4,8 @@ import { TConfigParamsBrowser, TConfigParamsNode } from './AConfigBase';
 import { IConfigData } from './interface/IConfigData';
 import { ConfigProvider } from './ConfigProvider';
 import { $logger } from '../utils/$logger';
+import { TPlatform } from '@dequanto/models/TPlatform';
+import { TExplorer } from '@dequanto/models/TExplorer';
 
 export class Config {
 
@@ -15,7 +17,7 @@ export class Config {
 
         obj_extend(config, cfg);
 
-        if (config.web3 == null) {
+        if (config.web3 == null && config.chains == null) {
             let message = `web3 is not defined in the config file`;
             $logger.log(message);
             singleton.reject(new Error(message));
@@ -33,6 +35,11 @@ export class Config {
         }
         return Config.fetch();
     }
+
+    // static async getExplorerConfig (platform: TPlatform | number): Promise<TExplorer> {
+    //     let config = await Config.get();
+
+    // }
 
     static async extend (json) {
         await provider.extend(json);

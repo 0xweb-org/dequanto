@@ -224,9 +224,6 @@ export namespace TEth {
             internalType?: string;
         }
     }
-
-
-
 }
 
 

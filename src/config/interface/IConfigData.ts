@@ -2,7 +2,8 @@ import { IContractDetails } from '@dequanto/models/IContractDetails';
 import { ITokenGlob } from '@dequanto/models/ITokenGlob';
 import { TAddress } from '@dequanto/models/TAddress';
 import { TPlatform } from '@dequanto/models/TPlatform';
-import { IProviderEndpoint } from '../AConfigBase';
+import { IRpcConfig } from '@dequanto/clients/ClientPool';
+import { TChain } from '@dequanto/models/TChain';
 
 
 export interface IConfigData {
@@ -31,12 +32,15 @@ export interface IConfigData {
             host: string;
         };
     };
+
+    chains: TChain[]
+
     web3: {
         [platform in TPlatform]: {
             chainId?: number
             chainToken?: string
             aliases?: string[]
-            endpoints: IProviderEndpoint[]
+            endpoints: IRpcConfig[]
         };
     };
     contracts?: {

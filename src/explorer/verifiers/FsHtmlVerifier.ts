@@ -5,7 +5,7 @@ import { IVerifier } from './IVerifier';
 import { IBlockchainTransferEvent } from '../IBlockchainExplorer';
 import { $platform } from '@dequanto/utils/$platform';
 import { TPlatform } from '@dequanto/models/TPlatform';
-import { IBlockchainExplorerConfig } from '../BlockchainExplorer';
+import { TExplorer, TExplorerDefinition } from '@dequanto/models/TExplorer';
 
 const PATH_ROOT = `./data/0xc/verification`;
 const PATH_TEMPLATE = `${PATH_ROOT}/template.html`;
@@ -66,7 +66,7 @@ export class FsHtmlVerifier implements IVerifier {
     private key: string;
     private enabled: boolean;
 
-    constructor (public platform: TPlatform, public config: IBlockchainExplorerConfig) {
+    constructor (public platform: TPlatform, public config: TExplorer) {
         $require.notEmpty(platform, `Argument platform is required`);
         $require.notNull(config, `Config is required for ${platform}`);
         this.enabled = Boolean(config.api);
@@ -105,12 +105,12 @@ export class FsHtmlVerifier implements IVerifier {
 
 
         let html = template
-            .replace('__host__', this.config.api)
+            .replace('__host__', this.config.api.url)
             .replace('__name__', contractData.contractName)
             .replace('__JSON__', contractData.sourceCode)
             .replace('__contractaddress__', contractData.address)
             .replace('__contractname__', contractData.contractName)
-            .replace('__apikey__', this.config.key ?? '')
+            .replace('__apikey__', this.config.api.key ?? '')
             .replace('__constructorArguements__', contractData.arguments?.replace(/^0x/, '') || '');
 
 
@@ -162,9 +162,9 @@ export class FsHtmlVerifier implements IVerifier {
 
 
         let html = template
-            .replace('__host__', this.config.api)
+            .replace('__host__', this.config.api.url)
             .replace('__contractaddress__', contractData.address)
-            .replace('__apikey__', this.config.key ?? '')
+            .replace('__apikey__', this.config.api.key ?? '')
             .replace('__expectedImplementation__', contractData.expectedImplementation ?? '')
             ;
 
@@ -197,8 +197,8 @@ export class FsHtmlVerifier implements IVerifier {
         throw new Error('Method not implemented.');
     }
 
-    private extractHostKey (config: IBlockchainExplorerConfig) {
-        let hostKey = /\.(?<hostkey>[\w\-]+)\.\w+($|\/)/.exec(config.api ?? config.host).groups.hostkey;
+    private extractHostKey (config: TExplorer) {
+        let hostKey = /\.(?<hostKey>[\w\-]+)\.\w+($|\/)/.exec(config.api.url).groups.hostKey;
         return hostKey;
     }
     private extractContractName (contractData: { address: `0x${string}`; contractName?: string; }, defaultPfx?: string) {

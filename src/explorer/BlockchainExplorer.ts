@@ -10,7 +10,6 @@ import { TPlatform } from '@dequanto/models/TPlatform';
 import { $address } from '@dequanto/utils/$address';
 import { $require } from '@dequanto/utils/$require';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { $config } from '@dequanto/utils/$config';
 import { $str } from '@dequanto/solidity/utils/$str';
 import { $platform } from '@dequanto/utils/$platform';
 import type { TAbiItem } from '@dequanto/types/TAbi';
@@ -19,8 +18,10 @@ import { $is } from '@dequanto/utils/$is';
 import { $http } from '@dequanto/utils/$http';
 import { IVerifier } from './verifiers/IVerifier';
 import { FsHtmlVerifier } from './verifiers/FsHtmlVerifier';
+import { TExplorer, TExplorerDefinition } from '@dequanto/models/TExplorer';
 
 
+/** @deprecated use TExplorerDefinition instead */
 export interface IBlockchainExplorerConfig {
     key?: string
     api?: string
@@ -34,6 +35,7 @@ export interface IBlockchainExplorerConfig {
     }[]
 }
 
+/** @deprecated use TExplorerDefinition instead */
 export interface IBlockchainExplorerFactoryParams extends IBlockchainExplorerConfig {
 
     platform?: string
@@ -56,35 +58,65 @@ export class BlockchainExplorer implements IBlockchainExplorer {
 
 
     inMemoryDb: IContractDetails[]
-    config: IBlockchainExplorerConfig;
     fsVerification: IVerifier
-    opts: IBlockchainExplorerFactoryParams;
-    platform: TPlatform;
 
-    constructor(opts?: IBlockchainExplorerFactoryParams)
-    constructor(platform?: TPlatform)
-    constructor(mix?: TPlatform | IBlockchainExplorerFactoryParams) {
+    config: TExplorer
+    platform: TPlatform
+    // opts: IBlockchainExplorerFactoryParams;
 
-        let opts = typeof mix === 'string'
-            ? { platform: mix }
-            : mix;
+    getWeb3: (platform) => Web3Client
 
-        this.opts = ensureDefaults(opts);
-        this.config = opts.getConfig(this.platform)
-        this.inMemoryDb = this.opts.CONTRACTS ?? [];
-        this.platform =this.opts.platform;
 
-        if ($str.isNullOrWhiteSpace(opts.ABI_CACHE) === false) {
+    constructor(config: TExplorerDefinition)
+    constructor(opts: IBlockchainExplorerFactoryParams)
+    constructor(mix: TExplorerDefinition | IBlockchainExplorerFactoryParams) {
+
+        $require.notNull(mix.platform, `BlockchainExplorer: Platform is required`);
+
+        let ABI_CACHE = mix.ABI_CACHE ?? `./cache/${$platform.toPath(mix.platform)}/abis.json`;
+        let CONTRACTS = mix.CONTRACTS ?? [];
+
+        let source = mix as TExplorerDefinition & IBlockchainExplorerFactoryParams;
+        let config = {
+            platform: mix.platform,
+            url: source.url ?? source.www ?? source.host,
+            api: (() => {
+                if (source.api == null) {
+                    let host = source.url ?? source.host ?? source.www;
+                    return {
+                        url: `${host}/api`,
+                        key: source.key
+                    }
+                }
+                if (typeof source.api === 'string') {
+                    return {
+                        url: source.api,
+                        key: source.key
+                    }
+                }
+                return source.api;
+            })(),
+            name: source.name ,
+            verification: source.verification ?? true,
+            standard: source.standard,
+        } satisfies TExplorer;
+
+        this.inMemoryDb = CONTRACTS ?? [];
+        this.config = config;
+        this.platform = config.platform;
+        this.getWeb3 = mix.getWeb3 ?? ((platform) => Web3ClientFactory.get(platform));
+
+        if ($str.isNullOrWhiteSpace(ABI_CACHE) === false) {
             this.getContractAbi = memd.fn.memoize(this.getContractAbi, {
                 trackRef: true,
                 persistence: new memd.FsTransport({
-                    path: opts.ABI_CACHE
+                    path: ABI_CACHE
                 })
             });
             this.getContractSource = memd.fn.memoize(this.getContractSource, {
                 trackRef: true,
                 persistence: new memd.FsTransport({
-                    path: opts.ABI_CACHE.replace('.json', '-source.json')
+                    path: ABI_CACHE.replace('.json', '-source.json')
                 })
             });
         }
@@ -101,8 +133,8 @@ export class BlockchainExplorer implements IBlockchainExplorer {
     }
 
     async getContractCreation(address: TAddress): Promise<{ creator: TAddress, txHash: TEth.Hex }> {
-        let apiUrl = this.config.api ?? `${this.config.host}/api`;
-        let url = `${apiUrl}?module=contract&action=getcontractcreation&contractaddresses=${address}&apikey=${this.config.key}`;
+        let apiUrl = this.config.api.url;
+        let url = `${apiUrl}?module=contract&action=getcontractcreation&contractaddresses=${address}&apikey=${this.config.api.key}`;
         let result = await this.client.get(url);
         let json = Array.isArray(result) ? result[0] : result;
         if (json == null) {
@@ -131,8 +163,8 @@ export class BlockchainExplorer implements IBlockchainExplorer {
             return { abi: info.abi, implementation: address }
         }
 
-        let apiUrl = this.config.api ?? `${this.config.host}/api`;
-        let url = `${apiUrl}?module=contract&action=getabi&address=${address}&apikey=${this.config.key}`;
+        let apiUrl = this.config.api.url;
+        let url = `${apiUrl}?module=contract&action=getabi&address=${address}&apikey=${this.config.api.key}`;
         let abi: string;
 
         try {
@@ -149,7 +181,7 @@ export class BlockchainExplorer implements IBlockchainExplorer {
         let abiJson = JSON.parse(abi);
         if (params?.implementation) {
             if ($is.HexBytes32(params.implementation)) {
-                let web3 = this.opts.getWeb3(this.platform);
+                let web3 = this.getWeb3(this.platform);
                 let uin256Hex = await web3.getStorageAt(
                     address,
                     params.implementation
@@ -160,7 +192,7 @@ export class BlockchainExplorer implements IBlockchainExplorer {
             throw new Error(`Implement ${params.implementation} support`);
         }
         if (isOpenZeppelinProxy(abiJson) || mightBeProxy(abiJson)) {
-            let web3 = this.opts.getWeb3(this.platform);
+            let web3 = this.getWeb3(this.platform);
             // (BigInt($contract.keccak256("eip1967.proxy.implementation")) - 1n).toString(16);
             let uint256Hex = await web3.getStorageAt(address, `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`);
             if ($address.isEmpty(uint256Hex)) {
@@ -179,7 +211,7 @@ export class BlockchainExplorer implements IBlockchainExplorer {
         }
 
         if (hasImplementationSlot(abiJson)) {
-            let web3 = this.opts.getWeb3(this.platform);
+            let web3 = this.getWeb3(this.platform);
             let implAddress = await web3.readContract({
                 address: address,
                 abi: abiJson,
@@ -189,7 +221,7 @@ export class BlockchainExplorer implements IBlockchainExplorer {
             return this.getContractAbi(implAddress);
         }
         if (hasTargetSlot(abiJson)) {
-            let web3 = this.opts.getWeb3(this.platform);
+            let web3 = this.getWeb3(this.platform);
             let implAddress = await web3.readContract({
                 address: address,
                 abi: abiJson,
@@ -214,9 +246,9 @@ export class BlockchainExplorer implements IBlockchainExplorer {
     }) {
         await this.fsVerification.submitContractVerification(contractData);
 
-        let url = this.config.api ?? `${this.config.host}/api`;
+        let url = this.config.api.url;
         let body = {
-            apikey: this.config.key,
+            apikey: this.config.api.key,
             module: 'contract',
             action: 'verifysourcecode',
             contractaddress: contractData.address,
@@ -240,9 +272,9 @@ export class BlockchainExplorer implements IBlockchainExplorer {
     }
 
     async checkContractVerificationSubmission(submission: { guid }) {
-        let url = this.config.api ?? `${this.config.host}/api`;
+        let url = this.config.api.url;
         let result = await this.client.get<string>(url, {
-            apikey: this.config.key,
+            apikey: this.config.api.key,
             module: "contract",
             action: "checkverifystatus",
             guid: submission.guid
@@ -256,10 +288,10 @@ export class BlockchainExplorer implements IBlockchainExplorer {
     }): Promise<string> {
         await this.fsVerification.submitContractProxyVerification(contractData);
 
-        let url = this.config.api ?? `${this.config.host}/api`;
+        let url = this.config.api.url;
         let guid = await this.client.post(url, {
             body: {
-                apikey: this.config.key,
+                apikey: this.config.api.key,
                 module: "contract",
                 action: "verifyproxycontract",
                 address: contractData.address,
@@ -269,9 +301,9 @@ export class BlockchainExplorer implements IBlockchainExplorer {
         return guid;
     }
     async checkContractProxyVerificationSubmission(submission: { guid: any; }): Promise<string> {
-        let url = this.config.api ?? `${this.config.host}/api`;
+        let url = this.config.api.url;
         let result = await this.client.get<string>(url, {
-            apikey: this.config.key,
+            apikey: this.config.api.key,
             module: "contract",
             action: "checkproxyverification",
             guid: submission.guid
@@ -292,8 +324,8 @@ export class BlockchainExplorer implements IBlockchainExplorer {
         ContractName: string
         ABI: string
     }> {
-        let apiUrl = this.config.api ?? `${this.config.host}/api`;
-        let url = `${apiUrl}?module=contract&action=getsourcecode&address=${address}&apikey=${this.config.key}`;
+        let apiUrl = this.config.api.url;
+        let url = `${apiUrl}?module=contract&action=getsourcecode&address=${address}&apikey=${this.config.api.key}`;
         let result = await this.client.get(url);
         let json = Array.isArray(result) ? result[0] : result;
 
@@ -400,7 +432,7 @@ export class BlockchainExplorer implements IBlockchainExplorer {
     }
 
     async getSimilarContract(address: TAddress) {
-        let url = `${this.config.www}/address/${address}#code`;
+        let url = `${this.config.url}/address/${address}#code`;
         let html = await this.client.getHtml(url);
         let rgx = /This contract matches/ig;
         let match = rgx.exec(html);
@@ -426,8 +458,8 @@ export class BlockchainExplorer implements IBlockchainExplorer {
         size?: number,
         sort?: 'asc' | 'desc'
     }) {
-        let apiUrl = this.config.api ?? `${this.config.host}/api`;
-        let url = `${apiUrl}?module=account&action=${type}&address=${address}&sort=${params.sort ?? 'desc'}&apikey=${this.config.key}`;
+        let apiUrl = this.config.api.url;
+        let url = `${apiUrl}?module=account&action=${type}&address=${address}&sort=${params.sort ?? 'desc'}&apikey=${this.config.api.key}`;
         if (params.fromBlockNumber != null) {
             url += `&startblock=${params.fromBlockNumber}`
         }
@@ -515,25 +547,24 @@ function hasMethod(abi: TAbiItem[], name: string) {
     return abi.some(item => item.type === 'function' && item.name === name);
 }
 
-function ensureDefaults(opts: IBlockchainExplorerFactoryParams) {
-    opts ??= {};
+function ensureDefaults(opts: TExplorerDefinition) {
 
     let platform = opts.platform;
     $require.notNull(platform, `Generic Blockchain Explorer Config should contain platform name`);
 
     opts.ABI_CACHE ??= `./cache/${$platform.toPath(platform)}/abis.json`
     opts.CONTRACTS ??= [];
-    opts.getWeb3 ??= (_) => {
-        return Web3ClientFactory.get(platform);
-    };
-    opts.getConfig ??= () => {
-        let config = $config.get(`blockchainExplorer.${platform}`);
+    // opts.getWeb3 ??= (_) => {
+    //     return Web3ClientFactory.get(platform);
+    // };
+    // opts.getConfig ??= () => {
+    //     let config = $config.get(`blockchainExplorer.${platform}`);
 
-        return {
-            ...(config ?? {}),
-            ...opts,
-        };
-    };
+    //     return {
+    //         ...(config ?? {}),
+    //         ...opts,
+    //     };
+    // };
     return opts;
 }
 

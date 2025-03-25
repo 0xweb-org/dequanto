@@ -69,6 +69,7 @@ export class GnosisSafeHandler {
 
     async submitTransaction(safeTxHash: string, options?: { threshold?: number }) {
         let tx = await this.transport.getTx(safeTxHash);
+
         let writer = di.resolve(ContractWriter, this.safeAddress, this.client);
         let confirmations = tx.confirmations;
 

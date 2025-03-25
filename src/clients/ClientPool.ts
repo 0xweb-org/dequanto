@@ -7,37 +7,32 @@ import { $contract } from '@dequanto/utils/$contract';
 import { $logger, l } from '@dequanto/utils/$logger';
 import { $promise } from '@dequanto/utils/$promise';
 import { $array } from '@dequanto/utils/$array';
-import { $bigint } from '@dequanto/utils/$bigint';
 
 import { PromiseEventWrap } from './model/PromiEventWrap';
 import { IWeb3ClientStatus } from './interfaces/IWeb3ClientStatus';
 import { ClientStatus } from './model/ClientStatus';
 import { ClientPoolTrace, ClientPoolTraceError, ErrorCode } from './ClientPoolStats';
-import { class_Dfr, obj_extendDefaults } from 'atma-utils';
+import { class_Dfr } from 'atma-utils';
 import { ClientErrorUtil } from './utils/ClientErrorUtil';
 import { IWeb3ClientOptions } from './interfaces/IWeb3Client';
 import { RateLimitGuard } from './handlers/RateLimitGuard';
 import { Web3BatchRequests } from './Web3BatchRequests';
 
-import { HttpTransport } from '@dequanto/rpc/transports/HttpTransport';
-import { WsTransport } from '@dequanto/rpc/transports/WsTransport';
 import { Rpc, RpcTypes } from '@dequanto/rpc/Rpc';
 
-import { Web3Transport } from '@dequanto/rpc/transports/compatibility/Web3Transport';
 import { PromiseEvent } from '@dequanto/class/PromiseEvent';
 import { TTransport } from '@dequanto/rpc/transports/ITransport';
 
 import { TRpc } from '@dequanto/rpc/RpcBase';
 import { TEth } from '@dequanto/models/TEth';
 import { $rpc } from '@dequanto/rpc/$rpc';
-import { Web3 } from './compatibility/Web3';
 import { DataLike } from '@dequanto/utils/types';
 
-export interface IPoolClientConfig {
+export interface IRpcConfig {
     url?: string
     options?: TTransport.Options.Http | TTransport.Options.Ws
 
-    /** Will be a pefered node for submitting transactions */
+    /** Will be a preferred node for submitting transactions */
     safe?: boolean
     distinct?: boolean
     wallet?: boolean
@@ -54,7 +49,7 @@ export interface IPoolClientConfig {
     /** True if the node supports traceTransaction calls */
     traceable?: boolean
 
-    // requestCout/timeSpan: e.g. 100/1min
+    // requestCount/timeSpan: e.g. 100/1min
     rateLimit?: string
 
     // the max block range to fetch per single request when getting Logs
@@ -406,7 +401,7 @@ export class ClientPool {
                 return null;
             }
             let promise = method(wClient);
-            return options?.timeout == null ? promise : $promise.timeout(promise, options.timeout);
+            return options?.timeout == null ? promise : $promise.timeout(promise, options.timeout, `${methodName} in ${ wClient.config?.url }`);
         }
 
         let nodes = await alot(this.clients).mapAsync(async (wClient, idx) => {
@@ -422,7 +417,8 @@ export class ClientPool {
                 ]);
                 let blockNumber = Number(blockNumberUint);
 
-                let ping = Math.round((Date.now() - start) / 4);
+                let requestsCount = options?.calls?.length ?? 4
+                let ping = Math.round((Date.now() - start) / requestsCount);
                 let blockNumberBehind = 0;
                 if (syncing?.currentBlock && syncing.currentBlock < blockNumber) {
                     blockNumberBehind = blockNumber - Number(syncing.currentBlock);
@@ -750,7 +746,7 @@ export class WClient {
 
     rpc: Rpc
 
-    config: IPoolClientConfig
+    config: IRpcConfig
     rateLimitGuard: RateLimitGuard
 
     /** For getLogs method, as some providers limit the range request or page result value */
@@ -800,7 +796,7 @@ export class WClient {
         }
     }
 
-    constructor(mix: IPoolClientConfig) {
+    constructor(mix: IRpcConfig) {
         const hasUrl = 'url' in mix && typeof mix.url === 'string';
         const hasWeb3 = 'web3' in mix && typeof mix.web3 != null;
         if (hasUrl || hasWeb3) {

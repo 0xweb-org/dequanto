@@ -101,10 +101,8 @@ web3:
     chainToken: ETH
     endpoints:
       # public rpc (ankr, linkpool)
-      - url: 'https://eth.public-rpc.com'
-      - url: 'https://main-light.eth.linkpool.io'
-        rateLimit: 2000/5m
-      - url: 'wss://main-light.eth.linkpool.io/ws'
+      - url: 'https://ethereum-rpc.publicnode.com'
+      - url: 'https://eth.drpc.org'
         rateLimit: 2000/5m
       # custom infura
       # - url: 'https://mainnet.infura.io/v3/a83f91c556054576a4c608ad4312720b'

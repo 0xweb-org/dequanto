@@ -158,9 +158,6 @@ UTest({
 
         let { safe, freeTokenContract, contracts } = await SafeTestableFactory.prepare();
 
-        console.log(`Safe`, safe.safeAddress);
-        console.log(`FREE_TOKEN`, freeTokenContract.address);
-
         eq_($address.isValid(safe.safeAddress), true, `Invalid address ${safe.safeAddress}`);
 
         let contract = new GnosisSafe(safe.safeAddress, client);

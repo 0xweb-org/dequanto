@@ -6,7 +6,7 @@ import type { TPlatform } from '@dequanto/models/TPlatform';
 
 import type { IWeb3Client, IWeb3ClientOptions } from './interfaces/IWeb3Client';
 
-import { ClientPool, IPoolClientConfig, IPoolWeb3Request, WClient } from './ClientPool';
+import { ClientPool, IRpcConfig, IPoolWeb3Request, WClient } from './ClientPool';
 import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
 import { $number } from '@dequanto/utils/$number';
 
@@ -65,8 +65,8 @@ export abstract class Web3Client implements IWeb3Client {
     public wallet = di.resolve(WalletClient);
 
     constructor(options: IWeb3ClientOptions)
-    constructor(endpoints: IPoolClientConfig[])
-    constructor(mix: IWeb3ClientOptions | IPoolClientConfig[]) {
+    constructor(endpoints: IRpcConfig[])
+    constructor(mix: IWeb3ClientOptions | IRpcConfig[]) {
         if (Array.isArray(mix)) {
             this.options = { endpoints: mix }
         } else if (mix != null) {
@@ -154,10 +154,7 @@ export abstract class Web3Client implements IWeb3Client {
     ): Promise<RpcSubscription<TEth.Hex>>;
     async subscribe(type, ...params): Promise<RpcSubscription<any>> {
         let wClient = await this.pool.getWrappedWeb3({ ws: true });
-        console.log(`Check ensure connected`);
         await wClient.ensureConnected();
-        console.log(`Check ensure connectd OK`);
-
         switch (type) {
             case 'newBlockHeaders':
                 type = 'newHeads';
@@ -548,9 +545,9 @@ export abstract class Web3Client implements IWeb3Client {
     }
 
     static url<T extends Web3Client>(options: IWeb3ClientOptions)
-    static url<T extends Web3Client>(endpoints: IPoolClientConfig[], opts?: Partial<IWeb3ClientOptions>)
+    static url<T extends Web3Client>(endpoints: IRpcConfig[], opts?: Partial<IWeb3ClientOptions>)
     static url<T extends Web3Client>(url: string, opts?: Partial<IWeb3ClientOptions>): T
-    static url<T extends Web3Client>(mix: IWeb3ClientOptions | IPoolClientConfig[] | string, opts?: Partial<IWeb3ClientOptions>): T {
+    static url<T extends Web3Client>(mix: IWeb3ClientOptions | IRpcConfig[] | string, opts?: Partial<IWeb3ClientOptions>): T {
         const Ctor: any = this;
         let options: IWeb3ClientOptions;
         if (typeof mix === 'string') {

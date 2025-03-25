@@ -4,6 +4,7 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { ITokenProvider } from './ITokenProvider';
 import { ContractReader } from '@dequanto/contracts/ContractReader';
+import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 
 export class TPChain implements ITokenProvider {
 
@@ -12,8 +13,11 @@ export class TPChain implements ITokenProvider {
     }
 
     async getByAddress(platform: TPlatform, address: TAddress) {
-        if (this.platform !== platform) {
+        if (this.platform !== platform || platform === 'hardhat') {
             return null;
+        }
+        if (this.client == null) {
+            this.client = await Web3ClientFactory.getAsync(platform);
         }
 
         let reader = new ContractReader(this.client)

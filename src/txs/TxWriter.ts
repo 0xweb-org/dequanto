@@ -173,6 +173,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
         let agent = TxWriterAccountAgents.get(this.account);
         if (agent != null) {
+
             let sender = await this.getSender();
             let innerWriter: TxWriter;
             try {
@@ -248,7 +249,6 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
                 .client
                 .sendTransaction(txData);
         }
-
         promiseEvent
             .once('transactionHash', hash => {
                 if (tx.hash === hash) {

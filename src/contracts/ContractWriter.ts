@@ -120,6 +120,7 @@ export class ContractWriter implements IContractWriter {
         }
 
         let writerConfig = configs?.writerConfig ?? this.writerConfig;
+
         let writer = TxWriter.write(
             this.client,
             txBuilder,

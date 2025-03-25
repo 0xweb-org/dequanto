@@ -4,6 +4,10 @@ import { BlockchainExplorer, IBlockchainExplorerConfig, IBlockchainExplorerFacto
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { $config } from '@dequanto/utils/$config';
 import { Config } from '@dequanto/config/Config';
+import { TExplorer, TExplorerDefinition } from '@dequanto/models/TExplorer';
+import { IConfigData } from '@dequanto/config/interface/IConfigData';
+import { TChain } from '@dequanto/models/TChain';
+import { $require } from '@dequanto/utils/$require';
 
 
 
@@ -18,14 +22,23 @@ export namespace BlockchainExplorerFactory {
         registry[platform] = explorer;
     }
 
-    export function get (platform: TPlatform | string, opts?: IBlockchainExplorerFactoryParams) {
+    export function get (platform: TPlatform | number)
+    export function get (config: TExplorerDefinition)
+    /** @obsolete */
+    export function get (platform: TPlatform | number, opts: IBlockchainExplorerFactoryParams)
+    export function get (mix: TPlatform | number | TExplorerDefinition, opts?: IBlockchainExplorerFactoryParams) {
 
-        let cfg = $config.get(`blockchainExplorer.${platform}`);
+        $require.notNull(mix, `ArgumentException: no platform in BlockchainExplorerFactory`);
+
+        let platform = typeof mix === 'object' ? mix.platform : mix;
+
+
+        let cfg =  $config.getExplorerOptions(platform);
         let params = {
-            platform ,
             ...(opts ?? {}),
-            ...(cfg?? {})
-        };
+            ...(cfg ?? {}),
+        } as any;
+
         let Ctor = registry[platform];
         if (Ctor != null) {
             if (typeof Ctor === 'function') {
@@ -38,7 +51,7 @@ export namespace BlockchainExplorerFactory {
     }
 
     /** Same as sync variation, but ensures the config is being fetched */
-    export async function getAsync (platform: TPlatform | string, opts?: IBlockchainExplorerFactoryParams) {
+    export async function getAsync (platform: TPlatform, opts?: IBlockchainExplorerFactoryParams) {
         await Config.get();
         return get(platform, opts);
     }
