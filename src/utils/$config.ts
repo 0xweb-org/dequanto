@@ -1,9 +1,9 @@
+import alot from 'alot';
+import { obj_getProperty, obj_setProperty } from 'atma-utils';
 import { config } from '@dequanto/config/Config';
 import { ConfigDefaults } from '@dequanto/config/ConfigDefaults';
 import { IConfigData } from '@dequanto/config/interface/IConfigData';
 import { TEth } from '@dequanto/models/TEth';
-import alot from 'alot';
-import { obj_getProperty, obj_setProperty } from 'atma-utils';
 import { $require } from './$require';
 import { IWeb3ClientOptions } from '@dequanto/clients/interfaces/IWeb3Client';
 import { TExplorerDefinition } from '@dequanto/models/TExplorer';
@@ -92,7 +92,11 @@ export namespace $config {
     }
 
     export function set <T = any> (path: string, value: T) {
-        $global.app.config?.$set?.(path, value);
+        if (typeof $global.app?.config?.$set === 'function') {
+            $global.app.config.$set(path, value);
+            return;
+        }
+        obj_setProperty(config, path, value);
     }
 
     /**

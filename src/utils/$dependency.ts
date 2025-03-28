@@ -19,7 +19,7 @@ export namespace $dependency {
 
     export function dirname () {
         if ($is.BROWSER) {
-            return location.host;
+            return location.origin;
         }
         if (typeof __dirname !== 'undefined') {
             return __dirname;
