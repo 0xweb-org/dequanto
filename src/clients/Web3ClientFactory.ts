@@ -1,5 +1,4 @@
 import di from 'a-di';
-import alot from 'alot';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { IWeb3EndpointOptions } from './interfaces/IWeb3EndpointOptions';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
@@ -7,7 +6,6 @@ import { Config } from '@dequanto/config/Config';
 import { EvmWeb3Client } from './EvmWeb3Client';
 import { $require } from '@dequanto/utils/$require';
 import { $config } from '@dequanto/utils/$config';
-import { IConfigData } from '@dequanto/config/interface/IConfigData';
 
 export namespace Web3ClientFactory {
 
@@ -19,7 +17,6 @@ export namespace Web3ClientFactory {
             }
             return client;
         }
-
 
         let options = $config.getWeb3Options(platform);
         $require.notNull(options, `Unsupported platform ${platform} for web3 client`)

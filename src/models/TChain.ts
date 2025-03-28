@@ -5,13 +5,14 @@ import { TExplorer } from './TExplorer'
 
 export interface TChain {
     name?: string
+    icon?: string
+    wwww?: string
 
     platform: TEth.Platform
     aliases?: string[]
 
     chainId?: number
     chainToken?: string
-
 
     endpoints: IRpcConfig[]
 
@@ -49,4 +50,7 @@ export interface TChain {
     spotPriceAggregator?: {
         aggregator: TEth.Address
     };
+    ens?: {
+        registry: TEth.Address
+    }
 }
