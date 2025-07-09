@@ -198,7 +198,7 @@ export class FsHtmlVerifier implements IVerifier {
     }
 
     private extractHostKey (config: TExplorer) {
-        let hostKey = /\.(?<hostKey>[\w\-]+)\.\w+($|\/)/.exec(config.api.url).groups.hostKey;
+        let hostKey = /(?<hostKey>[^\.]+)\.\w+($|\/)/.exec(config.api?.url ?? config.url).groups.hostKey;
         return hostKey;
     }
     private extractContractName (contractData: { address: `0x${string}`; contractName?: string; }, defaultPfx?: string) {

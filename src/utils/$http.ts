@@ -43,15 +43,11 @@ export namespace $http {
             if (contentType == null) {
                 contentType = 'application/json';
                 headers.append('Content-Type', contentType);
-                //headers.append('Content-Type', 'application/x-www-form-urlencoded');
             }
 
             if (typeof body !== 'string') {
                 if (contentType.includes('urlencoded')) {
                     const params = new URLSearchParams(opts.body);
-                    // for (let key in opts.body) {
-                    //     params.append(key, opts.body[key]);
-                    // }
                     body = params.toString();
                 }
                 if (contentType.includes('json')) {
@@ -88,7 +84,10 @@ export namespace $http {
             data: data
         };
         if (resp.status > 400) {
-            let err = new HttpError(response);
+            let err = new HttpError({
+                url,
+                method: options.method
+            }, response);
             throw err;
         }
 
@@ -156,8 +155,8 @@ export namespace $http {
     }
 
     class HttpError extends Error {
-        constructor (public response: { status: number, data: any}) {
-            super(`HTTP Error ${response.status}. ${typeof response.data === 'string' ? response.data : ''}`);
+        constructor (public req: { method, url }, public response: { status: number, data: any}) {
+            super(`HTTP Error ${response.status} for ${req.method}:${req.url}. ${typeof response.data === 'string' ? response.data : ''}`);
         }
     }
 }

@@ -484,7 +484,7 @@ export class Deployments {
         } catch (error) {
             deployment.verified = error.message;
             await this.store.updateDeployment(deployment);
-            this._logger.error(`Verification error ${error.message}`);
+            this._logger.error(`Verification error ${error.stack ?? error.message}`);
         }
     }
 

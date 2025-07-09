@@ -208,7 +208,7 @@ export class JsonArrayMultiStore<T> {
                 let end = start + groupSize;
                 return `${start}-${end}`;
             })
-            .mapAsync(async group => {
+            .forEachAsync(async group => {
                 let store = this.getStore(group.key);
                 await store.upsertMany(group.values);
             })
