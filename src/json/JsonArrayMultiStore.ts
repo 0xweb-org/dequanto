@@ -212,7 +212,7 @@ export class JsonArrayMultiStore<T> {
                 let store = this.getStore(group.key);
                 await store.upsertMany(group.values);
             })
-            .toArrayAsync();
+            .toArrayAsync({ threads: 1 });
 
         return arr as T[];
     }
