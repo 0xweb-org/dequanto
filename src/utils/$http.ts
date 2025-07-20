@@ -34,7 +34,8 @@ export namespace $http {
     async function doFetch <T = any> (opts: IHttpFetch): Promise<THttpResponse<T>> {
         let url = opts.url;
         if (opts.params) {
-            url += '?' + new URLSearchParams(opts.params).toString();
+            let c = url.includes('?') ? '&' : '?';
+            url += c + new URLSearchParams(opts.params).toString();
         }
         let headers = new Headers(opts.headers ?? {});
         let body = opts.body;

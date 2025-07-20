@@ -132,9 +132,14 @@ export class BlockchainExplorer implements IBlockchainExplorer {
         return info;
     }
 
-    async getContractCreation(address: TAddress): Promise<{ creator: TAddress, txHash: TEth.Hex }> {
+    private formatUri (query: string) {
         let apiUrl = this.config.api.url;
-        let url = `${apiUrl}?module=contract&action=getcontractcreation&contractaddresses=${address}&apikey=${this.config.api.key}`;
+        let c = apiUrl.includes('?') ? '&' : '?';
+        return `${apiUrl}${c}${query}&apikey=${this.config.api.key}`
+    }
+
+    async getContractCreation(address: TAddress): Promise<{ creator: TAddress, txHash: TEth.Hex }> {
+        let url = this.formatUri(`module=contract&action=getcontractcreation&contractaddresses=${address}`);
         let result = await this.client.get(url);
         let json = Array.isArray(result) ? result[0] : result;
         if (json == null) {
@@ -163,8 +168,7 @@ export class BlockchainExplorer implements IBlockchainExplorer {
             return { abi: info.abi, implementation: address }
         }
 
-        let apiUrl = this.config.api.url;
-        let url = `${apiUrl}?module=contract&action=getabi&address=${address}&apikey=${this.config.api.key}`;
+        let url = this.formatUri(`module=contract&action=getabi&address=${address}`);
         let abi: string;
 
         try {
@@ -324,8 +328,8 @@ export class BlockchainExplorer implements IBlockchainExplorer {
         ContractName: string
         ABI: string
     }> {
-        let apiUrl = this.config.api.url;
-        let url = `${apiUrl}?module=contract&action=getsourcecode&address=${address}&apikey=${this.config.api.key}`;
+
+        let url = this.formatUri(`module=contract&action=getsourcecode&address=${address}`);
         let result = await this.client.get(url);
         let json = Array.isArray(result) ? result[0] : result;
 
@@ -458,8 +462,7 @@ export class BlockchainExplorer implements IBlockchainExplorer {
         size?: number,
         sort?: 'asc' | 'desc'
     }) {
-        let apiUrl = this.config.api.url;
-        let url = `${apiUrl}?module=account&action=${type}&address=${address}&sort=${params.sort ?? 'desc'}&apikey=${this.config.api.key}`;
+        let url = this.formatUri(`module=account&action=${type}&address=${address}&sort=${params.sort ?? 'desc'}`);
         if (params.fromBlockNumber != null) {
             url += `&startblock=${params.fromBlockNumber}`
         }
