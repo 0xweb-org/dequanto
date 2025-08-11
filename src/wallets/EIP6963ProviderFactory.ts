@@ -127,7 +127,7 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
                 }
             });
         }
-        this.global.dispatchEvent(new CustomEvent('eip6963:requestProvider'));
+        this.global.dispatchEvent(new this.global.CustomEvent('eip6963:requestProvider'));
 
     }
     private listenToNewProvider () {

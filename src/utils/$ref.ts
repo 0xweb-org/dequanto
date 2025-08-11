@@ -12,6 +12,8 @@ export type TGlobal = {
     dispatchEvent (event: any): void;
 
     localStorage?: WindowLocalStorage['localStorage']
+
+    CustomEvent: typeof CustomEvent;
 }
 
 export namespace $ref {
@@ -30,6 +32,13 @@ export namespace $ref {
                 };
                 g.dispatchEvent = function (event: CustomEvent) {
                     emitter.emit(event.type, event);
+                };
+            }
+            if (typeof g.CustomEvent === 'undefined') {
+                g.CustomEvent = <any> class CustomEvent {
+                    constructor (public data) {
+
+                    }
                 };
             }
 
