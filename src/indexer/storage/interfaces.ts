@@ -22,4 +22,5 @@ export interface IEventsIndexerStore {
 export interface IEventsIndexerMetaStore {
     upsertMany(meta: TEventsIndexerMeta[]): Promise<TEventsIndexerMeta[]>
     fetch (): Promise<TEventsIndexerMeta[]>
+    removeMany(meta: TEventsIndexerMeta[]): Promise<any>
 }

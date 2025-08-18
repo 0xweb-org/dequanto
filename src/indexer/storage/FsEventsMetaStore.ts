@@ -59,6 +59,9 @@ export class FsEventsMetaStore <T extends ContractBase> implements IEventsIndexe
         return await this.store.getAll();
     }
 
+    async removeMany (meta: TEventsIndexerMeta[]) {
+        await this.store.removeMany(meta.map(x => x.event));
+    }
 
 }
 

@@ -163,12 +163,16 @@ export class EventsIndexer <T extends ContractBase> {
         l`Removing ${events.length} from Block #${params.fromBlock}...`;
         await this.store.removeMany(events);
 
+        let metas = await this.storeMeta.fetch();
         let lastBlock = params.fromBlock - 1;
-        let meta = await this.storeMeta.fetch();
-        meta.forEach(x => {
-            x.lastBlock = Math.min(x.lastBlock, lastBlock);
-        });
-        await this.storeMeta.upsertMany(meta);
+        if (lastBlock < 0) {
+            await this.storeMeta.removeMany(metas)
+        } else {
+            metas.forEach(x => {
+                x.lastBlock = Math.min(x.lastBlock, lastBlock);
+            });
+            await this.storeMeta.upsertMany(metas);
+        }
     }
 
     private async getRanges (events: string[], initialBlockNumber: number, toBlock: number, fromBlock?: number): Promise<TRange[]> {

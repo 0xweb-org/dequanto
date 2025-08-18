@@ -1,5 +1,6 @@
 import { TEth } from '@dequanto/models/TEth';
 import { $require } from './$require';
+import { $bigint } from './$bigint';
 
 export namespace $number {
 
@@ -112,21 +113,30 @@ export namespace $number {
             const K = 10 ** 3;
             const M = 10 ** 6;
             const B = 10 ** 9;
-            if (num >= B) {
+            const numAbs = Math.abs(num);
+            if (numAbs >= B) {
                 return format(num / B, { maximumFractionDigits: options.maximumFractionDigits ?? 2 }) + 'B';
             }
-            if (num >= M) {
+            if (numAbs >= M) {
                 return format(num / M, { maximumFractionDigits: options.maximumFractionDigits ?? 2 }) + 'M';
             }
-            if (num >= K) {
+            if (numAbs >= K) {
                 return format(num / K, { maximumFractionDigits: options.maximumFractionDigits ?? 2 }) + 'K';
             }
-
             return format(num, { maximumFractionDigits: options.maximumFractionDigits ?? 2 });
         }
         return num.toLocaleString('en-US', {
             maximumFractionDigits: options.maximumFractionDigits ?? 4
         });
+    }
+
+    export function humanize (num: bigint, decimals: number)
+    export function humanize (num: number)
+    export function humanize (mix: number | bigint, decimals: number = 18) {
+        if (typeof mix === 'bigint') {
+            mix = $bigint.toEther(mix, decimals);
+        }
+        return format(mix, { abbreviation: true });
     }
 
     export function toHex (num: string | number | TEth.Hex | bigint): TEth.Hex {
