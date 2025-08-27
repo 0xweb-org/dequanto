@@ -82,9 +82,7 @@ export class EventsIndexer <TContract extends ContractBase> {
         filter?: {
             fromBlock?: number
             toBlock?: number
-            params?: TLogName extends keyof TContract
-                ? (TContract[TLogName] extends (options: { params?: infer TParams }) => any ? TParams : never)
-                : never,
+            params?: Partial<TContract['Types']['Events'][TLogName]['outputParams']>
         }
     ): Promise<{
         logs: ITxLogItem<GetTypes<TContract>['Events'][TLogName]['outputParams']>[],
@@ -113,9 +111,7 @@ export class EventsIndexer <TContract extends ContractBase> {
             fromBlock?: number
             toBlock?: number
             blockRangeLimits?: WClient['blockRangeLimits']
-            params?: TLogName extends keyof TContract
-                ? (TContract[TLogName] extends (options: { params?: infer TParams }) => any ? TParams : never)
-                : never,
+            params?: Partial<TContract['Types']['Events'][TLogName]['outputParams']>
         },
     ): AsyncGenerator<
         TLogsRangeProgress<
