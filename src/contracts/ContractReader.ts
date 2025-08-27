@@ -168,6 +168,11 @@ export class ContractReader implements IContractReader {
         params?: { [key: string]: any } | any[]
 
     }): Promise<RpcTypes.Filter> {
+
+        if (Array.isArray(abi) && abi.length === 1) {
+            return this.getLogsFilter(abi[0], options);
+        }
+
         let filters: Partial<RpcTypes.Filter> = {
             address: options.address,
         };
@@ -227,9 +232,15 @@ export class ContractReader implements IContractReader {
                     abi.map($abiUtils.getTopicSignature)
                 ];
                 if (options.params != null) {
-                    let paramsArr = $require.Array(options.params, `Multiple Logs are being requested. The params should be an array. `);
                     let abiInputsArr = abi.map(x => x.inputs.filter(i => i.indexed));
+
+                    let paramsArr = Array.isArray(options.params) === false
+                        ? [options.params]
+                        : options.params;
+
                     let inputsMax = alot(abiInputsArr).max(x => x.length);
+                    $require.gt(inputsMax, 0, `The ABI ${abi[0].name} has no indexed arguments.`);
+
                     for (let i = 0; i < inputsMax; i++) {
                         let options = [];
                         for (let j = 0; j < abiInputsArr.length; j++) {

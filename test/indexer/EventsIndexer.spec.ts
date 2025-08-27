@@ -1,6 +1,7 @@
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { EventsIndexer } from '@dequanto/indexer/EventsIndexer';
 import { $date } from '@dequanto/utils/$date';
+import alot from 'alot';
 import { File, Directory } from 'atma-io';
 
 const FS_DIR = './test/tmp/data/logs/';
@@ -18,7 +19,7 @@ UTest({
         let client = hh.client();
         let code = `
             contract Foo {
-                event Number (uint256 num);
+                event Number (uint256 indexed num);
                 event String (string str);
 
                 function emitNumber(uint num) external {
@@ -110,9 +111,15 @@ UTest({
 
         let storageData3rdWeek = await File.readAsync<any[]>(`${BASE_DIR}${WEEK_SECONDS * 3}-${WEEK_SECONDS * 4}.json`);
         eq_(storageData3rdWeek.length, 1);
+
+        let events = await indexer.getPastLogs('Number', { params: {
+            num: '0x2'
+        } });
+
+        let nums = alot(events.logs).map(x => x.params.num).toArray();
+        deepEq_(nums, [2n]);
     },
     async 'fetch events streamed' () {
-
 
         let hh = new HardhatProvider();
         let deployer = hh.deployer();

@@ -7,7 +7,7 @@ import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { $date } from '@dequanto/utils/$date';
 import { $require } from '@dequanto/utils/$require';
 import { TAddress } from '@dequanto/models/TAddress';
-import { IEventsIndexerMetaStore, IEventsIndexerStore } from './storage/interfaces';
+import { IEventsIndexerMetaStore, IEventsIndexerStore, TEventsIndexerItem } from './storage/interfaces';
 import { FsEventsIndexerStore } from './storage/FsEventsIndexerStore';
 import { FsEventsMetaStore } from './storage/FsEventsMetaStore';
 import { class_Dfr } from 'atma-utils';
@@ -17,12 +17,12 @@ import { TEth } from '@dequanto/models/TEth';
 import { l } from '@dequanto/utils/$logger';
 
 
-export class EventsIndexer <T extends ContractBase> {
+export class EventsIndexer <TContract extends ContractBase> {
 
     public store: IEventsIndexerStore
     public storeMeta: IEventsIndexerMetaStore
 
-    constructor(public contract: T, public options: {
+    constructor(public contract: TContract, public options: {
         // Load events from the contract that was deployed to multiple addresses
         addresses?: TAddress[]
         name?: string
@@ -71,37 +71,40 @@ export class EventsIndexer <T extends ContractBase> {
         $require.True(this.store instanceof FsEventsIndexerStore);
         $require.True(this.storeMeta instanceof FsEventsMetaStore);
 
-        await (this.store as FsEventsIndexerStore<T>).ensureMigrated();
-        await (this.storeMeta as FsEventsMetaStore<T>).ensureMigrated();
+        await (this.store as FsEventsIndexerStore<TContract>).ensureMigrated();
+        await (this.storeMeta as FsEventsMetaStore<TContract>).ensureMigrated();
     }
 
     async getPastLogs <
-        TLogName extends GetEventLogNames<T>,
+        TLogName extends GetEventLogNames<TContract>,
     > (
         event: TLogName | TLogName[] | '*',
-        // Fetch all logs and filter later if needed
-        //- params?: T[TMethodName] extends (options: { params?: infer TParams }) => any ? TParams : never,
         filter?: {
             fromBlock?: number
             toBlock?: number
+            params?: TLogName extends keyof TContract
+                ? (TContract[TLogName] extends (options: { params?: infer TParams }) => any ? TParams : never)
+                : never,
         }
     ): Promise<{
-        logs: ITxLogItem<GetTypes<T>['Events'][TLogName]['outputParams']>[],
+        logs: ITxLogItem<GetTypes<TContract>['Events'][TLogName]['outputParams']>[],
     }> {
         let contract = this.contract;
         let client = contract.client;
         let toBlock = filter?.toBlock ?? await client.getBlockNumber();
         let events = Array.isArray(event) ? event as string[] : [ event as string ];
-        let ranges = await this.getRanges(events, this.options.initialBlockNumber, toBlock);
-        let logs = await this.getPastLogsRanges(ranges, events, toBlock, filter?.fromBlock);
-
+        let filterKey = this.getFilterKey(filter?.params);
+        let ranges = await this.getRanges(events, this.options.initialBlockNumber, toBlock, { filterKey });
+        let logs = await this.getPastLogsRanges(ranges, events, toBlock, filter?.fromBlock, {
+            params: filter?.params as any
+        });
         return {
             logs: logs as any
         };
     }
 
     async * getPastLogsStream <
-        TLogName extends GetEventLogNames<T>,
+        TLogName extends GetEventLogNames<TContract>,
     > (
         event: TLogName | TLogName[] | '*',
         // Fetch all logs and filter later if needed
@@ -110,10 +113,13 @@ export class EventsIndexer <T extends ContractBase> {
             fromBlock?: number
             toBlock?: number
             blockRangeLimits?: WClient['blockRangeLimits']
+            params?: TLogName extends keyof TContract
+                ? (TContract[TLogName] extends (options: { params?: infer TParams }) => any ? TParams : never)
+                : never,
         },
     ): AsyncGenerator<
         TLogsRangeProgress<
-            ITxLogItem<GetTypes<T>['Events'][TLogName]['outputParams'], string>
+            ITxLogItem<GetTypes<TContract>['Events'][TLogName]['outputParams'], string>
         >       // next result
         , void  // void returns
         , void  // next doesn't get any parameter
@@ -122,12 +128,16 @@ export class EventsIndexer <T extends ContractBase> {
         let client = contract.client;
         let toBlock = options?.toBlock ?? await client.getBlockNumber();
         let events = Array.isArray(event) ? event as string[] : [ event as string ];
-        let ranges = await this.getRanges(events, options?.fromBlock ?? this.options.initialBlockNumber, toBlock);
+        let filterKey = this.getFilterKey(options?.params);
+        let ranges = await this.getRanges(events, options?.fromBlock ?? this.options.initialBlockNumber, toBlock, {
+            filterKey
+        });
 
         let dfrInner = new class_Dfr<any>();
         let dfrOuter = new class_Dfr<any>();
 
         this.getPastLogsRanges(ranges, events, toBlock, options?.fromBlock, {
+            params: options?.params,
             blockRangeLimits: options?.blockRangeLimits,
             streamed: true,
             async onProgress (info) {
@@ -175,9 +185,14 @@ export class EventsIndexer <T extends ContractBase> {
         }
     }
 
-    private async getRanges (events: string[], initialBlockNumber: number, toBlock: number, fromBlock?: number): Promise<TRange[]> {
+    private async getRanges (events: string[], initialBlockNumber: number, toBlock: number, opts: {
+        fromBlock?: number
+        filterKey?: string
+    }): Promise<TRange[]> {
         let logsMetaArr = await this.storeMeta.fetch();
-        let eventsBlock = alot(logsMetaArr).toDictionary(x => x.event, x => x.lastBlock);
+        let eventsBlock = alot(logsMetaArr)
+            .filter(x => x.filterKey == opts?.filterKey)
+            .toDictionary(x => x.event, x => x.lastBlock);
         let logsMeta = events.map(event => {
             let blockNr = eventsBlock[event] ?? initialBlockNumber;
             return {
@@ -187,7 +202,7 @@ export class EventsIndexer <T extends ContractBase> {
         });
         let hasInitialBlock = logsMeta.every(x => x.lastBlock != null);
         if (hasInitialBlock === false) {
-            let blockNr = fromBlock ?? await this.getInitialBlockNumber();
+            let blockNr = opts?.fromBlock ?? await this.getInitialBlockNumber();
             logsMeta.filter(x => x.lastBlock == null).forEach(x => x.lastBlock = blockNr);
         };
 
@@ -210,7 +225,7 @@ export class EventsIndexer <T extends ContractBase> {
         }
         return ranges;
     }
-    private async getPastLogsRanges (ranges: TRange[], events: string[], toBlock: number, fromBlock?: number, options?: TEventLogOptions<TEth.Log>) {
+    private async getPastLogsRanges (ranges: TRange[], events: string[], toBlock: number, fromBlock?: number, options?: TEventLogOptions<any>) {
         // Save indexed logs every 2 minutes
         const PERSIST_INTERVAL = $date.parseTimespan('2min');
         // Save indexed logs every 10k logs
@@ -225,7 +240,8 @@ export class EventsIndexer <T extends ContractBase> {
             let arr = await this.getItemsFromStore({
                 fromBlock: fromBlock,
                 toBlock: toBlock,
-                events
+                events,
+                params: options?.params,
             });
             if (arr?.length > 0) {
                 let latestBlock = arr[arr.length - 1].blockNumber;
@@ -266,6 +282,7 @@ export class EventsIndexer <T extends ContractBase> {
                 fromBlock: fromBlock,
                 toBlock: toBlock,
                 blockRangeLimits: options?.blockRangeLimits,
+                params: options?.params,
                 onProgress: async info => {
                     onProgressCount++;
 
@@ -302,7 +319,7 @@ export class EventsIndexer <T extends ContractBase> {
                         buffer = [];
                         time = now;
                         savedCount += arr.length;
-                        await this.upsert(arr, events, info.latestBlock);
+                        await this.upsert(arr, events, info.latestBlock, options);
                     }
 
                     if (options?.onProgress) {
@@ -314,13 +331,13 @@ export class EventsIndexer <T extends ContractBase> {
             });
 
             if (buffer.length > 0) {
-                await this.upsert(buffer, events, toBlock);
+                await this.upsert(buffer, events, toBlock, options);
             }
         }
 
 
         // Upsert final, if buffer is empty, we still persist the toBlock
-        await this.upsert(buffer, events, toBlock);
+        await this.upsert(buffer, events, toBlock, options);
 
         if (isStreamed === true) {
             return;
@@ -329,7 +346,8 @@ export class EventsIndexer <T extends ContractBase> {
         let logs = await this.getItemsFromStore({
             fromBlock: fromBlock,
             toBlock: toBlock + 1,
-            events: events
+            events: events,
+            params: options?.params
         });
 
         return logs;
@@ -340,6 +358,7 @@ export class EventsIndexer <T extends ContractBase> {
         fromBlock?: number
         toBlock?: number
         events?: string[]
+        params?: Record<string, any>
     }) {
         let arr = await this.store.fetch(filter);
         let events = filter.events;
@@ -347,8 +366,18 @@ export class EventsIndexer <T extends ContractBase> {
             let requestedEvents = alot(events).toDictionary(x => x);
             arr = arr.filter(x => x.event in requestedEvents);
         }
-
+        let filterKey = this.getFilterKey(filter.params);
+        arr = arr.filter(x => x.filterKey == filterKey);
         return arr;
+    }
+    private getFilterKey (params) {
+        if (params == null) {
+            return;
+        }
+        let arr = Array.isArray(params)
+            ? params
+            : Object.keys(params).map(key => `${key}=${params[key]}`);
+        return arr.join('_');
     }
 
     private async getInitialBlockNumber () {
@@ -363,11 +392,19 @@ export class EventsIndexer <T extends ContractBase> {
     }
 
     @memd.deco.queued()
-    private async upsert (logs, events: string[], latestBlock: number) {
+    private async upsert (logs: TEventsIndexerItem[], events: string[], latestBlock: number, options: { params? }) {
+        let filterKey = this.getFilterKey(options?.params);
         if (logs?.length > 0) {
+            for (let log of logs) {
+                log.filterKey = filterKey;
+            }
             await this.store.upsertMany(logs);
         }
-        const logsMeta =  events.map(event => ({ event, lastBlock: latestBlock }));
+        const logsMeta =  events.map(event => ({
+            event,
+            lastBlock: latestBlock,
+            filterKey: filterKey,
+        }));
         await this.storeMeta.upsertMany(logsMeta);
     }
 }

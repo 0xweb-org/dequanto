@@ -33,7 +33,7 @@ export class FsEventsMetaStore <T extends ContractBase> implements IEventsIndexe
 
         this.store = new JsonArrayStore<TEventsIndexerMeta>({
             path: `${directory}meta-arr.json`,
-            key: x => x.event
+            key: x => (x.event + (x.filterKey || ''))
         });
 
         this.storeV0 = new JsonArrayStore<TEventsIndexerMeta>({

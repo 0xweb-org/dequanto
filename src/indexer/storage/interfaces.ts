@@ -1,20 +1,23 @@
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem'
 
-type TItem = ITxLogItem<any>
+export type TEventsIndexerItem = ITxLogItem<any> & {
+    filterKey?: string
+}
 
 export type TEventsIndexerMeta = {
     event: string
     lastBlock: number
+    filterKey?: string
 }
 
 export interface IEventsIndexerStore {
-    upsertMany(logs: TItem[]): Promise<TItem[]>
-    removeMany(logs: TItem[]): Promise<any>
+    upsertMany(logs: TEventsIndexerItem[]): Promise<TEventsIndexerItem[]>
+    removeMany(logs: TEventsIndexerItem[]): Promise<any>
 
     fetch (options?: {
         fromBlock?: number
         toBlock?: number
-    }): Promise<TItem[]>
+    }): Promise<TEventsIndexerItem[]>
 
     merge (store: IEventsIndexerStore): Promise<any>
 }
