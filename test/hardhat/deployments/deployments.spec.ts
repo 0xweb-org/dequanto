@@ -106,7 +106,7 @@ export default UTest({
                 //
                 eq_(await File.existsAsync(deploymentsProxyOutput), false);
             },
-            async ']verify' () {
+            async 'verify' () {
                 class HtmlVerifier extends FsHtmlVerifier {
                     constructor () {
                         super('polygon', {
@@ -122,6 +122,9 @@ export default UTest({
 
                 let CtorData = await hh.getContractFromSolPath(paths.DeploymentsFoo)
                 console.log(`CtorData`, CtorData);
+
+                has_(CtorData.output, 'DeploymentsFoo.sol/DeploymentsFoo.json');
+                eq_(CtorData.source.contractName, 'DeploymentsFoo');
             },
             async 'with proxy' () {
                 return UTest({
