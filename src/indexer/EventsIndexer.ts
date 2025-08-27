@@ -105,8 +105,6 @@ export class EventsIndexer <TContract extends ContractBase> {
         TLogName extends GetEventLogNames<TContract>,
     > (
         event: TLogName | TLogName[] | '*',
-        // Fetch all logs and filter later if needed
-        //- params?: T[TMethodName] extends (options: { params?: infer TParams }) => any ? TParams : never,
         options?: {
             fromBlock?: number
             toBlock?: number

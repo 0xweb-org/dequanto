@@ -9,6 +9,7 @@ import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorer
 import { $require } from '@dequanto/utils/$require';
 import { $promise } from '@dequanto/utils/$promise';
 import { TEth } from '@dequanto/models/TEth';
+import { $date } from '@dequanto/utils/$date';
 
 export class ContractCreationResolver {
 
@@ -74,8 +75,8 @@ class BlockchainExplorerDateResolver {
         let block = await this.client.getBlock(tx.blockNumber);
         return {
             tx: tx.hash,
-            block: tx.blockNumber,
-            timestamp: $block.getDate(block).valueOf()
+            block: $require.Number(Number(tx.blockNumber), `Invalid block: ${tx.blockNumber}`),
+            timestamp: $require.Number(Number(block.timestamp), `Invalid block timestamp: ${block.timestamp}`)
         };
     }
 }

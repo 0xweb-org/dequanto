@@ -24,7 +24,7 @@ export namespace BlockchainExplorerProvider {
                     return Mix;
                 }
                 if (cfg != null) {
-                    return new BlockchainExplorer({ platform });
+                    return new BlockchainExplorer({ platform, ...cfg });
                 }
                 throw new Error(`Unsupported platform ${platform} for block chain explorer`);
         }
