@@ -59,6 +59,10 @@ export class JsonStoreFs<T> {
         File.clearCache(this.path);
     }
 
+    public async delete () {
+        await this.transport.removeAsync();
+    }
+
     public write (arr: T) {
         this.data = arr;
 
@@ -190,6 +194,7 @@ export class JsonStoreFs<T> {
 interface ITransport {
     writeAsync(str: string): Promise<void>
     readAsync(): Promise<string>
+    removeAsync(): Promise<void>
 
     watch (watcherFn: (path?: string) => any)
     unwatch (watcherFn: (path?: string) => any)
@@ -223,6 +228,9 @@ class FileTransport implements ITransport {
         });
         return str;
     }
+    async removeAsync(): Promise<void> {
+        await this.file.removeAsync()
+    }
     async watch (watcherFn: (path?: string) => any) {
         File.watch(this.path, watcherFn);
     }
@@ -250,6 +258,9 @@ class LocalStorageTransport implements ITransport {
     }
     async readAsync(): Promise<string> {
         return this.global.localStorage.getItem(this.path);
+    }
+    async removeAsync(): Promise<void> {
+        this.global.localStorage.removeItem(this.path);
     }
     async exists (): Promise<boolean> {
         // To prevent double load with "getItem", assume the existence of the item, later in readAsync the NULL will be handled.

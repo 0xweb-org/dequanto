@@ -134,6 +134,12 @@ export class JsonArrayStore<T> {
         return this.fs.lock;
     }
 
+    async delete () {
+        await this.fs.delete();
+        this.array = null;
+        this.hash = null;
+    }
+
     private onStoreChanged () {
         this.array = null;
         this.hash = null;

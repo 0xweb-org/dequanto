@@ -8,6 +8,7 @@ import memd from 'memd';
 import alot from 'alot';
 import type { Alot } from 'alot/alot';
 import { $require } from '@dequanto/utils/$require';
+import { l } from '@dequanto/utils/$logger';
 
 export interface  IMultiStoreOptions<T> extends IArrayStoreOptions<T> {
     groupKey: (x: T) => number
@@ -86,7 +87,7 @@ export class JsonArrayMultiStore<T> {
         await this.upsertMany(arr);
     }
 
-    private async getGroupedFiles () {
+    private async getGroupedFiles (opts?: { revalidateGroupSize?: boolean }) {
         try {
             let files = await Directory.readFilesAsync(this.options.path, '*.json');
             let rangeFiles = alot(files)
@@ -99,22 +100,32 @@ export class JsonArrayMultiStore<T> {
             .filter(x => x.range != null)
             .sortBy(x => x.range.start, 'asc')
             .toArray();
+
+            if (opts?.revalidateGroupSize !== false && rangeFiles.length > 0) {
+                // ensure groupSize is the same
+                let [ rangeFile ] = rangeFiles;
+                let startNr = rangeFile.range.start;
+                if ((startNr % this.options.groupSize) !== 0) {
+                    l`GroupSize ${this.options.groupSize} is not a multiple of ${startNr}. Re-grouping files... [${rangeFile.file.uri.toString()}]`;
+                    for (let rangeFile of rangeFiles) {
+                        let store = new JsonArrayStore<T>({
+                            ...this.options,
+                            path: rangeFile.file.uri.toString(),
+                        });
+                        let entries = await store.getAll();
+                        await this.upsertMany(entries);
+                        await store.delete()
+                    }
+
+                    return await this.getGroupedFiles({ revalidateGroupSize: false });
+                }
+            }
+
             return rangeFiles;
         } catch (e) {
             return [];
         }
     }
-    private parseRangeFilename (filename: string) {
-        let match = /^(?<start>\d+)\-(?<end>\d+)\./.exec(filename);
-        if (match == null) {
-            return null;
-        }
-        return {
-            start: Number(match.groups.start),
-            end: Number(match.groups.end),
-        };
-    }
-
 
     private getStores (groups: { start: number, end: number }[]) {
         return groups.map(group => {
@@ -181,14 +192,9 @@ export class JsonArrayMultiStore<T> {
     }
 
     async removeMany(arr: Partial<T>[]): Promise<void> {
-        let groupSize = this.options.groupSize;
         await alot(arr)
             .groupBy(entry => {
-                let key = this.options.groupKey(entry as T);
-                let start = key - key % groupSize;
-                // "end" block is excluded (Exclusive Upper Bound)
-                let end = start + groupSize;
-                return `${start}-${end}`;
+                return this.createRangeFilename(entry);
             })
             .mapAsync(async group => {
                 let store = this.getStore(group.key);
@@ -199,14 +205,9 @@ export class JsonArrayMultiStore<T> {
     }
 
     async upsertMany(arr: Partial<T>[]): Promise<T[]> {
-        let groupSize = this.options.groupSize;
         await alot(arr)
             .groupBy(entry => {
-                let key = this.options.groupKey(entry as T);
-                let start = key - key % groupSize;
-                // "end" block is excluded (Exclusive Upper Bound)
-                let end = start + groupSize;
-                return `${start}-${end}`;
+                return this.createRangeFilename(entry);
             })
             .forEachAsync(async group => {
                 let store = this.getStore(group.key);
@@ -217,5 +218,23 @@ export class JsonArrayMultiStore<T> {
         return arr as T[];
     }
 
+    private parseRangeFilename (filename: string) {
+        let match = /^(?<start>\d+)\-(?<end>\d+)\./.exec(filename);
+        if (match == null) {
+            return null;
+        }
+        return {
+            start: Number(match.groups.start),
+            end: Number(match.groups.end),
+        };
+    }
 
+    private createRangeFilename (entry: Partial<T>) {
+        let groupSize = this.options.groupSize;
+        let key = this.options.groupKey(entry as T);
+        let start = key - key % groupSize;
+        // "end" block is excluded (Exclusive Upper Bound)
+        let end = start + groupSize;
+        return `${start}-${end}`;
+    }
 }
