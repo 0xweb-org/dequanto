@@ -238,7 +238,7 @@ export class EventsIndexer <TContract extends ContractBase> {
                 params: options?.params,
             });
             if (arr?.length > 0) {
-                let latestBlock = arr[arr.length - 1].blockNumber;
+                let lastBlock = arr[arr.length - 1].blockNumber;
                 await options.onProgress({
                     logs: arr,
                     paged: arr,
@@ -246,14 +246,27 @@ export class EventsIndexer <TContract extends ContractBase> {
                     blocksPerSecond: 0,
                     blocks: { total: 0, loaded: 0 },
                     timeLeftSeconds: 0,
-                    latestBlock: latestBlock
+                    latestBlock: lastBlock
                 });
-                if (fromBlock != null) {
-                    let latestFromStorage = alot(arr).max(x => x.blockNumber);
-                    fromBlock = latestFromStorage + 1;
-                    if (toBlock != null && fromBlock >= toBlock) {
-                        // we got all from storage
-                        return;
+                // if (fromBlock != null) {
+                //     let latestFromStorage = alot(arr).max(x => x.blockNumber);
+                //     fromBlock = latestFromStorage + 1;
+                //     if (toBlock != null && fromBlock >= toBlock) {
+                //         // we got all from storage
+                //         return;
+                //     }
+                // }
+
+                // Adjust ranges to skip blocks already in storage
+                for (let i = 0; i < ranges.length; i++) {
+                    let range = ranges[i];
+                    if (range.toBlock <= lastBlock) {
+                        ranges.splice(i, 1);
+                        i--;
+                        continue;
+                    }
+                    if (range.fromBlock < lastBlock) {
+                        range.fromBlock = lastBlock + 1;
                     }
                 }
             }
@@ -329,8 +342,7 @@ export class EventsIndexer <TContract extends ContractBase> {
             }
         }
 
-
-        // Upsert final, if buffer is empty, we still persist the toBlock
+        // Upsert final, if buffer is empty, we still persist the "toBlock" value
         await this.upsert(buffer, events, toBlock, options);
 
         if (isStreamed === true) {

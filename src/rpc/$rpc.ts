@@ -11,13 +11,13 @@ export namespace $rpc {
         ConnectionFailed = 1006
     }
 
-    export function createConnectionErrorResponse (error: Error & { cause?: Error }, opts?: { url: string}): TTransport.Response {
+    export function createConnectionErrorResponse (error: Error & { cause?: Error & { code?: number } }, opts?: { url: string}): TTransport.Response {
         let message =  error.message;
         if (error.cause != null) {
-            message += ` | ${error.cause.message}`;
+            message += ` Cause: ${error.cause.message} ${error.cause.code}`;
         }
         if (opts?.url != null) {
-            message += ` | ${opts.url}`;
+            message += ` [${opts.url}]`;
         }
         return {
             id: null,
