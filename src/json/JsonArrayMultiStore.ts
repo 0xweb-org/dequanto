@@ -87,7 +87,9 @@ export class JsonArrayMultiStore<T> {
         await this.upsertMany(arr);
     }
 
-    private async getGroupedFiles (opts?: { revalidateGroupSize?: boolean }) {
+    private async getGroupedFiles (opts?: { revalidateGroupSize?: boolean }): Promise<{
+        range: { start: number, end: number }
+    }[]> {
         try {
             let files = await Directory.readFilesAsync(this.options.path, '*.json');
             let rangeFiles = alot(files)
