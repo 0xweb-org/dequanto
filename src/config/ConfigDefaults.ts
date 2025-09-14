@@ -16,7 +16,7 @@ export const ConfigDefaults = <IConfigData> {
         },
         "eth": {
             "key": "FGCTXVXMZAPPW91KCZ91AMZFGBY1GZZB51",
-            "host": "https://api.etherscan.io",
+            "api": "https://api.etherscan.io/v2/api?chainid=1",
             "www": "https://etherscan.io"
         },
         "eth:goerli": {

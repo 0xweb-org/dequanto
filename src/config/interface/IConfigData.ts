@@ -29,7 +29,9 @@ export interface IConfigData {
     blockchainExplorer: {
         [platform in TPlatform]: {
             key: string;
-            host: string;
+            host?: string;
+            api?: string
+            wwww?: string
         };
     };
 
