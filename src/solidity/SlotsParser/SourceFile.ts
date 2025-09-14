@@ -13,7 +13,8 @@ import type {
     ContractDefinition,
     EnumDefinition,
     ImportDirective,
-    StructDefinition
+    StructDefinition,
+    TypeDefinition
 } from '@solidity-parser/parser/dist/src/ast-types';
 import { $semver } from '@dequanto/utils/$semver';
 import { $path } from '@dequanto/utils/$path';
@@ -164,7 +165,7 @@ export class SourceFile {
         let contract = await Ast.getStruct(ast, name);
         return contract;
     }
-    async getUserDefinedType(name: string, skipImports?: { [path: string]: boolean; }): Promise<ContractDefinition | StructDefinition | EnumDefinition> {
+    async getUserDefinedType(name: string, skipImports?: { [path: string]: boolean; }): Promise<ContractDefinition | StructDefinition | EnumDefinition | TypeDefinition> {
         // Fix infinite recursion of nested imports;
         skipImports ??= {};
 

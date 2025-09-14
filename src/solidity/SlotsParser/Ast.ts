@@ -31,6 +31,7 @@ import {
     StateVariableDeclaration,
     StringLiteral,
     StructDefinition,
+    TypeDefinition,
     TypeName,
     UnaryOperation,
     UserDefinedTypeName,
@@ -109,7 +110,7 @@ export namespace Ast {
         }
         return fns;
     }
-    export function getUserDefinedType(node: ContractDefinition | StructDefinition | SourceUnit, name: string): (StructDefinition | ContractDefinition | EnumDefinition) & { parent?; } {
+    export function getUserDefinedType(node: ContractDefinition | StructDefinition | SourceUnit, name: string): (StructDefinition | ContractDefinition | EnumDefinition | TypeDefinition) & { parent?; } {
         let [key, ...nestings] = name.split('.');
         let nodeFound = getUserDefinedTypeRaw(node, key);
         if (nodeFound == null) {
@@ -231,6 +232,9 @@ export namespace Ast {
     export function isContractDefinition(node: BaseASTNode): node is ContractDefinition {
         return node?.type === 'ContractDefinition';
     }
+    export function isTypeDefinition(node: BaseASTNode): node is TypeDefinition {
+        return node?.type === 'TypeDefinition';
+    }
     export function isVariableDeclarationStatement(node: BaseASTNode): node is VariableDeclarationStatement {
         return node?.type === 'VariableDeclarationStatement';
     }
@@ -279,7 +283,7 @@ export namespace Ast {
         return null;
     }
 
-    function getUserDefinedTypeRaw(node: ContractDefinition | StructDefinition | SourceUnit, name: string): StructDefinition | ContractDefinition | EnumDefinition {
+    function getUserDefinedTypeRaw(node: ContractDefinition | StructDefinition | SourceUnit, name: string): StructDefinition | ContractDefinition | EnumDefinition | TypeDefinition {
         let arr: BaseASTNode[];
         if (isContractDefinition(node)) {
             arr = node.subNodes
@@ -292,8 +296,8 @@ export namespace Ast {
         }
 
         let nodeFound = arr
-            .filter(x => x.type === 'StructDefinition' || x.type === 'ContractDefinition' || x.type === 'EnumDefinition')
-            .find(x => (x as any).name === name) as StructDefinition | ContractDefinition | EnumDefinition;
+            .filter(x => x.type === 'StructDefinition' || x.type === 'ContractDefinition' || x.type === 'EnumDefinition' || x.type === 'TypeDefinition')
+            .find(x => (x as any).name === name) as StructDefinition | ContractDefinition | EnumDefinition | TypeDefinition;
 
         if (nodeFound) {
             return nodeFound;
@@ -404,6 +408,12 @@ export namespace Ast {
                     return {
                         name: name,
                         type: 'address'
+                    };
+                }
+                if (isTypeDefinition($type)) {
+                    return {
+                        name: name,
+                        type: serialize($type.definition)
                     };
                 }
             } else {

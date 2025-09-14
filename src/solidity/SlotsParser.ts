@@ -266,6 +266,11 @@ namespace TypeUtil {
                 let count = Math.ceil(definition.members.length / 256);
                 return $types.sizeOf(`uint${ 8 * count }`)
             }
+            if (definition.type === 'TypeDefinition') {
+                let x = get(definition.definition, this.ctx);
+                return x.sizeOf();
+            }
+
             let ctx = {
                 ...this.ctx,
                 contract: definition.parent,
@@ -306,6 +311,10 @@ namespace TypeUtil {
             }
             if (definition.type === 'EnumDefinition') {
                 return 'enum';
+            }
+            if (definition.type === 'TypeDefinition') {
+                let x = get(definition.definition, this.ctx);
+                return x.serialize();
             }
             let ctx = {
                 ...this.ctx,

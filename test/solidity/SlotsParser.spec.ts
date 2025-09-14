@@ -533,4 +533,26 @@ UTest({
             }
         }
     },
+
+    async 'should parse type alias' () {
+        const input = `
+            type UD60x18 is uint256;
+
+            contract Test {
+                address foo;
+                UD60x18 bar;
+            }
+        `;
+        const slots = await SlotsParser.slots({
+            code: input,
+            path: './test/solidity/Parser.sol'
+        }, 'Test');
+
+        deepEq_(slots[0], {
+            slot: 0, position: 0, name: 'foo', size: 160, type: 'address'
+        });
+        deepEq_(slots[1], {
+            slot: 1, position: 0, name: 'bar', size: 256, type: 'uint256'
+        });
+    }
 })
