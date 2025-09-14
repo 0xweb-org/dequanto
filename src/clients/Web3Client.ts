@@ -353,10 +353,6 @@ export abstract class Web3Client implements IWeb3Client {
     }
     getGasEstimation(from: TEth.Address, tx: TEth.TxLike) {
         let data = $hex.ensure(tx.data ?? tx.input);
-        $require.notNull(data, `Expects the bytecode to estimate the gas for`, tx);
-        if ($is.Address(tx.to) === false && data.includes('60806040') === false) {
-            throw new Error(`"To" address is undefined, but the bytecode is not the contract creation ${data}`);
-        }
         return this.pool.call(async web3 => {
             let txData = {
                 from: from,
