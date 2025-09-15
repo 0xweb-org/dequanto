@@ -50,6 +50,14 @@ export class HardhatWeb3Client extends Web3Client {
                 mine: {
                     call: 'hardhat_mine',
                     params: 2
+                },
+                snapshot: {
+                    call: 'evm_snapshot',
+                    params: 0
+                },
+                revert: {
+                    call: 'evm_revert',
+                    params: 1
                 }
             }
         });

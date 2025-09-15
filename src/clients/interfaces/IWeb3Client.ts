@@ -54,5 +54,13 @@ export interface IWeb3ClientOptions {
             call: 'hardhat_mine' | string,
             params: 1 | number
         }
+        snapshot?: {
+            call: 'evm_snapshot' | string,
+            params: 0 | number
+        }
+        revert?: {
+            call: 'evm_revert' | string,
+            params: 1 | number
+        }
     }
 }

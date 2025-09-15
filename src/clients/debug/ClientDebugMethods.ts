@@ -71,6 +71,13 @@ export class ClientDebugMethods {
         return this.call('stopImpersonatingAccount', address);
     }
 
+    snapshot (): Promise<number> {
+        return this.call('snapshot');
+    }
+    revert (snapId: number) {
+        return this.call('revert', snapId);
+    }
+
     private call(method: keyof typeof this.methods, ...args: any[]) {
         let meta = this.methods[method];
         if (meta?.call == null) {
