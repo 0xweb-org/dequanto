@@ -30,8 +30,8 @@ export const ConfigDefaults = <IConfigData> {
             "www": "https://sepolia.etherscan.io"
         },
         "polygon": {
-            "key": "AQHXXI3KIU5FC8Y1WXX8A346PENKUX7BCE",
-            "host": "https://api.polygonscan.com",
+            "key": "FGCTXVXMZAPPW91KCZ91AMZFGBY1GZZB51",
+            "api": "https://api.etherscan.io/v2/api?chainid=137",
             "www": "https://polygonscan.com"
         },
         "polygon:mumbai": {
