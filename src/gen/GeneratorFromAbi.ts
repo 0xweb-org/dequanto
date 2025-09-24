@@ -765,27 +765,27 @@ namespace Gen {
     function isObjectParams(params: { name?, type }[]) {
         return params?.every(x => Boolean(x.name));
     }
-    function serializeMethodAbiReturns(params: { name?, type, components?}[]) {
+    function serializeMethodAbiReturns(params: { name?, type, components?}[], opts?: { asTuple?: boolean}) {
         if (params == null) {
             return '';
         }
         // if (isObjectParams(params)) {
         //     return params.map(x => serializeMethodAbiReturnsSingle(x)).join(',');
         // }
-        return params?.map(x => serializeMethodAbiReturnsSingle(x)).join(',');
+        return params?.map(x => serializeMethodAbiReturnsSingle(x, opts)).join(',');
     }
-    function serializeMethodAbiReturnsSingle(param: { name?, type, components?}) {
+    function serializeMethodAbiReturnsSingle(param: { name?, type, components?}, opts?: { asTuple?: boolean}) {
         if (param == null) {
             return null;
         }
         if (param.components) {
             // tuple, tuple[]
-            let fields = serializeMethodAbiReturns(param.components);
-            return `[${fields}]${param.type === 'tuple[]' ? '[]' : ''}`;
+            let fields = serializeMethodAbiReturns(param.components, { asTuple: true });
+            return `(${fields})${param.type === 'tuple[]' ? '[]' : ''}`;
         }
-        // if (param.name && param.type) {
-        //     return `${param.type} ${param.name}`;
-        // }
+        if (opts?.asTuple && param.name && param.type) {
+            return `${param.type} ${param.name}`;
+        }
         return param.type;
     }
     function serializeMethodTsReturns(params: { name?, type }[]) {
