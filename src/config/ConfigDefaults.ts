@@ -10,8 +10,8 @@ export const ConfigDefaults = <IConfigData> {
     "chains": null,
     "blockchainExplorer": {
         "bsc": {
-            "key": "MB1EM53BDJFKDIHUZ5JJT946BJJUQIHFP2",
-            "host": "https://api.bscscan.com",
+            "key": "FGCTXVXMZAPPW91KCZ91AMZFGBY1GZZB51",
+            "api": "https://api.etherscan.io/v2/api?chainid=56",
             "www": "https://bscscan.com"
         },
         "eth": {
