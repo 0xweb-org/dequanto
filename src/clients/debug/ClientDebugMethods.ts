@@ -74,8 +74,13 @@ export class ClientDebugMethods {
     snapshot (): Promise<number> {
         return this.call('snapshot');
     }
+
     revert (snapId: number) {
         return this.call('revert', snapId);
+    }
+
+    setAutomine (enabled: boolean) {
+        return this.call('autoMine', enabled);
     }
 
     private call(method: keyof typeof this.methods, ...args: any[]) {

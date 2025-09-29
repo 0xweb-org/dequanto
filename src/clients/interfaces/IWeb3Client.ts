@@ -62,5 +62,9 @@ export interface IWeb3ClientOptions {
             call: 'evm_revert' | string,
             params: 1 | number
         }
+        autoMine?: {
+            call: 'evm_setAutomine' | string,
+            params: 1 | number
+        }
     }
 }

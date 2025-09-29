@@ -58,6 +58,10 @@ export class HardhatWeb3Client extends Web3Client {
                 revert: {
                     call: 'evm_revert',
                     params: 1
+                },
+                autoMine: {
+                    call: 'evm_setAutomine',
+                    params: 1
                 }
             }
         });

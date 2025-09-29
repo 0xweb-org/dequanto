@@ -135,7 +135,7 @@ export class TokenTransferService {
             let txBuilder = new TxDataBuilder(this.client, from, {
                 to: to,
                 value: $bigint.toHex(transferValue)
-            });
+            }, this.builderConfig);
 
             txBuilder.data.gasPrice = $bigint.toHex($gasPrice);
 
@@ -176,10 +176,9 @@ export class TokenTransferService {
         let txBuilder = new TxDataBuilder(this.client, sender, {
             to: to,
             value: $bigint.toHex(amount)
-        });
+        }, this.builderConfig);
 
         if (sender.address) {
-
             await Promise.all([
                 txBuilder.setGas({ priceRatio: this.gasPriorityFee, gasEstimation: true, gasLimitRatio: 1, }),
                 txBuilder.setNonce(),
