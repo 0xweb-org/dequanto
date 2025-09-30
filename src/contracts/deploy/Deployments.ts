@@ -62,7 +62,8 @@ export class Deployments {
             BeaconProxy?: Constructor<IBeaconProxy>
         }
     } = {
-            TransparentProxy: {}
+            TransparentProxy: {},
+            Beacon: {}
         }
 
     constructor(public client: Web3Client, public deployer: IAccount, public opts: {
@@ -84,7 +85,8 @@ export class Deployments {
     } = {}) {
         this._config.TransparentProxy.Proxy = opts?.Proxy;
         this._config.TransparentProxy.ProxyAdmin = opts?.ProxyAdmin;
-        this._config.Beacon = opts?.Beacon;
+        this._config.Beacon.Beacon = opts?.Beacon?.Beacon;
+        this._config.Beacon.BeaconProxy = opts?.Beacon?.BeaconProxy;
         this.store = new DeploymentsStorage(client, deployer, opts);
 
         this._proxyDeployment = new ProxyDeployment(this.store, this._config);

@@ -233,7 +233,7 @@ export class ProxyDeployment {
         const deps = {
             TransparentUpgradeableProxy: `@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol`,
             ProxyAdmin: `@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol`,
-            Beacon: `@openzeppelin/contracts/proxy/beacon/UpgradeableBeacon.sol`,
+            UpgradeableBeacon: `@openzeppelin/contracts/proxy/beacon/UpgradeableBeacon.sol`,
             BeaconProxy: `@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol`,
         };
         const paths = {
@@ -250,7 +250,8 @@ export class ProxyDeployment {
                 source: `${baseSource}/beacon/UpgradeableBeacon.sol`,
                 output: `${baseOutput}/Beacon.sol`,
                 template: `
-                    import \"${deps.Beacon}\";
+                    import \"${deps.UpgradeableBeacon}\";
+                    import \"${deps.BeaconProxy}\";
                 `,
                 //install: `UpgradeableBeacon,BeaconProxy`,
                 contracts: [`UpgradeableBeacon`,`BeaconProxy`],
@@ -316,6 +317,13 @@ export class ProxyDeployment {
             Beacon,
             BeaconProxy,
         } = ctx.Beacon ?? this.opts.Beacon;
+
+        if (Beacon == null) {
+            let internal = await this.getOpenzeppelinUpgradable({ beacon: true, proxy: false });
+            BeaconProxy = internal.BeaconProxy as Constructor<IBeaconProxy>;
+            Beacon = internal.UpgradeableBeacon as Constructor<IBeacon>;
+        }
+
         $require.notNull(Beacon, 'Beacon is required');
         $require.notNull(BeaconProxy, 'BeaconProxy is required');
 
