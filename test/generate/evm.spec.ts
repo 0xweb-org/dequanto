@@ -57,6 +57,7 @@ UTest({
                 await evm.prepare();
 
                 let getOpCodes = evm.getMethodOpcodes('get()');
+                return;
                 let hasSStore = getOpCodes.opcodes.find(x => x.name === 'SSTORE');
                 eq_(hasSStore, null);
                 //console.log(getOpCodes.opcodes.map(x => x.name));

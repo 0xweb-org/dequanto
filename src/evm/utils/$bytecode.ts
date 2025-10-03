@@ -11,7 +11,7 @@ export namespace $bytecode {
      * remove the constructor code, leave the runtime bytecode only
      */
     export function trimConstructorCode (code: TEth.Hex) {
-        let rgx = /6080(\d\d)?6040/;
+        let rgx = /6080(\d\d)?6040/g;
         rgx.lastIndex = 4;
         let initCode = rgx.exec(code);
         if (initCode != null) {

@@ -119,8 +119,8 @@ export class OpcodesWalker {
             if (typeof dest === 'number') {
                 let opcode = this.opcodes.find(x => x.pc === dest);
                 if (opcode == null) {
-                    console.log(this.opcodes.map(x => `${x.pc.toString(16)} ${x.name}`).join('\n'));
-                    throw new Error(`No OPCODE found at ${dest.toString(16)}`);
+                    console.log(this.opcodes.map(x => `${x.pc} ${x.name}`).join('\n'));
+                    throw new Error(`No OPCODE found at ${dest}`);
                 }
                 this.current = opcode;
                 this.evm.pc = this.current.pc;
