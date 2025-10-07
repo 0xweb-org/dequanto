@@ -16,6 +16,13 @@
             "require": "./lib/cjs/*.js"
         }
     },
+    "typesVersions": {
+        "*": {
+            "*": [
+                "lib/types/*"
+            ]
+        }
+    },
     "scripts": {
         "hardhat": "node --openssl-legacy-provider ./node_modules/hardhat/internal/cli/cli.js node --hostname 127.0.0.1 --verbose",
         "build:tsc": "tsc -p tsconfig-src.json",
