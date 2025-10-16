@@ -82,6 +82,12 @@ export class Deployments {
 
         verification?: boolean
 
+        // default: true
+        checkBytecode?: boolean
+
+        // default 'redeploy'
+        whenBytecodeChanged?: 'redeploy' | 'ignore' | 'throw'
+
     } = {}) {
         this._config.TransparentProxy.Proxy = opts?.Proxy;
         this._config.TransparentProxy.ProxyAdmin = opts?.ProxyAdmin;
@@ -190,8 +196,8 @@ export class Deployments {
             await this.ensureVerification(Ctor, currentDeployment, opts);
 
             let requireLatest = opts.latest == null
-                ? (this.client.platform === 'hardhat')
-                : (opts.latest ?? false);
+                ? (this.client.platform === 'hardhat' || this.opts?.checkBytecode !== false)
+                : (opts.latest);
 
             if (opts.force !== true && requireLatest !== true) {
                 // return already deployed contract
@@ -213,6 +219,20 @@ export class Deployments {
                 }
             }
         }
+
+        if (contract != null) {
+            if (this.opts?.whenBytecodeChanged === 'ignore') {
+                return {
+                    contract,
+                    deployment: currentDeployment,
+                };
+            }
+            if (this.opts?.whenBytecodeChanged === 'throw') {
+                throw new Error(`The bytecode of ${currentDeployment.id} has changed, but 'whenBytecodeChanged' is set to 'throw'`);
+            }
+        }
+
+
 
         // Lets deploy the contract, new, forced, or latest
 
@@ -278,7 +298,7 @@ export class Deployments {
             arguments: opts?.arguments as any,
             id: id,
             force: opts?.force,
-            latest: true,
+            latest: this.opts?.checkBytecode !== false,
             verification: opts?.verification,
         });
 
@@ -364,7 +384,7 @@ export class Deployments {
             arguments: opts?.arguments as any,
             id: implId,
             force: opts?.force,
-            latest: true,
+            latest: this.opts?.checkBytecode !== false,
             verification: opts?.verification,
         });
 

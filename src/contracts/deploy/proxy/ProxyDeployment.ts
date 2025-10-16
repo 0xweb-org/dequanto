@@ -277,10 +277,10 @@ export class ProxyDeployment {
 
             if (await File.existsAsync(info.output) === false) {
                 await File.writeAsync(info.output, code);
+                await provider.compileSol(info.output, {
+                    tsgen: false,
+                });
             }
-            await provider.compileSol(info.output, {
-                tsgen: false,
-            });
 
             return await alot(info.contracts)
                 .mapAsync(async key => {
