@@ -101,7 +101,7 @@ UTest({
         });
     },
 
-    async '!dump with constants and immutables'() {
+    async 'dump with constants and immutables'() {
         const code = `
         contract A {
             uint           public countA = 3;

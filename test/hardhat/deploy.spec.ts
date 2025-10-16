@@ -233,7 +233,7 @@ UTest({
         let val = await contract.foo();
         eq_(val, 'peach');
     },
-    async '!should handle complex enums'() {
+    async 'should handle complex enums'() {
         let hh = new HardhatProvider();
         let code = `
             contract Cars {

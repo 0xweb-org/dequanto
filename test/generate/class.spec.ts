@@ -84,7 +84,7 @@ UTest({
         let source = await File.readAsync(genPath, { skipHooks: true });
         has_(source, 'onTransfer');
     },
-    async '!generate and check with deployed contract' () {
+    async 'generate and check with deployed contract' () {
 
         await hh.run('compile', {
             sources: '/test/fixtures/contracts',

@@ -373,7 +373,7 @@ UTest({
 
         eq_(Number(await client.getStorageAt(contract.address, 0)), 0);
     },
-    async '!should create reader for abstract classes' () {
+    async 'should create reader for abstract classes' () {
         let code = `
             abstract contract FooStorage {
                 uint256 public foo;

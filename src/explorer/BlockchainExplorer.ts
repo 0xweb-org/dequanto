@@ -174,6 +174,7 @@ export class BlockchainExplorer implements IBlockchainExplorer {
         try {
             abi = await this.client.get(url);
         } catch (err) {
+            $logger.log(`Blockchain explorer request filed "${url}": ${err.message}`);
             let addressByByteCode = await this.getSimilarContract(address);
             if (addressByByteCode != null) {
                 $logger.log(`Found similar byte code address: ${addressByByteCode}`);

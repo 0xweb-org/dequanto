@@ -150,7 +150,7 @@ UTest({
         eq_(Number(nonce), 1);
     },
 
-    async '!create file safe and manually receive tokens '() {
+    async 'create file safe and manually receive tokens '() {
         let provider = new HardhatProvider();
         let client = provider.client();
         let owner1 = provider.deployer(0);
