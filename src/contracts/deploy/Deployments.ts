@@ -100,7 +100,11 @@ export class Deployments {
         if (opts?.fork) {
             $require.eq(client.platform, 'hardhat', 'Only hardhat is supported for forked networks');
             (client as HardhatWeb3Client).configureFork(opts.fork);
+        } else if (client.forked?.platform != null) {
+            this.opts ??= {};
+            this.opts.fork = client.forked.platform;
         }
+
     }
 
     async has<T extends ContractBase>(Ctor: Constructor<T>, opts?: {

@@ -14,3 +14,9 @@
 /cache/
 
 .gitmodules
+
+/0xweb.json
+/tsconfig.esm.json
+/tsconfig-build.json
+/tsconfig-src.json
+/package-bundler.json

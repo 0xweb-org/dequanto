@@ -89,6 +89,7 @@ export class HardhatProvider {
                 blockNumber: block,
             }
         });
+        client.configureFork(params.platform);
         return client;
     }
 
