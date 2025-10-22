@@ -55,6 +55,18 @@ export namespace SolidityParser {
             })
             .toArrayAsync({ threads: 1 });
 
+        // fix: remove duplicates due to interfaces and multiple inheritance.
+        abisDef = alot(abisDef)
+            .map(def => {
+                let key = `${def.type} ${def.name} ${def.inputs?.map(input => input.type).join(',')}`;
+                return {
+                    key,
+                    def,
+                }
+            })
+            .distinctBy(x => x.key)
+            .map(x => x.def)
+            .toArray();
         return abisDef;
     }
 
@@ -90,7 +102,6 @@ export namespace SolidityParser {
         let abiEvents = await alot(Ast.getEventDefinitions(contract))
             .mapAsync(async $event => Ast.getAbi($event, ctx, inheritanceChain))
             .toArrayAsync();
-
 
         return [
             ...abiFns,
