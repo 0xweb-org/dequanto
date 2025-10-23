@@ -122,7 +122,7 @@ export class SlotBytesHandler extends ASlotsStorageHandler {
                 let slotValue = await this.transport.setStorageAt(this.getSlot(i), 0, 256, buf);
                 return slotValue;
             })
-            .toArrayAsync()
+            .toArrayAsync({ threads: 1 })
     }
 
     protected getSlot (idx: number) {

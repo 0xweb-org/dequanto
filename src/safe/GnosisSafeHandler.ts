@@ -304,7 +304,8 @@ export class GnosisSafeHandler {
                     if (typeof mix === 'object') {
                         return mix;
                     }
-                    return await ChainAccountService.get(mix)
+                    let account = await ChainAccountService.get(mix);
+                    return $require.notNull(account, `Account not found: ${mix}`);
                 })
                 .toArrayAsync();
 

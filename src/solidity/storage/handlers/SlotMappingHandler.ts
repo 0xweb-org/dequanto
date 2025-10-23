@@ -30,7 +30,7 @@ export class SlotMappingHandler extends ASlotsStorageHandler {
         }
         let key = keys.shift();
         let storage = await this.getStorageInner(key);
-        storage.set(keys, value);
+        await storage.set(keys, value);
     }
 
     async fetchAll () {

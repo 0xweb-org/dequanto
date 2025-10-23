@@ -254,7 +254,6 @@ UTest({
                 mapping(address => uint256) addresses;
                 mapping(address => User) users;
 
-
                 constructor () {
                     ids[1] = 2;
                     ids[7] = 8;
@@ -330,6 +329,47 @@ UTest({
                     await storage.get(['users', '0xa000000000000000000000000000000000000000', 'balance']),
                 ];
                 deepEq_(arr, [ 30n, 1000n ]);
+            },
+        })
+    },
+
+    async 'should read and write compact mapping struct'() {
+        let code = `
+            contract Foo {
+                struct User {
+                    address account;
+                    uint24 flag;
+                }
+                mapping(uint256 => User) users;
+
+                constructor () {
+                    users[0] = User(address(0xa000000000000000000000000000000000000000),1);
+                }
+            }
+        `;
+
+        let provider = new HardhatProvider();
+        let client = await provider.client();
+
+        let { contract } = await provider.deployCode(code, { client });
+        let slots = await SlotsParser.slots({ path: '', code });
+        let storage = SlotsStorage.createWithClient(client, contract.address, slots);
+
+        return UTest({
+            async 'read and write (address---struct) mapping' () {
+                let flag = await storage.get('users[0].flag');
+                eq_(flag, 1);
+
+                await storage.set('users[0]', {
+                    account: '0xB000000000000000000000000000000000000000',
+                    flag: 2
+                });
+
+                let obj = await storage.get('users[0]');
+                deepEq_(obj, {
+                    account: '0xb000000000000000000000000000000000000000',
+                    flag: 2
+                });
             },
         })
     },

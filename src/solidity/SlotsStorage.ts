@@ -104,12 +104,9 @@ export class SlotsStorage {
 
         if (is_Object(value)) {
             // object
-            await alot
-                .fromObject(value)
-                .mapAsync(async entry => {
-                    await this.set([{ key: entry.key, type: 'key' }], entry.value);
-                })
-                .toArrayAsync();
+            for (let key in value) {
+                await this.set([{ key: key, type: 'key' }], value[key]);
+            }
             return;
         }
 

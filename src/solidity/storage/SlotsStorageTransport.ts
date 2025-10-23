@@ -169,13 +169,13 @@ export class SlotsStorageTransportForMapping implements ISlotsStorageTransport {
 
     }
 
-    async getStorageAt (slot: string | number | bigint) {
+    async getStorageAt (slot: string | number | bigint, position: number, size: number) {
         let isValidType = typeof slot === 'number' || typeof slot === 'bigint' || $is.Hex(slot);
         if (isValidType === false) {
             throw new Error(`Mapping Slot reader supports only numbers for position ${slot}`);
         }
         let location = this.mapToGlobalSlot(BigInt(slot));
-        let memory = await this.getUnderlyingTransport().getStorageAt(location, 0, 256);
+        let memory = await this.getUnderlyingTransport().getStorageAt(location, position, size);
         return memory;
     }
 
