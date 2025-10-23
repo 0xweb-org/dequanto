@@ -1,4 +1,5 @@
 import { SolidityParser } from '@dequanto/solidity/SolidityParser';
+import alot from 'alot';
 
 UTest({
     async 'should extract slots from contract'() {
@@ -84,7 +85,7 @@ UTest({
             type: 'event'
         });
     },
-    async 'should extract from sol file' () {
+    async 'should extract from sol file'() {
         const { abi, source } = await SolidityParser.extractAbi({
             path: './test/fixtures/deployments/DeploymentsFoo.sol'
         });
@@ -127,7 +128,6 @@ UTest({
 
     async 'should parse weth.sol'() {
         let { abi: abis } = await SolidityParser.extractAbi({ path: './test/fixtures/scan/WETH.sol' }, 'MaticWETH');
-
         let names = abis.map(x => x.name);
         deepEq_(names, [
             'totalSupply',
@@ -141,12 +141,6 @@ UTest({
             'name',
             'symbol',
             'decimals',
-            'totalSupply',
-            'balanceOf',
-            'transfer',
-            'allowance',
-            'approve',
-            'transferFrom',
             'increaseAllowance',
             'decreaseAllowance',
             'deposit',
@@ -171,7 +165,6 @@ UTest({
             'ROOT_CHAIN_ID_BYTES',
             'CHILD_CHAIN_ID',
             'CHILD_CHAIN_ID_BYTES',
-            'deposit',
             'withdraw',
             'DEPOSITOR_ROLE',
             'constructor'
@@ -227,12 +220,8 @@ UTest({
                     'owner',
                     'transferOwnership',
                     'acceptOwnership',
-                    'transferOwnership',
-                    'acceptOwnership',
-                    'owner',
                     'newOwner',
                     'OwnerUpdate',
-                    'withdrawTokens',
                     'withdrawTokens',
                     'name',
                     'symbol',
@@ -240,26 +229,14 @@ UTest({
                     'totalSupply',
                     'balanceOf',
                     'allowance',
-                    'transfer',
-                    'transferFrom',
-                    'approve',
                     'transfer',
                     'transferFrom',
                     'approve',
                     'standard',
-                    'name',
-                    'symbol',
-                    'decimals',
-                    'totalSupply',
-                    'balanceOf',
-                    'allowance',
                     'Transfer',
                     'Approval',
                     'constructor',
-                    'transfer',
-                    'transferFrom',
                     'ENJ_UNIT',
-                    'totalSupply',
                     'maxPresaleSupply',
                     'minCrowdsaleAllocation',
                     'incentivisationAllocation',
@@ -282,21 +259,21 @@ UTest({
 
                 let names = abis.map(x => x.name);
                 deepEq_(names, [
-                    'constructor',       'addOwner',
-                    'removeOwner',          'replaceOwner',
-                    'changeRequirement',    'submitTransaction',
-                    'confirmTransaction',   'revokeConfirmation',
-                    'executeTransaction',   'isConfirmed',
+                    'constructor', 'addOwner',
+                    'removeOwner', 'replaceOwner',
+                    'changeRequirement', 'submitTransaction',
+                    'confirmTransaction', 'revokeConfirmation',
+                    'executeTransaction', 'isConfirmed',
                     'getConfirmationCount', 'getTransactionCount',
-                    'getOwners',            'getConfirmations',
-                    'getTransactionIds',    'MAX_OWNER_COUNT',
-                    'transactions',         'confirmations',
-                    'isOwner',              'owners',
-                    'required',             'transactionCount',
-                    'Confirmation',         'Revocation',
-                    'Submission',           'Execution',
-                    'ExecutionFailure',     'Deposit',
-                    'OwnerAddition',        'OwnerRemoval',
+                    'getOwners', 'getConfirmations',
+                    'getTransactionIds', 'MAX_OWNER_COUNT',
+                    'transactions', 'confirmations',
+                    'isOwner', 'owners',
+                    'required', 'transactionCount',
+                    'Confirmation', 'Revocation',
+                    'Submission', 'Execution',
+                    'ExecutionFailure', 'Deposit',
+                    'OwnerAddition', 'OwnerRemoval',
                     'RequirementChange'
                 ]);
             },
@@ -414,12 +391,6 @@ UTest({
             'mint',
             'minterAllowance',
             'isMinter',
-            'allowance',
-            'totalSupply',
-            'balanceOf',
-            'approve',
-            'transferFrom',
-            'transfer',
             'configureMinter',
             'removeMinter',
             'burn',
