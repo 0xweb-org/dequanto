@@ -142,6 +142,7 @@ export class HardhatProvider {
         deployer?: EoAccount
         arguments?: any[]
         client?: Web3Client
+        tx?: TEth.Hex
     }): Promise<{
         contract: T
         receipt: TEth.TxReceipt
@@ -155,7 +156,9 @@ export class HardhatProvider {
         let receipt: TEth.TxReceipt;
 
         try {
-            receipt = await factory.deploy();
+            receipt = options?.tx
+                ? await client.getTransactionReceipt(options.tx)
+                : await factory.deploy();
         } catch (error) {
             let wrapped = new Error(`Deploy ${Ctor.name} failed: ` + error.message + `\n ${error.stack}`);
             (wrapped as any).data = error.data;

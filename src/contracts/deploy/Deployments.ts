@@ -22,6 +22,7 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { $promise } from '@dequanto/utils/$promise';
 import { l } from '@dequanto/utils/$logger';
 import { $bytecode } from '@dequanto/evm/utils/$bytecode';
+import { THex } from '@dequanto/models/THex';
 
 
 
@@ -37,6 +38,13 @@ type TDeploymentOptions = {
 
     // Will be used for verification process
     proxyFor?: TAddress
+
+    deployment?: {
+        // Pending deployment transaction will be re-checked
+        tx?: THex
+        // When false, the implementation won't be updated in proxy
+        upgradeProxy?: boolean
+    }
 }
 type TVerificationOptions = TDeploymentOptions & {
     // otherwise will be fetched from the deployment TX
@@ -252,6 +260,7 @@ export class Deployments {
             arguments: constructorArgs,
             client: this.client,
             deployer: this.deployer as any,
+            tx: opts.deployment?.tx
         });
 
         let deployment = await this.store.saveDeployment(deployedContract, {
@@ -304,6 +313,7 @@ export class Deployments {
             force: opts?.force,
             latest: this.opts?.checkBytecode !== false,
             verification: opts?.verification,
+            deployment: opts?.deployment
         });
 
         let data = serializeInitData(id, contractImpl, opts.initialize);
@@ -321,7 +331,8 @@ export class Deployments {
             implementation: {
                 address: implementationAddress,
                 initData: data
-            }
+            },
+            upgradeImplementation: opts?.deployment?.upgradeProxy ?? true
         })
 
         if (contractImplDeployment.implementation == null) {

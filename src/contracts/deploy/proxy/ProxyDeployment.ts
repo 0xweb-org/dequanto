@@ -45,6 +45,7 @@ interface IDeploymentCtx {
     options?: {
         skipStorageLayoutCheck?: boolean
     }
+    upgradeImplementation?: boolean
 }
 
 interface IProxyDeploymentCtx extends IDeploymentCtx {
@@ -151,6 +152,7 @@ export class ProxyDeployment {
 
 
         let hasProxy = await deployments.has(Proxy, proxyOpts);
+        let shouldUpdate = ctx.upgradeImplementation ?? true;
         let {
             contract: contractProxy,
             receipt: contractProxyReceipt,
@@ -196,7 +198,7 @@ export class ProxyDeployment {
             $require.notNull(contractProxyAdmin, `Proxy was deployed previously, but the ProxyAdmin ${contractProxyAdminId} not found`);
         }
 
-        if (hasProxy) {
+        if (hasProxy && shouldUpdate) {
             let SLOT = `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc` as const;
             let slotValue = await client.getStorageAt(contractProxy.address, SLOT);
             let address = `0x` + slotValue.slice(-40);
