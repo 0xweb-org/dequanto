@@ -41,7 +41,7 @@ type TDeploymentOptions = {
 
     deployment?: {
         // Pending deployment transaction will be re-checked
-        tx?: THex
+        tx?: TEth.Hex
         // When false, the implementation won't be updated in proxy
         upgradeProxy?: boolean
     }

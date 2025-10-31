@@ -198,23 +198,26 @@ export class ProxyDeployment {
             $require.notNull(contractProxyAdmin, `Proxy was deployed previously, but the ProxyAdmin ${contractProxyAdminId} not found`);
         }
 
-        if (hasProxy && shouldUpdate) {
+        if (hasProxy) {
             let SLOT = `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc` as const;
             let slotValue = await client.getStorageAt(contractProxy.address, SLOT);
             let address = `0x` + slotValue.slice(-40);
             if ($address.eq(address, implAddress) === false) {
-                await this.requireCompatibleStorageLayout(proxyId, ctx);
-
-                $logger.log(`Upgrading ProxyAdmin(${contractProxyAdmin.address}) to ${implAddress} (${v}) from ${address}`);
-                let receipt = await Interfaces.call(
-                    deployer,
-                    contractProxyAdmin,
-                    Interfaces.TransparentProxy[v].contractProxyAdmin.upgradeAndCall,
-                    contractProxy.address,
-                    implAddress,
-                    null // data
-                );
-                await this.saveStorageLayout(proxyId, ctx);
+                if (shouldUpdate) {
+                    await this.requireCompatibleStorageLayout(proxyId, ctx);
+                    $logger.log(`Upgrading ProxyAdmin(${contractProxyAdmin.address}) to ${implAddress} (${v}) from ${address}`);
+                    let receipt = await Interfaces.call(
+                        deployer,
+                        contractProxyAdmin,
+                        Interfaces.TransparentProxy[v].contractProxyAdmin.upgradeAndCall,
+                        contractProxy.address,
+                        implAddress,
+                        null // data
+                    );
+                    await this.saveStorageLayout(proxyId, ctx);
+                } else {
+                    $logger.log(`Skip upgrade ProxyAdmin(${contractProxyAdmin.address}) to ${implAddress} (${v}) from ${address}`);
+                }
             }
         }
         if (hasProxy === false && contractProxyReceipt != null) {
