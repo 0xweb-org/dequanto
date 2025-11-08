@@ -42,6 +42,9 @@ UTest({
             [ '.5 ether', 5n * 10n**18n / 10n],
             [ '1.2 gwei', 12n * 10n**9n / 10n],
             [ '0.123^3', 123n],
+            [ '0.25e18', 25n * 10n**18n / 100n],
+            [ '.03e18', 3n * 10n**18n / 100n],
+            [ '1.2e1', 12n],
         ] as const;
 
         for (let [ input, expected ] of arr) {

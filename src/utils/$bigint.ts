@@ -49,8 +49,24 @@ export namespace $bigint {
         return BigInt(Math.round(amount));
     }
 
+    export function from (amount: number | bigint | string): bigint {
+        if (amount == null) {
+            return 0n;
+        }
+        if (typeof amount === 'bigint') {
+            return amount;
+        }
+        if (typeof amount === 'string') {
+            return BigInt(amount);
+        }
+        if (typeof amount === 'string') {
+            return parse(amount);
+        }
+        throw new Error(`Invalid $bigint.from type: ${amount}`);
+    }
+
     /**
-     * @param amount e.g "2.4 ether", "10 gwei", "1.7^18", "123456"
+     * @param amount e.g "2.4 ether", "10 gwei", "1.7^18", "123456", "1.7e18"
      */
     export function parse (amount: string): bigint {
         if (/^\d+$/.test(amount) || $is.Hex(amount) ) {
@@ -76,7 +92,7 @@ export namespace $bigint {
         }
 
         // 2.5^18
-        let rgxMantissa = /^(?<number>[\d.]+)\s*\^\s*(?<decimals>\d+)$/;
+        let rgxMantissa = /^(?<number>[\d.]+)\s*[\^e]\s*(?<decimals>\d+)$/;
         let rgxMantissaMatch = rgxMantissa.exec(amount);
         if (rgxMantissaMatch != null) {
             let number = Number(rgxMantissaMatch.groups.number);
