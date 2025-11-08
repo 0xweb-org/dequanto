@@ -57,6 +57,42 @@ export class TimelockService implements ITimelockService {
         return { status, schedule };
     }
 
+    async getPendingFromTx (txHash: TEth.Hex): Promise<{
+        status: ETimelockTxStatus;
+        schedule: ITimelockTx;
+    }> {
+        let receipt = await this.timelock.client.getTransactionReceipt(txHash);
+        $require.notNull(receipt, `Tx ${txHash} not found`);
+        let block = await this.timelock.client.getBlock(receipt.blockNumber);
+        let contract = new TimelockController(void 0, this.timelock.client);
+        let callScheduled = contract.extractLogsCallScheduled(receipt);
+        $require.gte(callScheduled.length, 1, `Expected at least 1 CallScheduled log`);
+
+        let callSaltArr = contract.extractLogsCallSalt(receipt);
+        $require.eq(callSaltArr.length, 1, `Expected 1 CallSalt log, but got ${callSaltArr.length}`);
+        let [ callSalt ] = callSaltArr;
+
+        let [ callScheduleFirst ] = callScheduled;
+        callScheduleFirst.params.delay
+
+        let schedule = {
+            sender: null,
+            key: callSalt.params.id,
+            id: callSalt.params.id,
+            salt: callSalt.params.salt,
+            to: callScheduled.map(x => x.params.target),
+            data: callScheduled.map(x => x.params.data),
+            value: callScheduled.map(x => $hex.ensure(x.params.value)),
+            predecessor: null,
+            createdAt: block.timestamp,
+            validAt: block.timestamp + Number(callScheduleFirst.params.delay),
+            status: 'pending',
+            txSchedule: txHash,
+        } as ITimelockTx;
+        let status = await this.getScheduleStatus(schedule);
+        return { status, schedule };
+    }
+
     async executePendingByTitle (sender: IAccount, title: string): Promise<{
         tx: TxWriter;
         schedule: ITimelockTx;
