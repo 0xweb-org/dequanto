@@ -44,6 +44,8 @@ type TDeploymentOptions = {
         tx?: TEth.Hex
         // When false, the implementation won't be updated in proxy
         upgradeProxy?: boolean
+        // Owner, if differes from deployer
+        owner?: TEth.IAccount
     }
 }
 type TVerificationOptions = TDeploymentOptions & {
@@ -75,6 +77,7 @@ export class Deployments {
         }
 
     constructor(public client: Web3Client, public deployer: IAccount, public opts: {
+        owner?: IAccount
         Proxy?: Constructor<ContractBase>,
         ProxyAdmin?: Constructor<IProxyAdmin>
         directory?: string
@@ -327,12 +330,13 @@ export class Deployments {
             ImplementationContract: CtorImpl,
             proxyId: proxyId,
             deployer: this.deployer,
+            owner: opts.deployment?.owner ?? this.opts?.owner ?? this.deployer,
             deployments: this,
             implementation: {
                 address: implementationAddress,
                 initData: data
             },
-            upgradeImplementation: opts?.deployment?.upgradeProxy ?? true
+            upgradeImplementation: opts.deployment?.upgradeProxy ?? true
         })
 
         if (contractImplDeployment.implementation == null) {

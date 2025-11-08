@@ -37,6 +37,7 @@ export interface IBeacon extends ContractBase {
 interface IDeploymentCtx {
     ImplementationContract: Constructor<ContractBase>
     deployer: IAccount
+    owner?: IAccount
     deployments: Deployments
     implementation: {
         address: TAddress
@@ -207,7 +208,7 @@ export class ProxyDeployment {
                     await this.requireCompatibleStorageLayout(proxyId, ctx);
                     $logger.log(`Upgrading ProxyAdmin(${contractProxyAdmin.address}) to ${implAddress} (${v}) from ${address}`);
                     let receipt = await Interfaces.call(
-                        deployer,
+                        ctx.owner ?? deployer,
                         contractProxyAdmin,
                         Interfaces.TransparentProxy[v].contractProxyAdmin.upgradeAndCall,
                         contractProxy.address,
