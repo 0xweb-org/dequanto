@@ -1,8 +1,11 @@
+import alot from 'alot';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { EventsIndexer } from '@dequanto/indexer/EventsIndexer';
 import { $date } from '@dequanto/utils/$date';
-import alot from 'alot';
+import { $promise } from '@dequanto/utils/$promise';
 import { File, Directory } from 'atma-io';
+import { $require } from '@dequanto/utils/$require';
+import { l } from '@dequanto/utils/$logger';
 
 const FS_DIR = './test/tmp/data/logs/';
 
@@ -160,6 +163,7 @@ UTest({
         });
 
 
+        l`Get all logs with 1-step iteration`;
         let step = 1;
         for await (let cursor of indexer.getPastLogsStream('Number', {
             fromBlock,
@@ -167,11 +171,37 @@ UTest({
                 blocks: 1
             }
         })) {
-
             eq_(cursor.logs.length, 1);
             eq_(cursor.logs[0].params.num, step);
             step += 1;
         }
+        eq_(step, 6);
+
+
+        l`Get single log from 1-block range fromBlock..fromBlock`;
+        let count = 0;
+        for await (let cursor of indexer.getPastLogsStream('Number', {
+            fromBlock,
+            toBlock: fromBlock
+        })) {
+
+            eq_(cursor.logs.length, 1, `Expects 1 log`);
+            eq_(cursor.logs[0].params.num, count + 1);
+            count += 1;
+        }
+        eq_(count, 1);
+
+        l`Will fail on toBlock < fromBlock`;
+        let { error } = await $promise.caught(async () => {
+            for await (let cursor of indexer.getPastLogsStream('Number', {
+                fromBlock,
+                toBlock: fromBlock - 1
+            })) {
+                throw new Error(`Expect revert`);
+            }
+        });
+        $require.match(/Invalid block range order/, error.message);
+
 
     }
 });

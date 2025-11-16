@@ -106,7 +106,9 @@ export class EventsIndexer <TContract extends ContractBase> {
     > (
         event: TLogName | TLogName[] | '*',
         options?: {
+            // includes block
             fromBlock?: number
+            // includes block
             toBlock?: number
             blockRangeLimits?: WClient['blockRangeLimits']
             params?: Partial<TContract['Types']['Events'][TLogName]['outputParams']>
@@ -183,6 +185,10 @@ export class EventsIndexer <TContract extends ContractBase> {
         fromBlock?: number
         filterKey?: string
     }): Promise<TRange[]> {
+        let fromBlock = opts?.fromBlock ?? initialBlockNumber;
+        if (fromBlock != null) {
+            $require.lte(fromBlock, toBlock, `Invalid block range order`);
+        }
         let logsMetaArr = await this.storeMeta.fetch();
         let eventsBlock = alot(logsMetaArr)
             .filter(x => x.filterKey == opts?.filterKey)
@@ -198,15 +204,24 @@ export class EventsIndexer <TContract extends ContractBase> {
         if (hasInitialBlock === false) {
             let blockNr = opts?.fromBlock ?? await this.getInitialBlockNumber();
             logsMeta.filter(x => x.lastBlock == null).forEach(x => x.lastBlock = blockNr);
-        };
+        }
 
         let ranges = [] as TRange[];
-        let blockNumbers = [ ...logsMeta.map(x => x.lastBlock), toBlock ];
-        let blockNumberSteps = alot(blockNumbers).distinct().sortBy(x => x).toArray();
+        let blockNumbers = [ ...logsMeta.map(x => x.lastBlock), toBlock ].filter(x => x <= toBlock);
 
+        let blockNumberSteps = alot(blockNumbers).distinct().sortBy(x => x).toArray();
+        if (blockNumberSteps.length === 1) {
+            let [ block ] = blockNumberSteps;
+            ranges.push({
+                fromBlock: block,
+                toBlock: block,
+                events: events
+            });
+        }
         for (let i = 0; i < blockNumberSteps.length - 1; i++) {
             let from = blockNumberSteps[i];
             if (i > 0) {
+                // The range includes both blocks: [x, y], but we want (x, y], so we make [x + 1, y]
                 from += 1;
             }
             let to = blockNumberSteps[i + 1];
