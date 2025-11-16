@@ -53,14 +53,15 @@ export namespace $bigint {
         if (amount == null) {
             return 0n;
         }
-        if (typeof amount === 'bigint') {
-            return amount;
-        }
-        if (typeof amount === 'string') {
-            return BigInt(amount);
-        }
-        if (typeof amount === 'string') {
-            return parse(amount);
+        switch (typeof amount) {
+            case 'bigint':
+                return amount;
+            case 'number':
+                return BigInt(amount);
+            case'string':
+                return parse(amount);
+            default:
+                break;
         }
         throw new Error(`Invalid $bigint.from type: ${amount}`);
     }
