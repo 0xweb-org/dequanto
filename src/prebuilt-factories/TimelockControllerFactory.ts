@@ -26,11 +26,12 @@ import type { TOverrideReturns } from '@dequanto/utils/types';
 import { Etherscan } from '@dequanto/explorer/Etherscan'
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 
+import type { TimelockController as TimelockControllerType } from '../prebuilt/openzeppelin/TimelockController';
 
 
-export function TimelockControllerFactory () {
+export function TimelockControllerFactory (): TimelockControllerType {
 
-    return class TimelockController extends ContractBase {
+    class TimelockController extends ContractBase {
         constructor(
             public address: TEth.Address = null,
             public client: Web3Client = di.resolve(EthWeb3Client,),
@@ -375,6 +376,7 @@ export function TimelockControllerFactory () {
 
     }
 
+    return TimelockController as any as TimelockControllerType;
 }
 
 type TSender = TAccount & {
@@ -575,3 +577,6 @@ interface ITimelockControllerTxData {
 type TEvents = TTimelockControllerTypes['Events'];
 type TEventParams<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
 type TEventArguments<TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputArgs']>;
+
+
+
