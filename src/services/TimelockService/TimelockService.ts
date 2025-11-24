@@ -1,6 +1,4 @@
 import memd from 'memd';
-import { TimelockController } from '@dequanto/prebuilt/openzeppelin/TimelockController';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
 import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
 import { IAccount } from '@dequanto/models/TAccount';
 import { TAddress } from '@dequanto/models/TAddress';
@@ -19,10 +17,25 @@ import { File } from 'atma-io';
 import { ITimelockTx, ITimelockTxParamsNormalized, ITimelockTxParams, ITimelockService, ETimelockTxStatus } from './ITimelockService';
 import { TTxWriteMethodKeys } from '@dequanto/utils/types';
 
+import type { TimelockController } from '@dequanto/prebuilt/openzeppelin/TimelockController';
+import type { ContractBase } from '@dequanto/contracts/ContractBase';
+
+import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
+
+const CONFIG = {
+    dir: `0x/data`
+};
 
 
 type TTimelockController = ContractBase & Pick<TimelockController,
-    'schedule' | 'scheduleBatch' | 'execute' | 'executeBatch' | 'getMinDelay' | 'cancel'
+    'schedule'
+    | 'scheduleBatch'
+    | 'execute'
+    | 'executeBatch'
+    | 'getMinDelay'
+    | 'cancel'
+    | 'extractLogsCallScheduled'
+    | 'extractLogsCallSalt'
 >;
 
 export class TimelockService implements ITimelockService {
@@ -37,7 +50,7 @@ export class TimelockService implements ITimelockService {
             // Only for hardhat client. Default: false
             execute?: boolean
 
-            // Directory to store the submitted schedules, default: `./0x/data/`
+            // Directory to store the submitted schedules, default: `./0x/data/`, or use `TimelockService.config` to override it globally
             dir?: string
         }
     ) {
@@ -64,7 +77,7 @@ export class TimelockService implements ITimelockService {
         let receipt = await this.timelock.client.getTransactionReceipt(txHash);
         $require.notNull(receipt, `Tx ${txHash} not found`);
         let block = await this.timelock.client.getBlock(receipt.blockNumber);
-        let contract = new TimelockController(void 0, this.timelock.client);
+        let contract = this.timelock;
         let callScheduled = contract.extractLogsCallScheduled(receipt);
         $require.gte(callScheduled.length, 1, `Expected at least 1 CallScheduled log`);
 
@@ -139,8 +152,29 @@ export class TimelockService implements ITimelockService {
         schedule: ITimelockTx
         tx?: TEth.Hex
     }> {
-
         let txParams = await this.getTxParamsNormalizedFromContract(uniqueTaskName, sender, contract, method, ...params);
+        return await this.processTxParams(txParams);
+    }
+
+    async processData (
+        sender: IAccount,
+        builder: TxDataBuilder
+    ): Promise<{
+        prevStatus: ETimelockTxStatus
+        status: ETimelockTxStatus
+        schedule: ITimelockTx
+        tx?: TEth.Hex
+    }> {
+        let { to, data, value } = builder.data;
+        let titleKey = `${to}${data}`;
+        let params = <ITimelockTxParams> {
+            title: $contract.keccak256(titleKey, 'hex'),
+            sender: sender,
+            to: to,
+            data: data,
+            value: value
+        };
+        let txParams = await this.getTxParamsNormalized (params);
         return await this.processTxParams(txParams);
     }
 
@@ -521,7 +555,7 @@ export class TimelockService implements ITimelockService {
     private async getUniqueByKey (key: TEth.Hex): Promise<ITimelockTx> {
         let store = await this.getStore();
         let all = await store.getAll();
-        let arr = all.filter(x => x.key === key);
+        let arr = all.filter(x => x.key === key && x.status === 'pending');
         $require.lt(arr.length, 2, `Timelock service expects ${key} to be unique. Found ${arr.length}`);
         return arr.length === 1 ? arr[0] : null;
     }
@@ -613,7 +647,7 @@ export class TimelockService implements ITimelockService {
     @memd.deco.memoize({ perInstance: true })
     private async getStore () {
         let { platform, network } = this.timelock.client;
-        let dir = this.options?.dir ?? `0x/data`;
+        let dir = this.options?.dir ?? CONFIG.dir;
 
         let path = getPath(platform, dir);
         if (platform === 'hardhat' && network !== platform) {
@@ -630,6 +664,12 @@ export class TimelockService implements ITimelockService {
             path,
             key: x => x.id
         });
+    }
+
+    static config (config: Partial<typeof CONFIG>) {
+        if (config.dir) {
+            CONFIG.dir = CONFIG.dir;
+        }
     }
 }
 

@@ -250,6 +250,17 @@ export namespace $date {
         result.setHours(23, 59, 59, 999);
         return result;
     }
+    export function weekNumber(date = new Date()) {
+        date = new Date(date);
+        date.setHours(0, 0, 0, 0);
+
+        // Set to nearest Thursday: current date + 4 - current day number
+        const dayNum = date.getDay() || 7;
+        date.setDate(date.getDate() + 4 - dayNum);
+        // Calculate week number
+        const yearStart = new Date(Date.UTC(date.getFullYear(), 0, 1));
+        return Math.ceil((((date.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+    }
     export function monthStart(date = new Date()) {
         let result = new Date(date);
         result.setDate(1);
@@ -263,7 +274,6 @@ export namespace $date {
         result.setHours(0, 0, 0, -1);
         return result;
     }
-
 
     /** date1 + X === date2 */
     export function daysBetween(a: Date, b: Date, abs: boolean = true) {

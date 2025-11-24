@@ -1,5 +1,6 @@
-import { EoAccount, Erc4337Account, SafeAccount, TAccount } from "@dequanto/models/TAccount";
+import { EoAccount, Erc4337Account, SafeAccount, TAccount, TimelockAccount } from "@dequanto/models/TAccount";
 import { $address } from './$address';
+import { $require } from './$require';
 
 export namespace $account {
 
@@ -11,10 +12,11 @@ export namespace $account {
             return { name: account };
         }
 
-        let acc = isSafe(account) || isErc4337 (account)
+        let acc = isSafe(account) || isErc4337 (account) || isTimelock(account)
             ? account.operator
             : account;
 
+        $require.notNull(acc, `Sender not resolved for ${ account?.address ?? account }`);
         return acc as EoAccount;
     }
 
@@ -41,6 +43,20 @@ export namespace $account {
             return rgx.test(account);
         }
         if (account.type === 'erc4337' || rgx.test(account.name)) {
+            return true;
+        }
+        return false;
+    }
+
+    export function isTimelock (account:TAccount): account is TimelockAccount {
+        if (account == null) {
+            return false;
+        }
+        let rgx = /^timelock\//;
+        if (typeof account === 'string') {
+            return rgx.test(account);
+        }
+        if (account.type === 'timelock' || rgx.test(account.name)) {
             return true;
         }
         return false;

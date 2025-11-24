@@ -27,8 +27,6 @@ export class Erc4337Factory {
 
         $require.notNull(provider, `No 4337 provider information found for ${name} and platform "${platform}"`);
 
-        console.log(`CreateService`, provider.contracts.entryPoint);
-
         return new Erc4337Service(client, explorer, {
             addresses: {
                 entryPoint: provider.contracts.entryPoint,

@@ -1,13 +1,14 @@
 import type { EoAccount, TAccount } from '@dequanto/models/TAccount';
-import type { TxWriter } from '../TxWriter';
+import type { ITxWriterEmitter, TxWriter } from '../TxWriter';
 import { SafeAgent } from './SafeAgent';
 import { Erc4337Agent } from './Erc4337Agent';
+import { TimelockAgent } from './TimelockAgent';
 
 
 
 export interface ITxWriterAccountAgent {
     supports (account: TAccount): boolean
-    process (sender: EoAccount, account: TAccount, outerWriter: TxWriter): Promise<TxWriter>
+    process (sender: EoAccount, account: TAccount, outerWriter: TxWriter): Promise<ITxWriterEmitter>
 }
 
 export namespace TxWriterAccountAgents {
@@ -15,6 +16,7 @@ export namespace TxWriterAccountAgents {
     const agents: ITxWriterAccountAgent[] = [
         new SafeAgent(),
         new Erc4337Agent(),
+        new TimelockAgent(),
     ];
 
     export function register (agent: ITxWriterAccountAgent) {

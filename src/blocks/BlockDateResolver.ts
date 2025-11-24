@@ -1,6 +1,9 @@
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { $block } from '@dequanto/utils/$block';
 import alot from 'alot';
+import memd from 'memd';
+import { Web3Client } from '@dequanto/clients/Web3Client';
+import { TEth } from '@dequanto/models/TEth';
+import { $block } from '@dequanto/utils/$block';
+import { $date } from '@dequanto/utils/$date';
 
 export class BlockDateResolver {
     private AVG_INITIAL = {
@@ -9,24 +12,22 @@ export class BlockDateResolver {
         polygon: 3_000,
     };
 
-    private closestTime: number;
-    private closestIdx: number;
-    private maxBlock: number;
 
-    private known = [] as IKnownBlock[]
-    private q: Date;
+
+    private _known = [] as IKnownBlock[]
+    private _requestedDate: Date;
 
     constructor(public client: Web3Client) {
 
     }
 
     async getDate (blockNumber: number): Promise<Date> {
-        let block = await this.client.getBlock(blockNumber);
+        let block = await this.getBlock(blockNumber);
         return new Date(block.timestamp * 1000);
     }
 
     async getBlockNumberFor (date: Date): Promise<number> {
-        this.q = date;
+        this._requestedDate = date;
 
         let avg = this.AVG_INITIAL[this.client.platform] ?? this.client.blockTimeAvg ?? this.AVG_INITIAL['eth'];
         let now = new Date();
@@ -36,38 +37,65 @@ export class BlockDateResolver {
             avg,
         };
 
-        this.maxBlock = topBlock.blockNumber;
-        this.known.push(topBlock);
-        return await this.moveNext(date, {
+
+        this._known.push(topBlock);
+        const result = await this.moveNext(date, {
             closestTime: null,
             blockNumber: null,
+            date: null
         });
+        return result.blockNumber;
+    }
+
+    async getBlockInfoFor (date: Date): Promise<{ block: number, timestamp: number }> {
+        this._requestedDate = date;
+
+        let avg = this.AVG_INITIAL[this.client.platform] ?? this.client.blockTimeAvg ?? this.AVG_INITIAL['eth'];
+        let now = new Date();
+        let topBlock = <IKnownBlock> {
+            blockNumber: await this.client.getBlockNumberCached(),
+            date: now,
+            avg,
+        };
+
+        this._known.push(topBlock);
+        const result = await this.moveNext(date, {
+            closestTime: null,
+            blockNumber: null,
+            date: null,
+        });
+        return {
+            block: result.blockNumber,
+            timestamp: result.date ? $date.toUnixTimestamp(result.date) : null,
+        };
     }
 
     private async moveNext (date: Date, ctx: {
         closestTime: number;
         blockNumber: number;
-    }) {
+        date: Date;
+    }): Promise<IKnownBlock> {
 
         let closestIndex = this.getClosest(date);
-        let block = this.known[closestIndex];
+        let block = this._known[closestIndex];
         let timeDiff = this.diffTime(block.date, date);
 
         let timeDistance = Math.abs(timeDiff);
         const BLOCKS_TOLERANCE = 2;
         if (timeDistance <= block.avg * BLOCKS_TOLERANCE) {
-            return block.blockNumber;
+            return block;
         }
         if (ctx.closestTime != null && timeDistance >= ctx.closestTime) {
-            return ctx.blockNumber;
+            return ctx;
         }
 
         ctx.closestTime = timeDistance;
         ctx.blockNumber = block.blockNumber;
+        ctx.date = block.date;
 
         let nextInfo = await this.checkPoint(block, timeDiff);
         if (nextInfo == null) {
-            return block.blockNumber;
+            return block;
         }
 
         return this.moveNext(date, ctx);
@@ -77,11 +105,11 @@ export class BlockDateResolver {
      * Returns index of the first known block, which is most near to specified block (it can be before or after the specified date).
      */
     private getClosest (date: Date) {
-        let entry = alot(this.known).map(x => [
+        let entry = alot(this._known).map(x => [
             this.diffTimeAbs(x.date, date),
             x
         ] as const).minItem(x => x[0])[1];
-        let i = this.known.indexOf(entry);
+        let i = this._known.indexOf(entry);
         return i;
     }
 
@@ -92,7 +120,7 @@ export class BlockDateResolver {
         }
         let blockNumber = anchor.blockNumber + diffCount;
         if (blockNumber < 0) {
-            throw new Error(`Date Out of range: ${ this.q.toISOString() }. Based on the AVG block time, the blockchain was not active on that date`);
+            throw new Error(`Date Out of range: ${ this._requestedDate.toISOString() }. Based on the AVG block time, the blockchain was not active on that date`);
         }
         let date = await this.getBlockDate(blockNumber);
         let info = {
@@ -106,18 +134,18 @@ export class BlockDateResolver {
 
     /** Add a know block to set */
     private push(info: IKnownBlock) {
-        for (let i = 0; i < this.known.length; i++) {
-            let x = this.known[i];
+        for (let i = 0; i < this._known.length; i++) {
+            let x = this._known[i];
             if (info.date < x.date) {
-                this.known.splice(i, 0, info);
+                this._known.splice(i, 0, info);
                 return;
             }
         }
-        this.known.push(info);
+        this._known.push(info);
     }
     /** Loads the block and gets the Date of the block */
     private async getBlockDate (blockNumber: number) {
-        let block = await this.client.getBlock(blockNumber);
+        let block = await this.getBlock(blockNumber);
         if (block == null) {
             throw new Error(`Block not loaded: ${blockNumber}`);
         }
@@ -139,15 +167,20 @@ export class BlockDateResolver {
     }
     /** With N>1 blocks we can better find out the AVG block time */
     private refineAvg () {
-        for (let i = 1; i < this.known.length; i++) {
-            let info = this.known[i];
-            let prev = this.known[i - 1];
+        for (let i = 1; i < this._known.length; i++) {
+            let info = this._known[i];
+            let prev = this._known[i - 1];
 
             info.avg = this.getAvgBlockCountBetween(prev, info);
             if (i === 1) {
-                this.known[0].avg = info.avg;
+                this._known[0].avg = info.avg;
             }
         }
+    }
+
+    @memd.deco.memoize()
+    private getBlock (blockNumber: number): Promise<TEth.Block> {
+        return this.client.getBlock(blockNumber);
     }
 }
 

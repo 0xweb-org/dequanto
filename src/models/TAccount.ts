@@ -4,7 +4,7 @@ import { TEth } from './TEth';
 import { TPlatform } from './TPlatform';
 
 export interface IAccount {
-    type?: 'eoa' | 'safe' | 'erc4337'
+    type?: 'eoa' | 'safe' | 'erc4337' | 'timelock'
     name?: string
     platform?: TPlatform
 
@@ -50,6 +50,16 @@ export interface SafeAccount extends IAccount {
 
 export interface Erc4337Account extends IAccount {
     type: 'erc4337'
+    provider?: 'default' | string
+
+    // Erc4337 account must include platform information
+    platform: TPlatform
+
+    operator: EoAccount
+}
+
+export interface TimelockAccount extends IAccount {
+    type: 'timelock'
     provider?: 'default' | string
 
     // Erc4337 account must include platform information

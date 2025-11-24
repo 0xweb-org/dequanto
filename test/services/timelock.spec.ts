@@ -1,5 +1,6 @@
 import { TimelockController } from '@dequanto-contracts/openzeppelin/TimelockController';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider'
+import { TimelockAccount } from '@dequanto/models/TAccount';
 import { TimelockService } from '@dequanto/services/TimelockService/TimelockService';
 import { $address } from '@dequanto/utils/$address';
 import { $date } from '@dequanto/utils/$date';
@@ -9,6 +10,9 @@ import { Directory } from 'atma-io';
 let hh = new HardhatProvider();
 let client = hh.client();
 let dir = './test/tmp/timelocks/';
+
+TimelockService.config({ dir });
+
 UTest({
     async $before () {
         try {
@@ -93,5 +97,58 @@ UTest({
         } catch (e) {
             has_(e.message, /Tx not scheduled/, 'or wrong message?');
         }
+    },
+    async '//timelock transaction via agent' () {
+        const DELAY = $date.parseTimespan('4s', { get: 's' });
+
+        let deployer = hh.deployer(0);
+        let { contract: timelock } = await hh.deployCode<TimelockController>(`
+            import "@openzeppelin/contracts/governance/TimelockController.sol";
+            contract Timelock is TimelockController {
+                constructor(
+                    uint minDelay,
+                    address[] memory proposers,
+                    address[] memory executors,
+                    address admin
+                ) TimelockController(minDelay, proposers, executors, admin) { }
+            }
+        `, {
+            client,
+            arguments: [
+                DELAY,
+                [ deployer.address ],
+                [ $address.ZERO ],
+                deployer.address
+            ],
+            tmpDir: './test/tmp/'
+        });
+
+        let { contract: counter } = await hh.deployCode(`
+            contract Counter {
+                event Sender(address indexed sender);
+
+                function smth() external {
+                    emit Sender(msg.sender);
+                }
+            }
+        `, {
+            client,
+            arguments: [
+                timelock.address
+            ],
+            tmpDir: './test/tmp/'
+        });
+
+        let sender = {
+            address: timelock.address,
+            type: 'timelock',
+            operator: deployer
+        } as TimelockAccount;
+
+        console.log(`Timelock`, timelock.address);
+        console.log(`Deployer`, deployer.address);
+
+        let receipt = await counter.$receipt().smth(sender);
+        console.log(receipt.tx.receipt.logs);
     }
 })

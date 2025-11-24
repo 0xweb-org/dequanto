@@ -26,15 +26,17 @@ import { TxLogParser } from './receipt/TxLogParser';
 
 import { ISafeServiceTransport } from '@dequanto/safe/transport/ISafeServiceTransport';
 import { SigFileTransport } from './sig-transports/SigFileTransport';
-import { TxWriterAccountAgents } from './agents/TxWriterAccountAgents';
 import { PromiseEvent } from '@dequanto/class/PromiseEvent';
 import { $sig } from '@dequanto/utils/$sig';
 import { TEth } from '@dequanto/models/TEth';
 import { SafeServiceTypes } from '@dequanto/safe/types/SafeServiceTypes';
 import { ChainAccountService } from '@dequanto/ChainAccountService';
 import { $is } from '@dequanto/utils/$is';
+import { TxWriterAccountAgents } from './agents/TxWriterAccountAgents';
 
-interface ITxWriterEvents {
+
+
+export interface ITxWriterEvents {
     transactionHash (hash: TEth.Hex)
     receipt (receipt: TEth.TxReceipt)
     confirmation (confNumber: number, receipt: TEth.TxReceipt)
@@ -42,6 +44,25 @@ interface ITxWriterEvents {
     sent ()
     log (message: string)
     safeTxProposed (safeTx: SafeServiceTypes.ProposeTransactionProps)
+}
+export interface ITxWriterEmitter {
+    onSent: PromiseLike<string | TEth.Hex>
+    onCompleted: PromiseLike<TEth.TxReceipt>
+
+    tx: ITxWriterTransaction
+    receipt:  TEth.TxReceipt
+
+    on (event: keyof ITxWriterEvents, callback: Function): any | this
+}
+
+export interface ITxWriterTransaction {
+    timestamp: number
+    confirmations: number,
+    hash?: TEth.Hex
+    timeout?: NodeJS.Timer
+    receipt?: TEth.TxReceipt
+    error?: Error
+    knownLogs?: ITxLogItem[]
 }
 export interface ITxWriterOptions {
     timeout?: number | boolean
@@ -80,7 +101,7 @@ export interface ITxWriterOptions {
 
 const DEFAULTS: ITxWriterOptions = {};
 
-export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
+export class TxWriter extends class_EventEmitter<ITxWriterEvents> implements ITxWriterEmitter {
 
     onSent = new class_Dfr<string | TEth.Hex>();
     onCompleted = new class_Dfr<TEth.TxReceipt>();
@@ -108,17 +129,9 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
     }
 
     id = Math.round(Math.random() * 10**10) + '';
-    tx: {
-        timestamp: number
-        confirmations: number,
-        hash?: TEth.Hex
-        timeout?: NodeJS.Timer
-        receipt?: TEth.TxReceipt
-        error?: Error
-        knownLogs?: ITxLogItem[]
-    } = null
+    tx: ITxWriterTransaction = null
 
-    txs: TxWriter['tx'][] = []
+    txs: ITxWriterTransaction[] = []
     options: ITxWriterOptions;
 
 
@@ -173,9 +186,8 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
 
         let agent = TxWriterAccountAgents.get(this.account);
         if (agent != null) {
-
             let sender = await this.getSender();
-            let innerWriter: TxWriter;
+            let innerWriter: ITxWriterEmitter;
             try {
                 innerWriter = await agent.process(sender, this.account, this);
             } catch (error) {
@@ -479,7 +491,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> {
         }
         this.sendTxInner();
     }
-    private pipeInnerWriter (innerWriter: TxWriter) {
+    private pipeInnerWriter (innerWriter: ITxWriterEmitter) {
         innerWriter.onCompleted.then(
             (receipt) => {
                 this.tx = innerWriter.tx;
