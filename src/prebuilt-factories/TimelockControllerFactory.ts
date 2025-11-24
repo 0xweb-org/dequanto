@@ -29,7 +29,7 @@ import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
 import type { TimelockController as TimelockControllerType } from '../prebuilt/openzeppelin/TimelockController';
 
 
-export function TimelockControllerFactory (): TimelockControllerType {
+export function TimelockControllerFactory (): typeof TimelockControllerType {
 
     class TimelockController extends ContractBase {
         constructor(
@@ -376,7 +376,7 @@ export function TimelockControllerFactory (): TimelockControllerType {
 
     }
 
-    return TimelockController as any as TimelockControllerType;
+    return TimelockController as any;
 }
 
 type TSender = TAccount & {
