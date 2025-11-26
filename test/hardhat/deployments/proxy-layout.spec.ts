@@ -312,11 +312,12 @@ UTest({
                     address a3;
                     address a31;
                     address a32;
+                    // wrong 2 vars added and only 1 was removed from gap
                     uint256[49] __gap;
                     address a4;
                 }`,
                 check(result) {
-                    has_(result?.message, `Variable a4(address) at slot 54 conflicts a4(address)`);
+                    has_(result?.message, `Variable __gap(uint256[49]) at slot 5 conflicts a4(address)`);
                 }
             }]);
         },
@@ -365,6 +366,7 @@ UTest({
                     uint256 aBase1;
                     uint256 aBase2;
                     uint256 aBase3;
+                    // 2 vars were added, but 1 was removed from gap
                     uint256[48] __gap;
                 }
                 contract B is ABase {
@@ -373,7 +375,7 @@ UTest({
                 }
                 `,
                 check(result) {
-                    has_(result?.message, `Variable aBase2(uint256) at slot 1 conflicts __gap$(uint256[49])`);
+                    has_(result?.message, `Variable __gap$(uint256[48]) at slot 3 conflicts a1(uint256)`);
                 }
             }]);
         },

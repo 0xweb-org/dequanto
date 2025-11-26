@@ -55,7 +55,7 @@ export namespace $proxyDeploy {
                 // Find the new variable name in old storage
                 // Exclude those with the same position, as they might be pushed logically down by __gap pattern
                 let oldVarWithName = oldVars.find(x => x.name === newVar.name);
-                if (oldVarWithName != null && !Variables.somePosition(oldVarWithName, newVar) && !rgxGap.test(newVar.name)) {
+                if (oldVarWithName != null && !Variables.eqLocation(oldVarWithName, newVar) && !rgxGap.test(newVar.name)) {
                     return new BaseError(
                         ELayoutError.NAME_MISMATCH,
                         newVar,
@@ -65,21 +65,18 @@ export namespace $proxyDeploy {
                 }
                 continue;
             }
-            if (rgxGap.test(newVar.name)) {
-                continue;
-            }
             let isLastVariable = newVar.slot === oldLastSlot;
-            let oldVar = oldVars.find(x => x.slot === newVar.slot && x.position === newVar.position);
-            if (oldVar != null) {
-                if (oldVar.type === newVar.type) {
+            let oldVarAtSamePos = oldVars.find(x => x.slot === newVar.slot && x.position === newVar.position);
+            if (oldVarAtSamePos != null) {
+                if (oldVarAtSamePos.type === newVar.type) {
                     // New variable is the same
-                    if (oldVar.name !== newVar.name) {
+                    if (oldVarAtSamePos.name !== newVar.name) {
                         let oldVarWithName = oldVars.find(x => x.name === newVar.name);
                         if (oldVarWithName != null) {
                             return new BaseError(
                                 ELayoutError.NAME_MISMATCH,
                                 newVar,
-                                [oldVar, oldVarWithName],
+                                [oldVarAtSamePos, oldVarWithName],
                                 ctx
                             );
                         }
@@ -87,7 +84,7 @@ export namespace $proxyDeploy {
                     continue;
                 }
                 if (isDynamicVariable(newVar)) {
-                    let error = await Variables.compare(oldVar, newVar, ctx);
+                    let error = await Variables.compare(oldVarAtSamePos, newVar, ctx);
                     if (error != null) {
                         return error;
                     }
@@ -100,11 +97,12 @@ export namespace $proxyDeploy {
                 if (current.offset + current.length <= mem.offset) {
                     return false;
                 }
-                if (current.offset > mem.offset + mem.length) {
+                if (current.offset >= mem.offset + mem.length) {
                     return false;
                 }
                 return true;
             });
+
             collisions = collisions.filter(x => {
                 return rgxGap.test(x.variable.name) === false;
             });
@@ -134,7 +132,7 @@ export namespace $proxyDeploy {
 
 
     namespace Variables {
-        export function somePosition (a: ISlotVarDefinition, b: ISlotVarDefinition) {
+        export function eqLocation (a: ISlotVarDefinition, b: ISlotVarDefinition) {
             return a.slot === b.slot && a.position === b.position;
         };
 
