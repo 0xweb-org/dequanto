@@ -49,9 +49,11 @@ export namespace $proxyDeploy {
                         ctx
                     );
                 }
+
                 // Find the new variable name in old storage
+                // Exclude those with the same position, as they might be pushed logically down by __gap pattern
                 let oldVarWithName = oldVars.find(x => x.name === newVar.name);
-                if (oldVarWithName != null) {
+                if (oldVarWithName != null && !Variables.somePosition(oldVarWithName, newVar) && !rgxGap.test(newVar.name)) {
                     return new BaseError(
                         ELayoutError.NAME_MISMATCH,
                         newVar,
@@ -130,6 +132,10 @@ export namespace $proxyDeploy {
 
 
     namespace Variables {
+        export function somePosition (a: ISlotVarDefinition, b: ISlotVarDefinition) {
+            return a.slot === b.slot && a.position === b.position;
+        };
+
         export async function compare (oldVar: ISlotVarDefinition, newVar: ISlotVarDefinition, ctx: ICtx) {
             if ($types.isDynamicArray(newVar.type)) {
                 if (!$types.isDynamicArray(oldVar.type)) {
