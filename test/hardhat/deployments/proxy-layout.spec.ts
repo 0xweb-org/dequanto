@@ -274,7 +274,55 @@ UTest({
             ]);
         }
     },
-
+    async 'should compare with added var before __gap' () {
+        return UTest({
+            async 'correct extending' () {
+                await fixtures([{
+                    A: `contract A {
+                        uint256 a1;
+                        address a2;
+                        address a3;
+                        uint256[50] __gap;
+                        address a4;
+                    }`,
+                    B: `contract B {
+                        uint256 a1;
+                        address a2;
+                        address a3;
+                        address a31;
+                        uint256[49] __gap;
+                        address a4;
+                    }`,
+                    check(result) {
+                        eq_(result, null);
+                    }
+                }]);
+            },
+            async 'should fail' () {
+                await fixtures([{
+                    A: `contract A {
+                        uint256 a1;
+                        address a2;
+                        address a3;
+                        uint256[50] __gap;
+                        address a4;
+                    }`,
+                    B: `contract B {
+                        uint256 a1;
+                        address a2;
+                        address a3;
+                        address a31;
+                        address a32;
+                        uint256[49] __gap;
+                        address a4;
+                    }`,
+                    check(result) {
+                        has_(result?.message, `Variable a4(address) at slot 54 conflicts a4(address)`);
+                    }
+                }]);
+            }
+        });
+    }
 })
 
 

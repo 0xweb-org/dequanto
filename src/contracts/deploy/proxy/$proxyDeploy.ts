@@ -34,6 +34,7 @@ export namespace $proxyDeploy {
 
         ctx ??= {};
 
+        let rgxGap = /^_+gap$/;
         let oldMemory = oldVars.map(getMemoryPosition);
         let oldLastSlot = alot(oldVars).max(x => x.slot);
         for (let i = 0; i < newVars.length; i++) {
@@ -58,6 +59,9 @@ export namespace $proxyDeploy {
                         ctx
                     );
                 }
+                continue;
+            }
+            if (rgxGap.test(newVar.name)) {
                 continue;
             }
             let isLastVariable = newVar.slot === oldLastSlot;
@@ -98,7 +102,7 @@ export namespace $proxyDeploy {
                 return true;
             });
             collisions = collisions.filter(x => {
-                return /gap/.test(x.variable.name) === false;
+                return rgxGap.test(x.variable.name) === false;
             });
             if (collisions.length > 0) {
                 if (collisions.length === 1) {
