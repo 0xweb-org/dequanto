@@ -34,7 +34,9 @@ export namespace $proxyDeploy {
 
         ctx ??= {};
 
-        let rgxGap = /^_+gap$/;
+        // When resolving state variables
+        // we append '$' char(s) to the overriden variables to avoid name conflicts, so here we check also for __gap with possible $ sfx.
+        let rgxGap = /^_+gap\$*$/;
         let oldMemory = oldVars.map(getMemoryPosition);
         let oldLastSlot = alot(oldVars).max(x => x.slot);
         for (let i = 0; i < newVars.length; i++) {
