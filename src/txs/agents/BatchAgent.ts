@@ -23,6 +23,14 @@ export class BatchAgent implements ITxWriterAgent {
 
     }
 
+    enable () {
+        TxWriter.DEFAULTS.agent = this;
+    }
+
+    disable () {
+        TxWriter.DEFAULTS.agent = null;
+    }
+
     getTxData (): Pick<TEth.TxLike, "to" | "data" | "value">[] {
         return this.transactions.map(tx => {
             let data = tx.outerWriter.builder.getTxData();
