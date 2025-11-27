@@ -10,6 +10,7 @@ import { $date } from '@dequanto/utils/$date';
 
 import { $require } from '@dequanto/utils/$require';
 import { $address } from '@dequanto/utils/$address';
+import { $logger } from '@dequanto/utils/$logger';
 
 
 export class BatchAgent implements ITxWriterAgent {
@@ -31,13 +32,16 @@ export class BatchAgent implements ITxWriterAgent {
         TxWriter.DEFAULTS.agent = null;
     }
 
-    getTxData (): Pick<TEth.TxLike, "to" | "data" | "value">[] {
+    getTxData (): (Pick<TEth.TxLike, "to" | "data" | "value"> & { sender: TEth.EoAccount, account: TEth.IAccount })[] {
         return this.transactions.map(tx => {
             let data = tx.outerWriter.builder.getTxData();
             return {
                 to: data.to,
                 value: data.value,
                 data: data.data,
+
+                sender: tx.sender,
+                account: tx.account,
             };
         })
     }
@@ -58,13 +62,10 @@ export class BatchAgent implements ITxWriterAgent {
             outerWriter,
         );
 
-        this.transactions.forEach(tx => {
-            $require.eq(sender.address, tx.sender.address, `Expected the same SENDER for all batch transactions`);
-            $require.eq(sender.address, tx.sender.address, `Expected the same ACCOUNT for all batch transactions`);
-        });
+        let methodInfo = await outerWriter.builder.getInputDataInfo();
+        $logger.log(`[BatchAgent] ${outerWriter.builder.data.to} (${methodInfo?.method})`);
 
         this.transactions.push(inner);
-
         await inner.process();
         return inner;
     }
@@ -78,7 +79,7 @@ export class MockTxWriter extends class_EventEmitter<ITxWriterEvents> implements
     tx: ITxWriterTransaction
 
     constructor (
-        public sender: TEth.IAccount,
+        public sender: TEth.EoAccount,
         public account: TEth.IAccount,
         public outerWriter: TxWriter,
     ) {

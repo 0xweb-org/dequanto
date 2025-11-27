@@ -5,6 +5,7 @@ import { File } from 'atma-io'
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { $contract } from '@dequanto/utils/$contract';
 import { TEth } from '@dequanto/models/TEth';
+import { TxWriter } from '@dequanto/txs/TxWriter';
 
 const tx = {
     swap: `0x7e91bf011c11e5e8a553db696bd4b070507b7149af841eb0319010bbfb03502a`
@@ -39,7 +40,7 @@ UTest({
             }
             `;
             let { contract, abi } = await provider.deployCode(code, { client });
-            let tx = await contract.swap(provider.deployer());
+            let tx = await contract.swap(provider.deployer()) as TxWriter;
             let receipt = await tx.wait();
 
             let logsParser = new TxLogParser();
@@ -47,6 +48,9 @@ UTest({
             eq_(logs.length, 2);
             eq_(logs[0].params.text, $contract.keccak256('Hello, world!'));
             eq_(logs[1].params.foo, 'Hello, world!');
+
+            let method = await tx.builder.getInputDataInfo();
+            eq_(method.method, 'swap');
         }
     }
 })

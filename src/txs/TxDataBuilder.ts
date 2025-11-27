@@ -244,6 +244,10 @@ export class TxDataBuilder {
         });
     }
 
+    async getInputDataInfo () {
+        return $contract.parseInputData(this.data.data, this.abi ?? $contract.store.getFlattened());
+    }
+
     private async getGasEstimation (from: TAddress) {
         try {
             return await this.client.getGasEstimation(from, this.data)
