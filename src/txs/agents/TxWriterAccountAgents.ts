@@ -5,10 +5,12 @@ import { Erc4337Agent } from './Erc4337Agent';
 import { TimelockAgent } from './TimelockAgent';
 
 
-
-export interface ITxWriterAccountAgent {
-    supports (account: TAccount): boolean
+export interface ITxWriterAgent {
     process (sender: EoAccount, account: TAccount, outerWriter: TxWriter): Promise<ITxWriterEmitter>
+}
+
+export interface ITxWriterAccountAgent extends ITxWriterAgent{
+    supports (account: TAccount): boolean
 }
 
 export namespace TxWriterAccountAgents {

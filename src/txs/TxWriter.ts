@@ -32,7 +32,7 @@ import { TEth } from '@dequanto/models/TEth';
 import { SafeServiceTypes } from '@dequanto/safe/types/SafeServiceTypes';
 import { ChainAccountService } from '@dequanto/ChainAccountService';
 import { $is } from '@dequanto/utils/$is';
-import { TxWriterAccountAgents } from './agents/TxWriterAccountAgents';
+import { ITxWriterAccountAgent, ITxWriterAgent, TxWriterAccountAgents } from './agents/TxWriterAccountAgents';
 
 
 
@@ -97,6 +97,12 @@ export interface ITxWriterOptions {
      * Do not log Transaction states (start, receipt, etc)
      */
     silent?: boolean
+
+
+    /**
+     * Custom agent to process the transaction data.
+     */
+    agent?: ITxWriterAgent
 }
 
 const DEFAULTS: ITxWriterOptions = {};
@@ -184,22 +190,30 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> implements ITx
             return;
         }
 
-        let agent = TxWriterAccountAgents.get(this.account);
-        if (agent != null) {
-            let sender = await this.getSender();
+        let sender = await this.getSender();
+        let globalAgent = DEFAULTS.agent;
+        let accountAgent = TxWriterAccountAgents.get(this.account);
+        if (globalAgent != null || accountAgent != null) {
             let innerWriter: ITxWriterEmitter;
             try {
-                innerWriter = await agent.process(sender, this.account, this);
+                if (globalAgent != null) {
+                    // Try global agent first
+                    innerWriter = await globalAgent.process(sender, this.account, this);
+                }
+                if (innerWriter == null && accountAgent!= null) {
+                    // If not processed by global agent, try account agent
+                    innerWriter = await accountAgent.process(sender, this.account, this);
+                }
             } catch (error) {
                 this.onCompleted.reject(error);
                 return;
             }
-            this.pipeInnerWriter(innerWriter);
-            return;
+            if (innerWriter != null) {
+                this.pipeInnerWriter(innerWriter);
+                return;
+            }
         }
-
         let time = Date.now();
-        let sender: EoAccount = await this.getSender();
         try {
             await Promise.all([
                 this.builder.ensureNonce(),
@@ -634,6 +648,10 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> implements ITx
             };
         }
         throw new Error(`Account ${account} not found`);
+    }
+
+    static async hasAgent (account: IAccount): Promise<boolean> {
+        return DEFAULTS.agent != null || TxWriterAccountAgents.get(account) != null;
     }
 
     static defaultOptions (options: ITxWriterOptions) {

@@ -80,7 +80,7 @@ export class ContractWriter implements IContractWriter {
             ? account.value
             : null;
 
-        let isSafe = $account.isSafe(account);
+        let hasAgent = await TxWriter.hasAgent(account);
         let sender = $account.getSender(account);
 
         let txBuilder = new TxDataBuilder(this.client, sender, {
@@ -101,7 +101,7 @@ export class ContractWriter implements IContractWriter {
         txBuilder.setInputDataWithABI(abi, ...params);
         txBuilder.abi = configs?.abi;
 
-        if (isSafe !== true) {
+        if (hasAgent !== true) {
             await Promise.all([
                 txBuilder.setGas({
                     price: builderConfig.gasPrice,

@@ -99,6 +99,9 @@ export class Deployments {
         // default 'redeploy'
         whenBytecodeChanged?: 'redeploy' | 'ignore' | 'throw'
 
+        // default: upgrade proxy implementation, when ignored, the upgrade is omitted and can be executed later
+        whenUpgradeRequired?: 'ignore'
+
     } = {}) {
         this._config.TransparentProxy.Proxy = opts?.Proxy;
         this._config.TransparentProxy.ProxyAdmin = opts?.ProxyAdmin;
@@ -336,7 +339,7 @@ export class Deployments {
                 address: implementationAddress,
                 initData: data
             },
-            upgradeImplementation: opts.deployment?.upgradeProxy ?? true
+            upgradeImplementation: opts.deployment?.upgradeProxy ?? this.opts?.whenUpgradeRequired !== 'ignore'
         })
 
         if (contractImplDeployment.implementation == null) {
