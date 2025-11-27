@@ -96,8 +96,27 @@ export class  DeploymentsStorage {
         if (byAddress != null) {
             let deployments = await store.getAll();
             let deploymentsByAddress = deployments.filter(x => $address.eq(x.address, byAddress));
-            $require.eq(deploymentsByAddress.length, 1, 'Expects only 1 deployment per Address. Has Proxies?');
-            return deploymentsByAddress[0];
+            if (deploymentsByAddress.length === 1) {
+                return deploymentsByAddress[0];
+            }
+
+            if (deploymentsByAddress.length > 1) {
+                let asProxy = deploymentsByAddress.filter(x => x.proxyFor != null);
+                if (asProxy.length > 0) {
+                    $require.eq(asProxy.length, 1, 'Expects only 1 deployment per Address.');
+                    return asProxy[0];
+                }
+            }
+
+            if (deploymentsByAddress.length === 0) {
+                let asImplementations = deployments.filter(x => $address.eq(x.implementation, byAddress));
+                if (asImplementations.length > 0) {
+                    $require.eq(asImplementations.length, 1, 'Expects only 1 deployment per Address.');
+                    return asImplementations[0];
+                }
+            }
+
+            throw new Error(`Deployment not found for Address: ${byAddress}`);
         }
 
         let id = typeof mix === 'string' ? mix : mix.name;
