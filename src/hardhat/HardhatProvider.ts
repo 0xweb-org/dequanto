@@ -305,7 +305,7 @@ export class HardhatProvider {
         const hh = await this.getHardhat();
         await hh.run('compile', hhOptions);
 
-        const files = await Directory.readFilesAsync(paths.sources, '*.sol');
+        const files = await Directory.readFilesAsync(paths.sources, '**/*.sol');
 
         const results = await alot(files).mapAsync(async file => {
             let solContractPath = file.uri.toLocalFile();
@@ -464,7 +464,7 @@ export class HardhatProvider {
     }
 
     @memd.deco.memoize()
-    private async getHardhat (): Promise<THardhatLib> {
+    public async getHardhat (): Promise<THardhatLib> {
         return await $dependency.load<THardhatLib>('hardhat');
     }
 
