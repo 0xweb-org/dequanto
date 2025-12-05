@@ -135,14 +135,14 @@ export namespace TEth {
 
 
     export interface IAccount {
-        type?: 'eoa' | 'safe' | 'erc4337'
+        type?: 'eoa' | 'safe' | 'erc4337' | 'timelock' | 'impersonated'
         name?: string
         address?: Address
         platform?: Platform
     }
 
     export interface EoAccount extends IAccount {
-        type?: 'eoa'
+        type?: 'eoa' | 'impersonated'
         key?: TEth.Hex | `p1:0x${string}`;
         signer?: IRpcSigner
     }
