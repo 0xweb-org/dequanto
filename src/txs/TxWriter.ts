@@ -191,6 +191,11 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> implements ITx
         }
 
         let sender = await this.getSender();
+        if (sender.type === 'impersonated') {
+            $require.eq(this.client.platform, 'hardhat');
+            await this.client.debug.impersonateAccount(sender.address);
+        }
+
         let globalAgent = DEFAULTS.agent;
         let accountAgent = TxWriterAccountAgents.get(this.account);
         if (globalAgent != null || accountAgent != null) {

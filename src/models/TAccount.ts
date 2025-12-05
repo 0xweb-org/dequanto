@@ -4,7 +4,7 @@ import { TEth } from './TEth';
 import { TPlatform } from './TPlatform';
 
 export interface IAccount {
-    type?: 'eoa' | 'safe' | 'erc4337' | 'timelock'
+    type?: 'eoa' | 'safe' | 'erc4337' | 'timelock' | 'impersonated'
     name?: string
     platform?: TPlatform
 
@@ -18,7 +18,7 @@ export interface IAccountTx extends IAccount {
 
 
 export interface EoAccount extends IAccount {
-    type?: 'eoa'
+    type?: 'eoa' | 'impersonated'
     key?: TEth.Hex | `p1:0x${string}`
     signer?: IRpcSigner
 }

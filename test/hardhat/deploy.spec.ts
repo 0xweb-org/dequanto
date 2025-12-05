@@ -10,7 +10,7 @@ import { l } from '@dequanto/utils/$logger';
 
 const provider = new HardhatProvider();
 const client = provider.client();
-
+const deployer = provider.deployer();
 
 UTest({
     async 'should deploy solidity contract'() {
@@ -569,6 +569,24 @@ UTest({
         eq_(r1.logs[0].topics[2], '0x0000000000000000000000000000000000000000000000000000000000000000');
         let { receipt: r2 } = await contract.$receipt().bar(provider.deployer(), 1n, 2n);
         eq_(r2.logs[0].topics[2], '0x0000000000000000000000000000000000000000000000000000000000000001');
+    },
+
+    async 'should provide from in calldata' () {
+        let code = `
+            contract Foo {
+                function myAddress () public view returns (address) {
+                    return msg.sender;
+                }
+            }
+        `;
+        let { contract } = await provider.deployCode(code, { client });
+
+        let deployer1 = provider.deployer(1);
+        let myself = await contract.myAddress();
+        eq_(myself, deployer.address);
+
+        let deployer1Address = await contract.$config({ from: deployer1.address }).myAddress();
+        eq_(deployer1Address, deployer1.address);
     },
 
     async 'sandbox'() {
