@@ -1,5 +1,5 @@
 import AppConfig from 'appcfg'
-import { Config as Appcfg } from 'appcfg/Config';
+import type { Config as Appcfg } from 'appcfg/Config';
 
 import { IConfigProvider, TConfigParamsNode } from './AConfigBase';
 import { IConfigData } from './interface/IConfigData';
@@ -59,6 +59,9 @@ export class ConfigProvider implements IConfigProvider {
         let configPathMain = $cli.getParamValue('config-global', parameters)
             ?? DEFAULT_PATHS.CONFIG[ PATH_KEY ];
 
+        let mergeArrayItems = {
+            'accounts': 'address',
+        };
         return [
             {
                 config: {
@@ -77,13 +80,15 @@ export class ConfigProvider implements IConfigProvider {
                 writable: true,
                 optional: true,
                 extendArrays: false,
+                mergeArrayItems
             },
             unlockedAccountsKey ? {
                 name: 'accounts',
                 path: configPathAccounts,
                 writable: true,
                 optional: true,
-                secret: unlockedAccountsKey
+                secret: unlockedAccountsKey,
+                mergeArrayItems
             } : null,
             {
                 path: 'package.json',

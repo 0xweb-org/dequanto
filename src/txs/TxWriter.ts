@@ -1,5 +1,6 @@
 import '../env/BigIntSerializer'
 import di from 'a-di';
+import memd from 'memd';
 import { class_Dfr, class_EventEmitter, obj_extend } from 'atma-utils';
 
 import { $bigint } from '@dequanto/utils/$bigint';
@@ -192,7 +193,8 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> implements ITx
 
         let sender = await this.getSender();
         if (sender.type === 'impersonated') {
-            $require.eq(this.client.platform, 'hardhat');
+            $require.eq(this.client.platform, 'hardhat', `${sender.name ?? sender.address} impersonating a user for invalid platform`);
+            await this.debugEnsureBalance(sender.address);
             await this.client.debug.impersonateAccount(sender.address);
         }
 
@@ -430,7 +432,7 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> implements ITx
         let account = this.account;
 
         let sender = $account.getSender(account);
-        if (sender.key == null) {
+        if (sender.key == null && (sender.type == null || sender.type === 'eoa')) {
             /** check the encrypted storage. In case no key is found, assume the target node contains unlocked or locked account */
             let addressOrName = sender.address ?? sender.name;
             let service = di.resolve(ChainAccountService);
@@ -662,7 +664,13 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> implements ITx
     static defaultOptions (options: ITxWriterOptions) {
         obj_extend(DEFAULTS, options);
     }
+
     static DEFAULTS = DEFAULTS
+
+    @memd.deco.memoize()
+    async debugEnsureBalance (address: TEth.Address) {
+        await this.client.debug.setBalance(address, BigInt(1e18));
+    }
 }
 
 export type TTxWriterJson = {
@@ -673,3 +681,5 @@ export type TTxWriterJson = {
     txs: TxWriter['txs']
     builder: ReturnType<TxDataBuilder['toJSON']>
 };
+
+
