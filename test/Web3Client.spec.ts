@@ -1,5 +1,7 @@
+import { EvmWeb3Client } from '@dequanto/clients/EvmWeb3Client';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
+import { $address } from '@dequanto/utils/$address';
 
 const Accounts = [
     {
@@ -77,5 +79,12 @@ UTest({
                 deepEq_(nums, [ 4, 5]);
             }
         })
+    },
+    async 'should extract EIP-7702 Delegator' () {
+        let mock = new EvmWeb3Client({ platform: 'eth'  });
+        mock.getCode = async (address) => '0xef010063c0c19a282a1b52b07dd5a65b58948a07dae32b';
+
+        let delegator = await mock.getDelegatedAddress($address.ZERO);
+        eq_(delegator, `0x63c0c19a282a1b52b07dd5a65b58948a07dae32b`);
     }
 })

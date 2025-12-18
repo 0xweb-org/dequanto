@@ -296,6 +296,17 @@ export abstract class Web3Client implements IWeb3Client {
             return code;
         })
     }
+    /**
+     * Get and extract EIP-7702 Delegator
+     */
+    async getDelegatedAddress(address: TEth.Address): Promise<TEth.Address> {
+        const code = await this.getCode(address);
+        // e.g. 0xef010063c0c19a282a1b52b07dd5a65b58948a07dae32b
+        if (!$hex.isEmpty(code) && /^0xef0100/i.test(code)) {
+            return (`0x` + code.slice(8)) as TEth.Address;
+        }
+        return null;
+    }
     getPendingTransactions() {
         return this.pool.call(web3 => {
             return web3.rpc.eth_pendingTransactions();
