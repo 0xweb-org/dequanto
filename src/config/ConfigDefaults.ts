@@ -154,7 +154,7 @@ export const ConfigDefaults = <IConfigData> {
             "chainToken": "POL",
             "endpoints": [
                 {
-                    "url": "https://polygon-rpc.com"
+                    "url": "https://polygon.drpc.org"
                 }
             ]
         },

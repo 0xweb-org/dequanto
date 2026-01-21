@@ -129,7 +129,8 @@ web3:
     chainId: 137
     chainToken: POL
     endpoints:
-      - url: 'https://polygon-rpc.com'
+      #- url: 'https://polygon-rpc.com'
+      - url: 'https://polygon.drpc.org'
       #- url: 'https://rpc-mainnet.maticvigil.com/v1/d41908ce4587e7646e975270498ce8da070112a2'
       #- url: 'wss://rpc-mainnet.maticvigil.com/ws/v1/d41908ce4587e7646e975270498ce8da070112a2'
 
