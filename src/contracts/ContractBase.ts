@@ -394,7 +394,30 @@ export abstract class ContractBase {
         if ($abis.length === 1) {
             return $abis[0];
         }
-        throw new Error(`Not implemented exception. Got multiple overloads for the argument count ${args.length}. We should pick the ABI by parameters type.`)
+        $abis = $abis.filter(abi => {
+            for (let i = 0; i < args.length; i++) {
+                let item = abi.inputs[i];
+                let arg = args[i];
+                if (item.type === 'address' && $address.isValid(arg)) {
+                    continue;
+                }
+                if (item.type === 'bool' && typeof arg === 'boolean') {
+                    continue;
+                }
+                if (item.type === 'string' && typeof arg === 'string') {
+                    continue;
+                }
+                if (/^u?int/.test(item.type) && (typeof arg === 'number' || typeof arg === 'bigint')) {
+                    continue;
+                }
+                return false;
+            }
+            return true;
+        });
+        if ($abis.length === 1) {
+            return $abis[0];
+        }
+        throw new Error(`ABI not found. Got multiple overloads for the argument count ${args.length}. We should pick the ABI by parameters type.`)
     }
 
     protected $extractLogs (tx: TEth.TxReceipt, abiItem: TAbiItem) {
