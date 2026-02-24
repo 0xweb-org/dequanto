@@ -12,6 +12,8 @@ let rateLimitRgx = {
         /exceed.+request/i,
         /try.+later/i,
         /request.+rate/i,
+        /max.+rate/i,
+        /max.+calls/i,
         /\b429\b/i,
         [/\bCUPS\b/i, /(\b(maximum|limit)\b)i/]
     ],

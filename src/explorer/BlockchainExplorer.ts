@@ -19,6 +19,7 @@ import { $http } from '@dequanto/utils/$http';
 import { IVerifier } from './verifiers/IVerifier';
 import { FsHtmlVerifier } from './verifiers/FsHtmlVerifier';
 import { TExplorer, TExplorerDefinition } from '@dequanto/models/TExplorer';
+import { RateLimitGuard } from '@dequanto/clients/handlers/RateLimitGuard';
 
 
 /** @deprecated use TExplorerDefinition instead */
@@ -627,18 +628,20 @@ class HttpClient {
         let data = resp.data;
         if (data.message === 'NOTOK') {
             let str = data.result;
-            if (/Max rate/i.test(str)) {
-                let count = opts?.retryCount ?? 3;
+            let error = new Error(str);
+            if (RateLimitGuard.isRateLimited(error)) {
+                const MAX = 3;
+                let count = opts?.retryCount ?? MAX;
                 if (--count === 0) {
-                    throw new Error(str);
+                    throw error;
                 }
-                await $promise.wait(200);
+                await $promise.wait(300 * (MAX - count + 1));
                 return this.getInner(url, {
                     ...(opts ?? {}),
                     retryCount: count
                 });
             }
-            throw new Error(str);
+            throw error;
         }
         if (data.result == null) {
             $logger.warn(`Blockchain "${url}" explorer returned empty result`, data);

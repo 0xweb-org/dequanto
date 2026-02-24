@@ -14,37 +14,37 @@ const contracts = $config.get('contracts.eth', [])
 
 export class Etherscan implements IBlockchainExplorer {
     inMemoryDb: IContractDetails[];
-    getContractMeta(q: string): Promise<IContractDetails> {
+    getContractMeta(q: string) {
         return this.getExplorer().getContractMeta(q);
     }
-    getContractCreation(address: TEth.Address): Promise<{ creator: TEth.Address; txHash: TEth.Hex; }> {
+    getContractCreation(address: TEth.Address) {
         return this.getExplorer().getContractCreation(address);
     }
-    getContractAbi(address: TEth.Address, opts?: { implementation: string; }): Promise<{ abi: string; implementation: TEth.Address; }> {
+    getContractAbi(address: TEth.Address, opts?) {
         return this.getExplorer().getContractAbi(address, opts);
     }
-    getContractSource(address: TEth.Address): Promise<{ SourceCode: { contractName: string; files: { [filename: string]: { content: string; }; }; }; ContractName: string; ABI: string; }> {
+    getContractSource(address: TEth.Address) {
         return this.getExplorer().getContractSource(address);
     }
-    submitContractVerification(contractData: { address: TAddress; sourceCode: string | any; contractName: any; compilerVersion: any; optimizer?: { enabled?: boolean; runs: number; }; arguments: TEth.Hex; }): Promise<string> {
+    submitContractVerification(contractData) {
         return this.getExplorer().submitContractVerification(contractData);
     }
-    checkContractVerificationSubmission(submission: { guid: any; }): Promise<string> {
+    checkContractVerificationSubmission(submission) {
         return this.getExplorer().checkContractVerificationSubmission(submission);
     }
-    submitContractProxyVerification(contractData: { address: TAddress; expectedImplementation?: TAddress; }): Promise<string> {
+    submitContractProxyVerification(contractData) {
         return this.getExplorer().submitContractProxyVerification(contractData);
     }
     checkContractProxyVerificationSubmission(submission: { guid: any; }): Promise<string> {
         return this.getExplorer().checkContractProxyVerificationSubmission(submission);
     }
-    getTransactions(address: TEth.Address, params?: { fromBlockNumber?: number; page?: number; size?: number; }): Promise<TEth.TxLike[]> {
+    getTransactions(address: TEth.Address, params?) {
         return this.getExplorer().getTransactions(address, params);
     }
-    getTransactionsAll(address: TEth.Address): Promise<TEth.TxLike[]> {
+    getTransactionsAll(address: TEth.Address) {
         return this.getExplorer().getTransactionsAll(address);
     }
-    getInternalTransactions(address: TEth.Address, params?: { fromBlockNumber?: number; page?: number; size?: number; }): Promise<TEth.TxLike[]> {
+    getInternalTransactions(address: TEth.Address, params) {
         return this.getExplorer().getInternalTransactions(address, params);
     }
     getInternalTransactionsAll(address: TEth.Address): Promise<TEth.TxLike[]> {
