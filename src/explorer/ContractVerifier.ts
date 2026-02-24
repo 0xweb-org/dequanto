@@ -87,12 +87,17 @@ export class ContractVerifier {
         address?: TEth.Address
         proxyFor?: TEth.Address
         constructorParams?: any[]
+        tx?: TEth.Hex
     }): Promise<TSubmissionStatus> {
         let client = this.deployments.client;
         let contractName = typeof Ctor === 'string' ? Ctor : Ctor.name;
-        let deployment = await this.deployments.store.getDeploymentInfo(Ctor, opts);
-        $require.notNull(deployment, `Deployment not found for ${opts?.id ?? contractName}`);
-        let address = opts?.address ?? deployment.implementation ?? deployment.address;
+        let address = opts?.address;
+
+        if ($is.Address(address) === false) {
+            let deployment = await this.deployments.store.getDeploymentInfo(Ctor, opts);
+            $require.notNull(deployment, `Deployment not found for ${opts?.id ?? contractName}`);
+            address = deployment.implementation ?? deployment.address;
+        }
 
         try {
             this.logger.log(`Checking if already verified ${address}`);
@@ -119,8 +124,14 @@ export class ContractVerifier {
         let ctorAbi = abi.find(x => x.type === 'constructor');
         if (ctorAbi?.inputs?.length > 0) {
             if (opts?.constructorParams == null) {
-                let tx = await this.deployments.client.getTransaction(deployment.tx);
-                $require.notNull(tx, `Tx ${deployment.tx} not found in ${this.deployments.client.network}`);
+                let txHash = opts.tx;
+                if (txHash == null) {
+                    let deployment = await this.deployments.store.getDeploymentInfo(Ctor, opts);
+                    $require.notNull(deployment, `Deployment not found for ${opts?.id ?? contractName}`);
+                    txHash = deployment.tx;
+                }
+                let tx = await this.deployments.client.getTransaction(txHash);
+                $require.notNull(tx, `Tx ${txHash} not found in ${this.deployments.client.network}`);
                 let parsedArguments = $contract.decodeDeploymentArguments(tx.input, ctorAbi);
                 constructorArguments = parsedArguments.encoded;
             } else {

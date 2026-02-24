@@ -22,11 +22,11 @@ export namespace BlockchainExplorerFactory {
         registry[platform] = explorer;
     }
 
-    export function get (platform: TPlatform | number)
-    export function get (config: TExplorerDefinition)
+    export function get (platform: TPlatform | number): IBlockchainExplorer
+    export function get (config: TExplorerDefinition): IBlockchainExplorer
     /** @obsolete */
-    export function get (platform: TPlatform | number, opts: IBlockchainExplorerFactoryParams)
-    export function get (mix: TPlatform | number | TExplorerDefinition, opts?: IBlockchainExplorerFactoryParams) {
+    export function get (platform: TPlatform | number, opts: IBlockchainExplorerFactoryParams): IBlockchainExplorer
+    export function get (mix: TPlatform | number | TExplorerDefinition, opts?: IBlockchainExplorerFactoryParams): IBlockchainExplorer {
 
         $require.notNull(mix, `ArgumentException: no platform in BlockchainExplorerFactory`);
 
@@ -35,8 +35,8 @@ export namespace BlockchainExplorerFactory {
 
         let cfg =  $config.getExplorerOptions(platform);
         let params = {
-            ...(opts ?? {}),
             ...(cfg ?? {}),
+            ...(opts ?? {}),
         } as any;
 
         let Ctor = registry[platform];
@@ -51,7 +51,7 @@ export namespace BlockchainExplorerFactory {
     }
 
     /** Same as sync variation, but ensures the config is being fetched */
-    export async function getAsync (platform: TPlatform, opts?: IBlockchainExplorerFactoryParams) {
+    export async function getAsync (platform: TPlatform, opts?: IBlockchainExplorerFactoryParams): Promise<IBlockchainExplorer> {
         await Config.get();
         return get(platform, opts);
     }
