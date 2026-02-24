@@ -1,6 +1,5 @@
 import di from 'a-di';
 import alot from 'alot';
-import { Etherscan } from '@dequanto/explorer/Etherscan';
 import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
 import { ITransactionDetails } from '@dequanto/models/ITransactionDetails';
 import { ContractProvider } from './ContractProvider';
@@ -11,8 +10,8 @@ export class TxContract {
 
     private provider: ContractProvider;
 
-    constructor (private explorer: IBlockchainExplorer = di.resolve(Etherscan)) {
-        this.provider = di.resolve(ContractProvider, this.explorer);
+    constructor (private explorer: IBlockchainExplorer) {
+        this.provider = di.resolve(ContractProvider, explorer);
     }
 
     async parseTransaction (tx: TEth.TxLike)  {
