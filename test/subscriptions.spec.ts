@@ -68,8 +68,8 @@ UTest({
 
 
 
-        await $promise.waitForTrue(() => onTransactionAllSpy.callCount > 0);
         await $promise.waitForTrue(() => onLogAllSpy.callCount > 0);
+        await $promise.waitForTrue(() => onTransactionAllSpy.callCount > 0);
         await $promise.waitForTrue(() => onLogEventSpy.callCount > 0);
 
         eq_(onTransactionAllSpy.callCount, 1);

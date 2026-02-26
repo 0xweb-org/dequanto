@@ -308,7 +308,7 @@ export abstract class ContractBase {
         let stream = this.getContractStream();
         let events = stream.on(event);
         if (cb) {
-            events.onData(cb);
+            events.subscribe(cb);
         }
         return events;
     }

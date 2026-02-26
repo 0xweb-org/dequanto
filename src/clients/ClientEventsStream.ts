@@ -41,9 +41,8 @@ export class ClientEventsStream<T extends TClientEventsStreamData<unknown[]> = a
         //     this.subscriptions.connection = null;
         // }
         this.innerStream = web3Subscription;
-        web3Subscription.on('data', this.onDataInner);
+        web3Subscription.subscribe(this.onDataInner, this.onErrorInner);
         web3Subscription.on('connected', this.onConnectedInner);
-        web3Subscription.on('error', this.onErrorInner);
     }
 
     subscribe (cb: (x: T) => void, onError?: (x: Error | any) => void) {
