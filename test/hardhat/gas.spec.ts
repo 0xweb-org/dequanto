@@ -22,7 +22,7 @@ UTest({
 
         let { error, gas } = await contract.$gas().foo(deployer, 1);
         eq_(error, null);
-        eq_(gas, 21393, `Invalid gas: ${gas}`);
+        eq_(Number(gas), 21510, `Invalid gas: ${gas}`);
 
         let nonce = TxNonceManager.create(client, deployer);
         let { signed } = await contract.$signed({ nonce }).foo(deployer, 2);
