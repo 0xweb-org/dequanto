@@ -164,6 +164,7 @@ UTest({
                 });
 
                 let erc4337Account = await writer.getAccount(ownerFoo);
+                await client.debug.setBalance(erc4337Account.address, 10n ** 18n);
 
                 let tx = await demoCounterContract.$data().logMe({ address: erc4337Account.address });
                 let { writer: opWriter } = await writer.submitUserOpViaEntryPointWithOwner({
@@ -185,11 +186,10 @@ UTest({
                     }
                 });
                 let submitter = await $sig.$account.generate();
-                client.debug.setBalance(submitter.address, 10n ** 18n);
+                await client.debug.setBalance(submitter.address, 10n ** 18n);
 
                 let erc4337Account = await writer.getAccount(ownerFoo);
-
-                client.debug.setBalance(erc4337Account.address, 10n ** 18n);
+                await client.debug.setBalance(erc4337Account.address, 10n ** 18n);
 
 
                 let tx = await demoCounterContract.$data().logMe({ address: erc4337Account.address });
