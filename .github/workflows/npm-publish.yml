@@ -28,6 +28,4 @@ jobs:
       - run: npm run build
       - run: npm run build-types
       - run: npm run test-node
-      - run: npm publish --provenance --access public
-        env:
-          #NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+      - run: npm publish --access public
