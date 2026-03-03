@@ -378,7 +378,13 @@ export abstract class ContractBase {
         return ContractBaseUtils.$getAbiItem(this.abi, type, name, argsCount);
     }
 
-    protected $getAbiItemOverload (abis: (string | TAbiItem)[], args: any[]) {
+    protected $getAbiItemOverload (fnName: string, args: any[])
+    protected $getAbiItemOverload (abis: (string | TAbiItem)[], args: any[])
+    protected $getAbiItemOverload (mix: string | (string | TAbiItem)[], args: any[]) {
+        let abis = typeof mix === 'string'
+           ? this.abi.filter(x => x.type === 'function' && x.name === mix)
+           : mix;
+
         let $abis = abis
             .map(methodAbi => {
                 if (typeof methodAbi ==='string') {

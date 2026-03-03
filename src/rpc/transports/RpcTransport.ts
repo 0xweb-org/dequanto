@@ -27,7 +27,7 @@ export namespace RpcTransport {
         }
         if (hasUrl(mix)) {
             let url = mix.url;
-            let protocol = /^(?<protocol>\w+):\/\//.exec(url).groups?.protocol;
+            let protocol = /^(?<protocol>\w+):\/\//.exec(url)?.groups?.protocol;
             $require.notEmpty(protocol, `Invalid protocol: ${url}`);
 
             let Factory = factories[protocol];

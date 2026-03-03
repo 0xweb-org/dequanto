@@ -616,7 +616,7 @@ namespace Gen {
             ts: `
                 ${overrides}
                 async ${abi.name} (...args): ${fnResult} {
-                    let abi = this.$getAbiItemOverload([ ${sigs} ], args);
+                    let abi = this.$getAbiItemOverload('${abi.name}', args);
                     return this.$read(abi, ...args);
                 }
             `,
@@ -626,7 +626,7 @@ namespace Gen {
             `,
             js: `
                 async ${abi.name} (...args) {
-                    let abi = this.$getAbiItemOverload([ ${sigs} ], args);
+                    let abi = this.$getAbiItemOverload('${abi.name}', args);
                     return this.$read(abi, ...args);
                 }
             `
