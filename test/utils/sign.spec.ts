@@ -323,5 +323,36 @@ UTest({
             eq_(account0.address, `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`);
             eq_(account0.key, `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`);
         }
+    },
+    async 'sign and recover' () {
+        // fixes tx + sig serialization before $rlp.encode (hexTrimmed from both sided)
+        // 0x00fa5817585e9ef2ab7bb8e697324550bb52ff7f61c3d6cce9d42db15a739f00 => 0xfa5817585e9ef2ab7bb8e697324550bb52ff7f61c3d6cce9d42db15a739f
+        // MUST trim only at the start: 0xfa5817585e9ef2ab7bb8e697324550bb52ff7f61c3d6cce9d42db15a739f00
+        const account = {
+            key: '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d',
+            address: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+        } as any;
+        const tx = {
+            to: '0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0',
+            chainId: 1337,
+            data: '0xf18d03cc000000000000000000000000e7f1725e7734ce288f8367e1bb143e90bb3f05120000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc0000000000000000000000000000000000000000000000000000000000000001',
+            maxFeePerGas: '0xa6e4a94b',
+            maxPriorityFeePerGas: '0x53724e00',
+            type: 2,
+            gas: 576148,
+            nonce: 48
+        };
+        let hh = new HardhatProvider();
+        let client = hh.client();
+        let builder = TxDataBuilder.fromJSON(client, account, {
+            tx: { ...tx },
+            config: null
+        });
+        let txData = builder.getTxData();
+
+        let txRaw = await $sig.signTx(txData, account);
+
+        let recovered = await $sig.recoverTx(txRaw);
+        eq_(recovered, account.address);
     }
 })

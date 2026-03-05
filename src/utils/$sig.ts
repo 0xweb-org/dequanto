@@ -473,7 +473,7 @@ export namespace $sig {
                     return '0x';
                 }
                 if (hex.startsWith('0x00')) {
-                    hex = $hex.trimBytes(hex);
+                    hex = hex.replace(/^0x(0{2})+/, '0x') as TEth.Hex;
                 }
                 return hex;
             }

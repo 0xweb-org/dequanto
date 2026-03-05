@@ -27,7 +27,7 @@ export namespace $hex {
         if (hex.startsWith('0x00') === false && hex.endsWith('00') === false) {
             return hex;
         }
-        return hex.replace(/^0x(0{2})+/, '').replace(/(0{2})+$/, '') as TEth.Hex;
+        return hex.replace(/^0x(0{2})+/, '0x').replace(/(0{2})+$/, '') as TEth.Hex;
     }
     export function trimLeadingZerosFromNumber(hex: string) {
         hex = hex.replace(/^0x0*/, '');
