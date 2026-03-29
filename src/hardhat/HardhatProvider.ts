@@ -219,7 +219,7 @@ export class HardhatProvider {
         const { contract, ContractCtor } = await ContractClassFactory.fromAbi<TReturn>(receipt.contractAddress, abi, client, null);
         const explorer = await this.explorer();
 
-        const meta = { name: options.contractName, abi: abi, address: receipt.contractAddress };
+        const meta = { name: options?.contractName, abi: abi, address: receipt.contractAddress };
         explorer.inMemoryDb.push(meta);
         $contract.store.register(meta);
 
