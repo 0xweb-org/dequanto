@@ -295,14 +295,30 @@ export namespace $contract {
 
     export namespace store {
         const knownContracts = [] as {
+            name?: string
+            address?: TEth.Address
             abi: TAbiItem[]
         }[];
 
         export function getFlattened() {
             return alot(knownContracts).mapMany(x => x.abi).toArray();
         }
-        export function register(contract: { abi: TAbiItem[] }) {
+        export function register(contract: {
+            address?: TEth.Address
+            name?: string
+            abi: TAbiItem[]
+        }) {
             knownContracts.push(contract)
+        }
+
+        export function getContract(address: TEth.Address) {
+            return knownContracts.find(x => x.address === address);
+        }
+
+        export function getAbiItem(selector: TEth.Hex) {
+            return getFlattened().find(item => {
+                return $abiUtils.getMethodSignature(item) === selector;
+            });
         }
     }
 

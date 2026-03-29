@@ -126,6 +126,15 @@ export namespace $require {
         }
     }
 
+    export function has<T = any>(a: T, arr: T[], message?: string)
+    export function has<T = any>(a: string, str: string, message?: string)
+    export function has<T = any>(a: T, mix: T[] | string, message: string = '') {
+        // not strict equal
+        if (mix.includes(a as any) === false) {
+            throw new Error(`${a} should be contain ${typeof mix === 'string' ? mix : mix.join(', ')}. ${message}`)
+        }
+    }
+
     export function Address (val: TAddress | string, message: string = ''): TAddress {
         if ($is.Address(val) === false) {
             throw new Error(`Value ${val} is not a valid address. ${message}`);

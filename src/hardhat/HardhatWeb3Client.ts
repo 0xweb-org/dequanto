@@ -62,6 +62,10 @@ export class HardhatWeb3Client extends Web3Client {
                 autoMine: {
                     call: 'evm_setAutomine',
                     params: 1
+                },
+                traceCall: {
+                    call: 'debug_traceCall',
+                    params: 3
                 }
             }
         });

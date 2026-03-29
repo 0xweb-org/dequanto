@@ -83,30 +83,39 @@ export class ClientDebugMethods {
         return this.call('autoMine', enabled);
     }
 
+    traceCall (data: TEth.TxLike, block?: number | string | 'latest', params?: {
+        disableMemory?: boolean
+        disableStack?: boolean
+        disableStorage?: boolean
+    }): Promise<TClientDebugTraces> {
+        return this.call('traceCall', data, block ?? 'latest', params);
+    }
+
     private call(method: keyof typeof this.methods, ...args: any[]) {
         let meta = this.methods[method];
         if (meta?.call == null) {
             throw new Error(`RPC method for ${method} is not configured in ${this.client.platform}`);
         }
         return this.client.pool.call(web3 => {
-            //let eth = web3.eth as (typeof web3.eth & { [key in typeof method]: Function });
-
             return web3.rpc.request({
                 method: meta.call,
                 params: args
             });
-            // if (eth[method] == null) {
-            //     web3.eth.extend({
-            //         methods: [
-            //             {
-            //                 name: method,
-            //                 call: meta.call,
-            //                 params: meta.params,
-            //             }
-            //         ]
-            //     });
-            // }
-            // return eth[method](...args);
         })
     }
+}
+
+
+export type TClientDebugTraces = {
+    failed?: boolean
+    returnValue?: TEth.Hex
+    structLogs?: {
+        depth: number
+        gas: number
+        gasCost: number
+        op: string
+        pc: number
+        memory?: string[]
+        stack?: string[]
+    }[]
 }

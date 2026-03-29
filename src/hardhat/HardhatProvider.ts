@@ -218,7 +218,10 @@ export class HardhatProvider {
         const receipt = await Factory.deploy();
         const { contract, ContractCtor } = await ContractClassFactory.fromAbi<TReturn>(receipt.contractAddress, abi, client, null);
         const explorer = await this.explorer();
-        explorer.inMemoryDb.push({ name: '', abi: abi, address: receipt.contractAddress });
+
+        const meta = { name: options.contractName, abi: abi, address: receipt.contractAddress };
+        explorer.inMemoryDb.push(meta);
+        $contract.store.register(meta);
 
         return {
             contract,
@@ -259,7 +262,9 @@ export class HardhatProvider {
         const { contract, ContractCtor } = await ContractClassFactory.fromAbi<TReturn>(receipt.contractAddress, abi, client, null);
 
         const explorer = await this.explorer();
-        explorer.inMemoryDb.push({ name: '', abi: abi, address: receipt.contractAddress });
+        const meta = { name: options.contractName, abi: abi, address: receipt.contractAddress };
+        explorer.inMemoryDb.push(meta);
+        $contract.store.register(meta);
         return {
             contract,
             ContractCtor,
@@ -354,7 +359,6 @@ export class HardhatProvider {
         const hh = await this.getHardhat();
         await hh.run('compile', hhOptions);
 
-
         return await this.getContractFromSolPath<T> (solContractPath, {
             contractName: options?.contractName,
             paths
@@ -413,6 +417,7 @@ export class HardhatProvider {
         if (contractName == null) {
             let matches = Array.from(solidityCode.matchAll(/contract\s+(?<name>[\w]+)/g));
             contractName = matches[matches.length - 1].groups.name;
+            options.contractName = contractName;
         }
         $require.notNull(contractName, `Contract name not resolved from the code`);
         let rnd = $number.randomInt(0, 10**10);

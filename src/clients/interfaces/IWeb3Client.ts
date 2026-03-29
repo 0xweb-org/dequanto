@@ -65,6 +65,10 @@ export interface IWeb3ClientOptions {
         autoMine?: {
             call: 'evm_setAutomine' | string,
             params: 1 | number
+        },
+        traceCall?: {
+            call: 'debug_traceCall' | string,
+            params: 3 | number
         }
     }
 }

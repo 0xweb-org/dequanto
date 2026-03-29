@@ -13,6 +13,7 @@ import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $hex } from '@dequanto/utils/$hex';
 import { $contract } from '@dequanto/utils/$contract';
 import { TxNonceManager } from './TxNonceManager';
+import { $traces } from '@dequanto/utils/$traces';
 
 export class TxDataBuilder {
 
@@ -268,6 +269,25 @@ export class TxDataBuilder {
             if (parsed) {
                 message += `\nMethod: ` + $contract.formatCall(parsed);
             }
+            if (this.client.debug && this.client.debug.traceCall) {
+                try {
+                    let txData = { from, ...this.data };
+                    let traces = await this.client.debug.traceCall(txData);
+                    let output = await $traces.format({
+                        tx: txData,
+                        traces,
+                        color: false,
+                        shortAddress: false,
+                        async getABI(address) {
+                            return $contract.store.getContract(address);
+                        }
+                    });
+                    message += `\nTraces: \n` + output;
+                } catch (error) {
+                    // ignore
+                }
+            }
+
             throw new Error(message);
         }
     }

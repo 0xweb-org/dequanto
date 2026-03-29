@@ -20,7 +20,7 @@ export function $color_options(opts: { type: 'none' | 'ascii' }) {
         : ColorData.ColorAscii
 };
 
-namespace ColorData {
+export namespace ColorData {
 
     export const ColorAscii = {
         type: 'ascii',
