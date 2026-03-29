@@ -5,7 +5,6 @@ import { $abiUtils } from './$abiUtils';
 import { $bigint } from './$bigint';
 import { $hex } from '@dequanto/utils/$hex';
 import { $color, ColorData } from './$color';
-import { TAbiItem } from '@dequanto/types/TAbi';
 import alot from 'alot';
 
 export namespace $traces {
@@ -14,7 +13,7 @@ export namespace $traces {
     type TAbiMeta = {
         name?: string
         contractName?: string
-        abi: (TAbiItem | TEth.Abi.Item)[]
+        abi: TEth.Abi.Item[]
     };
     type TTraceEvent = {
         index: number

@@ -192,8 +192,8 @@ export namespace TEth {
     }
 
     export namespace Abi {
-        export type Type = 'function' | 'constructor' | 'event' | 'fallback';
-        export type StateMutabilityType = 'pure' | 'view' | 'nonpayable' | 'payable';
+        export type Type = 'function' | 'constructor' | 'event' | 'error' | 'fallback' | 'receive';
+        export type StateMutabilityType = 'constant' | 'pure' | 'view' | 'nonpayable' | 'payable';
 
         export interface Item {
             anonymous?: boolean;

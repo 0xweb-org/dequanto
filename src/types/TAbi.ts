@@ -1,6 +1,6 @@
 
 export type AbiType = 'function' | 'constructor' | 'event' | 'error' | 'fallback' | 'receive';
-export type StateMutabilityType = 'constant' |'pure' | 'view' | 'nonpayable' | 'payable';
+export type StateMutabilityType = 'constant' | 'pure' | 'view' | 'nonpayable' | 'payable';
 
 export interface TAbiItem {
     anonymous?: boolean;
