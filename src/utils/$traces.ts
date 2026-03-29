@@ -3,7 +3,7 @@ import { TClientDebugTraces } from '@dequanto/clients/debug/ClientDebugMethods';
 import { TEth } from '@dequanto/models/TEth';
 import { $abiUtils } from './$abiUtils';
 import { $bigint } from './$bigint';
-import { $hex } from 'dequanto/utils/$hex';
+import { $hex } from '@dequanto/utils/$hex';
 import { $color, ColorData } from './$color';
 import { TAbiItem } from '@dequanto/types/TAbi';
 import alot from 'alot';
