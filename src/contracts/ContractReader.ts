@@ -322,9 +322,12 @@ export namespace ContractReaderUtils {
 
     ;
 
-    export async function readAsyncBatch(client: Web3Client, requests: IContractReadParams[]) {
+    export async function readAsyncBatch(client: Web3Client, requests: (IContractReadParams | null)[]) {
 
         let rpcRequests = await alot(requests).map(async request => {
+            if (request == null) {
+                return null;
+            }
             let abi = request.abi;
             if (typeof abi === 'string') {
                 abi = $abiParser.parseMethod(abi);
@@ -344,7 +347,19 @@ export namespace ContractReaderUtils {
             } as TRpcContractCall;
         }).toArrayAsync();
 
-        let outputs = await client.readContractBatch(rpcRequests);
-        return outputs;
+        let mapped = [];
+        let rpcRequestsNotEmpty = [];
+        for (let i = 0; i < rpcRequests.length; i++) {
+            if (rpcRequests[i] == null) {
+                continue;
+            }
+            let idx = rpcRequestsNotEmpty.push(rpcRequests[i]) - 1;
+            mapped[i] = idx;
+        }
+
+        let outputs = await client.readContractBatch(rpcRequestsNotEmpty);
+        return rpcRequests.map((_, i) => {
+            return outputs[mapped[i]] ?? null;
+        });
     }
 }
