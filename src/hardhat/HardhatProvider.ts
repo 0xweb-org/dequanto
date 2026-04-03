@@ -216,13 +216,19 @@ export class HardhatProvider {
         const Factory = await this.getFactory([abi, bytecode], client, signer, args);
 
         const receipt = await Factory.deploy();
-        const { contract, ContractCtor } = await ContractClassFactory.fromAbi<TReturn>(receipt.contractAddress, abi, client, null);
         const explorer = await this.explorer();
 
-        const meta = { name: options?.contractName, abi: abi, address: receipt.contractAddress };
+        const meta = {
+            name: options?.contractName,
+            abi: abi,
+            address: receipt.contractAddress
+        };
         explorer.inMemoryDb.push(meta);
         $contract.store.register(meta);
 
+        const { contract, ContractCtor } = await ContractClassFactory.fromAbi<TReturn>(receipt.contractAddress, abi, client, explorer, {
+            contractName: meta.name
+        });
         return {
             contract,
             ContractCtor,

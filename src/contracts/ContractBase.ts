@@ -31,6 +31,7 @@ import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { $is } from '@dequanto/utils/$is';
 import { FnRequestWrapper } from './wrappers/FnRequestWrapper';
 import { WClient } from '@dequanto/clients/ClientPool';
+import { Constructor } from '@dequanto/utils/types';
 
 
 export abstract class ContractBase {
@@ -39,12 +40,12 @@ export abstract class ContractBase {
     //private from?: TAddress;
 
     /** 1.4 for medium*/
-    private gasPriorityFee?: number
+    private gasPriorityFee?: number;
     protected builderConfig?: ITxBuilderOptions;
     protected writerConfig?: ITxWriterOptions;
 
-    abstract abi?: TAbiItem[]
-    abstract Types?: TContractTypes
+    abstract abi?: TAbiItem[];
+    abstract Types?: TContractTypes;
 
     $meta?: {
         // Path to the compiled JSON artifact file (exists when the contract was generated from artifact JSON)
@@ -64,7 +65,16 @@ export abstract class ContractBase {
         public client: Web3Client,
         public explorer: IBlockchainExplorer
     ) {
-
+        if ($is.Address(address) && $contract.store.has(address) === false) {
+            const Ctor = this.constructor as Constructor<ContractBase>;
+            const cloned = new Ctor(null, null, null);
+            const meta = {
+                address: address.toLowerCase() as TAddress,
+                abi: cloned.abi,
+                name: cloned?.$meta?.name ?? Ctor.name
+            };
+            //$contract.store.register(meta);
+        }
     }
 
     public async $getStorageAt (position: number | bigint | TEth.Hex)  {

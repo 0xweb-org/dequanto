@@ -294,11 +294,13 @@ export namespace $contract {
     }
 
     export namespace store {
-        const knownContracts = [] as {
+        interface IContractMeta {
             name?: string
             address?: TEth.Address
             abi: TAbiItem[]
-        }[];
+        }
+        const knownContracts = [] as IContractMeta[];
+        const knownContractsAddresses = {} as Record<string, IContractMeta>
 
         export function getFlattened() {
             return alot(knownContracts).mapMany(x => x.abi).toArray();
@@ -308,7 +310,17 @@ export namespace $contract {
             name?: string
             abi: TAbiItem[]
         }) {
+            if (contract.address != null) {
+                contract.address = contract.address.toLowerCase() as TEth.Address;
+                if (contract.address in knownContractsAddresses) {
+                    return;
+                }
+                knownContractsAddresses[contract.address] = contract;
+            }
             knownContracts.push(contract)
+        }
+        export function has (address: TEth.Address) {
+            return address.toLowerCase() in knownContractsAddresses;
         }
 
         export function getContract(address: TEth.Address) {

@@ -1,10 +1,11 @@
-import { ClientDebugMethods } from '@dequanto/clients/debug/ClientDebugMethods';
+import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
+import { WETH } from '@dequanto/prebuilt/weth/WETH/WETH';
+import { $address } from '@dequanto/utils/$address';
 import { $contract } from '@dequanto/utils/$contract';
 import { $promise } from '@dequanto/utils/$promise';
 import { $require } from '@dequanto/utils/$require';
 import { $traces } from '@dequanto/utils/$traces';
-import { File } from 'atma-io';
 import { TEth } from 'dequanto/models/TEth';
 
 const $assert = {} as any as typeof $require;
@@ -65,7 +66,6 @@ UTest({
         $assert.has(`${depl.contract.address} <=> A`, output);
     },
     async 'should parse traces in gas estimation'() {
-
         let code = `
             contract AThrown {
                 function fnOne(uint256 foo) public returns (uint256) {
@@ -81,8 +81,15 @@ UTest({
         let depl = await provider.deployCode(code, { client });
         let { error } = await $promise.caught(depl.contract.$receipt().fnOne(deployer, 42));
 
-
         $assert.has(`AThrown.fnOne(foo: 42)`, error.message);
+    },
 
+    async 'should contain the contract after constructor'() {
+        let wethAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' as TEth.Address;
+
+        new WETH(wethAddress, null);
+
+        let meta = $contract.store.getContract(wethAddress);
+        eq_(meta.name, 'WETH');
     }
 })
