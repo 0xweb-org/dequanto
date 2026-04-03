@@ -73,7 +73,7 @@ export abstract class ContractBase {
                 abi: cloned.abi,
                 name: cloned?.$meta?.name ?? Ctor.name
             };
-            //$contract.store.register(meta);
+            $contract.store.register(meta);
         }
     }
 

@@ -90,6 +90,6 @@ UTest({
         new WETH(wethAddress, null);
 
         let meta = $contract.store.getContract(wethAddress);
-        eq_(meta.name, 'WETH');
+        eq_(meta?.name, 'WETH');
     }
 })
