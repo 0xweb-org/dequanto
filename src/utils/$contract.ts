@@ -311,11 +311,11 @@ export namespace $contract {
             abi: TAbiItem[]
         }) {
             if (contract.address != null) {
-                contract.address = contract.address.toLowerCase() as TEth.Address;
-                if (contract.address in knownContractsAddresses) {
+                const address = contract.address.toLowerCase() as TEth.Address;
+                if (address in knownContractsAddresses) {
                     return;
                 }
-                knownContractsAddresses[contract.address] = contract;
+                knownContractsAddresses[address] = contract;
             }
             knownContracts.push(contract)
         }
