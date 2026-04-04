@@ -278,7 +278,7 @@ export class TxDataBuilder {
                     let output = await $traces.format({
                         tx: txData,
                         traces,
-                        color: true,
+                        color: this.config.color ?? true,
                         shortAddress: false,
                         async getABI(address) {
                             return $abiProvider.getAbi(address, client.network);

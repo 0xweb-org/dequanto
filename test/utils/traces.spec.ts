@@ -79,7 +79,9 @@ UTest({
             }
             `;
         let depl = await provider.deployCode(code, { client });
-        let { error } = await $promise.caught(depl.contract.$receipt().fnOne(deployer, 42));
+        let { error } = await $promise.caught(depl.contract.$config({
+            color: false
+        }).$receipt().fnOne(deployer, 42));
 
         $assert.has(`AThrown.fnOne(foo: 42)`, error.message);
     },

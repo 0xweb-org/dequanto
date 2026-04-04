@@ -38,4 +38,7 @@ export interface ITxBuilderOptions extends ITxBuilderNonceOptions {
     type?: 0 | 1 | 2
 
     abi?: TAbiItem[]
+
+    // Highlighted traces
+    color?: boolean
 }
