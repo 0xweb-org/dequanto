@@ -14,6 +14,8 @@ import { $hex } from '@dequanto/utils/$hex';
 import { $contract } from '@dequanto/utils/$contract';
 import { TxNonceManager } from './TxNonceManager';
 import { $traces } from '@dequanto/utils/$traces';
+import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
+import { l } from '@dequanto/utils/$logger';
 
 export class TxDataBuilder {
 
@@ -271,15 +273,36 @@ export class TxDataBuilder {
             }
             if (this.client.debug && this.client.debug.traceCall) {
                 try {
+                    let { client } = this;
                     let txData = { from, ...this.data };
-                    let traces = await this.client.debug.traceCall(txData);
+                    let traces = await client.debug.traceCall(txData);
                     let output = await $traces.format({
                         tx: txData,
                         traces,
-                        color: false,
+                        color: true,
                         shortAddress: false,
                         async getABI(address) {
-                            return $contract.store.getContract(address);
+                            let local = $contract.store.getContract(address);
+                            if (local) {
+                                return local;
+                            }
+                            if (client.network !== 'hardhat') {
+                                let explorer = await BlockchainExplorerFactory.get(client.network);
+                                try {
+                                    let info = await explorer.getContractAbi(address);
+                                    if (info) {
+                                        l`Loading contracts meta for bold<${address}>...`;
+                                        let abi = typeof info.abi === 'string'
+                                            ? JSON.parse(info.abi)
+                                            : info.abi;
+                                        return {
+                                            abi,
+                                            name: info.name ?? `${address.slice(0, 6)}__${address.slice(-4)}`,
+                                            address,
+                                        };
+                                    }
+                                } catch (err) {}
+                            }
                         }
                     });
                     message += `\nTraces: \n` + output;

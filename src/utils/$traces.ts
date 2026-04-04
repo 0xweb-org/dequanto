@@ -98,16 +98,20 @@ export namespace $traces {
 
         let lines: string[] = [];
         let entryLine = formatEntrypointLabel(params.tx, params.traces, entryAbiMeta?.contractName ?? entryAbiMeta?.name, entryAbiItem, params);
-        lines.push(`${entryLine}${params.traces.failed ? ' [FAILED]' : ''}`);
+        lines.push(`${entryLine}${params.traces.failed ? color('red', ' [FAILED]', params) : ''}`);
 
         let root = frames[0];
         if (root != null) {
             appendEntries(root, 1, lines);
         }
 
-        let addresses = alot.fromObject(params.addresses ?? {}).map(x => {
-            return `${x.key} <=> ${x.value}`;
-        }).toArray();
+        let addresses = alot
+            .fromObject(params.addresses ?? {})
+            .sortByLocalCompare(x => x.value, 'asc')
+            .map(x => {
+                return `${x.key} <=> ${x.value}`;
+            })
+            .toArray();
 
         lines.push('\n', ...addresses);
 
@@ -130,7 +134,7 @@ export namespace $traces {
 
             for (let entry of entries) {
                 if (entry.kind === 'frame') {
-                    out.push(`${indent}${entry.frame.label}${entry.frame.failed ? ' [FAILED]' : ''}`);
+                    out.push(`${indent}${entry.frame.label}${entry.frame.failed ? color('red', ' [FAILED]', params) : ''}`);
                     appendEntries(entry.frame, level + 1, out);
                     continue;
                 }
