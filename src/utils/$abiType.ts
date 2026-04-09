@@ -90,7 +90,7 @@ export namespace $abiType {
         }
         return getTsType(type);
     }
-    export function getTsType ($abiType: TAbiInput['type'], $abi?: { name?, components? }) {
+    export function getTsType ($abiType: TAbiInput['type'], $abi?: Partial<TAbiInput>) {
         let rgxArray = /\[(?<size>\d+)?\]$/
         let isArray = rgxArray.test($abiType);
         if (isArray) {
@@ -123,9 +123,12 @@ export namespace $abiType {
             }).join(', ');
             tsType = `{ ${fields} }`;
         }
+        if (tsType == null && $abi?.internalType?.startsWith('contract')) {
+            tsType = AbiTsTypes['address'];
+        }
 
         if (tsType == null) {
-            throw new Error(`Unknown abi type in return: "${abiType}"`);
+            throw new Error(`Unknown abi type in return: "${abiType}" ${$abi?.name ?? ''}`);
         }
 
         return tsType;
