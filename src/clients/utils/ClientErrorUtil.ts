@@ -26,4 +26,8 @@ export namespace ClientErrorUtil {
     export function IsNonceTooLow(error: Error) {
         return /nonce too low/i.test(error.message);
     }
+
+    export function IsNonceTooHigh(error: Error) {
+        return /nonce too high/i.test(error.message);
+    }
 }

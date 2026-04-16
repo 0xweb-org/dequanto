@@ -391,14 +391,18 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> implements ITx
                         // If insufficient funds this is can be due to the blockchain hasn't confirmed some incoming transactions
                     }
                 }
-                if (ClientErrorUtil.IsNonceTooLow(err)) {
+
+                let isNonceToLow = ClientErrorUtil.IsNonceTooLow(err);
+                let isNonceToHigh = ClientErrorUtil.IsNonceTooHigh(err);
+                if (isNonceToHigh || isNonceToLow) {
                     if (options.retries == null) {
                         options.retries = 1;
                     }
                     let nonce = this.builder.data.nonce;
                     // reset nonce
                     await this.builder.setNonce();
-                    this.logger.log(`Nonce was ${Number(nonce)} too low. Retries left: ${options.retries}. New nonce: ${Number(this.builder.data.nonce)}`);
+                    let newNonce = Number(this.builder.data.nonce);
+                    this.logger.log(`Nonce[${Number(nonce)}] was too ${ isNonceToLow ? 'low' : 'high'}. Retries left: ${options.retries}. New nonce: ${newNonce}`);
                 }
 
                 let submitsCount = this.txs.length;
