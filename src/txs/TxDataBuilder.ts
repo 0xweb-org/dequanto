@@ -15,6 +15,7 @@ import { $contract } from '@dequanto/utils/$contract';
 import { TxNonceManager } from './TxNonceManager';
 import { $traces } from '@dequanto/utils/$traces';
 import { $abiProvider } from '@dequanto/utils/$abiProvider';
+import { $require } from '@dequanto/utils/$require';
 
 export class TxDataBuilder {
 
@@ -167,8 +168,22 @@ export class TxDataBuilder {
                 $priorityFee = $bigint.multWithFloat($priorityFee, $priceRatio);
             }
 
-            this.data.maxFeePerGas = $bigint.toHex($baseFee + $priorityFee);
-            this.data.maxPriorityFeePerGas = $bigint.toHex($priorityFee);
+            const minGasPriorityFee = this.client.minGasPriorityFee;
+            if (minGasPriorityFee > 0) {
+                $priorityFee = $bigint.max(
+                    $bigint.toGweiFromEther(minGasPriorityFee),
+                    $priorityFee
+                );
+            }
+
+            const maxFeePerGas = $baseFee + $priorityFee;
+            const maxPriorityFeePerGas = $priorityFee;
+
+            $require.lte(maxFeePerGas, BigInt(200e9), `maxFeePerGas exceeds maximum`);
+            $require.lte(maxPriorityFeePerGas, BigInt(5e9), `maxPriorityFeePerGas exceeds maximum`);
+
+            this.data.maxFeePerGas = $bigint.toHex(maxFeePerGas);
+            this.data.maxPriorityFeePerGas = $bigint.toHex(maxPriorityFeePerGas);
             this.data.type = 2;
         }
 

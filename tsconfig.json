@@ -27,7 +27,11 @@
         "lib": ["dom", "es2022"],
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "strictPropertyInitialization": false,
+        "strictNullChecks": false,
+        "useUnknownInCatchVariables": false,
+        "noImplicitAny": false
     },
     "transformers": {
         "before": ["ts-nameof"]

@@ -54,7 +54,7 @@ export namespace $require {
         }
         return val;
     }
-    export function String<T>(val: T, message): T {
+    export function String<T>(val: T, message: string): T {
         if (typeof val !== 'string') {
             throw new Error(`Value ${val} is not a string ${message}`);
         }
@@ -126,13 +126,14 @@ export namespace $require {
         }
     }
 
-    export function has<T = any>(a: T, arr: T[], message?: string)
-    export function has<T = any>(a: string, str: string, message?: string)
-    export function has<T = any>(a: T, mix: T[] | string, message: string = '') {
+    export function has<T = any>(a: T, arr: T[], message?: string): T
+    export function has<T = any>(a: string, str: string, message?: string): T
+    export function has<T = any>(a: T, mix: T[] | string, message: string = ''): T {
         // not strict equal
         if (mix.includes(a as any) === false) {
             throw new Error(`${a} should be contain ${typeof mix === 'string' ? mix : mix.join(', ')}. ${message}`)
         }
+        return a;
     }
 
     export function Address (val: TAddress | string, message: string = ''): TAddress {

@@ -51,6 +51,7 @@ export abstract class Web3Client implements IWeb3Client {
 
     defaultTxType: 0 | 1 | 2 = 2;
     defaultGasPriceRatio = 1.4;
+    minGasPriorityFee = 0.0012345;
 
     // block time in ms
     blockTimeAvg = 12_000;
