@@ -24,6 +24,12 @@ export namespace $abiProvider {
                     let abi = typeof info.abi === 'string'
                         ? JSON.parse(info.abi)
                         : info.abi;
+
+                    // Store contract in local in-memory cache for future calls
+                    $contract.store.register({
+                        address,
+                        abi: abi
+                    });
                     return {
                         abi,
                         name: `${address.slice(0, 6)}__${address.slice(-4)}`,

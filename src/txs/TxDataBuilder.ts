@@ -270,6 +270,28 @@ export class TxDataBuilder {
             return await this.client.getGasEstimation(from, this.data)
         } catch (error) {
             let message = error.message;
+            let tracesF = null;
+            if (this.client.debug && this.client.debug.traceCall) {
+                // Process traces earlier to capture all ABIs for the error parser
+                try {
+                    let { client } = this;
+                    let txData = { from, ...this.data };
+                    let traces = await client.debug.traceCall(txData);
+                    let output = await $traces.format({
+                        tx: txData,
+                        traces,
+                        color: this.config.color ?? true,
+                        shortAddress: false,
+                        async getABI(address) {
+                            return $abiProvider.getAbi(address, client.network);
+                        }
+                    });
+                    tracesF = `\nTraces: \n` + output;
+                } catch (error) {
+                    // ignore
+                }
+            }
+
             if (error.data?.type != null) {
                 let data = error.data;
                 if (error.data.type === `Unknown` && error.data.params) {
@@ -285,24 +307,8 @@ export class TxDataBuilder {
             if (parsed) {
                 message += `\nMethod: ` + $contract.formatCall(parsed);
             }
-            if (this.client.debug && this.client.debug.traceCall) {
-                try {
-                    let { client } = this;
-                    let txData = { from, ...this.data };
-                    let traces = await client.debug.traceCall(txData);
-                    let output = await $traces.format({
-                        tx: txData,
-                        traces,
-                        color: this.config.color ?? true,
-                        shortAddress: false,
-                        async getABI(address) {
-                            return $abiProvider.getAbi(address, client.network);
-                        }
-                    });
-                    message += `\nTraces: \n` + output;
-                } catch (error) {
-                    // ignore
-                }
+            if (tracesF != null) {
+                message += `\nTraces: \n` + tracesF;
             }
 
             throw new Error(message);
