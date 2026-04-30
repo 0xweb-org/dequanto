@@ -8,6 +8,7 @@ export namespace $bigint {
     export const ETHER_DECIMALS = 18;
     export const GWEI_DECIMALS = 9;
     export const MAX_UINT256 = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn;
+    export const MAX_SAFE_INTEGER = BigInt(Number.MAX_SAFE_INTEGER);
 
     export function max(...args: bigint[]): bigint {
         let max: bigint = null;
@@ -134,24 +135,31 @@ export namespace $bigint {
         return toWei(amount, GWEI_DECIMALS);
     }
 
-    export function toEther (amount: string | number | bigint, decimals: number | string = ETHER_DECIMALS, round = 100000n): number {
+    export function toEther (amount: string | number | bigint, decimals: number | string = ETHER_DECIMALS, roundMix: number | bigint = 100000n, checked = true): number {
+        let round = typeof roundMix === 'number'
+            ? 10n**BigInt(roundMix)
+            : roundMix;
+
         let $decimals = BigInt(decimals);
+        let $mantissa = 10n ** $decimals;
         let $amount = BigInt(amount);
-        let val = $amount * round / 10n ** $decimals;
-        if (val < Number.MAX_SAFE_INTEGER) {
-            return Number(val) / Number(round);
+        if (round > $mantissa) {
+            round = $mantissa;
         }
-        throw new Error(`Ether overflow: ${val}. Amount: ${amount} Decimals: ${decimals}`);
+        const int = $amount / $mantissa;
+        if (-MAX_SAFE_INTEGER <= int && int <= MAX_SAFE_INTEGER) {
+            let fraction = $amount % $mantissa;
+            let fractionTruncated = fraction / ($mantissa / round);
+            return Number(int) + Number(fractionTruncated) / Number(round);
+        }
+        if (checked) {
+            throw new Error(`Ether overflow: ${int}. Amount: ${amount} Decimals: ${decimals}`);
+        }
+        return Number(int);
     }
 
-    export function toEtherSafe (amount: string | number | bigint, decimals: number | string = ETHER_DECIMALS, round = 100000n): number | bigint {
-        let $decimals = BigInt(decimals);
-        let $amount = BigInt(amount);
-        let val = $amount * round / 10n ** $decimals;
-        if (val < Number.MAX_SAFE_INTEGER) {
-            return Number(val) / Number(round);
-        }
-        return val / round;
+    export function toEtherSafe (amount: string | number | bigint, decimals: number | string = ETHER_DECIMALS, round: number | bigint = 100000n): number {
+        return toEther(amount, decimals, round, false);
     }
 
     export function toHex (num: string | bigint | number): TEth.Hex {

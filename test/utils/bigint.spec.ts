@@ -51,5 +51,17 @@ UTest({
             let val = $bigint.parse(input);
             eq_(val, expected);
         }
+    },
+    'toEther' () {
+        let arr = [
+            [ 2151279948713396074504291225n, 18, 10n**8n, 2151279948.71339607 ]
+        ] as [
+            [bigint, number, bigint, number ]
+        ];
+
+        for (let [ input, decimals, round, expected ] of arr) {
+            let val = $bigint.toEther(input, decimals, round );
+            eq_(val, expected);
+        }
     }
 })
