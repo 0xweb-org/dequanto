@@ -48,5 +48,15 @@ UTest({
         ].forEach(([val, expect]) => {
             eq_($number.parse(val), expect);
         });
+    },
+    'humanize' () {
+        ([
+            [0.00000511, '0.0₅511'],
+            [1_010_100, '1.01M'],
+            [0.0005194, '0.00052'],
+            [0.000000021234, '0.0₇2123'],
+        ] as const).forEach(([val, expect]) => {
+            eq_($number.humanize(val), expect);
+        });
     }
 })

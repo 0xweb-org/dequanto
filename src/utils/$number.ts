@@ -4,7 +4,7 @@ import { $bigint } from './$bigint';
 
 export namespace $number {
 
-    export function div (a: number, b: number, digits: number = 5) {
+    export function div(a: number, b: number, digits: number = 5) {
         let r = 10 ** digits;
         return Math.round(a * r / b) / r;
     }
@@ -14,7 +14,7 @@ export namespace $number {
      * @param min: includes
      * @param max: excludes
      */
-     export function random(min: number, max: number) {
+    export function random(min: number, max: number) {
         $require.True(min < max, `Random Int expects max to be greater then min: ${min}..${max}`);
         return Math.random() * (max - min) + min;
     }
@@ -40,7 +40,7 @@ export namespace $number {
         let val = 10 ** Math.max(decimals, decimalsFromNumber);
         return randomInt(min * val, max * val) / val;
     }
-    export function parse (mix: string | number) {
+    export function parse(mix: string | number) {
         if (!mix) return 0;
         if (typeof mix === 'number') {
             return mix;
@@ -70,7 +70,7 @@ export namespace $number {
         }
         return value;
     }
-    export function round (mix: string | number, digits: number = 0, round: 'ceil' | 'round' | 'floor' = 'round') {
+    export function round(mix: string | number, digits: number = 0, round: 'ceil' | 'round' | 'floor' = 'round') {
         let number = typeof mix === 'string' ? Number(mix) : mix;
         if (isNaN(number)) {
             return number;
@@ -86,7 +86,7 @@ export namespace $number {
         }
         return Math[round](val) / factor;
     }
-    export function parseOptional (mix, default_ = null) {
+    export function parseOptional(mix, default_ = null) {
         if (mix == null) {
             return default_;
         }
@@ -108,8 +108,11 @@ export namespace $number {
      * - abbreviation: Format number to *B, *M, *K
      * - maximumFractionDigits: Parameter for toLocaleString
      */
-    export function format (num: number, options?: { abbreviation?: boolean, maximumFractionDigits?: number }) {
+    export function format(num: number, options?: { abbreviation?: boolean, maximumFractionDigits?: number }) {
         if (options?.abbreviation) {
+            if (Math.abs(num) < 0.01) {
+                return humanizeSmallFloat(num);
+            }
             const K = 10 ** 3;
             const M = 10 ** 6;
             const B = 10 ** 9;
@@ -130,16 +133,39 @@ export namespace $number {
         });
     }
 
-    export function humanize (num: bigint, decimals: number)
-    export function humanize (num: number)
-    export function humanize (mix: number | bigint, decimals: number = 18) {
+    export function humanize(num: bigint, decimals: number)
+    export function humanize(num: number)
+    export function humanize(mix: number | bigint, decimals: number = 18) {
         if (typeof mix === 'bigint') {
             mix = $bigint.toEther(mix, decimals);
         }
         return format(mix, { abbreviation: true });
     }
 
-    export function toHex (num: string | number | TEth.Hex | bigint): TEth.Hex {
+    export function toHex(num: string | number | TEth.Hex | bigint): TEth.Hex {
         return (`0x` + Number(num).toString(16)) as TEth.Hex;
+    }
+
+    const subscriptDigits = '₀₁₂₃₄₅₆₇₈₉';
+    function humanizeSmallFloat(value: number, maxDigits = 4): string {
+        if (!Number.isFinite(value)) return String(value);
+        if (value === 0) return '0';
+
+        const sign = value < 0 ? '-' : '';
+        const abs = Math.abs(value);
+
+        const str = abs.toLocaleString('en-US', {
+            useGrouping: false,
+            maximumSignificantDigits: 20,
+        });
+
+        // Example: 0.0000005 -> zeros = 6, rest = '5'
+        const match = str.match(/^0\.(0{4,})(\d+)/);
+        if (!match) return format(value, { maximumFractionDigits: 5 });
+
+        const zeroCount = match[1].length;
+        const significant = match[2].slice(0, maxDigits);
+        const zeroCountSub = subscriptDigits[zeroCount];
+        return `${sign}0.0${zeroCountSub}${significant}`;
     }
 }
