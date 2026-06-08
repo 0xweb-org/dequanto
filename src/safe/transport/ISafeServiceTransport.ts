@@ -12,7 +12,11 @@ export interface ISafeServiceTransport {
 
     confirmTx(safeTxHash: string, sig: { signature: string, owner: TAddress }): Promise<SafeServiceTypes.SignatureResponse>
 
-    getSafeInfo(safeAddress: TAddress): Promise<{ nonce: number, threshold: number }>
+    getSafeInfo(safeAddress: TAddress): Promise<{
+        pending?: number
+        nonce: number
+        threshold: number
+    }>
 
     estimateSafeTransaction(safeAddress: TAddress, safeTxEstimation): Promise<SafeServiceTypes.SafeMultisigTransactionEstimateResponse>
 

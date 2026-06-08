@@ -175,7 +175,7 @@ export class GnosisSafeHandler {
             baseGas: 0,
             gasToken: $address.ZERO,
             refundReceiver: $address.ZERO,
-            nonce: safeInfo.nonce,
+            nonce: $require.Number(Number(safeInfo.nonce) + Number(safeInfo.pending ?? 0)),
             gasPrice: 0,
         };
 

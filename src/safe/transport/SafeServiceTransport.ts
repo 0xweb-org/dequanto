@@ -101,10 +101,21 @@ class SafeServiceClientInner {
         return data;
     }
 
-    async getSafeInfo(safeAddress: string): Promise<SafeServiceTypes.SafeInfoResponse> {
-        let url = `${this.params.txServiceUrl}/api/v1/safes/${safeAddress}`;
-        let { data } = await $http.get<SafeServiceTypes.SafeInfoResponse>(url);
-        return data;
+    async getSafeInfo(safeAddress: string): Promise<SafeServiceTypes.SafeInfoResponse & { pending?: number}> {
+        let safeUrl = `${this.params.txServiceUrl}/api/v1/safes/${safeAddress}`;
+        let { data: safeInfo } = await $http.get<SafeServiceTypes.SafeInfoResponse>(safeUrl);
+
+        let pendingUrl = `${this.params.txServiceUrl}/api/v1/safes/${safeAddress}/multisig-transactions/?executed=false&ordering=-nonce&limit=1`
+        let { data: pendingTxs } = await $http.get<SafeServiceTypes.SafeMultisigTransactionListResponse>(pendingUrl);
+        let nonce = Number(safeInfo.nonce);
+        let pending = 0;
+        if (pendingTxs.results?.length > 0) {
+            pending = $require.Number(Number(pendingTxs.results[0].nonce) + 1 - nonce);
+        }
+        return {
+            ...safeInfo,
+            pending
+        };
     }
 
     async estimateSafeTransaction(safeAddress: string, safeTransaction: SafeServiceTypes.SafeMultisigTransactionEstimate): Promise<SafeServiceTypes.SafeMultisigTransactionEstimateResponse> {
