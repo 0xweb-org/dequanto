@@ -8,6 +8,7 @@ export type TEventsIndexerMeta = {
     event: string
     lastBlock: number
     filterKey?: string
+    ranges?: [number, number][]
 }
 
 export interface IEventsIndexerStore {

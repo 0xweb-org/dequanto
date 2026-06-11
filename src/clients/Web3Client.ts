@@ -586,6 +586,10 @@ export type TLogsRangeProgress<TLogParsed> = {
     blocksPerSecond: number
     timeLeftSeconds: number
     completed: boolean
+    infos: {
+        fetched: number
+        cached: number
+    }
 }
 
 namespace RangeWorker {

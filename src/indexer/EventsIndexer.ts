@@ -7,7 +7,7 @@ import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 import { $date } from '@dequanto/utils/$date';
 import { $require } from '@dequanto/utils/$require';
 import { TAddress } from '@dequanto/models/TAddress';
-import { IEventsIndexerMetaStore, IEventsIndexerStore, TEventsIndexerItem } from './storage/interfaces';
+import { IEventsIndexerMetaStore, IEventsIndexerStore, TEventsIndexerItem, TEventsIndexerMeta } from './storage/interfaces';
 import { FsEventsIndexerStore } from './storage/FsEventsIndexerStore';
 import { FsEventsMetaStore } from './storage/FsEventsMetaStore';
 import { class_Dfr } from 'atma-utils';
@@ -15,6 +15,7 @@ import { TLogsRangeProgress } from '@dequanto/clients/Web3Client';
 import { WClient } from '@dequanto/clients/ClientPool';
 import { TEth } from '@dequanto/models/TEth';
 import { l } from '@dequanto/utils/$logger';
+import { PackedRanges } from '@dequanto/class/PackedRanges';
 
 
 export class EventsIndexer <TContract extends ContractBase> {
@@ -86,18 +87,27 @@ export class EventsIndexer <TContract extends ContractBase> {
         }
     ): Promise<{
         logs: ITxLogItem<GetTypes<TContract>['Events'][TLogName]['outputParams']>[],
+        infos: {
+            fetched: number,
+            cached: number,
+        }
     }> {
         let contract = this.contract;
         let client = contract.client;
+        let fromBlock = filter?.fromBlock;
         let toBlock = filter?.toBlock ?? await client.getBlockNumber();
         let events = Array.isArray(event) ? event as string[] : [ event as string ];
         let filterKey = this.getFilterKey(filter?.params);
-        let ranges = await this.getRanges(events, this.options.initialBlockNumber, toBlock, { filterKey });
-        let logs = await this.getPastLogsRanges(ranges, events, toBlock, filter?.fromBlock, {
+        let ranges = await this.getRanges(events, this.options.initialBlockNumber, toBlock, {
+            fromBlock,
+            filterKey
+        });
+        let { logs, infos } = await this.getPastLogsRanges(ranges, events, toBlock, fromBlock, {
             params: filter?.params as any
         });
         return {
-            logs: logs as any
+            logs: logs as any,
+            infos,
         };
     }
 
@@ -122,17 +132,19 @@ export class EventsIndexer <TContract extends ContractBase> {
     > {
         let contract = this.contract;
         let client = contract.client;
+        let fromBlock = options?.fromBlock;
         let toBlock = options?.toBlock ?? await client.getBlockNumber();
         let events = Array.isArray(event) ? event as string[] : [ event as string ];
         let filterKey = this.getFilterKey(options?.params);
-        let ranges = await this.getRanges(events, options?.fromBlock ?? this.options.initialBlockNumber, toBlock, {
+        let ranges = await this.getRanges(events, this.options.initialBlockNumber, toBlock, {
+            fromBlock,
             filterKey
         });
 
         let dfrInner = new class_Dfr<any>();
         let dfrOuter = new class_Dfr<any>();
 
-        this.getPastLogsRanges(ranges, events, toBlock, options?.fromBlock, {
+        this.getPastLogsRanges(ranges, events, toBlock, fromBlock, {
             params: options?.params,
             blockRangeLimits: options?.blockRangeLimits,
             streamed: true,
@@ -162,7 +174,7 @@ export class EventsIndexer <TContract extends ContractBase> {
         }
     }
 
-    async removeCached (params: {
+    async removeCached (params?: {
         fromBlock: number
     }) {
         let events = await this.store.fetch({ fromBlock: params.fromBlock });
@@ -170,12 +182,15 @@ export class EventsIndexer <TContract extends ContractBase> {
         await this.store.removeMany(events);
 
         let metas = await this.storeMeta.fetch();
-        let lastBlock = params.fromBlock - 1;
+        let lastBlock = (params?.fromBlock ?? 0) - 1;
         if (lastBlock < 0) {
+            // remove all metas
             await this.storeMeta.removeMany(metas)
         } else {
+            // adjust the lastBlock and the ranges
             metas.forEach(x => {
                 x.lastBlock = Math.min(x.lastBlock, lastBlock);
+                x.ranges = PackedRanges.pickTo(x.ranges, x.lastBlock);
             });
             await this.storeMeta.upsertMany(metas);
         }
@@ -184,107 +199,88 @@ export class EventsIndexer <TContract extends ContractBase> {
     private async getRanges (events: string[], initialBlockNumber: number, toBlock: number, opts: {
         fromBlock?: number
         filterKey?: string
-    }): Promise<TRange[]> {
-        let fromBlock = opts?.fromBlock ?? initialBlockNumber;
+    }): Promise<TRangeLoader> {
+        let fromBlock = opts?.fromBlock ?? initialBlockNumber ?? await this.getInitialBlockNumber();
         if (fromBlock != null) {
             $require.lte(fromBlock, toBlock, `Invalid block range order`);
         }
         let logsMetaArr = await this.storeMeta.fetch();
         let eventsBlock = alot(logsMetaArr)
             .filter(x => x.filterKey == opts?.filterKey)
-            .toDictionary(x => x.event, x => x.lastBlock);
-        let logsMeta = events.map(event => {
-            let blockNr = eventsBlock[event] ?? initialBlockNumber;
+            .toDictionary(x => x.event, x => x);
+
+        let logsMeta = await alot(events).mapAsync(async event => {
+            let lastBlock = eventsBlock[event]?.lastBlock ?? initialBlockNumber ?? await this.getInitialBlockNumber();
+            let ranges = eventsBlock[event]?.ranges ?? [];
             return {
                 event: event,
-                lastBlock: blockNr
-            }
-        });
-        let hasInitialBlock = logsMeta.every(x => x.lastBlock != null);
-        if (hasInitialBlock === false) {
-            let blockNr = opts?.fromBlock ?? await this.getInitialBlockNumber();
-            logsMeta.filter(x => x.lastBlock == null).forEach(x => x.lastBlock = blockNr);
-        }
+                lastBlock: lastBlock,
+                ranges: ranges,
+                filterKey: opts?.filterKey
+            };
+        }).toArrayAsync();
 
-        let ranges = [] as TRange[];
-        let blockNumbers = [ ...logsMeta.map(x => x.lastBlock), toBlock ].filter(x => x <= toBlock);
+        let intersactionRange = PackedRanges.intersection(logsMeta.map(x => x.ranges));
+        let rangesToLoad = PackedRanges.subtract([[fromBlock, toBlock]], intersactionRange);
 
-        let blockNumberSteps = alot(blockNumbers).distinct().sortBy(x => x).toArray();
-        if (blockNumberSteps.length === 1) {
-            let [ block ] = blockNumberSteps;
-            ranges.push({
-                fromBlock: block,
-                toBlock: block,
-                events: events
-            });
-        }
-        for (let i = 0; i < blockNumberSteps.length - 1; i++) {
-            let from = blockNumberSteps[i];
-            if (i > 0) {
-                // The range includes both blocks: [x, y], but we want (x, y], so we make [x + 1, y]
-                from += 1;
-            }
-            let to = blockNumberSteps[i + 1];
-            let events = logsMeta.filter(x => x.lastBlock < to).map(x =>x.event);
-            ranges.push({
+        let ranges = rangesToLoad.map(([from, to]) => {
+            return {
                 fromBlock: from,
                 toBlock: to,
-                events: events
-            });
-        }
-        return ranges;
+                events: events,
+                filterKey: opts?.filterKey
+            } as TRange
+        });
+
+        return {
+            fromBlock,
+            load: ranges,
+            current: logsMeta,
+        };
     }
-    private async getPastLogsRanges (ranges: TRange[], events: string[], toBlock: number, fromBlock?: number, options?: TEventLogOptions<any>) {
-        // Save indexed logs every 2 minutes
+    // Save indexed logs every 2 minutes
+    private async getPastLogsRanges (ranges: TRangeLoader, events: string[], toBlock: number, fromBlock?: number, options?: TEventLogOptions<any>) {
         const PERSIST_INTERVAL = $date.parseTimespan('2min');
         // Save indexed logs every 10k logs
         const PERSIST_COUNT = 10_000;
 
+        fromBlock ??= ranges.fromBlock ?? 0;
+
         let time = Date.now();
         let contract = this.contract;
         let buffer = [] as ITxLogItem<any>[];
-        let isStreamed = options?.streamed ?? false
+        let isStreamed = options?.streamed ?? false;
+        let infos = {
+            cached: 0,
+            fetched: 0,
+        };
 
+        let cachedStreamedBuffer = [];
         if (isStreamed && typeof options?.onProgress === 'function') {
-            let arr = await this.getItemsFromStore({
+            cachedStreamedBuffer = await this.getItemsFromStore({
                 fromBlock: fromBlock,
-                toBlock: toBlock,
+                toBlock: toBlock + 1,
                 events,
                 params: options?.params,
             });
-            if (arr?.length > 0) {
-                let lastBlock = arr[arr.length - 1].blockNumber;
-                await options.onProgress({
-                    logs: arr,
-                    paged: arr,
-                    completed: false,
-                    blocksPerSecond: 0,
-                    blocks: { total: 0, loaded: 0 },
-                    timeLeftSeconds: 0,
-                    latestBlock: lastBlock
-                });
-                // if (fromBlock != null) {
-                //     let latestFromStorage = alot(arr).max(x => x.blockNumber);
-                //     fromBlock = latestFromStorage + 1;
-                //     if (toBlock != null && fromBlock >= toBlock) {
-                //         // we got all from storage
-                //         return;
-                //     }
-                // }
-
-                // Adjust ranges to skip blocks already in storage
-                for (let i = 0; i < ranges.length; i++) {
-                    let range = ranges[i];
-                    if (range.toBlock <= lastBlock) {
-                        ranges.splice(i, 1);
-                        i--;
-                        continue;
-                    }
-                    if (range.fromBlock < lastBlock) {
-                        range.fromBlock = lastBlock + 1;
-                    }
-                }
-            }
+            infos.cached = cachedStreamedBuffer.length;
+            // Note: we don't emit progress right away to keep the order in progress callback
+            // Consider: we have blocks [100-150] in cache
+            // Requesting range: [50-200]
+            // Later we fetch [50-100) and (150-200]
+            // The cached response will be inserted after block.100 to keep consistent order
+            // if (arr?.length > 0) {
+            //     let lastBlock = arr[arr.length - 1].blockNumber;
+            //     await options.onProgress({
+            //         logs: arr,
+            //         paged: arr,
+            //         completed: false,
+            //         blocksPerSecond: 0,
+            //         blocks: { total: 0, loaded: 0 },
+            //         timeLeftSeconds: 0,
+            //         latestBlock: lastBlock
+            //     });
+            // }
         }
 
         let bufferCount = 0;
@@ -294,8 +290,8 @@ export class EventsIndexer <TContract extends ContractBase> {
         let uniqueCount = 0;
         let unique = {};
 
-        for (let i = 0; i < ranges.length; i++) {
-            let range = ranges[i];
+        for (let i = 0; i < ranges.load.length; i++) {
+            let range = ranges.load[i];
             let { fromBlock, toBlock, events: rangeEvents } = range;
 
             let fetched = await contract.getPastLogs(rangeEvents?.length > 0 ? rangeEvents : events, {
@@ -305,13 +301,14 @@ export class EventsIndexer <TContract extends ContractBase> {
                 toBlock: toBlock,
                 blockRangeLimits: options?.blockRangeLimits,
                 params: options?.params,
-                onProgress: async info => {
+                onProgress: async chunk => {
                     onProgressCount++;
 
-                    buffer.push(...info.logs);
-                    bufferCount += info.logs.length;
+                    buffer.push(...chunk.logs);
+                    bufferCount += chunk.logs.length;
+                    infos.fetched += chunk.logs.length;
 
-                    for (let log of info.logs) {
+                    for (let log of chunk.logs) {
                         let key = log.id + '';
                         if (key in unique) {
                             uniqueCount += 1;
@@ -326,9 +323,9 @@ export class EventsIndexer <TContract extends ContractBase> {
                         l`OnProgressCalled cyan<${ onProgressCount}> BufferCount cyan<${bufferCount}> SavedCount cyan<${savedCount}> Unique `
                     }
 
-                    let isCompleted = i < ranges.length - 1
+                    let isCompleted = i < ranges.load.length - 1
                         ? false
-                        : info.completed;
+                        : chunk.completed;
 
                     let now = Date.now();
 
@@ -341,24 +338,64 @@ export class EventsIndexer <TContract extends ContractBase> {
                         buffer = [];
                         time = now;
                         savedCount += arr.length;
-                        await this.upsert(arr, events, info.latestBlock, options);
+                        await this.upsert(arr, events, ranges, fromBlock, chunk.latestBlock, options);
                     }
 
                     if (options?.onProgress) {
                         // completed must be set to true only when the last Range completes
-                        info.completed = isCompleted;
-                        await options.onProgress(info);
+                        chunk.completed = isCompleted;
+                        if (cachedStreamedBuffer.length > 0) {
+                            if (chunk.logs.length > 0) {
+                                // Preserve the order of logs in progress callback:
+                                // insert cached.blockNumber < fetched.blockNumber first
+                                let [ first ] = chunk.logs;
+                                let i = 0;
+                                for (; i < cachedStreamedBuffer.length; i++) {
+                                    let x = cachedStreamedBuffer[i];
+                                    if (x.blockNumber > first.blockNumber) {
+                                        break;
+                                    }
+                                }
+                                if (i > 0) {
+                                    let before = cachedStreamedBuffer.splice(0, i);
+                                    chunk.logs = before.concat(chunk.logs);
+                                }
+                            }
+                            if (isCompleted) {
+                                // insert everything left from cache
+                                chunk.logs = chunk.logs.concat(cachedStreamedBuffer);
+                                cachedStreamedBuffer = [];
+                            }
+                        }
+                        await options.onProgress({
+                            ...chunk,
+                            infos,
+                        });
                     }
                 }
             });
 
             if (buffer.length > 0) {
-                await this.upsert(buffer, events, toBlock, options);
+                await this.upsert(buffer, events, ranges, fromBlock, toBlock, options);
             }
         }
 
-        // Upsert final, if buffer is empty, we still persist the "toBlock" value
-        await this.upsert(buffer, events, toBlock, options);
+        // Upsert final, if buffer is empty, we still persist the "toBlock" value and the ranges
+        await this.upsert(buffer, events, ranges, fromBlock, toBlock, options);
+
+        if (isStreamed && typeof options?.onProgress === 'function' && cachedStreamedBuffer.length > 0) {
+            let lastBlock = cachedStreamedBuffer[cachedStreamedBuffer.length - 1].blockNumber;
+            await options.onProgress({
+                logs: cachedStreamedBuffer,
+                paged: cachedStreamedBuffer,
+                completed: true,
+                blocksPerSecond: 0,
+                blocks: { total: 0, loaded: 0 },
+                timeLeftSeconds: 0,
+                latestBlock: lastBlock,
+                infos,
+            });
+        }
 
         if (isStreamed === true) {
             return;
@@ -371,7 +408,13 @@ export class EventsIndexer <TContract extends ContractBase> {
             params: options?.params
         });
 
-        return logs;
+        infos.fetched = bufferCount;
+        infos.cached = logs.length - infos.fetched;
+
+        return {
+            logs,
+            infos,
+        };
     }
 
 
@@ -389,7 +432,7 @@ export class EventsIndexer <TContract extends ContractBase> {
         }
         let filterKey = this.getFilterKey(filter.params);
         arr = arr.filter(x => x.filterKey == filterKey);
-        return arr;
+        return alot(arr).sortBy(x => x.id).toArray();
     }
     private getFilterKey (params) {
         if (params == null) {
@@ -413,7 +456,14 @@ export class EventsIndexer <TContract extends ContractBase> {
     }
 
     @memd.deco.queued()
-    private async upsert (logs: TEventsIndexerItem[], events: string[], latestBlock: number, options: { params? }) {
+    private async upsert (
+        logs: TEventsIndexerItem[],
+        events: string[],
+        ranges: TRangeLoader,
+        fromBlock: number,
+        latestBlock: number,
+        options: { params? }
+    ) {
         let filterKey = this.getFilterKey(options?.params);
         if (logs?.length > 0) {
             for (let log of logs) {
@@ -421,11 +471,22 @@ export class EventsIndexer <TContract extends ContractBase> {
             }
             await this.store.upsertMany(logs);
         }
-        const logsMeta =  events.map(event => ({
-            event,
-            lastBlock: latestBlock,
-            filterKey: filterKey,
-        }));
+        const logsMeta =  events.map(event => {
+            let currentMeta = ranges
+                .current
+                .find(x => x.event === event);
+
+            let arr = PackedRanges.union([
+                currentMeta?.ranges ?? [],
+                [[fromBlock, latestBlock]]
+            ]);
+            return {
+                event,
+                lastBlock: latestBlock,
+                filterKey: filterKey,
+                ranges: arr,
+            };
+        });
         await this.storeMeta.upsertMany(logsMeta);
     }
 }
@@ -434,8 +495,15 @@ type TRange = {
     events: string[]
     fromBlock: number
     toBlock: number
+    filterKey?: string
 }
 
+
+type TRangeLoader = {
+    fromBlock: number
+    current: TEventsIndexerMeta[]
+    load: TRange[]
+}
 
 type GetEventLogNames<T extends ContractBase> = keyof T['Types']['Events'];
 type GetTypes<T extends ContractBase> = T['Types'];

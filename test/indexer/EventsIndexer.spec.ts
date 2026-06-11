@@ -6,8 +6,27 @@ import { $promise } from '@dequanto/utils/$promise';
 import { File, Directory } from 'atma-io';
 import { $require } from '@dequanto/utils/$require';
 import { l } from '@dequanto/utils/$logger';
+import { TxWriter } from '@dequanto/txs/TxWriter';
 
 const FS_DIR = './test/tmp/data/logs/';
+const WEEK_SECONDS = $date.parseTimespan('1week', { get: 's' });
+
+const hh = new HardhatProvider();
+const deployer = hh.deployer();
+const client = hh.client();
+const code = `
+    contract Foo {
+        event Number (uint256 indexed num);
+        event String (string str);
+
+        function emitNumber(uint num) external {
+            emit Number(num);
+        }
+        function emitString(string memory str) external  {
+            emit String(str);
+        }
+    }
+`;
 
 UTest({
     async $before () {
@@ -15,24 +34,11 @@ UTest({
             await Directory.removeAsync(FS_DIR)
         }
     },
+    async $after () {
+        await client.debug.reset();
+    },
     async 'fetch events' () {
 
-        let hh = new HardhatProvider();
-        let deployer = hh.deployer();
-        let client = hh.client();
-        let code = `
-            contract Foo {
-                event Number (uint256 indexed num);
-                event String (string str);
-
-                function emitNumber(uint num) external {
-                    emit Number(num);
-                }
-                function emitString(string memory str) external  {
-                    emit String(str);
-                }
-            }
-        `;
         let { contract } = await hh.deployCode(code, {
             client
         });
@@ -55,7 +61,7 @@ UTest({
         eq_(logs[1].params.num, 2);
         eq_(logs[2].params.num, 3);
 
-        const WEEK_SECONDS = $date.parseTimespan('1week', { get: 's' });
+
         const BASE_DIR = `${FS_DIR}/hardhat/FooTest-${contract.address}/`;
         let blockNr = await client.getBlockNumber();
         let storageData = await File.readAsync<any[]>(`${BASE_DIR}0-${WEEK_SECONDS}.json`);
@@ -201,7 +207,212 @@ UTest({
             }
         });
         $require.match(/Invalid block range order/, error.message);
+    },
+
+    async 'fetch range-based events' () {
+        let { contract } = await hh.deployCode(code, {
+            client
+        });
+
+        const numbers = alot.fromRange(1, 6).toArray();
+        const numbersTxs = await alot(numbers)
+            .mapAsync(async num => {
+                return await contract.$receipt().emitNumber(deployer, num) as TxWriter;
+            })
+            .toArrayAsync({ threads: 1});
+        const numbersBlocks = alot(numbersTxs)
+            .map(tx => {
+                return tx.receipt.blockNumber;
+            })
+            .toArray()
 
 
+        let indexer = new EventsIndexer(contract, {
+            name: 'FooTestRanges',
+            fs: {
+                directory: FS_DIR,
+                blockTimeAvg: 1,
+            }
+        });
+
+        const block = await client.getBlockNumber();
+        const WEEK_FLOOR = Math.floor(block / WEEK_SECONDS);
+        const storageFrom = WEEK_FLOOR * WEEK_SECONDS;
+        const storageTo = storageFrom + WEEK_SECONDS;
+
+        const BASE_DIR = `${FS_DIR}/hardhat/FooTestRanges-${contract.address}/`;
+        const STORAGE_PATH = `${BASE_DIR}${storageFrom}-${storageTo}.json`;
+
+        const COUNT = 5; // [1,2,3,4,5]
+
+        // [5]
+        latest_log: {
+            let { logs } = await indexer.getPastLogs('Number', {
+                fromBlock: numbersBlocks[COUNT - 1]
+            });
+            eq_(logs.length, 1);
+            eq_(logs[0].params.num, numbers[numbers.length - 1]);
+
+            let storageData = await File.readAsync<any[]>(STORAGE_PATH);
+            eq_(storageData.length, 1);
+
+            console.log(`Latest FromBlock`, numbersBlocks[numbersBlocks.length - 1])
+        }
+
+        // [2, 3]
+        previous_log: {
+            let { logs } = await indexer.getPastLogs('Number', {
+                fromBlock: numbersBlocks[1],
+                toBlock: numbersBlocks[2],
+            });
+
+            eq_(logs.length, 2);
+            eq_(logs[0].params.num, numbers[1]);
+            eq_(logs[1].params.num, numbers[2]);
+
+            let storageData = await File.readAsync<any[]>(STORAGE_PATH, { cached: false });
+            eq_(storageData.length, 3);
+        }
+
+        // [1, 2, 3, 4]
+        first_logs: {
+            let { logs, infos } = await indexer.getPastLogs('Number', {
+                fromBlock: numbersBlocks[0],
+                toBlock: numbersBlocks[3],
+            });
+
+            eq_(infos.cached, 2);
+            eq_(infos.fetched, 2);
+
+            eq_(logs.length, 4);
+            eq_(logs[0].params.num, numbers[0]);
+            eq_(logs[1].params.num, numbers[1]);
+            eq_(logs[2].params.num, numbers[2]);
+            eq_(logs[3].params.num, numbers[3]);
+
+            let storageData = await File.readAsync<any[]>(STORAGE_PATH, { cached: false });
+            eq_(storageData.length, 5);
+        }
+
+        // [1, 2, 3, 4, 5]
+        full_logs: {
+            let { logs, infos } = await indexer.getPastLogs('Number', {
+                fromBlock: numbersBlocks[0],
+                toBlock: numbersBlocks[5],
+            });
+
+            eq_(infos.cached, 5);
+            eq_(infos.fetched, 0);
+
+            eq_(logs.length, 5);
+            eq_(logs[0].params.num, numbers[0]);
+            eq_(logs[1].params.num, numbers[1]);
+            eq_(logs[2].params.num, numbers[2]);
+            eq_(logs[3].params.num, numbers[3]);
+            eq_(logs[4].params.num, numbers[4]);
+
+            let storageData = await File.readAsync<any[]>(STORAGE_PATH, { cached: false });
+            eq_(storageData.length, 5);
+        }
+
+        // [1, 2, 3, 4, 5]
+        clear_logs_and_refetch: {
+            await indexer.removeCached({ fromBlock: numbersBlocks[2] });
+            let { logs, infos } = await indexer.getPastLogs('Number', {
+                fromBlock: numbersBlocks[0],
+            });
+
+            eq_(infos.cached, 2);
+            eq_(infos.fetched, 3);
+
+            eq_(logs.length, 5);
+            eq_(logs[0].params.num, numbers[0]);
+            eq_(logs[1].params.num, numbers[1]);
+            eq_(logs[2].params.num, numbers[2]);
+            eq_(logs[3].params.num, numbers[3]);
+            eq_(logs[4].params.num, numbers[4]);
+
+            let storageData = await File.readAsync<any[]>(STORAGE_PATH, { cached: false });
+            eq_(storageData.length, 5);
+        }
+
+        from_streamed_cached: {
+            const logs = [];
+            for await (let chunk of await indexer.getPastLogsStream(['Number'])) {
+                logs.push(...chunk.logs);
+            }
+            eq_(logs.length, 5);
+            eq_(logs[0].params.num, numbers[0]);
+            eq_(logs[1].params.num, numbers[1]);
+            eq_(logs[2].params.num, numbers[2]);
+            eq_(logs[3].params.num, numbers[3]);
+            eq_(logs[4].params.num, numbers[4]);
+        }
+
+        from_streamed_partial_cached: {
+            await indexer.removeCached({ fromBlock: numbersBlocks[2] });
+
+            const logs = [];
+            for await (let chunk of await indexer.getPastLogsStream(['Number'])) {
+                logs.push(...chunk.logs);
+
+                eq_(chunk.infos.cached, 2);
+                eq_(chunk.infos.fetched, 3);
+            }
+
+            eq_(logs.length, 5);
+            eq_(logs[0].params.num, numbers[0]);
+            eq_(logs[1].params.num, numbers[1]);
+            eq_(logs[2].params.num, numbers[2]);
+            eq_(logs[3].params.num, numbers[3]);
+            eq_(logs[4].params.num, numbers[4]);
+        }
+
+        from_streamed_fetched: {
+            await indexer.removeCached({ fromBlock: 0 });
+
+            // get [3, 4]: fetch [3, 4]
+            const logs = [];
+            for await (let chunk of await indexer.getPastLogsStream(['Number'], {
+                fromBlock: numbersBlocks[3],
+                toBlock: numbersBlocks[4],
+            })) {
+                logs.push(...chunk.logs);
+                eq_(chunk.infos.cached, 0);
+                eq_(chunk.infos.fetched, 2);
+            }
+            eq_(logs.length, 2);
+            eq_(logs[0].params.num, numbers[3]);
+            eq_(logs[1].params.num, numbers[4]);
+
+            // get [1, 2]: fetch [1, 2]
+            logs.length = 0;
+            for await (let chunk of await indexer.getPastLogsStream(['Number'], {
+                fromBlock: numbersBlocks[1],
+                toBlock: numbersBlocks[2],
+            })) {
+                logs.push(...chunk.logs);
+                eq_(chunk.infos.cached, 0);
+                eq_(chunk.infos.fetched, 2);
+            }
+
+            eq_(logs.length, 2);
+            eq_(logs[0].params.num, numbers[1]);
+            eq_(logs[1].params.num, numbers[2]);
+
+            // get all: fetch [5], cached: [1, 4]
+            logs.length = 0;
+            for await (let chunk of await indexer.getPastLogsStream(['Number'])) {
+                logs.push(...chunk.logs);
+                eq_(chunk.infos.cached, 4);
+                eq_(chunk.infos.fetched, 1);
+            }
+            eq_(logs.length, 5);
+            eq_(logs[0].params.num, numbers[0]);
+            eq_(logs[1].params.num, numbers[1]);
+            eq_(logs[2].params.num, numbers[2]);
+            eq_(logs[3].params.num, numbers[3]);
+            eq_(logs[4].params.num, numbers[4]);
+        }
     }
 });
