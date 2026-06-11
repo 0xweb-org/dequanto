@@ -662,7 +662,8 @@ namespace RangeWorker {
                 blocks: perf.blocks,
                 blocksPerSecond: Number(blocksPerSecFormatted),
                 timeLeftSeconds: leftSeconds,
-                completed: cursor >= toBlock
+                completed: cursor >= toBlock,
+                infos: { fetched: perf.blocks.loaded, cached: 0 }
             });
 
             let lastNodeStats = Date.now() - nodeStats;
