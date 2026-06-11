@@ -3,15 +3,14 @@ import { TokenTransferService } from '@dequanto/tokens/TokenTransferService';
 import { TxNonceManager } from '@dequanto/txs/TxNonceManager';
 import { $address } from '@dequanto/utils/$address';
 
+let hh = new HardhatProvider();
+let client = hh.client('hardhat');
+let alice = hh.deployer(1);
+
 UTest({
     async 'should create and restore a snapshot' () {
-        let hh = new HardhatProvider();
-        let client = hh.client('hardhat');
-        let alice = hh.deployer(1);
-
 
         let nonce = TxNonceManager.create(client, alice);
-
         let service = new TokenTransferService(client).$config({
             nonce
         });

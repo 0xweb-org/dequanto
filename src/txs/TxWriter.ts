@@ -296,7 +296,9 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> implements ITx
                 tx.hash = hash;
                 this.onSent.resolve(hash);
                 this.emit('transactionHash', hash);
-                this.emit('log', `Tx hash: ${hash}`);
+                if (this.client.platform !== 'hardhat') {
+                    this.emit('log', `Tx hash: ${hash}`);
+                }
             })
             // .on('confirmation', (confNumber, receipt) => {
             //     tx.hash = receipt.transactionHash ?? tx.hash;
@@ -344,7 +346,9 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> implements ITx
                     let hash = tx.hash;
                     let status = receipt.status;
                     let gasFormatted = $gas.formatUsed(this.builder.data, <any>receipt);
-                    this.emit('log', `Tx receipt: ${hash}.\n\tStatus: ${status}.\n\tGas used: ${gasFormatted}`);
+
+                    let message = `${status ? '✓' : '✕'} ${gasFormatted} ${hash}`;
+                    this.emit('log', message);
 
                     this.onCompleted.resolve(receipt);
                 } catch (error) {

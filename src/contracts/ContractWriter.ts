@@ -131,7 +131,7 @@ export class ContractWriter implements IContractWriter {
         let silentTxWriter = writerConfig?.silent ?? ContractWriter.SILENT;
         if (silentTxWriter === false) {
             writer.on('log', message => {
-                $logger.log(`TxContract ${abi.name}; ${message}`);
+                $logger.log(`${abi.name}; ${message}`);
             });
         }
         return writer;
