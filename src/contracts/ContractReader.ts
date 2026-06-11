@@ -19,8 +19,10 @@ import { $require } from '@dequanto/utils/$require';
 import { $array } from '@dequanto/utils/$array';
 import { RpcTypes } from '@dequanto/rpc/Rpc';
 import { TEth } from '@dequanto/models/TEth';
-import { TRpcContractCall } from '@dequanto/rpc/RpcContract';
+import { RpcContract, TRpcContractCall } from '@dequanto/rpc/RpcContract';
 import { WClient } from '@dequanto/clients/ClientPool';
+import { $traces } from '@dequanto/utils/$traces';
+import { $abiProvider } from '@dequanto/utils/$abiProvider';
 
 
 
@@ -35,7 +37,10 @@ export class ContractReader implements IContractReader {
     private blockNumberTask: Promise<number>;
     private options: TRpcContractCall = {};
 
-    constructor(public client: Web3Client = di.resolve(EthWeb3Client), private ctx?: { name?: string }) {
+    constructor(public client: Web3Client = di.resolve(EthWeb3Client), private ctx?: {
+        name?: string
+        color?: boolean
+    }) {
 
     }
     forBlock (mix: number | Date | undefined) {
@@ -107,7 +112,29 @@ export class ContractReader implements IContractReader {
             return result as TResult;
         } catch (error) {
             let args = params.map((x, i) => `[${i}] ${x}`).join('\n');
-            let err = new Error(`Read ${this.ctx?.name ?? ''} ${address}.${method}(${args}) failed with ${error.message}`);
+
+            let { client } = this;
+            let { tx: txData } = await RpcContract.createCalldata({
+                address,
+                abi: abiArr,
+                method: method,
+                params: params,
+                blockNumber: blockNumber,
+                from: this.options.from,
+            });
+            let traces = await client.debug.traceCall(txData);
+            let output = await $traces.format({
+                tx: txData,
+                traces,
+                color: this.ctx?.color ?? false,
+                shortAddress: false,
+                async getABI(address) {
+                    return $abiProvider.getAbi(address, client.network);
+                }
+            });
+            let tracesF = `\nTraces: \n` + output;
+
+            let err = new Error(`Read ${this.ctx?.name ?? ''} ${address}.${method}(${args}) failed with ${error.message}\n${tracesF}`);
             err.stack = error.stack;
             throw err;
         }

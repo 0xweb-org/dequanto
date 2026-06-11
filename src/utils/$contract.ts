@@ -299,8 +299,8 @@ export namespace $contract {
             address?: TEth.Address
             abi: TAbiItem[]
         }
-        const knownContracts = [] as IContractMeta[];
-        const knownContractsAddresses = {} as Record<string, IContractMeta>
+        let knownContracts = [] as IContractMeta[];
+        let knownContractsAddresses = {} as Record<string, IContractMeta>
 
         export function getFlattened() {
             return alot(knownContracts).mapMany(x => x.abi).toArray();
@@ -331,6 +331,11 @@ export namespace $contract {
             return getFlattened().find(item => {
                 return $abiUtils.getMethodSignature(item) === selector;
             });
+        }
+
+        export function clear () {
+            knownContracts = [];
+            knownContractsAddresses = {};
         }
     }
 

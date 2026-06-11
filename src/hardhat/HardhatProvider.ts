@@ -419,6 +419,15 @@ export class HardhatProvider {
     }
 
     private async createTmpFile(solidityCode: string, options: Parameters<HardhatProvider['deploySol']>[1] = {}) {
+
+        // Ensure the code includes the necessary pragmas and license header.
+        if (solidityCode.includes('pragma solidity') === false) {
+            solidityCode = `pragma solidity ^0.8.0;\n${solidityCode}`;
+        }
+        if (solidityCode.includes('SPDX-License-Identifier') === false) {
+            solidityCode = `// SPDX-License-Identifier: MIT\n${solidityCode}`;
+        }
+
         let contractName = options.contractName;
         if (contractName == null) {
             let matches = Array.from(solidityCode.matchAll(/contract\s+(?<name>[\w]+)/g));

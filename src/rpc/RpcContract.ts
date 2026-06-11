@@ -92,31 +92,12 @@ export class RpcContract {
         return alot(requests).mapAsync(req => this.getCallRequestRaw(req)).toArrayAsync();
     }
     private async getCallRequestRaw (request: TRpcContractCall) {
-        let address = request.address ?? this.defaults?.address;
-        $require.Address(address);
+        let {
+            tx,
+            abiItem,
+            blockNumber
+        } = await RpcContract.createCalldata(request, this.defaults);
 
-        let data = request.data;
-        let { abi, method, params, blockNumber } = request;
-        let abiArr = $web3Abi.ensureAbis(abi ?? this.defaults?.abi);
-        let abiItem = abiArr?.find(x => x.name === method);
-        if (abiItem == null) {
-            abiItem = this.defaults?.abi?.find(x => x.name === method);
-        }
-
-        if (data == null) {
-            $require.notNull(abiItem, `Method ${method} not found. Available methods: ${abiArr?.map(x => x.name) }`);
-            data = $abiUtils.serializeMethodCallData(abiItem, params ?? []);
-        }
-        if (blockNumber instanceof Date) {
-            let resolver = di.resolve(BlockDateResolver, this.client);
-            blockNumber = await resolver.getBlockNumberFor(blockNumber);
-        }
-        let tx = {
-            from: request.from ?? void 0,
-            to: address,
-            value: $hex.ensure(request.value ?? 0n),
-            data: data,
-        };
         let rpc = new Rpc();
         return {
             methodRequest: rpc.req.eth_call(tx, blockNumber ?? 'latest'),
@@ -125,6 +106,44 @@ export class RpcContract {
     }
 
 
+    static async createCalldata (request: TRpcContractCall, options?: {
+        client?: Web3Client
+        address?: TEth.Address
+        abi?: TAbiItem[]
+    }) {
+        let address = request.address ?? options?.address;
+        $require.Address(address);
+
+        let data = request.data;
+        let { abi, method, params, blockNumber } = request;
+        let abiArr = $web3Abi.ensureAbis(abi ?? options?.abi);
+        let abiItem = abiArr?.find(x => x.name === method);
+        if (abiItem == null) {
+            abiItem = options?.abi?.find(x => x.name === method);
+        }
+
+        if (data == null) {
+            $require.notNull(abiItem, `Method ${method} not found. Available methods: ${abiArr?.map(x => x.name) }`);
+            data = $abiUtils.serializeMethodCallData(abiItem, params ?? []);
+        }
+
+        if (blockNumber instanceof Date) {
+            let client = $require.notNull(options?.client, `Blocknumber is Date: ${blockNumber}, Client is required.`);
+            let resolver = di.resolve(BlockDateResolver, client);
+            blockNumber = await resolver.getBlockNumberFor(blockNumber);
+        }
+
+        return {
+            tx: {
+                from: request.from ?? void 0,
+                to: address,
+                value: $hex.ensure(request.value ?? 0n),
+                data: data,
+            },
+            abiItem,
+            blockNumber
+        };
+    }
 
     // async submit (contract: TRpcContract, req: TRpcContractCallReq) {
     //     let abis = contract.abi;

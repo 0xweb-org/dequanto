@@ -22,10 +22,9 @@ const deployer = provider.deployer();
 
 UTest({
     $before() {
-
+        $contract.store.clear();
     },
     async 'parse traces'() {
-
         let code = `
             contract A {
                 struct TResult {
@@ -33,6 +32,8 @@ UTest({
                     bool flag;
                 }
                 event MyNumber(uint256 indexed val);
+                uint256 private val_;
+                string private name_;
                 function fnOne(uint256 foo) public returns (uint256) {
                     TResult memory result = this.echo(foo, true, "lorem");
                     uint256 val = result.val;
@@ -40,6 +41,8 @@ UTest({
                     return val + 4;
                 }
                 function echo(uint256 val, bool flag, string calldata name) public returns (TResult memory) {
+                    val_ = val;
+                    name_ = name;
                     return TResult(val + 1, flag);
                 }
             }
@@ -58,7 +61,6 @@ UTest({
             }
         });
 
-        console.log(`>`, output);
         $assert.has(`A.fnOne(foo: 42)`, output);
         $assert.has(`A.echo(val: 42, flag: true, name: lorem)`, output);
         $assert.has(`{ val: 43, flag: true }`, output);
@@ -68,22 +70,33 @@ UTest({
     async 'should parse traces in gas estimation'() {
         let code = `
             contract AThrown {
+                uint256 private value_;
                 function fnOne(uint256 foo) public returns (uint256) {
                     uint256 val = this.echo(foo);
-                    return val + 4;
+                    value_ = val + 4;
+                    return value_;
                 }
-                function echo(uint256 val) public returns (uint256 result) {
-                    require(val == 1, "FooThrown");
+                function echo(uint256 val) public pure returns (uint256 result) {
+                    require(val == 1, "Only 1");
                     return val;
                 }
             }
-            `;
+        `;
         let depl = await provider.deployCode(code, { client });
-        let { error } = await $promise.caught(depl.contract.$config({
+        let contract = depl.contract.$config({
             color: false
-        }).$receipt().fnOne(deployer, 42));
+        });
 
-        $assert.has(`AThrown.fnOne(foo: 42)`, error.message);
+        return UTest({
+            async 'in gas estimation'() {
+                let { error } = await $promise.caught(contract.$receipt().fnOne(deployer, 42));
+                $assert.has(`AThrown.fnOne(foo: 42)`, error.message);
+            },
+            async 'in view getter'() {
+                let { error } = await $promise.caught(contract.echo(42));
+                $assert.has(`AThrown.echo(val: 42) : `, error.message);
+            }
+        });
     },
 
     async 'should contain the contract after constructor'() {
