@@ -113,28 +113,33 @@ export class ContractReader implements IContractReader {
         } catch (error) {
             let args = params.map((x, i) => `[${i}] ${x}`).join('\n');
 
-            let { client } = this;
-            let { tx: txData } = await RpcContract.createCalldata({
-                address,
-                abi: abiArr,
-                method: method,
-                params: params,
-                blockNumber: blockNumber,
-                from: this.options.from,
-            });
-            let traces = await client.debug.traceCall(txData);
-            let output = await $traces.format({
-                tx: txData,
-                traces,
-                color: this.ctx?.color ?? false,
-                shortAddress: false,
-                async getABI(address) {
-                    return $abiProvider.getAbi(address, client.network);
-                }
-            });
-            let tracesF = `\nTraces: \n` + output;
+            let tracesF = '';
+            try {
+                let { client } = this;
+                let { tx: txData } = await RpcContract.createCalldata({
+                    address,
+                    abi: abiArr,
+                    method: method,
+                    params: params,
+                    blockNumber: blockNumber,
+                    from: this.options.from,
+                });
+                let traces = await client.debug.traceCall(txData);
+                let output = await $traces.format({
+                    tx: txData,
+                    traces,
+                    color: this.ctx?.color ?? false,
+                    shortAddress: false,
+                    async getABI(address) {
+                        return $abiProvider.getAbi(address, client.network);
+                    }
+                });
+                tracesF = `\nTraces: \n` + output;
+            } catch (error) {
+                // ignore
+            }
 
-            let err = new Error(`Read ${this.ctx?.name ?? ''} ${address}.${method}(${args}) failed with ${error.message}\n${tracesF}`);
+            let err = new Error(`Read ${this.ctx?.name ?? ''} ${address}.${method}(${args}) failed with ${error.message}${tracesF}`);
             err.stack = error.stack;
             throw err;
         }
