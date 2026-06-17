@@ -611,7 +611,6 @@ namespace Gen {
 
         let abi = abis[0];
         let { fnResult } = serializeArgumentsTs(abi);
-        let sigs = abis.map(abi => serializeMethodAbi(abi)).map(x => `'${x}'`).join(', ');
         return {
             ts: `
                 ${overrides}
@@ -689,12 +688,11 @@ namespace Gen {
         }).join('\n');
 
         let abi = abis[0];
-        let sigs = abis.map(abi => serializeMethodAbi(abi)).map(x => `'${x}'`).join(', ');
         return {
             ts: `
                 ${overrides}
                 async ${abi.name} (sender: TSender, ...args): Promise<TxWriter> {
-                    let abi = this.$getAbiItemOverload([ ${sigs} ], args);
+                    let abi = this.$getAbiItemOverload('${abi.name}', args);
                     return this.$write(abi, sender, ...args);
                 }
             `,
@@ -704,7 +702,7 @@ namespace Gen {
             `,
             js: `
                 async ${abi.name} (sender, ...args) {
-                    let abi = this.$getAbiItemOverload([ ${sigs} ], args);
+                    let abi = this.$getAbiItemOverload('${abi.name}', args);
                     return this.$write(abi, sender, ...args);
                 }
             `

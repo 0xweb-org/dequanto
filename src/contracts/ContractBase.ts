@@ -426,6 +426,9 @@ export abstract class ContractBase {
                 if (/^u?int/.test(item.type) && (typeof arg === 'number' || typeof arg === 'bigint')) {
                     continue;
                 }
+                if (/tuple/.test(item.type) && (typeof arg === 'object')) {
+                    continue;
+                }
                 return false;
             }
             return true;
