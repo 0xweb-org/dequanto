@@ -60,7 +60,7 @@ export abstract class ContractBase {
 
     storage?: ContractStorageReaderBase
 
-    constructor (
+    constructor(
         public address: TAddress,
         public client: Web3Client,
         public explorer: IBlockchainExplorer
@@ -77,28 +77,28 @@ export abstract class ContractBase {
         }
     }
 
-    public async $getStorageAt (position: number | bigint | TEth.Hex)  {
+    public async $getStorageAt(position: number | bigint | TEth.Hex) {
         let reader = await this.getContractReader();
         return reader.getStorageAt(this.address, position);
     }
-    public $parseInputData (buffer: TEth.BufferLike, value?: string) {
+    public $parseInputData(buffer: TEth.BufferLike, value?: string) {
         return $abiUtils.parseMethodCallData(this.abi, buffer);
     }
-    public async $executeBatch <T extends readonly unknown[] | ContractReaderUtils.IContractReadParams[]>(values: T): Promise<
+    public async $executeBatch<T extends readonly unknown[] | ContractReaderUtils.IContractReadParams[]>(values: T): Promise<
         { -readonly [P in keyof T]: ContractReaderUtils.TIContractReadParamsInferred<T[P]>; }
     > {
         let reader = await this.getContractReader();
         return reader.executeBatch(values);
     }
 
-    async getPastLogs <TEvents extends TEventsBase, TEventName extends keyof TEvents> (
+    async getPastLogs<TEvents extends TEventsBase, TEventName extends keyof TEvents>(
         event: TEventName | TEventName[]
         , options?: TEventLogOptions<TEventParams<TEvents, TEventName>>
     ): Promise<ITxLogItem<TEventParams<TEvents, TEventName>, TEventName>[]> {
         return await this.$getPastLogsParsed(event as string | string[], options) as any;
     }
 
-    public $config (builderConfig?: ITxBuilderOptions, writerConfig?: ITxWriterOptions): this {
+    public $config(builderConfig?: ITxBuilderOptions, writerConfig?: ITxWriterOptions): this {
         let $contract = $class.curry(this, {
             builderConfig: {
                 ...(this.builderConfig ?? {}),
@@ -119,7 +119,7 @@ export abstract class ContractBase {
     }
 
     @memd.deco.memoize({ perInstance: true })
-    public $call () {
+    public $call() {
         let abiArr = this.abi;
         let writer = this.getContractWriter();
 
@@ -127,7 +127,7 @@ export abstract class ContractBase {
         let fns = alot(methods).map(abiMethod => {
             return {
                 name: abiMethod.name,
-                async fn (sender: TAccount,...args: any[]) {
+                async fn(sender: TAccount, ...args: any[]) {
                     return ContractBaseUtils.$call(
                         writer,
                         abiMethod,
@@ -146,7 +146,7 @@ export abstract class ContractBase {
     }
 
     @memd.deco.memoize({ perInstance: true })
-    public $data (params?: {
+    public $data(params?: {
         estimateGas?: boolean
         getNonce?: boolean
         from?: TAddress
@@ -160,14 +160,14 @@ export abstract class ContractBase {
         let writeFns = alot(writeMethods).map(method => {
             return {
                 name: method.name,
-                async fn (sender: TAccount,...args: any[]) {
+                async fn(sender: TAccount, ...args: any[]) {
                     let writer: TxWriter = await $top
                         .$config({
                             send: 'manual',
                             gasEstimation: false,
                             nonce: params?.getNonce ? void 0 : 0,
                         })
-                        [method.name](sender, ...args);
+                    [method.name](sender, ...args);
 
                     if (params?.getNonce) {
                         await writer.builder.ensureNonce();
@@ -192,7 +192,7 @@ export abstract class ContractBase {
         let readFns = alot(readMethods).map(method => {
             return {
                 name: method.name,
-                async fn (...args: any[]) {
+                async fn(...args: any[]) {
                     return {
                         to: $top.address,
                         data: $abiUtils.serializeMethodCallData(method, args)
@@ -209,7 +209,7 @@ export abstract class ContractBase {
     }
 
     @memd.deco.memoize({ perInstance: true })
-    public $gas () {
+    public $gas() {
         let abiArr = this.abi;
         let writer = this.getContractWriter();
 
@@ -217,7 +217,7 @@ export abstract class ContractBase {
         let fns = alot(methods).map(abiMethod => {
             return {
                 name: abiMethod.name,
-                async fn (sender: IAccount,...args: any[]) {
+                async fn(sender: IAccount, ...args: any[]) {
                     return ContractBaseUtils.$gas(
                         writer,
                         abiMethod,
@@ -235,11 +235,11 @@ export abstract class ContractBase {
         return $contract as any;
     }
 
-    public $req () {
+    public $req() {
         return FnRequestWrapper.create(this);
     }
 
-    public $signed (builderConfig?: ITxBuilderOptions, writerConfig?: ITxWriterOptions) {
+    public $signed(builderConfig?: ITxBuilderOptions, writerConfig?: ITxWriterOptions) {
         let instance = this.$signedCreate();
         if (builderConfig != null || writerConfig != null) {
             instance = instance.$config(builderConfig, writerConfig);
@@ -248,18 +248,18 @@ export abstract class ContractBase {
     }
 
     @memd.deco.memoize({ perInstance: true })
-    private $signedCreate () {
+    private $signedCreate() {
         return FnSignedWrapper.create(this);
     }
 
     @memd.deco.memoize({ perInstance: true })
-    public $receipt <T extends this> (this: T): T {
+    public $receipt<T extends this>(this: T): T {
         let $top = this;
         let methods = this.abi.filter(abi => abi.type === 'function' && $abiUtils.isReadMethod(abi) === false);
         let fns = alot(methods).map(abiMethod => {
             return {
                 name: abiMethod.name,
-                async fn (sender: IAccount,...args: any[]) {
+                async fn(sender: IAccount, ...args: any[]) {
                     let tx: TxWriter = await $top[abiMethod.name](sender, ...args);
                     let receipt = await tx.wait();
                     return tx;
@@ -273,7 +273,7 @@ export abstract class ContractBase {
         return $contract as any;
     }
 
-    public forBlock (mix: number | bigint | undefined | Date): this {
+    public forBlock(mix: number | bigint | undefined | Date): this {
         if (mix == null) {
             return this;
         }
@@ -282,14 +282,14 @@ export abstract class ContractBase {
         }
         return this.forBlockAt(mix);
     }
-    protected forBlockNumber (blockNumber: number | bigint | undefined): this {
+    protected forBlockNumber(blockNumber: number | bigint | undefined): this {
         let $contract = $class.curry(this, {
             blockNumber: blockNumber,
             blockDate: null
         })
         return $contract;
     }
-    protected forBlockAt (date: Date | undefined): this {
+    protected forBlockAt(date: Date | undefined): this {
         let $contract = $class.curry(this, {
             blockNumber: null,
             blockDate: date
@@ -297,7 +297,7 @@ export abstract class ContractBase {
         return $contract;
     }
 
-    protected $read (abi: string | TAbiItem, ...params) {
+    protected $read(abi: string | TAbiItem, ...params) {
         if (this.builderConfig?.send === 'manual') {
             let req = <ContractReaderUtils.IContractReadParams>{
                 address: this.address,
@@ -314,7 +314,7 @@ export abstract class ContractBase {
         return reader.readAsync(this.address, abi, ...params);
     }
 
-    public $onLog (event: string, cb?) {
+    public $onLog(event: string, cb?) {
         let stream = this.getContractStream();
         let events = stream.on(event);
         if (cb) {
@@ -323,12 +323,12 @@ export abstract class ContractBase {
         return events;
     }
 
-    public $onTransaction (options?: BlockWalker.IBlockWalkerOptions): SubjectStream<{ tx: TEth.Tx, block: TEth.Block, calldata: { method, arguments: any[] } }> {
+    public $onTransaction(options?: BlockWalker.IBlockWalkerOptions): SubjectStream<{ tx: TEth.Tx, block: TEth.Block, calldata: { method, arguments: any[] } }> {
 
         options ??= {};
         options.logProgress ??= false;
 
-        type TSubject =  {
+        type TSubject = {
             tx: TEth.Tx,
             block: TEth.Block,
             calldata: { method, arguments: any[] }
@@ -375,7 +375,7 @@ export abstract class ContractBase {
         return stream;
     }
 
-    protected async $write (abi: string | TAbiItem, account: TAccount & {  value?: number | string | bigint }, ...params): Promise<TxWriter> {
+    protected async $write(abi: string | TAbiItem, account: TAccount & { value?: number | string | bigint }, ...params): Promise<TxWriter> {
         let writer = await this.getContractWriter();
         return writer.writeAsync(account, abi, params, {
             abi: this.abi,
@@ -384,20 +384,20 @@ export abstract class ContractBase {
         });
     }
 
-    protected $getAbiItem (type: 'event' | 'function' | 'string', name: string, argsCount?: number) {
+    protected $getAbiItem(type: 'event' | 'function' | 'string', name: string, argsCount?: number) {
         return ContractBaseUtils.$getAbiItem(this.abi, type, name, argsCount);
     }
 
-    protected $getAbiItemOverload (fnName: string, args: any[])
-    protected $getAbiItemOverload (abis: (string | TAbiItem)[], args: any[])
-    protected $getAbiItemOverload (mix: string | (string | TAbiItem)[], args: any[]) {
+    protected $getAbiItemOverload(fnName: string, args: any[])
+    protected $getAbiItemOverload(abis: (string | TAbiItem)[], args: any[])
+    protected $getAbiItemOverload(mix: string | (string | TAbiItem)[], args: any[]) {
         let abis = typeof mix === 'string'
-           ? this.abi.filter(x => x.type === 'function' && x.name === mix)
-           : mix;
+            ? this.abi.filter(x => x.type === 'function' && x.name === mix)
+            : mix;
 
         let $abis = abis
             .map(methodAbi => {
-                if (typeof methodAbi ==='string') {
+                if (typeof methodAbi === 'string') {
                     return $abiParser.parseMethod(methodAbi);
                 }
                 return methodAbi;
@@ -410,43 +410,30 @@ export abstract class ContractBase {
         if ($abis.length === 1) {
             return $abis[0];
         }
-        $abis = $abis.filter(abi => {
-            for (let i = 0; i < args.length; i++) {
-                let item = abi.inputs[i];
-                let arg = args[i];
-                if (item.type === 'address' && $address.isValid(arg)) {
-                    continue;
-                }
-                if (item.type === 'bool' && typeof arg === 'boolean') {
-                    continue;
-                }
-                if (item.type === 'string' && typeof arg === 'string') {
-                    continue;
-                }
-                if (/^u?int/.test(item.type) && (typeof arg === 'number' || typeof arg === 'bigint')) {
-                    continue;
-                }
-                if (/tuple/.test(item.type) && (typeof arg === 'object')) {
-                    continue;
-                }
-                return false;
-            }
-            return true;
-        });
+        $abis = filterABIbyArguments($abis, args, 'shallow');
         if ($abis.length === 1) {
             return $abis[0];
         }
+        $abis = filterABIbyArguments($abis, args, 'single');
+        if ($abis.length === 1) {
+            return $abis[0];
+        }
+        $abis = filterABIbyArguments($abis, args, 'both');
+        if ($abis.length === 1) {
+            return $abis[0];
+        }
+
         throw new Error(`ABI not found. Got multiple overloads for the argument count ${args.length}. We should pick the ABI by parameters type.`)
     }
 
-    protected $extractLogs (tx: TEth.TxReceipt, abiItem: TAbiItem) {
+    protected $extractLogs(tx: TEth.TxReceipt, abiItem: TAbiItem) {
         let logs = $contract.extractLogsForAbi(tx, abiItem);
         return logs;
     }
-    protected $extractLog (log: TEth.Log, mix: string | string[] | TAbiItem | TAbiItem[] | '*') {
+    protected $extractLog(log: TEth.Log, mix: string | string[] | TAbiItem | TAbiItem[] | '*') {
         let abi: TAbiItem | TAbiItem[];
 
-        let mixArr = typeof mix === 'string' ? [ mix ] : ((mix as TAbiItem[] | string[])  ?? []);
+        let mixArr = typeof mix === 'string' ? [mix] : ((mix as TAbiItem[] | string[]) ?? []);
         if (mixArr.length === 0 || (mixArr.length === 1 && mixArr[0] === '*')) {
             abi = this.abi;
         } else {
@@ -459,18 +446,18 @@ export abstract class ContractBase {
     protected async $getPastLogs(filters: RpcTypes.Filter, options?: {
         streamed?: boolean
         blockRangeLimits?: WClient['blockRangeLimits']
-        onProgress? (info: TLogsRangeProgress<TEth.Log>)
+        onProgress?(info: TLogsRangeProgress<TEth.Log>)
     }) {
         return this.getContractReader().getLogs(filters, options);
     }
-    public async $getPastLogsParsed (mix: string | TAbiItem | string[] | TAbiItem[], options?: {
+    public async $getPastLogsParsed(mix: string | TAbiItem | string[] | TAbiItem[], options?: {
         addresses?: TAddress[]
         fromBlock?: number | Date
         toBlock?: number | Date
         params?: {
             [key: string]: any
         }
-        onProgress? (info: TLogsRangeProgress<ITxLogItem>)
+        onProgress?(info: TLogsRangeProgress<ITxLogItem>)
 
         /** if TRUE the data will be only forwarded via onProgress callback.
          * And the final array will be undefined.
@@ -516,7 +503,7 @@ export abstract class ContractBase {
             abi = this.$getAbiItem('event', mix);
         } else if (Array.isArray(mix) === false) {
             abi = mix;
-        } else if (mix.length === 1 && typeof mix[0] ==='string' && mix[0] === '*') {
+        } else if (mix.length === 1 && typeof mix[0] === 'string' && mix[0] === '*') {
             abi = '*';
         } else {
             abi = mix.map(x => {
@@ -535,7 +522,7 @@ export abstract class ContractBase {
         );
     }
 
-    private getContractReader () {
+    private getContractReader() {
         let reader = this.getContractReaderInner();
         if (this.blockDate != null) {
             reader.forBlockAt(this.blockDate);
@@ -551,13 +538,13 @@ export abstract class ContractBase {
     }
 
     @memd.deco.memoize({ perInstance: true })
-    private getContractReaderInner () {
+    private getContractReaderInner() {
         let reader = new ContractReader(this.client, { name: this.constructor.name });
         return reader;
     }
 
     @memd.deco.memoize({ perInstance: true })
-    protected getContractWriter () {
+    protected getContractWriter() {
         if (this.abi != null) {
             // Updates the singleton instance
             let logParser = di.resolve(TxTopicInMemoryProvider);
@@ -568,7 +555,7 @@ export abstract class ContractBase {
     }
 
     @memd.deco.memoize({ perInstance: true })
-    private getContractStream () {
+    private getContractStream() {
         let stream = new ContractStream(this.address, this.abi, this.client);
         return stream;
     }
@@ -587,9 +574,9 @@ namespace BlockWalker {
         }
     }
 
-    const indexers = {} as { [key: string]: BlocksTxIndexer } ;
+    const indexers = {} as { [key: string]: BlocksTxIndexer };
 
-    export function onBlock (client: Web3Client, options: IBlockWalkerOptions, cb: TBlockListener ) {
+    export function onBlock(client: Web3Client, options: IBlockWalkerOptions, cb: TBlockListener) {
 
         let key = `${client.platform}_${options?.name ?? ''}_${options?.persistence ?? false}`;
         let current = indexers[key];
@@ -621,7 +608,7 @@ export type TContractTypes = {
 type TEventsBase = {
     [name: string]: {
         outputParams: Record<string, any>,
-        outputArgs:   any[],
+        outputArgs: any[],
     }
 }
 
@@ -631,8 +618,71 @@ export type TEventLogOptions<TParams> = {
     toBlock?: number | Date
     params?: TParams
     streamed?: boolean
-    onProgress? (info: TLogsRangeProgress<ITxLogItem>)
+    onProgress?(info: TLogsRangeProgress<ITxLogItem>)
     blockRangeLimits?: WClient['blockRangeLimits']
 }
 
 type TEventParams<TEvents extends TEventsBase, TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
+
+
+// Tuple check type detects how an argument satisfies the "tuple"
+// shallow: checks only that the argument is an object type
+// single: checks that all tuple components (keys) are present in the argument
+// both: checks that all tuple components are present in the argument AND all argument keys exist in the tuple components
+function filterABIbyArguments(abis: TAbiItem[], args: any[], tupleCheck: 'shallow' | 'single' | 'both') {
+    return abis.filter(abi => {
+        for (let i = 0; i < args.length; i++) {
+            let item = abi.inputs[i];
+            let arg = args[i];
+            if (item.type === 'address' && $address.isValid(arg)) {
+                continue;
+            }
+            if (item.type === 'bool' && typeof arg === 'boolean') {
+                continue;
+            }
+            if (item.type === 'string' && typeof arg === 'string') {
+                continue;
+            }
+            if (/^u?int/.test(item.type) && (typeof arg === 'number' || typeof arg === 'bigint')) {
+                continue;
+            }
+            if (/tuple/.test(item.type)) {
+                arg ??= {};
+                if (tupleCheck === 'shallow') {
+                    if (typeof arg === 'object') {
+                        continue;
+                    }
+                }
+                if (tupleCheck === 'single' || tupleCheck === 'both') {
+                    // E.g. Solidity structs:
+                    // 1. struct FooV1 { uint256 a; uint256 b; }
+                    // 2. struct FooV2 { uint256 a; uint256 b; uint256 c; }
+                    // If we call the 2. overloaded function the single check will match both structs
+                    // therefore we need later to call with tupleCheck === 'both' to detect correct overload
+                    const components = item.components ?? [];
+                    const satisfies = components.every(x => x.name in arg) ?? false;
+                    if (!satisfies) {
+                        return false;
+                    }
+
+                    if (tupleCheck === 'single') {
+                        continue;
+                    }
+                }
+                if (tupleCheck === 'both') {
+                    const components = item.components ?? [];
+                    for (let key in arg) {
+                        const found = components.find(x => x.name === key);
+                        if (!found) {
+                            return false;
+                        }
+                    }
+                    continue;
+                }
+
+            }
+            return false;
+        }
+        return true;
+    });
+}
