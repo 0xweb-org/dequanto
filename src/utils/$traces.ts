@@ -6,6 +6,7 @@ import { $bigint } from './$bigint';
 import { $hex } from '@dequanto/utils/$hex';
 import { $color, ColorData } from './$color';
 import alot from 'alot';
+import { $contract } from './$contract';
 
 export namespace $traces {
 
@@ -335,10 +336,11 @@ export namespace $traces {
     }
 
     function formatFrameLabel(frame: TTraceFrame, contractName: string | null, abi: TEth.Abi.Item | null, params: {
-        shortAddress?: boolean
-        color?: boolean
-        addresses?: Record<string, string>
-    }): string {
+            shortAddress?: boolean
+            color?: boolean
+            addresses?: Record<string, string>
+        }
+    ): string {
         let head = color('gray', frame.callOp.toLowerCase(), params);
         let suffix = '';
 
@@ -511,6 +513,13 @@ export namespace $traces {
                 }
             } catch {
                 // Fall back to raw bytes if decoding fails.
+            }
+        }
+        if (frame.failed) {
+            let abis = $contract.store.getFlattened();
+            let error = $contract.decodeCustomError(frame.output, abis);
+            if (error) {
+                return JSON.stringify(error);
             }
         }
         return shortHex(frame.output, 18, 10);
