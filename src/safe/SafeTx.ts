@@ -54,9 +54,16 @@ export class SafeTx {
         });
 
         let transactionsHex = $hex.concat(transactionsHexArr);
+        let isCallOnly = txData.every(tx => !tx.operation /** 0: call, 1: delegatecall */);
+        let getAddress = (key: 'MultiSend' | 'MultiSendCallOnly') => {
+            return this.options?.contracts?.[this.client.network]?.[key]
+            ?? config.safe?.contracts?.[this.client.network]?.[key];
+        }
 
-        const multiSendAddress = this.options?.contracts?.[this.client.network]?.MultiSend
-            ?? config.safe?.contracts?.[this.client.network]?.MultiSend;
+        const multiSendAddress = isCallOnly
+            ? (getAddress('MultiSendCallOnly') ?? getAddress('MultiSend'))
+            : (getAddress('MultiSend'))
+
 
         $require.Address(multiSendAddress, `MultiSend contract for ${this.client.network}`);
         const safeMultiSendContract = new MultiSend(multiSendAddress, this.client);

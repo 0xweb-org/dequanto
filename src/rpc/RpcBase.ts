@@ -85,6 +85,7 @@ export abstract class RpcBase {
         let body = this._wrapBody(req);
         let subscription = await this._transport.subscribe<TReturn>(body);
 
+
         let mapped = RpcSubscription.createMapping(subscription, this._transport, x => this._deserialize(`${req.method}.${req.params[0]}`, x))
         return mapped as RpcSubscription<TReturn>;
         //return subscription.map(x => this._deserialize(`${req.method}.${req.params[0]}`, x));

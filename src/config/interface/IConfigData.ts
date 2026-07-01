@@ -64,6 +64,7 @@ export interface IConfigData {
             SafeL2?: TAddress;
             SafeProxyFactory: TAddress;
             MultiSend: TAddress;
+            MultiSendCallOnly?: TAddress;
             CreateCall?: TAddress;
         }>;
     };
