@@ -911,7 +911,9 @@ export class WClient {
             .eth_signTypedData_v4(address, typedData);
     }
 
-    async callBatched<TResult = any>(requests: TRpc.IRpcAction[]): Promise<TResult[]> {
+    async callBatched<TResult = any>(requests: TRpc.IRpcAction[], options?: {
+        allowErrors?: boolean
+    }): Promise<TResult[]> {
         let total = requests.length;
         let spanLimit = this.getSpanLimit(requests.length);
         let output = [] as TResult[];
@@ -925,7 +927,7 @@ export class WClient {
             }
             let { status, error, result: pageResult } = await this.call(async (client) => {
                 let batch = new Web3BatchRequests.BatchRequest(client.rpc, page);
-                let results = await batch.execute();
+                let results = await batch.execute(options);
                 return results;
             });
             if (status === ClientStatus.Ok) {

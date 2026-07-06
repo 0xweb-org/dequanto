@@ -63,20 +63,34 @@ export class RpcContract {
         }
     }
 
-    async batch (req: TRpcContractCall[]) {
+    async batch (req: TRpcContractCall[], options?: {
+        allowErrors?: boolean
+    }) {
 
         let requests = await this.getCallRequestsRaw(req);
         try {
-            let responseArr = await this.client.batch(requests.map(x => x.methodRequest));
+            let responseArr = await this.client.batch(requests.map(x => x.methodRequest), options);
 
             return responseArr.map((resp, i) => {
                 let abi = requests[i].methodAbi;
                 if (abi == null) {
                     return resp;
                 }
-                let outputs = abi.outputs;
+                let returnABI = abi.outputs;
+
+                if (resp != null && typeof resp === 'object' && 'error' in resp) {
+                    let defaults = null;
+                    try {
+                        const defaultHex = $abiCoder.encode(returnABI, [null]);
+                        defaults = utils.deserializeOutput(defaultHex, returnABI);
+                    } catch (error) {}
+                    return {
+                        defaults,
+                        ...resp
+                    };
+                }
                 let hex = typeof resp === 'string' ? resp : resp.data;
-                let result = utils.deserializeOutput(hex, outputs);
+                let result = utils.deserializeOutput(hex, returnABI);
                 return result;
             });
 

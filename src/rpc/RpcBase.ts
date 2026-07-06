@@ -39,7 +39,9 @@ export abstract class RpcBase {
         return this._deserialize(req.method, result);
     }
 
-    async batch (arr: TRpc.IRpcAction[]): Promise<any[]> {
+    async batch (arr: TRpc.IRpcAction[], options?: {
+        allowErrors?: boolean
+    }): Promise<any[]> {
         let body = arr.map(req => this._wrapBody(req));
         let resp = await this._transport.request(body);
         if (Array.isArray(resp) === false && arr.length === 1 && 'error' in resp === false && 'result' in resp === true) {
@@ -56,9 +58,14 @@ export abstract class RpcBase {
         return resp.map((resp, i) => {
             let req = arr[i];
             if ('error' in resp) {
+                if (options?.allowErrors) {
+                    return {
+                        error: new Error(resp.error.message),
+                        request: req
+                    };
+                }
                 throw new RpcError(resp.error, `BatchRequest ${i + 1}/${arr.length} (${req.method} ${JSON.stringify(req.params)})`);
             }
-
             let result = this._unwrapBody(resp);
             return this._deserialize(req.method, result);
         });

@@ -97,9 +97,11 @@ export abstract class Web3Client implements IWeb3Client {
         });
     }
 
-    async batch(requests: TRpc.IRpcAction[]): Promise<any[]> {
+    async batch(requests: TRpc.IRpcAction[], options?: {
+        allowErrors?: boolean
+    }): Promise<any[]> {
         return this.with (async web3 => {
-            return web3.callBatched(requests);
+            return web3.callBatched(requests, options);
         });
     }
 
@@ -187,9 +189,11 @@ export abstract class Web3Client implements IWeb3Client {
         return result;
     }
 
-    async readContractBatch(requests: TRpcContractCall[]) {
+    async readContractBatch(requests: TRpcContractCall[], options?: {
+        allowErrors?: boolean
+    }) {
         let reader = new RpcContract(this);
-        let result = await reader.batch(requests);
+        let result = await reader.batch(requests, options);
         return result;
     }
 

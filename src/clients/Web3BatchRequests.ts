@@ -38,13 +38,15 @@ export namespace Web3BatchRequests {
         constructor(private rpc: Rpc, private requests: TRpc.IRpcAction[]) {
         }
 
-        async execute(): Promise<any[]> {
+        async execute(options?: {
+            allowErrors?: boolean
+        }): Promise<any[]> {
             if (this.requests.length === 0) {
                 return [];
             }
 
             let rpc = this.rpc;
-            let response = await rpc.batch(this.requests);
+            let response = await rpc.batch(this.requests, options);
            return response;
         }
 

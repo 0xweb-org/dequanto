@@ -354,7 +354,9 @@ export namespace ContractReaderUtils {
 
     ;
 
-    export async function readAsyncBatch(client: Web3Client, requests: (IContractReadParams | null)[]) {
+    export async function readAsyncBatch(client: Web3Client, requests: (IContractReadParams | null)[], options?: {
+        allowErrors?: boolean
+    }) {
 
         let rpcRequests = await alot(requests).map(async request => {
             if (request == null) {
@@ -389,7 +391,7 @@ export namespace ContractReaderUtils {
             mapped[i] = idx;
         }
 
-        let outputs = await client.readContractBatch(rpcRequestsNotEmpty);
+        let outputs = await client.readContractBatch(rpcRequestsNotEmpty, options);
         return rpcRequests.map((_, i) => {
             return outputs[mapped[i]] ?? null;
         });
