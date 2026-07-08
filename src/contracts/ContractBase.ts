@@ -65,7 +65,7 @@ export abstract class ContractBase {
         public client: Web3Client,
         public explorer: IBlockchainExplorer
     ) {
-        if ($is.Address(address) && $contract.store.has(address) === false) {
+        if ($is.Address(address) && address !== $address.ZERO && $contract.store.has(address) === false) {
             const Ctor = this.constructor as Constructor<ContractBase>;
             const cloned = new Ctor(null, null, null);
             const meta = {
@@ -388,13 +388,12 @@ export abstract class ContractBase {
         return ContractBaseUtils.$getAbiItem(this.abi, type, name, argsCount);
     }
 
-    protected $getAbiItemOverload(fnName: string, args: any[])
-    protected $getAbiItemOverload(abis: (string | TAbiItem)[], args: any[])
-    protected $getAbiItemOverload(mix: string | (string | TAbiItem)[], args: any[]) {
+    protected $getAbiItemOverload(fnName: string, args: any[]): TAbiItem
+    protected $getAbiItemOverload(abis: (string | TAbiItem)[], args: any[]): TAbiItem
+    protected $getAbiItemOverload(mix: string | (string | TAbiItem)[], args: any[]): TAbiItem {
         let abis = typeof mix === 'string'
             ? this.abi.filter(x => x.type === 'function' && x.name === mix)
             : mix;
-
         let $abis = abis
             .map(methodAbi => {
                 if (typeof methodAbi === 'string') {
@@ -643,8 +642,19 @@ function filterABIbyArguments(abis: TAbiItem[], args: any[], tupleCheck: 'shallo
             if (item.type === 'string' && typeof arg === 'string') {
                 continue;
             }
-            if (/^u?int/.test(item.type) && (typeof arg === 'number' || typeof arg === 'bigint')) {
+            if (item.type === 'bytes32' && $is.HexBytes32(arg)) {
                 continue;
+            }
+            if (item.type === 'bytes' && $is.HexBytes32(arg)) {
+                continue;
+            }
+            if (/^u?int/.test(item.type)) {
+                if (typeof arg === 'number' || typeof arg === 'bigint') {
+                    continue;
+                }
+                if (typeof arg === 'string' && /^\d+$/.test(arg)) {
+                    continue;
+                }
             }
             if (/tuple/.test(item.type)) {
                 arg ??= {};
@@ -679,7 +689,6 @@ function filterABIbyArguments(abis: TAbiItem[], args: any[], tupleCheck: 'shallo
                     }
                     continue;
                 }
-
             }
             return false;
         }
