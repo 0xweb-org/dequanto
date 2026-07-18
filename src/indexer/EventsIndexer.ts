@@ -383,8 +383,11 @@ export class EventsIndexer <TContract extends ContractBase> {
         // Upsert final, if buffer is empty, we still persist the "toBlock" value and the ranges
         await this.upsert(buffer, events, ranges, fromBlock, toBlock, options);
 
-        if (isStreamed && typeof options?.onProgress === 'function' && cachedStreamedBuffer.length > 0) {
-            let lastBlock = cachedStreamedBuffer[cachedStreamedBuffer.length - 1].blockNumber;
+        if (isStreamed && typeof options?.onProgress === 'function' && (cachedStreamedBuffer.length > 0 || ranges.load.length === 0)) {
+            // When streaming, we MUST call onProgress, even if there are no ranges to load.
+            let lastBlock = cachedStreamedBuffer.length > 0
+                ? cachedStreamedBuffer[cachedStreamedBuffer.length - 1].blockNumber
+                : toBlock;
             await options.onProgress({
                 logs: cachedStreamedBuffer,
                 paged: cachedStreamedBuffer,
