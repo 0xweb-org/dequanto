@@ -49,7 +49,7 @@ abstract class CryptoBase implements ICrypto {
         const buffer = utils.toBuffer(mix);
         $require.gt(buffer.length, 0, `Buffer to encrypt must be a non-empty`);
         const secret = opts.secret;
-        $require.gt(secret.length, 0, `Secret must be a non-empty`);
+        $require.notEmpty(secret, `Secret must be a non-empty`);
         const bufferSecret = await this.prepareSecret(secret);
 
         let encrypted = await this.encryptInner(buffer, bufferSecret);

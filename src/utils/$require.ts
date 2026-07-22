@@ -74,14 +74,20 @@ export namespace $require {
         }
         return val;
     }
-    export function notEmpty<T extends string | Array<any>> (val: T, message: string): T {
+    export function notEmpty<T extends string | Array<any> | { length: number }> (val: T, message: string): T {
         if (val == null) {
             throw new Error(`Value is undefined. ${message}`);
         }
-        if (typeof val === 'string' && val.trim().length === 0) {
-            throw new Error(`Value is empty string. ${message}`);
-        } else if ($Array.isArray(val) && val.length === 0) {
-            throw new Error(`Value is empty array. ${message}`);
+        if (typeof val === 'string') {
+            if (val.trim().length === 0) {
+                throw new Error(`Value is empty string. ${message}`);
+            }
+        } else if (typeof val ==='object' && 'length' in val) {
+            if (val.length === 0) {
+                throw new Error(`Value is empty array. ${message}`);
+            }
+        } else {
+            throw new Error(`Invalid type for notEmpty check: ${typeof val}: ${val}`);
         }
         return val;
     }
