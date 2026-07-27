@@ -108,6 +108,23 @@ export class Generator {
         return generator.generate();
     }
 
+    static async generateFromJson (artifact: string) {
+        $require.True(await File.existsAsync(artifact), `${artifact} does not exist`);
+        let name = /(?<contractName>[^\\/]+).json$/.exec(artifact)?.groups?.contractName;
+        $require.notEmpty(name, `Contract name not resolved from the path ${artifact}`);
+
+        let generator = new Generator({
+            platform: 'hardhat',
+            name: name,
+            source: {
+                path: artifact
+            },
+            output: './0xc/hardhat/',
+            saveSources: false,
+        });
+        return generator.generate();
+    }
+
     /**
      * @deprecated Was possible to generate the Contract Class based on the meta information header in TS file
      */

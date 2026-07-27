@@ -15,6 +15,9 @@ import { $proxyDeploy } from './$proxyDeploy';
 import { File } from 'atma-io';
 import { IContractWrapped } from '@dequanto/contracts/ContractClassFactory';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
+import { $hex } from '@dequanto/utils/$hex';
+import { SlotsStorage } from '@dequanto/solidity/SlotsStorage';
+import { SlotsParser } from '@dequanto/solidity/SlotsParser';
 
 export interface IProxy extends ContractBase {
     changeAdmin?
@@ -24,14 +27,14 @@ export interface IProxyAdmin extends ContractBase {
 }
 
 export interface IBeaconProxy extends ContractBase {
-    $constructor (deployer: IAccount, beacon: TEth.Address, initData: TEth.Hex)
+    $constructor(deployer: IAccount, beacon: TEth.Address, initData: TEth.Hex)
 }
 export interface IBeacon extends ContractBase {
-    $constructor (deployer: IAccount, implementation: TEth.Address, initialOwner?: TEth.Address)
+    $constructor(deployer: IAccount, implementation: TEth.Address, initialOwner?: TEth.Address)
 
 
     implementation(): Promise<TEth.Address>
-    upgradeTo (sender: IAccount, newImplementation: TAddress)
+    upgradeTo(sender: IAccount, newImplementation: TAddress)
 }
 
 interface IDeploymentCtx {
@@ -42,6 +45,8 @@ interface IDeploymentCtx {
     implementation: {
         address: TAddress
         initData: TEth.Hex
+        migrationData: TEth.Hex
+        migrationV?: number
     }
     options?: {
         skipStorageLayoutCheck?: boolean
@@ -117,7 +122,9 @@ export class ProxyDeployment {
         } = deployments;
         let {
             address: implAddress,
-            initData
+            initData,
+            migrationData,
+            migrationV,
         } = ctx.implementation;
         let {
             Proxy,
@@ -134,7 +141,7 @@ export class ProxyDeployment {
         $require.notNull(ProxyAdmin, 'TransparentProxy.ProxyAdmin is required');
 
 
-        let proxyOpts = <Parameters<Deployments['ensure']>[1]> {
+        let proxyOpts = <Parameters<Deployments['ensure']>[1]>{
             id: proxyId,
             // will not compare the contract updates, once deployed. As proxies normally not updated
             latest: false,
@@ -149,8 +156,6 @@ export class ProxyDeployment {
         let proxyAbi = new Proxy().abi;
         let v = proxyAbi.some(x => x.name === 'upgradeToAndCall') || !proxyAbi.some(x => x.type === 'error') ? 'V4' : 'V5';
         /** OpenZeppelin V5 hides admin/upgrade public methods and introduces "error" types*/
-
-
 
         let hasProxy = await deployments.has(Proxy, proxyOpts);
         let shouldUpdate = ctx.upgradeImplementation ?? true;
@@ -206,6 +211,13 @@ export class ProxyDeployment {
             if ($address.eq(address, implAddress) === false) {
                 if (shouldUpdate) {
                     await this.requireCompatibleStorageLayout(proxyId, ctx);
+                    if ($hex.isEmpty(migrationData) === false) {
+                        let version = await Interfaces.TransparentProxy[v].contractProxy.version(contractProxy);
+                        if (migrationV <= version) {
+                            // Clear migration call; This upgrade is raw implementation upgrade
+                            migrationData = null;
+                        }
+                    }
                     $logger.log(`Upgrading ProxyAdmin(${contractProxyAdmin.address}) to ${implAddress} (${v}) from ${address}`);
                     let receipt = await Interfaces.call(
                         ctx.owner ?? deployer,
@@ -213,7 +225,7 @@ export class ProxyDeployment {
                         Interfaces.TransparentProxy[v].contractProxyAdmin.upgradeAndCall,
                         contractProxy.address,
                         implAddress,
-                        null // data
+                        migrationData,
                     );
                     await this.saveStorageLayout(proxyId, ctx);
                 } else {
@@ -232,7 +244,7 @@ export class ProxyDeployment {
         }
     }
 
-    private async getOpenzeppelinUpgradable (opts?: { proxy?: boolean, beacon?: boolean }) {
+    private async getOpenzeppelinUpgradable(opts?: { proxy?: boolean, beacon?: boolean }) {
         // We can't compile OpenZeppelin's contracts directly from node_modules folder, so create the wrappers
         const baseSource = `./node_modules/@openzeppelin/contracts/proxy`;
         const baseOutput = `./contracts/oz`;
@@ -250,7 +262,7 @@ export class ProxyDeployment {
                     import \"${deps.TransparentUpgradeableProxy}\";
                 `,
                 //install: `TransparentUpgradeableProxy,ProxyAdmin`,
-                contracts: [`TransparentUpgradeableProxy`,`ProxyAdmin`]
+                contracts: [`TransparentUpgradeableProxy`, `ProxyAdmin`]
             },
             Beacon: {
                 source: `${baseSource}/beacon/UpgradeableBeacon.sol`,
@@ -260,7 +272,7 @@ export class ProxyDeployment {
                     import \"${deps.BeaconProxy}\";
                 `,
                 //install: `UpgradeableBeacon,BeaconProxy`,
-                contracts: [`UpgradeableBeacon`,`BeaconProxy`],
+                contracts: [`UpgradeableBeacon`, `BeaconProxy`],
             }
         };
 
@@ -271,7 +283,7 @@ export class ProxyDeployment {
             delete paths.TransparentUpgradeableProxy;
         }
 
-        function fmt (template: string) {
+        function fmt(template: string) {
             let match = /^ +/m.exec(template);
             return template.trim().replace(new RegExp(`^${match[0]}`, 'gm'), '');
         }
@@ -342,12 +354,12 @@ export class ProxyDeployment {
                 ? [
                     // address implementation
                     implAddress
-                ] as [ TEth.Address ]
+                ] as [TEth.Address]
                 : [
                     // address implementation_, address initialOwner
                     implAddress,
                     deployer.address
-                ] as [ TEth.Address, TEth.Address ]
+                ] as [TEth.Address, TEth.Address]
         };
         let hasBeacon = await deployments.has(Beacon, beaconOpts);
         let {
@@ -428,7 +440,7 @@ export class ProxyDeployment {
         }
     }
 
-    private getOzVersionByBeacon (Beacon: Constructor<IBeacon>): 5 | 4 {
+    private getOzVersionByBeacon(Beacon: Constructor<IBeacon>): 5 | 4 {
         let $constructor = new Beacon().abi?.find(x => x.type === 'constructor');
         $require.notNull($constructor, `Invalid Beacon contract: constructor not found`);
 
@@ -465,9 +477,31 @@ namespace Interfaces {
         export const V4 = {
             contractProxy: {
                 changeAdmin: 'changeAdmin(address newAdmin) external',
+                async version(contract: ContractBase) {
+                    const slots = await SlotsParser.slotsFromAbi(`
+                        (uint8 _version, bool initializing)
+                    `);
+                    const storage = SlotsStorage.createWithClient(
+                        contract.client,
+                        contract.address,
+                        slots
+                    );
+                    let v = await storage.get('_version');
+                    return v;
+                },
             },
             contractProxyAdmin: {
                 async upgradeAndCall(account, contract, proxyAddress, implementationAddress, data) {
+                    if (data != null && $hex.isEmpty(data) === false) {
+                        return call(
+                            account,
+                            contract,
+                            'upgradeAndCall(address proxy, address implementation, bytes data) external',
+                            proxyAddress,
+                            implementationAddress,
+                            data,
+                        );
+                    }
                     return call(
                         account,
                         contract,
@@ -480,7 +514,18 @@ namespace Interfaces {
         }
         export const V5 = {
             contractProxy: {
-
+                async version(contract: ContractBase) {
+                    // keccak256(abi.encode(uint256(keccak256("openzeppelin.storage.Initializable")) - 1)) & ~bytes32(uint256(0xff))
+                    const position = '0xf0c57e16840df040f15088dc2f81fe391c3923bec73e23a9662efc9c229c6a00';
+                    const slots = await SlotsParser.slotsFromAbi(`
+                        (uint8 initialized, bool initializing)
+                    `);
+                    const storage = SlotsStorage.createWithClient(contract.client, contract.address, slots, {
+                        storageOffset: position
+                    });
+                    const v = await storage.get('initialized');
+                    return v;
+                },
             },
             contractProxyAdmin: {
                 upgradeAndCall: 'upgradeAndCall(address proxy, address implementation, bytes memory data) external'

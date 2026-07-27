@@ -7,8 +7,7 @@ import { TEth } from '@dequanto/models/TEth';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $contract } from '@dequanto/utils/$contract';
 import { $require } from '@dequanto/utils/$require';
-import { ParametersFromSecond } from '@dequanto/utils/types';
-import { Constructor } from '@dequanto/utils/types';
+import { Constructor, ParametersFromSecond } from '@dequanto/utils/types';
 
 import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
 import { ContractVerifier } from '@dequanto/explorer/ContractVerifier';
@@ -16,13 +15,12 @@ import { HardhatWeb3Client } from '@dequanto/hardhat/HardhatWeb3Client';
 import { LoggerService } from '@dequanto/loggers/LoggerService';
 import { $is } from '@dequanto/utils/$is';
 
+import { $bytecode } from '@dequanto/evm/utils/$bytecode';
+import { TAddress } from '@dequanto/models/TAddress';
+import { l } from '@dequanto/utils/$logger';
+import { $promise } from '@dequanto/utils/$promise';
 import { IBeacon, IBeaconProxy, IProxy, IProxyAdmin, ProxyDeployment } from './proxy/ProxyDeployment';
 import { DeploymentsStorage, IDeployment } from './storage/DeploymentsStorage';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $promise } from '@dequanto/utils/$promise';
-import { l } from '@dequanto/utils/$logger';
-import { $bytecode } from '@dequanto/evm/utils/$bytecode';
-import { THex } from '@dequanto/models/THex';
 
 
 
@@ -288,13 +286,11 @@ export class Deployments {
     }
 
     async ensureWithProxy<
-        T extends (TContract & { initialize?: TInit }),
-        TInit extends TInitializer
+        T extends (TContract & TInitializers<TInit>),
+        TInit extends TFunction
     >(
         CtorImpl: Constructor<T>,
-        opts?: TConstructorArgs<T> & TDeploymentOptions & {
-            initialize?: ParametersFromSecond<T['initialize']>
-        }
+        opts?: TConstructorArgs<T> & TDeploymentOptions & TInitializerParams<T>
     ): Promise<{
         // the Implementation Contract with the address set to Proxy
         contract: T
@@ -322,7 +318,8 @@ export class Deployments {
             deployment: opts?.deployment
         });
 
-        let data = serializeInitData(id, contractImpl, opts.initialize);
+        let initData = serializeInitData(id, contractImpl, opts.initialize);
+        let { migrationData, migrationV } = serializeMigrationData(id, contractImpl, opts);
         let implementationAddress = contractImplDeployment.implementation ?? contractImplDeployment.address;
 
         let {
@@ -337,7 +334,9 @@ export class Deployments {
             deployments: this,
             implementation: {
                 address: implementationAddress,
-                initData: data
+                initData,
+                migrationData,
+                migrationV,
             },
             upgradeImplementation: opts.deployment?.upgradeProxy ?? this.opts?.whenUpgradeRequired !== 'ignore'
         })
@@ -370,7 +369,7 @@ export class Deployments {
      **/
     async ensureWithBeacon<
         T extends (TContract & { initialize?: TInit }),
-        TInit extends TInitializer
+        TInit extends TFunction
     >(
         CtorImpl: Constructor<T>,
         opts: TConstructorArgs<T> & TDeploymentOptions & {
@@ -426,7 +425,9 @@ export class Deployments {
             deployments: this,
             implementation: {
                 address: implementationAddress,
-                initData: data
+                initData: data,
+                // @TODO implement migrations for Beacons
+                migrationData: null
             }
         });
 
@@ -612,8 +613,26 @@ export class Deployments {
 }
 
 
-type TInitializer = (...args: any[]) => any
-
+type TFunction = (...args: any[]) => any
+type TInitializerName = 'initialize' | `initializeV${number}`
+type TInitializers<TInit extends TFunction> = {
+    [K in TInitializerName]?: TInit
+}
+type TInitializerParams<T extends TInitializers<TFunction>> = {
+    initialize?: T['initialize'] extends TFunction
+        ? ParametersFromSecond<T['initialize']>
+        : never
+    initializeV2?: T['initializeV2'] extends TFunction
+        ? ParametersFromSecond<T['initializeV2']>
+        : never
+    initializeV3?: T['initializeV3'] extends TFunction
+        ? ParametersFromSecond<T['initializeV3']>
+        : never
+} & {
+    [K in Extract<keyof T, `initializeV${number}`>]?: T[K] extends TFunction
+        ? ParametersFromSecond<T[K]>
+        : any
+}
 
 type TContract = ContractBase & { $constructor?: (...args: any[]) => any }
 type TConstructorArgs<T extends TContract> = T['$constructor'] extends Function ? {
@@ -675,6 +694,31 @@ function serializeInitData(id: string, contract: ContractBase, initializeParams:
         data = $abiUtils.serializeMethodCallData(initializeAbi, initializeParams ?? []);
     }
     return data;
+}
+
+
+function serializeMigrationData(id: string, contract: ContractBase, opts: any) {
+    let rgx = /^initializeV(?<version>[\d+])$/;
+    let migrations = contract
+        .abi
+        .map(x => rgx.exec(x.name))
+        .filter(x => x != null)
+        .map(match => Number(match.groups.version))
+        ;
+    if (migrations.length === 0) {
+        return { migrationData: null, migrationV: 1 };
+    }
+    let v = alot(migrations).max(x => x);
+    let key = `initializeV${v}`;
+    let migrationAbi = contract.abi.find(x => x.name === key);
+    let migrationParams = opts?.[key] ?? [];
+    if (migrationParams?.length !== migrationAbi.inputs.length) {
+        throw new Error(`Wrong number of arguments (${migrationParams?.length}) for initializer method (${migrationAbi.inputs.length}) in ${id}.`);
+    }
+    return {
+        migrationData: $abiUtils.serializeMethodCallData(migrationAbi, migrationParams ?? []),
+        migrationV: v
+    };
 }
 
 
