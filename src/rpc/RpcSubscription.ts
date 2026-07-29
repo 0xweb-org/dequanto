@@ -34,7 +34,7 @@ export class RpcSubscription<T> extends SubjectStream<T> implements TTransport.S
 
     static createMapping <T> (subscription: TTransport.Subscription<any>, transport: TTransport.Transport, mapper: (x: any) => any): RpcSubscription<T> {
         let stream = new RpcSubscription<T>(subscription.id, transport, mapper);
-        //@TODO: fix 'any'
+        //@TODO Fix 'any'
         stream.fromStream(subscription as any);
         return stream;
     }

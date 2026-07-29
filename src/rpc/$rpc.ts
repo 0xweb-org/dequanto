@@ -29,7 +29,7 @@ export namespace $rpc {
         };
     }
 
-    // will wait for a receipt
+    // Wait for a receipt
     export async function waitForReceipt (rpc: Rpc, hash: TEth.Hex): Promise<TEth.TxReceipt> {
         let knownTx = false;
         let startedAt = Date.now();
@@ -41,7 +41,7 @@ export namespace $rpc {
                 if (tx == null) {
                     let ms = Date.now() - startedAt;
                     if (ms > MEM_POOL_TIMEOUT) {
-                        return [ new Error(`Transaction [${hash}] not found in mempool after ${MEM_POOL_TIMEOUT}ms`) ];
+                        return [ new Error(`Transaction [${hash}] was not found in the mempool after ${MEM_POOL_TIMEOUT}ms`) ];
                     }
                     return [ null ];
                 }

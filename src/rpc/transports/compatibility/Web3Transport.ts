@@ -26,6 +26,6 @@ export class Web3Transport implements TTransport.Transport {
         return subscription as any as TTransport.Subscription<any>;
     }
     unsubscribe(req: TTransport.Request & { method: 'eth_unsubscribe'; params: [number]; }): Promise<RpcSubscription<any>> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
 }

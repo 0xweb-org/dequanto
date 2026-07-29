@@ -137,12 +137,12 @@ export class RpcContract {
         }
 
         if (data == null) {
-            $require.notNull(abiItem, `Method ${method} not found. Available methods: ${abiArr?.map(x => x.name) }`);
+            $require.notNull(abiItem, `Method ${method} was not found. Available methods: ${abiArr?.map(x => x.name) }`);
             data = $abiUtils.serializeMethodCallData(abiItem, params ?? []);
         }
 
         if (blockNumber instanceof Date) {
-            let client = $require.notNull(options?.client, `Blocknumber is Date: ${blockNumber}, Client is required.`);
+            let client = $require.notNull(options?.client, `Block number is a Date: ${blockNumber}, client is required`);
             let resolver = di.resolve(BlockDateResolver, client);
             blockNumber = await resolver.getBlockNumberFor(blockNumber);
         }
@@ -162,7 +162,7 @@ export class RpcContract {
     // async submit (contract: TRpcContract, req: TRpcContractCallReq) {
     //     let abis = contract.abi;
     //     let abi = abis.find(x => x.name === req.method);
-    //     $require.notNull(abi, `Method ${req.method} not found. Available methods: ${abis.map(x => x.name).join(', ')}`);
+    //     $require.notNull(abi, `Method ${req.method} was not found. Available methods: ${abis.map(x => x.name).join(', ')}`);
 
     //     let sig = $abiUtils.getMethodSignature(abi);
     //     let data = $abiUtils.encode(abi.inputs, req.params);
@@ -178,7 +178,7 @@ export class RpcContract {
     //     let results = Array.isArray(result) === false
     //         ? [ result ]
     //         : (outputs.length === 1
-    //             // decode array as single value
+    //             // Decode array as a single value
     //             ? [ result ]
     //             : result
     //         );
@@ -200,7 +200,7 @@ namespace utils {
         if (outputs.length > 1) {
             let isNamedTuple = outputs.every(x => x.name != null && x.name !== '');
             if (isNamedTuple) {
-                // will return as object
+                // Return as an object
                 abi = [ { type: 'tuple', components: outputs, name: null } ];
                 isDynamic = false;
             }

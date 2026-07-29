@@ -21,7 +21,7 @@ export class EIP1193Transport implements TTransport.Transport {
     async request(req: TTransport.Request | TTransport.Request[]): Promise<any> {
 
         if (Array.isArray(req)) {
-            // Hardhat in-memory doesn't support batch requests
+            // Hardhat in-memory does not support batch requests
             return alot(req).mapAsync(async x => {
                 return this.request(x);
             }).toArrayAsync({ threads: 5 });
@@ -39,13 +39,13 @@ export class EIP1193Transport implements TTransport.Transport {
                 result
             };
         }
-        throw new Error(`Invalid transport with no sendAsync, request methods`);
+        throw new Error(`Invalid transport: no sendAsync or request methods`);
     }
 
     async subscribe(req: TTransport.Request): Promise<TTransport.Subscription<any>> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
     unsubscribe(req: TTransport.Request & { method: 'eth_unsubscribe'; params: [number]; }): Promise<RpcSubscription<any>> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
 }

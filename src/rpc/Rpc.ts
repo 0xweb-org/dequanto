@@ -146,7 +146,7 @@ eth_accounts(): Promise<TEth.Address[]> {
 
 /**
  * Presents a structured data message for the user to sign. <metamask>
- * Presents a data message for the user to sign in a structured and readable format and returns the signed response. Introduced By [EIP-712](https://eips.ethereum.org/EIPS/eip-712).
+ * Presents a data message for the user to sign in a structured and readable format and returns the signed response. Introduced by [EIP-712](https://eips.ethereum.org/EIPS/eip-712)
  * @param address - The address of the requested signing account.
  * @param typedData -
  * @returns Signature -
@@ -239,7 +239,7 @@ eth_estimateGas(transaction: DataLike<RpcTypes.GenericTransaction>, block?: Data
  * Returns transaction base fee per gas and effective priority fee per gas for the requested/supported block range.
  * @param blockCount - Requested range of blocks. Clients will return less than the requested range if not all blocks are available.
  * @param newestBlock - Highest block of the requested range.
- * @param rewardPercentiles - A monotonically increasing list of percentile values. For each block in the requested range, the transactions will be sorted in ascending order by effective tip per gas and the coresponding effective tip for the percentile will be determined, accounting for gas consumed.
+ * @param rewardPercentiles - A monotonically increasing list of percentile values. For each block in the requested range, the transactions will be sorted in ascending order by effective tip per gas and the corresponding effective tip for the percentile will be determined, accounting for gas consumed
  * @returns feeHistoryResult - Fee history for the returned block range. This can be a subsection of the requested range if not all blocks are available.
  */
 eth_feeHistory(blockCount: bigint, newestBlock: DataLike<RpcTypes.BlockNumberOrTag>, rewardPercentiles: number[]): Promise<{
