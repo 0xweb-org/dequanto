@@ -40,7 +40,7 @@ UTest({
         }
         let flashbots = await FlashbotsProvider.create(client, account);
 
-        // some tx to test serialization and submission
+        // Some tx to test serialization and submission
         let token = new ERC20(TOKEN, client);
 
         return UTest({
@@ -53,7 +53,7 @@ UTest({
                 eq_($is.Hex(bundleHash), true, `Not a valid bundle hash: ${bundleHash}`);
             },
             async 'check send MEV Bundle'() {
-                // some tx to test serialization and submission
+                // Some tx to test serialization and submission
                 let { signed: txHex } = await token.$signed().approve(account, account.address, 500n);
 
                 let simulated = await flashbots.simMevBundle({

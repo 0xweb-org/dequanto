@@ -76,8 +76,8 @@ UTest({
 
 
 /**
- * Check for TypeScript errors in a .d.ts file.
- * @param {string} filePath - The path to the .d.ts file.
+ * Check for TypeScript errors in a .d.ts file
+ * @param {string} filePath - The path to the .d.ts file
  * @returns {Promise<void>}
  */
 async function checkTypeScriptFile(projectDir, filePath) {

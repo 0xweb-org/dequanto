@@ -25,7 +25,7 @@ UTest({
         ContractWriter.SILENT = true;
     },
 
-    async 'generate polygons WETH' () {
+    async 'generate Polygon WETH' () {
 
         const gen = new Generator({
             name: 'WETH',
@@ -277,7 +277,7 @@ UTest({
                 eq_(logs2nd[0].params.valueB, 6n);
             },
 
-            async 'deploy and check indexed logs with index not-linear parameter order' () {
+            async 'deploy and check indexed logs with a non-linear indexed parameter order' () {
                 let provider = new HardhatProvider();
                 // use in-memory, as is enough
                 let client = await provider.client('hardhat');

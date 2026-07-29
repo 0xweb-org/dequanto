@@ -83,7 +83,7 @@ UTest({
                 validAt: $date.toUnixTimestamp(),
             })
             await service.executeCall(account, counter, 'update', 10);
-            throw new Error(`Successful?`);
+            throw new Error(`Expected failure`);
         } catch (e) {
             has_(e.message, /not ready/);
             await client.debug.mine(DELAY);
@@ -97,7 +97,7 @@ UTest({
         try {
             l`Should fail as previous was executed and the new one is not scheduled.`;
             await service.executeCall(account, counter, 'update', 10);
-            throw new Error(`Successful?`);
+            throw new Error(`Expected failure`);
         } catch (e) {
             has_(e.message, /Tx not scheduled/, 'or wrong message?');
         }

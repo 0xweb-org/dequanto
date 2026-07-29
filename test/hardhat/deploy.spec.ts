@@ -269,7 +269,7 @@ UTest({
         let carByGetter = await contract.getById(1n);
         deepEq_(car, carByGetter);
     },
-    async 'should initialize sub contract'() {
+    async 'should initialize a sub-contract'() {
         let provider = new HardhatProvider();
         let client = provider.client();
         let code = `
@@ -317,7 +317,7 @@ UTest({
         let aInner = await reader.readAsync(b, 'getA():address');
         eq_(aInner, a);
     },
-    async 'should support abstract class'() {
+    async 'should support an abstract class'() {
         let provider = new HardhatProvider();
         let client = provider.client();
         return UTest({
@@ -347,7 +347,7 @@ UTest({
                 let a = await contract.foo();
                 eq_(a, 5n);
             },
-            async 'with top level shallowing'() {
+            async 'with top-level shadowing'() {
                 let code = `
                     interface IContractB {
                         function someAbstract() external view returns (uint256);
@@ -424,7 +424,7 @@ UTest({
         let ratio = Number(gasUnchecked) / Number(gasChecked);
         gt_(ratio, 0.9);
         lt_(ratio, 1);
-        // Gas usage in unchecked array is less than in checked array, but not significant.
+        // Gas usage in an unchecked array is lower than in a checked array, but not significant
     },
 
     async 'checks try catch'() {

@@ -13,7 +13,7 @@ UTest({
     async $before() {
         await Config.fetch();
     },
-    async 'should read and write contracts storage'() {
+    async 'should read and write contract storage'() {
 
         const code = `
             contract A {
@@ -80,7 +80,7 @@ UTest({
                 let storageBase = SlotsStorage.createWithClient(client, contract.address, slots)
                 eq_(await storageBase.get('countA'), 3);
             },
-            async 'should write contracts storage from SLOT-VALUE table'() {
+            async 'should write contract storage from a SLOT-VALUE table'() {
                 let table = [
                     [
                         '0x0000000000000000000000000000000000000000000000000000000000000000',
@@ -91,7 +91,7 @@ UTest({
                 let countA = await contract.countA();
                 eq_(countA, 8n);
             },
-            async 'should write contracts storage from JSON'() {
+            async 'should write contract storage from JSON'() {
                 await dump.restoreStorageFromJSON({
                     countA: 12n
                 });

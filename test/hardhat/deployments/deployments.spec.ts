@@ -62,7 +62,7 @@ export default UTest({
     },
     async 'should deploy the generated contract'() {
         return UTest({
-            async 'should get and deploy openzeppelin proxy' () {
+            async 'should get and deploy an OpenZeppelin proxy' () {
                 let source = '@openzeppelin/contracts/governance/TimelockController.sol';
                 let wrapperPath = './test/tmp/wrappers/TimelockController.sol';
                 await File.writeAsync(wrapperPath, `import "${source}";`);

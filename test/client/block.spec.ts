@@ -14,7 +14,7 @@ UTest({
         let block = new BlockDateResolver(client);
         let date = new Date('2024-03-03T10:20:00Z');
         let nr = await block.getBlockNumberFor(date);
-        // As binary search is used to fetch a block for a given time, check aproximately 3 blocks difference
+        // As binary search is used to fetch a block for a given time, check an approximately 3-block difference
         let diff = Math.abs(nr - 19354006);
         lt_(diff, 3);
 

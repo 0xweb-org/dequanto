@@ -203,7 +203,7 @@ UTest({
                 fromBlock,
                 toBlock: fromBlock - 1
             })) {
-                throw new Error(`Expect revert`);
+                throw new Error(`Expected revert`);
             }
         });
         $require.match(/Invalid block range order/, error.message);

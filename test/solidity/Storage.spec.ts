@@ -6,7 +6,7 @@ import { $contract } from '@dequanto/utils/$contract';
 import { l } from '@dequanto/utils/$logger';
 
 UTest({
-    async 'should read and write simple Value Types'() {
+    async 'should read and write simple value types'() {
         let code = `
             contract Foo {
                 uint256 public iNumber = 41;
@@ -83,7 +83,7 @@ UTest({
         })
     },
 
-    async 'should read and write fix-sized structs'() {
+    async 'should read and write fixed-size structs'() {
         let code = `
             contract Foo {
                 struct User {
@@ -178,7 +178,7 @@ UTest({
         let storage = SlotsStorage.createWithClient(client, contract.address, slots);
 
         return UTest({
-            async 'read and write fixed sized array' () {
+            async 'read and write a fixed-size array' () {
                 let v0 = await storage.get('fixSized[0]');
                 eq_(v0, 2n);
 
@@ -192,7 +192,7 @@ UTest({
                 let readAll = await storage.get('fixSized');
                 deepEq_(readAll, [ 2n, 8n, 4n ]);
             },
-            async 'read and write fixed sized array with Structs' () {
+            async 'read and write a fixed-size array with structs' () {
                 let v0 = await storage.get('fixSizedStructs[0].ID');
                 eq_(v0, 11n);
 
@@ -206,7 +206,7 @@ UTest({
                 v1 = await storage.get('fixSizedStructs[0].balance');
                 eq_(v1, 17n);
             },
-            async 'read and write dynamic sized array' () {
+            async 'read and write a dynamic-size array' () {
                 let length = await storage.get('dynamicSized.length');
                 eq_(length, 3n);
 
@@ -223,7 +223,7 @@ UTest({
                 v1 = await storage.get('dynamicSized[1]');
                 eq_(v1, 15n);
             },
-            async 'read and write dynamic sized array with Structs' () {
+            async 'read and write a dynamic-size array with structs' () {
                 let v0_0 = await storage.get('dynamicSizedStructs[0].ID');
                 eq_(v0_0, 18n);
 
@@ -413,7 +413,7 @@ UTest({
 
         eq_(Number(await client.getStorageAt(contract.address, 0)), 0);
     },
-    async 'should create reader for abstract classes' () {
+    async 'should create a reader for abstract classes' () {
         let code = `
             abstract contract FooStorage {
                 uint256 public foo;

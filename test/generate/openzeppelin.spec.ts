@@ -2,7 +2,7 @@ import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
 import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client';
 
 UTest({
-    async 'check generated openzeppelin contract' () {
+    async 'should check the generated OpenZeppelin contract' () {
         let client = new PolyWeb3Client();
         let address = `0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063` as const;
         let erc20 = new ERC20(address, client);

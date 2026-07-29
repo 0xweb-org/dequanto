@@ -425,7 +425,7 @@ UTest({
         let path = `./test/fixtures/mapping-setters/UniswapV3Staker/UniswapV3Staker.sol`;
 
         return UTest({
-            async 'no Events, method mutates the mapping but the Event Logged does not contain the mapping key (is not easy calculable)'() {
+            async 'no events, the method mutates the mapping, but the logged event does not contain the mapping key, which is not easy to calculate'() {
                 // should we implement complex static calculations to get the mapping key?
                 let result = await MappingSettersResolver.getEventsForMappingMutations('incentives', {
                     path: path
@@ -437,7 +437,7 @@ UTest({
                     accessors: ['incentiveId']
                 });
             },
-            async 'extract correct Events and Mapping Keys'() {
+            async 'extract the correct events and mapping keys'() {
                 let result = await MappingSettersResolver.getEventsForMappingMutations('deposits', {
                     path: path
                 }, 'UniswapV3Staker');
@@ -468,7 +468,7 @@ UTest({
                     }
                 ]);
             },
-            async 'no Events, but should at least contain the methods'() {
+            async 'no events, but should at least contain the methods'() {
                 // should we implement complex static calculations to get the mapping key?
                 let result = await MappingSettersResolver.getEventsForMappingMutations('rewards', {
                     path: path
@@ -492,7 +492,7 @@ UTest({
         let path = `./test/fixtures/mapping-setters/GTC.sol`;
 
         return UTest({
-            async 'no Events, method mutates the mapping but the Event Logged does not contain the mapping key (is not easy calculable)'() {
+            async 'no events, the method mutates the mapping, but the logged event does not contain the mapping key, which is not easy to calculate'() {
                 // should we implement complex static calculations to get the mapping key?
                 let result = await MappingSettersResolver.getEventsForMappingMutations('balances', {
                     path: path

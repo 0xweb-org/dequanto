@@ -261,7 +261,7 @@ UTest({
             );
         })
     },
-    'should create intersactions' () {
+    'should create intersections' () {
         ([
             {
                 ranges: [

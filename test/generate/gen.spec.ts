@@ -8,7 +8,7 @@ import { Constructor } from 'atma-utils';
 declare let include;
 
 UTest({
-    async 'generate and deploy from compiled json meta' () {
+    async 'generate and deploy from compiled JSON metadata' () {
 
         /** Test with absolute path, to prevent absolute paths in generated files */
         const artifact = 'test/fixtures/artifacts/AnyERC20/AnyERC20.json'

@@ -325,9 +325,9 @@ UTest({
         }
     },
     async 'sign and recover' () {
-        // fixes tx + sig serialization before $rlp.encode (hexTrimmed from both sided)
+        // Fixes tx + sig serialization before $rlp.encode (hexTrimmed from both sides)
         // 0x00fa5817585e9ef2ab7bb8e697324550bb52ff7f61c3d6cce9d42db15a739f00 => 0xfa5817585e9ef2ab7bb8e697324550bb52ff7f61c3d6cce9d42db15a739f
-        // MUST trim only at the start: 0xfa5817585e9ef2ab7bb8e697324550bb52ff7f61c3d6cce9d42db15a739f00
+        // Must trim only at the start: 0xfa5817585e9ef2ab7bb8e697324550bb52ff7f61c3d6cce9d42db15a739f00
         const account = {
             key: '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d',
             address: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',

@@ -7,19 +7,19 @@ UTest({
         let val = $config.get('settings.base');
         eq_(val ?? './', './');
     },
-    async 'get value from cli' () {
+    async 'get a value from the CLI' () {
         $config.reloadEnv(['--config', '"settings.base=foo"']);
         let val = $config.get('settings.base');
         eq_(val, 'foo');
     },
-    async 'get value from cli single' () {
+    async 'get a single value from the CLI' () {
 
         $config.reloadEnv(["--config='settings.base=./'"]);
 
         let val = $config.get('settings.base');
         eq_(val, './');
     },
-    async 'get value from ENV' () {
+    async 'get a value from an environment variable' () {
 
         $config.reloadEnv([], {
             ['DQ_SETTINGS__BASE']: 'boom'

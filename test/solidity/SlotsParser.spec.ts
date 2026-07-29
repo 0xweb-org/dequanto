@@ -359,7 +359,7 @@ UTest({
         let totalSupply = await client.getStorageAt(contract.address, 2);
         eq_(Number(totalSupply), 4)
     },
-    async 'should parse sol versions lower then 0.4.17'() {
+    async 'should parse Solidity versions lower than 0.4.17'() {
 
         return new UTest({
             async 'parse enjtoken'() {

@@ -9,7 +9,7 @@ import { l } from '@dequanto/utils/$logger';
 
 UTest({
 
-    async 'should read contracts storage'() {
+    async 'should read contract storage'() {
 
         let provider = new HardhatProvider();
         let client = await provider.client();

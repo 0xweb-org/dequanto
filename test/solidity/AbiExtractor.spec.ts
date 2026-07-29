@@ -207,7 +207,7 @@ UTest({
         eq_(abis[1].name, 'foo');
         eq_(abis[2].name, 'totalSupply');
     },
-    async 'should parse abi from solidity lower then 0.5.0'() {
+    async 'should parse ABI from Solidity versions lower than 0.5.0'() {
 
         return new UTest({
             async 'parse enjtoken'() {

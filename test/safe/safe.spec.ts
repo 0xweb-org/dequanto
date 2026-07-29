@@ -150,7 +150,7 @@ UTest({
         eq_(Number(nonce), 1);
     },
 
-    async 'create file safe and manually receive tokens '() {
+    async 'create a file Safe and manually receive tokens'() {
         let provider = new HardhatProvider();
         let client = provider.client();
         let owner1 = provider.deployer(0);
@@ -309,7 +309,7 @@ UTest({
                             }
                         });
                         await txWriter.wait();
-                        throw new Error('Should be thrown earlier');
+                        throw new Error('Expected to throw earlier');
                     } catch (error) {
                         has_(error.message, owner2.address);
                         notEq_(error.sig?.message, null, `Should have a message on error`);

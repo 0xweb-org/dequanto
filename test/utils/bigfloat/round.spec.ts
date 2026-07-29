@@ -132,7 +132,7 @@ UTest({
             });
         },
         'HALF_CEIL'() {
-            // Rounds towards nearest neighbor. If equidistant, rounds towards Infinity.
+            // Rounds toward the nearest neighbor. If equidistant, rounds toward Infinity
             let fixtures = [
                 [5.5, 6],
                 [2.5, 3],
