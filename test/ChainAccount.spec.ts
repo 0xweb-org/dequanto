@@ -46,7 +46,7 @@ UTest({
     },
 
     async 'should load from a mnemonic' () {
-        let r1 = await $sig.$account.should load from a mnemonic('test test test test test test test test test test test junk');
+        let r1 = await $sig.$account.fromMnemonic('test test test test test test test test test test test junk');
         eq_(r1.address, new HardhatProvider().deployer().address);
     }
 })
