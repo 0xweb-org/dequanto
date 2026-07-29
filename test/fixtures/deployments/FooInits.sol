@@ -68,3 +68,10 @@ contract FooInits_v5_0_2_raw is InitializableV5_0 {
         return value + 1;
     }
 }
+
+contract ImmutablesInit {
+    uint256 public immutable value;
+    constructor (uint256 val) {
+        value = val;
+    }
+}

@@ -27,6 +27,12 @@ import { DeploymentsStorage, IDeployment } from './storage/DeploymentsStorage';
 type TDeploymentOptions = {
     id?: string
 
+    // For proxy deployments: will redeploy the implementation, if the bytecode has not changed, but the immutable arguments are modified.
+    immutablesKey?: string
+
+    // Older deployments didn't have the immutablesKey, so would ANY proxy implementation with immutable variables trigger the redeployment
+    checkImmutables?: boolean
+
     /** Will deploy the contract */
     force?: boolean
     /** Will check if local bytecode has changed and will deploy */
@@ -215,7 +221,13 @@ export class Deployments {
                 ? (this.client.platform === 'hardhat' || this.opts?.checkBytecode !== false)
                 : (opts.latest);
 
-            if (opts.force !== true && requireLatest !== true) {
+            /** For backward compatibility:
+             *  For older deployment, deployer should set if immutablesKey not present in deployed we  */
+            let hasNewImmutables = opts.checkImmutables === true
+                ? Boolean(currentDeployment.immutablesKey != opts.immutablesKey)
+                : Boolean(currentDeployment.immutablesKey && currentDeployment.immutablesKey != opts.immutablesKey);
+
+            if (opts.force !== true && requireLatest !== true && hasNewImmutables !== true) {
                 // return already deployed contract
                 $contract.store.register(contract as any);
                 return {
@@ -226,7 +238,7 @@ export class Deployments {
             if (requireLatest === true && opts.force !== true) {
                 // was already deployed. Check new bytecode hash
                 let isSame = await this.isSameBytecode(Ctor, currentDeployment);
-                if (isSame) {
+                if (isSame && hasNewImmutables !== true) {
                     $contract.store.register(contract as any);
                     return {
                         contract,
@@ -270,6 +282,7 @@ export class Deployments {
         let deployment = await this.store.saveDeployment(deployedContract, {
             id,
             name: Ctor.name,
+            immutablesKey: opts.immutablesKey,
             bytecodeHash: this.getBytecodeHash(deployedBytecode)
         }, receipt);
 
@@ -304,6 +317,7 @@ export class Deployments {
 
         let id = opts?.id ?? getImplementationId(CtorImpl);
         let proxyId = `${id}Proxy`;
+        let immutablesKey = getImmutablesKey(opts?.arguments);
 
         let {
             contract: contractImpl,
@@ -312,6 +326,7 @@ export class Deployments {
         } = await this.ensure(CtorImpl, {
             arguments: opts?.arguments as any,
             id: id,
+            immutablesKey,
             force: opts?.force,
             latest: this.opts?.checkBytecode !== false,
             verification: opts?.verification,
@@ -733,6 +748,15 @@ function getImplementationId (Ctor: Constructor<TContract>) {
         id = id.substring(0, id.length - version[0].length)
     };
     return id;
+}
+
+
+function getImmutablesKey (args: any[]) {
+    if (args == null || args.length === 0) {
+        return null;
+    }
+    let key = args.map(arg => `${arg?.toString()}`).join('-');
+    return key;
 }
 
 namespace Str {

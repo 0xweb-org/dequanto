@@ -22,6 +22,7 @@ import { $path } from '@dequanto/utils/$path';
 export interface IDeployment {
     id: string
     name: string
+    immutablesKey?: string
     // TS/JS file
     main: string
     address: TAddress
@@ -158,6 +159,7 @@ export class  DeploymentsStorage {
     async saveDeployment (contract: ContractBase, info: {
         id: string
         name: string
+        immutablesKey?: string
         bytecodeHash?: TEth.Hex
     }, receipt?: TEth.TxReceipt) {
         $contract.store.register(contract as any);
@@ -168,6 +170,7 @@ export class  DeploymentsStorage {
         let deployment = <IDeployment> {
             id: info.id,
             name: info.name,
+            immutablesKey: info.immutablesKey,
             main: $path.getRelativePath(contract.$meta?.class ?? contract.$meta?.artifact ?? contract.$meta.source),
             bytecodeHash: info.bytecodeHash,
             address: contract.address,
