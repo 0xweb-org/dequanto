@@ -222,7 +222,7 @@ UTest({
             amount = await storage.get('users[1].amount');
             eq_(amount, 4n);
         },
-        async 'should read dynamic array in dynamic array'() {
+        async 'should read a dynamic array in a dynamic array'() {
             let code = `
                 contract FooContract {
                     struct User {
@@ -347,7 +347,7 @@ UTest({
     },
     async 'generate positions' () {
         return UTest({
-            async 'generate array location' () {
+            async 'generate an array location' () {
                 let x = new SlotsStorageTransportForArray(null, 0);
                 let location = x.mapToGlobalSlot(14);
                 eq_(location, 18569430475105882587588266137607568536673111973893317399460219858819262702961n);

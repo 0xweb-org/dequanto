@@ -85,7 +85,7 @@ export default UTest({
                 let delay = await deployment.contract.getMinDelay();
                 eq_(delay, 12n);
             },
-            async 'is new installation' () {
+            async 'detects a new installation' () {
                 eq_(await File.existsAsync(deploymentsOutput), false);
                 eq_(await File.existsAsync(deploymentsProxyOutput), false);
             },
@@ -154,7 +154,7 @@ export default UTest({
                         let { receipt } = await contract.$receipt().setValue(deployer, 5n);
                         eq_(receipt.status, 1);
                     },
-                    async 'compile and deploy new version' () {
+                    async 'compile and deploy a new version' () {
 
                         let info = await Generator.generateFromSol(paths.DeploymentsFooV2);
                         let { DeploymentsFooV2 } = await include
@@ -180,7 +180,7 @@ export default UTest({
                         });
                         eq_(contractReceiptNew, null);
                     },
-                    async 'compile and try to deploy not compatible version' () {
+                    async 'compile and reject an incompatible version' () {
                         let info = await Generator.generateFromSol(paths.DeploymentsFooV3);
                         let { DeploymentsFooV3 } = await include
                             .instance()

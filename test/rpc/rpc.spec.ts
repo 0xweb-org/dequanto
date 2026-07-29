@@ -27,7 +27,7 @@ UTest({
     async $before() {
         await TestNode.start();
     },
-    async 'check http'() {
+    async 'should check HTTP'() {
         let url = `http://${HOST}`;
         let rpc = new Rpc(url);
         let client = new HardhatWeb3Client({
@@ -35,7 +35,7 @@ UTest({
         });
         return RpcUtest('Http Transport', rpc, client);
     },
-    async 'check ws calls'() {
+    async 'should check WS calls'() {
         let url = `ws://${HOST}`;
         let rpc = new Rpc(url);
         let client = new HardhatWeb3Client({
@@ -43,7 +43,7 @@ UTest({
         });
         return RpcUtest('Ws Transport', rpc, client);
     },
-    async 'check ws subscription'() {
+    async 'should check a WS subscription'() {
         let url = `ws://${HOST}`;
         let rpc = new Rpc(url);
         return UTest({
@@ -84,7 +84,7 @@ UTest({
             }
         })
     },
-    async 'check web3'() {
+    async 'should check Web3'() {
         let url = `http://${HOST}`;
         let web3 = new Web3(new Web3.providers.HttpProvider(url));
         let transport = new Web3Transport(web3);
@@ -100,11 +100,11 @@ UTest({
 
 function RpcUtest(name: string, rpc: Rpc, client: Web3Client) {
     return UTest({
-        async 'should return number for blockNumber'() {
+        async 'should return a number for blockNumber'() {
             let nr = await rpc.eth_blockNumber();
             eq_(typeof nr, 'number');
         },
-        async 'should get balance contract call'() {
+        async 'should get the balance via a contract call'() {
             let balance = await rpc.eth_getBalance($address.ZERO, 'latest');
             eq_(typeof balance, 'bigint');
         },
@@ -145,7 +145,7 @@ function RpcUtest(name: string, rpc: Rpc, client: Web3Client) {
                 }
             })
         },
-        async 'should submit contract call'() {
+        async 'should submit a contract call'() {
             let hardhat = new HardhatProvider();
 
             let { contract, abi } = await hardhat.deployCode(`
@@ -217,7 +217,7 @@ function RpcUtest(name: string, rpc: Rpc, client: Web3Client) {
             });
 
             return UTest({
-                async 'call unknown method'() {
+                async 'call an unknown method'() {
                     let result = await rpc.eth_call({
                         to: $address.ZERO,
                         input: '0x12345678'
@@ -225,14 +225,14 @@ function RpcUtest(name: string, rpc: Rpc, client: Web3Client) {
                     eq_(result, '0x');
                 },
                 'uint': {
-                    async 'parse return'() {
+                    async 'parse the return value'() {
                         let result = await reader.request({
                             method: 'getUint'
                         });
                         eq_(typeof result, 'bigint');
                         eq_(result, 1n);
                     },
-                    async 'serialize argument'() {
+                    async 'serialize the argument'() {
                         let result = await reader.request({
                             method: 'postUint',
                             params: [5n]
@@ -243,14 +243,14 @@ function RpcUtest(name: string, rpc: Rpc, client: Web3Client) {
                 },
                 'uint[]': {
 
-                    async 'parse return'() {
+                    async 'parse the return value'() {
                         let result = await reader.request({
                             method: 'getUints',
                         });
                         eq_(Array.isArray(result), true);
                         deepEq_(result, [2n, 3n]);
                     },
-                    async 'serialize argument'() {
+                    async 'serialize the argument'() {
                         let result = await reader.request({
                             method: 'postUints',
                             params: [[3n, 4n]]
@@ -259,14 +259,14 @@ function RpcUtest(name: string, rpc: Rpc, client: Web3Client) {
                     },
                 },
                 'string': {
-                    async 'parse return'() {
+                    async 'parse the return value'() {
                         let result = await reader.request({
                             method: 'getString'
                         });
                         eq_(typeof result, 'string');
                         eq_(result, 'hello');
                     },
-                    async 'serialize argument'() {
+                    async 'serialize the argument'() {
                         let result = await reader.request({
                             method: 'postString',
                             params: ['world']
@@ -275,13 +275,13 @@ function RpcUtest(name: string, rpc: Rpc, client: Web3Client) {
                     },
                 },
                 'tuple': {
-                    async 'parse return'() {
+                    async 'parse the return value'() {
                         let result = await reader.request({
                             method: 'getTuple',
                         });
                         deepEq_(result, { foo: 5n, bar: 8n });
                     },
-                    async 'serialize argument'() {
+                    async 'serialize the argument'() {
                         let result = await reader.request({
                             method: 'postTuple',
                             params: [{
@@ -293,7 +293,7 @@ function RpcUtest(name: string, rpc: Rpc, client: Web3Client) {
                     },
                 },
                 'unnamed tuple': {
-                    async 'parse return'() {
+                    async 'parse the return value'() {
                         let result = await reader.request({
                             method: 'getUnnamedTuple',
                         });
@@ -308,7 +308,7 @@ function RpcUtest(name: string, rpc: Rpc, client: Web3Client) {
                     eq_(result, 13n);
                 },
                 'object': {
-                    async 'parse complex object returns'() {
+                    async 'parse complex object return values'() {
                         let result = await reader.request({
                             method: 'getNested',
                         });
@@ -322,7 +322,7 @@ function RpcUtest(name: string, rpc: Rpc, client: Web3Client) {
                     },
                 }
             })
-        }, //< should submit contract call
+        }, //< should submit a contract call
         async 'should deploy contract'() {
             let hardhat = new HardhatProvider();
             let { bytecode, abi } = await hardhat.compileCode(`

@@ -196,7 +196,7 @@ UTest({
 
             ]);
         },
-        async 'with inheritance '() {
+        async 'with inheritance'() {
             await fixtures([
                 // No conflict:
                 // in A the bool takes the slot 0 (uint256 comes in the slot 1)
@@ -275,7 +275,7 @@ UTest({
         }
     },
     'should compare with added var before __gap': {
-        async 'correct extending' () {
+        async 'extends correctly' () {
             await fixtures([{
                 A: `contract A {
                     uint256 a1;
@@ -321,7 +321,7 @@ UTest({
                 }
             }]);
         },
-        async 'correct extending with inheritance' () {
+        async 'extends correctly with inheritance' () {
             await fixtures([{
                 A: `
                 contract ABase {
@@ -349,7 +349,7 @@ UTest({
                 }
             }]);
         },
-        async 'incorrect extending with inheritance' () {
+        async 'extends incorrectly with inheritance' () {
             await fixtures([{
                 A: `
                 contract ABase {

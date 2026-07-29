@@ -2,7 +2,7 @@ import { MappingSettersResolver } from '@dequanto/solidity/SlotsParser/MappingSe
 import { $contract } from '@dequanto/utils/$contract';
 
 UTest({
-    async 'should get simple event (with different orders)'() {
+    async 'should get a simple event with different argument orders'() {
         let code = `
             contract A {
                 mapping (uint => uint) foo;
@@ -82,7 +82,7 @@ UTest({
         eq_(forQux.event.name, 'SetQux');
         deepEq_(forQux.accessorsIdxMapping, [1])
     },
-    async 'should get for nested mapping'() {
+    async 'should get an event for a nested mapping'() {
         let code = `
             contract A {
                 mapping (uint => mapping(uint => uint)) allowances;
@@ -99,7 +99,7 @@ UTest({
         eq_(forFoo.event.name, 'SetAllowance');
         deepEq_(forFoo.accessorsIdxMapping, [0, 1]);
     },
-    async 'should get for outer method'() {
+    async 'should get an event from an outer method'() {
         let code = `
             contract A {
                 mapping (uint => uint) ids;
@@ -269,7 +269,7 @@ UTest({
         ]);
         deepEq_(eventInfo.accessorsIdxMapping, [1])
     },
-    async 'should get event with static dynamic argument'() {
+    async 'should get an event with a statically resolved dynamic argument'() {
         let code = `
             interface IERC20 {
                 event Transfer(address indexed from, address indexed to, uint256 value);
@@ -304,7 +304,7 @@ UTest({
         deepEq_(result.events[0].accessorsIdxMapping, [0]);
         deepEq_(result.events[1].accessorsIdxMapping, [1]);
     },
-    async 'should get event from solidity prior 0.5.0'() {
+    async 'should get an event from Solidity prior to 0.5.0'() {
         let code = `
             contract A {
 
@@ -404,7 +404,7 @@ UTest({
         eq_(result.events[0].event.name, 'Borrow');
         deepEq_(result.events[0].accessorsIdxMapping, [0]);
     },
-    async 'should parse key'() {
+    async 'should parse a key'() {
 
         let code = `
             contract A {

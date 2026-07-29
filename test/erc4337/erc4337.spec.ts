@@ -24,12 +24,12 @@ const client = await provider.client();
 const explorer = await provider.explorer();
 
 UTest({
-    async 'check handleOps method sig'() {
+    async 'should check the handleOps method signature'() {
         let abi = new EntryPoint().abi.find(x => x.name === 'handleOps');
         let sig = $abiUtils.getMethodSignature(abi);
         eq_(sig, '0x1fad948c');
     },
-    async 'parse handleOps method'() {
+    async 'should parse the handleOps method'() {
         let tx = {
             data: `0x1fad948c0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000e109be7b84e9bee53d9c043578ace493a9ea04c000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000020000000000000000000000000b6f84e00149de01a2690e88a64f76438db3341110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016000000000000000000000000000000000000000000000000000000000000001e0000000000000000000000000000000000000000000000000000000000000a9d500000000000000000000000000000000000000000000000000000000000647f60000000000000000000000000000000000000000000000000000000000005208000000000000000000000000000000000000000000000000000000005c8d76b9000000000000000000000000000000000000000000000000000000003b9aca0000000000000000000000000000000000000000000000000000000000000002c000000000000000000000000000000000000000000000000000000000000002e00000000000000000000000000000000000000000000000000000000000000058e7f1725e7734ce288f8367e1bb143e90bb3f05125fbfb9cf000000000000000000000000e51dbcf3a958f4b2fd1ea0cfbcd64ee5ab0ab5300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a4b61d27f6000000000000000000000000cf7ed3acca5a467e9e704c703e8d87f634fb0fc9000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000004d0854455000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000041f769d7020ec7eda54e9df74ef24fa48c4ad2c7cfe81ca088b29582adf8eb7f542cfdff5cc271ec5b33f5a05b8548aaca1cc8c9707a673167c07eea5c7d00bff31c00000000000000000000000000000000000000000000000000000000000000`
         } as const;
@@ -55,7 +55,7 @@ UTest({
         eq_(info[0].contractCall.method, 'logMe');
     },
 
-    async 'hash user operation'() {
+    async 'should hash a user operation'() {
         const op = <UserOperation>{
             sender: '0x03c2764cc30672dFBf3888457a9003bD0e8D6713',
             initCode: '0x9a9f2ccfde556a7e9ff0848998aa4a0cfd8863ae5fbfb9cf00000000000000000000000047cd2f859aaeea1bc5eaab577b10c56d613af65d0000000000000000000000000000000000000000000000000000000000000000',
@@ -76,7 +76,7 @@ UTest({
         eq_(hash, '0x4f7ea78cc1154bd3d168bd8e8166f7ceb1dfc8dbdc75e3ee94e07737c564e7d4');
     },
 
-    async 'erc4337 simple create' () {
+    async 'ERC-4337 simple account creation' () {
         let erc4337Contracts = await AccountAbstractionTestableFactory.prepare();
         let owner = $sig.$account.generate();
         let submitter = $sig.$account.generate();
@@ -101,7 +101,7 @@ UTest({
         eq_(userOperations.length, 1);
         eq_(userOperations[0].contractCall.method, '');
     },
-    async 'erc4337 contracts'() {
+    async 'ERC-4337 contracts'() {
 
         let erc4337Contracts = await AccountAbstractionTestableFactory.prepare();
         let { demoLoggerContract: demoCounterContract } = await TestableFactory.prepare();
@@ -118,7 +118,7 @@ UTest({
 
 
         return UTest({
-            async 'low level create and test with demo contract'() {
+            async 'low-level create and test with a demo contract'() {
                 l`1. Prepare ERC4337 contract account via Account Factory`;
                 let { initCode, initCodeGas } = await erc4337Service.prepareAccountCreation(ownerFoo.address);
                 let senderAddress = await erc4337Service.getAccountAddress(ownerFoo.address, initCode)
@@ -223,7 +223,7 @@ UTest({
                 eq_(info.transaction.hash, receipt.transactionHash);
                 eq_(info.contractCall.method, 'logMe');
             },
-            async 'should submit via tx writer'() {
+            async 'should submit via the tx writer'() {
 
                 let erc4337 = new Erc4337TxWriter(client, explorer, {
                     addresses: {
@@ -263,7 +263,7 @@ UTest({
         });
     },
 
-    async 'gasless erc20 transfer flow' () {
+    async 'gasless ERC20 transfer flow' () {
         let erc4337Contracts = await AccountAbstractionTestableFactory.prepare();
         let [ owner, receiver ] = [
             provider.deployer(0),
@@ -278,7 +278,7 @@ UTest({
         let transferOperation: UserOperation;
 
         return UTest({
-            async 'owner funds the erc4337 account with tokens' () {
+            async 'owner funds the ERC-4337 account with tokens' () {
                 let erc4337Writer = new Erc4337TxWriter(client, explorer, {
                     addresses: {
                         entryPoint: erc4337Contracts.entryPointContract.address,
@@ -311,7 +311,7 @@ UTest({
                 transferOperation = opData.op;
             },
 
-            async 'receiver submits UserOperation, gets tokens and pays for the gas' () {
+            async 'receiver submits UserOperation, receives tokens, and pays for gas' () {
                 let erc4337Writer = new Erc4337TxWriter(client, explorer, {
                     addresses: {
                         entryPoint: erc4337Contracts.entryPointContract.address,

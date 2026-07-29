@@ -113,7 +113,7 @@ UTest({
     },
     async 'constants and immutables'() {
         return UTest({
-            async 'should ignore constants per default'() {
+            async 'should ignore constants by default'() {
                 const input = `
                     contract Test {
                         uint256 constant a = 1;
@@ -156,7 +156,7 @@ UTest({
                     position: 0,
                 })
             },
-            async 'should ignore immutable per default'() {
+            async 'should ignore immutable variables by default'() {
                 const input = `
                     contract Test {
                         uint256 immutable a;
@@ -180,7 +180,7 @@ UTest({
         })
 
     },
-    async 'should extract slots from abi'() {
+    async 'should extract slots from an ABI'() {
 
         return UTest({
             async 'simple struct'() {
@@ -256,7 +256,7 @@ UTest({
             type: 'uint256'
         });
     },
-    async 'should extract slots from multi inheritance'() {
+    async 'should extract slots from multiple inheritance'() {
         const input = `
             contract Foo1 {
                 uint a;
@@ -283,7 +283,7 @@ UTest({
             'd'
         ]);
     },
-    async 'should parse weth.sol'() {
+    async 'should parse WETH.sol'() {
         let slots = await SlotsParser.slots({ path: './test/fixtures/scan/WETH.sol' }, 'MaticWETH');
 
         let names = slots.map(x => x.name);
@@ -324,7 +324,7 @@ UTest({
         eq_(names[10], 'nonces');
         eq_(types[10], 'mapping(address => uint256)');
     },
-    async 'should parse multi inheritance'() {
+    async 'should parse multiple inheritance'() {
         const input = `
             contract FooHolder {
                 uint foo = 3;
@@ -362,7 +362,7 @@ UTest({
     async 'should parse Solidity versions lower than 0.4.17'() {
 
         return new UTest({
-            async 'parse enjtoken'() {
+            async 'parse ENJToken'() {
                 // https://etherscan.io/bytecode-decompiler?a=0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c
 
                 const slots = await SlotsParser.slots({

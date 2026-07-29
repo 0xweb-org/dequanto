@@ -15,7 +15,7 @@ UTest({
     async $before () {
         await TestNode.start();
     },
-    async 'check balances' () {
+    async 'should check balances' () {
         let provider = new HardhatProvider();
         let client = await provider.client('localhost');
 
@@ -35,7 +35,7 @@ UTest({
         eq_(balancesBatched[1], balancesSingle[1]);
 
     },
-    async 'check subscriptions and batch tx resolver' () {
+    async 'should check subscriptions and the batch tx resolver' () {
 
         let provider = new HardhatProvider();
         let client = await provider.client('localhost');
@@ -73,7 +73,7 @@ UTest({
         l`Get Transactions`
         let txs = await client.getTransactions([r1.transactionHash, r2.transactionHash]);
 
-        l`Get Receipts`
+        l`Get receipts`
         let receipts = await client.getTransactionReceipts([r1.transactionHash, r2.transactionHash])
         eq_(receipts[0].transactionHash, r1.transactionHash);
         eq_(receipts[1].transactionHash, r2.transactionHash);

@@ -46,7 +46,7 @@ UTest({
 
         eq_(isValid, true);
     },
-    async 'should sign json' () {
+    async 'should sign JSON' () {
         let signer = $sig.$account.generate();
         let json = {
             data: { name: 'Foo' },

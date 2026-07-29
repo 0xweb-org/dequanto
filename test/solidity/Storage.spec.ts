@@ -107,7 +107,7 @@ UTest({
         let storage = SlotsStorage.createWithClient(client, contract.address, slots);
 
         return UTest({
-            async 'read single in simple structure' () {
+            async 'read a single field in a simple structure' () {
                 let user = await storage.get('user');
                 deepEq_(user, {
                     ID: 3n,
@@ -123,7 +123,7 @@ UTest({
             },
 
 
-            async 'nested structure' () {
+            async 'read a nested structure' () {
                 let container = await storage.get('container');
                 deepEq_(container, {
                     user: {
@@ -333,7 +333,7 @@ UTest({
         })
     },
 
-    async 'should read and write compact mapping struct'() {
+    async 'should read and write a compact mapping struct'() {
         let code = `
             contract Foo {
                 struct User {
@@ -374,7 +374,7 @@ UTest({
         })
     },
 
-    async 'should create reader for struct and read with offset' () {
+    async 'should create a reader for a struct and read with an offset' () {
         let code = `
             struct AppStorage {
                 uint256 foo;

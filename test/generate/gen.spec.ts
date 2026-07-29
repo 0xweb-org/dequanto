@@ -46,7 +46,7 @@ UTest({
 
         eq_(await contract.symbol(), 'Foo');
     },
-    async 'generate from solidity file by parsing into abi' () {
+    async 'generate from a Solidity file by parsing it into an ABI' () {
         const gen = new Generator({
             name: 'IERC4626',
             platform: 'hardhat',

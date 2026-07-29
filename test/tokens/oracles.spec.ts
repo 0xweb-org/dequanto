@@ -13,7 +13,7 @@ UTest({
         let token = 'ETH';
 
         return UTest({
-            async 'from chainlink' () {
+            async 'from Chainlink' () {
                 let oracle = new ChainlinkOracle();
                 let { error, result } = await oracle.getPrice({ symbol: token });
 
@@ -22,7 +22,7 @@ UTest({
                 lt_(result.price, 100_000);
                 l`(Chainlink) ${token}: ${result.price}$`;
             },
-            async 'from uniswap' () {
+            async 'from Uniswap' () {
 
                 let oracle = new AmmV2Oracle();
                 let { error, result } = await oracle.getPrice({ symbol: 'WETH' });
@@ -67,7 +67,7 @@ UTest({
         gt_(ethPrice.price, 0);
         gt_(solPrice.price, 0);
     },
-    async '//check the chainlink with multi hops' () {
+    async '// check Chainlink with multiple hops' () {
         let token = 'GTC';
         let oracle = new ChainlinkOracle();
         let { error, result } = await oracle.getPrice({ symbol: token });
@@ -77,7 +77,7 @@ UTest({
         lt_(result.price, 100);
         l`${token}: ${result.price}$`;
     },
-    async '//uniswap v1' () {
+    async '// Uniswap v1' () {
         let token = 'WBTC';
         let oracle = new AmmV1Oracle();
         let { error, result } = await oracle.getPrice({ symbol: token }, { date: $date.parse('01-09-2019') });

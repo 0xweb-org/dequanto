@@ -63,7 +63,7 @@ UTest({
         let nameFromSlot = await weth.storage._name();
         eq_(nameFromSlot, name);
     },
-    async 'generate from class meta comments and check the sources' () {
+    async 'generate from class metadata comments and check the sources' () {
         let genPath = `/test/tmp/polygon/DaiTokenContractBase/DaiTokenContractBase.ts`
 
         try {
@@ -84,7 +84,7 @@ UTest({
         let source = await File.readAsync(genPath, { skipHooks: true });
         has_(source, 'onTransfer');
     },
-    async 'generate and check with deployed contract' () {
+    async 'generate and check with a deployed contract' () {
 
         await hh.run('compile', {
             sources: '/test/fixtures/contracts',
@@ -249,7 +249,7 @@ UTest({
 
             async 'deploy and check indexed logs' () {
                 let provider = new HardhatProvider();
-                // use in-memory, as is enough
+                // Use in-memory storage, as it is enough
                 let client = await provider.client('hardhat');
                 let { contract: foo } = await provider.deployClass<any>(Foo.Foo, {
                     arguments: [ 'hello' ],
@@ -279,7 +279,7 @@ UTest({
 
             async 'deploy and check indexed logs with a non-linear indexed parameter order' () {
                 let provider = new HardhatProvider();
-                // use in-memory, as is enough
+                // Use in-memory storage, as it is enough
                 let client = await provider.client('hardhat');
                 let { contract: foo } = await provider.deployClass<any>(Foo.Foo, {
                     arguments: [ 'hello' ],

@@ -6,7 +6,7 @@ UTest({
     async $before () {
         await Config.fetch()
     },
-    async 'should get the date for contract' () {
+    async 'should get the contract creation date' () {
         //> dai-eth uniswap v2 pair
         let address = `0xa478c2975ab1ea89e8196811f51a7b7ade33eb11` as const;
         let resolver = ContractCreationResolver.get('eth');

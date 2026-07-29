@@ -17,7 +17,7 @@ UTest({
     async $after () {
         //await wallet.detach()
     },
-    async 'transfer from account1 to 2'() {
+    async 'should transfer from account 1 to account 2'() {
         wallet.announce();
         const account = wallet.addAccount();
         const account2 = await $sig.$account.generate();

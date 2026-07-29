@@ -9,7 +9,7 @@ UTest({
     async $before () {
 
     },
-    async 'fetch block by time' () {
+    async 'should fetch a block by time' () {
         let client = await Web3ClientFactory.getAsync('eth');
         let block = new BlockDateResolver(client);
         let date = new Date('2024-03-03T10:20:00Z');

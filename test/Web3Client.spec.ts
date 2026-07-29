@@ -18,15 +18,15 @@ const provider = new HardhatProvider();
 const client = await provider.client('hardhat');
 
 UTest({
-    async 'get block' () {
+    async 'should get a block' () {
         let block = await client.getBlockNumber();
         gte_(block, 0);
     },
-    async 'check balance' () {
+    async 'should check the balance' () {
         let balance = await client.getBalance('0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266');
         lte_(balance, 10000n * 10n ** 18n);
     },
-    async 'send eth' () {
+    async 'should send ETH' () {
         let [ from, to ] = Accounts;
         let before = await client.getBalance(to.address);
 
@@ -66,14 +66,14 @@ UTest({
         `, { client });
 
         return UTest({
-            async 'reads single slot' () {
+            async 'reads a single slot' () {
                 let foo = await client.getStorageAt(contract.address, 0);
                 eq_(Number(foo), 4)
 
                 let bar = await client.getStorageAt(contract.address, 1);
                 eq_(Number(bar), 5)
             },
-            async 'reads slots batched' () {
+            async 'reads batched slots' () {
                 let results = await client.getStorageAtBatched(contract.address, [0, 1]);
                 let nums = results.map(Number);
                 deepEq_(nums, [ 4, 5]);

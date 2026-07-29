@@ -53,7 +53,7 @@ UTest({
             eq_(recovered, account.address);
         });
     },
-    async 'sign and recover eip message'() {
+    async 'sign and recover an EIP message'() {
 
         let fixtures = {
             'sign data': [
@@ -74,7 +74,7 @@ UTest({
             eq_(recovered, account.address);
         });
     },
-    async 'raw eip sign as in web3'() {
+    async 'raw EIP signing as in Web3'() {
 
         let message, sigWeb3, sig;
 
@@ -242,7 +242,7 @@ UTest({
             }
         })
     },
-    async 'recover tx from TxBuilder'() {
+    async 'recover a tx from TxBuilder'() {
         let account = {
             address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
             key: '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
@@ -273,7 +273,7 @@ UTest({
                 let recovered = await $sig.recoverTx(txRaw);
                 eq_(recovered, account.address);
             },
-            async 'recover from json'() {
+            async 'recover from JSON'() {
                 let json = {
                     tx: {
                         to: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
@@ -313,12 +313,12 @@ UTest({
         eq_(recovered, account.address);
     },
     'accounts': {
-        async 'get address from private key' () {
+        async 'get an address from a private key' () {
             let account = $sig.$account.generate();
             let address = await $sig.$account.getAddressFromKey(account.key);
             eq_(address, account.address);
         },
-        async 'get account from private mnemonic' () {
+        async 'get an account from a private mnemonic' () {
             let account0 = await $sig.$account.fromMnemonic('test test test test test test test test test test test junk');
             eq_(account0.address, `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`);
             eq_(account0.key, `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`);

@@ -10,7 +10,7 @@ import memd from 'memd';
 // integration test
 
 UTest({
-    async '//integration test'() {
+    async '// integration test'() {
         memd.fn.clearMemoized(Config.fetch);
 
         const config = await Config.fetch({
@@ -44,7 +44,7 @@ UTest({
         let token = new ERC20(TOKEN, client);
 
         return UTest({
-            async 'check send Bundle'() {
+            async 'should send a bundle'() {
                 let { signed: txHex } = await token.$signed().approve(account, account.address, 700n);
                 let bundleHash = await flashbots.sendPrivateTransaction({
                     tx: txHex,
@@ -52,7 +52,7 @@ UTest({
                 console.log('Executed', bundleHash);
                 eq_($is.Hex(bundleHash), true, `Not a valid bundle hash: ${bundleHash}`);
             },
-            async 'check send MEV Bundle'() {
+            async 'should send a MEV bundle'() {
                 // Some tx to test serialization and submission
                 let { signed: txHex } = await token.$signed().approve(account, account.address, 500n);
 

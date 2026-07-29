@@ -85,7 +85,7 @@ UTest({
             type: 'event'
         });
     },
-    async 'should extract from sol file'() {
+    async 'should extract from a Solidity file'() {
         const { abi, source } = await SolidityParser.extractAbi({
             path: './test/fixtures/deployments/DeploymentsFoo.sol'
         });
@@ -126,7 +126,7 @@ UTest({
         });
     },
 
-    async 'should parse weth.sol'() {
+    async 'should parse WETH.sol'() {
         let { abi: abis } = await SolidityParser.extractAbi({ path: './test/fixtures/scan/WETH.sol' }, 'MaticWETH');
         let names = abis.map(x => x.name);
         deepEq_(names, [
@@ -170,7 +170,7 @@ UTest({
             'constructor'
         ]);
     },
-    async 'should parse Interface from weth.sol'() {
+    async 'should parse an interface from WETH.sol'() {
         let { abi: abis } = await SolidityParser.extractAbi({ path: './test/fixtures/scan/WETH.sol' }, 'IERC20');
 
         let names = abis.map(x => x.name);
@@ -185,7 +185,7 @@ UTest({
             'Approval'
         ]);
     },
-    async 'should parse multi inheritance'() {
+    async 'should parse multiple inheritance'() {
         const input = `
             contract FooHolder {
                 uint public foo = 3;
@@ -210,7 +210,7 @@ UTest({
     async 'should parse ABI from Solidity versions lower than 0.5.0'() {
 
         return new UTest({
-            async 'parse enjtoken'() {
+            async 'parse ENJToken'() {
                 const { abi: abis } = await SolidityParser.extractAbi({
                     path: './test/fixtures/parser/v04/ENJToken.sol'
                 }, 'ENJToken');

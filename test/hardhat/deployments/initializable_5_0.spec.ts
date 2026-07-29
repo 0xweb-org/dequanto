@@ -87,7 +87,7 @@ export default UTest({
 
     },
 
-    async 'v5_0 should call initializers'() {
+    async 'v5.0 should call initializers'() {
         let { contract: v1 } = await deployments.ensureWithProxy<IContractWrapped, any>(FooInits_v5_0_1, {
             id: 'FooInits_v5_0',
             initialize: [3]
