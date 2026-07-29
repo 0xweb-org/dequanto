@@ -16,13 +16,13 @@ UTest({
             $config: {
                 timeout: 90_000
             },
-            async 'read data from forked network' () {
+            async 'read data from a forked network' () {
                 const reader = new ContractReader(client);
                 // https://data.chain.link/ethereum/mainnet/crypto-usd/eth-usd
                 const result = await reader.readAsync('0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419', 'description() returns (string)');
                 eq_(result, 'ETH / USD');
             },
-            async 'write to forked network' () {
+            async 'write to a forked network' () {
                 // https://etherscan.io/address/0x60faae176336dab62e284fe19b885b095d29fb7f
                 const ownerImpersonated = '0x60faae176336dab62e284fe19b885b095d29fb7f';
                 const daiAddress = '0x6b175474e89094c44da98b954eedeac495271d0f';

@@ -4,7 +4,7 @@ import { $ns } from '@dequanto/ns/utils/$ns';
 
 UTest({
     'ens': {
-        async 'tld' () {
+        async 'TLD' () {
             let hash = $ns.namehash('eth');
             eq_(hash, '0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae');
         },
@@ -17,7 +17,7 @@ UTest({
             let { address: addr } = await ns.getAddress('alice.eth');
             eq_(addr, `0xcd2E72aEBe2A203b84f46DEEC948E6465dB51c75`);
         },
-        async 'content and records' () {
+        async 'content and record lookup' () {
             let ns = new NameService(Web3ClientFactory.get('eth'));
             let { address: addr } = await ns.getAddress('vitalik.eth');
             eq_(addr, `0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045`);
@@ -58,7 +58,7 @@ UTest({
             let { address: addr } = await ns.getAddress('fr.boracle.bnb');
             eq_(addr?.toLowerCase(), `0x55328A2dF78C5E379a3FeE693F47E6d4279C2193`.toLowerCase());
         },
-        async 'reversed' () {
+        async 'reverse lookup' () {
             let ns = new NameService(Web3ClientFactory.get('bsc'));
             let { name, platform } = await ns.getReverseName(`0xb5932a6B7d50A966AEC6C74C97385412Fb497540`);
             eq_(platform, 'bsc');

@@ -2,7 +2,7 @@ import { $abiParser } from '@dequanto/utils/$abiParser';
 import { Fixtures } from '../Fixtures';
 
 UTest({
-    async 'should parse type'() {
+    async 'should parse a type'() {
         const fixtures = {
             'simple uint256': [
                 [

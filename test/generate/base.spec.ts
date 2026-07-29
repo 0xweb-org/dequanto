@@ -4,7 +4,7 @@ import { $address } from '@dequanto/utils/$address';
 import { l } from '@dequanto/utils/$logger';
 
 UTest({
-    async 'overrides'() {
+    async 'should resolve overloads'() {
         class Foo extends ContractBase {
             abi = null;
             Types = null;
@@ -192,7 +192,7 @@ UTest({
                     }
                 ];
 
-                // Get with empty data field
+                // Get with an empty data field
                 let abi = foo.getAbi(
                     'depositWithPermit',
                     [
@@ -221,7 +221,7 @@ UTest({
                 deepEq_(argsTypes, ['uint256', 'uint256', 'address', 'uint256', 'bytes'], 'getAbiItemOverload() test failed');
 
 
-                // Get without data field
+                // Get without a data field
                 abi = foo.getAbi(
                     'depositWithPermit',
                     [

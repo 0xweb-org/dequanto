@@ -1,7 +1,7 @@
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 
 UTest({
-    async 'should deploy solidity contract' () {
+    async 'should deploy a Solidity contract' () {
         let provider = new HardhatProvider();
 
         let result = await provider.compileCode(`

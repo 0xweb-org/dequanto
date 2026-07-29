@@ -8,7 +8,7 @@ const deployer = provider.deployer();
 
 
 UTest({
-    async 'calculate gas and get signed transactions' () {
+    async 'should calculate gas and get signed transactions' () {
         let code1 = `
             contract Foo {
                 function foo (uint num) external {
@@ -34,7 +34,7 @@ UTest({
 
         let { signed: signed2 } = await contract.$signed({ nonce }).foo(deployer, 2);
         let tx2 = $sig.TxDeserializer.deserialize(signed2);
-        // the nonce should be incremented
+        // The nonce should be incremented
         eq_(tx.nonce + 1, tx2.nonce);
     }
 })

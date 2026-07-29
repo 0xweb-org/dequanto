@@ -1,7 +1,7 @@
 import { $abiUtils } from '@dequanto/utils/$abiUtils'
 
 UTest({
-    'get event topic hash'() {
+    'should get the event topic hash'() {
         let hash = $abiUtils.getTopicSignature({
             anonymous: false,
             inputs: [

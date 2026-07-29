@@ -2,7 +2,7 @@ import { $abiType } from '@dequanto/utils/$abiType'
 
 
 UTest({
-    'get event topic hash'() {
+    'should get the event topic hash'() {
         ([
             [`uint256`, `bigint`],
             [`mapping(address => uint8)`, `Record<string | number, number>`],

@@ -12,11 +12,11 @@ const tx = {
 };
 
 UTest({
-    async '//download' () {
+    async '// download receipt' () {
         let receipt = await di.resolve(EthWeb3Client).getTransactionReceipt(tx.swap);
         await File.writeAsync(`./test/fixtures/receipts/swap.json`, receipt);
     },
-    async 'parse swap logs' () {
+    async 'should parse swap logs' () {
         let swapReceipt = await File.readAsync<TEth.TxReceipt>('./test/fixtures/receipts/swap.json');
 
         let parser = new TxLogParser();
@@ -24,8 +24,8 @@ UTest({
         let dai = logs.find(x => x.token.symbol === 'DAI');
         eq_(dai.amount, 30000000000000000000000n);
     },
-    'parse tx logs': {
-        async 'parse string' () {
+    'should parse tx logs': {
+        async 'parse a string' () {
             let provider = new HardhatProvider();
             let client = provider.client();
             let code = `

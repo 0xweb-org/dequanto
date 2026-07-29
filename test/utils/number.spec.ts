@@ -3,7 +3,7 @@ import alot from 'alot';
 
 UTest({
     'random': {
-        async 'float with explicit digit-count' () {
+        async 'float with an explicit digit count' () {
             let min = 0.01;
             let max = 0.02;
 

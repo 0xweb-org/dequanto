@@ -2,7 +2,7 @@ import { $rpc } from '@dequanto/rpc/$rpc'
 import { Rpc } from '@dequanto/rpc/Rpc';
 
 UTest({
-    'deserialize logs' () {
+    'should deserialize logs' () {
         let rpc = new Rpc();
         let returns = (rpc as any).returnSchemas;
         let logsModel = [

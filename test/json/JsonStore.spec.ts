@@ -46,7 +46,7 @@ UTest({
             let json = JSON.parse(str);
             deepEq_(json, arr);
         },
-        'should load file and then write': {
+        'should load a file and then write': {
             async $before () {
                 await File.writeAsync(pathArr, [
                     { id: 'foo', letter: 'F'},
@@ -54,7 +54,7 @@ UTest({
                 ]);
                 File.clearCache();
             },
-            async 'load and upsert' () {
+            async 'load and upsert data' () {
                 let store = new JsonArrayStore<any>({
                     path: pathArr,
                     key: x => x.id,

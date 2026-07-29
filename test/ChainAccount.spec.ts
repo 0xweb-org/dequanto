@@ -9,11 +9,11 @@ import memd from 'memd';
 
 
 UTest({
-    async 'generate account' () {
+    async 'should generate an account' () {
         let { key, address } = $sig.$account.generate();
         eq_($is.Address(address), true);
     },
-    async 'save encrypted account' () {
+    async 'should save an encrypted account' () {
         const path = './test/tmp/accounts.json';
         await File.removeAsync(path);
 
@@ -45,8 +45,8 @@ UTest({
         deepEq_(account, account2);
     },
 
-    async 'fromMnemonic' () {
-        let r1 = await $sig.$account.fromMnemonic('test test test test test test test test test test test junk');
+    async 'should load from a mnemonic' () {
+        let r1 = await $sig.$account.should load from a mnemonic('test test test test test test test test test test test junk');
         eq_(r1.address, new HardhatProvider().deployer().address);
     }
 })

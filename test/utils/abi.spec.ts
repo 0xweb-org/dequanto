@@ -23,7 +23,7 @@ UTest({
             eq_(encoded, data.encoded);
         })
     },
-    async 'decode simple'() {
+    async 'decode a simple value'() {
 
         let [nrNumber] = $abiCoder.decode(['uint32'], '0x0000000000000000000000000000000000000000000000000000000000000011');
         eq_(typeof nrNumber, 'number');
@@ -67,7 +67,7 @@ UTest({
             sha256: '0x2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae'
         });
     },
-    async 'encode multiple'() {
+    async 'encode multiple values'() {
         let values = [
             '0x0000000000000000000000000000000000000002',
             '0x0000000000000000000000000000000000000003',
@@ -92,7 +92,7 @@ UTest({
         let decoded3 = $abiCoder.decode([abi], hexFromRaw);
         deepEq_(decoded3, [{ a1: values[0], a2: values[1] }]);
     },
-    async 'encode multiple with string'() {
+    async 'encode multiple values with a string'() {
         let values = [
             '0x0000000000000000000000000000000000000011',
             'Hello',
@@ -168,7 +168,7 @@ UTest({
             });
 
         },
-        async 'decode compiled'() {
+        async 'decode compiled constructor arguments'() {
             let hh = new HardhatProvider();
             let client = hh.client();
             let code = `

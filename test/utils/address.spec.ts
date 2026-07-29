@@ -2,7 +2,7 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { $address } from '@dequanto/utils/$address';
 
 UTest({
-    'check checksums'() {
+    'should check checksums'() {
         let fixtures = [{
             chainId: null as number,
             addresses: [

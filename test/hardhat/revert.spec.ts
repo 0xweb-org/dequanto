@@ -1,7 +1,7 @@
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 
 UTest({
-    async 'check revert' () {
+    async 'should check revert handling' () {
 
         let code = `
             contract Foo {

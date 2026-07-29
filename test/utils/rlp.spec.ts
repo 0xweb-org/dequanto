@@ -120,7 +120,7 @@ const fixtures = {
 }
 
 UTest({
-    'encode <-> decode fixtures'() {
+    'encode and decode fixtures'() {
         fixtures.data.forEach(([value, encoded], i) => {
             function ensureBuffers(val) {
                 return Array.isArray(val)

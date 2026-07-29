@@ -6,7 +6,7 @@ import { TestNode } from '../hardhat/TestNode';
 
 UTest({
 
-    async 'walk over sent simple transactions to get the blocks, txs, and receipts' () {
+    async 'should walk over sent transactions to get blocks, txs, and receipts' () {
         let provider = new HardhatProvider();
         let client = await TestNode.client();
 

@@ -1,7 +1,7 @@
 import { $abiParser } from '../../src/utils/$abiParser'
 
 UTest({
-    'parse empty return' () {
+    'parse an empty return' () {
         let abi = $abiParser.parseMethod('function bar(uint256):()');
         has_(abi, {
             type: 'function',
@@ -15,7 +15,7 @@ UTest({
             outputs: [],
         });
     },
-    'parse single return' () {
+    'parse a single return' () {
         let abi = $abiParser.parseMethod('function foo(uint256) returns address');
         has_(abi, {
             outputs: [
@@ -23,7 +23,7 @@ UTest({
             ],
         });
     },
-    'parse multiple return' () {
+    'parse multiple returns' () {
         let abi = $abiParser.parseMethod('function foo(uint256) returns (address, uint256)');
         has_(abi, {
             outputs: [
@@ -97,7 +97,7 @@ UTest({
             deepEq_(abi.outputs, [ { name: '', type: 'uint256' } ], str)
         });
     },
-    'parse with names' () {
+    'parse methods with names' () {
         [
             `foo(address account, uint256 value):(uint256 foo,uint256 bar)`,
             `function foo (address account,  uint256 value ) returns (uint256 foo ,uint256 bar)`,
@@ -114,7 +114,7 @@ UTest({
             ], str)
         })
     },
-    'parse with modifiers' () {
+    'parse methods with modifiers' () {
         [
             `lorem() external view returns (uint256)`,
             `lorem ( ) view returns (uint256)`,
@@ -125,7 +125,7 @@ UTest({
             deepEq_(abi.outputs, [ { name: '', type: 'uint256' } ]);
         })
     },
-    'parse with memory keywords' () {
+    'parse methods with memory keywords' () {
         [
             `upgradeToAndCall(address newImplementation, bytes memory data) external`,
             `upgradeToAndCall(address newImplementation, bytes calldata data) external`,

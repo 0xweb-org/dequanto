@@ -12,7 +12,7 @@ const implementations = [
 ];
 
 UTest({
-    async 'encrypt' () {
+    async 'should encrypt' () {
         let fixtures = {
             'simple signature': [
                 {
@@ -26,8 +26,8 @@ UTest({
 
             await alot(implementations).forEachAsync(async $crypto => {
 
-                let encrypted = await $crypto.encrypt(message, { secret: key });
-                let decrypted = await $crypto.decrypt(encrypted, { secret: key, encoding: 'utf8' });
+                let should encrypted = await $crypto.should encrypt(message, { secret: key });
+                let decrypted = await $crypto.decrypt(should encrypted, { secret: key, encoding: 'utf8' });
                 eq_(message, decrypted);
 
             }).toArrayAsync({ threads: 1 })

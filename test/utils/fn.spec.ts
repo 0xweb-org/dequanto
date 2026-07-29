@@ -8,7 +8,7 @@ function foo (num: number) {
 }
 
 UTest({
-    async 'should resolve retriable' () {
+    async 'should resolve a retriable function' () {
         let result = await $fn
             .retriable(foo, null)
             .options({

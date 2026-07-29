@@ -1,12 +1,12 @@
 import { $date } from '@dequanto/utils/$date'
 
 UTest({
-    'should check add seconds' () {
+    'should check adding seconds' () {
         let date = new Date();
         let x = $date.tool(date).add(`5s`).toUnixTimestamp();
         eq_(x, (date.valueOf() / 1000 | 0) + 5);
     },
-    'should calculate week nr' () {
+    'should calculate the week number' () {
         const isoWeekTests = [
             // ---- 2021 boundary around week rollover ----
             { date: "2020-12-28", week: 53 },

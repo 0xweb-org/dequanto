@@ -24,7 +24,7 @@ UTest({
     $before() {
         $contract.store.clear();
     },
-    async 'parse traces'() {
+    async 'should parse traces'() {
         let code = `
             contract A {
                 struct TResult {
@@ -67,7 +67,7 @@ UTest({
         $assert.has(`event MyNumber(val: 43)`, output);
         $assert.has(`${depl.contract.address} <=> A`, output);
     },
-    async 'should parse traces in gas estimation'() {
+    async 'should should parse traces in gas estimation'() {
         let code = `
             contract AThrown {
                 uint256 private value_;
