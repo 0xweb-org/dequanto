@@ -929,7 +929,7 @@ export class WClient {
                 let batch = new Web3BatchRequests.BatchRequest(client.rpc, page);
                 let results = await batch.execute(options);
                 return results;
-            });
+            }, { batchRequestCount: total });
             if (status === ClientStatus.Ok) {
                 output.push(...pageResult);
                 continue;

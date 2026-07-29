@@ -70,7 +70,7 @@ export class RpcContract {
         let requests = await this.getCallRequestsRaw(req);
         try {
             let responseArr = await this.client.batch(requests.map(x => x.methodRequest), options);
-
+            $require.eq(requests.length, responseArr.length, `Invalid response count`);
             return responseArr.map((resp, i) => {
                 let abi = requests[i].methodAbi;
                 if (abi == null) {

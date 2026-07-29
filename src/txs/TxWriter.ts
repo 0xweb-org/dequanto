@@ -411,6 +411,17 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> implements ITx
 
                 let submitsCount = this.txs.length;
                 let submitsMax = (options.retries ?? 0) + 1;
+
+                if (ClientErrorUtil.IsUnderpriced(err)) {
+                    if (options.retries == null) {
+                        options.retries = 1;
+                    }
+                    // Increase the price ratio and the
+                    this.builder.increaseGas(1.5);
+                    this.logger.log(`Underpriced: gas increased: retried ${submitsCount}/${options.retries ?? 0}`);
+                    submitsMax = Math.max(2, submitsMax);
+                }
+
                 if (submitsCount < submitsMax) {
                     let ms = options.retryDelay ?? 3000;
                     let waitMs = ms * submitsCount;

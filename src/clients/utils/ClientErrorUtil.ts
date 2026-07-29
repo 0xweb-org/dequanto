@@ -30,4 +30,8 @@ export namespace ClientErrorUtil {
     export function IsNonceTooHigh(error: Error) {
         return /nonce too high/i.test(error.message);
     }
+
+    export function IsUnderpriced(error: Error) {
+        return /underpriced/i.test(error.message);
+    }
 }
