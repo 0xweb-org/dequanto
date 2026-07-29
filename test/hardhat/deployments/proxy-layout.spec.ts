@@ -317,7 +317,7 @@ UTest({
                     address a4;
                 }`,
                 check(result) {
-                    has_(result?.message, `Variable __gap(uint256[49]) at slot 5 conflicts a4(address)`);
+                    has_(result?.message, `Variable __gap(uint256[49]) at slot 5 conflicts with a4(address)`);
                 }
             }]);
         },
@@ -375,7 +375,7 @@ UTest({
                 }
                 `,
                 check(result) {
-                    has_(result?.message, `Variable __gap$(uint256[48]) at slot 3 conflicts a1(uint256)`);
+                    has_(result?.message, `Variable __gap$(uint256[48]) at slot 3 conflicts with a1(uint256)`);
                 }
             }]);
         },
