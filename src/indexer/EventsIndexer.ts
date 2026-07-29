@@ -24,20 +24,20 @@ export class EventsIndexer <TContract extends ContractBase> {
     public storeMeta: IEventsIndexerMetaStore
 
     constructor(public contract: TContract, public options: {
-        // Load events from the contract that was deployed to multiple addresses
+        // Load events from a contract deployed to multiple addresses
         addresses?: TAddress[]
         name?: string
         initialBlockNumber?: number
         store?: IEventsIndexerStore
         storeMeta?: IEventsIndexerMetaStore
         fs?: {
-            /** Is used as a base directory. Later the ContractName and the address(es) hash will be appended */
+            /** Used as the base directory. Later, the contract name and address hash are appended */
             directory?: string
 
-            /** The events will be splitted into multiple files by block range */
+            /** Events are split into multiple files by block range */
             // @default ~1week
             rangeSeconds?: number
-            // @default is taken from Web3Client
+            // @default Taken from Web3Client
             blockTimeAvg?: number
         }
     }) {
@@ -116,9 +116,9 @@ export class EventsIndexer <TContract extends ContractBase> {
     > (
         event: TLogName | TLogName[] | '*',
         options?: {
-            // includes block
+            // Includes block
             fromBlock?: number
-            // includes block
+            // Includes block
             toBlock?: number
             blockRangeLimits?: WClient['blockRangeLimits']
             params?: Partial<TContract['Types']['Events'][TLogName]['outputParams']>
@@ -126,9 +126,9 @@ export class EventsIndexer <TContract extends ContractBase> {
     ): AsyncGenerator<
         TLogsRangeProgress<
             ITxLogItem<GetTypes<TContract>['Events'][TLogName]['outputParams'], string>
-        >       // next result
-        , void  // void returns
-        , void  // next doesn't get any parameter
+        >       // Next result
+        , void  // Returns void
+        , void  // next does not receive any parameters
     > {
         let contract = this.contract;
         let client = contract.client;
@@ -184,10 +184,10 @@ export class EventsIndexer <TContract extends ContractBase> {
         let metas = await this.storeMeta.fetch();
         let lastBlock = (params?.fromBlock ?? 0) - 1;
         if (lastBlock < 0) {
-            // remove all metas
+            // Remove all metadata
             await this.storeMeta.removeMany(metas)
         } else {
-            // adjust the lastBlock and the ranges
+            // Adjust lastBlock and ranges
             metas.forEach(x => {
                 x.lastBlock = Math.min(x.lastBlock, lastBlock);
                 x.ranges = PackedRanges.pickTo(x.ranges, x.lastBlock);
@@ -264,11 +264,11 @@ export class EventsIndexer <TContract extends ContractBase> {
                 params: options?.params,
             });
             infos.cached = cachedStreamedBuffer.length;
-            // Note: we don't emit progress right away to keep the order in progress callback
+            // Note: we do not emit progress right away to preserve order in the progress callback
             // Consider: we have blocks [100-150] in cache
             // Requesting range: [50-200]
             // Later we fetch [50-100) and (150-200]
-            // The cached response will be inserted after block.100 to keep consistent order
+            // The cached response will be inserted after block 100 to keep a consistent order
             // if (arr?.length > 0) {
             //     let lastBlock = arr[arr.length - 1].blockNumber;
             //     await options.onProgress({
@@ -342,12 +342,12 @@ export class EventsIndexer <TContract extends ContractBase> {
                     }
 
                     if (options?.onProgress) {
-                        // completed must be set to true only when the last Range completes
+                        // completed must be set to true only when the last range completes
                         chunk.completed = isCompleted;
                         if (cachedStreamedBuffer.length > 0) {
                             if (chunk.logs.length > 0) {
-                                // Preserve the order of logs in progress callback:
-                                // insert cached.blockNumber < fetched.blockNumber first
+                                // Preserve log order in the progress callback:
+                                // Insert cached.blockNumber < fetched.blockNumber first
                                 let [ first ] = chunk.logs;
                                 let i = 0;
                                 for (; i < cachedStreamedBuffer.length; i++) {
@@ -362,7 +362,7 @@ export class EventsIndexer <TContract extends ContractBase> {
                                 }
                             }
                             if (isCompleted) {
-                                // insert everything left from cache
+                                // Insert everything left from cache
                                 chunk.logs = chunk.logs.concat(cachedStreamedBuffer);
                                 cachedStreamedBuffer = [];
                             }
@@ -380,11 +380,11 @@ export class EventsIndexer <TContract extends ContractBase> {
             }
         }
 
-        // Upsert final, if buffer is empty, we still persist the "toBlock" value and the ranges
+        // Upsert final state. If the buffer is empty, we still persist the "toBlock" value and ranges
         await this.upsert(buffer, events, ranges, fromBlock, toBlock, options);
 
         if (isStreamed && typeof options?.onProgress === 'function' && (cachedStreamedBuffer.length > 0 || ranges.load.length === 0)) {
-            // When streaming, we MUST call onProgress, even if there are no ranges to load.
+            // When streaming, we MUST call onProgress, even if there are no ranges to load
             let lastBlock = cachedStreamedBuffer.length > 0
                 ? cachedStreamedBuffer[cachedStreamedBuffer.length - 1].blockNumber
                 : toBlock;
@@ -453,7 +453,7 @@ export class EventsIndexer <TContract extends ContractBase> {
             let explorer = await BlockchainExplorerFactory.get(this.contract.client.platform);
             let deployment = new ContractCreationResolver(client, explorer);
             let contractInfo = await deployment.getInfo(this.contract.address);
-            return $require.Number(contractInfo.block, `Contract deployment not resolved from the blockchain explorer`);
+            return $require.Number(contractInfo.block, `Contract deployment was not resolved from the blockchain explorer`);
         }
         return 0;
     }

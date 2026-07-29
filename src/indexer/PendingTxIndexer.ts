@@ -9,7 +9,7 @@ import { TEth } from '@dequanto/models/TEth';
 
 
 export interface IPendingTxIndexerOptions {
-    /** Name of the indexer */
+    /** Indexer name */
     name?: string
 }
 export type TPendingTxListener = (client: Web3Client, tx: TEth.Tx) => Promise<void>
@@ -33,7 +33,7 @@ export class PendingTxIndexer {
         txCount: 0,
         txNulls: 0,
 
-        // tx not seen in mempool
+        // Transaction not seen in the mempool
         txPrivateCount: 0,
     }
 
@@ -112,7 +112,7 @@ export class PendingTxIndexer {
                 delete this.mempoolHash[hash];
                 continue;
             }
-            //Not seen in memhash;
+            // Not seen in memhash
             this.status.txPrivateCount++;
             this.status.txCount++;
             this.mempoolHash[hash] = 1;

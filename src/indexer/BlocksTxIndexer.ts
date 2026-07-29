@@ -8,16 +8,16 @@ import { TEth } from '@dequanto/models/TEth';
 
 
 export interface IBlocksTxIndexerOptions {
-    /** Name of the indexer */
+    /** Indexer name */
     name?: string
 
-    /** Save indexer progress (visited blocks) to a file */
+    /** Saves indexer progress (visited blocks) to a file */
     persistence?: boolean
 
-    /** Load transactions from the block and provide them to the visitor method */
+    /** Loads transactions from the block and provides them to the visitor method */
     loadTransactions?: boolean
 
-    /** Load receipts from the block and provide them to the visitor method */
+    /** Loads receipts from the block and provides them to the visitor method */
     loadReceipts?: boolean
 
     client?: Web3Client
@@ -86,12 +86,12 @@ export class BlocksTxIndexer {
                         return;
                     }
                     if (blockHeader.transactions?.length === 0) {
-                        // hardhat emits empty blocks
+                        // Hardhat emits empty blocks
                         return;
                     }
                     this.walker.processUntil(blockHeader.number + 1);
                 });
-                // Reload the blocknumber, to ensure we didn't missed the block between walker starting and subscription
+                // Reload the block number to ensure we did not miss the block between walker startup and subscription
                 let newTo = await this.client.getBlockNumber();
                 this.walker.processUntil(newTo + 1);
                 console.log('BlockTxIndexer: subscribed', newTo);

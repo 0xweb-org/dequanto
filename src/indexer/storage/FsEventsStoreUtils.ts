@@ -15,7 +15,7 @@ export namespace FsEventsStoreUtils {
         addresses?: TAddress[]
     }): string {
         if (options?.path) {
-            $require.True(options.path.endsWith('/'), `Path for the events store should end with '/'`);
+            $require.True(options.path.endsWith('/'), `Path for the events store must end with '/'`);
             return options.path;
         }
 

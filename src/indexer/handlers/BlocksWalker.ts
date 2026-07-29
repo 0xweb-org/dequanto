@@ -76,7 +76,7 @@ export class BlocksWalker {
         }
 
         if (to != null && from == null) {
-            throw new Error(`FromBlock should be set while ToBlock(${to}) is present`);
+            throw new Error(`fromBlock must be set when toBlock (${to}) is present`);
         }
 
         this.walker.setFrom(
@@ -86,8 +86,8 @@ export class BlocksWalker {
             await this.getBlockNumber(to)
         );
 
-        $require.Number(this.ranges.from, 'From should be a number');
-        $require.Number(this.ranges.to, 'To should be a number');
+        $require.Number(this.ranges.from, 'from must be a number');
+        $require.Number(this.ranges.to, 'to must be a number');
 
         this.walker.process();
         if (this.params.logProgress !== false) {
@@ -97,8 +97,8 @@ export class BlocksWalker {
 
 
     /**
-     *  Can be called each time we get a new block from blockchain,
-     *  the walker will process its current blocks and up until the specified number
+     *  Can be called each time we get a new block from the blockchain,
+     *  the walker will process its current blocks up to the specified number
      *  @param nr Number is not included: [from, end)
      */
     async processUntil (nr: number) {
@@ -180,7 +180,7 @@ export class BlocksWalker {
 
     private async processBlocks (nrs: number[]) {
 
-        // reading block and transactions
+        // Read blocks and transactions
         let start = Date.now();
         let blocks = await this.client.getBlocks(nrs);
 
@@ -245,7 +245,7 @@ class RangeWalker {
         threads: 1,
         batch: 1,
         timeout: 20000,
-        // log every N ms
+        // Log every N ms
         logTimeWindow: 5000,
     };
 
@@ -317,7 +317,7 @@ class RangeWalker {
 
         let { from } = this.range;
         if (from != null && from > nr) {
-            throw new Error(`To (${nr}) should be greater then From (${from})`);
+            throw new Error(`to (${nr}) must be greater than from (${from})`);
         }
         this.range.to = nr;
     }
@@ -327,7 +327,7 @@ class RangeWalker {
             this.range.to = to;
 
             if (this.range.from == null) {
-                // In case we started the walker by listening to incoming mined blocks
+                // If the walker was started by listening to incoming mined blocks
                 this.range.from = to;
             }
         }

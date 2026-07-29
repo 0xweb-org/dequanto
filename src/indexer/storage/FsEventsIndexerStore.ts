@@ -22,21 +22,21 @@ export class FsEventsIndexerStore <T extends ContractBase> implements IEventsInd
 
 
     constructor(public contract: T, public options: {
-        // Load events from the contract that was deployed to multiple addresses
+        // Load events from a contract deployed to multiple addresses
         addresses?: TAddress[]
         name?: string
         initialBlockNumber?: number
         fs?: {
-            /** Base directory, in case the path is calculated from chain, name and addresses */
+            /** Base directory when the path is calculated from chain, name, and addresses */
             directory?: string
 
-            /** Relative final directory path to be used as is for store files */
+            /** Relative final directory path to use as is for store files */
             path?: string
 
-            // the events will be splitted into multiple files by block range
-            // default ~1week
+            // Events are split into multiple files by block range
+            // Default ~1week
             rangeSeconds?: number
-            // default is taken from Web3Client
+            // Default is taken from Web3Client
             blockTimeAvg?: number
 
             // Use a single file. Deprecated, used for migration only
@@ -109,7 +109,7 @@ export class FsEventsIndexerStore <T extends ContractBase> implements IEventsInd
     private map (x): ITxLogItem<any> {
 
         let abi = this.abi[x.event];
-        $require.notNull(abi, `Abi for ${x.event} not found.`)
+        $require.notNull(abi, `ABI for ${x.event} was not found`)
 
         let blockNumber = Math.floor(x.id / 100000);
         let logIndex = x.id % 100000;
@@ -126,7 +126,7 @@ export class FsEventsIndexerStore <T extends ContractBase> implements IEventsInd
     private serialize (x: ITxLogItem<any>) {
         return {
             ...x,
-            // remove redundant data
+            // Remove redundant data
             arguments: void 0,
             blockNumber: void 0,
             logIndex: void 0,
@@ -139,7 +139,7 @@ export class FsEventsIndexerStore <T extends ContractBase> implements IEventsInd
 
 
 namespace EventAbiInputs {
-    // primary to convert BigInt from JSON
+    // Mainly converts BigInt from JSON
 
     export function deserialize (params: Record<string, any>, abi: TAbiItem): Record<string, any> {
         let inputs = alot(abi.inputs).toDictionary(x => x.name, x => x);

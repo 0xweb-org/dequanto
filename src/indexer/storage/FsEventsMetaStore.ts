@@ -14,7 +14,7 @@ export class FsEventsMetaStore <T extends ContractBase> implements IEventsIndexe
 
 
     constructor(private contract: T, private options: {
-        // Load events from the contract that was deployed to multiple addresses
+        // Load events from a contract deployed to multiple addresses
         addresses?: TAddress[]
         name?: string
         fs?: {

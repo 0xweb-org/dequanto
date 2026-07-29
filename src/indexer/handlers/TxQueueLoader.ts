@@ -7,7 +7,7 @@ export class TxQueueLoader {
     private opts = {
         threads: 4,
         timeout: 20000,
-        // log every N ms
+        // Log every N ms
         logTimeWindow: 5000,
     };
 
