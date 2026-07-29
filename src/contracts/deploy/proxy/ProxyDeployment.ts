@@ -76,7 +76,7 @@ interface IBeaconDeploymentCtx extends IDeploymentCtx {
     }
 }
 
-// Supports OpenZeppelin proxy deployments
+// Supports OpenZeppelin proxy deployments.
 
 export class ProxyDeployment {
 
@@ -96,7 +96,7 @@ export class ProxyDeployment {
     async ensureProxy(ctx: IProxyDeploymentCtx) {
         $require.notEmpty(ctx.proxyId, `ProxyId for the contract is required`);
         $require.Address(ctx.implementation?.address, `Implementation address is required`);
-        //@TODO add support of UUPS proxy
+        //@TODO Add support for UUPS proxies.
         return this.ensureTransparentProxy(ctx);
     }
 
@@ -109,7 +109,7 @@ export class ProxyDeployment {
     }
 
 
-    // Supports OpenZeppelin TransparentProxy of v ^4.0 and ^5.0
+    // Supports OpenZeppelin TransparentProxy v4.x and v5.x.
     protected async ensureTransparentProxy(ctx: IProxyDeploymentCtx) {
         let {
             proxyId,
@@ -143,9 +143,9 @@ export class ProxyDeployment {
 
         let proxyOpts = <Parameters<Deployments['ensure']>[1]>{
             id: proxyId,
-            // will not compare the contract updates, once deployed. As proxies normally not updated
+            // Do not compare contract updates after deployment, as proxies are normally not updated.
             latest: false,
-            // will be used for verification
+            // Used for verification.
             proxyFor: implAddress,
             arguments: [
                 // address _logic, address initialOwner, bytes memory _data
@@ -155,7 +155,7 @@ export class ProxyDeployment {
 
         let proxyAbi = new Proxy().abi;
         let v = proxyAbi.some(x => x.name === 'upgradeToAndCall') || !proxyAbi.some(x => x.type === 'error') ? 'V4' : 'V5';
-        /** OpenZeppelin V5 hides admin/upgrade public methods and introduces "error" types*/
+        /** OpenZeppelin V5 hides admin/upgrade public methods and introduces "error" types. */
 
         let hasProxy = await deployments.has(Proxy, proxyOpts);
         let shouldUpdate = ctx.upgradeImplementation ?? true;
@@ -176,12 +176,12 @@ export class ProxyDeployment {
             }
 
             if ($address.eq(log.params.newAdmin, deployer.address)) {
-                // Openzeppelin < 5 was not deploying AdminContract automatically
+                // OpenZeppelin < 5 does not deploy AdminContract automatically.
                 let { contract } = await deployments.ensure(ProxyAdmin, {
                     id: contractProxyAdminId
                 });
                 contractProxyAdmin = contract;
-                // make sure we upgrade
+                // Make sure we upgrade.
 
                 l`Will change the EOA admin to ProxyAdmin contract`;
                 let receipt = await Interfaces.call(
@@ -192,7 +192,7 @@ export class ProxyDeployment {
                 );
 
             } else {
-                // Openzeppelin TransparentUpgradeableProxy V5 creates additionally the ProxyAdmin contract on Proxy deployment
+                // OpenZeppelin TransparentUpgradeableProxy V5 also creates the ProxyAdmin contract on proxy deployment.
                 contractProxyAdmin = new ProxyAdmin(log.params.newAdmin, client);
                 await this.store.saveDeployment(contractProxyAdmin, {
                     id: contractProxyAdminId,
@@ -201,7 +201,7 @@ export class ProxyDeployment {
             }
         } else {
             contractProxyAdmin = await deployments.get(ProxyAdmin, { id: contractProxyAdminId });
-            $require.notNull(contractProxyAdmin, `Proxy was deployed previously, but the ProxyAdmin ${contractProxyAdminId} not found`);
+            $require.notNull(contractProxyAdmin, `Proxy was deployed previously, but ProxyAdmin ${contractProxyAdminId} was not found`);
         }
 
         if (hasProxy) {
@@ -214,7 +214,7 @@ export class ProxyDeployment {
                     if ($hex.isEmpty(migrationData) === false) {
                         let version = await Interfaces.TransparentProxy[v].contractProxy.version(contractProxy);
                         if (migrationV <= version) {
-                            // Clear migration call; This upgrade is raw implementation upgrade
+                            // Clear the migration call; this upgrade is a raw implementation upgrade.
                             migrationData = null;
                         }
                     }
@@ -229,12 +229,12 @@ export class ProxyDeployment {
                     );
                     await this.saveStorageLayout(proxyId, ctx);
                 } else {
-                    $logger.log(`Skip upgrade ProxyAdmin(${contractProxyAdmin.address}) to ${implAddress} (${v}) from ${address}`);
+                    $logger.log(`Skipping ProxyAdmin(${contractProxyAdmin.address}) upgrade to ${implAddress} (${v}) from ${address}`);
                 }
             }
         }
         if (hasProxy === false && contractProxyReceipt != null) {
-            // new proxy deployment, save the storage layout
+            // New proxy deployment: save the storage layout.
             await this.saveStorageLayout(proxyId, ctx);
         }
         return {
@@ -245,7 +245,7 @@ export class ProxyDeployment {
     }
 
     private async getOpenzeppelinUpgradable(opts?: { proxy?: boolean, beacon?: boolean }) {
-        // We can't compile OpenZeppelin's contracts directly from node_modules folder, so create the wrappers
+        // We cannot compile OpenZeppelin's contracts directly from the node_modules folder, so create wrappers.
         const baseSource = `./node_modules/@openzeppelin/contracts/proxy`;
         const baseOutput = `./contracts/oz`;
         const deps = {
@@ -261,7 +261,7 @@ export class ProxyDeployment {
                 template: `
                     import \"${deps.TransparentUpgradeableProxy}\";
                 `,
-                //install: `TransparentUpgradeableProxy,ProxyAdmin`,
+                // install: `TransparentUpgradeableProxy,ProxyAdmin`,
                 contracts: [`TransparentUpgradeableProxy`, `ProxyAdmin`]
             },
             Beacon: {
@@ -271,7 +271,7 @@ export class ProxyDeployment {
                     import \"${deps.UpgradeableBeacon}\";
                     import \"${deps.BeaconProxy}\";
                 `,
-                //install: `UpgradeableBeacon,BeaconProxy`,
+                // install: `UpgradeableBeacon,BeaconProxy`,
                 contracts: [`UpgradeableBeacon`, `BeaconProxy`],
             }
         };
@@ -384,14 +384,14 @@ export class ProxyDeployment {
             }
         } else {
             if (contractBeaconReceipt?.status) {
-                // new beacon deployment, save the storage layout
+                // New beacon deployment: save the storage layout.
                 await this.saveStorageLayout(beaconId, ctx);
             }
         }
 
         let beaconProxyOpts = {
             id: beaconProxyId,
-            // Pass the target implementation address for verification
+            // Pass the target implementation address for verification.
             proxyFor: implAddress,
             arguments: [
                 // address implementation
@@ -414,7 +414,7 @@ export class ProxyDeployment {
     }
 
     private async saveStorageLayout(proxyId: string, ctx: IDeploymentCtx) {
-        $require.notNull(ctx.ImplementationContract, `Implementation Contract Class is required to compare the storage layout`);
+        $require.notNull(ctx.ImplementationContract, `Implementation contract class is required to compare the storage layout`);
         let newSlots = new ctx.ImplementationContract().storage?.$storage?.slots ?? [];
         await this.store.saveStorageLayoutInfo({
             id: proxyId,
@@ -424,10 +424,10 @@ export class ProxyDeployment {
 
     private async requireCompatibleStorageLayout(proxyId: string, ctx: IDeploymentCtx) {
         if (ctx.options?.skipStorageLayoutCheck !== true) {
-            $require.notNull(ctx.ImplementationContract, `Implementation Contract Class is required to compare the storage layout`);
+            $require.notNull(ctx.ImplementationContract, `Implementation contract class is required to compare the storage layout`);
 
             let newStorageLayout = new ctx.ImplementationContract().storage?.$storage?.slots;
-            $require.notNull(newStorageLayout, `No storage layout was generated for ${ctx.ImplementationContract.name}. `);
+            $require.notNull(newStorageLayout, `No storage layout was generated for ${ctx.ImplementationContract.name}.`);
 
             let currentStorageLayout = await this.store.getStorageLayoutInfo(proxyId);
             if (currentStorageLayout != null) {
@@ -442,7 +442,7 @@ export class ProxyDeployment {
 
     private getOzVersionByBeacon(Beacon: Constructor<IBeacon>): 5 | 4 {
         let $constructor = new Beacon().abi?.find(x => x.type === 'constructor');
-        $require.notNull($constructor, `Invalid Beacon contract: constructor not found`);
+        $require.notNull($constructor, `Invalid Beacon contract: constructor was not found`);
 
         if ($constructor.inputs.length === 1) {
             // constructor(address implementation_)

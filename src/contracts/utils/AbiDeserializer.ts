@@ -10,7 +10,7 @@ export namespace AbiDeserializer {
 
     export function process(result: any, types: TAbiOutput[]) {
         if (types == null || types.length === 0) {
-            // return as-is
+            // Return as is.
             return result;
         }
         let type: 'array' | 'object' | AbiNativeType = $abiParser.getReturnTypeFromTypes(types);
@@ -48,7 +48,7 @@ export namespace AbiDeserializer {
         }
         if (type.type === 'tuple[]') {
             if (Array.isArray(val) === false) {
-                throw new Error(`${type.name} tuple[] expects array to deserialize. Got ${val}`);
+                throw new Error(`${type.name} tuple[] expects an array to deserialize. Got ${val}`);
             }
             return val.map(item => {
                 return process(item, type.components);
@@ -61,7 +61,7 @@ export namespace AbiDeserializer {
         value = normalizeArray(value);
 
         if (Array.isArray(value) === false) {
-            throw new Error(`Array expected of types: ${types.map(x => x.type)}; Got ${value}`);
+            throw new Error(`Expected an array of types: ${types.map(x => x.type)}; got ${value}`);
         }
 
         let out = [];
@@ -87,7 +87,7 @@ export namespace AbiDeserializer {
         return out;
     }
 
-    // { 0: a, 1: b, 2: c } to array
+    // Convert { 0: a, 1: b, 2: c } to an array.
     function normalizeArray(val) {
         if (Array.isArray(val)) {
             return val;

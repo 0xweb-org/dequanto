@@ -35,7 +35,7 @@ export class ContractProvider implements IContractProvider {
     async getByAddress (address: string): Promise<IContract> {
         let info = await this.getInfo(address);
         if (info == null) {
-            throw new Error(`Contract info not found for ${address}`)
+            throw new Error(`Contract info was not found for ${address}`)
         }
         let abi = await this.getAbi(info.address);
 

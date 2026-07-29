@@ -53,9 +53,9 @@ export class ContractWriter implements IContractWriter {
     }
 
     /**
-    * We split Tx sending in two awaitable steps
-    * 1. This method prepares(gas, nonce, etc) - and sends the Tx
-    * 2. With returned writer you can subscribe to events and/or wait for Tx to be mined
+    * We split transaction sending into two awaitable steps:
+    * 1. This method prepares gas, nonce, etc., and sends the transaction.
+    * 2. With the returned writer, you can subscribe to events and/or wait for the transaction to be mined.
     * @param account
     * @param interfaceAbi
     * @param params
@@ -74,7 +74,7 @@ export class ContractWriter implements IContractWriter {
     ): Promise<TxWriter> {
 
         $require.notNull(account, 'Account parameter is undefined.');
-        $require.True(typeof account === 'object' || typeof account === 'string', `ContractWriter expect Account as the first parameter, got: ${ typeof account }`)
+        $require.True(typeof account === 'object' || typeof account === 'string', `ContractWriter expects Account as the first parameter, got: ${ typeof account }`)
 
         let value = typeof account !== 'string'
             ? account.value

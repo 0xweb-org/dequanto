@@ -149,7 +149,7 @@ export class ContractReader implements IContractReader {
         { -readonly [P in keyof T]: ContractReaderUtils.TIContractReadParamsInferred<T[P]>; }
     > {
 
-        // all inputs should be deferred requests
+        // All inputs should be deferred requests.
         let requests = await alot(requestArr as any[])
             .mapAsync(async x => await x)
             .toArrayAsync() as ContractReaderUtils.IContractReadParams[];
@@ -157,7 +157,7 @@ export class ContractReader implements IContractReader {
         let invalid = requests.find(x => $is.Address(x.address) === false);
         if (invalid != null) {
             $logger.error('Invalid object', invalid);
-            throw new Error(`Invalid Deferred Request at position ${ requests.indexOf(invalid) }`);
+            throw new Error(`Invalid deferred request at position ${ requests.indexOf(invalid) }`);
         }
 
         let inputs = await alot(requests).mapAsync(async req => {
@@ -190,10 +190,10 @@ export class ContractReader implements IContractReader {
     }
 
     async getLogsFilter(abi: TAbiItem | string | '*' | TAbiItem[], options: {
-        /** Can be UNDEFINED, then the logs will be searched globally */
+        /** Can be UNDEFINED; then the logs will be searched globally. */
         address?: TAddress | TAddress[]
         /**
-         * "deployment": get the contracts deployment date to skip lots of blocks (in case we use pagination to fetch logs)
+         * "deployment": get the contract deployment date to skip many blocks when paginating logs.
          */
         fromBlock?: number | Date | 'deployment'
         toBlock?: number | Date
@@ -214,14 +214,14 @@ export class ContractReader implements IContractReader {
                 if ($is.Array(options.address)) {
                     throw new Error('Cannot use "deployment" with multiple addresses');
                 }
-                $require.Address(options.address, `No contract address provided, but the "fromBlock" is "deployment"`)
+                $require.Address(options.address, `No contract address was provided, but "fromBlock" is "deployment"`)
                 try {
                     let explorer = BlockchainExplorerFactory.get(this.client.platform);
                     let dateResolver = new ContractCreationResolver(this.client, explorer);
                     let info = await dateResolver.getInfo(options.address);
                     filters.fromBlock = info.block - 1;
                 } catch (error) {
-                    // Skip any explorer errors and look from block 0
+                    // Skip any explorer errors and search from block 0.
                 }
             } else {
                 filters.fromBlock = await $block.ensureNumber(options.fromBlock, this.client);
@@ -259,7 +259,7 @@ export class ContractReader implements IContractReader {
                 }
                 filters.topics = topics;
             } else {
-                // is Array: query multiple events
+                // Array: query multiple events.
                 let topics = [
                     abi.map($abiUtils.getTopicSignature)
                 ];

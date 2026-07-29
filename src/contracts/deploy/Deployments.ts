@@ -27,33 +27,33 @@ import { DeploymentsStorage, IDeployment } from './storage/DeploymentsStorage';
 type TDeploymentOptions = {
     id?: string
 
-    // For proxy deployments: will redeploy the implementation, if the bytecode has not changed, but the immutable arguments are modified.
+    // For proxy deployments: redeploys the implementation if the bytecode has not changed but the immutable arguments have changed.
     immutablesKey?: string
 
-    // Older deployments didn't have the immutablesKey, so would ANY proxy implementation with immutable variables trigger the redeployment
+    // Older deployments did not have immutablesKey, so any proxy implementation with immutable variables would trigger redeployment.
     checkImmutables?: boolean
 
-    /** Will deploy the contract */
+    /** Deploys the contract. */
     force?: boolean
-    /** Will check if local bytecode has changed and will deploy */
+    /** Checks whether the local bytecode has changed and deploys if needed. */
     latest?: boolean
 
     verification?: boolean | 'silent'
 
-    // Will be used for verification process
+    // Used for the verification process.
     proxyFor?: TAddress
 
     deployment?: {
-        // Pending deployment transaction will be re-checked
+        // Pending deployment transaction will be rechecked.
         tx?: TEth.Hex
-        // When false, the implementation won't be updated in proxy
+        // When false, the implementation will not be updated in the proxy.
         upgradeProxy?: boolean
-        // Owner, if differes from deployer
+        // Owner, if different from the deployer.
         owner?: TEth.IAccount
     }
 }
 type TVerificationOptions = TDeploymentOptions & {
-    // otherwise will be fetched from the deployment TX
+    // Otherwise, this will be fetched from the deployment transaction.
     constructorParams?: any[]
 }
 
@@ -85,7 +85,7 @@ export class Deployments {
         Proxy?: Constructor<ContractBase>,
         ProxyAdmin?: Constructor<IProxyAdmin>
         directory?: string
-        // Will be part of the deployments filename
+        // Part of the deployments filename.
         name?: string
         // TPlatform of a forked network
         fork?: string
@@ -140,7 +140,7 @@ export class Deployments {
     }): Promise<T> {
         let contract = await this.getOrNull(Ctor, opts);
         if (contract == null) {
-            throw new Error(`Deployment ${Ctor.name} ${opts?.id ?? ''} not found in ${this.client.platform} [${this.store.opts?.name ?? this.store.opts?.directory ?? ''}]`);
+            throw new Error(`Deployment ${Ctor.name} ${opts?.id ?? ''} was not found in ${this.client.platform} [${this.store.opts?.name ?? this.store.opts?.directory ?? ''}]`);
         }
         return contract;
     }
@@ -166,7 +166,7 @@ export class Deployments {
     }
 
     /**
-     * Get the deployment for Ctor, but returns the CtorWrapped instance. Useful for proxies, etc.
+     * Gets the deployment for Ctor, but returns the CtorWrapped instance. Useful for proxies, etc.
      * e.g. deployments.getAs(SomeProxy, SomeImplementation);
      */
     async getAs<TDeployed extends ContractBase, TWrapped extends ContractBase>(Ctor: Constructor<TDeployed>, CtorWrapped: Constructor<TWrapped>, opts?: {
@@ -187,7 +187,7 @@ export class Deployments {
         let deployment = await this.store.getDeploymentInfo('', {
             id: params.id
         });
-        $require.notNull(deployment, `Deployment for ${params.id} not found`);
+        $require.notNull(deployment, `Deployment for ${params.id} was not found`);
         await this.ensureVerification(params.Ctor, deployment, {
             id: params.id,
             constructorParams: params.constructorParams,
@@ -222,13 +222,13 @@ export class Deployments {
                 : (opts.latest);
 
             /** For backward compatibility:
-             *  For older deployment, deployer should set if immutablesKey not present in deployed we  */
+             *  For older deployments, the deployer should set this if immutablesKey is not present in the deployed state. */
             let hasNewImmutables = opts.checkImmutables === true
                 ? Boolean(currentDeployment.immutablesKey != opts.immutablesKey)
                 : Boolean(currentDeployment.immutablesKey && currentDeployment.immutablesKey != opts.immutablesKey);
 
             if (opts.force !== true && requireLatest !== true && hasNewImmutables !== true) {
-                // return already deployed contract
+                // Return the already deployed contract.
                 $contract.store.register(contract as any);
                 return {
                     contract,
@@ -236,7 +236,7 @@ export class Deployments {
                 };
             }
             if (requireLatest === true && opts.force !== true) {
-                // was already deployed. Check new bytecode hash
+                // The contract was already deployed. Check the new bytecode hash.
                 let isSame = await this.isSameBytecode(Ctor, currentDeployment);
                 if (isSame && hasNewImmutables !== true) {
                     $contract.store.register(contract as any);
@@ -262,7 +262,7 @@ export class Deployments {
 
 
 
-        // Lets deploy the contract, new, forced, or latest
+        // Deploy the contract: new, forced, or latest.
 
         let constructorArgs = opts.arguments ?? [];
         let id = opts.id ?? Ctor.name;
@@ -305,7 +305,7 @@ export class Deployments {
         CtorImpl: Constructor<T>,
         opts?: TConstructorArgs<T> & TDeploymentOptions & TInitializerParams<T>
     ): Promise<{
-        // the Implementation Contract with the address set to Proxy
+        // The implementation contract with the address set to the proxy.
         contract: T
         contractReceipt?: TEth.TxReceipt
         contractProxy: IProxy,
@@ -357,7 +357,7 @@ export class Deployments {
         })
 
         if (contractImplDeployment.implementation == null) {
-            // Set the Proxy contract as the main Address
+            // Set the proxy contract as the main address.
             contractImplDeployment.implementation = contractImplDeployment.address;
             contractImplDeployment.address = contractProxy.address;
 
@@ -379,7 +379,7 @@ export class Deployments {
     }
 
     /**
-     * Deploys the Beacon contract. Implementation is the target contract (can be a proxy or normal contract)
+     * Deploys the Beacon contract. The implementation is the target contract (can be a proxy or normal contract).
      * https://docs.openzeppelin.com/contracts/5.x/api/proxy#beacon
      **/
     async ensureWithBeacon<
@@ -393,7 +393,7 @@ export class Deployments {
             initialize?: ParametersFromSecond<T['initialize']>
         }
     ): Promise<{
-        // the Implementation Contract with the address set to Beacon Proxy
+        // The implementation contract with the address set to the Beacon proxy.
         contract: T
         contractReceipt?: TEth.TxReceipt
         contractDeployment: IDeployment
@@ -404,7 +404,7 @@ export class Deployments {
         contractBeaconProxyDeployment: IDeployment
     }> {
 
-        $require.notEmpty(opts?.id, `ID is required for Beacon deployment, as Implementation apparently will get multiple Beacons`);
+        $require.notEmpty(opts?.id, `ID is required for Beacon deployment, as the implementation can have multiple Beacons`);
 
         let beaconProxyId = opts.id;
         let implId = beaconProxyId.includes('/')
@@ -441,7 +441,7 @@ export class Deployments {
             implementation: {
                 address: implementationAddress,
                 initData: data,
-                // @TODO implement migrations for Beacons
+                // @TODO Implement migrations for Beacons.
                 migrationData: null
             }
         });
@@ -477,7 +477,7 @@ export class Deployments {
             return true;
         }
 
-        // recheck v1
+        // Recheck v1.
         if (deployment.bytecodeHash != null) {
             let address = deployment.implementation ?? deployment.address;
             let bytecode = await this.client.getCode(address);
@@ -495,8 +495,8 @@ export class Deployments {
                 let [ localDiff, onchainDiff ] = Str.getDifference(bytecodeLocal, bytecodeOnchain);
                 if (localDiff === '' || /^0+$/.test(localDiff)) {
                     this._logger.log(`${deployment.id} bytecode has only immutable data diff, assume unchanged`);
-                    // Local deployedBytecode doesn't contain the immutable data
-                    // instead the solc generates the bytecode with 0 as the placeholder
+                    // Local deployedBytecode does not contain immutable data.
+                    // Instead, solc generates bytecode with 0 as the placeholder.
                     return true;
                 }
             }
@@ -573,19 +573,19 @@ export class Deployments {
 
 
     /**
-     * A simple method to configure the contracts state
+     * A simple method to configure contract state.
      */
     public async configure<T extends TContract, TValue>(Ctor: Constructor<T> | T, opts: {
         id?: string;
 
-        // Latest value, if differs from current, the updater will be executed
+        // Latest value. If it differs from current, the updater will be executed.
         value?: TValue
         // Current value.
         current?: TValue | Promise<TValue> | ((x: T) => Promise<TValue>);
         shouldUpdate?: boolean | (() => boolean | Promise<boolean>)
         updater: (x: T, value: TValue) => Promise<any>
 
-        // Will be logged with old and new value
+        // Logged with the old and new values.
         title?: string
     }) {
         let x: T;
@@ -673,7 +673,7 @@ function isEqual(a, b) {
         // Not strictly equal
         return a == b;
     }
-    // check arrays
+    // Check arrays.
     if (Array.isArray(a) || Array.isArray(b)) {
         if (a.length !== b.length) {
             return false;
@@ -682,7 +682,7 @@ function isEqual(a, b) {
             return isEqual(x, b[i]);
         });
     }
-    // check objects
+    // Check objects.
     for (let key in a) {
         let aValue = a[key];
         let bValue = b[key];
@@ -692,7 +692,7 @@ function isEqual(a, b) {
     }
     for (let key in b) {
         if (key in a === false && b[key] != null) {
-            // value present in b, but was not in a
+            // Value is present in b, but not in a.
             return false;
         }
     }
@@ -738,8 +738,8 @@ function serializeMigrationData(id: string, contract: ContractBase, opts: any) {
 
 
 /**
- * Normalize the contract name by removing any versions from name
- * "FooV1" is actually the "Foo" contract
+ * Normalizes the contract name by removing any version suffix from the name.
+ * "FooV1" is actually the "Foo" contract.
  */
 function getImplementationId (Ctor: Constructor<TContract>) {
     let id = Ctor.name;

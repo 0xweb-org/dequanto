@@ -23,11 +23,11 @@ export interface IDeployment {
     id: string
     name: string
     immutablesKey?: string
-    // TS/JS file
+    // TS/JS file.
     main: string
     address: TAddress
 
-    // If the Contract was deployed with Proxy - the Address is the address of the proxy
+    // If the contract was deployed with a proxy, the address is the proxy address.
     implementation?: TAddress
 
     proxyFor?: TAddress
@@ -54,9 +54,9 @@ export class  DeploymentsStorage {
 
     constructor (public client: Web3Client, public deployer: IAccount, public opts: {
         directory?: string
-        // Will be part of the deployments filename
+        // Part of the deployments filename.
         name?: string
-        // TPlatform of a forked network
+        // TPlatform of a forked network.
         fork?: string
     }) {
 
@@ -104,7 +104,7 @@ export class  DeploymentsStorage {
             if (deploymentsByAddress.length > 1) {
                 let asProxy = deploymentsByAddress.filter(x => x.proxyFor != null);
                 if (asProxy.length > 0) {
-                    $require.eq(asProxy.length, 1, 'Expects only 1 deployment per Address.');
+                    $require.eq(asProxy.length, 1, 'Expected only one deployment per address.');
                     return asProxy[0];
                 }
             }
@@ -112,12 +112,12 @@ export class  DeploymentsStorage {
             if (deploymentsByAddress.length === 0) {
                 let asImplementations = deployments.filter(x => $address.eq(x.implementation, byAddress));
                 if (asImplementations.length > 0) {
-                    $require.eq(asImplementations.length, 1, 'Expects only 1 deployment per Address.');
+                    $require.eq(asImplementations.length, 1, 'Expected only one deployment per address.');
                     return asImplementations[0];
                 }
             }
 
-            throw new Error(`Deployment not found for Address: ${byAddress}`);
+            throw new Error(`Deployment was not found for address: ${byAddress}`);
         }
 
         let id = typeof mix === 'string' ? mix : mix.name;
@@ -180,7 +180,7 @@ export class  DeploymentsStorage {
             deployer: this.deployer.address,
             timestamp: $date.toUnixTimestamp(new Date()),
 
-            // If current deployment is the implementation, set the field to null, for later reconfiguration, otherwise keep the field uninitialized
+            // If the current deployment is the implementation, set the field to null for later reconfiguration. Otherwise, keep the field uninitialized.
             implementation: currentDeployment?.implementation ? null : void 0,
         };
 
@@ -258,11 +258,11 @@ export class  DeploymentsStorage {
             let upstreamDeployments: IDeployment[];
             let shouldCopy = true;
             if (await File.existsAsync(path)) {
-                // forked deployments path already exists, check if stale
+                // The forked deployments path already exists; check whether it is stale.
                 let blockNumber = await this.client.getBlockNumber();
                 if (upstreamDeploymentExists) {
                     upstreamDeployments = await File.readAsync<IDeployment[]>(upstreamDeploymentsPath);
-                    // 1. Check if the original(upstream) network has more recent deployments
+                    // 1. Check whether the original (upstream) network has more recent deployments.
                     let hasNewDeployments = upstreamDeployments.some(x => x.block > blockNumber);
                     shouldCopy = hasNewDeployments;
                 } else {
@@ -278,11 +278,11 @@ export class  DeploymentsStorage {
                         shouldCopy = true;
                     }
                     if (shouldCopy === false) {
-                        // 3. Just-in-case, check if there are deployments with higher block number, as the current HEAD
+                        // 3. Just in case, check whether any deployments have a higher block number than the current HEAD.
                         let hasNewDeployments = deployments.some(x => x.block > blockNumber);
                         shouldCopy = hasNewDeployments;
                         if (shouldCopy === false) {
-                            // 4. Check if the latest deployments transaction exists in current forked network
+                            // 4. Check whether the latest deployment transaction exists in the current forked network.
                             let latestDeployment = alot(deployments).maxItem(x => x.block);
                             if (latestDeployment != null) {
                                 try {
@@ -295,7 +295,7 @@ export class  DeploymentsStorage {
                         }
                     }
                     if (shouldCopy === false && upstreamDeployments?.length > 0) {
-                        // 5. Just-in-case, if there are upstream deployments with lower block number, as the current HEAD, but not in the current forked network
+                        // 5. Just in case, check for upstream deployments with a lower block number than the current HEAD that are missing from the current forked network.
                         let deploymentIds = alot(deployments).toDictionary(x => x.id);
                         let hasNewDeployments = upstreamDeployments
                             .filter(x => x.block <= blockNumber)
@@ -306,14 +306,14 @@ export class  DeploymentsStorage {
                 }
             }
             if (shouldCopy) {
-                // current forked deployments are stale, copy the upstream deployments or clean
+                // Current forked deployments are stale; copy the upstream deployments or clear them.
                 if (upstreamDeploymentExists) {
                     await File.copyToAsync(upstreamDeploymentsPath, path, {
                         silent: true
                     });
                     File.clearCache();
                 } else {
-                    // clear
+                    // Clear.
                     await File.writeAsync(path, []);
                 }
             }
@@ -343,7 +343,7 @@ export class  DeploymentsStorage {
         ]);
         let deployments = await store.getAll();
         if (deployments.length === 0) {
-            // Nothing to remove: No deployments
+            // Nothing to remove: no deployments.
             return;
         }
         if (block0 == null) {
@@ -352,9 +352,9 @@ export class  DeploymentsStorage {
 
         let stale = deployments.filter(x => {
             return x.timestamp == null
-                // was deployed earlier as current genesis block
+                // Was deployed earlier than the current genesis block.
                 || x.timestamp < block0.timestamp
-                // was deployed in the later block as current block
+                // Was deployed in a later block than the current block.
                 || x.block > blockNumberHead;
         });
         if (stale.length > 0) {

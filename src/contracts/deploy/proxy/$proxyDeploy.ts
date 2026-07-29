@@ -20,7 +20,7 @@ export namespace $proxyDeploy {
                 variable: result.newVar,
                 path: serializePath(result.newPath, result.newVar),
                 conflicts: result.conflicts,
-                message: `${result.type}: Variable ${serializePath(result.newPath, result.newVar)}(${result.newVar.type}) at slot ${result.newVar.slot} conflicts ${conflicts}`
+                message: `${result.type}: Variable ${serializePath(result.newPath, result.newVar)}(${result.newVar.type}) at slot ${result.newVar.slot} conflicts with ${conflicts}`
             };
         }
         return null;
@@ -34,15 +34,15 @@ export namespace $proxyDeploy {
 
         ctx ??= {};
 
-        // When resolving state variables
-        // we append '$' char(s) to the overriden variables to avoid name conflicts, so here we check also for __gap with possible $ sfx.
+        // When resolving state variables, we append '$' characters to overridden variables to avoid name conflicts.
+        // Also check for __gap with a possible '$' suffix.
         let rgxGap = /^_+gap\$*$/;
         let oldMemory = oldVars.map(getMemoryPosition);
         let oldLastSlot = alot(oldVars).max(x => x.slot);
         for (let i = 0; i < newVars.length; i++) {
             let newVar = newVars[i];
             if (newVar.slot > oldLastSlot) {
-                // New variable was added after the last slot in current deployment
+                // A new variable was added after the last slot in the current deployment.
                 if (ctx.isExtendableMemory === false) {
                     return new BaseError(
                         ELayoutError.MEMORY_OVERFLOW,
@@ -52,8 +52,8 @@ export namespace $proxyDeploy {
                     );
                 }
 
-                // Find the new variable name in old storage
-                // Exclude those with the same position, as they might be pushed logically down by __gap pattern
+                // Find the new variable name in old storage.
+                // Exclude variables at the same position, as they might be pushed logically down by the __gap pattern.
                 let oldVarWithName = oldVars.find(x => x.name === newVar.name);
                 if (oldVarWithName != null && !Variables.eqLocation(oldVarWithName, newVar) && !rgxGap.test(newVar.name)) {
                     return new BaseError(
@@ -69,7 +69,7 @@ export namespace $proxyDeploy {
             let oldVarAtSamePos = oldVars.find(x => x.slot === newVar.slot && x.position === newVar.position);
             if (oldVarAtSamePos != null) {
                 if (oldVarAtSamePos.type === newVar.type) {
-                    // New variable is the same
+                    // The new variable is the same.
                     if (oldVarAtSamePos.name !== newVar.name) {
                         let oldVarWithName = oldVars.find(x => x.name === newVar.name);
                         if (oldVarWithName != null) {
@@ -229,7 +229,7 @@ export namespace $proxyDeploy {
         newPath?: string
         oldPath?: string
 
-        // root storage is extendable, but if we compare base array types, or structs, the memory is limited due to outer next variable slots
+        // Root storage is extendable, but when comparing base array types or structs, memory is limited by outer next-variable slots.
         isExtendableMemory?: boolean
 
         isLastVariable?: boolean
@@ -239,13 +239,13 @@ export namespace $proxyDeploy {
         TYPE_MISMATCH = 'TYPE_MISMATCH',
         TYPE_COLLISION = 'TYPE_COLLISION',
 
-        /** throws error if memory is not extendable */
+        /** Throws an error if memory is not extendable. */
         ARRAY_LENGTH_MISMATCH = 'ARRAY_LENGTH_MISMATCH',
 
-        /** in arrays the memory for a single item is not extendable, but in contract's root storage or mapping values is */
+        /** In arrays, memory for a single item is not extendable, but it is extendable in contract root storage or mapping values. */
         MEMORY_OVERFLOW = 'MEMORY_OVERFLOW',
 
-        /** Variables on same slot with different names (rename possible) but additionally the some variable exists in old layout on different slot */
+        /** Variables on the same slot with different names (rename possible), while the same variable also exists in the old layout on a different slot. */
         NAME_MISMATCH = 'NAME_MISMATCH'
     }
     class BaseError {
@@ -274,7 +274,7 @@ export namespace $proxyDeploy {
 
     function getMemoryPosition ($var: ISlotVarDefinition) {
         if (isDynamicVariable($var)) {
-            // dynamic variables occupy the single slot
+            // Dynamic variables occupy a single slot.
             return {
                 variable: $var,
                 offset: $var.slot * 256,
@@ -300,12 +300,12 @@ export namespace $proxyDeploy {
     function requireBoth (a: ISlotVarDefinition, b: ISlotVarDefinition, aCheck: boolean, bCheck: boolean) {
         if (!aCheck) {
             return {
-                error: `Current variable is not dynamic ${a.name}(${a.type}) but the new one is: ${b.name}(${b.type})`
+                error: `Current variable ${a.name}(${a.type}) is not dynamic, but the new one is: ${b.name}(${b.type})`
             };
         }
         if (!bCheck) {
             return {
-                error: `Current variable is dynamic ${a.name}(${a.type}) but the new one is not: ${b.name}(${b.type})`
+                error: `Current variable ${a.name}(${a.type}) is dynamic, but the new one is not: ${b.name}(${b.type})`
             };
         }
     }

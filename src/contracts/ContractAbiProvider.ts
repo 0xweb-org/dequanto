@@ -20,7 +20,7 @@ export class ContractAbiProvider {
 
     async getAbi(abi: TAddress | string, opts: { implementation?: string, location?: string, optional?: boolean } = null) {
 
-        $require.notNull(abi, `Abi not provided to get the Abi Json from`);
+        $require.notNull(abi, `ABI source is required`);
 
         let abiJson: TAbiItem[]
         let implementation: TAddress;
@@ -32,7 +32,7 @@ export class ContractAbiProvider {
             let path = abi;
             let location = opts?.location;
             if (location && $path.isAbsolute(path) === false) {
-                // if path not relative, check the file at ClassFile location
+                // If the path is not absolute, check the file relative to the class file location.
                 let relPath = class_Uri.combine(location, path);
                 if (await File.existsAsync(relPath)) {
                     path = relPath;
@@ -42,18 +42,18 @@ export class ContractAbiProvider {
             abiJson = Array.isArray(json) ? json : json.abi;
         }
 
-        opts?.optional !== true && $require.notNull(abiJson, `Abi not resolved from ${abi}`);
+        opts?.optional !== true && $require.notNull(abiJson, `ABI was not resolved from ${abi}`);
         return { abiJson, implementation };
     }
 
 
     private async getAbiByAddress (abi: TAddress, opts: { implementation?: string }) {
-        let address = $address.expectValid(abi, 'contract address is not valid');
+        let address = $address.expectValid(abi, 'Contract address is not valid');
         let platform = this.client.platform;
         let explorer = $require.notNull(this.explorer, `Explorer not resolved for network: ${platform}`);
 
         try {
-            $logger.log(`Loading contracts ABI for ${address}. `)
+            $logger.log(`Loading contract ABI for ${address}. `)
             let { abi, implementation } = await explorer.getContractAbi(address, opts);
 
             let hasProxy = $address.eq(address, implementation) === false;
@@ -63,7 +63,7 @@ export class ContractAbiProvider {
             return { abi: abiJson, implementation };
         } catch (error) {
             $logger.error(error);
-            throw new Error(`ABI is not resolved from ${platform}/${address}: ${error.message ?? error}`);
+            throw new Error(`ABI was not resolved from ${platform}/${address}: ${error.message ?? error}`);
         }
     }
 }

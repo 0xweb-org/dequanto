@@ -39,7 +39,7 @@ export abstract class ContractBase {
     private blockDate?: Date;
     //private from?: TAddress;
 
-    /** 1.4 for medium*/
+    /** 1.4 for medium */
     private gasPriorityFee?: number;
     protected builderConfig?: ITxBuilderOptions;
     protected writerConfig?: ITxWriterOptions;
@@ -177,7 +177,7 @@ export abstract class ContractBase {
                     }
                     let data = writer.builder.data as any as TEth.Tx;
                     if (!params?.estimateGas) {
-                        // remove default values
+                        // Remove default values.
                         delete data.gasPrice;
                         delete data.maxPriorityFeePerGas;
                         delete data.maxFeePerGas;
@@ -404,7 +404,7 @@ export abstract class ContractBase {
             .filter(x => (x.inputs?.length ?? 0) === args.length);
 
         if ($abis.length === 0) {
-            throw new Error(`ABI not found in overloads \n${abis.join('\n')}\n by arguments count. Got ${args.length} arguments`);
+            throw new Error(`ABI was not found in overloads \n${abis.join('\n')}\n by argument count. Got ${args.length} arguments`);
         }
         if ($abis.length === 1) {
             return $abis[0];
@@ -422,7 +422,7 @@ export abstract class ContractBase {
             return $abis[0];
         }
 
-        throw new Error(`ABI not found. Got multiple overloads for the argument count ${args.length}. We should pick the ABI by parameters type.`)
+        throw new Error(`ABI was not found. Got multiple overloads for the argument count ${args.length}. The ABI should be selected by parameter types.`)
     }
 
     protected $extractLogs(tx: TEth.TxReceipt, abiItem: TAbiItem) {
@@ -458,9 +458,9 @@ export abstract class ContractBase {
         }
         onProgress?(info: TLogsRangeProgress<ITxLogItem>)
 
-        /** if TRUE the data will be only forwarded via onProgress callback.
-         * And the final array will be undefined.
-         * This will handle big queries to hold huge arrays in memory
+        /** If TRUE, data will only be forwarded via the onProgress callback.
+         * The final array will be undefined.
+         * This handles large queries without holding huge arrays in memory.
          * */
         streamed?: boolean
 
@@ -545,7 +545,7 @@ export abstract class ContractBase {
     @memd.deco.memoize({ perInstance: true })
     protected getContractWriter() {
         if (this.abi != null) {
-            // Updates the singleton instance
+            // Update the singleton instance.
             let logParser = di.resolve(TxTopicInMemoryProvider);
             logParser.register(this.abi);
         }
@@ -624,10 +624,10 @@ export type TEventLogOptions<TParams> = {
 type TEventParams<TEvents extends TEventsBase, TEventName extends keyof TEvents> = Partial<TEvents[TEventName]['outputParams']>;
 
 
-// Tuple check type detects how an argument satisfies the "tuple"
-// shallow: checks only that the argument is an object type
-// single: checks that all tuple components (keys) are present in the argument
-// both: checks that all tuple components are present in the argument AND all argument keys exist in the tuple components
+// Tuple check type detects how an argument satisfies the "tuple" type.
+// shallow: checks only that the argument is an object type.
+// single: checks that all tuple components (keys) are present in the argument.
+// both: checks that all tuple components are present in the argument AND all argument keys exist in the tuple components.
 function filterABIbyArguments(abis: TAbiItem[], args: any[], tupleCheck: 'shallow' | 'single' | 'both') {
     return abis.filter(abi => {
         for (let i = 0; i < args.length; i++) {
@@ -667,8 +667,8 @@ function filterABIbyArguments(abis: TAbiItem[], args: any[], tupleCheck: 'shallo
                     // E.g. Solidity structs:
                     // 1. struct FooV1 { uint256 a; uint256 b; }
                     // 2. struct FooV2 { uint256 a; uint256 b; uint256 c; }
-                    // If we call the 2. overloaded function the single check will match both structs
-                    // therefore we need later to call with tupleCheck === 'both' to detect correct overload
+                    // If we call the second overloaded function, the single check will match both structs.
+                    // Therefore, we need to call later with tupleCheck === 'both' to detect the correct overload.
                     const components = item.components ?? [];
                     const satisfies = components.every(x => x.name in arg) ?? false;
                     if (!satisfies) {

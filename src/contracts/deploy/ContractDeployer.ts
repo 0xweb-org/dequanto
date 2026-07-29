@@ -87,10 +87,10 @@ export class ContractDeployer {
         let artifacts = ctx.artifacts ?? './artifacts/';
         let files = await $require.resolved(
             Directory.readFilesAsync(artifacts, '**.json'),
-            `Artifact files not found for ${ctx.name}`
+            `Artifact files were not found for ${ctx.name}`
         );
         let file = files.find(x => x.uri.file === `${ctx.name}.json`);
-        $require.notNull(file, `File for the contract ${ctx.name} not found within: \n ${ files.map(x => x.uri.toString()).join('\n') }`);
+        $require.notNull(file, `File for contract ${ctx.name} was not found in: \n ${ files.map(x => x.uri.toString()).join('\n') }`);
 
         return this.fromMetaFile ({
             ...ctx,
@@ -129,7 +129,7 @@ export class ContractDeployer {
     }
 
     private async fromMetaJson (ctx: TDeploymentByMetaJson) {
-        $require.notNull(ctx.json?.bytecode, 'Contract bytecode is expected in json');
+        $require.notNull(ctx.json?.bytecode, 'Contract bytecode is expected in JSON');
         return this.fromBytecode({
             ...ctx,
             bytecode: ctx.json.bytecode,
@@ -139,7 +139,7 @@ export class ContractDeployer {
     }
 
     private async fromBytecode (ctx: TDeploymentWithBytecode) {
-        $require.True($is.Hex(ctx.bytecode), `bytecode must be a hex string: ${ctx.bytecode}`);
+        $require.True($is.Hex(ctx.bytecode), `Bytecode must be a hex string: ${ctx.bytecode}`);
 
         let deployment = new ContractDeployment({
             client: this.client,

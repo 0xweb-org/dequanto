@@ -107,7 +107,7 @@ export abstract class Contract {
         if (info == null) {
             let byName = $is.Address(mix) === false;
             if (byName) {
-                throw new Error(`Contract by name not found ${mix}`);
+                throw new Error(`Contract by name was not found: ${mix}`);
             }
             info = <any> { address: mix };
         }

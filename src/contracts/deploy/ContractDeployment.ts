@@ -19,7 +19,7 @@ export class ContractDeployment {
         abi?: TAbiItem[]
         params?: any[]
         source?: {
-            // JSON meta file
+            // JSON metadata file.
             path: string
         }
     }) {

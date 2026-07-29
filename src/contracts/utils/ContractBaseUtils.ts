@@ -11,13 +11,13 @@ export namespace ContractBaseUtils {
     export function $getAbiItem(abi: TAbiItem[], type: 'event' | 'function' | 'string', name: string, argsCount?: number) {
         let arr = abi.filter(x => x.type === type && x.name === name);
         if (arr.length === 0) {
-            throw new Error(`TAbiItem ${name} not found`);
+            throw new Error(`TAbiItem ${name} was not found`);
         }
         if (arr.length === 1) {
             return arr[0];
         }
         if (argsCount == null) {
-            throw new Error(`Found multiple TAbiItems for ${name}. Args count not specified to pick one`);
+            throw new Error(`Found multiple TAbiItems for ${name}. Argument count was not specified to pick one`);
         }
         return arr.find(x => (x.inputs?.length ?? 0) === argsCount);
     }
@@ -98,7 +98,7 @@ export namespace ContractBaseUtils {
         let tx = await writer.writeAsync(account, abi, params);
         let { error, result } = await $promise.caught(tx.onSigned);
 
-        // get TransactionHash
+        // Get the transaction hash.
         let hash = result != null ? $contract.keccak256(result) : null;
         return { error, signed: result, hash };
     }
