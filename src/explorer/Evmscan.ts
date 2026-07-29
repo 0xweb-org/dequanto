@@ -3,6 +3,6 @@ import { BlockchainExplorer } from './BlockchainExplorer';
 
 
 /**
- * @obsolete Use BlockchainExplorer class instead.
+ * @obsolete Use BlockchainExplorer class instead
  */
 export const Evmscan = BlockchainExplorer;

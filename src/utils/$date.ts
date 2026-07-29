@@ -80,7 +80,7 @@ export class DateTool {
         if (ms != null) this.date.setMilliseconds(ms);
         return this;
     }
-    /** Sets the numeric day-of-the-month value of the Date object using local time. */
+    /** Sets the numeric day-of-the-month value of the Date object using local time */
     setDate(v: number) {
         this.date.setDate(v);
         return this;

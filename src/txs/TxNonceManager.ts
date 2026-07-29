@@ -34,7 +34,7 @@ export class TxNonceManager {
     }
 
     /**
-     * Pick current nonce without incrementing. TxDataBuilder will call the incrementCursor after the tx signed.
+     * Pick the current nonce without incrementing. TxDataBuilder will call incrementCursor after the tx is signed
      * */
     public async pickNonce (client: Web3Client): Promise<bigint> {
         if (this.shouldUpdateNonce()) {

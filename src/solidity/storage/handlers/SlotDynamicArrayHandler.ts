@@ -41,7 +41,7 @@ export class SlotDynamicArrayHandler extends ASlotDynamicArray {
     private async getStorageInner(key: IAccessorItem): Promise<any> {
 
         if (key.type !== 'index') {
-            throw new Error(`Expected to get the Array index as a Key got ${key.key} as ${key.type}`);
+            throw new Error(`Expected to get the array index as a key, but got ${key.key} as ${key.type}`);
         }
 
         let baseType = $abiType.array.getBaseType(this.slot.type);

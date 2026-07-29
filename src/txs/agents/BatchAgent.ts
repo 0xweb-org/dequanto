@@ -18,7 +18,7 @@ export class BatchAgent implements ITxWriterAgent {
     public transactions: MockTxWriter[] = []
 
     constructor (public options?: {
-        // It is usefull to not batch the deployment transactions.
+        // It is useful not to batch deployment transactions
         ignoreContractCreation?: boolean,
     }) {
 

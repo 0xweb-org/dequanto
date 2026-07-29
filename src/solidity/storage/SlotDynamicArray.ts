@@ -19,7 +19,7 @@ export abstract class ASlotDynamicArray extends ASlotsStorageHandler {
     }
 
 
-    // /** @TODO doesnt support complex arrays  */
+    // /** @TODO Does not support complex arrays */
     // protected async getCursorFor (idx: number): Promise<{
     //     slot: number | bigint,
     //     position: number,

@@ -38,7 +38,7 @@ UTest({
 
             paths.forEach(path => {
                 let keys = Accessor.parse(path).keys;
-                deepEq_(keys, expect, `${path} doesnt match ${ JSON.stringify(expect, null, 2) }`);
+                deepEq_(keys, expect, `${path} does not match ${ JSON.stringify(expect, null, 2) }`);
             })
         })
     }

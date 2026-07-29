@@ -197,7 +197,7 @@ namespace $astSetters {
 
         let body = method.body;
 
-        // Find a variable setter in the method's body.
+        // Find a variable setter in the method's body
         let matches = Ast.findMany<BinaryOperation | UnaryOperation | IndexAccess>(body, node => {
             if (Ast.isBinaryOperation(node) && /^.?=$/.test(node.operator)) {
 
@@ -370,7 +370,7 @@ namespace $astSetters {
                 }
             }
 
-            // local variables are not logged to get the Mapping Key from.
+            // Local variables are not logged to get the mapping key from
             return {
                 method: await Ast.getAbi(method, source, inheritance),
                 accessors: setterIdentifiers.map(x => x.key)
@@ -659,7 +659,7 @@ namespace $node {
             return accessors.every(key => event.args.some(arg => arg.key === key));
         });
         if (events.length > 0) {
-            // most of the time it will be only one event, so just take the first one.
+            // Most of the time there will be only one event, so just take the first one
             let event = events[0];
             let mappings = accessors.map(key => {
                 let index = event.args.findIndex(arg => arg.key === key);

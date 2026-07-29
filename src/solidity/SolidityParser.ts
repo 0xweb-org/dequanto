@@ -55,7 +55,7 @@ export namespace SolidityParser {
             })
             .toArrayAsync({ threads: 1 });
 
-        // fix: remove duplicates due to interfaces and multiple inheritance.
+        // Fix: remove duplicates due to interfaces and multiple inheritance
         abisDef = alot(abisDef)
             .map(def => {
                 let key = `${def.type} ${def.name} ${def.inputs?.map(input => input.type).join(',')}`;

@@ -132,7 +132,7 @@ export class TimelockService implements ITimelockService {
 
     /** Schedules-Wait-Execute a task distinguished by the unique task name
      *
-     * 1. if schedule doesn't exist, create it
+     * 1. if the schedule does not exist, create it
      * 2. if schedule date NOT yet ready, exit
      * 3. if schedule date IS ready, execute it
      * 4. if executed, exit
@@ -180,7 +180,7 @@ export class TimelockService implements ITimelockService {
 
     /** Schedules-Wait-Execute a task distinguished by the unique task name
      *
-     * 1. if schedule doesn't exist, create it
+     * 1. if the schedule does not exist, create it
      * 2. if schedule date NOT yet ready, exit
      * 3. if schedule date IS ready, execute it
      * 4. if executed, exit

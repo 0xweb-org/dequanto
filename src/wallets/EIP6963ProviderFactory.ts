@@ -7,7 +7,7 @@ import { $require } from '@dequanto/utils/$require';
 import { class_EventEmitter } from 'atma-utils';
 import { IEIP6963Provider } from '@dequanto/rpc/transports/compatibility/IEIP6963Provider';
 
-// Interface for provider information following EIP-6963.
+// Interface for provider information following EIP-6963
 interface EIP6963ProviderInfo {
     rdns?: string; // Unique identifier for the wallet e.g io.metamask, io.metamask.flask
     uuid: string; // Globally unique ID to differentiate between provider sessions for the lifetime of the page
@@ -16,16 +16,16 @@ interface EIP6963ProviderInfo {
     chainId?: number;
 }
 
-// Interface for Ethereum providers based on the EIP-1193 standard.
+// Interface for Ethereum providers based on the EIP-1193 standard
 
-// Interface detailing the structure of provider information and its Ethereum provider.
+// Interface detailing the structure of provider information and its Ethereum provider
 export interface EIP6963ProviderDetail {
     info: EIP6963ProviderInfo; // The provider's info
     provider: IEIP6963Provider; // The EIP-1193 compatible provider
     accounts?: TEth.Address[]; // Optional: Array of connected Ethereum accounts
 }
 
-// Type representing the event structure for announcing a provider based on EIP-6963.
+// Type representing the event structure for announcing a provider based on EIP-6963
 type EIP6963AnnounceProviderEvent = {
     detail: EIP6963ProviderDetail
 }

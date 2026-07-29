@@ -10,7 +10,7 @@ export abstract class ASlotFixedArray extends ASlotsStorageHandler {
         return $types.isFixedArray(slot.type);
     }
 
-    /** @TODO doesnt support complex arrays  */
+    /** @TODO Does not support complex arrays */
     protected async getCursorFor (idx: number): Promise<{ slot: number | bigint, position: number, size: number }> {
         let { slot } = this;
         let arrLength = $abiType.array.getLength(slot.type);

@@ -84,7 +84,7 @@ export class TokenDataProvider {
     }
 
     /**
-     *  Adds and saves the token to dequanto configuration.
+     * Adds and saves the token to the dequanto configuration
      */
     async addKnownToken (token: IToken): Promise<any> {
         await this.config.addToken(token);
@@ -109,7 +109,7 @@ export class TokenDataProvider {
         return NativeTokens.getNative(platform);
     }
 
-    /** Download tokens with various exchange/swap providers and merge them into one collection. */
+    /** Download tokens with various exchange/swap providers and merge them into one collection */
     async redownload () {
         return await alot(this.providers)
             .forEachAsync(async (x, i) => {

@@ -166,7 +166,7 @@ class MockedStorageTransport extends SlotsStorageTransport {
         return data;
     }
     setStorageAt(slot: string | number | bigint, position: number, size: number, buffer: string | number | bigint | boolean): Promise<void> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
 
     async extractMappingKeys (ctx: { slot: ISlotVarDefinition }): Promise<{ keys: (string | number | bigint)[][] }> {

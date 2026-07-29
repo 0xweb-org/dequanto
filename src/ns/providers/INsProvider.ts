@@ -4,7 +4,7 @@ import { TPlatform } from '@dequanto/models/TPlatform'
 
 export interface INsProviderOptions {
     /**
-     * Loop over each chain the provider supports.
+     * Loop over each chain the provider supports
      * @default: true
      */
     multichain?: boolean

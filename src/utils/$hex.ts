@@ -6,7 +6,7 @@ export namespace $hex {
     export const ZERO = '0x'
 
     /**
-     * Adds '00' bytes to the hex string.
+     * Adds '00' bytes to the hex string
      * @param hex
      * @param byteSize Min bytes count in the hex string
      */

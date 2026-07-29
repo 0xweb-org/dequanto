@@ -41,7 +41,7 @@ export class SourceCodeProvider {
         }).toArray();
 
         if (files.length === 0) {
-            throw new Error(`Source code can't be loaded for ${this.client.platform}:${opts.address}`);
+            throw new Error(`Source code cannot be loaded for ${this.client.platform}:${opts.address}`);
         }
 
         let file = null as (typeof files[0]);

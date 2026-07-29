@@ -3,7 +3,7 @@ import alot from 'alot';
 /**
  * Defines a RANGE: [FROM_NUMBER, TO_NUMBER | Infinity)
  *
- * - Walking/Iterating/Visiting through the range marks the visited number as ADD.
+ * - Walking/Iterating/Visiting through the range marks the visited number as ADD
  *
  * - Possible to ADD the number manually, for example for persistence/restore properties
  *
@@ -49,8 +49,8 @@ export class PackedRanges {
     }
 
     /**
-     * Calculates the number of elements remaining to be visited/added in the range.
-     * This is the difference between the total capacity and the number of elements already tracked.
+     * Calculates the number of elements remaining to be visited/added in the range
+     * This is the difference between the total capacity and the number of elements already tracked
      */
     totalLeft() {
         return this.total() - this.totalAdded();
@@ -58,11 +58,11 @@ export class PackedRanges {
 
 
     /**
-     * Gets the next unvisited number in the range and marks it as visited.
+     * Gets the next unvisited number in the range and marks it as visited
      *
      * This method finds the next number that hasn't been added to the tracked ranges yet,
      * automatically adds it to the ranges, and returns it. It respects the boundaries
-     * defined by `from` and `to` properties.
+     * defined by `from` and `to` properties
      *
      * The method works by:
      * - Starting from `this.from` if no ranges exist
@@ -112,10 +112,10 @@ export class PackedRanges {
     }
 
     /**
-     * Gets the maximum (upper bound) value from all tracked ranges.
+     * Gets the maximum (upper bound) value from all tracked ranges
      *
-     * This method returns the highest number that has been visited/added to the ranges.
-     * It retrieves the upper bound of the last range in the sorted ranges array.
+     * This method returns the highest number that has been visited/added to the ranges
+     * It retrieves the upper bound of the last range in the sorted ranges array
      *
      * @returns The maximum value in the tracked ranges, or `null` if no ranges have been added yet
      */
@@ -128,11 +128,11 @@ export class PackedRanges {
     }
 
     /**
-     * Checks if a specific number has been visited/added to the tracked ranges.
+     * Checks if a specific number has been visited/added to the tracked ranges
      *
      * This method searches through all tracked ranges to determine if the given number
      * falls within any of them. It performs a linear search through the ranges array,
-     * checking if the number is within the bounds (inclusive) of any range.
+     * checking if the number is within the bounds (inclusive) of any range
      *
      * @param nr - The number to check for inclusion in the tracked ranges
      * @returns `true` if the number exists within any of the tracked ranges, `false` otherwise
@@ -148,7 +148,7 @@ export class PackedRanges {
     }
 
     /**
-     * Adds a number to the tracked ranges, marking it as visited.
+     * Adds a number to the tracked ranges, marking it as visited
      *
      * This method intelligently adds a number to the ranges by either:
      * - Extending an existing range if the number is adjacent to it
@@ -156,7 +156,7 @@ export class PackedRanges {
      * - Doing nothing if the number is already included in an existing range
      *
      * The method maintains the sorted order of ranges and automatically merges
-     * adjacent numbers into contiguous ranges for efficient storage.
+     * adjacent numbers into contiguous ranges for efficient storage
      *
      * @param nr - The number to add to the tracked ranges
      * @returns `true` if the number was successfully added (new or extended a range),
@@ -200,16 +200,16 @@ export class PackedRanges {
     }
 
     /**
-     * Adds a complete range to the tracked ranges and compacts the result.
+     * Adds a complete range to the tracked ranges and compacts the result
      *
      * This method adds an entire range [min, max] to the tracked ranges array,
      * then automatically compacts the ranges to merge any overlapping or adjacent
      * ranges. This is useful for bulk operations where you want to mark multiple
-     * consecutive numbers as visited at once.
+     * consecutive numbers as visited at once
      *
      * Unlike the `add()` method which adds individual numbers, this method adds
      * a complete range tuple and ensures the internal ranges array remains optimized
-     * by calling `compact()` after insertion.
+     * by calling `compact()` after insertion
      *
      * @param range - A tuple [min, max] representing the range to add, where both bounds are inclusive
      */
@@ -219,7 +219,7 @@ export class PackedRanges {
     }
 
     /**
-     * Removes a specific number from the tracked ranges, marking it as unvisited.
+     * Removes a specific number from the tracked ranges, marking it as unvisited
      *
      * This method searches for the number within the tracked ranges and removes it by either:
      * - Removing the entire range if it contains only the target number
@@ -228,7 +228,7 @@ export class PackedRanges {
      * - Splitting the range into two separate ranges if the number is in the middle
      *
      * The method maintains the sorted order of ranges and ensures efficient storage
-     * by handling all edge cases appropriately.
+     * by handling all edge cases appropriately
      *
      * @param nr - The number to remove from the tracked ranges
      * @returns `true` if the number was found and successfully removed from the ranges,
@@ -262,14 +262,14 @@ export class PackedRanges {
     }
 
     /**
-     * Removes a range of numbers from the tracked ranges, marking them as unvisited.
+     * Removes a range of numbers from the tracked ranges, marking them as unvisited
      *
      * This method subtracts the specified range from all tracked ranges, effectively
      * removing all numbers within the given range from the visited/added set. It handles
-     * overlapping ranges by splitting or trimming existing ranges as needed.
+     * overlapping ranges by splitting or trimming existing ranges as needed
      *
      * The method maintains the sorted order of ranges and ensures efficient storage
-     * by delegating to the `Ranges.subtract()` utility function.
+     * by delegating to the `Ranges.subtract()` utility function
      *
      * @param range - A tuple [min, max] representing the range to remove, where both bounds are inclusive
      * @returns The current `PackedRanges` instance for method chaining
@@ -280,15 +280,15 @@ export class PackedRanges {
     }
 
     /**
-     * Removes multiple ranges of numbers from the tracked ranges, marking them as unvisited.
+     * Removes multiple ranges of numbers from the tracked ranges, marking them as unvisited
      *
      * This method subtracts all specified ranges from the tracked ranges, effectively
      * removing all numbers within the given ranges from the visited/added set. It handles
      * overlapping ranges by splitting or trimming existing ranges as needed for each
-     * range in the input array.
+     * range in the input array
      *
      * The method maintains the sorted order of ranges and ensures efficient storage
-     * by delegating to the `Ranges.subtractMany()` utility function.
+     * by delegating to the `Ranges.subtractMany()` utility function
      *
      * @param ranges - An array of tuples [min, max] representing the ranges to remove, where both bounds are inclusive
      * @returns The current `PackedRanges` instance for method chaining
@@ -299,7 +299,7 @@ export class PackedRanges {
     }
 
     /**
-     * Compacts the tracked ranges by merging overlapping and adjacent ranges.
+     * Compacts the tracked ranges by merging overlapping and adjacent ranges
      *
      * This method optimizes the internal ranges array by:
      * - Merging overlapping ranges into single contiguous ranges
@@ -308,21 +308,21 @@ export class PackedRanges {
      * - Removing redundant range entries
      *
      * This operation is useful after bulk modifications to ensure the ranges
-     * array remains in its most efficient form for storage and querying.
+     * array remains in its most efficient form for storage and querying
      */
     compact() {
         this.ranges = Ranges.compact(this.ranges);
     }
 
     /**
-     * Sets the tracked ranges to a new array of ranges and compacts them.
+     * Sets the tracked ranges to a new array of ranges and compacts them
      *
      * This method replaces the entire internal ranges array with the provided ranges,
-     * then automatically compacts them to merge any overlapping or adjacent ranges.
-     * This is useful for bulk initialization or restoration of ranges from a saved state.
+     * then automatically compacts them to merge any overlapping or adjacent ranges
+     * This is useful for bulk initialization or restoration of ranges from a saved state
      *
      * After setting the ranges, the method ensures the internal ranges array is optimized
-     * by calling `compact()`, which merges overlapping ranges and joins adjacent ones.
+     * by calling `compact()`, which merges overlapping ranges and joins adjacent ones
      *
      * @param ranges - An array of tuples [min, max] representing the ranges to set, where both bounds are inclusive
      */
@@ -332,12 +332,12 @@ export class PackedRanges {
     }
 
     /**
-     * Serializes the tracked ranges to a JSON string representation.
+     * Serializes the tracked ranges to a JSON string representation
      *
      * This method converts the internal ranges array into a JSON string format,
-     * which can be used for persistence, transmission, or storage purposes.
+     * which can be used for persistence, transmission, or storage purposes
      * The serialized string can later be parsed and used to restore the ranges
-     * via the constructor's `ranges` option.
+     * via the constructor's `ranges` option
      *
      * @returns A JSON string representation of the tracked ranges array
      */
@@ -346,14 +346,14 @@ export class PackedRanges {
     }
 
     /**
-     * Creates a new PackedRanges instance containing only the ranges starting from a specified number.
+     * Creates a new PackedRanges instance containing only the ranges starting from a specified number
      *
      * This method filters the tracked ranges to include only those that contain or come after
      * the specified `from` value. If a range overlaps with the `from` value, it is trimmed
-     * to start at `from`. All ranges before `from` are excluded from the result.
+     * to start at `from`. All ranges before `from` are excluded from the result
      *
      * The original PackedRanges instance remains unchanged; a new instance is returned with
-     * the filtered ranges.
+     * the filtered ranges
      *
      * @param from - The starting number from which to pick ranges (inclusive)
      * @returns A new PackedRanges instance containing only the ranges from the specified number onwards
@@ -364,14 +364,14 @@ export class PackedRanges {
     }
 
     /**
-     * Creates a new PackedRanges instance containing only the ranges up to a specified number.
+     * Creates a new PackedRanges instance containing only the ranges up to a specified number
      *
      * This method filters the tracked ranges to include only those that contain or come before
      * the specified `to` value. If a range overlaps with the `to` value, it is trimmed
-     * to end at `to`. All ranges after `to` are excluded from the result.
+     * to end at `to`. All ranges after `to` are excluded from the result
      *
      * The original PackedRanges instance remains unchanged; a new instance is returned with
-     * the filtered ranges.
+     * the filtered ranges
      *
      * @param to - The ending number up to which to pick ranges (inclusive)
      * @returns A new PackedRanges instance containing only the ranges up to the specified number
@@ -383,11 +383,11 @@ export class PackedRanges {
 
 
     /**
-     * Computes the intersection of multiple range arrays, returning only the ranges that are common to all inputs.
+     * Computes the intersection of multiple range arrays, returning only the ranges that are common to all inputs
      *
      * This method performs a set intersection operation across multiple arrays of ranges,
      * finding only those number ranges that appear in every input array. The result is
-     * compacted to merge any overlapping or adjacent ranges for efficient storage.
+     * compacted to merge any overlapping or adjacent ranges for efficient storage
      *
      * For example:
      * - Input: [[[1,5], [10,15]], [[3,7], [12,20]]]
@@ -408,11 +408,11 @@ export class PackedRanges {
     }
 
     /**
-     * Computes the union of multiple range arrays, returning all ranges that appear in any of the inputs.
+     * Computes the union of multiple range arrays, returning all ranges that appear in any of the inputs
      *
      * This method performs a set union operation across multiple arrays of ranges,
      * combining all number ranges from every input array. The result is compacted to
-     * merge any overlapping or adjacent ranges for efficient storage.
+     * merge any overlapping or adjacent ranges for efficient storage
      *
      * For example:
      * - Input: [[[1,5], [10,15]], [[3,7], [12,20]]]
@@ -429,12 +429,12 @@ export class PackedRanges {
     }
 
     /**
-     * Computes the difference between two range arrays, removing all ranges in B from ranges in A.
+     * Computes the difference between two range arrays, removing all ranges in B from ranges in A
      *
      * This method performs a set difference operation (A − B), subtracting all number ranges
      * in `rangesB` from `rangesA`. The result contains only those portions of `rangesA` that
      * do not overlap with any range in `rangesB`. The result is compacted to merge any
-     * overlapping or adjacent ranges for efficient storage.
+     * overlapping or adjacent ranges for efficient storage
      *
      * For example:
      * - Input: rangesA = [[1,10], [20,30]], rangesB = [[5,15], [25,35]]
@@ -533,7 +533,7 @@ namespace Ranges {
             .sortBy(([x]) => x)
             .toArray();
 
-        // Join non overlapping ranges: [1,4],[5, 6] -> [1,6]
+        // Join non-overlapping ranges: [1,4],[5, 6] -> [1,6]
         for (let i = 0; i < ranges.length - 1; i++) {
             let A = ranges[i];
             let B = ranges[i + 1];
@@ -624,7 +624,7 @@ namespace Ranges {
                 // No overlapping, pick full range
                 arr.push([aFirst, aLast]);
             } else {
-                // Overlapps
+                // Overlaps
                 arr.push([aFirst, to]);
             }
         }

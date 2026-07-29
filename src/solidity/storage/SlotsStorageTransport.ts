@@ -106,7 +106,7 @@ export class SlotsStorageTransport implements ISlotsStorageTransport {
     }
 
     extractMappingKeys (ctx): Promise<{ keys: (string | number | bigint)[][] }> {
-        throw new Error(`SlotMappingReader doesn't support fetchAll method, as size could be infinite`);
+        throw new Error(`SlotMappingReader does not support the fetchAll method, as the size could be infinite`);
     }
 
     mapToGlobalSlot (slot = 0) {
@@ -128,7 +128,7 @@ export class SlotsStorageTransportForArray implements ISlotsStorageTransport {
 
     async getStorageAt (slot: string | number | bigint, position = 0, size = 256) {
         if (typeof slot !== 'number') {
-            throw new Error(`Array Slot reader supports only numbers for position. Slot ${slot}`);
+            throw new Error(`Array slot reader supports only numeric positions. Slot ${slot}`);
         }
         let location = this.mapToGlobalSlot(slot);
         let memory = await this.getUnderlyingTransport().getStorageAt(location, position, size);
@@ -172,7 +172,7 @@ export class SlotsStorageTransportForMapping implements ISlotsStorageTransport {
     async getStorageAt (slot: string | number | bigint, position: number, size: number) {
         let isValidType = typeof slot === 'number' || typeof slot === 'bigint' || $is.Hex(slot);
         if (isValidType === false) {
-            throw new Error(`Mapping Slot reader supports only numbers for position ${slot}`);
+            throw new Error(`Mapping slot reader supports only numeric positions ${slot}`);
         }
         let location = this.mapToGlobalSlot(BigInt(slot));
         let memory = await this.getUnderlyingTransport().getStorageAt(location, position, size);

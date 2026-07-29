@@ -22,7 +22,7 @@ export class JsonArrayMultiStore<T> {
     constructor (public options: IMultiStoreOptions<T>) {
         $require.Function(this.options.groupKey, `Expect a method to get the group key for an entry`);
         $require.Number(this.options.groupSize, `Expect a size for the group`);
-        $require.True(this.options.path.endsWith('/'), `The ${this.options.path} must end with a slash, as it will be used as a folder`);
+        $require.True(this.options.path.endsWith('/'), `${this.options.path} must end with a slash, as it will be used as a folder`);
     }
 
     async query(filter?: {

@@ -111,7 +111,7 @@ namespace WebCryptoImpl {
         }
         createECDH(curve: string) {
             /** use this.crypto.subtle.importKey */
-            throw new Error("Method not implemented.");
+            throw new Error("Method not implemented");
         }
         async encryptInner(buffer: Uint8Array, secret: Uint8Array): Promise<Uint8Array> {
             const key = await this._getEncryptionKey(secret);

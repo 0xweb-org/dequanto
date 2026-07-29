@@ -42,8 +42,8 @@ export namespace $machine {
             freebsd: 'kenv -q smbios.system.uuid || sysctl -n kern.hostuuid'
         };
         function isWindowsProcessMixedOrNativeArchitecture(): string {
-            // detect if the node binary is the same arch as the Windows OS.
-            // or if this is 32 bit node on 64 bit windows.
+            // Detect if the node binary has the same architecture as the Windows OS
+            // Or if this is 32-bit Node on 64-bit Windows
             if (process.platform !== 'win32') {
                 return '';
             }

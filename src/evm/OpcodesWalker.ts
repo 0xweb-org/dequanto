@@ -93,7 +93,7 @@ export class OpcodesWalker {
                 // Is Conditional
                 this.evm.stack.pop();
 
-                // Visit falsy leaf (as if the jump not occured)
+                // Visit the falsy leaf as if the jump did not occur
                 let evm = this.evm.clone();
                 let walker = new OpcodesWalker(evm, this.opcodes);
                 let { opcodes } = walker.goToExit(this.current);

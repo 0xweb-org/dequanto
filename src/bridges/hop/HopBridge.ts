@@ -140,7 +140,7 @@ export class HopBridge implements IBridge {
         const url = await chainFrom.client.getNodeURL({ ws: false });
         const provider = new providers.JsonRpcProvider(url, Utils.getChainId(fromPlatform));
 
-        // WORKAROUND: make hop sdk to use our RPC.
+        // WORKAROUND: make the Hop SDK use our RPC
         networks[fromPlatform].publicRpcUrl = url;
 
         const signer = new Wallet(account.key, provider);

@@ -72,7 +72,7 @@ export class SourceFile {
             }
         }
         if (path == null) {
-            throw new Error(`Path ${this.path} not found to get the Source from`);
+            throw new Error(`Path ${this.path} was not found to load the source from`);
         }
         return new class_Uri(path);
     }
@@ -102,7 +102,7 @@ export class SourceFile {
     }
 
     /**
-     * @returns Inheritance chain: From base (root) class to the most derived class.
+     * @returns Inheritance chain: from the base (root) class to the most derived class
      */
     async getContractInheritanceChain(name?: string): Promise<TSourceFileContract[]> {
         let contract = await this.getContract(name);
@@ -177,7 +177,7 @@ export class SourceFile {
 
         let imports = await this.getImports();
 
-        // Track imports we have already looked in to prevent the infinitive loop
+        // Track imports we have already looked in to prevent an infinite loop
         imports = imports.filter(x => x.path in skipImports === false);
         imports.forEach(x => skipImports[x.path] = true);
 

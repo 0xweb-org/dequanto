@@ -158,8 +158,8 @@ export class TokenTransferService {
             ...(this.writerConfig ?? {}),
             retries: 3,
             async onErrorRebuild (tx, error, errCount) {
-                // In case we got `balance` value, but that one was outdated, then all our calculations where wrong.
-                // Retry the calculation and transfer once again.
+                // If we got the `balance` value, but it was outdated, then all our calculations were wrong
+                // Retry the calculation and transfer once again
                 if (/insufficient funds/.test(error.message)) {
                     const ms = 6000 * errCount;
                     $logger.log(`TokenTransfer Failed: insufficient funds. Waiting ${ms}ms to retry`);

@@ -176,25 +176,25 @@ export class FsHtmlVerifier implements IVerifier {
         return `verified`;
     }
     getTransactions(address: `0x${string}`, params?: { fromBlockNumber?: number; page?: number; size?: number; }): Promise<TEth.DataLike<TEth.Tx>[]> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
     getTransactionsAll(address: `0x${string}`): Promise<TEth.DataLike<TEth.Tx>[]> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
     getInternalTransactions(address: `0x${string}`, params?: { fromBlockNumber?: number; page?: number; size?: number; }): Promise<TEth.DataLike<TEth.Tx>[]> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
     getInternalTransactionsAll(address: `0x${string}`): Promise<TEth.DataLike<TEth.Tx>[]> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
     getErc20Transfers(address: `0x${string}`, fromBlockNumber?: number): Promise<IBlockchainTransferEvent[]> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
     getErc20TransfersAll(address: `0x${string}`, fromBlockNumber?: number): Promise<IBlockchainTransferEvent[]> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
     registerAbi(abis: { name: any; address: any; abi: any; }[]) {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
 
     private extractHostKey (config: TExplorer) {

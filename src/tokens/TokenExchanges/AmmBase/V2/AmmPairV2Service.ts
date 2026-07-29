@@ -97,7 +97,7 @@ export class AmmPairV2Service {
                 this.targetCoins = ['USDC', 'USDT', 'DAI'];
                 break;
             default:
-                throw new Error(`Unsupported Platform for exchange yet: ${client.platform}`);
+                throw new Error(`Unsupported exchange platform: ${client.platform}`);
         }
 
         this.tokensService = di.resolve(TokensService, this.client.platform, this.explorer);
@@ -125,7 +125,7 @@ export class AmmPairV2Service {
 
 
         if (pool == null || pool.reserveTo < (50_000n * BigInt(pool.pair.to.decimals))) {
-            // if NO or low-liquidity pool found, check the WETH pool
+            // If no pool or only a low-liquidity pool is found, check the WETH pool
             const SYMBOL = { bsc: 'WBNB', polygon: 'MATIC' }[platform] ?? 'WETH';
             const nativeTokenPool = await this.getPoolInfo(address, SYMBOL);
 

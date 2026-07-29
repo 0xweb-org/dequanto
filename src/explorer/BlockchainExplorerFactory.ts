@@ -12,7 +12,7 @@ import { $require } from '@dequanto/utils/$require';
 
 
 /**
- * @obsolete Use BlockchainExplorer class instead.
+ * @obsolete Use BlockchainExplorer class instead
  */
 export namespace BlockchainExplorerFactory {
 

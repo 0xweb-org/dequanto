@@ -51,7 +51,7 @@ export class HardhatProvider {
             if (network == 'localhost') {
                 opts.endpoints = [
                     { url: 'http://127.0.0.1:8545' },
-                    // Use `manual`, will be used for subscriptions only, otherwise BatchRequests will fail, as not implemented yet
+                    // Use `manual` for subscriptions only, otherwise BatchRequests will fail, as they are not implemented yet
                     // https://github.com/NomicFoundation/hardhat/issues/1324
                     { url: 'ws://127.0.0.1:8545' },
                 ];
@@ -72,7 +72,7 @@ export class HardhatProvider {
             let platformClient = await Web3ClientFactory.get(platform);
             url = await platformClient.getNodeURL({ ws: false });
 
-            // Hardhat looks like supports only HTTPs? nodes to fork from
+            // Hardhat seems to support only HTTPS nodes as fork sources
             $require.True(/^(http)/.test(url), `Requires the HTTP path of a node to fork: ${url}`);
 
             // Removed: use default Hardhat's behavior
@@ -301,7 +301,7 @@ export class HardhatProvider {
 
         dir = $path.normalize(dir);
         if (await Directory.existsAsync(dir) === false) {
-            throw new Error(`Directory "${dir}" does not exist.`);
+            throw new Error(`Directory "${dir}" does not exist`);
         }
         const paths = {
             sources: dir,
@@ -420,7 +420,7 @@ export class HardhatProvider {
 
     private async createTmpFile(solidityCode: string, options: Parameters<HardhatProvider['deploySol']>[1] = {}) {
 
-        // Ensure the code includes the necessary pragmas and license header.
+        // Ensure the code includes the necessary pragmas and license header
         if (solidityCode.includes('pragma solidity') === false) {
             solidityCode = `pragma solidity ^0.8.0;\n${solidityCode}`;
         }
@@ -507,7 +507,7 @@ export class HardhatProvider {
             if (rgx_CONTRACT_NAME.test(content) === false) {
                 return null;
             }
-            throw new Error(`No JSONs found in ${outputDir} for ${solContractPath}`);
+            throw new Error(`No JSON files were found in ${outputDir} for ${solContractPath}`);
         }
 
         if (options.contractName != null) {
@@ -525,12 +525,12 @@ export class HardhatProvider {
             }
         }
         if (filename == null) {
-            throw new Error(`Filename not extracted from ${solContractPath}`);
+            throw new Error(`Filename was not extracted from ${solContractPath}`);
         }
         let files = await Directory.readFilesAsync(outputDir);
         let jsons = files.filter(x => /(?<!dbg)\.json$/.test(x.uri.file));
         if (jsons.length === 0) {
-            throw new Error(`No JSONs output found in "${outputDir}/"`);
+            throw new Error(`No JSON output was found in "${outputDir}/"`);
         }
         if (jsons.length === 1) {
             // Only one JSON artifact found, assume it's the main contract

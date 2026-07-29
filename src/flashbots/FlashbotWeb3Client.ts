@@ -18,7 +18,7 @@ export class FlashbotWeb3Client extends Web3Client {
     constructor (opts) {
         super(opts);
 
-        throw new Error('Not Implemented. Use generic Web3Clients and submit transactions via FlashbotsProvider ');
+        throw new Error('Not implemented. Use generic Web3Clients and submit transactions via FlashbotsProvider');
     }
 
 }

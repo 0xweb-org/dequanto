@@ -50,16 +50,16 @@ export class BlockchainExplorerStorage implements IBlockchainExplorer {
         }
     }
     submitContractProxyVerification(contractData: { address: TAddress; expectedImplementation?: TAddress }): Promise<string> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
     checkContractProxyVerificationSubmission(submission: { guid: any; }): Promise<string> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
     submitContractVerification(contractData: { address: `0x${string}`; sourceCode: any; contractName: any; compilerVersion: any; optimizer?: { enabled?: boolean; runs: number; }; arguments?: `0x${string}`; }): Promise<string> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
     checkContractVerificationSubmission(submission: { guid: any; }): Promise<string> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
     registerAbi(abis: { name: any; address: any; abi: any; }[]) {
         abis.forEach(x => {
@@ -73,10 +73,10 @@ export class BlockchainExplorerStorage implements IBlockchainExplorer {
     }
 
     getContractMeta(q: string): Promise<IContractDetails> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
     getContractCreation(address: string): Promise<{ creator: TEth.Address; txHash: TEth.Hex; }> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
     async getContractAbi(address: TAddress, opts?: { implementation?: TAddress; }): Promise<{ abi: string; implementation: TAddress; }> {
         let $address = opts?.implementation ?? address;
@@ -103,22 +103,22 @@ export class BlockchainExplorerStorage implements IBlockchainExplorer {
         }
     }
     getTransactions(address: string, params?: { fromBlockNumber?: number; page?: number; size?: number; }): Promise<TEth.Tx[]> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
     getTransactionsAll(address: string): Promise<TEth.Tx[]> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
     getInternalTransactions(address: string, params?: { fromBlockNumber?: number; page?: number; size?: number; }): Promise<TEth.Tx[]> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
     getInternalTransactionsAll(address: string): Promise<TEth.Tx[]> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
     getErc20Transfers(address: string, fromBlockNumber?: number): Promise<IBlockchainTransferEvent[]> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
     getErc20TransfersAll(address: string, fromBlockNumber?: number): Promise<IBlockchainTransferEvent[]> {
-        throw new Error('Method not implemented.');
+        throw new Error('Method not implemented');
     }
 
 }

@@ -124,7 +124,7 @@ namespace Parse {
                 return i;
             }
         }
-        throw new Error(`Not found closing quote ${quote} in ${str}`);
+        throw new Error(`Closing quote ${quote} was not found in ${str}`);
     }
 
 

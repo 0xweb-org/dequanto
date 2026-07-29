@@ -263,7 +263,7 @@ class LocalStorageTransport implements ITransport {
         this.global.localStorage.removeItem(this.path);
     }
     async exists (): Promise<boolean> {
-        // To prevent double load with "getItem", assume the existence of the item, later in readAsync the NULL will be handled.
+        // To prevent duplicate loads with "getItem", assume the item exists; later in readAsync the NULL will be handled
         return true;
     }
     async watch (watcherFn: (path?: string) => any) {

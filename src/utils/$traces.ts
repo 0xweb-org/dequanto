@@ -512,7 +512,7 @@ export namespace $traces {
                     }).join(', ');
                 }
             } catch {
-                // Fall back to raw bytes if decoding fails.
+                // Fall back to raw bytes if decoding fails
             }
         }
         if (frame.failed) {

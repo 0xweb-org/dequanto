@@ -52,7 +52,7 @@ export class TokensService {
         return this.provider.getNative(platform);
     }
 
-    /** Download tokens with various exchange/swap providers and merge them into one collection. */
+    /** Download tokens with various exchange/swap providers and merge them into one collection */
     async redownload () {
         return this.provider.redownload();
     }

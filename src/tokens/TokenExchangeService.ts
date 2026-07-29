@@ -40,7 +40,7 @@ export class TokenExchangeService {
                 this.stables = ['USDC', 'USDT', 'DAI'];
                 break;
             default:
-                throw new Error(`Unsupported Platform for exchange yet: ${platform}`);
+                throw new Error(`Unsupported exchange platform: ${platform}`);
         }
 
         this.client = Web3ClientFactory.get(this.platform);

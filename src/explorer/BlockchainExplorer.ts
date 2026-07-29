@@ -377,7 +377,7 @@ export class BlockchainExplorer implements IBlockchainExplorer {
                     files
                 };
             } catch (error) {
-                throw new Error(`Source code (${url}) can't be parsed: ${error.message}`);
+                throw new Error(`Source code (${url}) cannot be parsed: ${error.message}`);
             }
         }
         function parseJson(str: string) {

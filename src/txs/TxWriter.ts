@@ -71,7 +71,7 @@ export interface ITxWriterOptions {
     retryDelay?: number
     safeTransport?: ISafeServiceTransport
 
-    /** Tx Data will be saved to the store(e.g. a File), and will wait until the signature appears in the store. */
+    /** Tx data will be saved to the store, e.g. a file, and wait until the signature appears in the store */
     sigTransport?: string
 
     /** Optionally disable waiting for the transport response */
@@ -83,11 +83,11 @@ export interface ITxWriterOptions {
     /** Proceed the Tx up to the signature */
     signOnly?: boolean
 
-    /** Provide a pre-signed signature for this transaction data. */
+    /** Provide a pre-signed signature for this transaction data */
     signature?: TEth.Hex
 
     /**
-     * The callback is executed on error, to give the opportunity to build a new Tx to resubmit the tx.
+     * The callback is executed on error to allow building a new tx for resubmission
      * @param tx - current TxWriter object
      * @param error - current Error with receipt(if any)
      * @param errCount - num of errors already handled
@@ -101,7 +101,7 @@ export interface ITxWriterOptions {
 
 
     /**
-     * Custom agent to process the transaction data.
+     * Custom agent to process the transaction data
      */
     agent?: ITxWriterAgent
 }

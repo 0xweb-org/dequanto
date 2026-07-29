@@ -39,7 +39,7 @@ export class AmmV2PriceQuote implements IOracle {
                 this.exchange = di.resolve(SushiswapPolygonExchange, this.client, this.explorer);
                 break;
             default:
-                throw new Error(`Unsupported Platform for exchange yet: ${client.platform}`);
+                throw new Error(`Unsupported exchange platform: ${client.platform}`);
         }
         this.tokensService = di.resolve(TokensService, this.client.platform, this.explorer)
         this.pairService = di.resolve(AmmPairV2Service, this.client, this.explorer)
@@ -371,7 +371,7 @@ namespace TokenPrice {
                 fromUsd: $fromUsd,
                 fromPrice: $fromPrice,
 
-                // Optimistic assume same USD out.
+                // Optimistically assume the same USD output
                 toUsd: $fromUsd
             };
         }

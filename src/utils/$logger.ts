@@ -213,7 +213,7 @@ export function l(strings: TemplateStringsArray, ...values: any[]) {
             case 'bigint':
                 break;
             default:
-                // skip colorizing all non-value types.
+                // Skip colorizing all non-value types
                 continue;
         }
         args[i - 1] = `${before}${value}${after}`;

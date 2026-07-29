@@ -24,7 +24,7 @@ export class SlotValueConstantHandler extends ASlotsStorageHandler {
 
     private requireNoKeys (keys: IAccessorItem[]) {
         if (keys?.length > 0) {
-            throw new Error(`ValueTypes can't have the nested accessors: ${ keys.map(x => x.key).join('.') }`);
+            throw new Error(`ValueTypes cannot have nested accessors: ${ keys.map(x => x.key).join('.') }`);
         }
     }
 }

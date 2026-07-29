@@ -94,7 +94,7 @@ export class GasWatcherTx {
             // re-submitting
             let currentGas = BigInt(data.gasPrice.toString());
             if (currentGas >= gasPrice) {
-                // we can't resubmit with less gas
+                // We cannot resubmit with less gas
                 gasPrice = currentGas + $bigint.toWeiFromGwei(.1);
             }
         }

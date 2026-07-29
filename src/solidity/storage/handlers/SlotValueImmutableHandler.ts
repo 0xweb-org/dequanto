@@ -10,8 +10,8 @@ export class SlotValueImmutableHandler extends ASlotsStorageHandler {
         return slot.memory === 'immutable';
     }
 
-    // We will read the public getter if any or skip for now
-    // @TODO: implement deployment tx reader
+    // Read the public getter if any, or skip for now
+    // @TODO Implement the deployment tx reader
     async get (keys?: IAccessorItem[]){
         this.requireNoKeys(keys);
 
@@ -26,7 +26,7 @@ export class SlotValueImmutableHandler extends ASlotsStorageHandler {
     }
 
     async set(keys: IAccessorItem[], value: any): Promise<any> {
-        throw new Error(`Can't set a immutable value ${this.slot.name}`);
+        throw new Error(`Cannot set an immutable value ${this.slot.name}`);
     }
 
     async fetchAll() {
@@ -35,7 +35,7 @@ export class SlotValueImmutableHandler extends ASlotsStorageHandler {
 
     private requireNoKeys (keys: IAccessorItem[]) {
         if (keys?.length > 0) {
-            throw new Error(`ValueTypes can't have the nested accessors: ${ keys.map(x => x.key).join('.') }`);
+            throw new Error(`ValueTypes cannot have nested accessors: ${ keys.map(x => x.key).join('.') }`);
         }
     }
 }

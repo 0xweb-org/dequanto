@@ -138,7 +138,7 @@ export class AmmV1Oracle implements IOracle {
 
         let mostLiquidity = alot(exchanges).sortBy(x => x?.eth ?? 0n, 'desc').first();
         if (mostLiquidity == null || mostLiquidity.eth < $bigint.toWei(2)) {
-            throw new Error(`ETH price can't be resolved due to NO or low-liquidity pairs: ${ exchanges.map(x => `${x.token.symbol} (${x.eth}wei)`)  }`);
+            throw new Error(`ETH price cannot be resolved due to missing or low-liquidity pairs: ${ exchanges.map(x => `${x.token.symbol} (${x.eth}wei)`)  }`);
         }
         let out = await this
             .reader
@@ -178,7 +178,7 @@ export class AmmV1Oracle implements IOracle {
             opts.block = number;
             return this.getBlockData(opts);
         }
-        throw new Error(`Unreachable reached`);
+        throw new Error(`Unreachable code reached`);
     }
 
     @memd.deco.memoize({

@@ -17,7 +17,7 @@ export class TxLogParser {
     }
 
     /**
-     *  Sparse arrays will contain NULLs for unparsed log items.
+     * Sparse arrays will contain NULLs for unparsed log items
      *  Per default dense arrays - only with known logs - are returned
      */
     async parse (receipt: { logs: TEth.TxReceipt['logs'] }, opts?: {

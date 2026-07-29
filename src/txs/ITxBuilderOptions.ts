@@ -17,7 +17,7 @@ export interface ITxBuilderNonceOptions {
      * 1: Used nonce of the first pending transaction will
      * 2: second pending transaction
      * ...
-     * In any case MAX is the count of pending transactions, so any value is safe.
+     * In any case, MAX is the count of pending transactions, so any value is safe
      */
     noncePending?: number
 }
