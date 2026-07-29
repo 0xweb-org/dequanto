@@ -60,7 +60,7 @@ export namespace $abiCoder {
             }
 
             if ('components' in abi) {
-                // unwrap array to object
+                // Unwrap the array to an object
                 let result = {};
                 for (let i = 0; i < abi.components.length; i++) {
                     let component = abi.components[i];

@@ -18,41 +18,41 @@ import { $require } from '@dequanto/utils/$require';
 
 
 /**
- *  A Type description in a [JSON ABI format](link-solc-jsonabi).
+ *  A Type description in a [JSON ABI format](link-solc-jsonabi)
  */
 export interface JsonFragmentType {
     /**
-     *  The parameter name.
+     *  The parameter name
      */
     readonly name?: string;
 
     /**
-     *  If the parameter is indexed.
+     *  If the parameter is indexed
      */
     readonly indexed?: boolean;
 
     /**
-     *  The type of the parameter.
+     *  The type of the parameter
      */
     readonly type?: string;
 
     /**
-     *  The internal Solidity type.
+     *  The internal Solidity type
      */
     readonly internalType?: string;
 
     /**
-     *  The components for a tuple.
+     *  The components for a tuple
      */
     readonly components?: ReadonlyArray<JsonFragmentType>;
 }
 
 /**
- *  A fragment for a method, event or error in a [JSON ABI format](link-solc-jsonabi).
+ *  A fragment for a method, event or error in a [JSON ABI format](link-solc-jsonabi)
  */
 export interface JsonFragment {
     /**
-     *  The name of the error, event, function, etc.
+     *  The name of the error, event, function, etc
      */
     readonly name?: string;
 
@@ -62,56 +62,56 @@ export interface JsonFragment {
     readonly type?: string;
 
     /**
-     *  If the event is anonymous.
+     *  If the event is anonymous
      */
     readonly anonymous?: boolean;
 
     /**
-     *  If the function is payable.
+     *  If the function is payable
      */
     readonly payable?: boolean;
 
     /**
-     *  If the function is constant.
+     *  If the function is constant
      */
     readonly constant?: boolean;
 
     /**
-     *  The mutability state of the function.
+     *  The mutability state of the function
      */
     readonly stateMutability?: string;
 
     /**
-     *  The input parameters.
+     *  The input parameters
      */
     readonly inputs?: ReadonlyArray<JsonFragmentType>;
 
     /**
-     *  The output parameters.
+     *  The output parameters
      */
     readonly outputs?: ReadonlyArray<JsonFragmentType>;
 
     /**
-     *  The gas limit to use when sending a transaction for this function.
+     *  The gas limit to use when sending a transaction for this function
      */
     readonly gas?: string;
 };
 
 /**
- *  The format to serialize the output as.
+ *  The format to serialize the output as
  *
  *  **``"sighash"``** - the bare formatting, used to compute the selector
  *  or topic hash; this format cannot be reversed (as it discards ``indexed``)
- *  so cannot by used to export an [[Interface]].
+ *  so it cannot be used to export an [[Interface]]
  *
  *  **``"minimal"``** - Human-Readable ABI with minimal spacing and without
  *  names, so it is compact, but will result in Result objects that cannot
- *  be accessed by name.
+ *  be accessed by name
  *
  *  **``"full"``** - Full Human-Readable ABI, with readable spacing and names
- *  intact; this is generally the recommended format.
+ *  intact; this is generally the recommended format
  *
- *  **``"json"``** - The [JSON ABI format](link-solc-jsonabi).
+ *  **``"json"``** - The [JSON ABI format](link-solc-jsonabi)
  */
 export type FormatType = "sighash" | "minimal" | "full" | "json";
 
@@ -125,7 +125,7 @@ function setify(items: Array<string>): ReadonlySet<string> {
 const _kwVisibDeploy = "external public payable";
 const KwVisibDeploy = setify(_kwVisibDeploy.split(" "));
 
-// Visibility Keywords
+// Visibility keywords
 const _kwVisib = "constant external internal payable private public pure view";
 const KwVisib = setify(_kwVisib.split(" "));
 
@@ -137,11 +137,11 @@ const KwModifiers = setify(_kwModifiers.split(" "));
 
 const _kwOther = "tuple returns";
 
-// All Keywords
+// All keywords
 const _keywords = [ _kwTypes, _kwModifiers, _kwOther, _kwVisib ].join(" ");
 const Keywords = setify(_keywords.split(" "));
 
-// Single character tokens
+// Single-character tokens
 const SimpleTokens: Record<string, string> = {
   "(": "OPEN_PAREN", ")": "CLOSE_PAREN",
   "[": "OPEN_BRACKET", "]": "CLOSE_BRACKET",
@@ -153,7 +153,7 @@ const regexWhitespacePrefix = new RegExp("^(\\s*)");
 const regexNumberPrefix = new RegExp("^([0-9]+)");
 const regexIdPrefix = new RegExp("^([a-zA-Z$_][a-zA-Z0-9$_]*)");
 
-// Parser regexs to check validity
+// Parser regexes to check validity
 const regexId = new RegExp("^([a-zA-Z$_][a-zA-Z0-9$_]*)$");
 const regexType = new RegExp("^(address|bool|bytes([0-9]*)|string|u?int([0-9]*))$");
 
@@ -161,7 +161,7 @@ const regexType = new RegExp("^(address|bool|bytes([0-9]*)|string|u?int([0-9]*))
  *  @ignore:
  */
 type Token = Readonly<{
-    // Type of token (e.g. TYPE, KEYWORD, NUMBER, etc)
+    // Type of token (e.g. TYPE, KEYWORD, NUMBER, etc.)
     type: string;
 
     // Offset into the original source code
@@ -173,15 +173,15 @@ type Token = Readonly<{
     // The parenthesis depth
     depth: number;
 
-    // If a parenthesis, the offset (in tokens) that balances it
+    // If this is a parenthesis, the offset (in tokens) that balances it
     match: number;
 
-    // For parenthesis and commas, the offset (in tokens) to the
+    // For parentheses and commas, the offset (in tokens) to the
     // previous/next parenthesis or comma in the list
     linkBack: number;
     linkNext: number;
 
-    // If a BRACKET, the value inside
+    // If this is a BRACKET, the value inside
     value: number;
 }>;
 
@@ -210,7 +210,7 @@ class TokenString {
         }));
     }
 
-    // Pops and returns the value of the next token, if it is a keyword in allowed; throws if out of tokens
+    // Pops and returns the value of the next token if it is a keyword in `allowed`; throws if out of tokens
     popKeyword(allowed: ReadonlySet<string>): string {
         const top = this.peek();
         if (top.type !== "KEYWORD" || !allowed.has(top.text)) { throw new Error(`expected keyword ${ top.text }`); }
@@ -223,7 +223,7 @@ class TokenString {
         return this.pop().text;
     }
 
-    // Pops and returns a "(" TOKENS ")"
+    // Pops and returns "(" TOKENS ")"
     popParen(): TokenString {
         const top = this.peek();
         if (top.type !== "OPEN_PAREN") { throw new Error("bad start"); }
@@ -251,7 +251,7 @@ class TokenString {
         return result;
     }
 
-    // Returns the top Token, throwing if out of tokens
+    // Returns the top token, throwing if out of tokens
     peek(): Token {
         if (this.#offset >= this.#tokens.length) {
             throw new Error("out-of-bounds");
@@ -259,7 +259,7 @@ class TokenString {
         return this.#tokens[this.#offset];
     }
 
-    // Returns the next value, if it is a keyword in `allowed`
+    // Returns the next value if it is a keyword in `allowed`
     peekKeyword(allowed: ReadonlySet<string>): null | string {
         const top = this.peekType("KEYWORD");
         return (top != null && allowed.has(top)) ? top: null;
@@ -394,7 +394,7 @@ function lex(text: string): TokenString {
     return new TokenString(tokens.map((t) => Object.freeze(t)));
 }
 
-// Check only one of `allowed` is in `set`
+// Check that only one item from `allowed` is in `set`
 function allowSingle(set: ReadonlySet<string>, allowed: ReadonlySet<string>): void {
     let included: Array<string> = [ ];
     for (const key in allowed.keys()) {
@@ -403,7 +403,7 @@ function allowSingle(set: ReadonlySet<string>, allowed: ReadonlySet<string>): vo
     if (included.length > 1) { throw new Error(`conflicting types: ${ included.join(", ") }`); }
 }
 
-// Functions to process a Solidity Signature TokenString from left-to-right for...
+// Functions to process a Solidity signature TokenString from left to right for..
 
 // ...the name with an optional type, returning the name
 function consumeName(type: string, tokens: TokenString): string {
@@ -417,7 +417,7 @@ function consumeName(type: string, tokens: TokenString): string {
     return tokens.popType("ID");
 }
 
-// ...all keywords matching allowed, returning the keywords
+// ...all keywords matching `allowed`, returning the keywords
 function consumeKeywords(tokens: TokenString, allowed?: ReadonlySet<string>): ReadonlySet<string> {
     const keywords: Set<string> = new Set();
     while (true) {
@@ -465,7 +465,7 @@ function consumeGas(tokens: TokenString): null | bigint {
         if (tokens.peekType("NUMBER")) {
             return $bigint.toBigInt(tokens.pop().text);
         }
-        throw new Error("invalid gas");
+        throw new Error("Invalid gas");
     }
     return null;
 }
@@ -480,19 +480,19 @@ const regexArrayType = new RegExp(/^(.*)\[([0-9]*)\]$/);
 
 function verifyBasicType(type: string): string {
     const match = type.match(regexType);
-    $require.notNull(match, `invalid type ${type}`);
+    $require.notNull(match, `Invalid type ${type}`);
     if (type === "uint") { return "uint256"; }
     if (type === "int") { return "int256"; }
 
     if (match[2]) {
         // bytesXX
         const length = parseInt(match[2]);
-        $require.True(length !== 0 && length <= 32, "invalid bytes length" + type);
+        $require.True(length !== 0 && length <= 32, "Invalid bytes length" + type);
 
     } else if (match[3]) {
         // intXX or uintXX
         const size = parseInt(match[3] as string);
-        $require.True(size !== 0 && size <= 256 && (size % 8) === 0, "invalid numeric width" + type);
+        $require.True(size !== 0 && size <= 256 && (size % 8) === 0, "Invalid numeric width" + type);
     }
 
     return type;
@@ -504,13 +504,13 @@ const _guard = { };
 
 /**
  *  When [walking](ParamType-walk) a [[ParamType]], this is called
- *  on each component.
+ *  on each component
  */
 export type ParamTypeWalkFunc = (type: string, value: any) => any;
 
 /**
  *  When [walking asynchronously](ParamType-walkAsync) a [[ParamType]],
- *  this is called on each component.
+ *  this is called on each component
  */
 export type ParamTypeWalkAsyncFunc = (type: string, value: any) => any | Promise<any>;
 
@@ -524,7 +524,7 @@ export type ParamTypeWalkAsyncFunc = (type: string, value: any) => any | Promise
 // const StructFragmentInternal = "_StructInternal";
 
 /**
- *  Each input and output of a [[Fragment]] is an Array of **ParamType**.
+ *  Each input and output of a [[Fragment]] is an Array of **ParamType**
  */
 export class ParamType {
 
@@ -545,30 +545,30 @@ export class ParamType {
     readonly baseType!: string;
 
     /**
-     *  True if the parameters is indexed.
+     *  True if the parameter is indexed
      *
-     *  For non-indexable types this is ``null``.
+     *  For non-indexable types this is ``null``
      */
     readonly indexed!: null | boolean;
 
     /**
-     *  The components for the tuple.
+     *  The components for the tuple
      *
-     *  For non-tuple types this is ``null``.
+     *  For non-tuple types this is ``null``
      */
     readonly components?: ReadonlyArray<ParamType>;
 
     /**
-     *  The array length, or ``-1`` for dynamic-lengthed arrays.
+     *  The array length, or ``-1`` for dynamic-length arrays
      *
-     *  For non-array types this is ``null``.
+     *  For non-array types this is ``null``
      */
     readonly arrayLength?: number;
 
     /**
-     *  The type of each child in the array.
+     *  The type of each child in the array
      *
-     *  For non-array types this is ``null``.
+     *  For non-array types this is ``null``
      */
     readonly arrayChildren?: ParamType;
 
@@ -616,7 +616,7 @@ export class ParamType {
     }
 
     /**
-     *  Return a string representation of this type.
+     *  Return a string representation of this type
      *
      *  For example,
      *
@@ -680,30 +680,30 @@ export class ParamType {
     }
 
     /**
-     *  Returns true if %%this%% is an Array type.
+     *  Returns true if %%this%% is an Array type
      *
      *  This provides a type gaurd ensuring that [[arrayChildren]]
-     *  and [[arrayLength]] are non-null.
+     *  and [[arrayLength]] are non-null
      */
     isArray(): this is (ParamType & { arrayChildren: ParamType, arrayLength: number }) {
         return (this.baseType === "array")
     }
 
     /**
-     *  Returns true if %%this%% is a Tuple type.
+     *  Returns true if %%this%% is a Tuple type
      *
      *  This provides a type gaurd ensuring that [[components]]
-     *  is non-null.
+     *  is non-null
      */
     isTuple(): this is (ParamType & { components: ReadonlyArray<ParamType> }) {
         return (this.baseType === "tuple");
     }
 
     /**
-     *  Returns true if %%this%% is an Indexable type.
+     *  Returns true if %%this%% is an Indexable type
      *
      *  This provides a type gaurd ensuring that [[indexed]]
-     *  is non-null.
+     *  is non-null
      */
     isIndexable(): this is (ParamType & { indexed: boolean }) {
         return (this.indexed != null);
@@ -711,22 +711,22 @@ export class ParamType {
 
     /**
      *  Walks the **ParamType** with %%value%%, calling %%process%%
-     *  on each type, destructing the %%value%% recursively.
+     *  on each type, destructing the %%value%% recursively
      */
     walk(value: any, process: ParamTypeWalkFunc): any {
         if (this.isArray()) {
-            if (!Array.isArray(value)) { throw new Error("invalid array value"); }
+            if (!Array.isArray(value)) { throw new Error("Invalid array value"); }
             if (this.arrayLength !== -1 && value.length !== this.arrayLength) {
-                throw new Error("array is wrong length");
+                throw new Error("Array has the wrong length");
             }
             const _this = this;
             return value.map((v) => (_this.arrayChildren.walk(v, process)));
         }
 
         if (this.isTuple()) {
-            if (!Array.isArray(value)) { throw new Error("invalid tuple value"); }
+            if (!Array.isArray(value)) { throw new Error("Invalid tuple value"); }
             if (value.length !== this.components.length) {
-                throw new Error("array is wrong length");
+                throw new Error("Array has the wrong length");
             }
             const _this = this;
             return value.map((v, i) => (_this.components[i].walk(v, process)));
@@ -738,9 +738,9 @@ export class ParamType {
     #walkAsync(promises: Array<Promise<void>>, value: any, process: ParamTypeWalkAsyncFunc, setValue: (value: any) => void): void {
 
         if (this.isArray()) {
-            if (!Array.isArray(value)) { throw new Error("invalid array value"); }
+            if (!Array.isArray(value)) { throw new Error("Invalid array value"); }
             if (this.arrayLength !== -1 && value.length !== this.arrayLength) {
-                throw new Error("array is wrong length");
+                throw new Error("Array has the wrong length");
             }
             const childType = this.arrayChildren;
 
@@ -764,20 +764,20 @@ export class ParamType {
 
             } else {
                 if (value == null || typeof(value) !== "object") {
-                    throw new Error("invalid tuple value");
+                    throw new Error("Invalid tuple value");
                 }
 
                 result = components.map((param) => {
-                    if (!param.name) { throw new Error("cannot use object value with unnamed components"); }
+                    if (!param.name) { throw new Error("Cannot use object value with unnamed components"); }
                     if (!(param.name in value)) {
-                        throw new Error(`missing value for component ${ param.name }`);
+                        throw new Error(`Missing value for component ${ param.name }`);
                     }
                     return value[param.name];
                 });
             }
 
             if (result.length !== this.components.length) {
-                throw new Error("array is wrong length");
+                throw new Error("Array has the wrong length");
             }
 
             result.forEach((value, index) => {
@@ -799,10 +799,10 @@ export class ParamType {
 
     /**
      *  Walks the **ParamType** with %%value%%, asynchronously calling
-     *  %%process%% on each type, destructing the %%value%% recursively.
+     *  %%process%% on each type, destructing the %%value%% recursively
      *
      *  This can be used to resolve ENS naes by walking and resolving each
-     *  ``"address"`` type.
+     *  ``"address"`` type
      */
     async walkAsync(value: any, process: ParamTypeWalkAsyncFunc): Promise<any> {
         const promises: Array<Promise<void>> = [ ];
@@ -815,10 +815,10 @@ export class ParamType {
     }
 
     /**
-     *  Creates a new **ParamType** for %%obj%%.
+     *  Creates a new **ParamType** for %%obj%%
      *
      *  If %%allowIndexed%% then the ``indexed`` keyword is permitted,
-     *  otherwise the ``indexed`` keyword will throw an error.
+     *  otherwise the ``indexed`` keyword will throw an error
      */
     static from(obj: any, allowIndexed?: boolean): ParamType {
         if (ParamType.isParamType(obj)) { return obj; }
@@ -827,7 +827,7 @@ export class ParamType {
             try {
                 return ParamType.from(lex(obj), allowIndexed);
             } catch (error) {
-                throw new Error(`invalid param type: ${ error.message }`);
+                throw new Error(`Invalid parameter type: ${ error.message }`);
             }
 
         } else if (obj instanceof TokenString) {
@@ -867,17 +867,17 @@ export class ParamType {
 
             const name = (obj.peekType("ID") ? obj.pop().text: "");
 
-            if (obj.length) { throw new Error("leftover tokens"); }
+            if (obj.length) { throw new Error("Leftover tokens"); }
 
             return new ParamType(_guard, name, type, baseType, indexed, comps, arrayLength, arrayChildren);
         }
 
         const name = obj.name;
-        $require.True(!name || (typeof(name) === "string" && regexId.test(name)), "invalid name" + name);
+        $require.True(!name || (typeof(name) === "string" && regexId.test(name)), "Invalid name" + name);
 
         let indexed = obj.indexed;
         if (indexed != null) {
-            $require.True(allowIndexed ?? true, `parameter cannot be indexed: ${obj.indexed}`);
+            $require.True(allowIndexed ?? true, `Parameter cannot be indexed: ${obj.indexed}`);
             indexed = !!indexed;
         }
 
@@ -897,7 +897,7 @@ export class ParamType {
         if (type === "tuple" || type.startsWith("tuple("/* fix: ) */) || type.startsWith("(" /* fix: ) */)) {
             const comps = (obj.components != null) ? obj.components.map((c: any) => ParamType.from(c)): null;
             const tuple = new ParamType(_guard, name || "", type, "tuple", indexed, comps, null, null);
-            // @TODO: use lexer to validate and normalize type
+            // @TODO: Use the lexer to validate and normalize type
             return tuple;
         }
 
@@ -907,7 +907,7 @@ export class ParamType {
     }
 
     /**
-     *  Returns true if %%value%% is a **ParamType**.
+     *  Returns true if %%value%% is a **ParamType**
      */
     static isParamType(value: any): value is ParamType {
         return (value instanceof ParamType)//value[internal] === ParamTypeInternal);
@@ -915,21 +915,21 @@ export class ParamType {
 }
 
 /**
- *  The type of a [[Fragment]].
+ *  The type of a [[Fragment]]
  */
 export type FragmentType = "constructor" | "error" | "event" | "fallback" | "function" | "struct";
 
 /**
- *  An abstract class to represent An individual fragment from a parse ABI.
+ *  An abstract class to represent An individual fragment from a parse ABI
  */
 export abstract class Fragment {
     /**
-     *  The type of the fragment.
+     *  The type of the fragment
      */
     readonly type!: FragmentType;
 
     /**
-     *  The inputs for the fragment.
+     *  The inputs for the fragment
      */
     readonly inputs!: ReadonlyArray<ParamType>;
 
@@ -945,18 +945,18 @@ export abstract class Fragment {
     }
 
     /**
-     *  Returns a string representation of this fragment as %%format%%.
+     *  Returns a string representation of this fragment as %%format%%
      */
     abstract format(format?: FormatType): string;
 
     /**
-     *  Creates a new **Fragment** for %%obj%%, wich can be any supported
-     *  ABI frgament type.
+     *  Creates a new **Fragment** for %%obj%%, which can be any supported
+     *  ABI fragment type
      */
     static from(obj: any): Fragment {
         if (typeof(obj) === "string") {
 
-            // Try parsing JSON...
+            // Try parsing JSON..
             try {
                 Fragment.from(JSON.parse(obj));
             } catch (e) { }
@@ -995,39 +995,39 @@ export abstract class Fragment {
 
             throw new Error(`UNSUPPORTED_OPERATION: unsupported type: ${ obj.type }`);
         }
-        throw new Error("unsupported frgament object: " + JSON.stringify(obj));
+        throw new Error("unsupported fragment object: " + JSON.stringify(obj));
     }
 
     /**
-     *  Returns true if %%value%% is a [[ConstructorFragment]].
+     *  Returns true if %%value%% is a [[ConstructorFragment]]
      */
     static isConstructor(value: any): value is ConstructorFragment {
         return ConstructorFragment.isFragment(value);
     }
 
     /**
-     *  Returns true if %%value%% is an [[ErrorFragment]].
+     *  Returns true if %%value%% is an [[ErrorFragment]]
      */
     static isError(value: any): value is ErrorFragment {
         return ErrorFragment.isFragment(value);
     }
 
     /**
-     *  Returns true if %%value%% is an [[EventFragment]].
+     *  Returns true if %%value%% is an [[EventFragment]]
      */
     static isEvent(value: any): value is EventFragment {
         return EventFragment.isFragment(value);
     }
 
     /**
-     *  Returns true if %%value%% is a [[FunctionFragment]].
+     *  Returns true if %%value%% is a [[FunctionFragment]]
      */
     static isFunction(value: any): value is FunctionFragment {
         return FunctionFragment.isFragment(value);
     }
 
     /**
-     *  Returns true if %%value%% is a [[StructFragment]].
+     *  Returns true if %%value%% is a [[StructFragment]]
      */
     static isStruct(value: any): value is StructFragment {
         return StructFragment.isFragment(value);
@@ -1036,11 +1036,11 @@ export abstract class Fragment {
 
 /**
  *  An abstract class to represent An individual fragment
- *  which has a name from a parse ABI.
+ *  which has a name from a parse ABI
  */
 export abstract class NamedFragment extends Fragment {
     /**
-     *  The name of the fragment.
+     *  The name of the fragment
      */
     readonly name!: string;
 
@@ -1049,7 +1049,7 @@ export abstract class NamedFragment extends Fragment {
      */
     constructor(guard: any, type: FragmentType, name: string, inputs: ReadonlyArray<ParamType>) {
         super(guard, type, inputs);
-        $require.True(typeof(name) === "string" && regexId.test(name), "invalid identifier " + name);
+        $require.True(typeof(name) === "string" && regexId.test(name), "Invalid identifier " + name);
         //-inputs = Object.freeze(inputs.slice());
         this.name = name;
     }
@@ -1060,7 +1060,7 @@ function joinParams(format: FormatType, params: ReadonlyArray<ParamType>): strin
 }
 
 /**
- *  A Fragment which represents a //Custom Error//.
+ *  A Fragment which represents a //Custom Error//
  */
 export class ErrorFragment extends NamedFragment {
     /**
@@ -1072,14 +1072,14 @@ export class ErrorFragment extends NamedFragment {
     }
 
     /**
-     *  The Custom Error selector.
+     *  The Custom Error selector
      */
     get selector(): string {
         return $contract.keccak256(this.format("sighash")).substring(0, 10);
     }
 
     /**
-     *  Returns a string representation of this fragment as %%format%%.
+     *  Returns a string representation of this fragment as %%format%%
      */
     format(format?: FormatType): string {
         if (format == null) { format = "sighash"; }
@@ -1098,7 +1098,7 @@ export class ErrorFragment extends NamedFragment {
     }
 
     /**
-     *  Returns a new **ErrorFragment** for %%obj%%.
+     *  Returns a new **ErrorFragment** for %%obj%%
      */
     static from(obj: any): ErrorFragment {
         if (ErrorFragment.isFragment(obj)) { return obj; }
@@ -1120,7 +1120,7 @@ export class ErrorFragment extends NamedFragment {
 
     /**
      *  Returns ``true`` and provides a type guard if %%value%% is an
-     *  **ErrorFragment**.
+     *  **ErrorFragment**
      */
     static isFragment(value: any): value is ErrorFragment {
         return (value instanceof ErrorFragment); //[internal] === ErrorFragmentInternal);
@@ -1128,11 +1128,11 @@ export class ErrorFragment extends NamedFragment {
 }
 
 /**
- *  A Fragment which represents an Event.
+ *  A Fragment which represents an Event
  */
 export class EventFragment extends NamedFragment {
     /**
-     *  Whether this event is anonymous.
+     *  Whether this event is anonymous
      */
     readonly anonymous!: boolean;
 
@@ -1146,14 +1146,14 @@ export class EventFragment extends NamedFragment {
     }
 
     /**
-     *  The Event topic hash.
+     *  The Event topic hash
      */
     get topicHash(): string {
         return $contract.keccak256(this.format("sighash"));
     }
 
     /**
-     *  Returns a string representation of this event as %%format%%.
+     *  Returns a string representation of this event as %%format%%
      */
     format(format?: FormatType): string {
         if (format == null) { format = "sighash"; }
@@ -1174,7 +1174,7 @@ export class EventFragment extends NamedFragment {
     }
 
     /**
-     *  Return the topic hash for an event with %%name%% and %%params%%.
+     *  Return the topic hash for an event with %%name%% and %%params%%
      */
     static getTopicHash(name: string, params?: Array<any>): string {
         params = (params || []).map((p) => ParamType.from(p));
@@ -1183,7 +1183,7 @@ export class EventFragment extends NamedFragment {
     }
 
     /**
-     *  Returns a new **EventFragment** for %%obj%%.
+     *  Returns a new **EventFragment** for %%obj%%
      */
     static from(obj: any): EventFragment {
         if (EventFragment.isFragment(obj)) { return obj; }
@@ -1192,7 +1192,7 @@ export class EventFragment extends NamedFragment {
             try {
                 return EventFragment.from(lex(obj));
             } catch (error) {
-                throw new Error("invalid event fragment: " + JSON.stringify(obj));
+                throw new Error("Invalid event fragment: " + JSON.stringify(obj));
             }
 
         } else if (obj instanceof TokenString) {
@@ -1210,7 +1210,7 @@ export class EventFragment extends NamedFragment {
 
     /**
      *  Returns ``true`` and provides a type guard if %%value%% is an
-     *  **EventFragment**.
+     *  **EventFragment**
      */
     static isFragment(value: any): value is EventFragment {
         return (value instanceof EventFragment); //[internal] === EventFragmentInternal);
@@ -1218,17 +1218,17 @@ export class EventFragment extends NamedFragment {
 }
 
 /**
- *  A Fragment which represents a constructor.
+ *  A Fragment which represents a constructor
  */
 export class ConstructorFragment extends Fragment {
 
     /**
-     *  Whether the constructor can receive an endowment.
+     *  Whether the constructor can receive an endowment
      */
     readonly payable!: boolean;
 
     /**
-     *  The recommended gas limit for deployment or ``null``.
+     *  The recommended gas limit for deployment or ``null``
      */
     readonly gas!: null | bigint;
 
@@ -1243,7 +1243,7 @@ export class ConstructorFragment extends Fragment {
     }
 
     /**
-     *  Returns a string representation of this constructor as %%format%%.
+     *  Returns a string representation of this constructor as %%format%%
      */
     format(format?: FormatType): string {
         $require.True(format != null && format !== "sighash", "UNSUPPORTED_OPERATION: cannot format a constructor for sighash");
@@ -1265,7 +1265,7 @@ export class ConstructorFragment extends Fragment {
     }
 
     /**
-     *  Returns a new **ConstructorFragment** for %%obj%%.
+     *  Returns a new **ConstructorFragment** for %%obj%%
      */
     static from(obj: any): ConstructorFragment {
         if (ConstructorFragment.isFragment(obj)) { return obj; }
@@ -1274,7 +1274,7 @@ export class ConstructorFragment extends Fragment {
             try {
                 return ConstructorFragment.from(lex(obj));
             } catch (error) {
-                throw new Error("invalid constructor fragment: " + JSON.stringify(obj));
+                throw new Error("Invalid constructor fragment: " + JSON.stringify(obj));
             }
 
         } else if (obj instanceof TokenString) {
@@ -1294,7 +1294,7 @@ export class ConstructorFragment extends Fragment {
 
     /**
      *  Returns ``true`` and provides a type guard if %%value%% is a
-     *  **ConstructorFragment**.
+     *  **ConstructorFragment**
      */
     static isFragment(value: any): value is ConstructorFragment {
         return (value instanceof ConstructorFragment); //[internal] === ConstructorFragmentInternal);
@@ -1302,12 +1302,12 @@ export class ConstructorFragment extends Fragment {
 }
 
 /**
- *  A Fragment which represents a method.
+ *  A Fragment which represents a method
  */
 export class FallbackFragment extends Fragment {
 
     /**
-     *  If the function can be sent value during invocation.
+     *  If the function can be sent value during invocation
      */
     readonly payable!: boolean;
 
@@ -1318,7 +1318,7 @@ export class FallbackFragment extends Fragment {
     }
 
     /**
-     *  Returns a string representation of this fallback as %%format%%.
+     *  Returns a string representation of this fallback as %%format%%
      */
     format(format?: FormatType): string {
         const type = ((this.inputs.length === 0) ? "receive": "fallback");
@@ -1332,7 +1332,7 @@ export class FallbackFragment extends Fragment {
     }
 
     /**
-     *  Returns a new **FallbackFragment** for %%obj%%.
+     *  Returns a new **FallbackFragment** for %%obj%%
      */
     static from(obj: any): FallbackFragment {
         if (FallbackFragment.isFragment(obj)) { return obj; }
@@ -1341,14 +1341,14 @@ export class FallbackFragment extends Fragment {
             try {
                 return FallbackFragment.from(lex(obj));
             } catch (error) {
-                throw new Error("invalid fallback fragment: " + JSON.stringify(obj));
+                throw new Error("Invalid fallback fragment: " + JSON.stringify(obj));
             }
 
         } else if (obj instanceof TokenString) {
             const errorObj = obj.toString();
 
             const topIsValid = obj.peekKeyword(setify([ "fallback", "receive" ]));
-            $require.notNull(topIsValid, "type must be fallback or receive " + errorObj);
+            $require.notNull(topIsValid, "Type must be fallback or receive " + errorObj);
 
             const type = obj.popKeyword(setify([ "fallback", "receive" ]));
 
@@ -1397,12 +1397,12 @@ export class FallbackFragment extends Fragment {
             return new FallbackFragment(_guard, inputs, payable);
         }
 
-        throw new Error("invalid fallback fragment: " + JSON.stringify(obj));
+        throw new Error("Invalid fallback fragment: " + JSON.stringify(obj));
     }
 
     /**
      *  Returns ``true`` and provides a type guard if %%value%% is a
-     *  **FallbackFragment**.
+     *  **FallbackFragment**
      */
     static isFragment(value: any): value is FallbackFragment {
         return (value instanceof FallbackFragment); //[internal] === FallbackFragmentInternal);
@@ -1411,16 +1411,16 @@ export class FallbackFragment extends Fragment {
 
 
 /**
- *  A Fragment which represents a method.
+ *  A Fragment which represents a method
  */
 export class FunctionFragment extends NamedFragment {
     /**
-     *  If the function is constant (e.g. ``pure`` or ``view`` functions).
+     *  If the function is constant (e.g. ``pure`` or ``view`` functions)
      */
     readonly constant!: boolean;
 
     /**
-     *  The returned types for the result of calling this function.
+     *  The returned types for the result of calling this function
      */
     readonly outputs!: ReadonlyArray<ParamType>;
 
@@ -1431,12 +1431,12 @@ export class FunctionFragment extends NamedFragment {
     readonly stateMutability!: "payable" | "nonpayable" | "view" | "pure";
 
     /**
-     *  If the function can be sent value during invocation.
+     *  If the function can be sent value during invocation
      */
     readonly payable!: boolean;
 
     /**
-     *  The recommended gas limit to send when calling this function.
+     *  The recommended gas limit to send when calling this function
      */
     readonly gas!: null | bigint;
 
@@ -1458,14 +1458,14 @@ export class FunctionFragment extends NamedFragment {
     }
 
     /**
-     *  The Function selector.
+     *  The Function selector
      */
     get selector(): string {
         return $contract.keccak256(this.format("sighash")).substring(0, 10);
     }
 
     /**
-     *  Returns a string representation of this function as %%format%%.
+     *  Returns a string representation of this function as %%format%%
      */
     format(format?: FormatType): string {
         if (format == null) { format = "sighash"; }
@@ -1504,7 +1504,7 @@ export class FunctionFragment extends NamedFragment {
     }
 
     /**
-     *  Return the selector for a function with %%name%% and %%params%%.
+     *  Return the selector for a function with %%name%% and %%params%%
      */
     static getSelector(name: string, params?: Array<any>): string {
         params = (params || []).map((p) => ParamType.from(p));
@@ -1513,7 +1513,7 @@ export class FunctionFragment extends NamedFragment {
     }
 
     /**
-     *  Returns a new **FunctionFragment** for %%obj%%.
+     *  Returns a new **FunctionFragment** for %%obj%%
      */
     static from(obj: any): FunctionFragment {
         if (FunctionFragment.isFragment(obj)) { return obj; }
@@ -1572,7 +1572,7 @@ export class FunctionFragment extends NamedFragment {
 
     /**
      *  Returns ``true`` and provides a type guard if %%value%% is a
-     *  **FunctionFragment**.
+     *  **FunctionFragment**
      */
     static isFragment(value: any): value is FunctionFragment {
         return (value instanceof FunctionFragment); //[internal] === FunctionFragmentInternal);
@@ -1580,7 +1580,7 @@ export class FunctionFragment extends NamedFragment {
 }
 
 /**
- *  A Fragment which represents a structure.
+ *  A Fragment which represents a structure
  */
 export class StructFragment extends NamedFragment {
 
@@ -1593,14 +1593,14 @@ export class StructFragment extends NamedFragment {
     }
 
     /**
-     *  Returns a string representation of this struct as %%format%%.
+     *  Returns a string representation of this struct as %%format%%
      */
     format(): string {
         throw new Error("@TODO");
     }
 
     /**
-     *  Returns a new **StructFragment** for %%obj%%.
+     *  Returns a new **StructFragment** for %%obj%%
      */
     static from(obj: any): StructFragment {
         if (typeof(obj) === "string") {
@@ -1623,7 +1623,7 @@ export class StructFragment extends NamedFragment {
 // @TODO: fix this return type
     /**
      *  Returns ``true`` and provides a type guard if %%value%% is a
-     *  **StructFragment**.
+     *  **StructFragment**
      */
     static isFragment(value: any): value is FunctionFragment {
         return (value instanceof StructFragment) //[internal] === StructFragmentInternal);

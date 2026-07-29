@@ -58,12 +58,12 @@ export namespace Web3BatchRequests {
         //         if (RateLimitGuard.isBatchLimit(error)) {
         //             let num = RateLimitGuard.extractBatchLimitFromError(error);
         //             if (num && num < this.requests.length) {
-        //                 // if got the batch limit lower than current batch, throw to make the wClient to reread the batch limit, and the pool to retry
+        //                 // If the batch limit is lower than the current batch, throw so wClient rereads the batch limit and the pool retries
         //                 this.promise.reject(error);
         //                 return;
         //             }
         //         }
-        //         l`Web3BatchRequest failed for ${this.results.length} Batch with error "${ this.results[0]?.error?.message }". Fallback to single calls.`;
+        //         l`Web3BatchRequest failed for a batch of ${this.results.length} with error "${ this.results[0]?.error?.message }". Falling back to single calls.`;
         //         this.results = new Array(this.requests.length);
         //         this.awaitables = this.requests.length;
         //         this.callByOne();
@@ -98,7 +98,7 @@ export namespace Web3BatchRequests {
 
         //     } catch (error) {
         //         if (index > -1) {
-        //             l`BatchRequester when processing by one request errored after ${index + 1} requests`;
+        //             l`BatchRequester failed while processing requests one by one after ${index + 1} requests`;
         //         }
         //         this.promise.reject(error);
         //     }

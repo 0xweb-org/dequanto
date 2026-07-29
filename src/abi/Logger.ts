@@ -9,7 +9,7 @@ export class Logger {
     }
 
     throwArgumentError (message, localVar, value) {
-        throw new Error(`${message}: Invalid ${localVar}: ${value}`)
+        throw new Error(`${message}: invalid ${localVar}: ${value}`)
     }
 
     throwError (message, name, params) {

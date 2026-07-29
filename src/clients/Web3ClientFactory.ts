@@ -26,7 +26,7 @@ export namespace Web3ClientFactory {
         });
     }
 
-    /** Same as sync variation, but ensures the config is being fetched */
+    /** Same as the sync variant, but ensures the config is fetched */
     export async function getAsync (platform: TPlatform | string | number, opts?: IWeb3EndpointOptions) {
         let cfg = await Config.get();
         return get(platform, opts);

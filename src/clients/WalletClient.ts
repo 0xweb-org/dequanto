@@ -7,7 +7,7 @@ import { EIP6963ProviderDetail, EIP6963ProviderFactory } from '@dequanto/wallets
 import { WClient } from './ClientPool';
 import { $hex } from '@dequanto/utils/$hex';
 
-/** Wallet actions only. For all Node (Chain) related actions - Web3Client should be used */
+/** Wallet actions only. Use Web3Client for all node/chain-related actions */
 
 export class WalletClient {
     public factory: EIP6963ProviderFactory;
@@ -18,7 +18,7 @@ export class WalletClient {
 
     // Client abstract methods
 
-    //Set the provider by UUID as the default one for eth_** methods
+    // Set the provider by UUID as the default one for eth_** methods
     async useProvider (uuid: string) {
         this.factory.useProvider(uuid);
     }
@@ -37,7 +37,7 @@ export class WalletClient {
         return rpc.eth_accounts();
     }
 
-    /** Find the provider by UUID or use the first one to connect to and to requestAccounts */
+    /** Finds the provider by UUID, or uses the first one to connect and request accounts */
     async connect (uuid?: string): Promise<TEth.Address[]> {
         return this.factory.connect(uuid);
     }

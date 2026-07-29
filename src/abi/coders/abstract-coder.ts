@@ -8,14 +8,14 @@ import { $require } from '@dequanto/utils/$require';
 export const WordSize: number = 32;
 const Padding = new Uint8Array(WordSize);
 
-// Properties used to immediate pass through to the underlying object
-// - `then` is used to detect if an object is a Promise for await
+// Properties used to immediately pass through to the underlying object
+// - `then` is used to detect whether an object is a Promise for await
 const passProperties = [ "then" ];
 
 const _guard = { };
 
 function throwError(name: string, error: Error): never {
-    const wrapped = new Error(`deferred error during ABI decoding triggered accessing ${ name }`);
+    const wrapped = new Error(`Deferred error during ABI decoding was triggered by accessing ${ name }`);
     (<any>wrapped).error = error;
     throw wrapped;
 }
@@ -23,7 +23,7 @@ function throwError(name: string, error: Error): never {
 /**
  *  A [[Result]] is a sub-class of Array, which allows accessing any
  *  of its values either positionally by its index or, if keys are
- *  provided by its name.
+ *  provided by its name
  *
  *  @_docloc: api/abi
  */
@@ -36,7 +36,7 @@ export class Result extends Array<any> {
      *  @private
      */
     constructor(...args: Array<any>) {
-        // To properly sub-class Array so the other built-in
+        // To properly subclass Array so the other built-in
         // functions work, the constructor has to behave fairly
         // well. So, in the event we are created via fromItems()
         // we build the read-only Result object we want, but on
@@ -54,8 +54,8 @@ export class Result extends Array<any> {
             wrap = false;
         }
 
-        // Can't just pass in ...items since an array of length 1
-        // is a special case in the super.
+        // Cannot just pass in ...items because an array of length 1
+        // is a special case in the super
         super(items.length);
         items.forEach((item, index) => { this[index] = item; });
 
@@ -67,7 +67,7 @@ export class Result extends Array<any> {
             return accum;
         }, <Map<string, number>>(new Map()));
 
-        // Remove any key thats not unique
+        // Remove any key that is not unique
         this.#names = Object.freeze(items.map((item, index) => {
             const name = names[index];
             if (name != null && nameCounts.get(name) === 1) {
@@ -125,10 +125,10 @@ export class Result extends Array<any> {
     }
 
     /**
-     *  Returns the Result as a normal Array.
+     *  Returns the Result as a normal Array
      *
-     *  This will throw if there are any outstanding deferred
-     *  errors.
+     *  This throws if there are any outstanding deferred
+     *  errors
      */
     toArray(): Array<any> {
         const result: Array<any> = [ ];
@@ -140,16 +140,16 @@ export class Result extends Array<any> {
     }
 
     /**
-     *  Returns the Result as an Object with each name-value pair.
+     *  Returns the Result as an Object with each name-value pair
      *
-     *  This will throw if any value is unnamed, or if there are
-     *  any outstanding deferred errors.
+     *  This throws if any value is unnamed, or if there are
+     *  any outstanding deferred errors
      */
     toObject(): Record<string, any> {
         return this.#names.reduce((accum, name, index) => {
             $require.notNull(name, `UNSUPPORTED_OPERATION: value at index ${ index } unnamed`);
 
-            // Add values for names that don't conflict
+            // Add values for names that do not conflict
             if (!(name in accum)) {
                 accum[name] = this.getValue(name);
             }
@@ -223,12 +223,12 @@ export class Result extends Array<any> {
 
 
     /**
-     *  Returns the value for %%name%%.
+     *  Returns the value for %%name%%
      *
      *  Since it is possible to have a key whose name conflicts with
      *  a method on a [[Result]] or its superclass Array, or any
      *  JavaScript keyword, this ensures all named values are still
-     *  accessible by name.
+     *  accessible by name
      */
     getValue(name: string): any {
         const index = this.#names.indexOf(name);
@@ -245,7 +245,7 @@ export class Result extends Array<any> {
 
     /**
      *  Creates a new [[Result]] for %%items%% with each entry
-     *  also accessible by its corresponding name in %%keys%%.
+     *  also accessible by its corresponding name in %%keys%%
      */
     static fromItems(items: Array<any>, keys?: Array<null | string>): Result {
         return new Result(_guard, items, keys);
@@ -253,20 +253,20 @@ export class Result extends Array<any> {
 }
 
 /**
- *  Returns all errors found in a [[Result]].
+ *  Returns all errors found in a [[Result]]
  *
  *  Since certain errors encountered when creating a [[Result]] do
  *  not impact the ability to continue parsing data, they are
  *  deferred until they are actually accessed. Hence a faulty string
- *  in an Event that is never used does not impact the program flow.
+ *  in an Event that is never used does not impact the program flow
  *
- *  However, sometimes it may be useful to access, identify or
- *  validate correctness of a [[Result]].
+ *  However, sometimes it may be useful to access, identify, or
+ *  validate correctness of a [[Result]]
  *
  *  @_docloc api/abi
  */
 export function checkResultErrors(result: Result): Array<{ path: Array<string | number>, error: Error }> {
-    // Find the first error (if any)
+    // Find the first error, if any
     const errors: Array<{ path: Array<string | number>, error: Error }> = [ ];
 
     const checkErrors = function(path: Array<string | number>, object: any): void {
@@ -306,11 +306,11 @@ function getValue(value: bigint): Uint8Array {
 export abstract class Coder {
 
     // The coder name:
-    //   - address, uint256, tuple, array, etc.
+    //   - address, uint256, tuple, array, etc
     readonly name!: string;
 
     // The fully expanded type, including composite types:
-    //   - address, uint256, tuple(address,bytes), uint256[3][4][],  etc.
+    //   - address, uint256, tuple(address,bytes), uint256[3][4][],  etc
     readonly type!: string;
 
     // The localName bound in the signature, in this example it is "baz":
@@ -318,7 +318,7 @@ export abstract class Coder {
     readonly localName!: string;
 
     // Whether this type is dynamic:
-    //  - Dynamic: bytes, string, address[], tuple(boolean[]), etc.
+    //  - Dynamic: bytes, string, address[], tuple(boolean[]), etc
     //  - Not Dynamic: address, uint256, boolean[3], tuple(address, uint8)
     readonly dynamic!: boolean;
 
@@ -343,7 +343,7 @@ export abstract class Coder {
  *  @_ignore
  */
 export class Writer {
-    // An array of WordSize lengthed objects to concatenation
+    // An array of WordSize-length objects to concatenate
     #data: Array<Uint8Array>;
     #dataLength: number;
 
@@ -367,7 +367,7 @@ export class Writer {
         return this.#writeData($buffer.ensure(writer.data));
     }
 
-    // Arrayish item; pad on the right to *nearest* WordSize
+    // Array-like item; pad on the right to the *nearest* WordSize
     writeBytes(value: Uint8Array): number {
         let bytes = value;
         const paddingOffset = bytes.length % WordSize;
@@ -382,8 +382,8 @@ export class Writer {
         return this.#writeData(getValue(value));
     }
 
-    // Inserts a numeric place-holder, returning a callback that can
-    // be used to asjust the value later
+    // Inserts a numeric placeholder, returning a callback that can
+    // be used to adjust the value later
     writeUpdatableValue(): (value: bigint) => void {
         const offset = this.#data.length;
         this.#data.push(Padding);
@@ -398,10 +398,10 @@ export class Writer {
  *  @_ignore
  */
 export class Reader {
-    // Allows incomplete unpadded data to be read; otherwise an error
+    // Allows incomplete unpadded data to be read; otherwise, an error
     // is raised if attempting to overrun the buffer. This is required
     // to deal with an old Solidity bug, in which event data for
-    // external (not public thoguh) was tightly packed.
+    // external (not public though) was tightly packed
     readonly allowLoose!: boolean;
 
     readonly #data: Uint8Array;
@@ -425,13 +425,13 @@ export class Reader {
             if (this.allowLoose && loose && this.#offset + length <= this.#data.length) {
                 alignedLength = length;
             } else {
-                throw new Error(`BUFFER_OVERRUN: data out-of-bounds. Length: ${this.#data.length}; Offset: ${this.#offset}; AlignedLength: ${alignedLength};`);
+                throw new Error(`BUFFER_OVERRUN: data out of bounds. Length: ${this.#data.length}; Offset: ${this.#offset}; AlignedLength: ${alignedLength};`);
             }
         }
         return this.#data.slice(this.#offset, this.#offset + alignedLength)
     }
 
-    // Create a sub-reader with the same underlying data, but offset
+    // Create a sub-reader with the same underlying data, but with an offset
     subReader(offset: number): Reader {
         return new Reader(this.#data.slice(this.#offset + offset), this.allowLoose);
     }
@@ -440,11 +440,11 @@ export class Reader {
     readBytes(length: number, loose?: boolean): Uint8Array {
         let bytes = this.#peekBytes(0, length, !!loose);
         this.#offset += bytes.length;
-        // @TODO: Make sure the length..end bytes are all 0?
+        // @TODO: Make sure the length..end bytes are all 0
         return bytes.slice(0, length);
     }
 
-    // Read a numeric values
+    // Read a numeric value
     readValue(): bigint {
         return $buffer.toBigInt(this.readBytes(WordSize));
     }

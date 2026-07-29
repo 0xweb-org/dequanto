@@ -75,7 +75,7 @@ export class ClientEventsStream<T extends TClientEventsStreamData<unknown[]> = a
         let eventTopic = event.topics[0];
         let abi = eventsAbi.find(x => $abiUtils.getMethodHash(x) === eventTopic);
         if (abi == null) {
-            stream.error(new Error(`ABI for the topic ${eventTopic} not found. Supports: ${ eventsAbi.map(x => x.name).join(', ') }`));
+            stream.error(new Error(`ABI for topic ${eventTopic} was not found. Supported events: ${ eventsAbi.map(x => x.name).join(', ') }`));
             return;
         }
 

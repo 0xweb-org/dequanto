@@ -3,7 +3,7 @@ import type { TAbiItem } from '@dequanto/types/TAbi';
 
 export namespace $web3Abi {
 
-    /** Normalize user input by normalizing to the array of TAbiItems */
+    /** Normalizes user input into an array of TAbiItems */
     export function ensureAbis(abi: string | TAbiItem | TAbiItem[]): (TAbiItem & { signature? })[] {
         let arr: TAbiItem[];
         if (typeof abi === 'string') {
@@ -16,7 +16,7 @@ export namespace $web3Abi {
 
         let first = abi[0];
         if (first.outputs == null || first.outputs.length === 0) {
-            // Normalize outputs, to read at least bytes if nothing set
+            // Normalize outputs to read at least bytes if nothing is set
             first.outputs = [
                 {
                     type: 'bytes32',

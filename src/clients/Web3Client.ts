@@ -43,7 +43,7 @@ export abstract class Web3Client implements IWeb3Client {
     abstract defaultGasLimit: number;
 
 
-    // Hardhat network could be launched in forking mode
+    // The Hardhat network can be launched in forking mode
     forked?: {
         platform: TPlatform;
         block?: number;
@@ -53,7 +53,7 @@ export abstract class Web3Client implements IWeb3Client {
     defaultGasPriceRatio = 1.4;
     minGasPriorityFee = 0.0012345;
 
-    // block time in ms
+    // Block time in ms
     blockTimeAvg = 12_000;
 
     get network (): TPlatform {
@@ -76,7 +76,7 @@ export abstract class Web3Client implements IWeb3Client {
 
         if (this.options.endpoints == null && this.options.web3 == null) {
             console.dir(this.options, { depth: null });
-            throw new Error(`Neither Node endpoints nor web3 instance provided`);
+            throw new Error(`Neither node endpoints nor a web3 instance were provided`);
         }
         this.pool = new ClientPool(this.options);
         this.debug = new ClientDebugMethods(this, this.options.debug);
@@ -109,7 +109,7 @@ export abstract class Web3Client implements IWeb3Client {
         let eventAbi = abi.find(x => x.type === 'event' && x.name === event);
         if (eventAbi == null) {
             let events = abi.filter(x => x.type === 'event').map(x => x.name).join(', ');
-            throw new Error(`Event "${event}" not present in ABI. Events: ${events}`);
+            throw new Error(`Event "${event}" is not present in the ABI. Events: ${events}`);
         }
         let stream = new ClientEventsStream(address, eventAbi);
         this
@@ -133,7 +133,7 @@ export abstract class Web3Client implements IWeb3Client {
     }
 
     async getWeb3(options?: IPoolWeb3Request) {
-        throw new Error(`To get the web3 initialize the Web3 compatibility class ('compatibility/Web3.ts') instead`)
+        throw new Error(`To get web3, initialize the Web3 compatibility class ('compatibility/Web3.ts') instead`)
     }
     async getRpc(options?: IPoolWeb3Request): Promise<Rpc> {
         return await this.pool.getRpc(options);
@@ -466,7 +466,7 @@ export abstract class Web3Client implements IWeb3Client {
             }
         }
         if (tx.input != null) {
-            /** eth_call expects 'data' property, not the 'input' as in Transaction */
+            /** eth_call expects the 'data' property, not 'input' as in Transaction */
             tx.data = tx.input;
             delete tx.input;
         }
@@ -484,18 +484,18 @@ export abstract class Web3Client implements IWeb3Client {
 
     async getPastLogs(filter: RpcTypes.Filter, options?: {
         /**
-         * For large block ranges and huge amounts of logs, streaming should be used, we pass the loaded logs in batches direct to onProgress
-         * and do not aggregate to a final logs array to prevent memory issues.
+         * For large block ranges and huge amounts of logs, streaming should be used. Loaded logs are passed directly to onProgress in batches
+         * and do not aggregate to a final logs array to prevent memory issues
          */
         streamed?: boolean
         /**
-         * Override the default block range limits for all underlying RPC clients, otherwise the config will be used or
-         * the RPC exception will be parsed.
+         * Overrides the default block range limits for all underlying RPC clients. Otherwise, the config will be used or
+         * the RPC exception will be parsed
          */
         blockRangeLimits?: WClient['blockRangeLimits']
 
         /**
-         * When loading in batches the cb will be called with fetched and parsed logs on each iteration
+         * When loading in batches, the callback will be called with fetched and parsed logs on each iteration
          */
         onProgress? (info: TLogsRangeProgress<TEth.Log>): void
     }): Promise<TEth.Log[]> {
@@ -504,7 +504,7 @@ export abstract class Web3Client implements IWeb3Client {
             this.pool.MINIMUM_BLOCK_RANGE = Math.min(this.pool.MINIMUM_BLOCK_RANGE, options.blockRangeLimits.blocks);
         }
 
-        // ensure numbers, bigints, bools are in HEX
+        // Ensure numbers, bigints, and bools are in HEX
         filter.topics = filter.topics?.map(mix => {
             if (mix != null && Array.isArray(mix) === false) {
                 return $hex.ensure(mix as any)
@@ -512,7 +512,7 @@ export abstract class Web3Client implements IWeb3Client {
             return mix;
         });
 
-        // ensure all topics are in 32-byte
+        // Ensure all topics are 32 bytes
         filter.topics = filter.topics?.map(topic => {
             if (typeof topic === 'string' && topic.startsWith('0x')) {
                 return $hex.padBytes(topic, 32);
@@ -540,7 +540,7 @@ export abstract class Web3Client implements IWeb3Client {
 
         let removedLogs = logs?.filter(x => x.removed === true);
         if (removedLogs?.length > 0) {
-            console.error(`Caution: There are ${removedLogs.length} removed Logs. But @dequanto didn't handle this as they are not expected to be present in past logs.`);
+            console.error(`Caution: there are ${removedLogs.length} removed logs. @dequanto does not handle them because they are not expected to be present in past logs.`);
         }
 
         return logs;
@@ -580,7 +580,7 @@ export abstract class Web3Client implements IWeb3Client {
 export type TLogsRangeProgress<TLogParsed> = {
     logs: TLogParsed[]
 
-    /** @deprecated Use logs for current logs buffer */
+    /** @deprecated Use logs for the current logs buffer */
     paged: TLogParsed[]
     latestBlock: number
     blocks: {
@@ -612,8 +612,8 @@ namespace RangeWorker {
     ) {
         let { fromBlock, toBlock } = ranges;
 
-        $require.Number(fromBlock, `FromBlock must be a number`);
-        $require.Number(toBlock, `ToBlock must be a number`);
+        $require.Number(fromBlock, `fromBlock must be a number`);
+        $require.Number(toBlock, `toBlock must be a number`);
         if (options?.streamed) {
             $require.Function(options.onProgress, `onProgress must be a function when streaming past logs`);
         }
@@ -738,7 +738,7 @@ namespace RangeWorker {
             }
 
             /**
-             * query returned more than 10000 results
+             * The query returned more than 10,000 results
              */
             $logger.log(`Range worker request: ${range.fromBlock}-${range.toBlock}. ${error.message.trim()}. Current range: ${ blockRange }`);
 
@@ -755,7 +755,7 @@ namespace RangeWorker {
 
             let maxRangeMatch = /\b(?<maxRange>\d{2,})\b/.exec(error.message)?.groups?.maxRange;
             if (maxRangeMatch && knownLimits.maxBlockRange == null) {
-                // handle unknown range, otherwise throw
+                // Handle an unknown range; otherwise, throw
                 let rangeLimit = Number(maxRangeMatch);
                 let currentRangeLimit = currentWClient.blockRangeLimits.blocks;
                 if (currentRangeLimit <= rangeLimit) {
@@ -766,7 +766,7 @@ namespace RangeWorker {
                 return fetchPaged(client, filter, range, knownLimits);
             }
             if (/\b(range|limit)\b/.test(error.message)) {
-                // Generic "block range is too wide", "limit exceeded",
+                // Generic "block range is too wide" or "limit exceeded" error
                 let newRange = Math.floor(blockRange * 0.8);
                 currentWClient.updateBlockRangeInfo({
                     blocks: newRange
@@ -798,7 +798,7 @@ namespace LogsFetcher {
 
                 let { result } = await fetch (client, lastBlock, toBlockExcluded, blockRange, filter);
 
-                // The sub-range query includes the last block, as some results might be skipped that are in the same block.
+                // The sub-range query includes the last block, as some results in the same block might otherwise be skipped
                 arr = arr.filter(x => x.blockNumber !== lastBlock);
                 arr = arr.concat(result.paged);
             }

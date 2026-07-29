@@ -28,7 +28,7 @@ export class PromiseEventWrap extends class_Dfr {
         this._events.emit(event, ...args);
     }
 
-    /** Attach this wrapper to the promiseEvent */
+    /** Attaches this wrapper to the promiseEvent */
     bind (promiseEvent: PromiseEvent<any>) {
 
         this.$source = promiseEvent;

@@ -15,7 +15,7 @@ export interface IWeb3ClientOptions {
     chainId?: number
     // Token symbol: e.g. ETH
     chainToken?: string
-    // alias to `provider`
+    // Alias to `provider`
     web3?: TTransport.Transport | Promise<TTransport.Transport>
     provider?: TTransport.Transport
 
@@ -23,7 +23,7 @@ export interface IWeb3ClientOptions {
     defaultGasPriceRatio?: number;
     minGasPriorityFee?: number; // in GWEI
 
-    // block time in ms
+    // Block time in ms
     blockTimeAvg?: number;
 
     debug?: {

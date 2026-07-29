@@ -1,12 +1,12 @@
 /**
  *  When sending values to or receiving values from a [[Contract]], the
- *  data is generally encoded using the [ABI standard](link-solc-abi).
+ *  data is generally encoded using the [ABI standard](link-solc-abi)
  *
  *  The AbiCoder provides a utility to encode values to ABI data and
- *  decode values from ABI data.
+ *  decode values from ABI data
  *
- *  Most of the time, developers should favour the [[Contract]] class,
- *  which further abstracts a lot of the finer details of ABI data.
+ *  Most of the time, developers should favor the [[Contract]] class,
+ *  which further abstracts a lot of the finer details of ABI data
  *
  *  @_section api/abi/abi-coder:ABI Encoding
  */
@@ -52,7 +52,7 @@ let defaultCoder: null | AbiCoder = null;
 
 /**
  *  The **AbiCoder** is a low-level class responsible for encoding JavaScript
- *  values into binary data and decoding binary data into JavaScript values.
+ *  values into binary data and decoding binary data into JavaScript values
  */
 export class AbiCoder {
 
@@ -83,7 +83,7 @@ export class AbiCoder {
         if (match) {
             let size = parseInt(match[2] || "256");
             $require.True(size !== 0 && size <= 256 && (size % 8) === 0,
-                "invalid " + match[1] + " bit length" + param);
+                "Invalid " + match[1] + " bit length" + param);
             return new NumberCoder(size / 8, (match[1] === "int"), param.name);
         }
 
@@ -91,18 +91,18 @@ export class AbiCoder {
         match = param.type.match(paramTypeBytes);
         if (match) {
             let size = parseInt(match[1]);
-            $require.True(size !== 0 && size <= 32, "invalid bytes length" + param);
+            $require.True(size !== 0 && size <= 32, "Invalid bytes length" + param);
             return new FixedBytesCoder(size, param.name);
         }
 
-        throw new Error(`invalid type ${param.type}`);
+        throw new Error(`Invalid type ${param.type}`);
     }
 
     /**
-     *  Get the default values for the given %%types%%.
+     *  Get the default values for the given %%types%%
      *
      *  For example, a ``uint`` is by default ``0`` and ``bool``
-     *  is by default ``false``.
+     *  is by default ``false``
      */
     getDefaultValue(types: ReadonlyArray<string | ParamType>): Result {
         const coders: Array<Coder> = types.map((type) => this.#getCoder(ParamType.from(type)));
@@ -111,7 +111,7 @@ export class AbiCoder {
     }
 
     /**
-     *  Encode the %%values%% as the %%types%% into ABI data.
+     *  Encode the %%values%% as the %%types%% into ABI data
      *
      *  @returns DataHexstring
      */
@@ -125,7 +125,7 @@ export class AbiCoder {
     }
 
     /**
-     *  Encode the %%values%% as the %%types%% into ABI data.
+     *  Encode the %%values%% as the %%types%% into ABI data
      *
      *  @returns DataHexstring
      */
@@ -141,11 +141,11 @@ export class AbiCoder {
     }
 
     /**
-     *  Decode the ABI %%data%% as the %%types%% into values.
+     *  Decode the ABI %%data%% as the %%types%% into values
      *
      *  If %%loose%% decoding is enabled, then strict padding is
      *  not enforced. Some older versions of Solidity incorrectly
-     *  padded event data emitted from ``external`` functions.
+     *  padded event data emitted from ``external`` functions
      */
     decode(types: ReadonlyArray<string | ParamType | TAbiInput>, hex: string, opts?: {
         loose?: boolean
@@ -172,9 +172,9 @@ export class AbiCoder {
     }
 
     /**
-     *  Returns the shared singleton instance of a default [[AbiCoder]].
+     *  Returns the shared singleton instance of a default [[AbiCoder]]
      *
-     *  On the first call, the instance is created internally.
+     *  On the first call, the instance is created internally
      */
     static defaultAbiCoder(): AbiCoder {
         if (defaultCoder == null) {

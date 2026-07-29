@@ -32,7 +32,7 @@ export interface IRpcConfig {
     url?: string
     options?: TTransport.Options.Http | TTransport.Options.Ws
 
-    /** Will be a preferred node for submitting transactions */
+    /** Preferred node for submitting transactions */
     safe?: boolean
     distinct?: boolean
     wallet?: boolean
@@ -40,25 +40,25 @@ export interface IRpcConfig {
     web3?: TTransport.Transport | Promise<TTransport.Transport>
 
     name?: string
-    /** Will be used only if manually requested with .getWeb3, or .getNodeUrl */
+    /** Used only when manually requested with .getWeb3 or .getNodeUrl */
     manual?: boolean
 
-    /** max block range per request when getting for example the past logs*/
+    /** Max block range per request, for example when fetching past logs */
     fetchableBlockRange?: number
 
     /** True if the node supports traceTransaction calls */
     traceable?: boolean
 
-    // requestCount/timeSpan: e.g. 100/1min
+    // requestCount/timeSpan, e.g. 100/1min
     rateLimit?: string
 
-    // the max block range to fetch per single request when getting Logs
+    // Max block range to fetch per single request when getting logs
     blockRangeLimit?: string | number
 
-    // maximum of requests to be batched, otherwise batches will be paginated
+    // Maximum number of requests to batch; otherwise, batches will be paginated
     batchLimit?: number
 
-    // Will be used only for the specified methods
+    // Used only for the specified methods
     methods?: {
         exclude?: string[]
         only?: string[]
@@ -68,7 +68,7 @@ export interface IPoolWeb3Request {
     ws?: boolean
     preferSafe?: boolean
 
-    /** Request wallet node to submit unsigned transactions */
+    /** Request a wallet node to submit unsigned transactions */
     wallet?: boolean
     distinct?: boolean
     name?: string
@@ -78,20 +78,20 @@ export interface IPoolWeb3Request {
 
     /** Supported node features */
     node?: {
-        // For specific url
+        // For a specific URL
         url?: string
 
         /** Supports traceTransaction */
         traceable?: boolean
     }
 
-    /** RPC method - will find the node that has the configuration */
+    /** RPC method; finds the node that has the configuration */
     method?: string
 
-    // Amount of batch requests to be performed, sothat we can choose the appropriate wClient and handle the rate limits correctly
+    // Number of batch requests to perform, so we can choose the appropriate wClient and handle rate limits correctly
     batchRequestCount?: number
 
-    // By fetching logs, specifies the desired block range to query
+    // When fetching logs, specifies the desired block range to query
     blockRangeCount?: number
 }
 
@@ -113,7 +113,7 @@ export class ClientPool {
             this.clients = [new WClient({ web3: config.web3 ?? config.provider })];
         } else {
             console.dir(config, { depth: null });
-            throw new Error(`Neither Node endpoints nor Web3 instance`)
+            throw new Error(`Neither node endpoints nor a Web3 instance were provided`)
         }
         if (this.clients.length < 2) {
             this.discoveredPartial = true;
@@ -145,7 +145,7 @@ export class ClientPool {
             ...(opts ?? {}),
 
             /**
-             * web3@1.6.0 has a bug with batch request via websockets, as the callback can stuck if a single response contains multiple IDs, as only the first one will be taken
+             * web3@1.6.0 has a bug with batch requests via WebSockets, as the callback can get stuck if a single response contains multiple IDs because only the first one is taken
              * https://github.com/web3/web3.js/blob/9238e106294784b4a6a20af020765973f0437022/packages/web3-providers-ws/src/index.js#L128
             */
             ws: false
@@ -167,7 +167,7 @@ export class ClientPool {
                         .map(x => `    ${x.config.url}`)
                         .join('\n');
 
-                    error = new Error(`Live clients not found in \n${urls}`);
+                    error = new Error(`Live clients were not found in \n${urls}`);
                 }
                 throw ClientPoolTraceError.create(error, opts?.trace, ErrorCode.NO_LIVE_CLIENT);
             }
@@ -184,10 +184,10 @@ export class ClientPool {
 
 
             if (wClientUsage == null) {
-                // per default NO_RETRIES
+                // By default, NO_RETRIES
                 used.set(wClient, 0);
             } else {
-                // decrease retry count
+                // Decrease the retry count
                 used.set(wClient, wClientUsage - 1);
             }
 
@@ -208,7 +208,7 @@ export class ClientPool {
                 return result;
             }
 
-            // if not the CallError, process the while loop to check another NodeProvider
+            // If this is not a CallError, continue the loop to check another NodeProvider
         }
     }
     async getRpc(options?: IPoolWeb3Request) {
@@ -218,7 +218,7 @@ export class ClientPool {
     async getWrappedWeb3(options?: IPoolWeb3Request) {
         let wClient = await this.next(null, options, { manual: true });
         if (wClient == null) {
-            throw new Error(`No client found in ${this.clients.length} Clients with options: ${JSON.stringify(options)}`);
+            throw new Error(`No client was found in ${this.clients.length} clients with options: ${JSON.stringify(options)}`);
         }
         return wClient;
     }
@@ -228,7 +228,7 @@ export class ClientPool {
             let stats = await this.getNodeStats();
             let info = stats.map(x => `    ${x.url}. ERR: ${x.fail}; OK: ${x.success}; Ping: ${x.ping}`).join('\n');
             let requirements = JSON.stringify(options);
-            throw new Error(`No alive node for ${requirements} found. \n ${info}`);
+            throw new Error(`No live node was found for ${requirements}. \n ${info}`);
         }
         return wClient?.config.url;
     }
@@ -291,7 +291,7 @@ export class ClientPool {
                         .map(x => `    ${x.config.url}`)
                         .join('\n');
 
-                    let error = new Error(`Live clients not found in \n${urls}`);
+                    let error = new Error(`Live clients were not found in \n${urls}`);
                     root.emit('error', error);
                     root.reject(error);
                 });
@@ -371,7 +371,7 @@ export class ClientPool {
     }): Promise<IWeb3ClientStatus[]> {
         const Calls = {
             async net_peerCount(wClient: WClient) {
-                /** @TODO Public nodes smt. do not allow net_peerCount methods. Allow to switch this on/off on node-url-config level */
+                /** @TODO Public nodes sometimes do not allow net_peerCount methods. Allow this to be switched on/off at the node URL config level */
                 try {
                     return await wClient.rpc.net_peerCount();
                 } catch (error) {
@@ -476,7 +476,7 @@ export class ClientPool {
                 return true;
             });
             if (clientsWithSupportedMethod.length > 0) {
-                // if there are no clients with manually specified method, use all clients
+                // If there are no clients with the manually specified method, use all clients
                 clients = clientsWithSupportedMethod;
             }
         } else {
@@ -495,7 +495,7 @@ export class ClientPool {
         }
 
         if (opts?.ws === false) {
-            // filter out all WS providers (important for batched requests, as web3js has issues submitting multiple batch requests and handle response IDs)
+            // Filter out all WS providers. This is important for batched requests, as web3.js has issues submitting multiple batch requests and handling response IDs
             clients = clients.filter(x => x.config.url?.startsWith('http') || x.config.url == null);
         }
         if (opts?.node?.traceable === true) {
@@ -510,10 +510,10 @@ export class ClientPool {
             this.discoveredPartial = true;
         }
 
-        // we check OK clients first
+        // Check OK clients first
         let okClients = clients.filter(x => x.status === 'ok');
         if (okClients.length === 0) {
-            // then switch to at least not off
+            // Then switch to clients that are at least not off
             let notOffClients = clients.filter(x => x.status !== 'off');
             if (notOffClients) {
                 clients = notOffClients;
@@ -562,14 +562,14 @@ export class ClientPool {
             arr = arr.filter(x => {
                 let blocks = x.blockRangeLimits.blocks;
                 if (blocks == null) {
-                    // Block limit is unknown yet
+                    // The block limit is not known yet
                     return true;
                 }
                 if (blocks < this.MINIMUM_BLOCK_RANGE) {
-                    // Was not possible to load a minimum amount of blocks
+                    // Could not load the minimum number of blocks
                     return false;
                 }
-                // Get if higher than 50% of max supported limit
+                // Use clients higher than 50% of the max supported limit
                 return x.blockRangeLimits.blocks >= upperThreshold
             });
         }
@@ -600,16 +600,16 @@ export class ClientPool {
 
         const MAX_WAIT = 60_000;
         if (minWait > MAX_WAIT) {
-            throw new Error(`rate limit overflows. Waiting ${minWait}ms`);
+            throw new Error(`Rate limit overflow. Waiting ${minWait}ms`);
         }
         return minClient;
     }
 
     /**
-     * We may have tens of Nodes to communicate with. Discover LIVE and operating nodes.
-     * Resolves when first 3 active nodes are discovered, to prevent waiting for all of them.
+     * We may have tens of nodes to communicate with. Discover live and operating nodes
+     * Resolves when the first 3 active nodes are discovered to avoid waiting for all of them
      * @returns
-     * - Ready Promise - in case 3 clients look good
+     * - Ready Promise - when 3 clients look good
      * - Complete Promise - when all clients are resolved
      */
     @memd.deco.memoize({ perInstance: true })
@@ -749,13 +749,13 @@ export class WClient {
     config: IRpcConfig
     rateLimitGuard: RateLimitGuard
 
-    /** For getLogs method, as some providers limit the range request or page result value */
+    /** For the getLogs method, as some providers limit the range request or paged result size */
     blockRangeLimits: {
         blocks?: number
         results?: number
     }
 
-    // Max requests per single Web3 Batch request
+    // Max requests per single Web3 batch request
     batchLimit?: number
 
     healthy() {
@@ -947,7 +947,7 @@ export class WClient {
     }
 
     async call<TResult extends PromiseLike<any>>(fn: (wClient: WClient) => TResult, options?: {
-        // For the rate limit guard, to make sure we wait enough time to proceed with batch request for example
+        // For the rate limit guard, to make sure we wait long enough to proceed with a batch request, for example
         batchRequestCount?: number
     }): Promise<{ status: ClientStatus, error?, result?: Awaited<TResult>, time: number }> {
         let now = Date.now();
@@ -1091,7 +1091,7 @@ export class WClient {
     }
 
     /**
-     * Checks the rate limit wait time, so that the POOL can select the wClient with shortest wait time
+     * Checks the rate limit wait time so the pool can select the wClient with the shortest wait time
      **/
     getRateLimitGuardTime() {
         return this.rateLimitGuard?.checkWaitTime() ?? 0;

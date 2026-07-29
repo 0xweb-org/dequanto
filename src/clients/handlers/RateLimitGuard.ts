@@ -6,7 +6,7 @@ import memd from 'memd';
 
 let rateLimitRgx = {
     checks: [
-        // extracted from known and common rate-limit messages
+        // Extracted from known and common rate-limit messages
         /rate.+limit/i,
         /too.+many.+request/i,
         /exceed.+request/i,
@@ -99,9 +99,9 @@ export class RateLimitGuard {
 
                     val = Number(val);
                     if (val < 50_000) {
-                        // relative time
+                        // Relative time
                         if (val < 1000) {
-                            // in seconds
+                            // In seconds
                             val = val * 1000;
                         }
                         val = Date.now() + val;
@@ -243,9 +243,9 @@ export class RateLimitGuard {
     private onThrottle(ms: number) {
         let awaited = this.awaited;
         if (awaited.count > 0 && awaited.count % 20 === 0) {
-            l`The Node ${this.id} with (${this.rates[0].counter}req) was ${awaited.count}x throttled, in total for ${ $date.formatTimespan(awaited.total) }. Current wait-time: ${ $date.formatTimespan(ms) }`
+            l`The node ${this.id} with (${this.rates[0].counter} req) was throttled ${awaited.count}x for ${ $date.formatTimespan(awaited.total) } in total. Current wait time: ${ $date.formatTimespan(ms) }`
         } else if (ms > 30_000) {
-            l`The Node ${this.id} with (${this.rates[0].counter}req) waits now for ${ $date.formatTimespan(ms) } to continue.`
+            l`The node ${this.id} with (${this.rates[0].counter} req) is now waiting ${ $date.formatTimespan(ms) } to continue.`
         }
 
         //-this.rates[1].printStatus()
@@ -255,9 +255,9 @@ export class RateLimitGuard {
 }
 
 /**
- * In short epoch rate limiter (1s, 1m, 1h) we track each request
+ * In the short-epoch rate limiter (1s, 1m, 1h), we track each request
  *
- * sliding(rolling) window | fixed window
+ * sliding (rolling) window | fixed window
  */
 class ShortEpochRateLimitData {
     public started: number;
@@ -273,7 +273,7 @@ class ShortEpochRateLimitData {
         let rgx = /^(?<limit>\d+)[\\/](?<time>\w+)$/;
         let match = rgx.exec(rate);
         if (match == null) {
-            throw new Error(`Invalid value for rate limit: ${rate}. Expects to match the regex: ${rgx.toString()}`);
+            throw new Error(`Invalid value for rate limit: ${rate}. Expected to match the regex: ${rgx.toString()}`);
         }
         let spanMs = Number(match.groups.limit);
         let spanLimit = $date.parseTimespan(match.groups.time);
@@ -312,9 +312,9 @@ class ShortEpochRateLimitData {
     }
 
     /**
-     * The server has own request time, with `addTicks` we save the time BEFORE sending to the server
-     * Here we should update the times AFTER the response received,
-     * otherwise the Request could be removed locally from TimeWindow earlier, as it has been cleared on the backend.
+     * The server has its own request time. With `addTicks`, we save the time BEFORE sending to the server
+     * Here we should update the times AFTER the response is received,
+     * otherwise the request could be removed locally from TimeWindow earlier than it is cleared on the backend
      */
     public updateRequests (tick: number, newTick: number) {
         for (let i = 0; i < this.ticks.length; i++) {
@@ -329,20 +329,20 @@ class ShortEpochRateLimitData {
         let spanStart = now - this.spanMs;
         for (let i = 0; i < ticks.length; i++) {
             if (ticks[i] < spanStart) {
-                // older ticks, continue to slice later
+                // Older ticks; continue and slice later
                 continue;
             }
 
             if (i > 0) {
-                // remove older requests
+                // Remove older requests
                 ticks.splice(0, i);
             }
-            // in range tick found
+            // In-range tick found
             break;
         }
 
         if ((ticks.length + ticksCount) <= this.spanLimit) {
-            // We can add requests to current span
+            // We can add requests to the current span
             return 0;
         }
 

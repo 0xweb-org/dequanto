@@ -102,7 +102,7 @@ export class BlockDateResolver {
     }
 
     /**
-     * Returns index of the first known block, which is most near to specified block (it can be before or after the specified date).
+     * Returns the index of the known block nearest to the specified date. It can be before or after the specified date
      */
     private getClosest (date: Date) {
         let entry = alot(this._known).map(x => [
@@ -120,7 +120,7 @@ export class BlockDateResolver {
         }
         let blockNumber = anchor.blockNumber + diffCount;
         if (blockNumber < 0) {
-            throw new Error(`Date Out of range: ${ this._requestedDate.toISOString() }. Based on the AVG block time, the blockchain was not active on that date`);
+            throw new Error(`Date out of range: ${ this._requestedDate.toISOString() }. Based on the average block time, the blockchain was not active on that date`);
         }
         let date = await this.getBlockDate(blockNumber);
         let info = {
@@ -132,7 +132,7 @@ export class BlockDateResolver {
         return info;
     }
 
-    /** Add a know block to set */
+    /** Adds a known block to the set */
     private push(info: IKnownBlock) {
         for (let i = 0; i < this._known.length; i++) {
             let x = this._known[i];
@@ -143,29 +143,29 @@ export class BlockDateResolver {
         }
         this._known.push(info);
     }
-    /** Loads the block and gets the Date of the block */
+    /** Loads the block and returns its date */
     private async getBlockDate (blockNumber: number) {
         let block = await this.getBlock(blockNumber);
         if (block == null) {
-            throw new Error(`Block not loaded: ${blockNumber}`);
+            throw new Error(`Block was not loaded: ${blockNumber}`);
         }
         let date = $block.getDate(block);
         return date;
     }
-    /** Returns SIGNED time in milliseconds between two dates. Negative values when t2 < t1 */
+    /** Returns the signed time in milliseconds between two dates. Values are negative when t2 < t1 */
     private diffTime (t1: Date, t2: Date) {
         return (t2.getTime() - t1.getTime());
     }
-    /** Returns ABSOLUTE time in milliseconds between two dates.  */
+    /** Returns the absolute time in milliseconds between two dates */
     private diffTimeAbs (t1: Date, t2: Date) {
         return Math.abs(this.diffTime(t1, t2));
     }
-    /** Returns AVG block count between two dates */
+    /** Returns the average block count between two dates */
     private getAvgBlockCountBetween (b1: IKnownBlock, b2: IKnownBlock) {
         let diff = this.diffTimeAbs(b1.date, b2.date);
         return Math.round(diff / Math.abs(b2.blockNumber - b1.blockNumber));
     }
-    /** With N>1 blocks we can better find out the AVG block time */
+    /** With N > 1 blocks, we can better estimate the average block time */
     private refineAvg () {
         for (let i = 1; i < this._known.length; i++) {
             let info = this._known[i];

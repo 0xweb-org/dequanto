@@ -63,14 +63,14 @@ function _pack(type: string, value: any, isArray?: boolean): Uint8Array {
         return $buffer.concat(buffers);
     }
 
-    throw new Error(`AbiCoder: Invalid type ${type}`);
+    throw new Error(`AbiCoder: invalid type ${type}`);
 }
 
-// @TODO: Array Enum
+// @TODO: Array enum
 
 /**
  *   Computes the [[link-solc-packed]] representation of %%values%%
- *   respectively to their %%types%%.
+ *   respectively to their %%types%%
  *
  *   @example:
  *       addr = "0x8ba1f109551bd432803012645ac136ddd64dba72"

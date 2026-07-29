@@ -100,7 +100,7 @@ namespace $Web3Contract {
             get(target: Web3Contract, method, receiver) {
                 let abiItem = target.abi.find(item => item.name === method);
                 if (abiItem == null) {
-                    throw new Error(`Method ${method.toString()} not found. Available methods: ${target.abi.map(item => item.name).join(', ')}`);
+                    throw new Error(`Method ${method.toString()} was not found. Available methods: ${target.abi.map(item => item.name).join(', ')}`);
                 }
                 return (...args) => {
                     return new Web3ContractMethod(target.eth, abiItem, target.abi, target.address, args);
@@ -140,7 +140,7 @@ namespace $Web3Contract {
         }
         send (opts: { from, gas }) {
             let account = this.eth.accounts.wallet.get(opts.from);
-            $require.notNull(account, `Account ${opts.from} not found`);
+            $require.notNull(account, `Account ${opts.from} was not found`);
 
             let builder = new TxDataBuilder(this.eth.client, account, {
                 to: this.address,
