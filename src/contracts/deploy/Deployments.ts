@@ -298,10 +298,7 @@ export class Deployments {
         };
     }
 
-    async ensureWithProxy<
-        T extends (TContract & TInitializers<TInit>),
-        TInit extends TFunction
-    >(
+    async ensureWithProxy<T extends TContract>(
         CtorImpl: Constructor<T>,
         opts?: TConstructorArgs<T> & TDeploymentOptions & TInitializerParams<T>
     ): Promise<{
@@ -627,27 +624,19 @@ export class Deployments {
     }
 }
 
-
-type TFunction = (...args: any[]) => any
-type TInitializerName = 'initialize' | `initializeV${number}`
-type TInitializers<TInit extends TFunction> = {
-    [K in TInitializerName]?: TInit
-}
-type TInitializerParams<T extends TInitializers<TFunction>> = {
-    initialize?: T['initialize'] extends TFunction
-        ? ParametersFromSecond<T['initialize']>
-        : never
-    initializeV2?: T['initializeV2'] extends TFunction
-        ? ParametersFromSecond<T['initializeV2']>
-        : never
-    initializeV3?: T['initializeV3'] extends TFunction
-        ? ParametersFromSecond<T['initializeV3']>
-        : never
+type TFunction = (...args: any[]) => any;
+type TInitializerName = 'initialize' | `initializeV${number}`;
+type TInitializerParams<T> = {
+    initialize?: T extends { initialize: infer TInit }
+        ? TInit extends TFunction
+            ? ParametersFromSecond<TInit>
+            : never
+        : any[];
 } & {
-    [K in Extract<keyof T, `initializeV${number}`>]?: T[K] extends TFunction
+    [K in Extract<keyof T, TInitializerName>]?: T[K] extends TFunction
         ? ParametersFromSecond<T[K]>
-        : any
-}
+        : never;
+};
 
 type TContract = ContractBase & { $constructor?: (...args: any[]) => any }
 type TConstructorArgs<T extends TContract> = T['$constructor'] extends Function ? {
