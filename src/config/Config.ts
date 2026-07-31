@@ -1,4 +1,5 @@
 import memd from 'memd';
+import type { Config as Appcfg } from 'appcfg/Config';
 import { class_Dfr, obj_extend } from 'atma-utils';
 import { TConfigParamsBrowser, TConfigParamsNode } from './AConfigBase';
 import { IConfigData } from './interface/IConfigData';
@@ -8,7 +9,7 @@ import { $logger } from '../utils/$logger';
 export class Config {
 
     @memd.deco.memoize()
-    static async fetch (parameters?: TConfigParamsNode | TConfigParamsBrowser) {
+    static async fetch (parameters?: TConfigParamsNode | TConfigParamsBrowser): Promise<Appcfg<IConfigData> & IConfigData> {
         singleton ??= new class_Dfr();
 
         let cfg = await provider.fetch(parameters);
@@ -27,7 +28,7 @@ export class Config {
     }
 
     /** Will return a config that was previously loaded by fetch with any parameters or will trigger fetch with default parameters  */
-    static async get (): Promise<IConfigData> {
+    static async get (): Promise<Appcfg<IConfigData> & IConfigData>  {
         if (singleton != null) {
             return singleton;
         }
@@ -47,4 +48,4 @@ export class Config {
 export const config = { } as IConfigData;
 
 let provider = new ConfigProvider();
-let singleton: class_Dfr<IConfigData> = null;
+let singleton: class_Dfr<Appcfg<IConfigData> & IConfigData> = null;
