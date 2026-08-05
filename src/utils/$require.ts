@@ -5,7 +5,7 @@ import { $address } from './$address';
 
 const $Array = Array;
 export namespace $require {
-    export function Number <T> (val: T, message: string = '', opts?: { min?: T, max?: T}): T {
+    export function Number <T> (val: T, message: string = '', opts?: { min?: T, max?: T}): number {
         if (typeof val !== 'number') {
             throw new Error(`Expects number type, got ${typeof val} ${val}. ${message}`);
         }
@@ -20,7 +20,7 @@ export namespace $require {
         }
         return val;
     }
-    export function BigInt<T> (val: T, message: string = '', opts?: { min?: T, max?: T}): T {
+    export function BigInt<T> (val: T, message: string = '', opts?: { min?: T, max?: T}): bigint {
         if (typeof val !== 'bigint') {
             throw new Error(`Expects bigint type, got ${typeof val} (${val}). ${message}`);
         }
@@ -32,35 +32,35 @@ export namespace $require {
         }
         return val;
     }
-    export function Numeric<T>(val: T, message: string = '', opts?: { min?: T, max?: T}): T {
+    export function Numeric<T>(val: T, message: string = '', opts?: { min?: T, max?: T}): NonNullable<T> {
         if (typeof val === 'number') {
-            return Number(val, message, opts);
+            return Number(val, message, opts) as any;
         }
         if (typeof val === 'bigint') {
-            return BigInt(val, message, opts);
+            return BigInt(val, message, opts) as any;
         }
         throw new Error(`Expects numeric type, got ${typeof val}. ${message}`);
     }
 
-    export function Function<T>(val: T, message: string): T {
+    export function Function<T>(val: T, message: string): NonNullable<T> {
         if (typeof val !== 'function') {
             throw new Error(`Value is not a function ${message}`);
         }
         return val;
     }
-    export function Array<T>(val: T, message: string): T {
+    export function Array<T>(val: T, message: string): NonNullable<T> {
         if ($Array.isArray(val) === false) {
             throw new Error(`Value is not a function ${message}`);
         }
         return val;
     }
-    export function String<T>(val: T, message: string): T {
+    export function String<T>(val: T, message: string): NonNullable<T> {
         if (typeof val !== 'string') {
             throw new Error(`Value ${val} is not a string ${message}`);
         }
         return val;
     }
-    export function notNull<T> (val: T, message: string, ...logs): T {
+    export function notNull<T> (val: T, message: string, ...logs): NonNullable<T> {
         if (val == null) {
             logs?.forEach(log => console.error(log));
             throw new Error(`Value is undefined. ${message}`);
@@ -74,7 +74,7 @@ export namespace $require {
         }
         return val;
     }
-    export function notEmpty<T extends string | Array<any> | { length: number }> (val: T, message: string): T {
+    export function notEmpty<T extends string | Array<any> | { length: number }> (val: T, message: string): NonNullable<T> {
         if (val == null) {
             throw new Error(`Value is undefined. ${message}`);
         }
