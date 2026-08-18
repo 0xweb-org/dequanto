@@ -1,3 +1,4 @@
+import alot from 'alot';
 import { EoAccount } from '@dequanto/models/TAccount';
 import { ITxWriterAgent } from './TxWriterAccountAgents';
 import { ITxWriterEmitter, ITxWriterEvents, ITxWriterTransaction, TxWriter } from '../TxWriter';
@@ -7,11 +8,13 @@ import { class_Dfr, class_EventEmitter } from 'atma-utils';
 import { TEth } from '@dequanto/models/TEth';
 import { $date } from '@dequanto/utils/$date';
 
-
-import { $require } from '@dequanto/utils/$require';
 import { $address } from '@dequanto/utils/$address';
 import { $logger } from '@dequanto/utils/$logger';
-
+import { SafeTx } from '@dequanto/safe/SafeTx';
+import { TimelockController } from '@dequanto/prebuilt/openzeppelin/TimelockController';
+import { TimelockService } from '@dequanto/services/TimelockService/TimelockService';
+import { TxDataBuilder } from '../TxDataBuilder';
+import { $contract } from '@dequanto/utils/$contract';
 
 export class BatchAgent implements ITxWriterAgent {
 
@@ -26,10 +29,12 @@ export class BatchAgent implements ITxWriterAgent {
 
     enable () {
         TxWriter.DEFAULTS.agent = this;
+        return this;
     }
 
     disable () {
         TxWriter.DEFAULTS.agent = null;
+        return this;
     }
 
     getTxData (): (Pick<TEth.TxLike, "to" | "data" | "value"> & { sender: TEth.EoAccount, account: TEth.IAccount })[] {
@@ -39,11 +44,12 @@ export class BatchAgent implements ITxWriterAgent {
                 to: data.to,
                 value: data.value,
                 data: data.data,
+                chainId: data.chainId,
 
                 sender: tx.sender,
                 account: tx.account,
             };
-        })
+        });
     }
 
     async process (senderMix: string | EoAccount, account: TEth.IAccount, outerWriter: TxWriter) {
@@ -62,12 +68,85 @@ export class BatchAgent implements ITxWriterAgent {
             outerWriter,
         );
 
-        let methodInfo = await outerWriter.builder.getInputDataInfo();
-        $logger.log(`[BatchAgent] ${outerWriter.builder.data.to} (${methodInfo?.method})`);
+        let title = await this.getTitle(outerWriter.builder);
+        $logger.log(`[BatchAgent] ${title}`);
 
         this.transactions.push(inner);
         await inner.process();
         return inner;
+    }
+
+    async execute (): Promise<TxWriter[]> {
+        this.disable();
+
+        let groupStart = 0;
+        let writers = [];
+        for (let i = 0; i < this.transactions.length; i++) {
+            let tx = this.transactions[i];
+            let next = i < this.transactions.length - 1
+                ? this.transactions[i + i]
+                : null;
+
+            if (next == null || $address.eq(tx.account.address, next.account.address) === false) {
+                let arr = await this.executeGroup(this.transactions.slice(groupStart, i + 1));
+                writers.push(...arr);
+            }
+        }
+        this.enable();
+        return writers;
+    }
+
+    private async executeGroup (txs: MockTxWriter[]) {
+        let { account, sender } = txs[0];
+        if (account.name.includes('safe/')) {
+            let tx = await this.executeBatchSafe(sender, account, txs);
+            return [ tx ];
+        }
+        if (account.name.includes('timelock/')) {
+            let tx = await this.executeBatchTimelock(sender, account, txs);
+            return [ tx ];
+        }
+        let writers = [];
+        for (let i = 0; i < txs.length; i++) {
+            let tx = txs[i];
+            let writer = tx.outerWriter.send();
+            await writer.wait();
+            writers.push(writer);
+        }
+        return writers;
+    }
+    private async executeBatchSafe (sender: TEth.EoAccount, account: TEth.IAccount, txs: MockTxWriter[]) {
+        let client = txs[0].outerWriter.client;
+        let safe = new SafeTx(account as TEth.SafeAccount, client);
+
+        let calls = txs.map(x => x.outerWriter.builder.getTxData());
+        let writer = await safe.executeBatch(...calls);
+        await writer.wait();
+        return writer;
+    }
+    private async executeBatchTimelock (sender: TEth.EoAccount, account: TEth.IAccount, txs: MockTxWriter[]) {
+        let client = txs[0].outerWriter.client;
+        let timelock = new TimelockController(account.address, client);
+        let service = new TimelockService(timelock, {
+
+        });
+        let titles = await alot(txs)
+            .map(x => this.getTitle(x.outerWriter.builder))
+            .toArrayAsync();
+        let taskName = $contract.keccak256(titles.join(','), 'hex');
+        let calls = txs.map(x => x.outerWriter.builder.getTxData());
+
+        let { tx } = await service.processBatch(taskName, sender, calls);
+        if (tx == null) {
+            // No transactions
+            return null;
+        }
+        return TxWriter.fromTxHash(client, tx);
+    }
+
+    private async getTitle (builder: TxDataBuilder) {
+        let methodInfo = await builder.getInputDataInfo();
+        return `${builder.data.to} [${methodInfo?.method}(${JSON.stringify(methodInfo?.params ?? [])})]`
     }
 }
 

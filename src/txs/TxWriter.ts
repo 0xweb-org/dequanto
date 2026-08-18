@@ -619,6 +619,28 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> implements ITx
         return writer;
     }
 
+    static async fromTxHash (client: Web3Client, hash: TEth.Hex): Promise<TxWriter> {
+        let txData = await client.getTransaction(hash);
+        let txReceipt = await client.getTransactionReceipt(hash);
+        let account = await TxWriter.prepareAccount(txData.from);
+
+        let builder = TxDataBuilder.fromJSON(client, account, {
+            config: null,
+            tx: txData
+        });
+        let writer = TxWriter.create(client, builder, account);
+        writer.tx = {
+            hash: hash,
+            receipt: txReceipt,
+            confirmations: null,
+            timestamp: null,
+        };
+        writer.txs = [ writer.tx ];
+        writer.receipt = txReceipt;
+
+        return writer;
+    }
+
 
     static write (
         client: Web3Client,

@@ -21,6 +21,10 @@ import { l } from '@dequanto/utils/$logger';
 import { $promise } from '@dequanto/utils/$promise';
 import { IBeacon, IBeaconProxy, IProxy, IProxyAdmin, ProxyDeployment } from './proxy/ProxyDeployment';
 import { DeploymentsStorage, IDeployment } from './storage/DeploymentsStorage';
+import { $address } from '@dequanto/utils/$address';
+import { $date } from '@dequanto/utils/$date';
+import { TransparentUpgradeableProxy } from '@dequanto/prebuilt/openzeppelin/compiled/TransparentUpgradeableProxy/TransparentUpgradeableProxy';
+import { Directory, File, env } from 'atma-io';
 
 
 
@@ -178,7 +182,7 @@ export class Deployments {
             : new CtorWrapped(deployment.address, this.client);
     }
 
-    async verify (params: {
+    async verify(params: {
         id: string
         address?: TAddress,
         Ctor: Constructor<ContractBase>
@@ -193,7 +197,6 @@ export class Deployments {
             constructorParams: params.constructorParams,
             proxyFor: deployment.proxyFor,
         });
-
     }
 
 
@@ -489,7 +492,7 @@ export class Deployments {
 
                 let { bytecode: bytecodeOnchain } = $bytecode.splitToMetadata(bytecode);
                 let { bytecode: bytecodeLocal } = $bytecode.splitToMetadata(deployedBytecode);
-                let [ localDiff, onchainDiff ] = Str.getDifference(bytecodeLocal, bytecodeOnchain);
+                let [localDiff, onchainDiff] = Str.getDifference(bytecodeLocal, bytecodeOnchain);
                 if (localDiff === '' || /^0+$/.test(localDiff)) {
                     this._logger.log(`${deployment.id} bytecode has only immutable data diff, assume unchanged`);
                     // Local deployedBytecode does not contain immutable data.
@@ -504,7 +507,7 @@ export class Deployments {
     }
 
 
-    private async ensureVerification <T extends TContract> (Ctor: Constructor<T>, deployment: IDeployment, opts: TVerificationOptions) {
+    private async ensureVerification<T extends TContract>(Ctor: Constructor<T>, deployment: IDeployment, opts: TVerificationOptions) {
         if (this.client.platform === 'hardhat' || opts?.verification === false || this.opts.verification === false) {
             return;
         }
@@ -563,6 +566,154 @@ export class Deployments {
         await this.store.saveAll(deployments);
     }
 
+    public async saveExisting(params: {
+        contractAddress: TEth.Address
+        name: string
+        id: string
+
+        // The generated 0xc contract to save the deployment for
+        main: string
+    }) {
+        $require.AddressNotEmpty(params.contractAddress);
+
+        const main = await this.resolveMain(params.main);
+
+        let deployments = await this.store.getDeployments();
+        let current = deployments.find(x => $address.eq(x.address, params.contractAddress));
+        $require.Null(current, `Contract already exists in deployments`);
+
+        let explorer = await BlockchainExplorerFactory.getAsync(this.client.network);
+        let abiInfo = await explorer.getContractAbi(params.contractAddress);
+        if ($is.Address(abiInfo.implementation)) {
+            // Is proxy
+            const deployments = [] as IDeployment[];
+
+            const contractInfo = await this.getContractDeploymentInfo(abiInfo.implementation);
+            deployments.push({
+                id: params.id,
+                name: params.name,
+                main: main,
+                ...contractInfo,
+
+                address: params.contractAddress,
+                implementation: abiInfo.implementation,
+            });
+
+            const proxyInfo = await this.getContractDeploymentInfo(params.contractAddress);
+            const proxy = {
+                id: `${params.id}Proxy`,
+                name: 'TransparentUpgradeableProxy',
+                main: 'artifacts/@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol/TransparentUpgradeableProxy.json',
+                ...proxyInfo,
+                address: params.contractAddress,
+                proxyFor: params.contractAddress,
+            };
+            deployments.push(proxy);
+
+            const proxyReceipt = await this.client.getTransactionReceipt(proxy.tx);
+            const proxyAdmin = new TransparentUpgradeableProxy($address.ZERO, this.client);
+            const [proxyAdminLog] = proxyAdmin.extractLogsAdminChanged(proxyReceipt);
+            if (proxyAdminLog) {
+                deployments.push({
+                    id: `${params.id}ProxyAdmin`,
+                    name: 'ProxyAdmin',
+                    main: 'artifacts/@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol/ProxyAdmin.json',
+                    address: proxyAdminLog.params.newAdmin,
+                    block: proxy.block,
+                    tx: proxy.tx,
+                    gas: proxy.gas,
+                    timestamp: proxy.timestamp,
+
+                    // Not required for the proxyadmin contract
+                    deployer: null,
+                    bytecodeHash: null,
+                });
+            }
+
+            let slots = await this.getSlotsForMain(main);
+            if (slots != null) {
+                this.store.saveStorageLayoutInfo({
+                    id: proxy.id,
+                    slots
+                });
+            }
+            await this.store.upsertMany(deployments);
+            return;
+        }
+
+        const contractInfo = await this.getContractDeploymentInfo(params.contractAddress);
+        const deployment = {
+            id: params.id,
+            name: params.name,
+            main: main,
+            ...contractInfo,
+        };
+        await this.store.upsertMany([ deployment ]);
+    }
+
+    private async getContractDeploymentInfo(address: TAddress) {
+        const client = this.client;
+        const explorer = await BlockchainExplorerFactory.getAsync(client.network);
+        const creation = await explorer.getContractCreation(address);
+        const receipt = await this.client.getTransactionReceipt(creation.txHash);
+        const block = await this.client.getBlock(receipt.blockNumber);
+        const bytecode = await this.client.getCode(address);
+        const info = {
+            address: address,
+            bytecodeHash: this.getBytecodeHash(bytecode),
+            block: receipt.blockNumber,
+            tx: receipt.transactionHash,
+            timestamp: block.timestamp,
+            gas: Number(receipt.gasUsed),
+            deployer: receipt.from,
+            verified: $date.fromUnixTimestamp(block.timestamp).toISOString()
+        };
+        return info;
+    }
+
+    private async resolveMain(main: string) {
+        let extMatch = /\.\w+$/.exec(main);
+        if (extMatch != null) {
+            let exists = await File.existsAsync(main);
+            $require.True(exists, `The main file "${main}" must exist`);
+            return main;
+        }
+        let files = await Directory.readFilesAsync('./0xc/hardhat/', main);
+        if (files.length > 1) {
+            throw new Error(`Multiple contracts found: ${files.map(x => x.uri.toLocalFile())} by the match "${main}"`);
+        }
+        if (files.length === 0) {
+            throw new Error(`No files found by the match "${main}"`);
+        }
+        let [file] = files;
+        return file.uri.toRelativeString(env.currentDir);
+    }
+
+    private async getSlotsForMain(main: string) {
+        let code = await File.readAsync<string>(main, { skipHooks: true });
+        // parse from ts-generated code (consider to output slots in extra file like abi json)
+        let rgxStart = /^\s*\$slots\s*=\s*\[/mg;
+        let rgxStartMatch = rgxStart.exec(code);
+        if (rgxStartMatch == null) {
+            console.error(`${main} has no generated $slots field`);
+            return null;
+        }
+        let rgxEnd = /^\s*\]/mg;
+        rgxEnd.lastIndex = rgxStartMatch.index;
+        let rgxEndMatch = rgxEnd.exec(code);
+        if (rgxEndMatch == null) {
+            console.error(`${main}: End not found of the $slots value`);
+            return null;
+        }
+        let json = code.substring(rgxStartMatch.index + rgxStartMatch[0].length - 1, rgxEndMatch.index + 1);
+        try {
+            return JSON.parse(json);
+        } catch (error) {
+            console.error(`Slots not parsed from ${main}: ${error.message}`)
+            return null;
+        }
+    }
+
     private getBytecodeHash(bytecode: TEth.Hex) {
         let { bytecode: bytecodeRaw } = $bytecode.splitToMetadata(bytecode);
         return $contract.keccak256(bytecodeRaw);
@@ -614,7 +765,7 @@ export class Deployments {
                 return;
             }
         }
-        if (opts.title!= null) {
+        if (opts.title != null) {
             let currentStr = currentVal == null || typeof currentVal === 'object'
                 ? ''
                 : ` from ${currentVal}`;
@@ -628,14 +779,14 @@ type TFunction = (...args: any[]) => any;
 type TInitializerName = 'initialize' | `initializeV${number}`;
 type TInitializerParams<T> = {
     initialize?: T extends { initialize: infer TInit }
-        ? TInit extends TFunction
-            ? ParametersFromSecond<TInit>
-            : never
-        : any[];
+    ? TInit extends TFunction
+    ? ParametersFromSecond<TInit>
+    : never
+    : any[];
 } & {
     [K in Extract<keyof T, TInitializerName>]?: T[K] extends TFunction
-        ? ParametersFromSecond<T[K]>
-        : never;
+    ? ParametersFromSecond<T[K]>
+    : never;
 };
 
 type TContract = ContractBase & { $constructor?: (...args: any[]) => any }
@@ -652,7 +803,7 @@ function isEqual(a, b) {
     }
     if (typeof a !== 'object' && typeof b !== 'object') {
 
-        if (typeof a === 'string' && typeof b ==='string') {
+        if (typeof a === 'string' && typeof b === 'string') {
             if (a.startsWith('0x') && b.startsWith('0x') && $is.Hex(a) && $is.Hex(b)) {
                 a = a.toLowerCase();
                 b = b.toLowerCase();
@@ -730,7 +881,7 @@ function serializeMigrationData(id: string, contract: ContractBase, opts: any) {
  * Normalizes the contract name by removing any version suffix from the name.
  * "FooV1" is actually the "Foo" contract.
  */
-function getImplementationId (Ctor: Constructor<TContract>) {
+function getImplementationId(Ctor: Constructor<TContract>) {
     let id = Ctor.name;
     let version = /V?(?<version>\d)$/i.exec(id);
     if (version) {
@@ -740,7 +891,7 @@ function getImplementationId (Ctor: Constructor<TContract>) {
 }
 
 
-function getImmutablesKey (args: any[]) {
+function getImmutablesKey(args: any[]) {
     if (args == null || args.length === 0) {
         return null;
     }
@@ -749,9 +900,9 @@ function getImmutablesKey (args: any[]) {
 }
 
 namespace Str {
-    export function getDifference (a: TEth.Hex, b: TEth.Hex) {
+    export function getDifference(a: TEth.Hex, b: TEth.Hex) {
         if (a === b) {
-            return [ '', '' ];
+            return ['', ''];
         }
 
         let start = -1;

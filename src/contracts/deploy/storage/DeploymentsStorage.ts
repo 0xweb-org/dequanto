@@ -39,6 +39,7 @@ export interface IDeployment {
     deployer: TEth.Address
     timestamp: number
     bytecodeHash: TEth.Hex
+    gas?: number
 
     history?: (Omit<IDeployment, 'id' | 'name'> & { version?: string })[]
 }
@@ -156,6 +157,11 @@ export class  DeploymentsStorage {
         await store.saveAll(deployments);
     }
 
+    async upsertMany (deployments: IDeployment[]) {
+        let store = await this.getDeploymentsStore();
+        await store.upsertMany(deployments);
+    }
+
     async saveDeployment (contract: ContractBase, info: {
         id: string
         name: string
@@ -176,7 +182,7 @@ export class  DeploymentsStorage {
             address: contract.address,
             block: receipt.blockNumber,
             tx: receipt.transactionHash,
-            gas: receipt.gasUsed,
+            gas: Number(receipt.gasUsed),
             deployer: this.deployer.address,
             timestamp: $date.toUnixTimestamp(new Date()),
 

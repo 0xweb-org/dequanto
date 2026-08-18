@@ -36,7 +36,7 @@ export namespace $address {
     }
 
     export function toBytes32(address: TEth.Address) {
-        return address.toLowerCase().substring(2).padStart(32, '0');
+        return address.toLowerCase().substring(2).padStart(32, '0') as TEth.Hex;
     }
     export function fromBytes32(hex: string): TEth.Address {
         const SIZE = 40;

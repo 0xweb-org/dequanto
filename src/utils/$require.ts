@@ -2,6 +2,7 @@ import { IToken } from '@dequanto/models/IToken';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $is } from './$is';
 import { $address } from './$address';
+import { TEth } from '@dequanto/models/TEth';
 
 const $Array = Array;
 export namespace $require {
@@ -170,7 +171,7 @@ export namespace $require {
         return val;
     }
 
-    export function Hex (val: string, message: string = ''): string {
+    export function Hex (val: string, message: string = ''): TEth.Hex {
         if ($is.Hex(val) === false) {
             throw new Error(`Value ${val} is not a valid hex value. ${message}`);
         }
