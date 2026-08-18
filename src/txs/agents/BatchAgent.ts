@@ -15,6 +15,7 @@ import { TimelockController } from '@dequanto/prebuilt/openzeppelin/TimelockCont
 import { TimelockService } from '@dequanto/services/TimelockService/TimelockService';
 import { TxDataBuilder } from '../TxDataBuilder';
 import { $contract } from '@dequanto/utils/$contract';
+import { $require } from '@dequanto/utils/$require';
 
 export class BatchAgent implements ITxWriterAgent {
 
@@ -52,6 +53,7 @@ export class BatchAgent implements ITxWriterAgent {
         });
     }
 
+    // Called by TxWriter for regular transactions. Prevents on-chain submission and keeps the transaction in the batch.
     async process (senderMix: string | EoAccount, account: TEth.IAccount, outerWriter: TxWriter) {
 
         if (outerWriter.builder.data.to == null && this.options?.ignoreContractCreation != false) {
@@ -76,6 +78,7 @@ export class BatchAgent implements ITxWriterAgent {
         return inner;
     }
 
+    // Submits queued transactions on-chain. If the account is Safe or Timelock, prepares the corresponding calldata and submits as batch transaction.
     async execute (): Promise<TxWriter[]> {
         this.disable();
 
@@ -84,12 +87,16 @@ export class BatchAgent implements ITxWriterAgent {
         for (let i = 0; i < this.transactions.length; i++) {
             let tx = this.transactions[i];
             let next = i < this.transactions.length - 1
-                ? this.transactions[i + i]
+                ? this.transactions[i + 1]
                 : null;
 
-            if (next == null || $address.eq(tx.account.address, next.account.address) === false) {
+            let acc0 = tx.account?.address ?? tx.sender?.address;
+            let acc1 = next?.account?.address ?? next?.sender?.address;
+
+            if (next == null || $address.eq(acc0, acc1) === false) {
                 let arr = await this.executeGroup(this.transactions.slice(groupStart, i + 1));
                 writers.push(...arr);
+                groupStart = i + 1;
             }
         }
         this.enable();
@@ -98,24 +105,27 @@ export class BatchAgent implements ITxWriterAgent {
 
     private async executeGroup (txs: MockTxWriter[]) {
         let { account, sender } = txs[0];
-        if (account.name.includes('safe/')) {
-            let tx = await this.executeBatchSafe(sender, account, txs);
+        let acc = account ?? sender;
+        if (acc.name.includes('safe/')) {
+            let tx = await this.executeBatchSafe(acc, txs);
             return [ tx ];
         }
-        if (account.name.includes('timelock/')) {
+        if (acc.name.includes('timelock/')) {
             let tx = await this.executeBatchTimelock(sender, account, txs);
             return [ tx ];
         }
         let writers = [];
         for (let i = 0; i < txs.length; i++) {
-            let tx = txs[i];
-            let writer = tx.outerWriter.send();
-            await writer.wait();
+            let writer = txs[i].outerWriter;
+            writer.tx = null;
+            writer.txs = [];
+            writer.receipt = null;
             writers.push(writer);
+            await writer.send().wait();
         }
         return writers;
     }
-    private async executeBatchSafe (sender: TEth.EoAccount, account: TEth.IAccount, txs: MockTxWriter[]) {
+    private async executeBatchSafe (account: TEth.IAccount, txs: MockTxWriter[]) {
         let client = txs[0].outerWriter.client;
         let safe = new SafeTx(account as TEth.SafeAccount, client);
 
@@ -125,6 +135,8 @@ export class BatchAgent implements ITxWriterAgent {
         return writer;
     }
     private async executeBatchTimelock (sender: TEth.EoAccount, account: TEth.IAccount, txs: MockTxWriter[]) {
+        $require.notNull(sender, `Sender is undefined`);
+        $require.notNull(account, `Timelock is undefined`);
         let client = txs[0].outerWriter.client;
         let timelock = new TimelockController(account.address, client);
         let service = new TimelockService(timelock, {
