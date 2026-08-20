@@ -137,6 +137,9 @@ export class BatchAgent implements ITxWriterAgent {
     private async executeBatchTimelock (sender: TEth.EoAccount, account: TEth.IAccount, txs: MockTxWriter[]) {
         $require.notNull(sender, `Sender is undefined`);
         $require.notNull(account, `Timelock is undefined`);
+
+        sender = await TxWriter.prepareAccount(sender) as TEth.EoAccount;
+
         let client = txs[0].outerWriter.client;
         let timelock = new TimelockController(account.address, client);
         let service = new TimelockService(timelock, {

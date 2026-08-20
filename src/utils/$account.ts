@@ -28,10 +28,11 @@ export namespace $account {
         if (typeof account === 'string') {
             return rgx.test(account);
         }
-        if (account.type === 'safe' || rgx.test(account.name)) {
-            return true;
+        if (account.type != null && typeof account.type === 'string') {
+            return account.type === 'safe';
         }
-        return false;
+        // Optimistic match by pattern "safe/";
+        return rgx.test(account.name);
     }
 
     export function isErc4337 (account:TAccount): account is Erc4337Account {
@@ -42,10 +43,11 @@ export namespace $account {
         if (typeof account === 'string') {
             return rgx.test(account);
         }
-        if (account.type === 'erc4337' || rgx.test(account.name)) {
-            return true;
+         if (account.type != null && typeof account.type === 'string') {
+            return account.type === 'erc4337';
         }
-        return false;
+        // Optimistic match by pattern "erc4337/";
+        return rgx.test(account.name);
     }
 
     export function isTimelock (account:TAccount): account is TimelockAccount {
@@ -56,9 +58,10 @@ export namespace $account {
         if (typeof account === 'string') {
             return rgx.test(account);
         }
-        if (account.type === 'timelock' || rgx.test(account.name)) {
-            return true;
+        if (account.type != null && typeof account.type === 'string') {
+            return account.type === 'timelock';
         }
-        return false;
+        // Optimistic match by pattern "timelock/";
+        return rgx.test(account.name);
     }
 }

@@ -681,7 +681,10 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> implements ITx
         return w;
     }
 
-    static async prepareAccount (account: TAccount): Promise<IAccount> {
+    static async prepareAccount (mix: TAccount | TAccount[]): Promise<IAccount> {
+        const account = Array.isArray(mix)
+            ? mix[0]
+            : mix;
         if (typeof account !== 'string') {
             return account;
         }

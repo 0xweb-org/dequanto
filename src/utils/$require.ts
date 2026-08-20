@@ -45,19 +45,19 @@ export namespace $require {
 
     export function Function<T>(val: T, message: string): NonNullable<T> {
         if (typeof val !== 'function') {
-            throw new Error(`Value is not a function ${message}`);
+            throw new Error(`Value (${typeof val}) is not a function ${message}`);
         }
         return val;
     }
     export function Array<T>(val: T, message: string): NonNullable<T> {
         if ($Array.isArray(val) === false) {
-            throw new Error(`Value is not a function ${message}`);
+            throw new Error(`Value (${typeof val}) is not an array ${message}`);
         }
         return val;
     }
     export function String<T>(val: T, message: string): NonNullable<T> {
         if (typeof val !== 'string') {
-            throw new Error(`Value ${val} is not a string ${message}`);
+            throw new Error(`Value (${typeof val}) is not a string ${message}`);
         }
         return val;
     }
