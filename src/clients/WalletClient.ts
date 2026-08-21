@@ -18,7 +18,9 @@ export class WalletClient {
 
     // Client abstract methods
 
-    // Set the provider by UUID as the default one for eth_** methods
+    /**
+     * Sets the provider by UUID as the default provider for eth_** methods.
+     */
     async useProvider (uuid: string) {
         this.factory.useProvider(uuid);
     }

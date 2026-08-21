@@ -589,7 +589,9 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> implements ITx
         };
     }
 
-    //** We can save the Tx Data for later reuse/blockchain send */
+    /**
+     * Saves the transaction data for later reuse or blockchain submission.
+     */
     async saveTxAndExit (additionalProperties?) {
         let path = this.options?.txOutput;
         $require.notNull(path, 'Save tx data to the file, but the path is undefined');

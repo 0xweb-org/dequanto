@@ -99,7 +99,9 @@ export class SubjectStream<T = any> {
         this._events.on(type, cb);
     }
 
-    // When binding the to expression like: 'foo.bar.quxStream()' we create additional stream to listen to `foo.bar` properties reassignment
+    /**
+     * Rebinds the inner stream when a bound expression, such as `foo.bar.quxStream()`, changes.
+     */
     private onInnerChanged (newStream) {
         this._pipe?.unsubscribe?.(this.next);
         this._pipe = newStream;

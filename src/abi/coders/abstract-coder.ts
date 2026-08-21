@@ -367,7 +367,9 @@ export class Writer {
         return this.#writeData($buffer.ensure(writer.data));
     }
 
-    // Array-like item; pad on the right to the *nearest* WordSize
+    /**
+     * Writes an array-like item, padding on the right to the nearest WordSize.
+     */
     writeBytes(value: Uint8Array): number {
         let bytes = value;
         const paddingOffset = bytes.length % WordSize;
@@ -377,13 +379,16 @@ export class Writer {
         return this.#writeData(bytes);
     }
 
-    // Numeric item; pad on the left *to* WordSize
+    /**
+     * Writes a numeric item, padding on the left to WordSize.
+     */
     writeValue(value: bigint): number {
         return this.#writeData(getValue(value));
     }
 
-    // Inserts a numeric placeholder, returning a callback that can
-    // be used to adjust the value later
+    /**
+     * Inserts a numeric placeholder and returns a callback that can adjust the value later.
+     */
     writeUpdatableValue(): (value: bigint) => void {
         const offset = this.#data.length;
         this.#data.push(Padding);
@@ -431,12 +436,16 @@ export class Reader {
         return this.#data.slice(this.#offset, this.#offset + alignedLength)
     }
 
-    // Create a sub-reader with the same underlying data, but with an offset
+    /**
+     * Creates a sub-reader with the same underlying data, but with an offset.
+     */
     subReader(offset: number): Reader {
         return new Reader(this.#data.slice(this.#offset + offset), this.allowLoose);
     }
 
-    // Read bytes
+    /**
+     * Reads bytes.
+     */
     readBytes(length: number, loose?: boolean): Uint8Array {
         let bytes = this.#peekBytes(0, length, !!loose);
         this.#offset += bytes.length;
@@ -444,7 +453,9 @@ export class Reader {
         return bytes.slice(0, length);
     }
 
-    // Read a numeric value
+    /**
+     * Reads a numeric value.
+     */
     readValue(): bigint {
         return $buffer.toBigInt(this.readBytes(WordSize));
     }

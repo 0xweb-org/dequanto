@@ -238,7 +238,9 @@ export class EventsIndexer <TContract extends ContractBase> {
             current: logsMeta,
         };
     }
-    // Save indexed logs every 2 minutes
+    /**
+     * Saves indexed logs every two minutes.
+     */
     private async getPastLogsRanges (ranges: TRangeLoader, events: string[], toBlock: number, fromBlock?: number, options?: TEventLogOptions<any>) {
         const PERSIST_INTERVAL = $date.parseTimespan('2min');
         // Save indexed logs every 10k logs

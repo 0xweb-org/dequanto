@@ -56,7 +56,9 @@ export class BatchAgent implements ITxWriterAgent {
         });
     }
 
-    // Called by TxWriter for regular transactions. Prevents on-chain submission and keeps the transaction in the batch.
+    /**
+     * Called by TxWriter for regular transactions. Prevents on-chain submission and keeps the transaction in the batch.
+     */
     async process (senderMix: string | EoAccount, account: TEth.IAccount, outerWriter: TxWriter) {
 
         if (outerWriter.builder.data.to == null && this.options?.ignoreContractCreation != false) {
@@ -81,7 +83,10 @@ export class BatchAgent implements ITxWriterAgent {
         return inner;
     }
 
-    // Submits queued transactions on-chain. If the account is Safe or Timelock, prepares the corresponding calldata and submits as batch transaction.
+    /**
+     * Submits queued transactions on-chain. If the account is Safe or Timelock,
+     * prepares the corresponding calldata and submits it as a batch transaction.
+     */
     async execute (): Promise<TxWriter[]> {
         this.disable();
 

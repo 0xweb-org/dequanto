@@ -256,7 +256,9 @@ namespace TypeUtil {
 
         }
 
-        // Calculate the SLOTs size of the enum excluding any dynamic values that are stored in offset
+        /**
+         * Calculates the slot size of the enum, excluding dynamic values stored by offset.
+         */
         async sizeOf () {
             let definition = await this.getDefinition();
             if (definition.type === 'ContractDefinition') {

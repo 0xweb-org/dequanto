@@ -84,7 +84,9 @@ export class BigFloat {
         return new Intl.NumberFormat(locales, options).format(str as any);
     }
 
-    // a-b
+    /**
+     * a - b
+     */
     minus (mix: TNumeric) {
         return math.minus(this, from(mix));
     }
@@ -92,7 +94,9 @@ export class BigFloat {
         return math.minus(this, from(mix));
     }
 
-    // a+b
+    /**
+     * a + b
+     */
     plus (mix: TNumeric) {
         return math.plus(this, from(mix));
     }
@@ -100,24 +104,34 @@ export class BigFloat {
         return math.plus(this, from(mix));
     }
 
-    // a*b
+    /**
+     * a * b
+     */
     multipliedBy (mix: TNumeric) {
         return math.mul(this, from(mix));
     }
-    // a*b
+    /**
+     * a * b
+     */
     times (mix: TNumeric) {
         return math.mul(this, from(mix));
     }
-    // a*b
+    /**
+     * a * b
+     */
     mul (mix: TNumeric) {
         return math.mul(this, from(mix));
     }
 
-    // a/b
+    /**
+     * a / b
+     */
     dividedBy (mix: TNumeric) {
         return math.div(this, from(mix));
     }
-    // a/b
+    /**
+     * a / b
+     */
     div (mix: TNumeric) {
         return math.div(this, from(mix));
     }
@@ -155,7 +169,9 @@ export class BigFloat {
         return math.mod(this, from(mix));
     }
 
-    //Supports negative and fractional numbers
+    /**
+     * Supports negative and fractional exponents.
+     */
     pow (exponent: number | bigint) {
         return math.pow(this, exponent)
     }

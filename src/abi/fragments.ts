@@ -210,20 +210,26 @@ class TokenString {
         }));
     }
 
-    // Pops and returns the value of the next token if it is a keyword in `allowed`; throws if out of tokens
+    /**
+     * Pops and returns the value of the next token if it is a keyword in `allowed`; throws if out of tokens.
+     */
     popKeyword(allowed: ReadonlySet<string>): string {
         const top = this.peek();
         if (top.type !== "KEYWORD" || !allowed.has(top.text)) { throw new Error(`expected keyword ${ top.text }`); }
         return this.pop().text;
     }
 
-    // Pops and returns the value of the next token if it is `type`; throws if out of tokens
+    /**
+     * Pops and returns the value of the next token if it is `type`; throws if out of tokens.
+     */
     popType(type: string): string {
         if (this.peek().type !== type) { throw new Error(`expected ${ type }; got ${ JSON.stringify(this.peek()) }`); }
         return this.pop().text;
     }
 
-    // Pops and returns "(" TOKENS ")"
+    /**
+     * Pops and returns "(" TOKENS ")".
+     */
     popParen(): TokenString {
         const top = this.peek();
         if (top.type !== "OPEN_PAREN") { throw new Error("bad start"); }
@@ -232,7 +238,9 @@ class TokenString {
         return result;
     }
 
-    // Pops and returns the items within "(" ITEM1 "," ITEM2 "," ... ")"
+    /**
+     * Pops and returns the items within "(" ITEM1 "," ITEM2 "," ... ")".
+     */
     popParams(): Array<TokenString> {
         const top = this.peek();
 
@@ -251,7 +259,9 @@ class TokenString {
         return result;
     }
 
-    // Returns the top token, throwing if out of tokens
+    /**
+     * Returns the top token, throwing if out of tokens.
+     */
     peek(): Token {
         if (this.#offset >= this.#tokens.length) {
             throw new Error("out-of-bounds");
@@ -259,20 +269,26 @@ class TokenString {
         return this.#tokens[this.#offset];
     }
 
-    // Returns the next value if it is a keyword in `allowed`
+    /**
+     * Returns the next value if it is a keyword in `allowed`.
+     */
     peekKeyword(allowed: ReadonlySet<string>): null | string {
         const top = this.peekType("KEYWORD");
         return (top != null && allowed.has(top)) ? top: null;
     }
 
-    // Returns the value of the next token if it is `type`
+    /**
+     * Returns the value of the next token if it is `type`.
+     */
     peekType(type: string): null | string {
         if (this.length === 0) { return null; }
         const top = this.peek();
         return (top.type === type) ? top.text: null;
     }
 
-    // Returns the next token; throws if out of tokens
+    /**
+     * Returns the next token; throws if out of tokens.
+     */
     pop(): Token {
         const result = this.peek();
         this.#offset++;

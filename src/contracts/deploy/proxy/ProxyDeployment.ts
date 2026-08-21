@@ -109,7 +109,9 @@ export class ProxyDeployment {
     }
 
 
-    // Supports OpenZeppelin TransparentProxy v4.x and v5.x.
+    /**
+     * Supports OpenZeppelin TransparentProxy v4.x and v5.x.
+     */
     protected async ensureTransparentProxy(ctx: IProxyDeploymentCtx) {
         let {
             proxyId,

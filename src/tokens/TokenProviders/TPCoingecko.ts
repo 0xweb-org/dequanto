@@ -133,7 +133,9 @@ export class TPCoingecko extends ATokenProvider  implements ITokenProvider {
         return info;
     }
 
-    // 50 per minute
+    /**
+     * Limits Coingecko requests to 50 per minute.
+     */
     @memd.deco.throttle(60 * 1000 / 50)
     private async _downloadTokenInfo (id: string) {
 

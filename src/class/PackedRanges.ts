@@ -29,7 +29,9 @@ export class PackedRanges {
         }
     }
 
-    // Get the outer range [from..to] total capacity (regardless of tracked ranges)
+    /**
+     * Gets the outer range [from..to] total capacity, regardless of tracked ranges.
+     */
     total() {
         let min = this.from;
         let max = this.to ?? this.getMax();
@@ -38,7 +40,9 @@ export class PackedRanges {
         }
         return max - min;
     }
-    // Get the sum of all tracked range lengths (total numbers visited/added)
+    /**
+     * Gets the sum of all tracked range lengths: the total numbers visited or added.
+     */
     totalAdded() {
         let count = 0;
         for (let i = 0; i < this.ranges.length; i++) {
