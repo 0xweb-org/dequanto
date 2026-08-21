@@ -1,5 +1,5 @@
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { EoAccount } from '@dequanto/models/TAccount';
+import type { Web3Client } from '@dequanto/clients/Web3Client';
+import type { EoAccount } from '@dequanto/models/TAccount';
 import { TAddress } from '@dequanto/models/TAddress';
 
 import memd from 'memd';
@@ -9,7 +9,6 @@ import { TPlatform } from '@dequanto/models/TPlatform';
 import { config } from '@dequanto/config/Config';
 import { $require } from '@dequanto/utils/$require';
 import { SafeServiceTypes } from '../types/SafeServiceTypes';
-import { $bigint } from '@dequanto/utils/$bigint';
 
 // https://safe-transaction-mainnet.safe.global/?format=openapi
 
@@ -55,8 +54,6 @@ export class SafeServiceTransport implements ISafeServiceTransport {
         let service = await this.getService();
         await service.proposeTransaction(args);
     }
-
-
 
     @memd.deco.memoize({ perInstance: true })
     private async getService(): Promise<SafeServiceClientInner> {

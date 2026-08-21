@@ -328,7 +328,7 @@ export class Deployments {
             id: id,
             immutablesKey,
             force: opts?.force,
-            latest: this.opts?.checkBytecode !== false,
+            latest: opts?.latest ?? this.opts?.checkBytecode !== false,
             verification: opts?.verification,
             deployment: opts?.deployment
         });

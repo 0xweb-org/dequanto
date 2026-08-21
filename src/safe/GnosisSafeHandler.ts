@@ -1,6 +1,7 @@
 import di from 'a-di';
-import memd from 'memd';
 import alot from 'alot';
+
+import type { TAbiItem } from '@dequanto/types/TAbi';
 
 import { EoAccount, SafeAccount } from "@dequanto/models/TAccount";
 import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
@@ -16,17 +17,15 @@ import { $address } from '@dequanto/utils/$address';
 import { $logger } from '@dequanto/utils/$logger';
 import { $bigint } from '@dequanto/utils/$bigint';
 import { $promise } from '@dequanto/utils/$promise';
-import { $gnosis } from './$gnosis';
 
 import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-
-import type { TAbiItem } from '@dequanto/types/TAbi';
 import { $sig } from '@dequanto/utils/$sig';
 import { TEth } from '@dequanto/models/TEth';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $require } from '@dequanto/utils/$require';
 import { ChainAccountService } from '@dequanto/ChainAccountService';
 import { config } from '@dequanto/config/Config';
+import { InMemoryServiceTransport } from './transport/InMemoryServiceTransport';
 
 export class GnosisSafeHandler {
 
@@ -44,7 +43,13 @@ export class GnosisSafeHandler {
         this.safeAddress = config.safeAddress;
         this.owners = config.owners;
         this.client = config.client ?? di.resolve(EthWeb3Client);
-        this.transport = config.transport ?? new SafeServiceTransport(this.client, this.owners);
+        this.transport = config.transport ?? (
+            config.owners.length > 1
+            // when multiple owners are provided assume the transport is InMemory
+            ? new InMemoryServiceTransport(this.client, this.owners[0])
+            // otherwise use the default Safe Transaction Service
+            : new SafeServiceTransport(this.client, this.owners)
+        )
 
         $require.Address(this.safeAddress, `Safe address ${this.safeAddress} is not valid`);
         $require.True(this.owners != null && this.owners.length > 0, `At least one owner is required`);
@@ -170,8 +175,7 @@ export class GnosisSafeHandler {
         let safeTxData: SafeServiceTypes.SafeTransactionData = {
             ...safeTxEstimation,
 
-            safeTxGas: 0, // Number(estimated.safeTxGas),
-
+            safeTxGas: 0,
             baseGas: 0,
             gasToken: $address.ZERO,
             refundReceiver: $address.ZERO,
@@ -220,12 +224,10 @@ export class GnosisSafeHandler {
             }
         }).toArrayAsync();
 
-
         let signatures = new Map();
         sigArr.forEach(sig => {
             signatures.set(sig.address, sig.signature);
-        })
-
+        });
 
         // https://docs.gnosis-safe.io/tutorials/tutorial_tx_service_initiate_sign
         let owner = this.owners[0];

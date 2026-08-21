@@ -1,11 +1,10 @@
-import alot from 'alot';
-import { GnosisSafe } from '@dequanto/prebuilt/safe/GnosisSafe';
-import { Web3Client } from '@dequanto/clients/Web3Client';
+import type { Web3Client } from '@dequanto/clients/Web3Client';
 import type { EoAccount } from '@dequanto/models/TAccount';
 import type { TAddress } from '@dequanto/models/TAddress';
-
 import type { ISafeServiceTransport } from './ISafeServiceTransport';
 import { SafeServiceTypes } from '../types/SafeServiceTypes';
+
+import { ContractReader } from '@dequanto/contracts/ContractReader';
 
 export class InMemoryServiceTransport implements ISafeServiceTransport {
 
@@ -47,10 +46,11 @@ export class InMemoryServiceTransport implements ISafeServiceTransport {
     }
 
     async getSafeInfo(safeAddress: TAddress): Promise<{ nonce, threshold }> {
-        let contract = new GnosisSafe(safeAddress, this.client);
+
+        let contract = new ContractReader(this.client);
         let [ nonce, threshold ] = await Promise.all([
-            contract.nonce(),
-            contract.getThreshold(),
+            contract.readAsync<bigint>(safeAddress, 'function nonce() view returns (uint256)'),
+            contract.readAsync<bigint>(safeAddress, 'function getThreshold() view returns (uint256)'),
         ]);
 
         return { nonce, threshold };

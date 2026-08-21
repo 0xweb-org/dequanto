@@ -1,4 +1,5 @@
 import alot from 'alot';
+import type { Deployments } from '@dequanto/contracts/deploy/Deployments';
 import { EoAccount } from '@dequanto/models/TAccount';
 import { ITxWriterAgent } from './TxWriterAccountAgents';
 import { ITxWriterEmitter, ITxWriterEvents, ITxWriterTransaction, TxWriter } from '../TxWriter';
@@ -16,6 +17,8 @@ import { TimelockService } from '@dequanto/services/TimelockService/TimelockServ
 import { TxDataBuilder } from '../TxDataBuilder';
 import { $contract } from '@dequanto/utils/$contract';
 import { $require } from '@dequanto/utils/$require';
+import { $account } from '@dequanto/utils/$account';
+
 
 export class BatchAgent implements ITxWriterAgent {
 
@@ -103,14 +106,59 @@ export class BatchAgent implements ITxWriterAgent {
         return writers;
     }
 
+    /**
+     * Format all queued transactions for display.
+     */
+    async print (data?: {
+        deployments: Deployments[]
+    }): Promise<string> {
+        const contracts = await alot(data?.deployments ?? [])
+            .mapManyAsync(d => d.store.getDeployments())
+            .toArrayAsync();
+
+        const lines = await alot(this.transactions).mapManyAsync(async (tx, i) => {
+            let builder = tx.outerWriter.builder;
+            let data = builder.data;
+            let info = await builder.getInputDataInfo();
+            let arr = [];
+
+            let localContract = contracts.find(x => $address.eq(x.address, data.to));
+            let acc = tx.account ?? tx.sender;
+
+            arr.push(
+                `Transaction: #${i + 1}`,
+                `    To:   ${data.to} ${localContract?.id ?? ''}`,
+                `    From: ${acc.address} ${acc.name}`,
+                `    Data: ${data.data}`,
+            );
+            if (info?.method) {
+                arr.push(`    Function  : ${info.method}`);
+                if (info.params != null) {
+                    arr.push(`    Parameters:`);
+                    if (Array.isArray(info.params)) {
+                        info.params.forEach(val => arr.push(`        ${JSON.stringify(val)}`));
+                    } else if (typeof info.params === 'object') {
+                        alot
+                            .fromObject(info.params)
+                            .forEach(entry => arr.push(`        ${entry.key}: ${JSON.stringify(entry.value)}`))
+                            .toArray();
+                    }
+                }
+            }
+            return arr;
+        }).toArrayAsync();
+
+        return lines.join('\n');
+    }
+
     private async executeGroup (txs: MockTxWriter[]) {
         let { account, sender } = txs[0];
         let acc = account ?? sender;
-        if (acc.name.includes('safe/')) {
+        if ($account.isSafe(acc)) {
             let tx = await this.executeBatchSafe(acc, txs);
             return [ tx ];
         }
-        if (acc.name.includes('timelock/')) {
+        if ($account.isTimelock(acc)) {
             let tx = await this.executeBatchTimelock(sender, account, txs);
             return [ tx ];
         }
