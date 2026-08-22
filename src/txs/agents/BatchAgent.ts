@@ -84,25 +84,44 @@ export class BatchAgent implements ITxWriterAgent {
     }
 
     /**
-     * Submits queued transactions on-chain. If the account is Safe or Timelock,
+     * Executes the queued transactions.
+     *
+     * By default, duplicate transactions are skipped. If the account is Safe or Timelock,
      * prepares the corresponding calldata and submits it as a batch transaction.
+     *
+     * @param options.includeDuplicates Include duplicate transactions in the execution batch.
      */
-    async execute (): Promise<TxWriter[]> {
+    async execute (options?: {
+        includeDuplicates?: boolean
+    }): Promise<TxWriter[]> {
         this.disable();
 
+        let txs = this.transactions;
+        if (options?.includeDuplicates !== true) {
+            txs = alot(txs).distinctBy(x => {
+                const data = x.outerWriter.builder.data;
+                const acc = x.account ?? x.sender;
+                // remove duplicates by [from,to,data]
+                return [
+                    acc.address.toLowerCase(),
+                    data.to?.toLowerCase() ?? '',
+                    data.data ?? ''
+                ].join('');
+            }).toArray();
+        }
         let groupStart = 0;
         let writers = [];
-        for (let i = 0; i < this.transactions.length; i++) {
-            let tx = this.transactions[i];
-            let next = i < this.transactions.length - 1
-                ? this.transactions[i + 1]
+        for (let i = 0; i < txs.length; i++) {
+            let tx = txs[i];
+            let next = i < txs.length - 1
+                ? txs[i + 1]
                 : null;
 
             let acc0 = tx.account?.address ?? tx.sender?.address;
             let acc1 = next?.account?.address ?? next?.sender?.address;
 
             if (next == null || $address.eq(acc0, acc1) === false) {
-                let arr = await this.executeGroup(this.transactions.slice(groupStart, i + 1));
+                let arr = await this.executeGroup(txs.slice(groupStart, i + 1));
                 writers.push(...arr);
                 groupStart = i + 1;
             }
