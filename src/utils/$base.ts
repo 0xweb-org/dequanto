@@ -18,7 +18,7 @@ export namespace $base {
 
         public encode (hex: TEth.Hex): string {
             hex = $hex.toHexBuffer(hex);
-            hex = $hex.trimBytes(hex);
+            hex = $hex.trimBytesStart(hex);
             let buffer = $buffer.fromHex(hex);
 
             let result = [];

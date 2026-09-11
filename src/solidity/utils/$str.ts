@@ -44,7 +44,7 @@ export namespace $str {
     }
 
     export function fromHex(hex: TEth.Hex) {
-        let trimmed = $hex.trimBytes(hex);
+        let trimmed = $hex.trimBytesEnd(hex);
         return $buffer.fromHex(trimmed).toString();
     }
 

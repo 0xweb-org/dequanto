@@ -24,10 +24,19 @@ export namespace $hex {
      * Trims '00' bytes from start or end, e.g.  0x68656c6c6f000000 =>  0x68656c6c6f
      */
     export function trimBytes(hex: TEth.Hex): TEth.Hex {
-        if (hex.startsWith('0x00') === false && hex.endsWith('00') === false) {
+        return trimBytesEnd(trimBytesStart(hex));
+    }
+    export function trimBytesStart(hex: TEth.Hex): TEth.Hex {
+        if (hex.startsWith('0x00') === false) {
             return hex;
         }
-        return hex.replace(/^0x(0{2})+/, '0x').replace(/(0{2})+$/, '') as TEth.Hex;
+        return hex.replace(/^0x(0{2})+/, '0x') as TEth.Hex;
+    }
+    export function trimBytesEnd(hex: TEth.Hex): TEth.Hex {
+        if (hex.endsWith('00') === false) {
+            return hex;
+        }
+        return hex.replace(/(0{2})+$/, '') as TEth.Hex;
     }
     export function trimLeadingZerosFromNumber(hex: string) {
         hex = hex.replace(/^0x0*/, '');
@@ -114,7 +123,6 @@ export namespace $hex {
         return hex;
     }
 
-
     /**
      * Adds `0x` to the start if not present
      */
@@ -131,6 +139,7 @@ export namespace $hex {
         if (typeof mix ==='boolean') {
             return mix ? '0x1' : '0x0';
         }
+        $require.match(/^(0x)?[\da-f]*$/i, mix, 'NotValidHex');
         if (mix.startsWith('0x')) {
             return mix as TEth.Hex;
         }

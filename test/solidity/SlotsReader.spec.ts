@@ -46,7 +46,7 @@ UTest({
             return await storage.get(`${key}[${idx}]`);
         }
         function toString(hex) {
-            return $buffer.fromHex($hex.trimBytes(hex)).toString()
+            return $buffer.fromHex($hex.trimBytesEnd(hex)).toString()
         }
 
         eq_(await read('count'), 123n);

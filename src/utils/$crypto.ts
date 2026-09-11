@@ -8,6 +8,7 @@ interface ICrypto {
     randomUUID(): `${string}-${string}-${string}-${string}-${string}`;
     createECDH(curve: string)
 
+    sha256 (mix: string | TEth.Hex | Uint8Array, opts?: { encoding: 'hex' }): Promise<TEth.Hex>;
     sha256 (mix: string | TEth.Hex | Uint8Array): Promise<Uint8Array>;
 
     encrypt(buffer: string | TEth.Hex | Uint8Array, opts: IEncryptionParams & { encoding?: undefined | 'binary' }): Promise<Uint8Array>
