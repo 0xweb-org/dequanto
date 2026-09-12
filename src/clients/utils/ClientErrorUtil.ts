@@ -14,6 +14,14 @@ export namespace ClientErrorUtil {
         }
         return false;
     }
+    export function isNodeConfigurationError (error: Error & { code?, reason? }) {
+        let str = error.message ?? error.stack;
+        let noHistory = /history unavailable/i.test(str);
+        if (noHistory) {
+            return true;
+        }
+        return false;
+    }
     export function isAlreadyKnown (error: Error & { code?, reason? }) {
         return /already known/i.test(error.message);
     }

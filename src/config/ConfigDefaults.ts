@@ -117,9 +117,6 @@ export const ConfigDefaults = <IConfigData> {
             "chainToken": "ETH",
             "endpoints": [
                 {
-                    "url": "https://ethereum-rpc.publicnode.com"
-                },
-                {
                     "url": "https://eth.drpc.org",
                     "rateLimit": "2000/5m"
                 }

@@ -227,7 +227,10 @@ export abstract class Web3Client implements IWeb3Client {
     getTransaction(txHash: TEth.Hex, opts?: IPoolWeb3Request): Promise<TEth.Tx> {
         return this.pool.call(web3 => {
             return web3.rpc.eth_getTransactionByHash(txHash);
-        }, opts);
+        }, {
+            tryNextOnNull: true,
+            ...(opts ?? {})
+        });
     }
     getTransactions(txHashes: TEth.Hex[], opts?: IPoolWeb3Request): Promise<TEth.Tx[]> {
         return this.pool.call(async web3 => {

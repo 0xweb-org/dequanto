@@ -122,7 +122,7 @@ export abstract class RpcBase {
         };
     }
     private _unwrapBody (resp: any): any {
-        return resp.result;
+        return RpcBase.unwrapBody(resp);
     }
     private _deserialize (method: string, result: any) {
         let { methods, schemas } = this.returnSchemas;
@@ -141,6 +141,10 @@ export abstract class RpcBase {
 
 
     protected abstract returnSchemas
+
+    static unwrapBody (resp: any) {
+        return resp.result;
+    }
 }
 
 

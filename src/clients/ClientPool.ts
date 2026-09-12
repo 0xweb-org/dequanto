@@ -93,6 +93,9 @@ export interface IPoolWeb3Request {
 
     // When fetching logs, specifies the desired block range to query
     blockRangeCount?: number
+
+    /** Try another node when the RPC succeeds but returns null, e.g. tx not found on one provider. */
+    tryNextOnNull?: boolean
 }
 
 export class ClientPool {
@@ -156,12 +159,18 @@ export class ClientPool {
         // Client - Retries
         let used = new Map<WClient, number>();
         let errors = [];
+        let dataIsNull: boolean;
 
         while (true) {
             let wClient = await this.next(used, opts);
             if (wClient == null) {
                 let error = errors.pop();
                 if (error == null) {
+                    if (dataIsNull) {
+                        // No provider returned an error, but none found the requested data
+                        return null;
+                    }
+
                     let urls = this
                         .clients
                         .map(x => `    ${x.config.url}`)
@@ -182,7 +191,6 @@ export class ClientPool {
                 ?.trace
                 ?.onComplete({ status, error, time, url: wClient.config.url })
 
-
             if (wClientUsage == null) {
                 // By default, NO_RETRIES
                 used.set(wClient, 0);
@@ -194,6 +202,12 @@ export class ClientPool {
             errors.push(error ?? result);
 
             if (status == ClientStatus.Ok) {
+                if (opts?.tryNextOnNull === true) {
+                    if (result == null) {
+                        dataIsNull = true;
+                        continue;
+                    }
+                }
                 return result;
             }
             if (status == ClientStatus.RateLimited) {
@@ -994,6 +1008,8 @@ export class WClient {
                             l`yellow<New BatchLimit> for "${this.config.url}" bold<${limit}>`;
                             this.batchLimit = limit;
                         }
+                    } else if (ClientErrorUtil.isNodeConfigurationError(error)) {
+                        status = ClientStatus.NodeConfigurationError;
                     } else if (ClientErrorUtil.isConnectionFailed(error)) {
                         status = ClientStatus.NetworkError;
                     }

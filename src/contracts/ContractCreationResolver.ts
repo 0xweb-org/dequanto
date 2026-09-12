@@ -72,6 +72,7 @@ class BlockchainExplorerDateResolver {
             throw error;
         }
         let tx = await this.client.getTransaction(info.txHash);
+        $require.notNull(tx, `Tx not found: ${info.txHash} in ${this.client.network} (${this.client.options?.endpoints?.[0]?.url})`);
         let block = await this.client.getBlock(tx.blockNumber);
         return {
             tx: tx.hash,

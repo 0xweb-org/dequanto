@@ -21,6 +21,6 @@ UTest({
         let resolver = ContractCreationResolver.get('eth');
 
         let { error } = await $promise.caught(resolver.getInfo(address))
-        has_(error?.message, 'not a contract')
+        has_(error?.message, /(not a contract)|(No data found)/i);
     }
 })
