@@ -412,12 +412,12 @@ export abstract class Web3Client implements IWeb3Client {
     //     return tx;
     // }
 
-    async sign(address: TEth.Address, message: string): Promise<string> {
+    async sign(address: TEth.Address, message: string): Promise<TEth.Hex> {
         if (this.wallet.isConnected(address)) {
-            return this.wallet.eth_sign(address, message);
+            return this.wallet.eth_sign(address, message) as Promise<TEth.Hex>;
         }
         return this.pool.call(wClient => {
-            return wClient.sign(address, message);
+            return wClient.sign(address, message) as Promise<TEth.Hex>;
         }, {
             wallet: true
         });

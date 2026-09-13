@@ -65,7 +65,7 @@ export interface TimelockAccount extends IAccount {
     // Erc4337 account must include platform information
     platform: TPlatform
 
-    operator: EoAccount
+    operator: IAccount
 }
 
 export type TAccount = string | IAccount | EoAccount | SafeAccount | Erc4337Account;
