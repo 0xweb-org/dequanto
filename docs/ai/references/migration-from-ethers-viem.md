@@ -10,14 +10,14 @@ Agents often know ethers and viem better than dequanto. Use this file to transla
 | Read contract | `new Contract(address, abi, provider).balanceOf(owner)` | generated contract class, for example `new ERC20(address, client).balanceOf(owner)` |
 | Write contract | `contract.connect(signer).transfer(...)`, `walletClient.writeContract(...)` | generated write method returning `TxWriter` |
 | Wait for tx | `tx.wait()` | `await writer.wait()` or `await contract.$receipt().method(...)` |
-| Build calldata | `iface.encodeFunctionData(...)`, `encodeFunctionData(...)` | generated `$data().method(...)` or `$abiUtils.serializeMethodCallData(...)` |
-| Raw eth_call | `provider.call(tx)` | `client.call(tx)` |
+| Build calldata | `iface.encodeFunctionData(...)`, `encodeFunctionData(...)` | generated `contract.$data().method(...)` or `$abiUtils.serializeMethodCallData(...)` |
+| Raw eth_call | `provider.call(tx)` | `contract.$call().method(...)` or `client.call(tx)` |
 | Raw ABI read | `readContract(...)` | `client.readContract(...)` or `ContractReader.readAsync(...)` |
 | Logs | `provider.getLogs(...)`, `client.getLogs(...)` | `client.getPastLogs(...)`, generated `getPastLogs(...)`, or `EventsIndexer` |
 | Explorer ABI | hand-written Etherscan HTTP | `BlockchainExplorerFactory.get(platform).getContractAbi(address)` |
 | Contract generation | TypeChain, viem codegen | `Generator` / 0xweb-generated dequanto contract classes |
 | Storage | raw `eth_getStorageAt` plus manual decode | `SlotsParser` + `SlotsStorage` |
-| Bigint formatting | `parseUnits`, `formatUnits` | `$bigint` helpers and token decimals through dequanto token services |
+| Bigint formatting | `parseUnits`, `formatUnits` | `bigint` js type is supported natively, additionally `$bigint` helpers and token decimals through dequanto token services |
 | Safe tx | Safe SDK | `SafeAccount`, `GnosisSafeHandler`, `SafeTx`, Safe transports |
 | ERC-4337 | external bundler/account SDK | `Erc4337Service`, `Erc4337TxWriter`, `Erc4337Account` |
 

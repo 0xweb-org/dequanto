@@ -15,6 +15,7 @@ Key source files:
 - `src/erc4337/Erc4337TxWriter.ts`
 - `src/txs/agents/SafeAgent.ts`
 - `src/txs/agents/Erc4337Agent.ts`
+- `src/txs/agents/BatchAgent.ts`
 
 Useful tests:
 
@@ -76,7 +77,7 @@ await submitTx.wait();
 
 ## Safe Batch
 
-Use `SafeTx.executeBatch(...)` with generated `$data()` calls:
+Use `SafeTx.executeBatch(...)` with generated `$data()` calls when manually composing a Safe batch:
 
 ```ts
 const safeTx = new SafeTx(safeAccount, client, {
@@ -91,6 +92,10 @@ const tx = await safeTx.executeBatch(
 
 await tx.wait();
 ```
+
+For scripts, prefer `BatchAgent` when the code should call generated write methods normally and review or submit the collected transactions at the end. If the submitting account is a Safe, `batch.execute()` converts the collected single transactions into one Safe batch/multicall transaction. If the submitting account is a Timelock, `batch.execute()` converts them into one Timelock batch/scheduleBatch flow.
+
+See `../../references/transactions.md` for the full `BatchAgent` script pattern.
 
 ## Safe Decoding
 

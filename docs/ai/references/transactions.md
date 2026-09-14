@@ -6,6 +6,7 @@ Key source files:
 
 - `src/txs/TxDataBuilder.ts`
 - `src/txs/TxWriter.ts`
+- `src/txs/agents/BatchAgent.ts`
 - `src/txs/TxNonceManager.ts`
 - `src/contracts/ContractWriter.ts`
 - `src/tokens/TokenTransferService.ts`
@@ -17,6 +18,7 @@ Useful tests:
 - `test/hardhat/tx.spec.ts`
 - `test/receipt.spec.ts`
 - `test/safe/safe.spec.ts`
+- `test/services/timelock.spec.ts`
 
 ## TxWriter Lifecycle
 
@@ -37,6 +39,39 @@ const receipt = await tx.wait();
 - `builder`
 - `receipt`
 - `tx.knownLogs`
+
+## BatchAgent For Scripts
+
+Use `BatchAgent` when a script should run its full transaction flow without immediately submitting transactions on-chain. `BatchAgent` plugs into `TxWriter.DEFAULTS.agent`, intercepts write calls, returns completed mock writers/receipts to the script, and caches the transactions for later review or execution.
+
+```ts
+import { BatchAgent } from '@dequanto/txs/agents/BatchAgent';
+
+const batch = new BatchAgent().enable();
+
+try {
+    await token.$receipt().approve(sender, spender, amount);
+    await vault.$receipt().deposit(sender, amount, receiver);
+
+    console.log(await batch.print());
+
+    // Submit cached transactions after review.
+    const writers = await batch.execute();
+    await Promise.all(writers.map(x => x?.wait()));
+} finally {
+    batch.disable();
+}
+```
+
+Important behavior:
+
+- Use `batch.transactions` or `batch.getTxData()` to inspect cached transactions programmatically.
+- `batch.print()` formats pending transactions and decoded input data for review.
+- `batch.execute()` skips duplicate transactions by default; pass `{ includeDuplicates: true }` when duplicates are intentional.
+- Deployment transactions are ignored by default; pass `new BatchAgent({ ignoreContractCreation: false })` when contract creation should also be intercepted.
+- If the account being submitted is a Safe, `execute()` creates one Safe multicall/batch transaction from many cached single transactions.
+- If the account being submitted is a Timelock, `execute()` creates one Timelock batch/scheduleBatch flow from many cached single transactions.
+- For normal EOA accounts, `execute()` sends each cached transaction on-chain.
 
 ## Build And Sign Raw Tx
 
