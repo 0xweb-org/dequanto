@@ -97,12 +97,23 @@ export abstract class Web3Client implements IWeb3Client {
         });
     }
 
+    // Low-level batch for raw RPC calls.
+    // For contract batch calls, use batchContractCalls to decode the responses.
     async batch(requests: TRpc.IRpcAction[], options?: {
         allowErrors?: boolean
     }): Promise<any[]> {
         return this.with (async web3 => {
             return web3.callBatched(requests, options);
         });
+    }
+
+    // Submit contract calls in a batch and decode the responses.
+    async batchContractCalls(requests: TRpcContractCall[], options?: {
+        allowErrors?: boolean
+    }) {
+        let reader = new RpcContract(this);
+        let result = await reader.batch(requests, options);
+        return result;
     }
 
     getEventStream(address: TEth.Address, abi: TAbiItem[], event: string) {
@@ -189,12 +200,11 @@ export abstract class Web3Client implements IWeb3Client {
         return result;
     }
 
+    // Alias for batchContractCalls.
     async readContractBatch(requests: TRpcContractCall[], options?: {
         allowErrors?: boolean
     }) {
-        let reader = new RpcContract(this);
-        let result = await reader.batch(requests, options);
-        return result;
+        return this.batchContractCalls(requests, options);
     }
 
 

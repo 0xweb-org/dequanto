@@ -9,7 +9,7 @@ export namespace FnRequestWrapper {
 
 type TRequests<T extends ContractBase> = {
     [K in keyof T]: T[K] extends (...any) => Promise<any>
-        ? (...params: Parameters<T[K]>) => ContractReaderUtils.IContractReadParams<Awaited<ReturnType<T[K]>>>
+        ? (...params: Parameters<T[K]>) => Promise<ContractReaderUtils.IContractReadParams<Awaited<ReturnType<T[K]>>>>
         : never
 }
 
