@@ -34,6 +34,6 @@ export namespace Web3ClientFactory {
         TClient extends EvmWeb3Client | HardhatWeb3Client = EvmWeb3Client
     > (platform: TPlatform | string | number, opts?: IWeb3EndpointOptions): Promise<TClient> {
         let cfg = await Config.get();
-        return get(platform, opts);
+        return get<TClient>(platform, opts);
     }
 }
