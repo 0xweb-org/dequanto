@@ -86,6 +86,69 @@ export namespace $abiParser {
         };
     }
 
+
+    /**
+     * Parses Solidity struct declarations into a tuple ABI component.
+     * Supports multiple declarations so later structs can reference earlier ones,
+     * and returns the ABI component for the last struct in the input.
+     */
+    export function parseStruct (struct: string): TAbiItem {
+        let structs = Parse.structs(struct);
+        $require.gt(structs.length, 0, `No structs found in ${struct}`);
+
+        let byName = new Map(structs.map(x => [ x.name, x ]));
+        let cache = new Map<string, TAbiInput>();
+
+        function toTuple (name: string): TAbiInput {
+            let cached = cache.get(name);
+            if (cached != null) {
+                return cached;
+            }
+            let def = byName.get(name);
+            $require.notNull(def, `Struct ${name} is not found`);
+
+            let tuple: TAbiInput = {
+                name: '',
+                type: 'tuple',
+                internalType: `struct ${name}`,
+                components: []
+            };
+            cache.set(name, tuple);
+            tuple.components = Parse.splitByDelimiter(def.body, ';')
+                .map(field => $abiParser.parseArguments(field)[0])
+                .map(resolveStructs);
+
+            return tuple;
+        }
+
+        function resolveStructs (param: TAbiInput): TAbiInput {
+            let { type, array } = Parse.extractArray(param.type);
+            if (byName.has(type) === false) {
+                if (param.components != null) {
+                    return {
+                        ...param,
+                        components: param.components.map(resolveStructs)
+                    };
+                }
+                return param;
+            }
+
+            let tuple = toTuple(type);
+            return {
+                name: param.name,
+                type: `tuple${array}`,
+                internalType: `struct ${type}${array}`,
+                components: tuple.components
+            };
+        }
+
+        let last = structs[structs.length - 1];
+        return {
+            ...toTuple(last.name),
+            name: last.name
+        } as any as TAbiItem;
+    }
+
     // uint256
     // address[]
     // (uint256, uint256)
@@ -247,6 +310,35 @@ namespace Parse {
 
     const CLOSE_CHARS = {
         '[': ']',
-        '(': ')'
+        '(': ')',
+        '{': '}'
     };
+
+    export function structs (source: string) {
+        let rgx = /\bstruct\s+(?<name>[\w_$]+)\s*\{/g;
+        let arr: { name: string, body: string }[] = [];
+        let match: RegExpExecArray;
+        while ((match = rgx.exec(source)) != null) {
+            let openI = source.indexOf('{', match.index);
+            let closeI = goToClosing(source, openI, '{');
+            arr.push({
+                name: match.groups.name,
+                body: source.substring(openI + 1, closeI).trim()
+            });
+            rgx.lastIndex = closeI + 1;
+        }
+        return arr;
+    }
+
+    export function extractArray (type: string) {
+        let array = '';
+        while (true) {
+            let match = /^(?<type>.+?)(?<array>\[[^\]]*\])$/.exec(type);
+            if (match == null) {
+                return { type, array };
+            }
+            type = match.groups.type;
+            array = `${match.groups.array}${array}`;
+        }
+    }
 }

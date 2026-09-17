@@ -6,11 +6,24 @@ import { TEth } from '@dequanto/models/TEth';
 import { $abiParser } from '@dequanto/utils/$abiParser';
 
 export namespace $abiCoder {
-    export function encode(types: (string | ParamType | TAbiInput)[], values: any[]): TEth.Hex {
+
+    type TAbiType = string | ParamType | TAbiInput;
+    type TDecodeOptions = {
+        loose?: boolean
+        dynamic?: boolean
+    };
+
+    export function encode(types: TAbiType, values: any): TEth.Hex
+    export function encode(types: TAbiType[], values: any[]): TEth.Hex
+    export function encode(types: TAbiType | TAbiType[], values: any | any[]): TEth.Hex {
+        if (Array.isArray(types) == false) {
+            return encodeSingle(types, values)
+        }
         let coder = new AbiCoder();
         return coder.encode(types, values) as TEth.Hex;
     }
-    export function encodeSingle(type: (string | ParamType | TAbiInput), value: any): TEth.Hex {
+    export function encodeSingle(type: TAbiType, value: any): TEth.Hex {
+        type = normalizeType(type);
         let coder = new AbiCoder();
         return coder.encodeSingle(type, value) as TEth.Hex;
     }
@@ -19,20 +32,20 @@ export namespace $abiCoder {
         return solidityPacked(types, values) as TEth.Hex;
     }
 
-    export function decode(types: (string | ParamType | TAbiInput)[], hex: string, opts?: {
-        loose?: boolean
-        dynamic?: boolean
-    }): any {
+    export function decode(types: TAbiType, hex: string, opts?: TDecodeOptions): any
+    export function decode(types: TAbiType[], hex: string, opts?: TDecodeOptions): any[]
+    export function decode(types: TAbiType| TAbiType[], hex: string, opts?: TDecodeOptions): any {
+        if (Array.isArray(types) == false) {
+            return decodeSingle(types, hex, opts)
+        }
         let coder = new AbiCoder();
         let arr = coder.decode(types, hex, opts);
         return arr.map((x, i) => {
             return unwrap(types[i] as TAbiInput, x);
         });
     }
-    export function decodeSingle(type: (string | ParamType | TAbiInput), hex: string, opts?: {
-        loose?: boolean
-        dynamic?: boolean
-    }): any {
+    export function decodeSingle(type: TAbiType, hex: string, opts?: TDecodeOptions): any {
+        type = normalizeType(type);
         let coder = new AbiCoder();
         let x = coder.decodeSingle(type, hex, opts);
         return unwrap(type as TAbiInput, x);
@@ -71,5 +84,13 @@ export namespace $abiCoder {
             }
         }
         return mixValue;
+    }
+
+
+    function normalizeType (type: TAbiType) {
+        if (typeof type === 'string' && /\bstruct /.test(type)) {
+            return $abiParser.parseStruct(type);
+        }
+        return type;
     }
 }
