@@ -1,4 +1,5 @@
 import { $abiCoder } from '../../src/abi/$abiCoder'
+import { $abi } from '../../src/abi/$abi'
 import { $abiParser } from '../../src/utils/$abiParser'
 
 UTest({
@@ -207,7 +208,7 @@ UTest({
     async 'encode structs' () {
         let user = '0xA0b86991C6218b36c1d19d4A2E9Eb0cE36060000';
         let user2 = '0x08C23e9d8f34Fefb1B7bd6A91B7fF122F4e16f5c';
-        let fixtures: [string, any, string][] = [
+        let fixtures: [string, any, string, any?][] = [
             [
                 `struct IFoo { address user; }`,
                 { user },
@@ -266,13 +267,45 @@ UTest({
             ]
         ];
 
-        fixtures.forEach(([struct, data, expected], i) => {
+        fixtures.forEach(([struct, data, expected, decodedExpected], i) => {
             let abi = $abiParser.parseStruct(struct);
             let hex = $abiCoder.encode(abi, data);
             eq_(hex, expected, `fixture ${i}`);
 
             let decoded = $abiCoder.decode(abi, hex);
-            deepEq_(decoded, data, `fixture ${i}`);
+            deepEq_(decoded, decodedExpected ?? data, `fixture ${i}`);
         });
+
+        let userParamsStruct = `
+            struct UserParams {
+                address userAddress;
+                uint48 userNumber;
+                address referee;
+                bytes32 userKey;
+                address[] referrals;
+            }
+        `;
+        let userParamsAbi = $abiParser.parseStruct(userParamsStruct);
+        let userParamsData = {
+            userAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+            userNumber: 10n,
+            referee: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+            userKey: null,
+            referrals: []
+        };
+        let userParamsExpected = '0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48000000000000000000000000000000000000000000000000000000000000000a000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000';
+        let userParamsDecoded = {
+            userAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+            userNumber: 10n,
+            referee: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+            userKey: '0x0000000000000000000000000000000000000000000000000000000000000000',
+            referrals: []
+        };
+
+        let userParamsHex = $abi.encode(userParamsAbi, userParamsData);
+        eq_(userParamsHex, userParamsExpected, 'solidity abi.encode struct');
+
+        let decodedUserParams = $abi.decode(userParamsAbi, userParamsHex);
+        deepEq_(decodedUserParams, userParamsDecoded, 'solidity abi.decode struct');
     }
 })

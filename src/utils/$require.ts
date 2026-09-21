@@ -200,6 +200,7 @@ export namespace $require {
         if (a <= b) {
             throw new Error(`Expected a(${a}) > b(${b}). ${message}`);
         }
+        return a;
     }
     export function gte<T = number | bigint> (a: T, b: T, message: string = '') {
         Numeric(a);
@@ -207,6 +208,7 @@ export namespace $require {
         if (a < b) {
             throw new Error(`Expected a(${a}) > b(${b}). ${message}`);
         }
+        return a;
     }
 
     /**
@@ -218,6 +220,7 @@ export namespace $require {
         if (a >= b) {
             throw new Error(`Expected a(${a}) > b(${b}). ${message}`);
         }
+        return a;
     }
     export function lte<T = number | bigint> (a: T, b: T, message: string = '') {
         Numeric(a);
@@ -225,5 +228,6 @@ export namespace $require {
         if (a > b) {
             throw new Error(`Expected a(${a}) > b(${b}). ${message}`);
         }
+        return a;
     }
 }

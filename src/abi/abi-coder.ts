@@ -116,9 +116,7 @@ export class AbiCoder {
      *  @returns DataHexstring
      */
     encodeSingle(type: string | ParamType | TAbiInput, value: any): string {
-
-        let coder = this.#getCoder(ParamType.from(type));
-
+        const coder = this.#getCoder(ParamType.from(type));
         const writer = new Writer();
         coder.encode(writer, value);
         return writer.data;

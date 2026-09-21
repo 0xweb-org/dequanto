@@ -87,7 +87,7 @@ export namespace $abiCoder {
     }
 
 
-    function normalizeType (type: TAbiType) {
+    export function normalizeType (type: TAbiType) {
         if (typeof type === 'string' && /\bstruct /.test(type)) {
             return $abiParser.parseStruct(type);
         }
