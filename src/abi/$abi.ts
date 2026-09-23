@@ -1,7 +1,9 @@
-import { TAbiInput } from '@dequanto/types/TAbi';
+import { TAbiInput, TAbiItem, TAbiOutput } from '@dequanto/types/TAbi';
 import { ParamType } from './fragments';
 import { TEth } from '@dequanto/models/TEth';
 import { $abiCoder } from './$abiCoder';
+import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { $abiParser } from '@dequanto/utils/$abiParser';
 
 export namespace $abi {
     type TAbiType = string | ParamType | TAbiInput;
@@ -27,6 +29,37 @@ export namespace $abi {
         let result = $abiCoder.decode(arr, hex, opts);
 
         return isSingle ? result[0] : result;
+    }
+
+    export function encodeCall(abi: string | TAbiItem, params?: any[]): TEth.Hex {
+        return $abiUtils.serializeMethodCallData(abi, params);
+    }
+
+    export function decodeReturn<T = any>(abi: string | TAbiItem | TAbiOutput[], hex: string): T {
+        let outputs = typeof abi === 'string'
+            ? ($abiParser.parseMethod(abi).outputs ?? [])
+            : (Array.isArray(abi) ? abi : abi.outputs ?? []);
+        let returnAbi = outputs;
+        let isDynamic: boolean = null;
+        if (outputs.length > 1) {
+            let isNamedTuple = outputs.every(x => x.name != null && x.name !== '');
+            if (isNamedTuple) {
+                returnAbi = [{ type: 'tuple', components: outputs, name: null }];
+                isDynamic = false;
+            }
+        }
+
+        try {
+            let arr = $abiCoder.decode(returnAbi as any, hex, {
+                dynamic: isDynamic
+            });
+            return returnAbi.length === 1 ? arr[0] : arr;
+        } catch (error) {
+            if (outputs.length === 1 && returnAbi.length === 1) {
+                return $abiCoder.decodeSingle(returnAbi[0], hex);
+            }
+            throw error;
+        }
     }
 
     function ensureTypes (types: TAbiType | TAbiType[]): TAbiType[] {

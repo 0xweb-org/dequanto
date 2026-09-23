@@ -2,11 +2,12 @@ import di from 'a-di';
 import alot from 'alot';
 import { Rpc, RpcTypes } from './Rpc';
 
-import { TAbiItem, TAbiOutput } from '@dequanto/types/TAbi';
+import { TAbiItem } from '@dequanto/types/TAbi';
 import { TAddress } from '@dequanto/models/TAddress';
 import { $require } from '@dequanto/utils/$require';
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
 import { $abiCoder } from '@dequanto/abi/$abiCoder';
+import { $abi } from '@dequanto/abi/$abi';
 import { RpcError } from './RpcError';
 import { $hex } from '@dequanto/utils/$hex';
 import { TEth } from '@dequanto/models/TEth';
@@ -54,7 +55,7 @@ export class RpcContract {
             if (methodAbi == null) {
                 return hex;
             }
-            return utils.deserializeOutput(hex, methodAbi.outputs);
+            return $abi.decodeReturn(methodAbi, hex);
         } catch (err) {
             if (err instanceof RpcError) {
                 err.message = `RpcCall ${req.method} (${JSON.stringify(req.params)}) ${err.message}`;
@@ -82,7 +83,7 @@ export class RpcContract {
                     let defaults = null;
                     try {
                         const defaultHex = $abiCoder.encode(returnABI, [null]);
-                        defaults = utils.deserializeOutput(defaultHex, returnABI);
+                        defaults = $abi.decodeReturn(abi, defaultHex);
                     } catch (error) {}
                     return {
                         defaults,
@@ -90,7 +91,7 @@ export class RpcContract {
                     };
                 }
                 let hex = typeof resp === 'string' ? resp : resp.data;
-                let result = utils.deserializeOutput(hex, returnABI);
+                let result = $abi.decodeReturn(abi, hex);
                 return result;
             });
 
@@ -191,32 +192,3 @@ export class RpcContract {
     // }
 }
 
-
-namespace utils {
-    export function deserializeOutput(hex: string, outputs: TAbiOutput[]) {
-
-        let abi = outputs;
-        let isDynamic: boolean = null;
-        if (outputs.length > 1) {
-            let isNamedTuple = outputs.every(x => x.name != null && x.name !== '');
-            if (isNamedTuple) {
-                // Return as an object
-                abi = [ { type: 'tuple', components: outputs, name: null } ];
-                isDynamic = false;
-            }
-        }
-
-        try {
-            let arr = $abiCoder.decode(abi as any, hex, {
-                dynamic: isDynamic
-            });
-            let value = abi.length === 1 ? arr[0] : arr;
-            return value;
-        } catch (error) {
-            if (outputs.length === 1 && abi.length === 1) {
-                return $abiCoder.decodeSingle(abi[0], hex);
-            }
-            throw error;
-        }
-    }
-}

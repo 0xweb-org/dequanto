@@ -25,11 +25,11 @@ Before using an unfamiliar dequanto API, verify the exact signature in `src/` or
 
 ## Source Of Truth
 
-- Package exports resolve by subpath, for example `@dequanto/clients/Web3ClientFactory`.
+- Package exports resolve by subpath for both ESM imports and CommonJS requires: `import { Web3ClientFactory } from "dequanto/clients/Web3ClientFactory"` or `const { Web3ClientFactory } = require("dequanto/clients/Web3ClientFactory")`.
 - Source lives under `src/`.
 - Declarations are emitted under `lib/types/`.
 - Tests under `test/` are often the best runnable examples.
-- Generated contract clients usually live outside this package in `0xc/` or `@dequanto-contracts/...` paths.
+- Generated contract clients are published under `dequanto/prebuilt/...` and can be imported or required by subpath in the same way.
 
 ## Agent Workflow
 

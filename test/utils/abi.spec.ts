@@ -1,3 +1,4 @@
+import { $abi } from '@dequanto/abi/$abi';
 import { $abiCoder } from '@dequanto/abi/$abiCoder';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { TAbiInput } from '@dequanto/types/TAbi';
@@ -8,6 +9,55 @@ import { l } from '@dequanto/utils/$logger';
 import { File } from 'atma-io'
 
 UTest({
+    'encode call data'() {
+        let to = '0x0000000000000000000000000000000000000002';
+        let expected = '0xa9059cbb00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000005';
+        let fromString = $abi.encodeCall('function transfer(address to, uint256 amount)', [to, 5n]);
+        let fromJson = $abi.encodeCall({
+            type: 'function',
+            name: 'transfer',
+            stateMutability: 'nonpayable',
+            inputs: [
+                { name: 'to', type: 'address' },
+                { name: 'amount', type: 'uint256' }
+            ],
+            outputs: [
+                { name: '', type: 'bool' }
+            ]
+        }, [to, 5n]);
+
+        eq_(fromString, expected);
+        eq_(fromJson, expected);
+    },
+    'decode return data'() {
+        let owner = '0x0000000000000000000000000000000000000002';
+
+        let scalarHex = $abiCoder.encode(['uint256'], [5n]);
+        let scalar = $abi.decodeReturn({
+            type: 'function',
+            name: 'totalSupply',
+            inputs: [],
+            outputs: [
+                { name: '', type: 'uint256' }
+            ]
+        }, scalarHex);
+        eq_(scalar, 5n);
+
+        let tupleHex = $abiCoder.encode(['uint256', 'address'], [5n, owner]);
+        let tuple = $abi.decodeReturn({
+            type: 'function',
+            name: 'snapshot',
+            inputs: [],
+            outputs: [
+                { name: 'total', type: 'uint256' },
+                { name: 'owner', type: 'address' }
+            ]
+        }, tupleHex);
+        deepEq_(tuple, {
+            total: 5n,
+            owner
+        });
+    },
     async 'encode packed'() {
         let json = await File.readAsync<{ types, values, keccak256 }[]>('./test/fixtures/abi/encodePacked.json');
         json.forEach((data, i) => {
