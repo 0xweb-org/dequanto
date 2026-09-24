@@ -2,8 +2,7 @@
     "compilerOptions": {
         "baseUrl": "./",
         "paths": {
-            "@dequanto/*": [ "src/*" ],
-            "@dequanto-contracts/*": [ "src/prebuilt/*" ]
+            "@dequanto/*": [ "src/*" ]
         },
         "typeRoots": [
             "node_modules/@types",

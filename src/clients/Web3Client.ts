@@ -32,6 +32,8 @@ import { DataLike } from '@dequanto/utils/types';
 import { ErrorCode } from './ClientPoolStats';
 import { $date } from '@dequanto/utils/$date';
 import { WalletClient } from './WalletClient';
+import alot from 'alot';
+import { $abiParser } from '@dequanto/utils/$abiParser';
 
 export abstract class Web3Client implements IWeb3Client {
 
@@ -108,12 +110,50 @@ export abstract class Web3Client implements IWeb3Client {
     }
 
     // Submit contract calls in a batch and decode the responses.
-    async batchContractCalls(requests: TRpcContractCall[], options?: {
+    async batchContractCalls(requests: TRpcContractCall[] | Promise<TRpcContractCall>[], options?: {
         allowErrors?: boolean
     }) {
         let reader = new RpcContract(this);
-        let result = await reader.batch(requests, options);
-        return result;
+
+        let requestsArrRaw = await Promise.all(requests);
+        let requestsArr = await alot(requestsArrRaw).mapAsync(async request => {
+            if (request == null) {
+                return null;
+            }
+            let abi = request.abi;
+            if (typeof abi === 'string') {
+                abi = $abiParser.parseMethod(abi);
+            }
+            let blockNumber = request.blockNumber;
+            if (blockNumber instanceof Date) {
+                let resolver = di.resolve(BlockDateResolver, this);
+                blockNumber = await resolver.getBlockNumberFor(blockNumber);
+            }
+            return {
+                address: request.address,
+                abi: [ abi ],
+                method: request.method,
+                params: request.params,
+                blockNumber: blockNumber,
+                options: options
+            } as TRpcContractCall;
+        }).toArrayAsync();
+
+        // Skip NULL request: mirror later as the NULL result
+        let mapped = [];
+        let rpcRequestsNotEmpty = [];
+        for (let i = 0; i < requestsArr.length; i++) {
+            if (requestsArr[i] == null) {
+                continue;
+            }
+            let idx = rpcRequestsNotEmpty.push(requestsArr[i]) - 1;
+            mapped[i] = idx;
+        }
+
+        let outputs = await reader.batch(rpcRequestsNotEmpty, options);
+        return requestsArr.map((_, i) => {
+            return outputs[mapped[i]] ?? null;
+        });
     }
 
     getEventStream(address: TEth.Address, abi: TAbiItem[], event: string) {

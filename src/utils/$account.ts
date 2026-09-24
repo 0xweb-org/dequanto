@@ -1,6 +1,7 @@
 import { EoAccount, Erc4337Account, SafeAccount, TAccount, TimelockAccount } from "@dequanto/models/TAccount";
 import { $address } from './$address';
 import { $require } from './$require';
+import { $sig } from './$sig';
 
 export namespace $account {
 
@@ -63,5 +64,9 @@ export namespace $account {
         }
         // Optimistic match by pattern "timelock/";
         return rgx.test(account.name);
+    }
+
+    export function generate(name: string): EoAccount {
+        return $sig.$account.generate({ name });
     }
 }

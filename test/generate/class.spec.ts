@@ -9,7 +9,7 @@ import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { TestNode } from '../hardhat/TestNode';
 import { $promise } from '@dequanto/utils/$promise';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';
-import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
+import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
 import alot from 'alot';
 import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
 

@@ -8,13 +8,13 @@ export namespace $web3Abi {
         let arr: TAbiItem[];
         if (typeof abi === 'string') {
             arr = [ $abiParser.parseMethod(abi) ];
-        } else  if (Array.isArray(abi)) {
+        } else if (Array.isArray(abi)) {
             arr = abi;
         } else {
             arr = [ abi ];
         }
 
-        let first = abi[0];
+        let first = arr[0];
         if (first.outputs == null || first.outputs.length === 0) {
             // Normalize outputs to read at least bytes if nothing is set
             first.outputs = [

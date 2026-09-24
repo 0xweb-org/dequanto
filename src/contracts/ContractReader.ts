@@ -302,9 +302,9 @@ export class ContractReader implements IContractReader {
         return filters as RpcTypes.Filter;
     }
 
-    static async read (client: Web3Client, address: TAddress, methodAbi: string){
+    static async read <TResult = any> (client: Web3Client, address: TAddress, methodAbi: string){
         let reader = new ContractReader(client);
-        return reader.readAsync(address, methodAbi);
+        return reader.readAsync<TResult>(address, methodAbi);
     }
 }
 
@@ -358,42 +358,6 @@ export namespace ContractReaderUtils {
         allowErrors?: boolean
     }) {
 
-        let rpcRequests = await alot(requests).map(async request => {
-            if (request == null) {
-                return null;
-            }
-            let abi = request.abi;
-            if (typeof abi === 'string') {
-                abi = $abiParser.parseMethod(abi);
-            }
-            let blockNumber = request.blockNumber;
-            if (blockNumber instanceof Date) {
-                let resolver = di.resolve(BlockDateResolver, client);
-                blockNumber = await resolver.getBlockNumberFor(blockNumber);
-            }
-            return {
-                address: request.address,
-                abi: [ abi ],
-                method: abi.name,
-                params: request.params,
-                blockNumber: blockNumber,
-                options: request.options
-            } as TRpcContractCall;
-        }).toArrayAsync();
-
-        let mapped = [];
-        let rpcRequestsNotEmpty = [];
-        for (let i = 0; i < rpcRequests.length; i++) {
-            if (rpcRequests[i] == null) {
-                continue;
-            }
-            let idx = rpcRequestsNotEmpty.push(rpcRequests[i]) - 1;
-            mapped[i] = idx;
-        }
-
-        let outputs = await client.readContractBatch(rpcRequestsNotEmpty, options);
-        return rpcRequests.map((_, i) => {
-            return outputs[mapped[i]] ?? null;
-        });
+        return await client.readContractBatch(requests, options);
     }
 }

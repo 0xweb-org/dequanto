@@ -61,17 +61,17 @@ export namespace $require {
         }
         return val;
     }
-    export function notNull<T> (val: T, message: string, ...logs): NonNullable<T> {
+    export function notNull<T> (val: T, message?: string, ...logs): NonNullable<T> {
         if (val == null) {
             logs?.forEach(log => console.error(log));
-            throw new Error(`Value is undefined. ${message}`);
+            throw new Error(`Value is undefined. ${message ?? ''}`);
         }
         return val;
     }
-    export function Null<T> (val: T, message: string, ...logs): T {
+    export function Null<T> (val: T, message?: string, ...logs): T {
         if (val != null) {
             logs?.forEach(log => console.error(log));
-            throw new Error(`Value ${val} expects to be undefined. ${message}`);
+            throw new Error(`Value ${val} expects to be undefined. ${message ?? ''}`);
         }
         return val;
     }

@@ -37,9 +37,6 @@
                             "paths": {
                                 "@dequanto/*": [
                                     "src/*"
-                                ],
-                                "@dequanto-contracts/*": [
-                                    "src/prebuilt/*"
                                 ]
                             },
                             "module": "CommonJS",
@@ -93,9 +90,6 @@
                             "paths": {
                                 "@dequanto/*": [
                                     "src/*"
-                                ],
-                                "@dequanto-contracts/*": [
-                                    "src/prebuilt/*"
                                 ]
                             },
                             "module": "ES2022",
@@ -126,9 +120,6 @@
                 "routes": {
                     "@dequanto/*": [
                         "src/*"
-                    ],
-                    "@dequanto-contracts/*": [
-                        "src/prebuilt/*"
                     ]
                 },
                 "map": {}

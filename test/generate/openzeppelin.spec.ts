@@ -1,4 +1,4 @@
-import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
+import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
 import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client';
 
 UTest({

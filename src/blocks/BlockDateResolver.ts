@@ -1,9 +1,9 @@
 import alot from 'alot';
 import memd from 'memd';
-import { Web3Client } from '@dequanto/clients/Web3Client';
 import { TEth } from '@dequanto/models/TEth';
 import { $block } from '@dequanto/utils/$block';
 import { $date } from '@dequanto/utils/$date';
+import type { Web3Client } from '@dequanto/clients/Web3Client';
 
 export class BlockDateResolver {
     private AVG_INITIAL = {

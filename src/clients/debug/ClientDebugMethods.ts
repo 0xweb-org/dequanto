@@ -7,6 +7,7 @@ import { $hex } from '@dequanto/utils/$hex';
 import { TEth } from '@dequanto/models/TEth';
 import { $array } from '@dequanto/utils/$array';
 import { $date } from '@dequanto/utils/$date';
+import { $number } from '@dequanto/utils/$number';
 
 
 export class ClientDebugMethods {
@@ -53,9 +54,12 @@ export class ClientDebugMethods {
         return this.call('mine', ...args);
     }
 
-    setBalance (address: TAddress, amount: bigint | string) {
+    setBalance (address: TAddress, amount: bigint | number | string) {
         if (typeof amount === 'bigint') {
             amount = $bigint.toHex(amount);
+        }
+        if (typeof amount === 'number') {
+            amount = $number.toHex(amount);
         }
         return this.call('setBalance', address, amount);
     }

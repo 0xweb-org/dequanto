@@ -1,4 +1,4 @@
-import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
+import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
 import { Generator } from '@dequanto/gen/Generator';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { l } from '@dequanto/utils/$logger';

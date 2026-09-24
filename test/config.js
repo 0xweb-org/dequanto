@@ -48,6 +48,12 @@ module.exports = {
                 includejs: includeSettings(),
             },
             tests: 'test/**.spec.ts'
+        },
+        docs : {
+            $config: {
+                includejs: includeSettings(),
+            },
+            tests: 'docs/ai/examples/**.spec.ts'
         }
     }
 };

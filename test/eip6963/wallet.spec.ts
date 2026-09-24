@@ -1,7 +1,7 @@
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 
 import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { EntryPoint } from '@dequanto-contracts/erc4337/EntryPoint/EntryPoint';
+import { EntryPoint } from '@dequanto/prebuilt/erc4337/EntryPoint/EntryPoint';
 import { MockWallet } from './MockWallet';
 import { $sig } from '@dequanto/utils/$sig';
 import { TokenTransferService } from '@dequanto/tokens/TokenTransferService';

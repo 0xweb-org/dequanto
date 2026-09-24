@@ -1,4 +1,4 @@
-import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
+import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
 import { ContractReader } from '@dequanto/contracts/ContractReader';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { $sig } from '@dequanto/utils/$sig';

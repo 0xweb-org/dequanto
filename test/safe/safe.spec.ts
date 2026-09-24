@@ -1,7 +1,7 @@
 import { File } from 'atma-io';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { GnosisSafeFactory } from '@dequanto/safe/GnosisSafeFactory';
-import { GnosisSafe } from '@dequanto-contracts/safe/GnosisSafe';
+import { GnosisSafe } from '@dequanto/prebuilt/safe/GnosisSafe';
 import { GnosisSafeHandler } from '@dequanto/safe/GnosisSafeHandler';
 import { InMemoryServiceTransport } from '@dequanto/safe/transport/InMemoryServiceTransport';
 import { ContractWriter } from '@dequanto/contracts/ContractWriter';
@@ -16,7 +16,7 @@ import { $sig } from '@dequanto/utils/$sig';
 import { l } from '@dequanto/utils/$logger';
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 import { Config } from '@dequanto/config/Config';
-import { ERC20 } from '@dequanto-contracts/openzeppelin/ERC20';
+import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
 import { $http } from '@dequanto/utils/$http';
 import { TEth } from '@dequanto/models/TEth';
 import { SafeTx } from '@dequanto/safe/SafeTx';

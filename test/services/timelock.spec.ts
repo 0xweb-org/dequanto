@@ -1,4 +1,4 @@
-import { TimelockController } from '@dequanto-contracts/openzeppelin/TimelockController';
+import { TimelockController } from '@dequanto/prebuilt/openzeppelin/TimelockController';
 import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider'
 import { TimelockAccount } from '@dequanto/models/TAccount';
 import { TimelockService } from '@dequanto/services/TimelockService/TimelockService';

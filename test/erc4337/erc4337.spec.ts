@@ -13,9 +13,9 @@ import { Erc4337Account } from '@dequanto/models/TAccount';
 import { $is } from '@dequanto/utils/$is';
 import { Config } from '@dequanto/config/Config';
 import { $config } from '@dequanto/utils/$config';
-import { EntryPoint } from '@dequanto-contracts/erc4337/EntryPoint/EntryPoint';
-import { SimpleAccount } from '@dequanto-contracts/erc4337/SimpleAccount/SimpleAccount';
-import { SimpleAccountFactory } from '@dequanto-contracts/erc4337/SimpleAccountFactory/SimpleAccountFactory';
+import { EntryPoint } from '@dequanto/prebuilt/erc4337/EntryPoint/EntryPoint';
+import { SimpleAccount } from '@dequanto/prebuilt/erc4337/SimpleAccount/SimpleAccount';
+import { SimpleAccountFactory } from '@dequanto/prebuilt/erc4337/SimpleAccountFactory/SimpleAccountFactory';
 import { $sig } from '@dequanto/utils/$sig';
 
 

@@ -6,8 +6,7 @@
     "compilerOptions": {
         "baseUrl": "./",
         "paths": {
-            "@dequanto/*": [ "src/*" ],
-            "@dequanto-contracts/*": [ "src/prebuilt/*" ]
+            "@dequanto/*": [ "src/*" ]
         },
         "lib": [ "ES2019", "dom" ],
         "typeRoots": [

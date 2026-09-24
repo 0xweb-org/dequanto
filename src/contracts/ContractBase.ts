@@ -299,14 +299,18 @@ export abstract class ContractBase {
 
     protected $read(abi: string | TAbiItem, ...params) {
         if (this.builderConfig?.send === 'manual') {
+            let abiJson = typeof abi === 'string'
+                ? $abiParser.parseMethod(abi)
+                : abi;
             let req = <ContractReaderUtils.IContractReadParams>{
                 address: this.address,
-                abi,
+                abi: abiJson,
                 params: params,
                 blockNumber: this.blockNumber ?? this.blockDate,
                 options: {
                     from: this.builderConfig?.from
-                }
+                },
+                method: abiJson.name
             };
             return req;
         }
