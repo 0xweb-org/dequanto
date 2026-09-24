@@ -4,6 +4,7 @@ import { Erc4337Service } from '@dequanto/erc4337/Erc4337Service';
 import { UserOperation } from '@dequanto/erc4337/models/UserOperation';
 import { $address } from '@dequanto/utils/$address';
 import { $erc4337 } from '@dequanto/erc4337/utils/$erc4337';
+import { $require } from '@dequanto/utils/$require';
 
 UTest({
     async 'hash a UserOperation and create an ERC-4337 service' () {
@@ -28,10 +29,11 @@ UTest({
             paymasterAndData: '0x',
             signature: '0x'
         };
+        const entryPointAddress = '0xc6e7df5e7b4f2a278906862b61205850344d4e7d';
+        const chainId = 1;
+        const hash = $erc4337.hash(op,entryPointAddress , chainId);
 
-        const hash = $erc4337.hash(op, '0xc6e7df5e7b4f2a278906862b61205850344d4e7d', 1);
-
-        has_(hash, /^0x[a-fA-F0-9]{64}$/);
-        notEq_(service, null);
+        $require.match(/^0x[a-fA-F0-9]{64}$/, hash);
+        $require.notNull(service);
     }
 });

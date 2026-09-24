@@ -6,7 +6,9 @@ import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
 // 0xweb install <address> --name AavePool --chain eth --save-sources false
 import { AavePool } from '../../../0xc/eth/AavePool/AavePool';
 import { $abi } from '@dequanto/abi/$abi';
+import { $require } from '@dequanto/utils/$require';
 import type { TEth } from '@dequanto/models/TEth';
+import { $address } from '@dequanto/utils/$address';
 
 const USDC = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48' as const;
 const AAVE_POOL = '0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2' as const;
@@ -22,9 +24,9 @@ UTest({
             usdc.balanceOf('0x0000000000000000000000000000000000000000')
         ]);
 
-        eq_(symbol, 'USDC');
-        eq_(Number(decimals), 6);
-        gte_(balance, 0n);
+        $require.eq(symbol, 'USDC');
+        $require.eq(Number(decimals), 6);
+        $require.gte(balance, 0n);
     },
 
     async 'read data from mainnet using the generated AavePool' () {
@@ -38,12 +40,12 @@ UTest({
             pool.getReserveData(USDC)
         ]);
 
-        has_(addressesProvider, /^0x[a-fA-F0-9]{40}$/);
-        gt_(Number(maxReserves), 0);
-        eq_(reserves.some(x => x.toLowerCase() === USDC.toLowerCase()), true);
-        has_(reserveData.aTokenAddress, /^0x[a-fA-F0-9]{40}$/);
-        has_(reserveData.variableDebtTokenAddress, /^0x[a-fA-F0-9]{40}$/);
-        gte_(reserveData.liquidityIndex, 1n);
+        $require.AddressNotEmpty(addressesProvider);
+        $require.gt(Number(maxReserves), 0);
+        $require.True(reserves.some(x => $address.eq(x, USDC)));
+        $require.AddressNotEmpty(reserveData.aTokenAddress);
+        $require.AddressNotEmpty(reserveData.variableDebtTokenAddress);
+        $require.gte(reserveData.liquidityIndex, 1n);
     },
 
     async 'read data from mainnet by generating the class from ABI as JSON or string' () {
@@ -66,8 +68,8 @@ UTest({
             pool.MAX_NUMBER_RESERVES()
         ]);
 
-        has_(addressesProvider, /^0x[a-fA-F0-9]{40}$/);
-        gt_(Number(maxReserves), 0);
+        $require.AddressNotEmpty(addressesProvider);
+        $require.gt(Number(maxReserves), 0);
     },
 
     async 'read data from mainnet using a low-level RPC call' () {
@@ -82,6 +84,29 @@ UTest({
 
         const addressesProvider = $abi.decodeReturn<TEth.Address>(addressesProviderAbi, responseHex);
 
-        has_(addressesProvider, /^0x[a-fA-F0-9]{40}$/);
-    }
+        $require.AddressNotEmpty(addressesProvider);
+    },
+
+
+    async 'batch-read data from mainnet using the generated AavePool' () {
+        const client = await Web3ClientFactory.getAsync('eth');
+        const pool = new AavePool(undefined, client);
+
+        const [addressesProvider, maxReserves, reserves, isNull, reserveData] = await client.batchContractCalls([
+            pool.$req().ADDRESSES_PROVIDER(),
+            pool.$req().MAX_NUMBER_RESERVES(),
+            pool.$req().getReservesList(),
+            // allows null
+            null,
+            pool.$req().getReserveData(USDC),
+        ]);
+
+        $require.AddressNotEmpty(addressesProvider);
+        $require.gt(Number(maxReserves), 0);
+        $require.True(reserves.some(x => $address.eq(x, USDC)));
+        $require.AddressNotEmpty(reserveData.aTokenAddress);
+        $require.AddressNotEmpty(reserveData.variableDebtTokenAddress);
+        $require.gte(reserveData.liquidityIndex, 1n);
+        $require.Null(isNull);
+    },
 });

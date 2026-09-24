@@ -21,8 +21,8 @@ const decimals = await token.decimals();
 
 Use the high-level generation tools when no prebuilt class exists:
 
-- For deployed and explorer-verified contracts, use the `0xweb` CLI.
-- For Hardhat projects, use the `@0xweb/hardhat` plugin so local Solidity contracts generate TypeScript classes whenever Hardhat compiles.
+- For deployed and explorer-verified third-party contracts, use `0xweb install` as the primary generation workflow.
+- For local contract development, use `@0xweb/contract` / `@0xweb/hardhat` so local Solidity contracts generate TypeScript classes from the normal compile flow.
 - Use the low-level `Generator` API only when the task needs custom generation inside TypeScript code.
 
 Key source files:
@@ -41,19 +41,31 @@ Useful tests:
 - `test/generate/slotreader.spec.ts`
 - `test/hardhat/deployments/deployments.spec.ts`
 
-## Install Deployed Verified Contracts
+## Install Third-Party Contracts With 0xweb
 
-Use `0xweb install` for any deployed contract that is verified on Etherscan-compatible explorers:
+Use `0xweb install` as the primary tool for generating classes from deployed third-party contracts. When the contract is verified on an Etherscan-compatible explorer, `0xweb` downloads the ABI and source, follows standard proxy patterns, and generates the class for the current implementation.
 
 ```bash
 npm i 0xweb -g
-0xweb install <address> --chain <chainAbbr> --name <contractClassName>
+0xweb install <address> --name <contractClassName> --chain <chainAbbr>
 ```
 
 Example:
 
 ```bash
-0xweb install 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 --chain eth --name USDC
+0xweb install 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 --name USDC --chain eth
+```
+
+If the target contract is a proxy but the implementation cannot be detected automatically, pass the implementation address explicitly:
+
+```bash
+0xweb install <proxyAddress> --implementation <implementationAddress> --name SomeName --chain eth
+```
+
+By default, `0xweb install` saves the downloaded Solidity sources next to the generated class. Use `--save-sources false` when the project should keep only the generated contract class:
+
+```bash
+0xweb install <address> --name SomeName --chain eth --save-sources false
 ```
 
 The generated class can then be imported and used like a normal TypeScript class:
@@ -68,6 +80,17 @@ const usdc = new USDC(undefined, client);
 const symbol = await usdc.symbol();
 const decimals = await usdc.decimals();
 ```
+
+## Install From ABI JSON Or Solidity Source
+
+`0xweb install` also accepts a local ABI JSON artifact or Solidity source file instead of an address:
+
+```bash
+0xweb install test/fixtures/artifacts/AnyERC20/AnyERC20.json --name AnyERC20 --chain eth
+0xweb install contracts/AnyERC20.sol --name AnyERC20 --chain eth
+```
+
+Use this for ad hoc class generation from explicit local inputs. For ongoing local contract development, prefer the Hardhat integration so the generated classes stay in sync with `hardhat compile`.
 
 ## Hardhat Projects
 
@@ -93,7 +116,7 @@ Use the generated classes in tests, scripts, and app code instead of raw ABI obj
 
 ## Low-Level Generator API
 
-Use `Generator` directly only for custom generation tasks, test fixtures, non-Hardhat toolchains, or agent code that must generate classes from explicit ABI arrays, ABI JSON, compiled artifacts, Solidity files, or explorer-verified source by address.
+Use `Generator` directly only for custom generation tasks, test fixtures, non-Hardhat toolchains, or agent code that must generate classes from explicit ABI arrays, ABI JSON, compiled artifacts, Solidity files, or explorer-verified source by address. For normal third-party contracts, prefer `0xweb install`; for local Hardhat projects, prefer `@0xweb/hardhat`.
 
 ### Generate From Compiled Artifact
 

@@ -2,6 +2,7 @@ import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
 import { InMemoryServiceTransport } from '@dequanto/safe/transport/InMemoryServiceTransport';
 import { SafeTx } from '@dequanto/safe/SafeTx';
 import { $address } from '@dequanto/utils/$address';
+import { $require } from '@dequanto/utils/$require';
 import { SafeAccount } from '@dequanto/models/TAccount';
 
 UTest({
@@ -45,11 +46,11 @@ UTest({
             await token.$data().transfer(safeAccount, owner2.address, 50n)
         ];
 
-        eq_(txs.length, 2);
+        $require.eq(txs.length, 2);
         txs.forEach(tx => {
-            eq_(tx.to, token.address);
-            has_(tx.data, /^0x[a-fA-F0-9]+$/);
+            $require.True($address.eq(tx.to, token.address));
+            $require.match(/^0x[a-fA-F0-9]+$/, tx.data);
         });
-        notEq_(safeTx, null);
+        $require.notNull(safeTx);
     }
 });

@@ -13,7 +13,7 @@ Before using an unfamiliar dequanto API, verify the exact signature in `src/` or
 | Create an RPC client, read blocks, balances, logs, storage, or raw tx data | `Web3ClientFactory`, `Web3Client`, chain clients | `references/rpc-clients.md` | `examples/rpc-read.spec.ts` |
 | Call a smart contract | generated contract classes extending `ContractBase`, or `ContractReader` for ad hoc ABI calls | `references/contracts.md` | `examples/contract-read.spec.ts` |
 | Send a contract transaction | generated write methods returning `TxWriter`; use `$receipt()` when the receipt is needed | `references/contracts.md`, `references/transactions.md` | `examples/contract-write.spec.ts` |
-| Generate typed contract classes | `Generator`, `HardhatProvider`, 0xweb-generated classes | `references/generation.md` | `examples/generate-client.spec.ts` |
+| Generate typed contract classes | `Generator`, `HardhatProvider`, 0xweb-generated classes | `references/generation.md` | `examples/generate-contract-class.spec.ts` |
 | Deploy contracts and proxies | `HardhatProvider`, `Deployments`, `ensure`, `ensureWithProxy`, `ensureWithBeacon` | `references/deployments.md` | `examples/deploy-contract.spec.ts` |
 | Build, sign, save, submit, or inspect transactions | `TxDataBuilder`, `TxWriter`, `TokenTransferService` | `references/transactions.md` | `examples/send-transaction.spec.ts` |
 | Fetch or cache historical contract events | generated `getPastLogs*` helpers or `EventsIndexer` | `references/events-indexing.md` | `examples/index-events.spec.ts` |
