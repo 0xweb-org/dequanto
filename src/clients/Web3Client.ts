@@ -120,19 +120,24 @@ export abstract class Web3Client implements IWeb3Client {
             if (request == null) {
                 return null;
             }
-            let abi = request.abi;
-            if (typeof abi === 'string') {
-                abi = $abiParser.parseMethod(abi);
-            }
+            let abi = typeof request.abi === 'string'
+                ? [ $abiParser.parseMethod(request.abi) ]
+                : (Array.isArray(request.abi) ? request.abi : [ request.abi ])
+
             let blockNumber = request.blockNumber;
             if (blockNumber instanceof Date) {
                 let resolver = di.resolve(BlockDateResolver, this);
                 blockNumber = await resolver.getBlockNumberFor(blockNumber);
             }
+            let method = request.method;
+            if (method == null) {
+                $require.eq(abi.length, 1, `No function method is provided, the single ABI item expected`);
+                method = abi[0].name;
+            }
             return {
                 address: request.address,
-                abi: [ abi ],
-                method: request.method,
+                abi: abi,
+                method: method,
                 params: request.params,
                 blockNumber: blockNumber,
                 options: options

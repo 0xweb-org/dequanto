@@ -357,7 +357,6 @@ export namespace ContractReaderUtils {
     export async function readAsyncBatch(client: Web3Client, requests: (IContractReadParams | null)[], options?: {
         allowErrors?: boolean
     }) {
-
         return await client.readContractBatch(requests, options);
     }
 }
