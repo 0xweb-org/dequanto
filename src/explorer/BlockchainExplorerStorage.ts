@@ -82,7 +82,7 @@ export class BlockchainExplorerStorage implements IBlockchainExplorer {
         let $address = opts?.implementation ?? address;
         let $contract = this.contracts[$address.toLowerCase()];
         $require.notNull($contract, `Contract "${$address}" not found`);
-        // @TODO: L1: return abi as json (means in *scan providers we must serialize it earlier)
+        // @TODO: L1: Return ABI as JSON. *scan providers should serialize it earlier.
         return {
             implementation: $address,
             abi: JSON.stringify($contract.abi)
@@ -92,7 +92,7 @@ export class BlockchainExplorerStorage implements IBlockchainExplorer {
         let _address = address;
         let _contract = this.contracts[_address.toLowerCase()];
         $require.notNull(_contract, `Contract "${_address}" not found`);
-        // @TODO: L1: return abi as json (means in *scan providers we must serialize it earlier)
+        // @TODO: L1: Return ABI as JSON. *scan providers should serialize it earlier.
         return {
             SourceCode: {
                 contractName: _contract.name,

@@ -42,7 +42,7 @@ export class ContractVerifier {
     }
 
     async ensure (Ctor: TContractInfo, opts: TSubmissionOptions = {}): Promise<void>  {
-        this.logger.log(`Submit sources for ${typeof Ctor === 'string' ? Ctor : Ctor.name}`);
+        this.logger.log(`Submitting sources for ${typeof Ctor === 'string' ? Ctor : Ctor.name}`);
 
         let status = await this.submit(Ctor, opts);
         await this.waitForVerification(status, opts);
@@ -66,7 +66,7 @@ export class ContractVerifier {
             } catch (e) {
                 let message = e.message;
                 if (/verified/i.test(message)) {
-                    // was already verified
+                    // Already verified.
                     return true;
                 }
                 if (/(pending|queue)/i.test(message)) {
@@ -100,13 +100,13 @@ export class ContractVerifier {
         }
 
         try {
-            this.logger.log(`Checking if already verified ${address}`);
+            this.logger.log(`Checking whether contract ${address} is already verified`);
             let currentSources = await this.explorer.getContractSource(address);
             if ($is.notEmpty(currentSources?.ContractName)) {
                 return { status:'verified' };
             }
         } catch (error) {
-            // ignore any pre-check error and continue with the verification
+            // Ignore pre-check errors and continue with verification.
         }
 
         let deployedBytecode = await client.getCode(address);
@@ -140,7 +140,7 @@ export class ContractVerifier {
         }
 
         let jsonMetaPath = info.ctx.source.path;
-        $require.notEmpty(jsonMetaPath, `Deployment should return a path to compilation JSON`);
+        $require.notEmpty(jsonMetaPath, `Deployment should return a path to the compilation JSON`);
         $require.True(await File.existsAsync(jsonMetaPath) , `${jsonMetaPath} does not exist`);
 
         let jsonMeta = await File.readAsync<{ sourceName: string, contractName: string }>(jsonMetaPath);
@@ -150,7 +150,7 @@ export class ContractVerifier {
         let jsonMetaDbg = await File.readAsync<{ buildInfo: string }>(jsonMetaDbgPath);
 
         let jsonMetaBuildInfoPath = jsonMetaDbg.buildInfo;
-        $require.notEmpty(jsonMetaPath, `${jsonMetaDbgPath} should contain the path to the buildInfo json file`);
+        $require.notEmpty(jsonMetaPath, `${jsonMetaDbgPath} should contain the path to the build info JSON file`);
 
         let buildInfoPath = new class_Uri(new class_Uri(jsonMetaPath).toDir()).combine(jsonMetaBuildInfoPath).toString();
         $require.True(await File.existsAsync(buildInfoPath) , `${buildInfoPath} does not exist`);
@@ -170,7 +170,7 @@ export class ContractVerifier {
         }
         let buildInfo = await File.readAsync<TBuildInfo>(buildInfoPath);
 
-        $require.notNull(buildInfo.solcLongVersion, `${buildInfoPath} should contain the "solcLongVersion" information`);
+        $require.notNull(buildInfo.solcLongVersion, `${buildInfoPath} should contain the "solcLongVersion" value`);
 
         let sources = await this.getSources(jsonMeta.sourceName);
         let sourcesSerialized = JSON.stringify({
@@ -181,7 +181,7 @@ export class ContractVerifier {
 
         let sourcesSerializedWrapped = `${sourcesSerialized}`;
 
-        this.logger.log(`Submit ${jsonMeta.sourceName}:${jsonMeta.contractName} and dependencies to verify ${address} contract`);
+        this.logger.log(`Submitting ${jsonMeta.sourceName}:${jsonMeta.contractName} and dependencies to verify contract ${address}`);
 
         try {
             let guid = await this.explorer.submitContractVerification({
@@ -243,7 +243,7 @@ export class ContractVerifier {
 
         await crawlSourceFile(new SourceFile(main));
 
-        this.logger.log(`Found ${Object.keys(sources).length} source files: `, Object.keys(sources));
+        this.logger.log(`Found ${Object.keys(sources).length} source files:`, Object.keys(sources));
         return sources;
     }
 
@@ -284,7 +284,7 @@ export class ContractVerifier {
             } catch (e) {
                 let message = e.message;
                 if (/verified|success/i.test(message)) {
-                    // was already verified
+                    // Already verified.
                     return true;
                 }
                 if (/(pending|queue)/i.test(message)) {

@@ -175,10 +175,10 @@ export class BlockchainExplorer implements IBlockchainExplorer {
         try {
             abi = await this.client.get(url);
         } catch (err) {
-            $logger.log(`Blockchain explorer request filed "${url}": ${err.message}`);
+            $logger.log(`Blockchain explorer request failed for "${url}": ${err.message}`);
             let addressByByteCode = await this.getSimilarContract(address);
             if (addressByByteCode != null) {
-                $logger.log(`Found similar byte code address: ${addressByByteCode}`);
+                $logger.log(`Found similar bytecode address: ${addressByByteCode}`);
                 return this.getContractAbi(addressByByteCode);
             }
             throw err;
@@ -195,7 +195,7 @@ export class BlockchainExplorer implements IBlockchainExplorer {
                 let hex = $address.fromBytes32(uin256Hex);
                 return this.getContractAbi(hex)
             }
-            throw new Error(`Implement ${params.implementation} support`);
+            throw new Error(`Implementation lookup is not supported for ${params.implementation}`);
         }
         if (isOpenZeppelinProxy(abiJson) || mightBeProxy(abiJson)) {
             let web3 = this.getWeb3(this.platform);
@@ -384,12 +384,12 @@ export class BlockchainExplorer implements IBlockchainExplorer {
             try {
                 return JSON.parse(str)
             } catch (error) {
-                // etherscan returns code wrapped into {{}}
+                // Etherscan can return source code wrapped in {{...}}
             }
             str = str
                 .replace(/^\s*\{\{/g, '{')
                 .replace(/\}\}\s*$/g, '}');
-            // @TODO check etherscan serialized jsons. Does it always has "{{...}}" wrappings
+            // @TODO Check Etherscan serialized JSON. Does it always use "{{...}}" wrapping?
 
             return JSON.parse(str)
         }
@@ -555,7 +555,7 @@ function hasMethod(abi: TAbiItem[], name: string) {
 function ensureDefaults(opts: TExplorerDefinition) {
 
     let platform = opts.platform;
-    $require.notNull(platform, `Generic Blockchain Explorer Config should contain platform name`);
+    $require.notNull(platform, `Generic blockchain explorer config must include a platform name`);
 
     opts.ABI_CACHE ??= `./cache/${$platform.toPath(platform)}/abis.json`
     opts.CONTRACTS ??= [];
@@ -594,7 +594,7 @@ class HttpClient {
     async getHtml(url: string) {
         let resp = await $http.get(url);
         if (resp.status !== 200) {
-            throw new Error(`${url} not loaded with status ${resp.status}.`);
+            throw new Error(`${url} failed to load with status ${resp.status}.`);
         }
         return resp.data;
     }
@@ -644,7 +644,7 @@ class HttpClient {
             throw error;
         }
         if (data.result == null) {
-            $logger.warn(`Blockchain "${url}" explorer returned empty result`, data);
+            $logger.warn(`Blockchain explorer "${url}" returned an empty result`, data);
         }
         return data.result as TOut;
     }
@@ -669,7 +669,7 @@ class HttpClient {
             throw new Error(str);
         }
         if (data.result == null) {
-            $logger.warn(`Blockchain "${url}" explorer returned empty result`, data);
+            $logger.warn(`Blockchain explorer "${url}" returned an empty result`, data);
         }
         return data.result;
     }

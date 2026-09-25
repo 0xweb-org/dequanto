@@ -115,7 +115,7 @@ export class FsHtmlVerifier implements IVerifier {
 
 
         if (contractData.contractName.includes('Utils/Proxy')) {
-            // fix Proxy, rename contract duplicates
+            // Rename duplicate Proxy contracts before writing the verification form.
             html = html.replaceAll('contracts/Utils/Proxy.sol:Proxy', 'contracts/Utils/TUProxy.sol:TUProxy');
             html = html.replace('Utils/Proxy.sol":', 'Utils/TUProxy.sol":');
             html = html.replace('contract Proxy is ', 'contract TUProxy is ');

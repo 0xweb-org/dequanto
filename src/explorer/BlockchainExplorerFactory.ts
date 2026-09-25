@@ -50,7 +50,7 @@ export namespace BlockchainExplorerFactory {
         return new BlockchainExplorer(params);
     }
 
-    /** Same as sync variation, but ensures the config is being fetched */
+    /** Same as the synchronous variant, but ensures the config has been fetched */
     export async function getAsync (platform: TPlatform, opts?: IBlockchainExplorerFactoryParams): Promise<IBlockchainExplorer> {
         await Config.get();
         return get(platform, opts);
