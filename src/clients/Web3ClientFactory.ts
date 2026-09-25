@@ -7,6 +7,7 @@ import { EvmWeb3Client } from './EvmWeb3Client';
 import { $require } from '@dequanto/utils/$require';
 import { $config } from '@dequanto/utils/$config';
 import type { HardhatWeb3Client } from '@dequanto/hardhat/HardhatWeb3Client';
+import { IConfigData } from '@dequanto/config/interface/IConfigData';
 
 export namespace Web3ClientFactory {
 
@@ -50,8 +51,8 @@ export namespace Web3ClientFactory {
     /** Same as the sync variant, but ensures the config is fetched */
     export async function getAsync <
         TClient extends EvmWeb3Client | HardhatWeb3Client = EvmWeb3Client
-    > (platform: TPlatform | string | number, opts?: IWeb3EndpointOptions & HHInMemoryForkData): Promise<TClient> {
-        let cfg = await Config.get();
+    > (platform: TPlatform | string | number, opts?: IWeb3EndpointOptions & HHInMemoryForkData & { config?: Partial<IConfigData>}): Promise<TClient> {
+        let cfg = await Config.get(opts?.config);
         if (typeof platform === 'string' && platform.startsWith('hh:memory:')) {
             let network = platform.replace('hh:memory:', '');
             let client = await di.resolve(HardhatProvider).forked({

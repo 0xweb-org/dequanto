@@ -10,6 +10,7 @@ Before using an unfamiliar dequanto API, verify the exact signature in `src/` or
 
 | Goal | Use | Reference | Examples |
 | --- | --- | --- | --- |
+| Configure RPC endpoints, explorer keys, or custom chains | `Config.fetch`, `ConfigDefaults`, `RPC_<PLATFORM>` env vars, `blockchainExplorer` | `src/config/ConfigDefaults.ts` | `examples/config.spec.ts` |
 | Create an RPC client, read blocks, balances, logs, storage, or raw tx data | `Web3ClientFactory`, `Web3Client`, chain clients | `references/rpc-clients.md` | `examples/rpc-read.spec.ts` |
 | Call a smart contract | generated contract classes extending `ContractBase`, or `ContractReader` for ad hoc ABI calls | `references/contracts.md` | `examples/contract-read.spec.ts` |
 | Send a contract transaction | generated write methods returning `TxWriter`; use `$receipt()` when the receipt is needed | `references/contracts.md`, `references/transactions.md` | `examples/contract-write.spec.ts` |

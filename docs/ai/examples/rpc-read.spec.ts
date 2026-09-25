@@ -1,8 +1,11 @@
 import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
+import { Config } from '@dequanto/config/Config';
 import { $require } from '@dequanto/utils/$require';
 
 UTest({
-    async 'read common RPC data via Web3Client directly' () {
+    async '!read common RPC data via Web3Client directly' () {
+        const cfg = await Config.fetch();
+
         const client = await Web3ClientFactory.getAsync('eth');
 
         const chainId = await client.getChainId();

@@ -16,8 +16,8 @@ export namespace $config {
     let envOptions = null;
 
     export function get <T = any> (path: string, $default?: T): T {
-        let value = (typeof $global.app !== 'undefined' ? $global.app.config?.$get?.(path) : null)
-            ?? obj_getProperty(config, path)
+        let value = obj_getProperty(config, path)
+            ?? (typeof $global.app !== 'undefined' ? $global.app.config?.$get?.(path) : null)
             ?? obj_getProperty(envOptions, path);
 
         if (value == null && envOptions == null) {
@@ -79,11 +79,10 @@ export namespace $config {
         let explorer = $config.get<IConfigData['blockchainExplorer']>(`blockchainExplorer`);
         let chains = $config.get<IConfigData['chains']>('chains', []);
 
-
         let explorerConfig = explorer[platform];
         let chainConfig = chains.find(x => x.platform === platform || x.aliases?.includes(platform));
 
-        $require.notNull(explorerConfig || chainConfig, `Unsupported platform ${platform} for web3 client`);
+        $require.notNull(explorerConfig || chainConfig, `Unsupported platform ${platform} for blockchain explorer`);
         return {
             platform,
             ...(chainConfig?.explorers?.[0] ?? {}),

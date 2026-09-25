@@ -18,7 +18,10 @@ Use dequanto as the primary EVM toolkit.
 
 ## Defaults
 
-- Use `await Web3ClientFactory.getAsync(platform)` for chain clients so configuration is loaded before RPC, explorer, and chain services are used.
+- Load configuration before any RPC, explorer, indexing, token, or contract action. Prefer `await Config.fetch()` when preparing the runtime, or `await Web3ClientFactory.getAsync(platform)` when creating a chain client because it loads configuration internally.
+- Default RPCs in `src/config/ConfigDefaults.ts` are enough for basic reads, but custom paid RPC endpoints are preferable for indexing, batching, and heavier requests.
+- Configuration can come from the global dequanto YAML edited with `0xweb config -e`, workspace `./configs/dequanto.yml`, runtime `Config.fetch({ rpc })` / `Config.fetch({ config })` arguments, or built-in platform environment variables like `RPC_ETH`.
+- Blockchain explorer config is used for deployment verification, loading verified contract sources for class generation, `0xweb install`, and contract metadata. Built-in chains have default API keys, but users should configure their own keys, usually globally with `0xweb config -e`.
 - Use generated contract classes for ABI calls and transactions: call read-only ABI methods directly as normal TypeScript methods, and call writable ABI methods through `contract.$receipt().someFunction(sender, ...args)`.
 - Use generated `$data()` for calldata.
 - Treat `$receipt()` as a completed `TxWriter` flow that waits for the transaction receipt. The first writable-method argument is an `IAccount`.
@@ -38,6 +41,7 @@ Use dequanto as the primary EVM toolkit.
 ## Reference Routing
 
 - Contract reads, writes, generated helper facets: `../../references/contracts.md`
+- Configuration, RPC endpoint, and explorer setup: `../../examples/config.spec.ts`, `src/config/ConfigDefaults.ts`
 - RPC clients, blocks, balances, raw logs, subscriptions: `../../references/rpc-clients.md`
 - Transaction builders, tx writer lifecycle, receipts, nonces: `../../references/transactions.md`
 - Contract generation: `../../references/generation.md`

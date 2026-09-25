@@ -33,7 +33,6 @@ export class ConfigProvider implements IConfigProvider {
             ;
 
         let cfg = await AppConfig.fetch<IConfigData>(sources);
-
         if (this.config != null) {
             this.config.$extend(cfg.toJSON());
         } else {
@@ -101,6 +100,11 @@ export class ConfigProvider implements IConfigProvider {
             },
             parameters?.dotenv ? {
                 dotenv: true
+            } : null,
+            parameters?.config ? {
+                sync: true,
+                extendArrays: false,
+                config: parameters.config
             } : null,
         ];
     }

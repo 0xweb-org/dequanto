@@ -8,7 +8,8 @@ async function process () {
     let json = JSON.stringify(config, null, 4);
     let content = [
         `import { IConfigData } from './interface/IConfigData';`,
-        `export const ConfigDefaults = <IConfigData> ${json};\n`
+        `import { DefaultFactory } from './DefaultFactory';`,
+        `export const ConfigDefaults = DefaultFactory(${json});\n`
     ].join('\n');
     await File.writeAsync('src/config/ConfigDefaults.ts', content);
 }

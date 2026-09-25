@@ -1,5 +1,6 @@
 import { IConfigData } from './interface/IConfigData';
-export const ConfigDefaults = <IConfigData> {
+import { DefaultFactory } from './DefaultFactory';
+export const ConfigDefaults = DefaultFactory({
     "accounts": null,
     "settings": {
         "generate": {
@@ -116,6 +117,9 @@ export const ConfigDefaults = <IConfigData> {
             "chainId": 1,
             "chainToken": "ETH",
             "endpoints": [
+                {
+                    "url": "https://ethereum-rpc.publicnode.com"
+                },
                 {
                     "url": "https://eth.drpc.org",
                     "rateLimit": "2000/5m"
@@ -504,4 +508,4 @@ export const ConfigDefaults = <IConfigData> {
         "base": "0x00000000000D6FFc74A8feb35aF5827bf57f6786",
         "linea": "0x00000000000D6FFc74A8feb35aF5827bf57f6786"
     }
-};
+});

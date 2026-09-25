@@ -3,9 +3,13 @@ import { IAbiProvider } from './IAbiProvider';
 import { TEth } from '@dequanto/models/TEth';
 import { TAddress } from '@dequanto/models/TAddress';
 import { IVerifier } from './verifiers/IVerifier';
+import { TExplorerDefinition } from '@dequanto/models/TExplorer';
 
 
 export interface IBlockchainExplorer extends IAbiProvider, IVerifier {
+    config: {
+        api: { url?: string; key?: string }
+    }
     inMemoryDb: IContractDetails[]
     getContractMeta(q: string): Promise<IContractDetails>;
     getContractCreation(address: TEth.Address): Promise<{ creator: TEth.Address, txHash: TEth.Hex }>;

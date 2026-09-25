@@ -58,7 +58,6 @@ export namespace BlockchainExplorerFactory {
 
     /** @obsolete Create instance directly with the get/getAsync method */
     export function create (opts: IBlockchainExplorerFactoryParams): Constructor<IBlockchainExplorer> {
-
         return class extends BlockchainExplorer {
             constructor (config?: IBlockchainExplorerFactoryParams) {
                 super(config ?? opts);

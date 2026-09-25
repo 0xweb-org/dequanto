@@ -4,6 +4,7 @@ import { TAddress } from '@dequanto/models/TAddress';
 import { TPlatform } from '@dequanto/models/TPlatform';
 import { IRpcConfig } from '@dequanto/clients/ClientPool';
 import { TChain } from '@dequanto/models/TChain';
+import { TEth } from '@dequanto/models/TEth';
 
 
 export interface IConfigData {
@@ -28,10 +29,10 @@ export interface IConfigData {
 
     blockchainExplorer: {
         [platform in TPlatform]: {
-            key: string;
+            key?: string;
             host?: string;
             api?: string
-            wwww?: string
+            www?: string
         };
     };
 
@@ -77,4 +78,16 @@ export interface IConfigData {
         [platform in TPlatform]: TAddress
     };
 
+    ns: {
+        [service: string]: {
+            [platform: string]: {
+                registry: TEth.Address
+                resolver?: TEth.Address
+            }
+        }
+    }
+
+    oracles: {
+        [service: string]: any
+    }
 }

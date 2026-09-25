@@ -5,6 +5,10 @@ import { TEth } from '@dequanto/models/TEth'
 
 type TConfigParamsBase = {
     config?: Partial<IConfigData>
+    // alias for config.web3.platform.endpoints
+    rpc?: {
+        [platform: string]: string | string[] | IConfigData['web3']['']['endpoints']
+    }
 }
 
 export type TConfigParamsNode = TConfigParamsBase & {
