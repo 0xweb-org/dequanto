@@ -91,11 +91,10 @@ export namespace $config {
     }
 
     export function set <T = any> (path: string, value: T) {
+        obj_setProperty(config, path, value);
         if (typeof $global.app?.config?.$set === 'function') {
             $global.app.config.$set(path, value);
-            return;
         }
-        obj_setProperty(config, path, value);
     }
 
     /**
