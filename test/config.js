@@ -53,7 +53,7 @@ module.exports = {
             $config: {
                 includejs: includeSettings(),
             },
-            tests: 'docs/ai/examples/**.spec.ts'
+            tests: 'skills/dequanto/examples/**.spec.ts'
         }
     }
 };

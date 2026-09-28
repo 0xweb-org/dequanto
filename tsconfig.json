@@ -1,6 +1,7 @@
 {
     "exclude": [
-        "exports/core.lib.ts"
+        "exports/core.lib.ts",
+        "ts-temp"
     ],
     "compilerOptions": {
         "baseUrl": "./",
