@@ -91,9 +91,15 @@ Transaction APIs accept several account shapes:
 
 - EOA account: `{ address, key }`
 - named account: string resolved through `ChainAccountService`
-- impersonated account in Hardhat
+- impersonated account in Hardhat: `{ type: 'impersonated', address }` (no private key required)
 - Safe account: `{ type: 'safe', address, operator, owners? }`
 - ERC-4337 account: `{ type: 'erc4337', address, operator }`
 
 Inspect `src/models/TAccount.ts` before adding a new account shape.
+
+## Balances And Impersonation On Hardhat
+
+Use `client.debug.setBalance(address, 10n ** 18n)` to set a native balance to 1 ETH. Use `$erc20.setBalanceAny(client, tokenAddress, accountAddress, amount)` to resolve and overwrite an ERC20 balance slot: `bigint` amounts are raw smallest units, while `number` amounts are converted using token decimals.
+
+Pass an impersonated account to generated write methods, for example `await usdc.$receipt().transfer({ address, type: 'impersonated' }, to, amount)`. See [Hardhat development and forking](hardhat.md) and the [fork example](../examples/hardhat-fork.spec.ts).
 

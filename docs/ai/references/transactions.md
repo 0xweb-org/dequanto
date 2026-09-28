@@ -22,6 +22,8 @@ Useful tests:
 
 ## TxWriter Lifecycle
 
+For transactions from any address on a Hardhat development network or fork, pass `{ address, type: 'impersonated' }` as the account. The writer enables impersonation automatically. See [Hardhat development and forking](hardhat.md#impersonate-an-account) for a complete ERC20 transfer example.
+
 Generated write methods return a `TxWriter`.
 
 ```ts

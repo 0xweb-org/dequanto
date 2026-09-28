@@ -1,6 +1,6 @@
 # Solidity Storage
 
-Use `SlotsParser` to derive layout and `SlotsStorage` to read or write slots. Do not decode raw storage words as ABI payloads.
+Prefer the storage reader included in generated contract classes. For manual layouts, use `SlotsParser` to derive layout and `SlotsStorage` to read or write slots. Do not decode raw storage words as ABI payloads.
 
 Key source files:
 
@@ -18,6 +18,33 @@ Useful tests:
 - `test/solidity/Storage.spec.ts`
 - `test/solidity/SlotsParser.spec.ts`
 - `test/generate/slotreader.spec.ts`
+
+## Generated Contract Storage Readers
+
+Contract classes installed from a blockchain explorer with `0xweb install`, or generated from Solidity sources with `@0xweb/hardhat`, include a storage reader on `contractInstance.storage`. It contains the storage layout derived from the source, including slot positions and packed fields, so you can access storage by variable name without manually resolving slots.
+
+On a Hardhat development network or fork, write a variable with `await contractInstance.storage.$set('someVar', value)`. The generated reader exposes `$set` and `$get`; `set` and `get` are methods on the underlying `SlotsStorage`.
+
+For example, using the generated AavePool class:
+
+```ts
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { AavePool } from '../../../0xc/eth/AavePool/AavePool';
+
+const client = await Web3ClientFactory.getAsync('hh:memory:eth');
+const pool = new AavePool(undefined, client);
+const id = await client.debug.snapshot();
+
+try {
+    await pool.storage.$set('_flashLoanPremium', 12_345n);
+    const premium = await pool.storage._flashLoanPremium();
+    const publicPremium = await pool.FLASHLOAN_PREMIUM_TOTAL();
+} finally {
+    await client.debug.revert(id);
+}
+```
+
+The AavePool import points to this repository's generated class; use your project's generated path. Keep generated storage layouts in sync with the deployed implementation, especially after proxy upgrades. See the [storage example](../examples/storage.spec.ts) for assertions and rollback verification.
 
 ## Parse Slots From Solidity
 
@@ -84,6 +111,8 @@ const storage = SlotsStorage.createWithClient(client, contract.address, slots, {
 ```ts
 await storage.set('user.balance', 1000n);
 ```
+
+For a known raw slot on Hardhat, use `await client.debug.setStorageAt(contractAddress, slot, '0x2a')`; the value is padded to 32 bytes. To set an ERC20 balance without resolving its layout manually, use `$erc20.setBalanceAny(client, tokenAddress, accountAddress, amount)`. See [Hardhat development and forking](hardhat.md) for examples and snapshot/rollback handling.
 
 Do not use storage writes in production code unless the transport explicitly supports it and the task requires test/debug mutation.
 

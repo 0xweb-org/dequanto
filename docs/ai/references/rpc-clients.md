@@ -26,17 +26,19 @@ import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
 const client = await Web3ClientFactory.getAsync('eth');
 ```
 
-For Hardhat:
+For an in-memory Hardhat fork using the platform's default/configured RPCs:
 
 ```ts
-const client = await Web3ClientFactory.getAsync('hardhat');
+const client = await Web3ClientFactory.getAsync('hh:memory:eth');
 ```
 
-For a fork-like platform string:
+To connect to an already running local Hardhat node configured as an Ethereum fork:
 
 ```ts
 const client = await Web3ClientFactory.getAsync('hh:eth');
 ```
+
+Use `hh:memory` for an in-memory development network without a fork, or `hardhat` for a separately running local development node. See [Hardhat development and forking](hardhat.md) for setup, impersonation, balance/storage changes, mining, and snapshots.
 
 For direct endpoints:
 

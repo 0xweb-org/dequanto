@@ -2,6 +2,8 @@
 
 Use `HardhatProvider` for compile/deploy helper flows and `Deployments` for idempotent deployments, deployment storage, bytecode checks, proxy upgrades, beacon proxies, and verification.
 
+See [Hardhat development and forking](hardhat.md) for creating development networks and live-contract forks, impersonating accounts, changing balances/storage, and restoring snapshots.
+
 Key source files:
 
 - `src/hardhat/HardhatProvider.ts`
