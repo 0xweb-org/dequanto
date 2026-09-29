@@ -8,6 +8,7 @@ Key source files:
 - `src/clients/Web3Client.ts`
 - `src/clients/EvmWeb3Client.ts`
 - `src/clients/ClientPool.ts`
+- `src/blocks/BlockDateResolver.ts`
 - `src/rpc/Rpc.ts`
 - `src/rpc/RpcBase.ts`
 
@@ -81,6 +82,23 @@ const result = await client.readContract({
     params: [owner]
 });
 ```
+
+## Resolve Blocks By Date
+
+Use `BlockDateResolver` to find the block nearest to a date, or to resolve a block number back to its date:
+
+```ts
+import { BlockDateResolver } from 'dequanto/blocks/BlockDateResolver';
+
+const resolver = new BlockDateResolver(client);
+const date = new Date('2024-03-03T10:20:00Z');
+
+const blockNumber = await resolver.getBlockNumberFor(date);
+const { block, timestamp } = await resolver.getBlockInfoFor(date);
+const blockDate = await resolver.getDate(blockNumber);
+```
+
+`getBlockNumberFor(date)` returns the nearest block number. `getBlockInfoFor(date)` also returns that block's Unix timestamp. The resolver estimates from the chain's average block time and refines the estimate by loading blocks, so the result can be immediately before or after the requested time. Compare the returned timestamp when an exact time boundary matters. Dates before the chain was active throw a `Date out of range` error.
 
 ## Logs
 

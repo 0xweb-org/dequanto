@@ -1,9 +1,11 @@
 import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { BlockDateResolver } from 'dequanto/blocks/BlockDateResolver';
 import { Config } from 'dequanto/config/Config';
+import { $date } from 'dequanto/utils/$date';
 import { $require } from 'dequanto/utils/$require';
 
 UTest({
-    async '!read common RPC data via Web3Client directly' () {
+    async 'read common RPC data via Web3Client directly' () {
         const cfg = await Config.fetch();
 
         const client = await Web3ClientFactory.getAsync('eth');
@@ -38,5 +40,20 @@ UTest({
             params: []
         });
         $require.gt(Number(response), 0);
+    },
+
+    async 'resolve a block number and timestamp from a date' () {
+        const client = await Web3ClientFactory.getAsync('eth');
+        const resolver = new BlockDateResolver(client);
+        const date = new Date('2026-03-03T10:20:00Z');
+
+        const blockNumber = await resolver.getBlockNumberFor(date);
+        const info = await resolver.getBlockInfoFor(date);
+        const blockDate = await resolver.getDate(blockNumber);
+
+        $require.eq(blockNumber, 24576295);
+        $require.eq(blockNumber, 24576295);
+        $require.lte(Math.abs($date.toUnixTimestamp(date) - info.timestamp), 1);
+        $require.eq(blockDate.toISOString(), new Date('2026-03-03T10:19:59Z').toISOString());
     }
 });

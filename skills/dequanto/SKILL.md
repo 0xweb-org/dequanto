@@ -57,6 +57,7 @@ Examples use published `dequanto/...` imports. They retain the repository's `UTe
 - Deployment and proxy flows: `./references/deployments.md`
 - Historical events and indexing: `./references/events-indexing.md`
 - Explorer integration: `./references/explorer.md`
+- ABI, hashing, validation, hex, dates, signing, and promise helpers: `./references/utils.md`
 - Solidity storage: `./references/storage.md`
 - Tokens and accounts: `./references/tokens-accounts.md`
 - Safe and ERC-4337: `./references/safe-erc4337.md`

@@ -11,7 +11,7 @@ Before using an unfamiliar dequanto API, verify the exact signature in `src/` or
 | Goal | Use | Reference | Examples |
 | --- | --- | --- | --- |
 | Configure RPC endpoints, explorer keys, or custom chains | `Config.fetch`, `ConfigDefaults`, `RPC_<PLATFORM>` env vars, `blockchainExplorer` | `src/config/ConfigDefaults.ts` | `examples/config.spec.ts` |
-| Create an RPC client, read blocks, balances, logs, storage, or raw tx data | `Web3ClientFactory`, `Web3Client`, chain clients | `references/rpc-clients.md` | `examples/rpc-read.spec.ts` |
+| Create an RPC client; read blocks, balances, logs, storage, or raw tx data; resolve blocks by date | `Web3ClientFactory`, `Web3Client`, `BlockDateResolver`, chain clients | `references/rpc-clients.md` | `examples/rpc-read.spec.ts` |
 | Develop contracts or experiment on a Hardhat fork; impersonate accounts, change balances/storage, mine, or roll back | `Web3ClientFactory`, `client.debug`, `$erc20.setBalanceAny` | `references/hardhat.md` | `examples/hardhat-debug.spec.ts`, `examples/hardhat-fork.spec.ts` |
 | Call a smart contract | generated contract classes extending `ContractBase`, or `ContractReader` for ad hoc ABI calls | `references/contracts.md` | `examples/contract-read.spec.ts` |
 | Send a contract transaction | generated write methods returning `TxWriter`; use `$receipt()` when the receipt is needed | `references/contracts.md`, `references/transactions.md` | `examples/contract-write.spec.ts` |
@@ -20,6 +20,7 @@ Before using an unfamiliar dequanto API, verify the exact signature in `src/` or
 | Build, sign, save, submit, or inspect transactions | `TxDataBuilder`, `TxWriter`, `TokenTransferService` | `references/transactions.md` | `examples/send-transaction.spec.ts` |
 | Fetch or cache historical contract events | generated `getPastLogs*` helpers or `EventsIndexer` | `references/events-indexing.md` | `examples/index-events.spec.ts` |
 | Fetch ABI/source/creation data from an explorer | `BlockchainExplorerFactory`, `BlockchainExplorer`, `ContractAbiProvider` | `references/explorer.md` | `examples/explorer-abi.spec.ts` |
+| Encode/decode ABI data, hash Solidity values, validate inputs, manipulate hex, work with dates, sign data, or capture promise errors | `$abi`, `$contract`, `$require`, `$hex`, `$date`, `$sig`, `$promise` | `references/utils.md` | `examples/utils.spec.ts` |
 | Read Solidity storage, structs, mappings, arrays, or diamond storage | `SlotsParser`, `SlotsStorage`, generated storage readers | `references/storage.md` | `examples/storage.spec.ts` |
 | Work with tokens and balances | `TokensService`, `TokensServiceFactory`, `TokenTransferService`, generated ERC20 wrappers | `references/tokens-accounts.md` | `examples/token-transfer.spec.ts` |
 | Work with accounts, signing, Safe, or ERC-4337 | `ChainAccountService`, `$sig`, `GnosisSafeHandler`, `SafeTx`, `Erc4337Service`, `Erc4337TxWriter` | `references/safe-erc4337.md`, `references/tokens-accounts.md` | `examples/safe-batch.spec.ts`, `examples/erc4337-userop.spec.ts` |
