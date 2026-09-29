@@ -95,7 +95,7 @@ await tx.wait();
 
 For scripts, prefer `BatchAgent` when the code should call generated write methods normally and review or submit the collected transactions at the end. If the submitting account is a Safe, `batch.execute()` converts the collected single transactions into one Safe batch/multicall transaction. If the submitting account is a Timelock, `batch.execute()` converts them into one Timelock batch/scheduleBatch flow.
 
-See `../../references/transactions.md` for the full `BatchAgent` script pattern.
+See `./transactions.md` for the full `BatchAgent` script pattern.
 
 ## Safe Decoding
 

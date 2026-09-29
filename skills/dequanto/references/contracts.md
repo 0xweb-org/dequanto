@@ -89,6 +89,14 @@ const tx = await token
     .transfer(sender, receiver, amount);
 ```
 
+### Automatic Simulation And Error Handling
+
+Do not perform manual pre-flight simulations before submitting. When calling write methods such as `contract.$receipt().method(sender, ...args)`:
+- Dequanto automatically estimates gas, which simulates the transaction on the node.
+- If it reverts, dequanto decodes custom error bytecode using the contract ABI, attaches call traces, and throws a standard JavaScript `Error`.
+- If gas estimation succeeds but the transaction reverts on-chain later, the error flow is identical: `wait()` throws a standard `Error` with decoded custom error details.
+- Catch reverts with normal JavaScript `try / catch`.
+
 ## Events
 
 For generated contracts, prefer generated log helpers when present. Otherwise use:

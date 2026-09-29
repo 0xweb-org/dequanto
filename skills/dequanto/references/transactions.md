@@ -141,8 +141,29 @@ const parser = new TxLogParser();
 const logs = await parser.parse(receipt, { abi });
 ```
 
+## Reverts And Error Handling
+
+Developers do not need to perform manual pre-flight simulations (e.g. via `contract.$call()` or `contract.$gas()`). When sending a transaction via `TxWriter` or generated methods like `contract.$receipt().method(account, ...)`:
+
+1. **Automatic Simulation via Gas Estimation:** Dequanto automatically estimates gas before submitting. Estimating gas inherently simulates the transaction on the node.
+2. **Custom Error Decoding:** If the call reverts during estimation, dequanto catches the revert, automatically decodes the custom error bytecode using the contract ABI, formats the call arguments, attaches execution traces (when running on Hardhat/debug nodes), and throws a standard JavaScript `Error`.
+3. **On-Chain Reverts:** If gas estimation succeeded (or was disabled) but the transaction subsequently reverts on-chain, the flow is identical: `await writer.wait()` rejects with a standard JavaScript `Error` containing the decoded custom error name and arguments.
+
+```ts
+try {
+    await vault.$receipt().withdraw(user, 100n);
+} catch (error) {
+    // error.message includes the decoded custom error name, parameters, method, and traces:
+    // e.g., "VM Exception: reverted with custom error 'InsufficientBalance(50, 100)'"
+    console.error(error.message);
+}
+```
+
+See the [revert and custom error example](../examples/revert-error.spec.ts) for runnable demonstrations.
+
 ## Avoid
 
+- Do not perform manual simulations with `$call()` or `$gas()` solely to catch reverts before sending; `TxWriter` automatically simulates via gas estimation, decodes custom errors, and throws standard JavaScript errors.
 - Do not manually manage gas and nonce unless the task needs it.
 - Do not use external wallet clients when a dequanto `TAccount`, `SafeAccount`, or `Erc4337Account` flow is available.
 

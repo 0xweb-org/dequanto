@@ -45,6 +45,7 @@ Examples use published `dequanto/...` imports. They retain the repository's `UTe
 - Prefer generated `contract.storage` readers and `storage.$set(name, value)` when available; use `SlotsParser` and `SlotsStorage` for manual Solidity layouts.
 - Use `Deployments` for idempotent deployments, proxy deployments, beacon deployments, and verification.
 - Use dequanto account-agent flows when the account type says `safe`, `timelock`, or `erc4337`.
+- For browser and dApp workflows, use `client.wallet` (`WalletClient`) and `EIP6963ProviderFactory` to discover injected wallets, connect accounts, switch chains, and delegate signing.
 
 ## Reference Routing
 
@@ -61,6 +62,7 @@ Examples use published `dequanto/...` imports. They retain the repository's `UTe
 - Solidity storage: `./references/storage.md`
 - Tokens and accounts: `./references/tokens-accounts.md`
 - Safe and ERC-4337: `./references/safe-erc4337.md`
+- Browser wallet and dApp integration: `./references/browser.md`
 - Translating ethers/viem habits: `./references/migration-from-ethers-viem.md`
 
 ## Rules

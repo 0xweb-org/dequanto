@@ -20,6 +20,7 @@ Agents often know ethers and viem better than dequanto. Use this file to transla
 | Bigint formatting | `parseUnits`, `formatUnits` | `bigint` js type is supported natively, additionally `$bigint` helpers and token decimals through dequanto token services |
 | Safe tx | Safe SDK | `SafeAccount`, `GnosisSafeHandler`, `SafeTx`, Safe transports |
 | ERC-4337 | external bundler/account SDK | `Erc4337Service`, `Erc4337TxWriter`, `Erc4337Account` |
+| Browser wallet / dApp | wagmi, RainbowKit, `window.ethereum` | `client.wallet`, `EIP6963ProviderFactory` |
 
 ## Strong Defaults
 
