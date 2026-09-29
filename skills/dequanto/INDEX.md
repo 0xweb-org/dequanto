@@ -18,6 +18,7 @@ Before using an unfamiliar dequanto API, verify the exact signature in `src/` or
 | Generate typed contract classes | `Generator`, `HardhatProvider`, 0xweb-generated classes | `references/generation.md` | `examples/generate-contract-class.spec.ts` |
 | Deploy contracts and proxies | `HardhatProvider`, `Deployments`, `ensure`, `ensureWithProxy`, `ensureWithBeacon` | `references/deployments.md` | `examples/deploy-contract.spec.ts` |
 | Build, sign, save, submit, or inspect transactions | `TxDataBuilder`, `TxWriter`, `TokenTransferService` | `references/transactions.md` | `examples/send-transaction.spec.ts` |
+| Subscribe to typed contract events, live logs, new blocks, or pending transactions over WebSocket | `on<EventName>`, `onLog`, `client.subscribe`, `Rpc.eth_subscribe` | `references/live-events.md` | `examples/live-events.spec.ts` |
 | Fetch or cache historical contract events | generated `getPastLogs*` helpers or `EventsIndexer` | `references/events-indexing.md` | `examples/index-events.spec.ts` |
 | Fetch ABI/source/creation data from an explorer | `BlockchainExplorerFactory`, `BlockchainExplorer`, `ContractAbiProvider` | `references/explorer.md` | `examples/explorer-abi.spec.ts` |
 | Encode/decode ABI data, hash Solidity values, validate inputs, manipulate hex, work with dates, sign data, or capture promise errors | `$abi`, `$contract`, `$require`, `$hex`, `$date`, `$sig`, `$promise` | `references/utils.md` | `examples/utils.spec.ts` |

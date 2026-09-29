@@ -93,5 +93,5 @@ contract.$onLog('Transfer', log => {
 });
 ```
 
-For raw client subscriptions, use `client.subscribe(...)`.
+For new logs after a live connection is established, see [WebSocket and live logs](live-events.md).
 

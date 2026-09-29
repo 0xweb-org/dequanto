@@ -56,6 +56,7 @@ Examples use published `dequanto/...` imports. They retain the repository's `UTe
 - Transaction builders, tx writer lifecycle, receipts, nonces: `./references/transactions.md`
 - Contract generation: `./references/generation.md`
 - Deployment and proxy flows: `./references/deployments.md`
+- WebSocket endpoints, generated live event streams, and low-level subscriptions: `./references/live-events.md`
 - Historical events and indexing: `./references/events-indexing.md`
 - Explorer integration: `./references/explorer.md`
 - ABI, hashing, validation, hex, dates, signing, and promise helpers: `./references/utils.md`

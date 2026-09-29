@@ -117,16 +117,7 @@ For large ranges, use `streamed: true` and `onProgress`.
 
 ## Subscriptions
 
-Use `subscribe(...)` for websocket subscriptions:
-
-```ts
-const sub = await client.subscribe('newHeads', (error, block) => {
-    if (error) throw error;
-    console.log(block.number);
-});
-```
-
-For contract events, generated contracts expose `$onLog(event, cb?)`.
+Add a `wss://...` endpoint to the chain RPC list, then use generated contract event methods, `client.subscribe(...)`, or `Rpc.eth_subscribe(...)`. Dequanto automatically selects a WebSocket endpoint for live connections; that endpoint can also serve ordinary RPC calls. See [WebSocket and live logs](live-events.md).
 
 ## Avoid
 
