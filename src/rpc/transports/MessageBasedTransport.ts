@@ -10,7 +10,7 @@ import { l } from '@dequanto/utils/$logger';
 export abstract class MessageBasedTransport extends class_EventEmitter implements TTransport.Transport {
 
     protected requests = new Map() as Map<string, class_Dfr<TTransport.Response | TTransport.Response[]>>;
-    protected subscriptions = new Map() as Map<number, {
+    protected subscriptions = new Map() as Map<TTransport.SubscriptionId, {
         method: string
         params: any[]
         subscription: RpcSubscription<any>
@@ -65,7 +65,7 @@ export abstract class MessageBasedTransport extends class_EventEmitter implement
         return subscription;
     }
 
-    async unsubscribe(req: TTransport.Request & { method: 'eth_unsubscribe', params: [number] }) {
+    async unsubscribe(req: TTransport.Request & { method: 'eth_unsubscribe', params: [TTransport.SubscriptionId] }) {
         let [ id ] = req.params
         let { params, method, subscription } = this.subscriptions.get(id) ?? {};
 

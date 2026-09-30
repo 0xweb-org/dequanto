@@ -25,7 +25,7 @@ export class Web3Transport implements TTransport.Transport {
         let subscription = this.mix.eth.subscribe(req.method as any, req.params?.[0] ?? null);
         return subscription as any as TTransport.Subscription<any>;
     }
-    unsubscribe(req: TTransport.Request & { method: 'eth_unsubscribe'; params: [number]; }): Promise<RpcSubscription<any>> {
+    unsubscribe(req: TTransport.Request & { method: 'eth_unsubscribe'; params: [TTransport.SubscriptionId]; }): Promise<RpcSubscription<any>> {
         throw new Error('Method not implemented');
     }
 }

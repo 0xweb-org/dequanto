@@ -1,9 +1,13 @@
 import { TError } from '@dequanto/models/TError';
 import { class_EventEmitter } from 'atma-utils';
 import { TFnWithCallback } from './types';
+import { $date } from './$date';
 
 export namespace $promise {
-    export function wait (ms) {
+    export function wait (mix: number | `${number}${$date.TTimespanType}`) {
+        const ms = typeof mix === 'string'
+            ? $date.parseTimespan(mix)
+            : mix;
         return new Promise(resolve => {
             setTimeout(resolve, ms);
         });

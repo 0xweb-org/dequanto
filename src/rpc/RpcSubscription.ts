@@ -7,7 +7,7 @@ export class RpcSubscription<T> extends SubjectStream<T> implements TTransport.S
 
     private _emitter: class_EventEmitter
 
-    constructor (public id: number, public transport: TTransport.Transport,  mapper?: (value) => T) {
+    constructor (public id: TTransport.SubscriptionId, public transport: TTransport.Transport,  mapper?: (value) => T) {
         super();
         this._mapper = mapper;
     }

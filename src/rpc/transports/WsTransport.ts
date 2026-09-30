@@ -23,7 +23,7 @@ export class WsTransport  implements TTransport.Transport {
         return this.ws.subscribe<TResult>(req);
     }
 
-    async unsubscribe (req: TTransport.Request & { method: 'eth_unsubscribe', params: [number] }) {
+    async unsubscribe (req: TTransport.Request & { method: 'eth_unsubscribe', params: [TTransport.SubscriptionId] }) {
         return this.ws.unsubscribe(req);
     }
 }

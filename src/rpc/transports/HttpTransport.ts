@@ -48,7 +48,7 @@ export class HttpTransport implements TTransport.Transport {
     async subscribe(req: TTransport.Request): Promise<RpcSubscription<any>> {
         throw new Error(`(subscribe) Polling is not implemented for HttpTransport`);
     }
-    unsubscribe(req: TTransport.Request & { method: 'eth_unsubscribe'; params: [number]; }): Promise<TTransport.Subscription<any>> {
+    unsubscribe(req: TTransport.Request & { method: 'eth_unsubscribe'; params: [TTransport.SubscriptionId]; }): Promise<TTransport.Subscription<any>> {
         throw new Error(`(unsubscribe) Polling is not implemented for HttpTransport`);
     }
 }

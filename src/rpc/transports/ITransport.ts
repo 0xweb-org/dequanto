@@ -12,7 +12,7 @@ export namespace TTransport {
         request (req: Request): Promise<Response>
 
         subscribe <TResult = any> (req: Request): Promise<Subscription<TResult>>
-        unsubscribe (req: Request & { method: 'eth_unsubscribe', params: [number] }): Promise<Subscription<any>>
+        unsubscribe (req: Request & { method: 'eth_unsubscribe', params: [SubscriptionId] }): Promise<Subscription<any>>
     }
 
     export type Request = {
@@ -33,10 +33,12 @@ export namespace TTransport {
     }
 
     export interface Subscription <T> {
-        id: number
+        id: SubscriptionId
         unsubscribe(cb?: Function): void | Promise<boolean>
         subscribe (cb: (x: T) => void, onError?: (x: Error | any) => void, once?): any
     }
+
+    export type SubscriptionId = string | number;
 
     export namespace Options {
 

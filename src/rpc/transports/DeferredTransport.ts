@@ -17,7 +17,7 @@ export class DeferredTransport implements TTransport.Transport {
         const inner = await this.getInner();
         return inner.subscribe(req);
     }
-    async unsubscribe(req: TTransport.Request & { method: 'eth_unsubscribe'; params: [number]; }): Promise<TTransport.Subscription<any>> {
+    async unsubscribe(req: TTransport.Request & { method: 'eth_unsubscribe'; params: [TTransport.SubscriptionId]; }): Promise<TTransport.Subscription<any>> {
         const inner = await this.getInner();
         return inner.unsubscribe(req);
     }

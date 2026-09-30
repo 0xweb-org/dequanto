@@ -360,6 +360,26 @@ export namespace $date {
         return new Date(Y, M - 1, D, H, Min);
     }
 
+    export type TTimespanType = 'ms'
+        | 's'
+        | 'sec'
+        | 'seconds'
+        | 'm'
+        | 'min'
+        | 'mins'
+        | 'h'
+        | 'hour'
+        | 'hours'
+        | 'd'
+        | 'day'
+        | 'days'
+        | 'w'
+        | 'week'
+        | 'weeks'
+        | 'month'
+        | 'months'
+        | 'y'
+        | 'years';
     /**
      * s|sec|seconds|m|mins?|h|hours?|d|days?|w|weeks?|months?|y|years?
      * e.g: 2h

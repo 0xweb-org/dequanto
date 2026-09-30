@@ -67,7 +67,12 @@ export namespace RpcTransport {
         return typeof (mix as any).url === 'string';
     }
     function isEIP1193Compatible (mix: any): mix is IEip1193Provider  {
-        return typeof (mix as any).sendAsync === 'function';
+        if (typeof mix?.sendAsync === 'function') {
+            return true;
+        }
+        return typeof mix?.request === 'function'
+            && typeof mix?.on === 'function'
+            && typeof mix?.removeListener === 'function';
     }
     function isTransport (mix: TTransport.Options.Any): mix is TTransport.Transport  {
         return typeof (mix as any).request === 'function';

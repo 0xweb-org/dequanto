@@ -1,6 +1,6 @@
 # WebSocket And Live Logs
 
-Live subscriptions require at least one WebSocket endpoint in the chain's RPC endpoint list. Add a `wss://...` URL alongside any HTTP endpoints:
+For URL-based clients, live subscriptions require at least one WebSocket endpoint in the chain's RPC endpoint list. Add a `wss://...` URL alongside any HTTP endpoints:
 
 ```yaml
 web3:
@@ -11,6 +11,8 @@ web3:
 ```
 
 When a subscription requests a live connection, dequanto automatically selects a WebSocket endpoint from the client pool. A WebSocket endpoint can also serve normal RPC calls. HTTP endpoints remain useful for ordinary request traffic and as additional pool endpoints.
+
+An EIP-1193 provider can deliver subscriptions through its `message` event and does not need a separate WebSocket URL. This includes the in-memory Hardhat provider.
 
 You can provide the same configuration through `Config.fetch({ config: ... })`, workspace or global dequanto configuration, or the platform RPC environment configuration. See [RPC clients](rpc-clients.md) and [the configuration example](../examples/config.spec.ts).
 
@@ -29,7 +31,7 @@ Useful tests:
 - `test/subscriptions.spec.ts`
 - `test/rpc/rpc.spec.ts`
 
-Runnable template: [live event subscriptions](../examples/live-events.spec.ts). Its cases are skipped by default because they need a working WebSocket endpoint and live network activity.
+Runnable example: [live event subscriptions](../examples/live-events.spec.ts). It uses an in-memory Hardhat Ethereum fork and mines the required activity itself. The fork needs a configured Ethereum HTTP RPC, but it does not require a WebSocket endpoint or live network activity.
 
 ## Generated Contract Event Subscriptions
 

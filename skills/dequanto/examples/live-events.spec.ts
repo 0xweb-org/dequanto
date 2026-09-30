@@ -1,80 +1,123 @@
+import { TEth } from 'dequanto/models/TEth';
 import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import { ERC20 } from 'dequanto/prebuilt/openzeppelin/ERC20';
-import { Rpc } from 'dequanto/rpc/Rpc';
+import { $account } from 'dequanto/utils/$account';
+import { $erc20 } from 'dequanto/utils/$erc20';
 import { $promise } from 'dequanto/utils/$promise';
 import { $require } from 'dequanto/utils/$require';
 
-const USDC = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48';
+const USDC = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48' as const;
+const TRANSFER_AMOUNT = 1_000_000n; // 1 USDC (6 decimals).
 
 UTest({
     $config: {
         timeout: 60_000
     },
 
-    'expose generated and low-level subscription APIs' () {
-        eq_(typeof ERC20.prototype.onTransfer, 'function');
-        eq_(typeof ERC20.prototype.onLog, 'function');
-        eq_(typeof Rpc.prototype.eth_subscribe, 'function');
-    },
-
-    async '// generated contract subscriptions require a configured wss endpoint' () {
-        const client = await Web3ClientFactory.getAsync('eth');
+    async 'subscribe to contract events with a generated contract class' () {
+        const client = await Web3ClientFactory.getAsync('hh:memory:eth');
         const usdc = new ERC20(USDC, client);
 
+        let eventFromTypedCallback = null;
+        let eventFromTypedStream = null;
+        let eventFromNamedCallback = null;
+
         // Prefer the generated, event-specific method for typed callback arguments.
-        const callbackStream = usdc.onTransfer(event => {
-            console.log(event.name, event.arguments);
+        usdc.onTransfer(event => {
+            eventFromTypedCallback = event;
         });
 
         // The same method returns a stream when the callback is omitted.
         const transferStream = usdc.onTransfer();
         const listener = transferStream.subscribe(
-            event => console.log(event.arguments),
-            error => console.error(error)
+            event => {
+                eventFromTypedStream = event;
+            },
+            error => {
+                throw error;
+            }
         );
 
         // Subscribe by event name when the name is selected dynamically.
-        const namedStream = usdc.onLog('Transfer', event => {
-            console.log(event.name, event.arguments);
+        usdc.onLog('Transfer', event => {
+            eventFromNamedCallback = event;
         });
 
-        $require.notNull(callbackStream);
-        $require.notNull(namedStream);
-        listener.unsubscribe();
+        const sender = $account.generate('sender');
+        const receiver = $account.generate('receiver');
+
+        // Test-only fork setup: fund the sender with native gas and USDC balance.
+        await client.debug.setBalance(sender.address, 10n ** 18n);
+        await $erc20.setBalanceAny(
+            client,
+            usdc.address,
+            sender.address,
+            TRANSFER_AMOUNT
+        );
+
+        try {
+            const writer = await usdc
+                .$receipt()
+                .transfer(sender, receiver.address, TRANSFER_AMOUNT);
+
+            for (const event of [
+                eventFromTypedCallback,
+                eventFromTypedStream,
+                eventFromNamedCallback
+            ]) {
+                const receivedEvent = $require.notNull(event);
+                $require.eq(receivedEvent.name, 'Transfer');
+                $require.eq(receivedEvent.event.address, usdc.address);
+                $require.eq(
+                    receivedEvent.event.transactionHash,
+                    writer.receipt.transactionHash
+                );
+            }
+        } finally {
+            listener.unsubscribe();
+        }
     },
 
-    async '// client newHeads subscription requires a configured wss endpoint' () {
-        const client = await Web3ClientFactory.getAsync('eth');
+    async 'subscribe to new block headers with Web3Client' () {
+        const client = Web3ClientFactory.get('hh:memory');
+        const previousBlockNumber = await client.getBlockNumber();
         const subscription = await client.subscribe('newHeads');
 
         try {
-            const block = await $promise.timeout(
-                new Promise((resolve, reject) => {
+            const nextBlock = $promise.timeout(
+                new Promise<TEth.Block>((resolve, reject) => {
                     subscription.subscribe(resolve, reject, true);
                 }),
-                30_000,
+                5_000,
                 'Waiting for the next block'
             );
-            $require.notNull(block);
+            await client.debug.mine(1);
+
+            const block = await nextBlock;
+            $require.eq(block.number, previousBlockNumber + 1);
         } finally {
             await subscription.unsubscribe();
         }
     },
 
-    async '// raw Rpc subscription requires RPC_ETH_WS' () {
-        const wsUrl = $require.notNull(process.env.RPC_ETH_WS, 'Set RPC_ETH_WS to a wss:// endpoint');
-        const rpc = new Rpc(wsUrl);
+    async 'subscribe to new block headers with the low-level Rpc client' () {
+        const client = Web3ClientFactory.get('hh:memory');
+        const previousBlockNumber = await client.getBlockNumber();
+        const rpc = await client.getRpc({ ws: true });
         const subscription = await rpc.eth_subscribe('newHeads');
 
         try {
-            const block = await $promise.timeout(
-                new Promise((resolve, reject) => {
+            const nextBlock = $promise.timeout(
+                new Promise<TEth.Block>((resolve, reject) => {
                     subscription.subscribe(resolve, reject, true);
                 }),
-                30_000,
+                5_000,
                 'Waiting for the next block'
             );
-            $require.notNull(block);
+            await client.debug.mine(1);
+
+            const block = await nextBlock;
+            $require.eq(block.number, previousBlockNumber + 1);
         } finally {
             await subscription.unsubscribe();
         }
