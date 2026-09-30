@@ -1,7 +1,5 @@
-
 import { IEIP6963Provider } from '@dequanto/rpc/transports/compatibility/IEIP6963Provider';
 import { class_EventEmitter } from 'atma-utils';
-
 
 
 export type TGlobal = {
@@ -22,13 +20,16 @@ export namespace $ref {
             const g = window as any as TGlobal;
             return g;
         }
-        if (typeof global !== 'undefined' && typeof global  === 'object') {
+        if (typeof global !== 'undefined' && typeof global === 'object') {
             const g = global as any as TGlobal;
 
-            if (typeof g.addEventListener !== 'function' || typeof g.dispatchEvent !== 'function') {
+            if (typeof g.addEventListener !== 'function' || typeof g.removeEventListener !== 'function' || typeof g.dispatchEvent !== 'function') {
                 const emitter = new class_EventEmitter;
                 g.addEventListener = function (event: string, fn: (event) => any) {
                     emitter.on(event, fn);
+                };
+                g.removeEventListener = function (event: string, fn: (event) => any) {
+                    emitter.off(event, fn);
                 };
                 g.dispatchEvent = function (event: CustomEvent) {
                     emitter.emit(event.type, event);
@@ -36,8 +37,12 @@ export namespace $ref {
             }
             if (typeof g.CustomEvent === 'undefined') {
                 g.CustomEvent = <any> class CustomEvent {
-                    constructor (public data) {
+                    public type: string;
+                    public detail: any;
 
+                    constructor (type: string, eventInitDict?: CustomEventInit) {
+                        this.type = type;
+                        this.detail = eventInitDict?.detail;
                     }
                 };
             }

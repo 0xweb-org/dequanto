@@ -14,20 +14,19 @@ UTest({
 
         // Setup mock injected provider (simulates MetaMask or Rabby announcing via EIP-6963)
         const mockWallet = new MockWallet(client);
-        mockWallet.announce();
-
         const walletAccount = mockWallet.addAccount();
         const recipient = $sig.$account.generate();
 
         await client.debug.setBalance(walletAccount.address, 10n ** 18n);
         mockWallet.unlockAccount(walletAccount);
+        mockWallet.announce();
 
         // 1. Discover available wallets
         const providers = await client.wallet.getProviders();
-        $require.gt(providers.length, 0);
+        $require.True(providers.some(x => x.info.uuid === mockWallet.uuid));
 
         // 2. Connect wallet (calls eth_requestAccounts)
-        const accounts = await client.wallet.connect();
+        const accounts = await client.wallet.connect(mockWallet.uuid);
         $require.True(client.wallet.isConnected(walletAccount.address));
         $require.eq(accounts[0], walletAccount.address);
 

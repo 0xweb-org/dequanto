@@ -175,7 +175,7 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
         if (id == null) {
             return this.providers[0];
         }
-        let provider = this.providers.find(x => this.getId(x.info) === id);
+        let provider = this.providers.find(x => this.matchesId(x.info, id));
         return provider;
     }
     getProvider (id?: string, optional?: boolean) {
@@ -183,13 +183,19 @@ export class EIP6963ProviderFactory extends class_EventEmitter<IProviderEvents> 
             optional !== true && $require.notNull(this.selected, `Wallet is not connected`);
             return this.selected;
         }
-        let provider = this.providers.find(x => this.getId(x.info) === id);
+        let provider = this.providers.find(x => this.matchesId(x.info, id));
         optional !== true && $require.notNull(provider, `Wallet is not found by ID ${id}`);
         return provider;
     }
 
     private getId (info: EIP6963ProviderInfo | null) {
-        return info?.rdns ?? info?.name;
+        return info?.uuid ?? info?.rdns ?? info?.name;
+    }
+
+    private matchesId (info: EIP6963ProviderInfo | null, id: string) {
+        return info?.uuid === id
+            || info?.rdns === id
+            || info?.name === id;
     }
 
     private addEventListeners (providerDetails: EIP6963ProviderDetail) {
