@@ -751,7 +751,7 @@ export class ClientPool {
 
 export class WClient {
     lastStatus = 0;
-    lastDate = new Date(2000).getTime();
+    lastDate = 0;
 
     status: 'ok' | 'off' | 'ping' = 'ok'
 
@@ -783,7 +783,7 @@ export class WClient {
             return true;
         }
         let health = this.requests.fail / this.getRequestCount();
-        if (health > .5) {
+        if (health <= .5) {
             return true;
         }
         if (Date.now() - this.lastDate > $date.parseTimespan('10m')) {
@@ -972,11 +972,13 @@ export class WClient {
 
         let connectionError = await this.ensureConnected();
         if (connectionError) {
+            let time = Date.now() - now;
+            this.onComplete(ClientStatus.NetworkError, time);
             return {
                 status: ClientStatus.NetworkError,
                 result: null,
                 error: connectionError,
-                time: Date.now() - now
+                time
             };
         }
 
@@ -1028,11 +1030,13 @@ export class WClient {
         result.on('error', error => {
             if (ClientErrorUtil.isConnectionFailed(error)) {
                 this.lastStatus = ClientStatus.NetworkError;
+                this.lastDate = Date.now();
                 this.requests.fail++;
             }
         });
         result.on('transactionHash', hash => {
             this.lastStatus = ClientStatus.Ok;
+            this.lastDate = Date.now();
             this.requests.success++;
         })
         return result;
@@ -1042,11 +1046,13 @@ export class WClient {
         result.on('error', error => {
             if (ClientErrorUtil.isConnectionFailed(error)) {
                 this.lastStatus = ClientStatus.NetworkError;
+                this.lastDate = Date.now();
                 this.requests.fail++;
             }
         });
         result.on('transactionHash', hash => {
             this.lastStatus = ClientStatus.Ok;
+            this.lastDate = Date.now();
             this.requests.success++;
         })
         return result;
@@ -1068,6 +1074,7 @@ export class WClient {
         let ping = this.requests.ping;
 
         this.lastStatus = status;
+        this.lastDate = Date.now();
         switch (status) {
             case ClientStatus.Ok:
                 this.requests.success++;

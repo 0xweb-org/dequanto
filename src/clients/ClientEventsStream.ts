@@ -12,7 +12,7 @@ export interface TClientEventsStreamData<T extends any[] = any[]> {
     arguments: T
 }
 
-export class ClientEventsStream<T extends TClientEventsStreamData<unknown[]> = any> {
+export class ClientEventsStream<T extends TClientEventsStreamData<any[]> = any> {
 
     private abi: TAbiItem[];
     private streams = {
@@ -46,7 +46,7 @@ export class ClientEventsStream<T extends TClientEventsStreamData<unknown[]> = a
     }
 
     subscribe (cb: (x: T) => void, onError?: (x: Error | any) => void) {
-        return this.streams.onData.subscribe(cb, onError)
+        return this.streams.onData.subscribe(cb as any, onError)
     }
 
     onData (cb: (event: TClientEventsStreamData) => void): this {
