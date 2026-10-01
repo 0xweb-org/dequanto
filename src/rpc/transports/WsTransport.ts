@@ -11,7 +11,7 @@ export class WsTransport  implements TTransport.Transport {
 
     constructor(private options: TTransport.Options.Ws) {
         this.id = this.options.url;
-        this.ws = WsTransportSingleton.create(this.options.url, {});
+        this.ws = WsTransportSingleton.create(this.options.url, this.options);
     }
 
     async request (req: TTransport.Request)

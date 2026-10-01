@@ -135,10 +135,9 @@ export abstract class Web3Client implements IWeb3Client {
                 method = abi[0].name;
             }
             return {
-                address: request.address,
+                ...request,
                 abi: abi,
                 method: method,
-                params: request.params,
                 blockNumber: blockNumber,
                 options: options
             } as TRpcContractCall;
@@ -791,7 +790,7 @@ namespace RangeWorker {
                 }
             };
         } catch (error) {
-            if (error.code === ErrorCode.NO_LIVE_CLIENT) {
+            if (error.code === ErrorCode.NO_LIVE_CLIENT || currentWClient == null) {
                 throw error;
             }
 
@@ -803,7 +802,7 @@ namespace RangeWorker {
             let matchCountLimit = /(?<count>\d+) results/.exec(error.message);
             if (matchCountLimit) {
                 let count = Number(matchCountLimit.groups.count);
-                let newRange = Math.floor(blockRange * 0.8);
+                let newRange = $require.gt(Math.floor(blockRange * 0.8), 0, `NewRange is 0`);
                 currentWClient.updateBlockRangeInfo({
                     blocks: newRange,
                     results: count,
@@ -825,7 +824,7 @@ namespace RangeWorker {
             }
             if (/\b(range|limit)\b/.test(error.message)) {
                 // Generic "block range is too wide" or "limit exceeded" error
-                let newRange = Math.floor(blockRange * 0.8);
+                let newRange = $require.gt(Math.floor(blockRange * 0.8), 0, `NewRange is 0`);
                 currentWClient.updateBlockRangeInfo({
                     blocks: newRange
                 });
@@ -852,7 +851,9 @@ namespace LogsFetcher {
             }) as RpcTypes.Log[];
             if (arr.length > 0 && arr.length % MAX_RESULTS === 0) {
                 $logger.log(`Too many results: ${arr.length} at block ${fromBlock} to ${toBlockExcluded}. Fetching sub-ranges.`);
+                let firstBlock = arr[0].blockNumber;
                 let lastBlock = arr[arr.length - 1].blockNumber;
+                $require.lt(firstBlock, lastBlock, `Single-block response would cause an infinite loop.`);
 
                 let { result } = await fetch (client, lastBlock, toBlockExcluded, blockRange, filter);
 

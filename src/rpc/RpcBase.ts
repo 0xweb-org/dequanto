@@ -1,6 +1,6 @@
 import { RpcTransport } from './transports/RpcTransport';
 import { RpcError } from './RpcError';
-import { TTransport } from './transports/ITransport';
+import { getRpcRequestTimeout, rpcRequestWithTimeout, TTransport } from './transports/ITransport';
 import { RpcSubscription } from './RpcSubscription';
 import { $rpc } from './$rpc';
 import { RpcFunction } from './RpcFunction';
@@ -12,6 +12,7 @@ let ID = 0;
 export abstract class RpcBase {
 
     protected _transport: TTransport.Transport;
+    private requestTimeout: number;
 
     public fns = {} as {
         [name: string]: (...params) => Promise<any>
@@ -19,11 +20,12 @@ export abstract class RpcBase {
 
     constructor (protected transportInfo?: TTransport.Options.Any) {
         this._transport = RpcTransport.create(this.transportInfo);
+        this.requestTimeout = getRpcRequestTimeout(this.transportInfo);
     }
 
     async request <TResult = any> (req: TRpc.IRpcAction): Promise<TResult> {
         let body = this._wrapBody(req);
-        let resp = await this._transport.request(body);
+        let resp = await this.requestWithTimeout(this._transport.request(body), req.method);
         if ('error' in resp) {
             let params = { ...(req.params ?? {}) };
             for (let key in params) {
@@ -43,7 +45,7 @@ export abstract class RpcBase {
         allowErrors?: boolean
     }): Promise<any[]> {
         let body = arr.map(req => this._wrapBody(req));
-        let resp = await this._transport.request(body);
+        let resp = await this.requestWithTimeout(this._transport.request(body), `batch (${arr.length})`);
         if (Array.isArray(resp) === false && arr.length === 1 && 'error' in resp === false && 'result' in resp === true) {
             // Some RPCs return a single response instead of an array for one RpcAction in a batch
             resp = [ resp ];
@@ -90,7 +92,7 @@ export abstract class RpcBase {
 
     protected async subscribe <TReturn = any> (req: TRpc.IRpcAction): Promise<RpcSubscription<TReturn>> {
         let body = this._wrapBody(req);
-        let subscription = await this._transport.subscribe<TReturn>(body);
+        let subscription = await this.requestWithTimeout(this._transport.subscribe<TReturn>(body), req.method);
 
 
         let mapped = RpcSubscription.createMapping(subscription, this._transport, x => this._deserialize(`${req.method}.${req.params[0]}`, x))
@@ -123,6 +125,9 @@ export abstract class RpcBase {
     }
     private _unwrapBody (resp: any): any {
         return RpcBase.unwrapBody(resp);
+    }
+    private requestWithTimeout<T> (promise: PromiseLike<T>, method: string): Promise<T> {
+        return rpcRequestWithTimeout(promise, this.requestTimeout, `${this._transport.id ?? 'RPC'}: ${method}`);
     }
     private _deserialize (method: string, result: any) {
         let { methods, schemas } = this.returnSchemas;

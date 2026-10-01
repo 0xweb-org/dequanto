@@ -32,6 +32,9 @@ export interface IRpcConfig {
     url?: string
     options?: TTransport.Options.Http | TTransport.Options.Ws
 
+    /** Maximum time for an RPC request in milliseconds. Set to 0 to disable. */
+    timeout?: number
+
     /** Preferred node for submitting transactions */
     safe?: boolean
     distinct?: boolean

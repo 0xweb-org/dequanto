@@ -1,5 +1,5 @@
 import memd from 'memd';
-import { TTransport } from './ITransport';
+import { getRpcRequestTimeout, RpcRequestTimeoutError, TTransport } from './ITransport';
 import { class_Dfr, class_EventEmitter } from 'atma-utils';
 import { RpcSubscription } from '../RpcSubscription';
 import { RpcError } from '../RpcError';
@@ -9,7 +9,10 @@ import { l } from '@dequanto/utils/$logger';
 
 export abstract class MessageBasedTransport extends class_EventEmitter implements TTransport.Transport {
 
-    protected requests = new Map() as Map<string, class_Dfr<TTransport.Response | TTransport.Response[]>>;
+    protected requests = new Map() as Map<string, {
+        deferred: class_Dfr<TTransport.Response | TTransport.Response[]>
+        timeout: ReturnType<typeof setTimeout>
+    }>;
     protected subscriptions = new Map() as Map<TTransport.SubscriptionId, {
         method: string
         params: any[]
@@ -19,7 +22,7 @@ export abstract class MessageBasedTransport extends class_EventEmitter implement
 
     protected abstract send(message: string): Promise<void>;
 
-    constructor (protected optionsBase?: { url }) {
+    constructor (protected optionsBase?: { url, timeout? }) {
         super();
 
     }
@@ -30,15 +33,13 @@ export abstract class MessageBasedTransport extends class_EventEmitter implement
     request (req: TTransport.Request | TTransport.Request[]): Promise<TTransport.Response | TTransport.Response[]> {
         let dfr = new class_Dfr<TTransport.Response>();
 
-        if (Array.isArray(req)) {
-            let id = req.map(x => x.id).join('-');
-            this.requests.set(id, dfr);
-        } else {
-            this.requests.set(String(req.id), dfr);
-        }
-
+        let id = Array.isArray(req)
+            ? req.map(x => x.id).join('-')
+            : String(req.id);
+        this.addRequest(id, dfr);
 
         this.send(JSON.stringify(req)).catch(error => {
+            this.deleteRequest(id);
             dfr.resolve($rpc.createConnectionErrorResponse(error, this.optionsBase));
         });
 
@@ -103,24 +104,48 @@ export abstract class MessageBasedTransport extends class_EventEmitter implement
                 let keys = Array.from(this.requests.keys());
                 for (let i = 0; i < keys.length; i++) {
                     let key = keys[i];
-                    let dfr = this.requests.get(key);
-                    if (dfr != null) {
-                        dfr.resolve(json);
+                    let entry = this.deleteRequest(key);
+                    if (entry != null) {
+                        entry.deferred.resolve(json);
                     }
-                    this.requests.delete(key);
                 }
                 return;
             }
             l`RPC MessageBasedTransport: No ID for message: ${message}`;
         }
 
-        let dfr = this.requests.get(id);
-        if (dfr == null) {
+        let entry = this.deleteRequest(id);
+        if (entry == null) {
             return;
         }
+        entry.deferred.resolve(json);
+    }
 
+    private addRequest(id: string, deferred: class_Dfr<TTransport.Response | TTransport.Response[]>) {
+        let timeoutMs = getRpcRequestTimeout(this.optionsBase);
+        let timeout = timeoutMs === 0
+            ? null
+            : setTimeout(() => {
+                let entry = this.deleteRequest(id);
+                if (entry == null) {
+                    return;
+                }
+                let error = new RpcRequestTimeoutError(timeoutMs, `${this.optionsBase?.url ?? 'WebSocket'}: RPC`);
+                entry.deferred.resolve($rpc.createConnectionErrorResponse(error, this.optionsBase));
+            }, timeoutMs);
+        this.requests.set(id, { deferred, timeout });
+    }
+
+    private deleteRequest(id: string) {
+        let entry = this.requests.get(id);
+        if (entry == null) {
+            return null;
+        }
         this.requests.delete(id);
-        dfr.resolve(json);
+        if (entry.timeout != null) {
+            clearTimeout(entry.timeout);
+        }
+        return entry;
     }
 }
 

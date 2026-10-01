@@ -1,6 +1,6 @@
 import { $rpc } from '../$rpc';
 import { RpcSubscription } from '../RpcSubscription';
-import { RequestError, TTransport } from './ITransport';
+import { getRpcRequestTimeout, RequestError, rpcRequestWithTimeout, TTransport } from './ITransport';
 
 export class HttpTransport implements TTransport.Transport {
 
@@ -12,6 +12,9 @@ export class HttpTransport implements TTransport.Transport {
 
 
     async request (req: TTransport.Request | TTransport.Request[]) {
+        let controller: AbortController;
+        let externalSignal = this.options.signal;
+        let onExternalAbort: () => void;
         try {
             let body = JSON.stringify(req);
             let headers = {
@@ -23,11 +26,36 @@ export class HttpTransport implements TTransport.Transport {
                     headers[key] = await headers[key]({ body });
                 }
             }
-            let resp = await fetch(this.options.url, {
+            let {
+                url,
+                // Remove fields from options to have cleaner featchOptions
+                headers: _,
+                timeout: __,
+                signal: ___,
+                ...fetchOptions
+            } = this.options;
+            controller = new AbortController();
+            if (externalSignal != null) {
+                onExternalAbort = () => controller.abort(externalSignal.reason);
+                if (externalSignal.aborted) {
+                    onExternalAbort();
+                } else {
+                    externalSignal.addEventListener('abort', onExternalAbort, { once: true });
+                }
+            }
+            let responsePromise = fetch(url, {
+                ...fetchOptions,
                 method: 'POST',
                 body,
                 headers,
+                signal: controller.signal,
             });
+            let resp = await rpcRequestWithTimeout(
+                responsePromise,
+                getRpcRequestTimeout(this.options),
+                `${url}: HTTP`,
+                () => controller.abort()
+            );
             let data = /json/.test(resp.headers.get('Content-Type'))
                 ? await resp.json()
                 : await resp.text();
@@ -42,6 +70,10 @@ export class HttpTransport implements TTransport.Transport {
             return data;
         } catch (error) {
             return $rpc.createConnectionErrorResponse(error, this.options);
+        } finally {
+            if (externalSignal != null && onExternalAbort != null) {
+                externalSignal.removeEventListener('abort', onExternalAbort);
+            }
         }
     }
 

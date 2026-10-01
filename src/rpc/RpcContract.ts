@@ -34,6 +34,7 @@ type TRpcContractCallBase = {
     value?: bigint
     from?: TAddress
     blockNumber?: DataLike<RpcTypes.BlockNumberOrTagOrHash> | Date
+    options?
 }
 
 export type TRpcContractCall = (TRpcContractCallBase & Pick<TRpcContractCallBase, 'method' | 'params'>)
