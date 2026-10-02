@@ -36,6 +36,7 @@ import { $dependency } from 'dequanto/utils/$dependency';
 import { TTransport } from 'dequanto/rpc/transports/ITransport';
 import { Constructor } from 'dequanto/utils/types';
 import { BlockchainExplorer } from 'dequanto/explorer/BlockchainExplorer';
+import { Rpc } from 'dequanto/rpc/Rpc';
 
 type THardhatLib = typeof import('hardhat');
 
@@ -63,26 +64,73 @@ export class HardhatProvider {
         return client;
     }
 
-    async forked (params: { platform?: TPlatform, url?: string, block?: number | 'latest' } = {}) {
-        const client = await this.client('hardhat');
-        let { url, block } = params;
-        if (url == null) {
-            let platform = params.platform;
-            $require.notNull(platform, `Platform is required to resolve the RPC url for`);
-            let platformClient = await Web3ClientFactory.get(platform);
-            url = await platformClient.getNodeURL({ ws: false });
+    /**
+     * Creates an independent in-memory fork and returns its HardhatWeb3Client.
+     * Each call creates a new provider with the requested chainId and fork state,
+     * allowing multiple forks to coexist without resetting the shared instance.
+     * Use this when a separate chainId is needed, since hardhat_reset preserves
+     * the existing provider's chainId. Supports Hardhat 2 and 3.
+     */
+    async createFork (params: {
+        chainId: number
+        platform?: TPlatform
+        url?: string
+        block?: number | 'latest'
+    }) {
+        let { block, platform } = params;
 
-            // Hardhat seems to support only HTTPS nodes as fork sources
-            $require.True(/^(http)/.test(url), `Requires the HTTP path of a node to fork: ${url}`);
+        let url = params.url ?? await this.getRpcUrl(platform);
+        let chainId = $require.Number(params.chainId, 'Invalid fork chainId');
 
-            // Removed: use default Hardhat's behavior
-            // if (block == null) {
-            //     let rpc = await platformClient.getRpc({ node: { url }});
-            //     block = await rpc.eth_blockNumber();
-            //     // hardhat performance issues on latest block. Requires at least 5 confirmations
-            //     block -= 5;
-            // }
+        const hh = await this.getHardhat();
+        const forking = {
+            enabled: true,
+            url,
+            ...(block != null && block !== 'latest' ? { blockNumber: block } : {}),
+        };
+        // Hardhat 3 exposes a network manager; earlier releases use connect().
+        const network = hh.network as typeof hh.network & {
+            create?: (options: any) => Promise<{ provider: any }>;
+            connect?: (options: any) => Promise<{ provider: any }>;
+        };
+        const create = network.create ?? network.connect;
+        let provider;
+        if (typeof create === 'function') {
+            const networkName = Object.keys(hh.config.networks)
+                .find(name => (hh.config.networks[name] as any).type === 'edr-simulated');
+            $require.notNull(networkName, 'Hardhat 3 requires an edr-simulated network configuration');
+            const connection = await create.call(network, {
+                network: networkName,
+                override: { chainId, forking },
+            });
+            provider = connection.provider;
+        } else {
+            // Hardhat 2 has no public factory. Load its internal factory only here.
+            const { createProvider } = await $dependency.load<typeof import('hardhat/internal/core/providers/construction')>(
+                'hardhat/internal/core/providers/construction.js'
+            );
+            const config = {
+                ...hh.config,
+                networks: {
+                    ...hh.config.networks,
+                    hardhat: { ...hh.config.networks.hardhat, chainId, forking },
+                },
+            };
+            provider = await createProvider(config, 'hardhat', hh.artifacts);
         }
+
+        const client = new HardhatWeb3Client({
+            web3: provider,
+            chainId: chainId
+        });
+        client.configureFork(params.platform);
+        return client;
+    }
+
+    async forked (params: { platform: TPlatform, url?: string, block?: number | 'latest' }) {
+        const client = await this.client('hardhat');
+        let { platform, block } = params;
+        let url = params.url ?? await this.getRpcUrl(platform);
         await client.debug.reset({
             forking: {
                 jsonRpcUrl: url,
@@ -485,7 +533,17 @@ export class HardhatProvider {
 
     @memd.deco.memoize()
     public async getHardhat (): Promise<THardhatLib> {
-        return await $dependency.load<THardhatLib>('hardhat');
+        let loaded;
+        try {
+            loaded = await $dependency.load('hardhat');
+        } catch (error) {
+            if (error.code !== 'ERR_REQUIRE_ESM' && error.code !== 'ERR_REQUIRE_ASYNC_MODULE') {
+                throw error;
+            }
+            // Preserve native import when this file is compiled to CommonJS/AMD.
+            loaded = await new Function('return import("hardhat")')();
+        }
+        return loaded.default ?? loaded;
     }
 
     private async getHardhatProvider (): Promise<TTransport.Transport> {
@@ -654,6 +712,16 @@ export class HardhatProvider {
             linkReferences,
             ContractCtor
         };
+    }
+
+    private async getRpcUrl (platform: TPlatform) {
+        $require.notNull(platform, `Platform is required to resolve the RPC url for`);
+        let platformClient = await Web3ClientFactory.get(platform);
+        let url = await platformClient.getNodeURL({ ws: false });
+
+        // Hardhat seems to support only HTTPS nodes as fork sources
+        $require.True(/^(http)/.test(url), `Requires the HTTP path of a node to fork: ${url}`);
+        return url;
     }
 }
 
