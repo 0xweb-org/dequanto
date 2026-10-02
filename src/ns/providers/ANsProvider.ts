@@ -1,15 +1,15 @@
 import alot from 'alot';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $config } from '@dequanto/utils/$config';
-import { $require } from '@dequanto/utils/$require';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $config } from 'dequanto/utils/$config';
+import { $require } from 'dequanto/utils/$require';
 import { INsProvider, INsProviderOptions } from './INsProvider';
-import { TEth } from '@dequanto/models/TEth';
-import { $base } from '@dequanto/utils/$base';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { $address } from '@dequanto/utils/$address';
-import { $is } from '@dequanto/utils/$is';
+import { TEth } from 'dequanto/models/TEth';
+import { $base } from 'dequanto/utils/$base';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { $address } from 'dequanto/utils/$address';
+import { $is } from 'dequanto/utils/$is';
 
 
 export abstract class ANsProvider implements INsProvider {

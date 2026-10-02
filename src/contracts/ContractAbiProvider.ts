@@ -1,15 +1,15 @@
-import { type TAbiItem } from '@dequanto/types/TAbi';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { $address } from '@dequanto/utils/$address';
-import { $require } from '@dequanto/utils/$require';
+import { type TAbiItem } from 'dequanto/types/TAbi';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { $address } from 'dequanto/utils/$address';
+import { $require } from 'dequanto/utils/$require';
 
-import { TAddress } from '@dequanto/models/TAddress';
+import { TAddress } from 'dequanto/models/TAddress';
 import { File } from 'atma-io';
 import { class_Uri } from 'atma-utils';
-import { $path } from '@dequanto/utils/$path';
-import { $logger } from '@dequanto/utils/$logger';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { $is } from '@dequanto/utils/$is';
+import { $path } from 'dequanto/utils/$path';
+import { $logger } from 'dequanto/utils/$logger';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { $is } from 'dequanto/utils/$is';
 
 
 export class ContractAbiProvider {

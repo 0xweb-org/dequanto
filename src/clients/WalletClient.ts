@@ -1,11 +1,11 @@
 import di from 'a-di';
-import { TEth } from '@dequanto/models/TEth';
-import { Rpc, RpcTypes } from '@dequanto/rpc/Rpc';
-import { $require } from '@dequanto/utils/$require';
-import { DataLike } from '@dequanto/utils/types';
-import { EIP6963ProviderDetail, EIP6963ProviderFactory } from '@dequanto/wallets/EIP6963ProviderFactory';
+import { TEth } from 'dequanto/models/TEth';
+import { Rpc, RpcTypes } from 'dequanto/rpc/Rpc';
+import { $require } from 'dequanto/utils/$require';
+import { DataLike } from 'dequanto/utils/types';
+import { EIP6963ProviderDetail, EIP6963ProviderFactory } from 'dequanto/wallets/EIP6963ProviderFactory';
 import { WClient } from './ClientPool';
-import { $hex } from '@dequanto/utils/$hex';
+import { $hex } from 'dequanto/utils/$hex';
 
 /** Wallet actions only. Use Web3Client for all node/chain-related actions */
 

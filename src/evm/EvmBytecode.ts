@@ -1,22 +1,22 @@
 import alot from 'alot';
-import type { TAbiItem } from '@dequanto/types/TAbi';
+import type { TAbiItem } from 'dequanto/types/TAbi';
 import { OpcodesInfo } from './OpcodesInfo';
-import { JsonObjectStore } from '@dequanto/json/JsonObjectStore';
-import { $path } from '@dequanto/utils/$path';
-import { $abiParser } from '@dequanto/utils/$abiParser';
+import { JsonObjectStore } from 'dequanto/json/JsonObjectStore';
+import { $path } from 'dequanto/utils/$path';
+import { $abiParser } from 'dequanto/utils/$abiParser';
 import Opcode from './interfaces/IOpcode';
 import IMemory from './interfaces/IMemory';
 import IJumps from './interfaces/IJumps';
 import Stack from './Stack';
 import IStorage from './interfaces/IStorage';
 import { OpcodesWalker } from './OpcodesWalker';
-import { $logger } from '@dequanto/utils/$logger';
+import { $logger } from 'dequanto/utils/$logger';
 import IOpcode from './interfaces/IOpcode';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
 import { $bytecode } from './utils/$bytecode';
-import { $buffer } from '@dequanto/utils/$buffer';
-import { $array } from '@dequanto/utils/$array';
-import { TEth } from '@dequanto/models/TEth';
+import { $buffer } from 'dequanto/utils/$buffer';
+import { $array } from 'dequanto/utils/$array';
+import { TEth } from 'dequanto/models/TEth';
 import opcodeFunctions from './utils/opcodes';
 
 /**

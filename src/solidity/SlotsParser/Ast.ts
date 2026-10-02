@@ -1,6 +1,6 @@
 import alot from 'alot';
 import * as parser from '@solidity-parser/parser';
-import type { TAbiItem, AbiType, TAbiInput } from '@dequanto/types/TAbi';
+import type { TAbiItem, AbiType, TAbiInput } from 'dequanto/types/TAbi';
 import {
     ArrayTypeName,
     AssemblyBlock,
@@ -38,10 +38,10 @@ import {
     VariableDeclaration,
     VariableDeclarationStatement
 } from '@solidity-parser/parser/dist/src/ast-types';
-import { $logger } from '@dequanto/utils/$logger';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { $logger } from 'dequanto/utils/$logger';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
 import { SourceFile, TSourceFileContract } from './SourceFile';
-import { $array } from '@dequanto/utils/$array';
+import { $array } from 'dequanto/utils/$array';
 import { $types } from '../utils/$types';
 
 export namespace Ast {

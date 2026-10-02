@@ -1,18 +1,18 @@
 import memd from 'memd';
 import alot from 'alot';
 import { File } from 'atma-io';
-import { TPlatform } from '@dequanto/models/TPlatform';
+import { TPlatform } from 'dequanto/models/TPlatform';
 import { ITokenProvider } from './ITokenProvider';
-import { $path } from '@dequanto/utils/$path';
-import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
-import { ITokenGlob } from '@dequanto/models/ITokenGlob';
+import { $path } from 'dequanto/utils/$path';
+import { JsonArrayStore } from 'dequanto/json/JsonArrayStore';
+import { ITokenGlob } from 'dequanto/models/ITokenGlob';
 import { ATokenProvider } from './ATokenProvider';
-import { l } from '@dequanto/utils/$logger';
-import { $promise } from '@dequanto/utils/$promise';
-import { ITokenBase } from '@dequanto/models/IToken';
-import { $address } from '@dequanto/utils/$address';
-import { $require } from '@dequanto/utils/$require';
-import { $http } from '@dequanto/utils/$http';
+import { l } from 'dequanto/utils/$logger';
+import { $promise } from 'dequanto/utils/$promise';
+import { ITokenBase } from 'dequanto/models/IToken';
+import { $address } from 'dequanto/utils/$address';
+import { $require } from 'dequanto/utils/$require';
+import { $http } from 'dequanto/utils/$http';
 
 // https://www.coingecko.com/en/api/documentation
 

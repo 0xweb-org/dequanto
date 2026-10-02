@@ -1,17 +1,17 @@
 import alot from 'alot';
-import { PromiseEvent } from '@dequanto/class/PromiseEvent';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TEth } from '@dequanto/models/TEth';
-import { RpcTypes } from '@dequanto/rpc/Rpc';
+import { PromiseEvent } from 'dequanto/class/PromiseEvent';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TEth } from 'dequanto/models/TEth';
+import { RpcTypes } from 'dequanto/rpc/Rpc';
 import { Web3Client } from '../Web3Client';
-import { TxWriter } from '@dequanto/txs/TxWriter';
-import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-import { EoAccount } from '@dequanto/models/TAccount';
-import { $address } from '@dequanto/utils/$address';
-import { $require } from '@dequanto/utils/$require';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { $sig } from '@dequanto/utils/$sig';
-import { $abiCoder } from '@dequanto/abi/$abiCoder';
+import { TxWriter } from 'dequanto/txs/TxWriter';
+import { TxDataBuilder } from 'dequanto/txs/TxDataBuilder';
+import { EoAccount } from 'dequanto/models/TAccount';
+import { $address } from 'dequanto/utils/$address';
+import { $require } from 'dequanto/utils/$require';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
+import { $sig } from 'dequanto/utils/$sig';
+import { $abiCoder } from 'dequanto/abi/$abiCoder';
 
 export class Web3 {
     eth: Web3Eth

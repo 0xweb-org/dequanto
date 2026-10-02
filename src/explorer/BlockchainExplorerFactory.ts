@@ -1,13 +1,13 @@
 import { IBlockchainExplorer } from './IBlockchainExplorer';
-import { Constructor } from '@dequanto/utils/types';
+import { Constructor } from 'dequanto/utils/types';
 import { BlockchainExplorer, IBlockchainExplorerConfig, IBlockchainExplorerFactoryParams } from './BlockchainExplorer';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { $config } from '@dequanto/utils/$config';
-import { Config } from '@dequanto/config/Config';
-import { TExplorer, TExplorerDefinition } from '@dequanto/models/TExplorer';
-import { IConfigData } from '@dequanto/config/interface/IConfigData';
-import { TChain } from '@dequanto/models/TChain';
-import { $require } from '@dequanto/utils/$require';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { $config } from 'dequanto/utils/$config';
+import { Config } from 'dequanto/config/Config';
+import { TExplorer, TExplorerDefinition } from 'dequanto/models/TExplorer';
+import { IConfigData } from 'dequanto/config/interface/IConfigData';
+import { TChain } from 'dequanto/models/TChain';
+import { $require } from 'dequanto/utils/$require';
 
 
 

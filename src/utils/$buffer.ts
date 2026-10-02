@@ -1,5 +1,5 @@
 import { is_NODE } from 'atma-utils';
-import { TEth } from '@dequanto/models/TEth';
+import { TEth } from 'dequanto/models/TEth';
 
 
 interface IBufferUtils {

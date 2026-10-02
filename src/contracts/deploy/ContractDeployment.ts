@@ -1,12 +1,12 @@
-import { $abiCoder } from '@dequanto/abi/$abiCoder';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IAccount } from '@dequanto/models/TAccount';
-import { TEth } from '@dequanto/models/TEth';
-import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-import { TxWriter } from '@dequanto/txs/TxWriter';
-import { TAbiItem } from '@dequanto/types/TAbi';
-import { $hex } from '@dequanto/utils/$hex';
-import { $require } from '@dequanto/utils/$require';
+import { $abiCoder } from 'dequanto/abi/$abiCoder';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { IAccount } from 'dequanto/models/TAccount';
+import { TEth } from 'dequanto/models/TEth';
+import { TxDataBuilder } from 'dequanto/txs/TxDataBuilder';
+import { TxWriter } from 'dequanto/txs/TxWriter';
+import { TAbiItem } from 'dequanto/types/TAbi';
+import { $hex } from 'dequanto/utils/$hex';
+import { $require } from 'dequanto/utils/$require';
 
 export class ContractDeployment {
 

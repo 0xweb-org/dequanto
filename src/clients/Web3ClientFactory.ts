@@ -1,13 +1,13 @@
 import di from 'a-di';
-import { TPlatform } from '@dequanto/models/TPlatform';
+import { TPlatform } from 'dequanto/models/TPlatform';
 import { IWeb3EndpointOptions } from './interfaces/IWeb3EndpointOptions';
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { Config } from '@dequanto/config/Config';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { Config } from 'dequanto/config/Config';
 import { EvmWeb3Client } from './EvmWeb3Client';
-import { $require } from '@dequanto/utils/$require';
-import { $config } from '@dequanto/utils/$config';
-import type { HardhatWeb3Client } from '@dequanto/hardhat/HardhatWeb3Client';
-import { IConfigData } from '@dequanto/config/interface/IConfigData';
+import { $require } from 'dequanto/utils/$require';
+import { $config } from 'dequanto/utils/$config';
+import type { HardhatWeb3Client } from 'dequanto/hardhat/HardhatWeb3Client';
+import { IConfigData } from 'dequanto/config/interface/IConfigData';
 
 export namespace Web3ClientFactory {
 

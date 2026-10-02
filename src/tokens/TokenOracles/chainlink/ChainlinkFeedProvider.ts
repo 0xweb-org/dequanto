@@ -1,15 +1,15 @@
 import alot from 'alot';
-import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
-import { IToken } from '@dequanto/models/IToken';
-import { ITokenGlob } from '@dequanto/models/ITokenGlob';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { $path } from '@dequanto/utils/$path';
+import { JsonArrayStore } from 'dequanto/json/JsonArrayStore';
+import { IToken } from 'dequanto/models/IToken';
+import { ITokenGlob } from 'dequanto/models/ITokenGlob';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { $path } from 'dequanto/utils/$path';
 import { File } from 'atma-io';
-import { $require } from '@dequanto/utils/$require';
-import { l } from '@dequanto/utils/$logger';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $str } from '@dequanto/solidity/utils/$str';
-import { $http } from '@dequanto/utils/$http';
+import { $require } from 'dequanto/utils/$require';
+import { l } from 'dequanto/utils/$logger';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $str } from 'dequanto/solidity/utils/$str';
+import { $http } from 'dequanto/utils/$http';
 
 
 export interface IChainlinkFeedInfo {

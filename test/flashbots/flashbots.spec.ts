@@ -1,10 +1,10 @@
-import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20'
-import { ChainAccountService } from '@dequanto/ChainAccountService';
-import { Config } from '@dequanto/config/Config';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { FlashbotsProvider } from '@dequanto/flashbots/FlashbotsProvider';
-import { EoAccount } from '@dequanto/models/TAccount';
-import { $is } from '@dequanto/utils/$is';
+import { ERC20 } from 'dequanto/prebuilt/openzeppelin/ERC20'
+import { ChainAccountService } from 'dequanto/ChainAccountService';
+import { Config } from 'dequanto/config/Config';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { FlashbotsProvider } from 'dequanto/flashbots/FlashbotsProvider';
+import { EoAccount } from 'dequanto/models/TAccount';
+import { $is } from 'dequanto/utils/$is';
 import memd from 'memd';
 
 // integration test

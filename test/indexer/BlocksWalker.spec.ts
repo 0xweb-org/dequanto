@@ -1,7 +1,7 @@
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { BlocksWalker } from '@dequanto/indexer/handlers/BlocksWalker';
-import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-import { TxWriter } from '@dequanto/txs/TxWriter';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { BlocksWalker } from 'dequanto/indexer/handlers/BlocksWalker';
+import { TxDataBuilder } from 'dequanto/txs/TxDataBuilder';
+import { TxWriter } from 'dequanto/txs/TxWriter';
 import { TestNode } from '../hardhat/TestNode';
 
 UTest({

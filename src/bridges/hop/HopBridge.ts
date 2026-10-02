@@ -1,30 +1,30 @@
 import di from 'a-di';
-import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
-import { EoAccount } from "@dequanto/models/TAccount";
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { IToken } from '@dequanto/models/IToken';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { TokenService } from '@dequanto/tokens/TokenService';
-import { TokensServiceFactory } from '@dequanto/tokens/TokensServiceFactory';
-import { $bigint } from '@dequanto/utils/$bigint';
-import { $date } from '@dequanto/utils/$date';
+import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
+import { EoAccount } from "dequanto/models/TAccount";
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { IToken } from 'dequanto/models/IToken';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { TokenService } from 'dequanto/tokens/TokenService';
+import { TokensServiceFactory } from 'dequanto/tokens/TokensServiceFactory';
+import { $bigint } from 'dequanto/utils/$bigint';
+import { $date } from 'dequanto/utils/$date';
 import { networks } from '@hop-protocol/core/networks/mainnet';
 import { Hop, Chain } from '@hop-protocol/sdk';
 
 import { class_Dfr } from 'atma-utils';
 import { HopAddresses } from './HopAddresses';
-import { $fn } from '@dequanto/utils/$fn';
+import { $fn } from 'dequanto/utils/$fn';
 
 import { IBridge } from '../models/IBridge';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TokensService } from '@dequanto/tokens/TokensService';
-import { PlatformFactory } from '@dequanto/chains/PlatformFactory';
-import { $require } from '@dequanto/utils/$require';
-import { ITxBuilderOptions } from '@dequanto/txs/ITxBuilderOptions';
-import { ITxWriterOptions } from '@dequanto/txs/TxWriter';
-import { $address } from '@dequanto/utils/$address';
-import { $promise } from '@dequanto/utils/$promise';
-import { TEth } from '@dequanto/models/TEth';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TokensService } from 'dequanto/tokens/TokensService';
+import { PlatformFactory } from 'dequanto/chains/PlatformFactory';
+import { $require } from 'dequanto/utils/$require';
+import { ITxBuilderOptions } from 'dequanto/txs/ITxBuilderOptions';
+import { ITxWriterOptions } from 'dequanto/txs/TxWriter';
+import { $address } from 'dequanto/utils/$address';
+import { $promise } from 'dequanto/utils/$promise';
+import { TEth } from 'dequanto/models/TEth';
 
 /** HOP protocol was partially implemented, but will take some time to implement bridges packages */
 

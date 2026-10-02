@@ -1,21 +1,21 @@
 import di from 'a-di';
 
-import { EoAccount, IAccount, SafeAccount, TAccount } from "@dequanto/models/TAccount";
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IToken } from '@dequanto/models/IToken';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-import { ITxWriterOptions, TxWriter } from '@dequanto/txs/TxWriter';
-import { $bigint } from '@dequanto/utils/$bigint';
+import { EoAccount, IAccount, SafeAccount, TAccount } from "dequanto/models/TAccount";
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { IToken } from 'dequanto/models/IToken';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TxDataBuilder } from 'dequanto/txs/TxDataBuilder';
+import { ITxWriterOptions, TxWriter } from 'dequanto/txs/TxWriter';
+import { $bigint } from 'dequanto/utils/$bigint';
 import { TokensService } from './TokensService';
-import { $address } from '@dequanto/utils/$address';
-import { ITxBuilderOptions } from '@dequanto/txs/ITxBuilderOptions';
-import { $promise } from '@dequanto/utils/$promise';
-import { LoggerService } from '@dequanto/loggers/LoggerService';
-import { $logger } from '@dequanto/utils/$logger';
-import { $account } from '@dequanto/utils/$account';
-import { TEth } from '@dequanto/models/TEth';
-import { $require } from '@dequanto/utils/$require';
+import { $address } from 'dequanto/utils/$address';
+import { ITxBuilderOptions } from 'dequanto/txs/ITxBuilderOptions';
+import { $promise } from 'dequanto/utils/$promise';
+import { LoggerService } from 'dequanto/loggers/LoggerService';
+import { $logger } from 'dequanto/utils/$logger';
+import { $account } from 'dequanto/utils/$account';
+import { TEth } from 'dequanto/models/TEth';
+import { $require } from 'dequanto/utils/$require';
 
 
 export class TokenTransferService {

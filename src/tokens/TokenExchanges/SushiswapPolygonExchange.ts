@@ -1,11 +1,11 @@
 import di from 'a-di';
-import { Bscscan } from '@dequanto/explorer/Bscscan';
-import { BscWeb3Client } from '@dequanto/clients/BscWeb3Client';
-import { $config } from '@dequanto/utils/$config';
+import { Bscscan } from 'dequanto/explorer/Bscscan';
+import { BscWeb3Client } from 'dequanto/clients/BscWeb3Client';
+import { $config } from 'dequanto/utils/$config';
 import { AmmV2ExchangeBase } from './AmmV2ExchangeBase';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { $require } from '@dequanto/utils/$require';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { $require } from 'dequanto/utils/$require';
 
 
 

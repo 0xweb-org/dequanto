@@ -1,5 +1,5 @@
-import { EntryPoint } from '@dequanto/prebuilt/erc4337/EntryPoint/EntryPoint';
-import { $address } from '@dequanto/utils/$address';
+import { EntryPoint } from 'dequanto/prebuilt/erc4337/EntryPoint/EntryPoint';
+import { $address } from 'dequanto/utils/$address';
 
 export type UserOperation = Parameters<EntryPoint['handleOps']>[1][0];
 

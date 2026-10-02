@@ -1,12 +1,12 @@
-import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
-import { IToken } from '@dequanto/models/IToken';
-import { ITokenGlob } from '@dequanto/models/ITokenGlob';
-import { TPlatform } from '@dequanto/models/TPlatform';
+import { JsonArrayStore } from 'dequanto/json/JsonArrayStore';
+import { IToken } from 'dequanto/models/IToken';
+import { ITokenGlob } from 'dequanto/models/ITokenGlob';
+import { TPlatform } from 'dequanto/models/TPlatform';
 import { TokenUtils } from '../utils/TokenUtils';
 import { ITokenProvider } from './ITokenProvider';
 import { ATokenProvider } from './ATokenProvider';
-import { $path } from '@dequanto/utils/$path';
-import { $http } from '@dequanto/utils/$http';
+import { $path } from 'dequanto/utils/$path';
+import { $http } from 'dequanto/utils/$http';
 
 
 

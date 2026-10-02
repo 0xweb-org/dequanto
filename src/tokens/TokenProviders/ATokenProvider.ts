@@ -1,8 +1,8 @@
-import { $address } from '@dequanto/utils/$address';
-import { IToken } from '@dequanto/models/IToken';
-import { ITokenGlob } from '@dequanto/models/ITokenGlob';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TPlatform } from '@dequanto/models/TPlatform';
+import { $address } from 'dequanto/utils/$address';
+import { IToken } from 'dequanto/models/IToken';
+import { ITokenGlob } from 'dequanto/models/ITokenGlob';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TPlatform } from 'dequanto/models/TPlatform';
 
 export abstract class ATokenProvider {
     abstract getTokens (): Promise<ITokenGlob[]>

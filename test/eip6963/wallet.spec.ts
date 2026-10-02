@@ -1,9 +1,9 @@
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 
 import { MockWallet } from './MockWallet';
-import { $sig } from '@dequanto/utils/$sig';
-import { TokenTransferService } from '@dequanto/tokens/TokenTransferService';
-import { $bigint } from '@dequanto/utils/$bigint';
+import { $sig } from 'dequanto/utils/$sig';
+import { TokenTransferService } from 'dequanto/tokens/TokenTransferService';
+import { $bigint } from 'dequanto/utils/$bigint';
 
 
 const provider = new HardhatProvider();

@@ -1,4 +1,4 @@
-import { ISlotVarDefinition } from '@dequanto/solidity/SlotsParser/models';
+import { ISlotVarDefinition } from 'dequanto/solidity/SlotsParser/models';
 import { IAccessorItem } from '../Accessor';
 import { ASlotsStorageHandler } from '../SlotsStorageHandler';
 

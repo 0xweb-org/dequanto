@@ -1,12 +1,12 @@
-import { ContractReader } from '@dequanto/contracts/ContractReader';
-import { ContractWriter } from '@dequanto/contracts/ContractWriter';
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { $address } from '@dequanto/utils/$address';
-import { $date } from '@dequanto/utils/$date';
-import { $signSerializer } from '@dequanto/utils/$signSerializer';
-import { $sig } from '@dequanto/utils/$sig';
-import { TEth } from '@dequanto/models/TEth';
-import { l } from '@dequanto/utils/$logger';
+import { ContractReader } from 'dequanto/contracts/ContractReader';
+import { ContractWriter } from 'dequanto/contracts/ContractWriter';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { $address } from 'dequanto/utils/$address';
+import { $date } from 'dequanto/utils/$date';
+import { $signSerializer } from 'dequanto/utils/$signSerializer';
+import { $sig } from 'dequanto/utils/$sig';
+import { TEth } from 'dequanto/models/TEth';
+import { l } from 'dequanto/utils/$logger';
 
 const provider = new HardhatProvider();
 const client = provider.client();

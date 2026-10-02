@@ -1,5 +1,5 @@
 import type { EvmBytecode } from './EvmBytecode';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
 import IOpcode from './interfaces/IOpcode';
 import Stack from './Stack';
 import opcodeFunctions from './utils/opcodes';

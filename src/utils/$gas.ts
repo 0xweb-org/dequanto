@@ -1,5 +1,5 @@
-import { TEth } from '@dequanto/models/TEth';
-import { $bigint } from '@dequanto/utils/$bigint';
+import { TEth } from 'dequanto/models/TEth';
+import { $bigint } from 'dequanto/utils/$bigint';
 
 
 export namespace $gas {

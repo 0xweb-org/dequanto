@@ -1,11 +1,11 @@
-import { $abi } from '@dequanto/abi/$abi';
-import { $abiCoder } from '@dequanto/abi/$abiCoder';
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { TAbiInput } from '@dequanto/types/TAbi';
-import { $buffer } from '@dequanto/utils/$buffer';
-import { $contract } from '@dequanto/utils/$contract';
-import { $hex } from '@dequanto/utils/$hex';
-import { l } from '@dequanto/utils/$logger';
+import { $abi } from 'dequanto/abi/$abi';
+import { $abiCoder } from 'dequanto/abi/$abiCoder';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { TAbiInput } from 'dequanto/types/TAbi';
+import { $buffer } from 'dequanto/utils/$buffer';
+import { $contract } from 'dequanto/utils/$contract';
+import { $hex } from 'dequanto/utils/$hex';
+import { l } from 'dequanto/utils/$logger';
 import { File } from 'atma-io'
 
 UTest({

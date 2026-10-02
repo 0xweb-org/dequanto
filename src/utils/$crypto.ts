@@ -1,4 +1,4 @@
-import { TEth } from '@dequanto/models/TEth';
+import { TEth } from 'dequanto/models/TEth';
 import { $buffer } from './$buffer';
 import { $require } from './$require';
 import { $is } from './$is';

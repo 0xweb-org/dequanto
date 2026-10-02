@@ -1,8 +1,8 @@
-import { IToken } from '@dequanto/models/IToken';
-import { TAddress } from '@dequanto/models/TAddress';
+import { IToken } from 'dequanto/models/IToken';
+import { TAddress } from 'dequanto/models/TAddress';
 import { $is } from './$is';
 import { $address } from './$address';
-import { TEth } from '@dequanto/models/TEth';
+import { TEth } from 'dequanto/models/TEth';
 
 const $Array = Array;
 export namespace $require {

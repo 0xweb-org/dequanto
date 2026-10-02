@@ -1,11 +1,11 @@
 import { Wallet } from 'ethers';
-import { l } from '@dequanto/utils/$logger';
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-import { TxWriter } from '@dequanto/txs/TxWriter';
-import { $bigint } from '@dequanto/utils/$bigint';
-import { $contract } from '@dequanto/utils/$contract';
-import { $txData } from '@dequanto/utils/$txData';
+import { l } from 'dequanto/utils/$logger';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { TxDataBuilder } from 'dequanto/txs/TxDataBuilder';
+import { TxWriter } from 'dequanto/txs/TxWriter';
+import { $bigint } from 'dequanto/utils/$bigint';
+import { $contract } from 'dequanto/utils/$contract';
+import { $txData } from 'dequanto/utils/$txData';
 import { TestNode } from './hardhat/TestNode';
 
 UTest({

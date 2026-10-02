@@ -2,7 +2,8 @@
     "compilerOptions": {
         "baseUrl": "./",
         "paths": {
-            "@dequanto/*": [ "src/*" ]
+            "@dequanto/*": [ "src/*" ],
+            "dequanto/*": [ "src/*" ]
         },
         "typeRoots": [
             "node_modules/@types",

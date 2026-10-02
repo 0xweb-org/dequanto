@@ -1,17 +1,17 @@
 import hh from 'hardhat';
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { Generator } from '@dequanto/gen/Generator';
-import { $path } from '@dequanto/utils/$path';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { Generator } from 'dequanto/gen/Generator';
+import { $path } from 'dequanto/utils/$path';
 import { File } from 'atma-io';
-import { $date } from '@dequanto/utils/$date';
-import { l } from '@dequanto/utils/$logger';
-import { ContractReader } from '@dequanto/contracts/ContractReader';
+import { $date } from 'dequanto/utils/$date';
+import { l } from 'dequanto/utils/$logger';
+import { ContractReader } from 'dequanto/contracts/ContractReader';
 import { TestNode } from '../hardhat/TestNode';
-import { $promise } from '@dequanto/utils/$promise';
-import { ContractWriter } from '@dequanto/contracts/ContractWriter';
-import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
+import { $promise } from 'dequanto/utils/$promise';
+import { ContractWriter } from 'dequanto/contracts/ContractWriter';
+import { ERC20 } from 'dequanto/prebuilt/openzeppelin/ERC20';
 import alot from 'alot';
-import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
+import { ITxLogItem } from 'dequanto/txs/receipt/ITxLogItem';
 
 declare let include;
 

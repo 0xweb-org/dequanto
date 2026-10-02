@@ -1,6 +1,6 @@
-import { $promise } from '@dequanto/utils/$promise';
+import { $promise } from 'dequanto/utils/$promise';
 import { TTransport } from '../ITransport';
-import { RpcSubscription } from '@dequanto/rpc/RpcSubscription';
+import { RpcSubscription } from 'dequanto/rpc/RpcSubscription';
 
 interface Web3 {
     currentProvider

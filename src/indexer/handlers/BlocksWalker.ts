@@ -5,14 +5,14 @@ import { FileSafe } from 'atma-io';
 import { class_Dfr } from 'atma-utils';
 import { PackedRanges } from '../../class/PackedRanges';
 
-import { $array } from '@dequanto/utils/$array';
-import { $date } from '@dequanto/utils/$date';
-import { $logger } from '@dequanto/utils/$logger';
-import { $block } from '@dequanto/utils/$block';
-import { $require } from '@dequanto/utils/$require';
+import { $array } from 'dequanto/utils/$array';
+import { $date } from 'dequanto/utils/$date';
+import { $logger } from 'dequanto/utils/$logger';
+import { $block } from 'dequanto/utils/$block';
+import { $require } from 'dequanto/utils/$require';
 
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { TEth } from '@dequanto/models/TEth';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { TEth } from 'dequanto/models/TEth';
 import { IChannel } from '@everlog/core/interfaces/IChannel';
 
 

@@ -1,7 +1,7 @@
-import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
-import { Generator } from '@dequanto/gen/Generator';
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { l } from '@dequanto/utils/$logger';
+import { ERC20 } from 'dequanto/prebuilt/openzeppelin/ERC20';
+import { Generator } from 'dequanto/gen/Generator';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { l } from 'dequanto/utils/$logger';
 import { File } from 'atma-io';
 import { Constructor } from 'atma-utils';
 

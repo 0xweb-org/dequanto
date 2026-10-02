@@ -1,11 +1,11 @@
-import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { Generator } from '@dequanto/gen/Generator';
-import { TPlatform } from '@dequanto/models/TPlatform';
+import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { Generator } from 'dequanto/gen/Generator';
+import { TPlatform } from 'dequanto/models/TPlatform';
 import alot from 'alot';
 import { UAction } from 'atma-utest';
 import { HopAddresses } from '../HopAddresses';
-import { $platform } from '@dequanto/utils/$platform';
+import { $platform } from 'dequanto/utils/$platform';
 
 UAction.create({
     async 'generate contracts' () {

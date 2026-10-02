@@ -1,8 +1,8 @@
 import { $buffer } from './$buffer';
 import { $bigint } from './$bigint';
-import { $abiCoder } from '@dequanto/abi/$abiCoder';
+import { $abiCoder } from 'dequanto/abi/$abiCoder';
 import { $contract } from './$contract';
-import { TEth } from '@dequanto/models/TEth';
+import { TEth } from 'dequanto/models/TEth';
 import { $is } from './$is';
 
 export namespace $signSerializer {

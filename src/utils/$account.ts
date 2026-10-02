@@ -1,4 +1,4 @@
-import { EoAccount, Erc4337Account, SafeAccount, TAccount, TimelockAccount } from "@dequanto/models/TAccount";
+import { EoAccount, Erc4337Account, SafeAccount, TAccount, TimelockAccount } from "dequanto/models/TAccount";
 import { $address } from './$address';
 import { $require } from './$require';
 import { $sig } from './$sig';

@@ -1,8 +1,8 @@
-import { $date } from '@dequanto/utils/$date';
+import { $date } from 'dequanto/utils/$date';
 import { Everlog } from '@everlog/core';
 import { ILogger } from './ILogger';
 import memd from 'memd';
-import { $logger } from '@dequanto/utils/$logger';
+import { $logger } from 'dequanto/utils/$logger';
 
 export class LoggerService implements ILogger {
 

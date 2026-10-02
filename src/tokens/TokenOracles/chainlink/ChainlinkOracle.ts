@@ -1,17 +1,17 @@
 import di from 'a-di';
 import alot from 'alot';
 import memd from 'memd';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { $bigint } from '@dequanto/utils/$bigint';
-import { ITokenBase } from '@dequanto/models/IToken';
-import { ContractReader } from '@dequanto/contracts/ContractReader';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { $bigint } from 'dequanto/utils/$bigint';
+import { ITokenBase } from 'dequanto/models/IToken';
+import { ContractReader } from 'dequanto/contracts/ContractReader';
 import { IOracle, IOracleResult, ISwapOptions } from '../IOracle';
-import { TResultAsync } from '@dequanto/models/TResult';
+import { TResultAsync } from 'dequanto/models/TResult';
 import { ChainlinkFeedProvider, IChainlinkFeedInfo } from './ChainlinkFeedProvider';
-import { $require } from '@dequanto/utils/$require';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { $cache } from '@dequanto/utils/$cache';
+import { $require } from 'dequanto/utils/$require';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { $cache } from 'dequanto/utils/$cache';
 
 
 const CACHE_PATH = $cache.file(`chainlink-feeds.json`);

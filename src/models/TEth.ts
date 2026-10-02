@@ -1,4 +1,4 @@
-import type { RpcTypes } from '@dequanto/rpc/Rpc'
+import type { RpcTypes } from 'dequanto/rpc/Rpc'
 import { TPlatform } from './TPlatform'
 
 export namespace TEth {

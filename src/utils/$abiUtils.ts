@@ -1,15 +1,15 @@
-import type { TAbiItem, TAbiInput } from '@dequanto/types/TAbi';
+import type { TAbiItem, TAbiInput } from 'dequanto/types/TAbi';
 
 import { $is } from './$is';
 import { $hex } from './$hex';
-import { $str } from '@dequanto/solidity/utils/$str';
-import { $types } from '@dequanto/solidity/utils/$types';
+import { $str } from 'dequanto/solidity/utils/$str';
+import { $types } from 'dequanto/solidity/utils/$types';
 import { $abiType } from './$abiType';
 import { $contract } from './$contract';
 import { $abiParser } from './$abiParser';
-import { ParamType } from '@dequanto/abi/fragments';
-import { $abiCoder } from '@dequanto/abi/$abiCoder';
-import { TEth } from '@dequanto/models/TEth';
+import { ParamType } from 'dequanto/abi/fragments';
+import { $abiCoder } from 'dequanto/abi/$abiCoder';
+import { TEth } from 'dequanto/models/TEth';
 import alot from 'alot';
 
 export namespace $abiUtils {

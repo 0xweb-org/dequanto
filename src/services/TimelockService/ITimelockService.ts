@@ -1,9 +1,9 @@
-import { ContractBase } from '@dequanto/contracts/ContractBase';
-import { IAccount } from '@dequanto/models/TAccount'
-import { TAddress } from '@dequanto/models/TAddress'
-import { TEth } from '@dequanto/models/TEth'
-import { TxWriter } from '@dequanto/txs/TxWriter';
-import { TTxWriteMethodKeys } from '@dequanto/utils/types';
+import { ContractBase } from 'dequanto/contracts/ContractBase';
+import { IAccount } from 'dequanto/models/TAccount'
+import { TAddress } from 'dequanto/models/TAddress'
+import { TEth } from 'dequanto/models/TEth'
+import { TxWriter } from 'dequanto/txs/TxWriter';
+import { TTxWriteMethodKeys } from 'dequanto/utils/types';
 
 export interface ITimelockService {
 

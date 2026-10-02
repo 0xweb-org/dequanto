@@ -1,4 +1,4 @@
-import { $date } from '@dequanto/utils/$date'
+import { $date } from 'dequanto/utils/$date'
 
 UTest({
     'should check adding seconds' () {

@@ -1,6 +1,6 @@
-import { $date } from '@dequanto/utils/$date';
-import { l } from '@dequanto/utils/$logger';
-import { $promise } from '@dequanto/utils/$promise';
+import { $date } from 'dequanto/utils/$date';
+import { l } from 'dequanto/utils/$logger';
+import { $promise } from 'dequanto/utils/$promise';
 import alot from 'alot';
 import memd from 'memd';
 

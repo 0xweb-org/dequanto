@@ -1,5 +1,5 @@
-import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
-import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client';
+import { ERC20 } from 'dequanto/prebuilt/openzeppelin/ERC20';
+import { PolyWeb3Client } from 'dequanto/clients/PolyWeb3Client';
 
 UTest({
     async 'should check the generated OpenZeppelin contract' () {

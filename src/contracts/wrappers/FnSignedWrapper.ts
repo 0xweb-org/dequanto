@@ -1,11 +1,11 @@
-import { Constructor } from '@dequanto/utils/types';
+import { Constructor } from 'dequanto/utils/types';
 import type { ContractBase } from '../ContractBase';
-import { TAbiItem } from '@dequanto/types/TAbi';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { TAbiItem } from 'dequanto/types/TAbi';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
 import alot from 'alot';
-import { $class } from '@dequanto/utils/$class';
+import { $class } from 'dequanto/utils/$class';
 import { ContractBaseUtils } from '../utils/ContractBaseUtils';
-import { IAccount } from '@dequanto/models/TAccount';
+import { IAccount } from 'dequanto/models/TAccount';
 import { ContractWriter } from '../ContractWriter';
 
 export namespace FnSignedWrapper {

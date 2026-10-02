@@ -1,8 +1,8 @@
-import { $config } from '@dequanto/utils/$config';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IWeb3EndpointOptions } from '@dequanto/clients/interfaces/IWeb3EndpointOptions';
-import { ClientEndpoints } from '@dequanto/clients/utils/ClientEndpoints';
+import { $config } from 'dequanto/utils/$config';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { IWeb3EndpointOptions } from 'dequanto/clients/interfaces/IWeb3EndpointOptions';
+import { ClientEndpoints } from 'dequanto/clients/utils/ClientEndpoints';
 
 export class ArbWeb3Client extends Web3Client {
 

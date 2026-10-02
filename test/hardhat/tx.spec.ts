@@ -1,7 +1,7 @@
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { TokenTransferService } from '@dequanto/tokens/TokenTransferService';
-import { TxNonceManager } from '@dequanto/txs/TxNonceManager';
-import { $address } from '@dequanto/utils/$address';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { TokenTransferService } from 'dequanto/tokens/TokenTransferService';
+import { TxNonceManager } from 'dequanto/txs/TxNonceManager';
+import { $address } from 'dequanto/utils/$address';
 
 let hh = new HardhatProvider();
 let client = hh.client('hardhat');

@@ -1,10 +1,10 @@
-import { IContractWrapped } from '@dequanto/contracts/ContractClassFactory';
-import { Deployments } from '@dequanto/contracts/deploy/Deployments';
-import { IBeacon, IBeaconProxy, IProxyAdmin } from '@dequanto/contracts/deploy/proxy/ProxyDeployment';
-import { Generator } from '@dequanto/gen/Generator';
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { $address } from '@dequanto/utils/$address';
-import { $require } from '@dequanto/utils/$require';
+import { IContractWrapped } from 'dequanto/contracts/ContractClassFactory';
+import { Deployments } from 'dequanto/contracts/deploy/Deployments';
+import { IBeacon, IBeaconProxy, IProxyAdmin } from 'dequanto/contracts/deploy/proxy/ProxyDeployment';
+import { Generator } from 'dequanto/gen/Generator';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { $address } from 'dequanto/utils/$address';
+import { $require } from 'dequanto/utils/$require';
 import { File } from 'atma-io';
 
 let hh = new HardhatProvider();

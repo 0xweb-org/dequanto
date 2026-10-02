@@ -1,11 +1,11 @@
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { SlotsParser } from '@dequanto/solidity/SlotsParser';
-import { SlotsStorage } from '@dequanto/solidity/SlotsStorage';
-import { SlotsStorageTransportForArray } from '@dequanto/solidity/storage/SlotsStorageTransport';
-import { $buffer } from '@dequanto/utils/$buffer';
-import { $hex } from '@dequanto/utils/$hex';
-import { l } from '@dequanto/utils/$logger';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { SlotsParser } from 'dequanto/solidity/SlotsParser';
+import { SlotsStorage } from 'dequanto/solidity/SlotsStorage';
+import { SlotsStorageTransportForArray } from 'dequanto/solidity/storage/SlotsStorageTransport';
+import { $buffer } from 'dequanto/utils/$buffer';
+import { $hex } from 'dequanto/utils/$hex';
+import { l } from 'dequanto/utils/$logger';
 
 UTest({
 

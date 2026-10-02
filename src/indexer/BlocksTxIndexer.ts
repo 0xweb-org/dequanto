@@ -1,10 +1,10 @@
 import { class_Dfr } from 'atma-utils';
 import { BlocksWalker } from './handlers/BlocksWalker';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { $logger } from '@dequanto/utils/$logger';
-import { TEth } from '@dequanto/models/TEth';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { $logger } from 'dequanto/utils/$logger';
+import { TEth } from 'dequanto/models/TEth';
 
 
 export interface IBlocksTxIndexerOptions {

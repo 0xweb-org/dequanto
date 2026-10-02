@@ -1,7 +1,7 @@
 import memd from 'memd';
 import { Socket } from 'net';
 import { Shell } from 'shellbee'
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 
 const PORT = `8545`;
 const HOST = `http://127.0.0.1:${PORT}/`

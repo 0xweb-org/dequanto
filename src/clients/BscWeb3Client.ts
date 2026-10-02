@@ -1,6 +1,6 @@
-import { $config } from '@dequanto/utils/$config';
+import { $config } from 'dequanto/utils/$config';
 import { Web3Client } from './Web3Client';
-import { TPlatform } from '@dequanto/models/TPlatform';
+import { TPlatform } from 'dequanto/models/TPlatform';
 import { IWeb3EndpointOptions } from './interfaces/IWeb3EndpointOptions';
 import { ClientEndpoints } from './utils/ClientEndpoints';
 

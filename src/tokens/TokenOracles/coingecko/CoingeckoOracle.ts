@@ -1,13 +1,13 @@
-import { ITokenBase } from '@dequanto/models/IToken';
-import { TResultAsync } from '@dequanto/models/TResult';
-import { $config } from '@dequanto/utils/$config';
-import { $date } from '@dequanto/utils/$date';
+import { ITokenBase } from 'dequanto/models/IToken';
+import { TResultAsync } from 'dequanto/models/TResult';
+import { $config } from 'dequanto/utils/$config';
+import { $date } from 'dequanto/utils/$date';
 import { IOracle, IOracleResult, ISwapOptions } from '../IOracle';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { $block } from '@dequanto/utils/$block';
-import { $require } from '@dequanto/utils/$require';
-import { TPCoingecko } from '@dequanto/tokens/TokenProviders/TPCoingecko';
-import { $http } from '@dequanto/utils/$http';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { $block } from 'dequanto/utils/$block';
+import { $require } from 'dequanto/utils/$require';
+import { TPCoingecko } from 'dequanto/tokens/TokenProviders/TPCoingecko';
+import { $http } from 'dequanto/utils/$http';
 
 export class CoingeckoOracle  implements IOracle {
 

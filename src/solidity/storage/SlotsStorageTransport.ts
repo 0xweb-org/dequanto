@@ -1,17 +1,17 @@
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $str } from '@dequanto/solidity/utils/$str';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { $address } from '@dequanto/utils/$address';
-import { $bigint } from '@dequanto/utils/$bigint';
-import { $contract } from '@dequanto/utils/$contract';
-import { $hex } from '@dequanto/utils/$hex';
-import { $is } from '@dequanto/utils/$is';
-import { $require } from '@dequanto/utils/$require';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $str } from 'dequanto/solidity/utils/$str';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
+import { $address } from 'dequanto/utils/$address';
+import { $bigint } from 'dequanto/utils/$bigint';
+import { $contract } from 'dequanto/utils/$contract';
+import { $hex } from 'dequanto/utils/$hex';
+import { $is } from 'dequanto/utils/$is';
+import { $require } from 'dequanto/utils/$require';
 import { ISlotVarDefinition } from '../SlotsParser/models';
-import { TEth } from '@dequanto/models/TEth';
-import { RpcTypes } from '@dequanto/rpc/Rpc';
-import { DataLike } from '@dequanto/utils/types';
+import { TEth } from 'dequanto/models/TEth';
+import { RpcTypes } from 'dequanto/rpc/Rpc';
+import { DataLike } from 'dequanto/utils/types';
 
 export interface ISlotsStorageTransport {
     getStorageAt (slot: string | number | bigint, position: number, size: number): Promise<string>

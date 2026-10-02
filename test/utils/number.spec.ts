@@ -1,4 +1,4 @@
-import { $number } from '@dequanto/utils/$number'
+import { $number } from 'dequanto/utils/$number'
 import alot from 'alot';
 
 UTest({

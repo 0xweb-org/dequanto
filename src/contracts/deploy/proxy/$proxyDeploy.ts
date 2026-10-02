@@ -1,7 +1,7 @@
-import { SlotsParser } from '@dequanto/solidity/SlotsParser';
-import { ISlotVarDefinition } from '@dequanto/solidity/SlotsParser/models';
-import { $types } from '@dequanto/solidity/utils/$types';
-import { $abiType } from '@dequanto/utils/$abiType';
+import { SlotsParser } from 'dequanto/solidity/SlotsParser';
+import { ISlotVarDefinition } from 'dequanto/solidity/SlotsParser/models';
+import { $types } from 'dequanto/solidity/utils/$types';
+import { $abiType } from 'dequanto/utils/$abiType';
 import alot from 'alot';
 
 export namespace $proxyDeploy {

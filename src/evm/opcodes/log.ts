@@ -1,4 +1,4 @@
-import { $is } from '@dequanto/utils/$is';
+import { $is } from 'dequanto/utils/$is';
 import { EvmBytecode } from '../EvmBytecode';
 import Opcode from '../interfaces/IOpcode';
 import { MLOAD } from './mload';

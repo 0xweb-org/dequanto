@@ -1,9 +1,9 @@
-import { TAbiInput, TAbiItem, TAbiOutput } from '@dequanto/types/TAbi';
+import { TAbiInput, TAbiItem, TAbiOutput } from 'dequanto/types/TAbi';
 import { ParamType } from './fragments';
-import { TEth } from '@dequanto/models/TEth';
+import { TEth } from 'dequanto/models/TEth';
 import { $abiCoder } from './$abiCoder';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { $abiParser } from '@dequanto/utils/$abiParser';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
+import { $abiParser } from 'dequanto/utils/$abiParser';
 
 export namespace $abi {
     type TAbiType = string | ParamType | TAbiInput;

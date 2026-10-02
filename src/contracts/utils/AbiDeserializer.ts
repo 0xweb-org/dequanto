@@ -1,7 +1,7 @@
-import { $str } from '@dequanto/solidity/utils/$str';
-import { $abiType } from '@dequanto/utils/$abiType';
-import { $is } from '@dequanto/utils/$is';
-import { type TAbiItem, TAbiOutput } from '@dequanto/types/TAbi';
+import { $str } from 'dequanto/solidity/utils/$str';
+import { $abiType } from 'dequanto/utils/$abiType';
+import { $is } from 'dequanto/utils/$is';
+import { type TAbiItem, TAbiOutput } from 'dequanto/types/TAbi';
 import { $abiParser } from '../../utils/$abiParser';
 
 export namespace AbiDeserializer {

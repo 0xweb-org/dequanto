@@ -1,30 +1,30 @@
 import di from 'a-di';
 import alot from 'alot';
 
-import type { TAbiItem } from '@dequanto/types/TAbi';
+import type { TAbiItem } from 'dequanto/types/TAbi';
 
-import { EoAccount, SafeAccount } from "@dequanto/models/TAccount";
-import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { TAddress } from '@dequanto/models/TAddress';
+import { EoAccount, SafeAccount } from "dequanto/models/TAccount";
+import { EthWeb3Client } from 'dequanto/clients/EthWeb3Client';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { TAddress } from 'dequanto/models/TAddress';
 
-import { TxWriter } from '@dequanto/txs/TxWriter';
-import { ContractWriter } from '@dequanto/contracts/ContractWriter';
+import { TxWriter } from 'dequanto/txs/TxWriter';
+import { ContractWriter } from 'dequanto/contracts/ContractWriter';
 import { SafeServiceTransport } from './transport/SafeServiceTransport';
 import { SafeServiceTypes } from './types/SafeServiceTypes';
 import { ISafeServiceTransport } from './transport/ISafeServiceTransport';
-import { $address } from '@dequanto/utils/$address';
-import { $logger } from '@dequanto/utils/$logger';
-import { $bigint } from '@dequanto/utils/$bigint';
-import { $promise } from '@dequanto/utils/$promise';
+import { $address } from 'dequanto/utils/$address';
+import { $logger } from 'dequanto/utils/$logger';
+import { $bigint } from 'dequanto/utils/$bigint';
+import { $promise } from 'dequanto/utils/$promise';
 
-import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-import { $sig } from '@dequanto/utils/$sig';
-import { TEth } from '@dequanto/models/TEth';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { $require } from '@dequanto/utils/$require';
-import { ChainAccountService } from '@dequanto/ChainAccountService';
-import { config } from '@dequanto/config/Config';
+import { TxDataBuilder } from 'dequanto/txs/TxDataBuilder';
+import { $sig } from 'dequanto/utils/$sig';
+import { TEth } from 'dequanto/models/TEth';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
+import { $require } from 'dequanto/utils/$require';
+import { ChainAccountService } from 'dequanto/ChainAccountService';
+import { config } from 'dequanto/config/Config';
 import { InMemoryServiceTransport } from './transport/InMemoryServiceTransport';
 
 export class GnosisSafeHandler {

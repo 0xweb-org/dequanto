@@ -1,4 +1,4 @@
-import { $require } from '@dequanto/utils/$require';
+import { $require } from 'dequanto/utils/$require';
 
 
 export namespace ClientErrorUtil {

@@ -1,8 +1,8 @@
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { TEth } from '@dequanto/models/TEth';
-import { $hex } from '@dequanto/utils/$hex';
-import { $require } from '@dequanto/utils/$require';
-import { $sig } from '@dequanto/utils/$sig';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { TEth } from 'dequanto/models/TEth';
+import { $hex } from 'dequanto/utils/$hex';
+import { $require } from 'dequanto/utils/$require';
+import { $sig } from 'dequanto/utils/$sig';
 import { class_EventEmitter } from 'atma-utils';
 
 

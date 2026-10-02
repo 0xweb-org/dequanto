@@ -1,6 +1,6 @@
-import { $bigint } from '@dequanto/utils/$bigint';
-import { $date } from '@dequanto/utils/$date';
-import { $logger } from '@dequanto/utils/$logger';
+import { $bigint } from 'dequanto/utils/$bigint';
+import { $date } from 'dequanto/utils/$date';
+import { $logger } from 'dequanto/utils/$logger';
 import { Everlog } from '@everlog/core';
 
 export class GasWatcherLogger {

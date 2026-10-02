@@ -1,8 +1,8 @@
-import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
-import { JsonObjectStore } from '@dequanto/json/JsonObjectStore';
-import { IToken } from '@dequanto/models/IToken';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $cache } from '@dequanto/utils/$cache';
+import { JsonArrayStore } from 'dequanto/json/JsonArrayStore';
+import { JsonObjectStore } from 'dequanto/json/JsonObjectStore';
+import { IToken } from 'dequanto/models/IToken';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $cache } from 'dequanto/utils/$cache';
 import memd from 'memd';
 
 interface ITokenPriceOptions {

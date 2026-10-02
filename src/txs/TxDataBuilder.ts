@@ -1,21 +1,21 @@
-import { type TAbiItem } from '@dequanto/types/TAbi';
+import { type TAbiItem } from 'dequanto/types/TAbi';
 import { File } from 'atma-io';
-import type { TAccount } from "@dequanto/models/TAccount";
-import type { Web3Client } from '@dequanto/clients/Web3Client';
-import type { TAddress } from '@dequanto/models/TAddress';
-import { $account } from '@dequanto/utils/$account';
-import { $bigint } from '@dequanto/utils/$bigint';
+import type { TAccount } from "dequanto/models/TAccount";
+import type { Web3Client } from 'dequanto/clients/Web3Client';
+import type { TAddress } from 'dequanto/models/TAddress';
+import { $account } from 'dequanto/utils/$account';
+import { $bigint } from 'dequanto/utils/$bigint';
 import { ITxBuilderNonceOptions, ITxBuilderOptions } from './ITxBuilderOptions';
-import { $number } from '@dequanto/utils/$number';
-import { TEth } from '@dequanto/models/TEth';
-import { $sig } from '@dequanto/utils/$sig';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { $hex } from '@dequanto/utils/$hex';
-import { $contract } from '@dequanto/utils/$contract';
+import { $number } from 'dequanto/utils/$number';
+import { TEth } from 'dequanto/models/TEth';
+import { $sig } from 'dequanto/utils/$sig';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
+import { $hex } from 'dequanto/utils/$hex';
+import { $contract } from 'dequanto/utils/$contract';
 import { TxNonceManager } from './TxNonceManager';
-import { $traces } from '@dequanto/utils/$traces';
-import { $abiProvider } from '@dequanto/utils/$abiProvider';
-import { $require } from '@dequanto/utils/$require';
+import { $traces } from 'dequanto/utils/$traces';
+import { $abiProvider } from 'dequanto/utils/$abiProvider';
+import { $require } from 'dequanto/utils/$require';
 
 export class TxDataBuilder {
 

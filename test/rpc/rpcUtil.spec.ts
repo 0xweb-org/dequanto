@@ -1,5 +1,5 @@
-import { $rpc } from '@dequanto/rpc/$rpc'
-import { Rpc } from '@dequanto/rpc/Rpc';
+import { $rpc } from 'dequanto/rpc/$rpc'
+import { Rpc } from 'dequanto/rpc/Rpc';
 
 UTest({
     'should deserialize logs' () {

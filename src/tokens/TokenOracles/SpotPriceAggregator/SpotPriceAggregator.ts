@@ -1,15 +1,15 @@
-import { IToken } from '@dequanto/models/IToken';
+import { IToken } from 'dequanto/models/IToken';
 import { ChainlinkOracle } from '../chainlink/ChainlinkOracle';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { ContractClassFactory } from '@dequanto/contracts/ContractClassFactory';
-import { $config } from '@dequanto/utils/$config';
-import { IConfigData } from '@dequanto/config/interface/IConfigData';
-import { TAddress } from '@dequanto/models/TAddress';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { ContractClassFactory } from 'dequanto/contracts/ContractClassFactory';
+import { $config } from 'dequanto/utils/$config';
+import { IConfigData } from 'dequanto/config/interface/IConfigData';
+import { TAddress } from 'dequanto/models/TAddress';
 import { IOracle, IOracleOptions, IOracleResult } from '../IOracle';
-import { TResultAsync } from '@dequanto/models/TResult';
-import { $bigfloat } from '@dequanto/utils/$bigfloat';
-import { $require } from '@dequanto/utils/$require';
-import { Web3Client } from '@dequanto/clients/Web3Client';
+import { TResultAsync } from 'dequanto/models/TResult';
+import { $bigfloat } from 'dequanto/utils/$bigfloat';
+import { $require } from 'dequanto/utils/$require';
+import { Web3Client } from 'dequanto/clients/Web3Client';
 
 // https://github.com/1inch/spot-price-aggregator?tab=readme-ov-file
 export class SpotPriceAggregator implements IOracle {

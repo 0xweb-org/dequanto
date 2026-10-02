@@ -1,7 +1,7 @@
-import { EoAccount, SafeAccount, TAccount } from '@dequanto/models/TAccount';
+import { EoAccount, SafeAccount, TAccount } from 'dequanto/models/TAccount';
 import { ITxWriterAccountAgent } from './TxWriterAccountAgents';
-import { $account } from '@dequanto/utils/$account';
-import { GnosisSafeHandler } from '@dequanto/safe/GnosisSafeHandler';
+import { $account } from 'dequanto/utils/$account';
+import { GnosisSafeHandler } from 'dequanto/safe/GnosisSafeHandler';
 import { TxWriter } from '../TxWriter';
 
 export class SafeAgent implements ITxWriterAccountAgent {

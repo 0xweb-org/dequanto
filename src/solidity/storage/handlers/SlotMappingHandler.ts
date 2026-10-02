@@ -1,11 +1,11 @@
-import { $abiType } from '@dequanto/utils/$abiType';
+import { $abiType } from 'dequanto/utils/$abiType';
 import { SlotsParser } from '../../SlotsParser';
 import { SlotsStorage } from '../../SlotsStorage';
 import { $types } from '../../utils/$types';
 import { SlotsStorageTransportForMapping } from '../SlotsStorageTransport';
 import { ASlotsStorageHandler } from '../SlotsStorageHandler';
 import { IAccessorItem } from '../Accessor';
-import { ISlotVarDefinition } from '@dequanto/solidity/SlotsParser/models';
+import { ISlotVarDefinition } from 'dequanto/solidity/SlotsParser/models';
 import alot from 'alot';
 import { File } from 'atma-io';
 

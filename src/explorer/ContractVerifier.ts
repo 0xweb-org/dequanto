@@ -1,20 +1,20 @@
 import alot from 'alot';
 import { File } from 'atma-io';
-import { Constructor } from '@dequanto/utils/types';
+import { Constructor } from 'dequanto/utils/types';
 import { class_Uri } from 'atma-utils';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
-import { ContractDeployer } from '@dequanto/contracts/deploy/ContractDeployer';
-import { Deployments } from '@dequanto/contracts/deploy/Deployments';
-import { LoggerService } from '@dequanto/loggers/LoggerService';
-import { TEth } from '@dequanto/models/TEth';
-import { SourceFile } from '@dequanto/solidity/SlotsParser/SourceFile';
-import { $is } from '@dequanto/utils/$is';
-import { $path } from '@dequanto/utils/$path';
-import { $promise } from '@dequanto/utils/$promise';
-import { $require } from '@dequanto/utils/$require';
+import { ContractBase } from 'dequanto/contracts/ContractBase';
+import { ContractDeployer } from 'dequanto/contracts/deploy/ContractDeployer';
+import { Deployments } from 'dequanto/contracts/deploy/Deployments';
+import { LoggerService } from 'dequanto/loggers/LoggerService';
+import { TEth } from 'dequanto/models/TEth';
+import { SourceFile } from 'dequanto/solidity/SlotsParser/SourceFile';
+import { $is } from 'dequanto/utils/$is';
+import { $path } from 'dequanto/utils/$path';
+import { $promise } from 'dequanto/utils/$promise';
+import { $require } from 'dequanto/utils/$require';
 import { IBlockchainExplorer } from './IBlockchainExplorer';
-import { $contract } from '@dequanto/utils/$contract';
-import { $abiCoder } from '@dequanto/abi/$abiCoder';
+import { $contract } from 'dequanto/utils/$contract';
+import { $abiCoder } from 'dequanto/abi/$abiCoder';
 import { IVerifier } from './verifiers/IVerifier';
 
 

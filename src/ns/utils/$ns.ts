@@ -1,5 +1,5 @@
-import { TEth } from '@dequanto/models/TEth';
-import { $contract } from '@dequanto/utils/$contract';
+import { TEth } from 'dequanto/models/TEth';
+import { $contract } from 'dequanto/utils/$contract';
 
 export namespace $ns {
     export function isNsAlike(name: string): boolean {

@@ -1,24 +1,24 @@
 import di from 'a-di';
 import alot from 'alot';
-import { type TAbiItem } from '@dequanto/types/TAbi';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { $address } from '@dequanto/utils/$address';
-import { $require } from '@dequanto/utils/$require';
+import { type TAbiItem } from 'dequanto/types/TAbi';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { $address } from 'dequanto/utils/$address';
+import { $require } from 'dequanto/utils/$require';
 import { GeneratorFromAbi } from './GeneratorFromAbi';
-import { TAddress } from '@dequanto/models/TAddress';
+import { TAddress } from 'dequanto/models/TAddress';
 import { File, Directory } from 'atma-io';
 import { class_Uri, obj_setProperty } from 'atma-utils';
-import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { $path } from '@dequanto/utils/$path';
-import { $logger, l } from '@dequanto/utils/$logger';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { EvmBytecode } from '@dequanto/evm/EvmBytecode';
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { TEth } from '@dequanto/models/TEth';
-import { $hex } from '@dequanto/utils/$hex';
-import { SolidityParser } from '@dequanto/solidity/SolidityParser';
+import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { $path } from 'dequanto/utils/$path';
+import { $logger, l } from 'dequanto/utils/$logger';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { EvmBytecode } from 'dequanto/evm/EvmBytecode';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { TEth } from 'dequanto/models/TEth';
+import { $hex } from 'dequanto/utils/$hex';
+import { SolidityParser } from 'dequanto/solidity/SolidityParser';
 
 export interface IGenerateOptions {
     platform: TPlatform

@@ -1,6 +1,6 @@
-import { $abiParser } from '@dequanto/utils/$abiParser';
-import { $abiType } from '@dequanto/utils/$abiType';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { $abiParser } from 'dequanto/utils/$abiParser';
+import { $abiType } from 'dequanto/utils/$abiType';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
 import alot from 'alot';
 
 export namespace $types {

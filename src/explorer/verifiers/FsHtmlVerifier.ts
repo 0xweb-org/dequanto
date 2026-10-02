@@ -1,11 +1,11 @@
 import { File } from 'atma-io';
-import { $require } from '@dequanto/utils/$require';
-import { TEth } from '@dequanto/models/TEth';
+import { $require } from 'dequanto/utils/$require';
+import { TEth } from 'dequanto/models/TEth';
 import { IVerifier } from './IVerifier';
 import { IBlockchainTransferEvent } from '../IBlockchainExplorer';
-import { $platform } from '@dequanto/utils/$platform';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { TExplorer, TExplorerDefinition } from '@dequanto/models/TExplorer';
+import { $platform } from 'dequanto/utils/$platform';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { TExplorer, TExplorerDefinition } from 'dequanto/models/TExplorer';
 
 const PATH_ROOT = `./data/0xc/verification`;
 const PATH_TEMPLATE = `${PATH_ROOT}/template.html`;

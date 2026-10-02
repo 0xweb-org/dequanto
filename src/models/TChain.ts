@@ -1,4 +1,4 @@
-import { IRpcConfig } from '@dequanto/clients/ClientPool'
+import { IRpcConfig } from 'dequanto/clients/ClientPool'
 import { TEth } from './TEth'
 import { IToken } from './IToken'
 import { TExplorer } from './TExplorer'

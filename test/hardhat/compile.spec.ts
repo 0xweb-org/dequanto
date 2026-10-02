@@ -1,4 +1,4 @@
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 
 UTest({
     async 'should deploy a Solidity contract' () {

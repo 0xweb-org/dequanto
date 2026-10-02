@@ -1,21 +1,21 @@
 import { secp256k1 } from '@noble/curves/secp256k1'
-import { TEth } from '@dequanto/models/TEth';
+import { TEth } from 'dequanto/models/TEth';
 import { $buffer } from './$buffer';
 import { $contract } from './$contract';
 import { $is } from './$is';
 import { $hex } from './$hex';
 import { $address } from './$address';
 import { $signSerializer } from './$signSerializer';
-import { $rlp } from '@dequanto/abi/$rlp';
+import { $rlp } from 'dequanto/abi/$rlp';
 import { $require } from './$require';
-import type { Web3Client } from '@dequanto/clients/Web3Client';
-import type { Rpc, RpcTypes } from '@dequanto/rpc/Rpc';
+import type { Web3Client } from 'dequanto/clients/Web3Client';
+import type { Rpc, RpcTypes } from 'dequanto/rpc/Rpc';
 import { $crypto } from './$crypto';
 import { $config } from './$config';
 import { HDKey } from '@scure/bip32'
 import { mnemonicToSeedSync } from '@scure/bip39'
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { EoAccount } from '@dequanto/models/TAccount';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { EoAccount } from 'dequanto/models/TAccount';
 
 
 export namespace $sig {

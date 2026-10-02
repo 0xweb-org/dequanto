@@ -1,4 +1,4 @@
-import { SolidityParser } from '@dequanto/solidity/SolidityParser';
+import { SolidityParser } from 'dequanto/solidity/SolidityParser';
 import alot from 'alot';
 
 UTest({

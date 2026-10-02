@@ -1,12 +1,12 @@
 import alot from 'alot';
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { EventsIndexer } from '@dequanto/indexer/EventsIndexer';
-import { $date } from '@dequanto/utils/$date';
-import { $promise } from '@dequanto/utils/$promise';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { EventsIndexer } from 'dequanto/indexer/EventsIndexer';
+import { $date } from 'dequanto/utils/$date';
+import { $promise } from 'dequanto/utils/$promise';
 import { File, Directory } from 'atma-io';
-import { $require } from '@dequanto/utils/$require';
-import { l } from '@dequanto/utils/$logger';
-import { TxWriter } from '@dequanto/txs/TxWriter';
+import { $require } from 'dequanto/utils/$require';
+import { l } from 'dequanto/utils/$logger';
+import { TxWriter } from 'dequanto/txs/TxWriter';
 
 const FS_DIR = './test/tmp/data/logs/';
 const WEEK_SECONDS = $date.parseTimespan('1week', { get: 's' });

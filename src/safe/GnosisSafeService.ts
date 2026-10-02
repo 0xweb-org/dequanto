@@ -1,14 +1,14 @@
-import { GnosisSafe } from '@dequanto/prebuilt/safe/GnosisSafe';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { ContractAbiProvider } from '@dequanto/contracts/ContractAbiProvider';
-import { TEth } from '@dequanto/models/TEth';
-import { $abiParser } from '@dequanto/utils/$abiParser';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { $address } from '@dequanto/utils/$address';
-import { $hex } from '@dequanto/utils/$hex';
-import { $promise } from '@dequanto/utils/$promise';
-import { $require } from '@dequanto/utils/$require';
+import { GnosisSafe } from 'dequanto/prebuilt/safe/GnosisSafe';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { ContractAbiProvider } from 'dequanto/contracts/ContractAbiProvider';
+import { TEth } from 'dequanto/models/TEth';
+import { $abiParser } from 'dequanto/utils/$abiParser';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
+import { $address } from 'dequanto/utils/$address';
+import { $hex } from 'dequanto/utils/$hex';
+import { $promise } from 'dequanto/utils/$promise';
+import { $require } from 'dequanto/utils/$require';
 import alot from 'alot';
 
 export class GnosisSafeService {

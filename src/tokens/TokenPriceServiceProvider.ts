@@ -1,9 +1,9 @@
-import { TPlatform } from '@dequanto/models/TPlatform';
+import { TPlatform } from 'dequanto/models/TPlatform';
 import { TokenPriceService, TokenPriceServiceCacheable } from './TokenPriceService';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
 
 export namespace TokenPriceServiceFactory {
 

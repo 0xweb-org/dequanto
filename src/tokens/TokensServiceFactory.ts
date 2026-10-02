@@ -1,6 +1,6 @@
-import { TPlatform } from '@dequanto/models/TPlatform';
+import { TPlatform } from 'dequanto/models/TPlatform';
 import { TokensService } from './TokensService';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 
 export namespace TokensServiceFactory {
 

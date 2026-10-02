@@ -1,6 +1,6 @@
 
-import { $buffer } from '@dequanto/utils/$buffer';
-import { $require } from '@dequanto/utils/$require';
+import { $buffer } from 'dequanto/utils/$buffer';
+import { $require } from 'dequanto/utils/$require';
 
 /**
  * @_ignore:

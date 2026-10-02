@@ -1,10 +1,10 @@
 import alot from 'alot';
-import { TPlatform } from '@dequanto/models/TPlatform';
+import { TPlatform } from 'dequanto/models/TPlatform';
 import { TxWriter } from '../TxWriter';
 import { IKnownLogFormatter, ITxLogItem } from './ITxLogItem';
-import { IToken } from '@dequanto/models/IToken';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TokenDataProvider } from '@dequanto/tokens/TokenDataProvider';
+import { IToken } from 'dequanto/models/IToken';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TokenDataProvider } from 'dequanto/tokens/TokenDataProvider';
 
 export interface ITxLogsTransferData {
     event: string

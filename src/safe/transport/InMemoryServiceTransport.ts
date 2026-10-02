@@ -1,10 +1,10 @@
-import type { Web3Client } from '@dequanto/clients/Web3Client';
-import type { EoAccount } from '@dequanto/models/TAccount';
-import type { TAddress } from '@dequanto/models/TAddress';
+import type { Web3Client } from 'dequanto/clients/Web3Client';
+import type { EoAccount } from 'dequanto/models/TAccount';
+import type { TAddress } from 'dequanto/models/TAddress';
 import type { ISafeServiceTransport } from './ISafeServiceTransport';
 import { SafeServiceTypes } from '../types/SafeServiceTypes';
 
-import { ContractReader } from '@dequanto/contracts/ContractReader';
+import { ContractReader } from 'dequanto/contracts/ContractReader';
 
 export class InMemoryServiceTransport implements ISafeServiceTransport {
 

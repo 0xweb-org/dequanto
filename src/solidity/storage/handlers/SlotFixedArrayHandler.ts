@@ -1,9 +1,9 @@
 import alot from 'alot';
-import { $abiType } from '@dequanto/utils/$abiType';
+import { $abiType } from 'dequanto/utils/$abiType';
 import { ASlotFixedArray } from '../SlotFixedArray';
 import { IAccessorItem } from '../Accessor';
-import { SlotsStorage } from '@dequanto/solidity/SlotsStorage';
-import { SlotsParser } from '@dequanto/solidity/SlotsParser';
+import { SlotsStorage } from 'dequanto/solidity/SlotsStorage';
+import { SlotsParser } from 'dequanto/solidity/SlotsParser';
 import { SlotsCursorTransport } from '../SlotsStorageTransport';
 
 export class SlotFixedArrayHandler extends ASlotFixedArray {

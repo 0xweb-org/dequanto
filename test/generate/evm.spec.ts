@@ -1,5 +1,5 @@
-import { EvmBytecode } from '@dequanto/evm/EvmBytecode';
-import { TEth } from '@dequanto/models/TEth';
+import { EvmBytecode } from 'dequanto/evm/EvmBytecode';
+import { TEth } from 'dequanto/models/TEth';
 import alot from 'alot';
 
 UTest({

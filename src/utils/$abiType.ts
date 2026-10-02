@@ -1,6 +1,6 @@
-import { $types } from '@dequanto/solidity/utils/$types';
+import { $types } from 'dequanto/solidity/utils/$types';
 import alot from 'alot';
-import { type TAbiInput } from '@dequanto/types/TAbi';
+import { type TAbiInput } from 'dequanto/types/TAbi';
 import { $require } from './$require';
 export namespace $abiType {
 

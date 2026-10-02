@@ -1,7 +1,7 @@
-import { $contract } from '@dequanto/utils/$contract';
+import { $contract } from 'dequanto/utils/$contract';
 import { UserOperation } from '../models/UserOperation';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { TAddress } from '@dequanto/models/TAddress';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
+import { TAddress } from 'dequanto/models/TAddress';
 
 export namespace $erc4337 {
     export function hash(userOp: UserOperation, entryPointAddress: TAddress, chainId: number) {

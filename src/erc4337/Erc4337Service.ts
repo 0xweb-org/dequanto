@@ -1,22 +1,22 @@
 import alot from 'alot';
 
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { $address } from '@dequanto/utils/$address';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { ContractBase } from 'dequanto/contracts/ContractBase';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
+import { $address } from 'dequanto/utils/$address';
 import { UserOperation, UserOperationDefaults } from './models/UserOperation';
-import { EoAccount } from '@dequanto/models/TAccount';
+import { EoAccount } from 'dequanto/models/TAccount';
 import { obj_extendDefaults } from 'atma-utils';
-import { $require } from '@dequanto/utils/$require';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { ContractAbiProvider } from '@dequanto/contracts/ContractAbiProvider';
+import { $require } from 'dequanto/utils/$require';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { ContractAbiProvider } from 'dequanto/contracts/ContractAbiProvider';
 import { $erc4337 } from './utils/$erc4337';
-import { $hex } from '@dequanto/utils/$hex';
-import { ContractClassFactory, IContractWrapped } from '@dequanto/contracts/ContractClassFactory';
+import { $hex } from 'dequanto/utils/$hex';
+import { ContractClassFactory, IContractWrapped } from 'dequanto/contracts/ContractClassFactory';
 import { Erc4337Abi } from './models/Erc4337Abi';
-import { TEth } from '@dequanto/models/TEth';
-import { $sig } from '@dequanto/utils/$sig';
+import { TEth } from 'dequanto/models/TEth';
+import { $sig } from 'dequanto/utils/$sig';
 
 
 export class Erc4337Service {

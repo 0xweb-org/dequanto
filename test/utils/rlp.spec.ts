@@ -1,6 +1,6 @@
-import { $rlp } from '@dequanto/abi/$rlp'
-import { TEth } from '@dequanto/models/TEth';
-import { $buffer } from '@dequanto/utils/$buffer'
+import { $rlp } from 'dequanto/abi/$rlp'
+import { TEth } from 'dequanto/models/TEth';
+import { $buffer } from 'dequanto/utils/$buffer'
 
 const fixtures = {
     data: [

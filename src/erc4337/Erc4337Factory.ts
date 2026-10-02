@@ -1,13 +1,13 @@
-import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { $config } from '@dequanto/utils/$config';
-import { $require } from '@dequanto/utils/$require';
+import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { $config } from 'dequanto/utils/$config';
+import { $require } from 'dequanto/utils/$require';
 import { Erc4337Service } from './Erc4337Service';
 import { Erc4337TxWriter } from './Erc4337TxWriter';
-import { IConfigData } from '@dequanto/config/interface/IConfigData';
+import { IConfigData } from 'dequanto/config/interface/IConfigData';
 
 export class Erc4337Factory {
     static createService (opts?: {

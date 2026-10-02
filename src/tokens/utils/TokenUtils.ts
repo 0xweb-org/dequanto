@@ -1,7 +1,7 @@
-import { IToken } from '@dequanto/models/IToken';
-import { ITokenGlob } from '@dequanto/models/ITokenGlob';
-import { $bigint } from '@dequanto/utils/$bigint';
-import { $number } from '@dequanto/utils/$number';
+import { IToken } from 'dequanto/models/IToken';
+import { ITokenGlob } from 'dequanto/models/ITokenGlob';
+import { $bigint } from 'dequanto/utils/$bigint';
+import { $number } from 'dequanto/utils/$number';
 import alot from 'alot';
 
 export namespace TokenUtils {

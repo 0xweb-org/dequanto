@@ -1,8 +1,8 @@
-import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $require } from '@dequanto/utils/$require';
+import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $require } from 'dequanto/utils/$require';
 import alot from 'alot';
 import memd from 'memd';
 

@@ -1,9 +1,9 @@
-import { TAbiInput, TAbiItem } from '@dequanto/types/TAbi';
+import { TAbiInput, TAbiItem } from 'dequanto/types/TAbi';
 import { AbiCoder } from './abi-coder';
 import { solidityPacked } from './abi-coder-packed';
 import { ParamType } from './fragments';
-import { TEth } from '@dequanto/models/TEth';
-import { $abiParser } from '@dequanto/utils/$abiParser';
+import { TEth } from 'dequanto/models/TEth';
+import { $abiParser } from 'dequanto/utils/$abiParser';
 
 export namespace $abiCoder {
 

@@ -1,11 +1,11 @@
 import di from 'a-di';
-import { EoAccount } from "@dequanto/models/TAccount";
-import { ChainAccountService } from '@dequanto/ChainAccountService';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IToken } from '@dequanto/models/IToken';
+import { EoAccount } from "dequanto/models/TAccount";
+import { ChainAccountService } from 'dequanto/ChainAccountService';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { IToken } from 'dequanto/models/IToken';
 import { ISwapService } from './defi/ISwapService';
 import { Paraswap } from './defi/paraswap/Paraswap';
-import { $require } from '@dequanto/utils/$require';
+import { $require } from 'dequanto/utils/$require';
 
 
 export class TokenSwapService {

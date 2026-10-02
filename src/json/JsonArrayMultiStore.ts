@@ -7,8 +7,8 @@ import { Directory } from 'atma-io';
 import memd from 'memd';
 import alot from 'alot';
 import type { Alot } from 'alot/alot';
-import { $require } from '@dequanto/utils/$require';
-import { l } from '@dequanto/utils/$logger';
+import { $require } from 'dequanto/utils/$require';
+import { l } from 'dequanto/utils/$logger';
 
 export interface  IMultiStoreOptions<T> extends IArrayStoreOptions<T> {
     groupKey: (x: T) => number

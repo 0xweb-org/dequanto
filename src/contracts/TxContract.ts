@@ -1,10 +1,10 @@
 import di from 'a-di';
 import alot from 'alot';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { ITransactionDetails } from '@dequanto/models/ITransactionDetails';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { ITransactionDetails } from 'dequanto/models/ITransactionDetails';
 import { ContractProvider } from './ContractProvider';
-import { TEth } from '@dequanto/models/TEth';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { TEth } from 'dequanto/models/TEth';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
 
 export class TxContract {
 

@@ -1,7 +1,7 @@
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { $config } from '@dequanto/utils/$config';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { $config } from 'dequanto/utils/$config';
 import { IBlockchainExplorer } from './IBlockchainExplorer';
-import { Constructor } from '@dequanto/utils/types';
+import { Constructor } from 'dequanto/utils/types';
 import { BlockchainExplorer, IBlockchainExplorerFactoryParams } from './BlockchainExplorer';
 
 /** @obsolete Use BlockchainExplorerFactory instead */

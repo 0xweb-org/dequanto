@@ -1,5 +1,5 @@
-import { TEth } from '@dequanto/models/TEth';
-import { Rpc, RpcTypes } from '@dequanto/rpc/Rpc';
+import { TEth } from 'dequanto/models/TEth';
+import { Rpc, RpcTypes } from 'dequanto/rpc/Rpc';
 
 
 export class Signer implements TEth.IRpcSigner {

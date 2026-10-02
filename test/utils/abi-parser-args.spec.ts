@@ -1,4 +1,4 @@
-import { $abiParser } from '@dequanto/utils/$abiParser';
+import { $abiParser } from 'dequanto/utils/$abiParser';
 import { Fixtures } from '../Fixtures';
 
 UTest({

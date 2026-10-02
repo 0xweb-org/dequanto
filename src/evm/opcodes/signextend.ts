@@ -3,7 +3,7 @@ import Opcode from '../interfaces/IOpcode';
 import { SHL } from './shl';
 import { SAR } from './sar';
 import { SUB } from './sub';
-import { $is } from '@dequanto/utils/$is';
+import { $is } from 'dequanto/utils/$is';
 
 
 export default (opcode: Opcode, state: EvmBytecode): void => {

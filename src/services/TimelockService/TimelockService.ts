@@ -1,26 +1,26 @@
 import memd from 'memd';
-import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
-import { IAccount } from '@dequanto/models/TAccount';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TEth } from '@dequanto/models/TEth';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { TxWriter } from '@dequanto/txs/TxWriter';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { $contract } from '@dequanto/utils/$contract';
-import { $date } from '@dequanto/utils/$date';
-import { $hex } from '@dequanto/utils/$hex';
-import { l } from '@dequanto/utils/$logger';
-import { $number } from '@dequanto/utils/$number';
-import { $platform } from '@dequanto/utils/$platform';
-import { $require } from '@dequanto/utils/$require';
+import { JsonArrayStore } from 'dequanto/json/JsonArrayStore';
+import { IAccount } from 'dequanto/models/TAccount';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TEth } from 'dequanto/models/TEth';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { TxWriter } from 'dequanto/txs/TxWriter';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
+import { $contract } from 'dequanto/utils/$contract';
+import { $date } from 'dequanto/utils/$date';
+import { $hex } from 'dequanto/utils/$hex';
+import { l } from 'dequanto/utils/$logger';
+import { $number } from 'dequanto/utils/$number';
+import { $platform } from 'dequanto/utils/$platform';
+import { $require } from 'dequanto/utils/$require';
 import { File } from 'atma-io';
 import { ITimelockTx, ITimelockTxParamsNormalized, ITimelockTxParams, ITimelockService, ETimelockTxStatus } from './ITimelockService';
-import { TTxWriteMethodKeys } from '@dequanto/utils/types';
+import { TTxWriteMethodKeys } from 'dequanto/utils/types';
 
-import type { TimelockController } from '@dequanto/prebuilt/openzeppelin/TimelockController';
-import type { ContractBase } from '@dequanto/contracts/ContractBase';
+import type { TimelockController } from 'dequanto/prebuilt/openzeppelin/TimelockController';
+import type { ContractBase } from 'dequanto/contracts/ContractBase';
 
-import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
+import { TxDataBuilder } from 'dequanto/txs/TxDataBuilder';
 
 const CONFIG = {
     dir: `0x/data`

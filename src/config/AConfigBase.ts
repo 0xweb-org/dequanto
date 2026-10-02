@@ -1,7 +1,7 @@
-import { IRpcConfig } from '@dequanto/clients/ClientPool'
+import { IRpcConfig } from 'dequanto/clients/ClientPool'
 import { IConfigData } from './interface/IConfigData'
-import { TPlatform } from '@dequanto/models/TPlatform'
-import { TEth } from '@dequanto/models/TEth'
+import { TPlatform } from 'dequanto/models/TPlatform'
+import { TEth } from 'dequanto/models/TEth'
 
 type TConfigParamsBase = {
     config?: Partial<IConfigData>

@@ -1,13 +1,13 @@
 import di from 'a-di';
 import memd from 'memd';
-import { $config } from '@dequanto/utils/$config';
-import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
-import { TPlatform } from '@dequanto/models/TPlatform';
+import { $config } from 'dequanto/utils/$config';
+import { EthWeb3Client } from 'dequanto/clients/EthWeb3Client';
+import { TPlatform } from 'dequanto/models/TPlatform';
 import { IBlockchainExplorer, IBlockchainTransferEvent } from './IBlockchainExplorer';
 import { BlockchainExplorer } from './BlockchainExplorer';
-import { IContractDetails } from '@dequanto/models/IContractDetails';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TEth } from '@dequanto/models/TEth';
+import { IContractDetails } from 'dequanto/models/IContractDetails';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TEth } from 'dequanto/models/TEth';
 
 const contracts = $config.get('contracts.eth', [])
 

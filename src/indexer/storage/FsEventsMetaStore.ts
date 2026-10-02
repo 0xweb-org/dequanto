@@ -1,7 +1,7 @@
-import { TAddress } from '@dequanto/models/TAddress'
+import { TAddress } from 'dequanto/models/TAddress'
 import { IEventsIndexerMetaStore, TEventsIndexerMeta } from './interfaces'
-import { JsonArrayStore } from '@dequanto/json/JsonArrayStore'
-import { ContractBase } from '@dequanto/contracts/ContractBase'
+import { JsonArrayStore } from 'dequanto/json/JsonArrayStore'
+import { ContractBase } from 'dequanto/contracts/ContractBase'
 import { FsEventsStoreUtils } from './FsEventsStoreUtils'
 import { File } from 'atma-io'
 

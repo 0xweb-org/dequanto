@@ -1,19 +1,19 @@
-import { EoAccount, TAccount, TimelockAccount } from '@dequanto/models/TAccount';
+import { EoAccount, TAccount, TimelockAccount } from 'dequanto/models/TAccount';
 import { ITxWriterAccountAgent } from './TxWriterAccountAgents';
-import { $account } from '@dequanto/utils/$account';
+import { $account } from 'dequanto/utils/$account';
 import { ITxWriterEmitter, ITxWriterEvents, ITxWriterTransaction, TxWriter } from '../TxWriter';
 
-import { ChainAccountService } from '@dequanto/ChainAccountService';
-import { $promise } from '@dequanto/utils/$promise';
+import { ChainAccountService } from 'dequanto/ChainAccountService';
+import { $promise } from 'dequanto/utils/$promise';
 import { class_Dfr, class_EventEmitter } from 'atma-utils';
-import { TEth } from '@dequanto/models/TEth';
-import { $require } from '@dequanto/utils/$require';
-import { $date } from '@dequanto/utils/$date';
-import { ITimelockTx } from '@dequanto/services/TimelockService/ITimelockService';
-import { Web3Client } from '@dequanto/clients/Web3Client';
+import { TEth } from 'dequanto/models/TEth';
+import { $require } from 'dequanto/utils/$require';
+import { $date } from 'dequanto/utils/$date';
+import { ITimelockTx } from 'dequanto/services/TimelockService/ITimelockService';
+import { Web3Client } from 'dequanto/clients/Web3Client';
 
-import { TimelockService } from '@dequanto/services/TimelockService/TimelockService';
-import { TimelockControllerFactory } from '@dequanto/prebuilt-factories/TimelockControllerFactory';
+import { TimelockService } from 'dequanto/services/TimelockService/TimelockService';
+import { TimelockControllerFactory } from 'dequanto/prebuilt-factories/TimelockControllerFactory';
 
 
 export class TimelockAgent implements ITxWriterAccountAgent {

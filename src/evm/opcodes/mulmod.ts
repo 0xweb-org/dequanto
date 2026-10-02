@@ -2,7 +2,7 @@ import { EvmBytecode } from '../EvmBytecode';
 import Opcode from '../interfaces/IOpcode';
 import { MUL } from './mul';
 import { MOD } from './mod';
-import { $is } from '@dequanto/utils/$is';
+import { $is } from 'dequanto/utils/$is';
 
 
 export default (opcode: Opcode, state: EvmBytecode): void => {

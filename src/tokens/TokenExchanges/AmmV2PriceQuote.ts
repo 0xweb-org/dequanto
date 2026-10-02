@@ -1,23 +1,23 @@
 import di from 'a-di';
 import alot from 'alot';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IToken } from '@dequanto/models/IToken';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { IToken } from 'dequanto/models/IToken';
 import { AmmV2ExchangeBase } from './AmmV2ExchangeBase';
 import { PancakeswapExchange } from './PancakeswapExchange';
 import { UniswapV2Exchange } from './UniswapV2Exchange';
-import { TAddress } from '@dequanto/models/TAddress';
+import { TAddress } from 'dequanto/models/TAddress';
 import { TokenUtils } from '../utils/TokenUtils';
 import { TokensService } from '../TokensService';
-import { $address } from '@dequanto/utils/$address';
-import { LoggerService } from '@dequanto/loggers/LoggerService';
-import { TResult, TResultAsync } from '@dequanto/models/TResult';
+import { $address } from 'dequanto/utils/$address';
+import { LoggerService } from 'dequanto/loggers/LoggerService';
+import { TResult, TResultAsync } from 'dequanto/models/TResult';
 import { TokenPriceStore } from '../TokenOracles/TokenPriceStore';
-import { $bigint } from '@dequanto/utils/$bigint';
+import { $bigint } from 'dequanto/utils/$bigint';
 import { AmmPairV2Service, ISwapPool, ISwapPoolInfo } from './AmmBase/V2/AmmPairV2Service';
 import { SushiswapPolygonExchange } from './SushiswapPolygonExchange';
 import { IOracle, IOracleOptions, IOracleResult, ISwapOptions } from '../TokenOracles/IOracle';
-import { ILogger } from '@dequanto/loggers/ILogger';
+import { ILogger } from 'dequanto/loggers/ILogger';
 
 
 export class AmmV2PriceQuote implements IOracle {

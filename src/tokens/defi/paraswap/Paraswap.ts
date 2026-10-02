@@ -1,19 +1,19 @@
 import di from 'a-di';
-import { IToken } from '@dequanto/models/IToken';
-import { TAddress } from '@dequanto/models/TAddress';
-import { THex } from '@dequanto/models/THex';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { TokensServiceFactory } from '@dequanto/tokens/TokensServiceFactory';
-import { $bigint } from '@dequanto/utils/$bigint';
+import { IToken } from 'dequanto/models/IToken';
+import { TAddress } from 'dequanto/models/TAddress';
+import { THex } from 'dequanto/models/THex';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { TokensServiceFactory } from 'dequanto/tokens/TokensServiceFactory';
+import { $bigint } from 'dequanto/utils/$bigint';
 import { ParaSwap, NetworkID } from "paraswap";
 import { OptimalRate, SwapSide } from "paraswap-core";
-import { EoAccount } from "@dequanto/models/TAccount";
-import { TxWriter } from '@dequanto/txs/TxWriter';
-import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client';
-import { TokensService } from '@dequanto/tokens/TokensService';
+import { EoAccount } from "dequanto/models/TAccount";
+import { TxWriter } from 'dequanto/txs/TxWriter';
+import { TxDataBuilder } from 'dequanto/txs/TxDataBuilder';
+import { PolyWeb3Client } from 'dequanto/clients/PolyWeb3Client';
+import { TokensService } from 'dequanto/tokens/TokensService';
 import { ISwapService } from '../ISwapService';
-import { Web3Client } from '@dequanto/clients/Web3Client';
+import { Web3Client } from 'dequanto/clients/Web3Client';
 
 
 interface TransactionParams {

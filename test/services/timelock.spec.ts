@@ -1,12 +1,12 @@
-import { TimelockController } from '@dequanto/prebuilt/openzeppelin/TimelockController';
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider'
-import { TimelockAccount } from '@dequanto/models/TAccount';
-import { TimelockService } from '@dequanto/services/TimelockService/TimelockService';
-import { BatchAgent } from '@dequanto/txs/agents/BatchAgent';
-import { TxWriter } from '@dequanto/txs/TxWriter';
-import { $address } from '@dequanto/utils/$address';
-import { $date } from '@dequanto/utils/$date';
-import { l } from '@dequanto/utils/$logger';
+import { TimelockController } from 'dequanto/prebuilt/openzeppelin/TimelockController';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider'
+import { TimelockAccount } from 'dequanto/models/TAccount';
+import { TimelockService } from 'dequanto/services/TimelockService/TimelockService';
+import { BatchAgent } from 'dequanto/txs/agents/BatchAgent';
+import { TxWriter } from 'dequanto/txs/TxWriter';
+import { $address } from 'dequanto/utils/$address';
+import { $date } from 'dequanto/utils/$date';
+import { l } from 'dequanto/utils/$logger';
 import { Directory } from 'atma-io';
 
 

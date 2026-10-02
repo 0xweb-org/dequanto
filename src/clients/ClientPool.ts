@@ -1,12 +1,12 @@
 import alot from 'alot';
 import memd from 'memd';
-import { $date } from '@dequanto/utils/$date';
-import { $number } from '@dequanto/utils/$number';
-import { $require } from '@dequanto/utils/$require';
-import { $contract } from '@dequanto/utils/$contract';
-import { $logger, l } from '@dequanto/utils/$logger';
-import { $promise } from '@dequanto/utils/$promise';
-import { $array } from '@dequanto/utils/$array';
+import { $date } from 'dequanto/utils/$date';
+import { $number } from 'dequanto/utils/$number';
+import { $require } from 'dequanto/utils/$require';
+import { $contract } from 'dequanto/utils/$contract';
+import { $logger, l } from 'dequanto/utils/$logger';
+import { $promise } from 'dequanto/utils/$promise';
+import { $array } from 'dequanto/utils/$array';
 
 import { PromiseEventWrap } from './model/PromiEventWrap';
 import { IWeb3ClientStatus } from './interfaces/IWeb3ClientStatus';
@@ -18,15 +18,15 @@ import { IWeb3ClientOptions } from './interfaces/IWeb3Client';
 import { RateLimitGuard } from './handlers/RateLimitGuard';
 import { Web3BatchRequests } from './Web3BatchRequests';
 
-import { Rpc, RpcTypes } from '@dequanto/rpc/Rpc';
+import { Rpc, RpcTypes } from 'dequanto/rpc/Rpc';
 
-import { PromiseEvent } from '@dequanto/class/PromiseEvent';
-import { TTransport } from '@dequanto/rpc/transports/ITransport';
+import { PromiseEvent } from 'dequanto/class/PromiseEvent';
+import { TTransport } from 'dequanto/rpc/transports/ITransport';
 
-import { TRpc } from '@dequanto/rpc/RpcBase';
-import { TEth } from '@dequanto/models/TEth';
-import { $rpc } from '@dequanto/rpc/$rpc';
-import { DataLike } from '@dequanto/utils/types';
+import { TRpc } from 'dequanto/rpc/RpcBase';
+import { TEth } from 'dequanto/models/TEth';
+import { $rpc } from 'dequanto/rpc/$rpc';
+import { DataLike } from 'dequanto/utils/types';
 
 export interface IRpcConfig {
     url?: string

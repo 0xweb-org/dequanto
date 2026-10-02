@@ -1,4 +1,4 @@
-import { TAddress } from '@dequanto/models/TAddress'
+import { TAddress } from 'dequanto/models/TAddress'
 import { SafeServiceTypes } from '../types/SafeServiceTypes'
 
 export interface ISafeServiceTransport {

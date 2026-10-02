@@ -1,4 +1,4 @@
-import { $fn } from '@dequanto/utils/$fn'
+import { $fn } from 'dequanto/utils/$fn'
 
 function foo (num: number) {
     if (num < 5) {

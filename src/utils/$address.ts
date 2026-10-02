@@ -1,4 +1,4 @@
-import { TEth } from '@dequanto/models/TEth';
+import { TEth } from 'dequanto/models/TEth';
 import { $hex } from './$hex';
 import { $contract } from './$contract';
 import { $buffer } from './$buffer';

@@ -1,6 +1,6 @@
-import { EIP1193Transport, IEip1193Message, IEip1193Provider } from '@dequanto/rpc/transports/compatibility/EIP1193Transport';
-import { RpcTransport } from '@dequanto/rpc/transports/RpcTransport';
-import { TTransport } from '@dequanto/rpc/transports/ITransport';
+import { EIP1193Transport, IEip1193Message, IEip1193Provider } from 'dequanto/rpc/transports/compatibility/EIP1193Transport';
+import { RpcTransport } from 'dequanto/rpc/transports/RpcTransport';
+import { TTransport } from 'dequanto/rpc/transports/ITransport';
 import Sinon from 'sinon';
 
 UTest({

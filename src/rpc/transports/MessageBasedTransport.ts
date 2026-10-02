@@ -3,9 +3,9 @@ import { getRpcRequestTimeout, RpcRequestTimeoutError, TTransport } from './ITra
 import { class_Dfr, class_EventEmitter } from 'atma-utils';
 import { RpcSubscription } from '../RpcSubscription';
 import { RpcError } from '../RpcError';
-import { $require } from '@dequanto/utils/$require';
+import { $require } from 'dequanto/utils/$require';
 import { $rpc } from '../$rpc';
-import { l } from '@dequanto/utils/$logger';
+import { l } from 'dequanto/utils/$logger';
 
 export abstract class MessageBasedTransport extends class_EventEmitter implements TTransport.Transport {
 

@@ -1,6 +1,6 @@
-import { IConfigData } from '@dequanto/config/interface/IConfigData';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { TTransport } from '@dequanto/rpc/transports/ITransport';
+import { IConfigData } from 'dequanto/config/interface/IConfigData';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { TTransport } from 'dequanto/rpc/transports/ITransport';
 
 
 export interface IWeb3EndpointOptions {

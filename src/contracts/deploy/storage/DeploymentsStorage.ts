@@ -1,21 +1,21 @@
 import memd from 'memd';
 import alot from 'alot';
-import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
-import { $require } from '@dequanto/utils/$require';
+import { JsonArrayStore } from 'dequanto/json/JsonArrayStore';
+import { $require } from 'dequanto/utils/$require';
 import { class_Uri } from 'atma-utils';
-import { Constructor } from '@dequanto/utils/types';
+import { Constructor } from 'dequanto/utils/types';
 import { File } from 'atma-io';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TEth } from '@dequanto/models/TEth';
-import { ISlotVarDefinition } from '@dequanto/solidity/SlotsParser/models';
-import { $contract } from '@dequanto/utils/$contract';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
-import { IAccount } from '@dequanto/models/TAccount';
-import { $date } from '@dequanto/utils/$date';
-import { $is } from '@dequanto/utils/$is';
-import { $address } from '@dequanto/utils/$address';
-import { $path } from '@dequanto/utils/$path';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TEth } from 'dequanto/models/TEth';
+import { ISlotVarDefinition } from 'dequanto/solidity/SlotsParser/models';
+import { $contract } from 'dequanto/utils/$contract';
+import { ContractBase } from 'dequanto/contracts/ContractBase';
+import { IAccount } from 'dequanto/models/TAccount';
+import { $date } from 'dequanto/utils/$date';
+import { $is } from 'dequanto/utils/$is';
+import { $address } from 'dequanto/utils/$address';
+import { $path } from 'dequanto/utils/$path';
 
 
 

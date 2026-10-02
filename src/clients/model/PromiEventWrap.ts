@@ -1,5 +1,5 @@
 
-import { PromiseEvent } from '@dequanto/class/PromiseEvent';
+import { PromiseEvent } from 'dequanto/class/PromiseEvent';
 import { class_Dfr, class_EventEmitter } from 'atma-utils';
 
 

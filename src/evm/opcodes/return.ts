@@ -3,7 +3,7 @@ import Opcode from '../interfaces/IOpcode';
 import { MLOAD } from './mload';
 import { hex2a } from '../utils/hex';
 import stringify from '../utils/stringify';
-import { $is } from '@dequanto/utils/$is';
+import { $is } from 'dequanto/utils/$is';
 
 export class RETURN {
     readonly name: string;

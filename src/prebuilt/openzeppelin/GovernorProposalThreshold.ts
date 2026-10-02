@@ -3,28 +3,28 @@
  *  Implementation: https://etherscan.io/address/undefined#code
  */
 import di from 'a-di';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TAccount } from '@dequanto/models/TAccount';
-import { TBufferLike } from '@dequanto/models/TBufferLike';
-import { ClientEventsStream, TClientEventsStreamData } from '@dequanto/clients/ClientEventsStream';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
-import { ContractBaseUtils } from '@dequanto/contracts/utils/ContractBaseUtils';
-import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
-import { TxWriter } from '@dequanto/txs/TxWriter';
-import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { SubjectStream } from '@dequanto/class/SubjectStream';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TAccount } from 'dequanto/models/TAccount';
+import { TBufferLike } from 'dequanto/models/TBufferLike';
+import { ClientEventsStream, TClientEventsStreamData } from 'dequanto/clients/ClientEventsStream';
+import { ContractBase } from 'dequanto/contracts/ContractBase';
+import { ContractBaseUtils } from 'dequanto/contracts/utils/ContractBaseUtils';
+import { ContractStorageReaderBase } from 'dequanto/contracts/ContractStorageReaderBase';
+import { TxWriter } from 'dequanto/txs/TxWriter';
+import { ITxLogItem } from 'dequanto/txs/receipt/ITxLogItem';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { SubjectStream } from 'dequanto/class/SubjectStream';
 
 
-import type { ContractWriter } from '@dequanto/contracts/ContractWriter';
-import type { TAbiItem } from '@dequanto/types/TAbi';
-import type { TEth } from '@dequanto/models/TEth';
-import type { TOverrideReturns } from '@dequanto/utils/types';
+import type { ContractWriter } from 'dequanto/contracts/ContractWriter';
+import type { TAbiItem } from 'dequanto/types/TAbi';
+import type { TEth } from 'dequanto/models/TEth';
+import type { TOverrideReturns } from 'dequanto/utils/types';
 
 
-import { Etherscan } from '@dequanto/explorer/Etherscan'
-import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client'
+import { Etherscan } from 'dequanto/explorer/Etherscan'
+import { EthWeb3Client } from 'dequanto/clients/EthWeb3Client'
 
 export namespace GovernorProposalThresholdErrors {
     export interface Empty {

@@ -1,5 +1,5 @@
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { TEth } from '@dequanto/models/TEth';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { TEth } from 'dequanto/models/TEth';
 
 export class TxService {
 

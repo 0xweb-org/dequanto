@@ -1,11 +1,11 @@
 import alot from 'alot';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TEth } from '@dequanto/models/TEth';
-import { $address } from '@dequanto/utils/$address';
-import { $ref, TGlobal } from '@dequanto/utils/$ref';
-import { $require } from '@dequanto/utils/$require';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TEth } from 'dequanto/models/TEth';
+import { $address } from 'dequanto/utils/$address';
+import { $ref, TGlobal } from 'dequanto/utils/$ref';
+import { $require } from 'dequanto/utils/$require';
 import { class_EventEmitter } from 'atma-utils';
-import { IEIP6963Provider } from '@dequanto/rpc/transports/compatibility/IEIP6963Provider';
+import { IEIP6963Provider } from 'dequanto/rpc/transports/compatibility/IEIP6963Provider';
 
 // Interface for provider information following EIP-6963
 interface EIP6963ProviderInfo {

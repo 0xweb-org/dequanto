@@ -1,11 +1,11 @@
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { WETH } from '@dequanto/prebuilt/weth/WETH/WETH';
-import { $address } from '@dequanto/utils/$address';
-import { $contract } from '@dequanto/utils/$contract';
-import { $promise } from '@dequanto/utils/$promise';
-import { $require } from '@dequanto/utils/$require';
-import { $traces } from '@dequanto/utils/$traces';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { WETH } from 'dequanto/prebuilt/weth/WETH/WETH';
+import { $address } from 'dequanto/utils/$address';
+import { $contract } from 'dequanto/utils/$contract';
+import { $promise } from 'dequanto/utils/$promise';
+import { $require } from 'dequanto/utils/$require';
+import { $traces } from 'dequanto/utils/$traces';
 import { TEth } from 'dequanto/models/TEth';
 
 const $assert = {} as any as typeof $require;

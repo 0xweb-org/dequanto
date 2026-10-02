@@ -1,13 +1,13 @@
-import { $bytecode } from '@dequanto/evm/utils/$bytecode';
+import { $bytecode } from 'dequanto/evm/utils/$bytecode';
 import type { IWeb3ClientOptions } from '../interfaces/IWeb3Client';
 import type { Web3Client } from '../Web3Client';
-import { TAddress } from '@dequanto/models/TAddress'
-import { $bigint } from '@dequanto/utils/$bigint';
-import { $hex } from '@dequanto/utils/$hex';
-import { TEth } from '@dequanto/models/TEth';
-import { $array } from '@dequanto/utils/$array';
-import { $date } from '@dequanto/utils/$date';
-import { $number } from '@dequanto/utils/$number';
+import { TAddress } from 'dequanto/models/TAddress'
+import { $bigint } from 'dequanto/utils/$bigint';
+import { $hex } from 'dequanto/utils/$hex';
+import { TEth } from 'dequanto/models/TEth';
+import { $array } from 'dequanto/utils/$array';
+import { $date } from 'dequanto/utils/$date';
+import { $number } from 'dequanto/utils/$number';
 
 
 export class ClientDebugMethods {

@@ -1,7 +1,7 @@
 import { Coder, WordSize } from "./abstract-coder";
 
 import type { Reader, Writer } from "./abstract-coder";
-import { $bigint } from '@dequanto/utils/$bigint';
+import { $bigint } from 'dequanto/utils/$bigint';
 
 
 

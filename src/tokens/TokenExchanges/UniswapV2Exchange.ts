@@ -1,12 +1,12 @@
 import di from 'a-di';
-import { $config } from '@dequanto/utils/$config';
+import { $config } from 'dequanto/utils/$config';
 import { AmmV2ExchangeBase } from './AmmV2ExchangeBase';
 
-import { Etherscan } from '@dequanto/explorer/Etherscan';
-import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { $require } from '@dequanto/utils/$require';
+import { Etherscan } from 'dequanto/explorer/Etherscan';
+import { EthWeb3Client } from 'dequanto/clients/EthWeb3Client';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { $require } from 'dequanto/utils/$require';
 
 
 export class UniswapV2Exchange extends AmmV2ExchangeBase {

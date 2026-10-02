@@ -1,14 +1,14 @@
-import { Web3Client } from '@dequanto/clients/Web3Client';
+import { Web3Client } from 'dequanto/clients/Web3Client';
 import { IErc4337Info } from './models/IErc4337Info';
-import { EoAccount, Erc4337Account } from '@dequanto/models/TAccount';
+import { EoAccount, Erc4337Account } from 'dequanto/models/TAccount';
 import { Erc4337Service } from './Erc4337Service';
-import { $require } from '@dequanto/utils/$require';
+import { $require } from 'dequanto/utils/$require';
 import { UserOperation } from './models/UserOperation';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $is } from '@dequanto/utils/$is';
-import { TxWriter } from '@dequanto/txs/TxWriter';
-import { TEth } from '@dequanto/models/TEth';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $is } from 'dequanto/utils/$is';
+import { TxWriter } from 'dequanto/txs/TxWriter';
+import { TEth } from 'dequanto/models/TEth';
 
 export class Erc4337TxWriter {
     public service: Erc4337Service;

@@ -1,16 +1,16 @@
 
 import di from 'a-di';
-import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
-import { ContractReader } from '@dequanto/contracts/ContractReader';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TBufferLike } from '@dequanto/models/TBufferLike';
-import { $config } from '@dequanto/utils/$config';
-import { $require } from '@dequanto/utils/$require';
+import { EthWeb3Client } from 'dequanto/clients/EthWeb3Client';
+import { ContractReader } from 'dequanto/contracts/ContractReader';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TBufferLike } from 'dequanto/models/TBufferLike';
+import { $config } from 'dequanto/utils/$config';
+import { $require } from 'dequanto/utils/$require';
 import { INsProvider } from './INsProvider';
 import { $ns } from '../utils/$ns';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { Web3Client } from '@dequanto/clients/Web3Client';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { Web3Client } from 'dequanto/clients/Web3Client';
 import { ANsProvider } from './ANsProvider';
 
 export class UDProvider extends ANsProvider {

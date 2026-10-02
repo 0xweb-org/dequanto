@@ -1,6 +1,6 @@
 import di from 'a-di';
 import { EnsProvider } from './EnsProvider';
-import { BscWeb3Client } from '@dequanto/clients/BscWeb3Client';
+import { BscWeb3Client } from 'dequanto/clients/BscWeb3Client';
 
 export class SpaceIdProvider extends EnsProvider {
 

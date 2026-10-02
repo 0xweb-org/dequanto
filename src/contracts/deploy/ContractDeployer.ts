@@ -1,12 +1,12 @@
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IAccount } from '@dequanto/models/TAccount';
-import { TEth } from '@dequanto/models/TEth';
-import { TAbiItem } from '@dequanto/types/TAbi';
-import { $require } from '@dequanto/utils/$require';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { IAccount } from 'dequanto/models/TAccount';
+import { TEth } from 'dequanto/models/TEth';
+import { TAbiItem } from 'dequanto/types/TAbi';
+import { $require } from 'dequanto/utils/$require';
 import { ContractDeployment } from './ContractDeployment';
-import { $is } from '@dequanto/utils/$is';
+import { $is } from 'dequanto/utils/$is';
 import { Directory, File } from 'atma-io';
-import { Constructor } from '@dequanto/utils/types';
+import { Constructor } from 'dequanto/utils/types';
 import { ContractBase } from '../ContractBase';
 
 

@@ -1,8 +1,8 @@
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IAccount } from '@dequanto/models/TAccount';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { $require } from '@dequanto/utils/$require';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { IAccount } from 'dequanto/models/TAccount';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { $require } from 'dequanto/utils/$require';
 import memd from 'memd';
 
 export class TxNonceManager {

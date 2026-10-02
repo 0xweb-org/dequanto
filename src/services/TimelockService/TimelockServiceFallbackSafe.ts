@@ -1,12 +1,12 @@
-import { TimelockController } from '@dequanto/prebuilt/openzeppelin/TimelockController';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
-import { IAccount } from '@dequanto/models/TAccount';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TEth } from '@dequanto/models/TEth';
-import { SafeTx } from '@dequanto/safe/SafeTx';
-import { TxWriter } from '@dequanto/txs/TxWriter';
-import { $contract } from '@dequanto/utils/$contract';
-import { $hex } from '@dequanto/utils/$hex';
+import { TimelockController } from 'dequanto/prebuilt/openzeppelin/TimelockController';
+import { ContractBase } from 'dequanto/contracts/ContractBase';
+import { IAccount } from 'dequanto/models/TAccount';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TEth } from 'dequanto/models/TEth';
+import { SafeTx } from 'dequanto/safe/SafeTx';
+import { TxWriter } from 'dequanto/txs/TxWriter';
+import { $contract } from 'dequanto/utils/$contract';
+import { $hex } from 'dequanto/utils/$hex';
 import memd from 'memd';
 import { ETimelockTxStatus, ITimelockTx, ITimelockTxParamsNormalized, ITimelockTxParams, ITimelockService } from './ITimelockService';
 

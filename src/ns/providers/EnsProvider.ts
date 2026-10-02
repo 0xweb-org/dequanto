@@ -1,17 +1,17 @@
 
 import di from 'a-di';
-import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $require } from '@dequanto/utils/$require';
+import { EthWeb3Client } from 'dequanto/clients/EthWeb3Client';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $require } from 'dequanto/utils/$require';
 import { $ns } from '../utils/$ns';
-import type { EnsPublicResolver } from '@dequanto/prebuilt/ens/EnsPublicResolver/EnsPublicResolver';
-import type { EnsRegistry } from '@dequanto/prebuilt/ens/EnsRegistry/EnsRegistry';
-import { $is } from '@dequanto/utils/$is';
-import { TEth } from '@dequanto/models/TEth';
-import { ContractClassFactory } from '@dequanto/contracts/ContractClassFactory';
-import { $hex } from '@dequanto/utils/$hex';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { TPlatform } from '@dequanto/models/TPlatform';
+import type { EnsPublicResolver } from 'dequanto/prebuilt/ens/EnsPublicResolver/EnsPublicResolver';
+import type { EnsRegistry } from 'dequanto/prebuilt/ens/EnsRegistry/EnsRegistry';
+import { $is } from 'dequanto/utils/$is';
+import { TEth } from 'dequanto/models/TEth';
+import { ContractClassFactory } from 'dequanto/contracts/ContractClassFactory';
+import { $hex } from 'dequanto/utils/$hex';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { TPlatform } from 'dequanto/models/TPlatform';
 import { ANsProvider } from './ANsProvider';
 
 

@@ -1,9 +1,9 @@
-import { $abiCoder } from '@dequanto/abi/$abiCoder';
-import { $contract } from '@dequanto/utils/$contract';
+import { $abiCoder } from 'dequanto/abi/$abiCoder';
+import { $contract } from 'dequanto/utils/$contract';
 import { File } from 'atma-io'
 import { Fixtures } from '../Fixtures';
-import { $cryptoImpl } from '@dequanto/utils/$crypto';
-import { $buffer } from '@dequanto/utils/$buffer';
+import { $cryptoImpl } from 'dequanto/utils/$crypto';
+import { $buffer } from 'dequanto/utils/$buffer';
 import alot from 'alot';
 
 const implementations = [

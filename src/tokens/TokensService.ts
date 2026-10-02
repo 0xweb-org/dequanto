@@ -1,14 +1,14 @@
 import di from 'a-di';
 import memd from 'memd';
-import { TAddress } from '@dequanto/models/TAddress';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { IToken } from '@dequanto/models/IToken';
+import { TAddress } from 'dequanto/models/TAddress';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { IToken } from 'dequanto/models/IToken';
 import { ITokenProvider } from './TokenProviders/ITokenProvider';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
 import { TokenDataProvider } from './TokenDataProvider';
-import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
+import { ERC20 } from 'dequanto/prebuilt/openzeppelin/ERC20';
 
 
 export class TokensService {

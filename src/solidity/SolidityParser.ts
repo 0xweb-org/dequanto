@@ -8,8 +8,8 @@ import { SourceFile, TSourceFileContract } from './SlotsParser/SourceFile';
 import { Ast } from './SlotsParser/Ast';
 import { ISlotsParserOption } from './SlotsParser/models';
 
-import type { TAbiItem } from '@dequanto/types/TAbi';
-import { $require } from '@dequanto/utils/$require';
+import type { TAbiItem } from 'dequanto/types/TAbi';
+import { $require } from 'dequanto/utils/$require';
 
 export namespace SolidityParser {
 

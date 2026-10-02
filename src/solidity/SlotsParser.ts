@@ -10,15 +10,15 @@ import type {
     UserDefinedTypeName
 } from '@solidity-parser/parser/dist/src/ast-types';
 
-import { $require } from '@dequanto/utils/$require';
-import { $abiParser } from '@dequanto/utils/$abiParser';
+import { $require } from 'dequanto/utils/$require';
+import { $abiParser } from 'dequanto/utils/$abiParser';
 import { $types } from './utils/$types';
-import { $abiType } from '@dequanto/utils/$abiType';
+import { $abiType } from 'dequanto/utils/$abiType';
 import { SourceFile } from './SlotsParser/SourceFile';
 import { Ast } from './SlotsParser/Ast';
 import { ISlotsParserOption, ISlotVarDefinition } from './SlotsParser/models';
 
-import type { TAbiInput } from '@dequanto/types/TAbi';
+import type { TAbiInput } from 'dequanto/types/TAbi';
 
 const SLOT_SIZE = 256;
 export namespace SlotsParser {

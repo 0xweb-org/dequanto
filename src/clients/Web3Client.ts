@@ -1,39 +1,39 @@
 import di from 'a-di';
 import memd from 'memd';
 
-import type { TAbiItem } from '@dequanto/types/TAbi';
-import type { TPlatform } from '@dequanto/models/TPlatform';
+import type { TAbiItem } from 'dequanto/types/TAbi';
+import type { TPlatform } from 'dequanto/models/TPlatform';
 
 import type { IWeb3Client, IWeb3ClientOptions } from './interfaces/IWeb3Client';
 
 import { ClientPool, IRpcConfig, IPoolWeb3Request, WClient } from './ClientPool';
-import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
-import { $number } from '@dequanto/utils/$number';
+import { BlockDateResolver } from 'dequanto/blocks/BlockDateResolver';
+import { $number } from 'dequanto/utils/$number';
 
-import { $logger } from '@dequanto/utils/$logger';
+import { $logger } from 'dequanto/utils/$logger';
 import { ClientEventsStream } from './ClientEventsStream';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
 import { ClientDebugMethods } from './debug/ClientDebugMethods';
-import { $require } from '@dequanto/utils/$require';
-import { $is } from '@dequanto/utils/$is';
-import { $hex } from '@dequanto/utils/$hex';
+import { $require } from 'dequanto/utils/$require';
+import { $is } from 'dequanto/utils/$is';
+import { $hex } from 'dequanto/utils/$hex';
 
-import { $bigint } from '@dequanto/utils/$bigint';
+import { $bigint } from 'dequanto/utils/$bigint';
 
-import { RpcContract, TRpcContractCall } from '@dequanto/rpc/RpcContract';
-import { RpcLogFilterOptions, RpcSubscription } from '@dequanto/rpc/RpcSubscription';
-import { TEth } from '@dequanto/models/TEth';
+import { RpcContract, TRpcContractCall } from 'dequanto/rpc/RpcContract';
+import { RpcLogFilterOptions, RpcSubscription } from 'dequanto/rpc/RpcSubscription';
+import { TEth } from 'dequanto/models/TEth';
 
-import { PromiseEvent } from '@dequanto/class/PromiseEvent';
-import { Rpc, RpcTypes } from '@dequanto/rpc/Rpc';
-import { TRpc } from '@dequanto/rpc/RpcBase';
-import { $sig } from '@dequanto/utils/$sig';
-import { DataLike } from '@dequanto/utils/types';
+import { PromiseEvent } from 'dequanto/class/PromiseEvent';
+import { Rpc, RpcTypes } from 'dequanto/rpc/Rpc';
+import { TRpc } from 'dequanto/rpc/RpcBase';
+import { $sig } from 'dequanto/utils/$sig';
+import { DataLike } from 'dequanto/utils/types';
 import { ErrorCode } from './ClientPoolStats';
-import { $date } from '@dequanto/utils/$date';
+import { $date } from 'dequanto/utils/$date';
 import { WalletClient } from './WalletClient';
 import alot from 'alot';
-import { $abiParser } from '@dequanto/utils/$abiParser';
+import { $abiParser } from 'dequanto/utils/$abiParser';
 
 export abstract class Web3Client implements IWeb3Client {
 

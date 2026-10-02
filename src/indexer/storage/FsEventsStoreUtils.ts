@@ -1,11 +1,11 @@
 import alot from 'alot';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { $hex } from '@dequanto/utils/$hex';
-import { $is } from '@dequanto/utils/$is';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
-import { $contract } from '@dequanto/utils/$contract';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $require } from '@dequanto/utils/$require';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { $hex } from 'dequanto/utils/$hex';
+import { $is } from 'dequanto/utils/$is';
+import { ContractBase } from 'dequanto/contracts/ContractBase';
+import { $contract } from 'dequanto/utils/$contract';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $require } from 'dequanto/utils/$require';
 
 export namespace FsEventsStoreUtils {
     export function getDirectory (contract: ContractBase, options?: {

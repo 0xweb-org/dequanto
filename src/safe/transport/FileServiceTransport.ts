@@ -1,11 +1,11 @@
-import { GnosisSafe } from '@dequanto/prebuilt/safe/GnosisSafe';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { EoAccount } from '@dequanto/models/TAccount';
-import { TAddress } from '@dequanto/models/TAddress';
+import { GnosisSafe } from 'dequanto/prebuilt/safe/GnosisSafe';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { EoAccount } from 'dequanto/models/TAccount';
+import { TAddress } from 'dequanto/models/TAddress';
 
 import { ISafeServiceTransport } from './ISafeServiceTransport';
 import { File } from 'atma-io';
-import { $address } from '@dequanto/utils/$address';
+import { $address } from 'dequanto/utils/$address';
 import { SafeServiceTypes } from '../types/SafeServiceTypes';
 
 export class FileServiceTransport implements ISafeServiceTransport {

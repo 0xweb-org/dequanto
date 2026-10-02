@@ -1,4 +1,4 @@
-import { IToken } from '@dequanto/models/IToken';
+import { IToken } from 'dequanto/models/IToken';
 
 export namespace AmmUtils {
     export function toSameBase (a: Pick<IToken, 'decimals'>, b: Pick<IToken, 'decimals'>, aAmount: bigint, bAmount: bigint): [bigint, bigint] {

@@ -1,4 +1,4 @@
-import { Web3Client } from '@dequanto/clients/Web3Client'
+import { Web3Client } from 'dequanto/clients/Web3Client'
 import { IContractDetails } from './IContractDetails'
 import { TEth } from './TEth'
 

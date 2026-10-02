@@ -1,11 +1,11 @@
 import di from 'a-di';
-import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
-import { TxLogParser } from '@dequanto/txs/receipt/TxLogParser'
+import { EthWeb3Client } from 'dequanto/clients/EthWeb3Client';
+import { TxLogParser } from 'dequanto/txs/receipt/TxLogParser'
 import { File } from 'atma-io'
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { $contract } from '@dequanto/utils/$contract';
-import { TEth } from '@dequanto/models/TEth';
-import { TxWriter } from '@dequanto/txs/TxWriter';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { $contract } from 'dequanto/utils/$contract';
+import { TEth } from 'dequanto/models/TEth';
+import { TxWriter } from 'dequanto/txs/TxWriter';
 
 const tx = {
     swap: `0x7e91bf011c11e5e8a553db696bd4b070507b7149af841eb0319010bbfb03502a`

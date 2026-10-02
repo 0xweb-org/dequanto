@@ -1,7 +1,7 @@
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { TxWriter } from '@dequanto/txs/TxWriter';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { l } from '@dequanto/utils/$logger';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { TxWriter } from 'dequanto/txs/TxWriter';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
+import { l } from 'dequanto/utils/$logger';
 
 UTest({
     async 'calldata vs encoded vs digit-packed vs bitwise-packed' () {

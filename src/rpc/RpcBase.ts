@@ -4,8 +4,8 @@ import { getRpcRequestTimeout, rpcRequestWithTimeout, TTransport } from './trans
 import { RpcSubscription } from './RpcSubscription';
 import { $rpc } from './$rpc';
 import { RpcFunction } from './RpcFunction';
-import { $array } from '@dequanto/utils/$array';
-import { $hex } from '@dequanto/utils/$hex';
+import { $array } from 'dequanto/utils/$array';
+import { $hex } from 'dequanto/utils/$hex';
 
 let ID = 0;
 

@@ -1,28 +1,28 @@
 import di from 'a-di';
 import alot from 'alot';
 import { class_Dfr } from 'atma-utils';
-import type { TAbiItem } from '@dequanto/types/TAbi';
-import type { TLogsRangeProgress, Web3Client } from '@dequanto/clients/Web3Client';
-import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
-import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $is } from '@dequanto/utils/$is';
-import { $logger } from '@dequanto/utils/$logger';
+import type { TAbiItem } from 'dequanto/types/TAbi';
+import type { TLogsRangeProgress, Web3Client } from 'dequanto/clients/Web3Client';
+import { EthWeb3Client } from 'dequanto/clients/EthWeb3Client';
+import { BlockDateResolver } from 'dequanto/blocks/BlockDateResolver';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $is } from 'dequanto/utils/$is';
+import { $logger } from 'dequanto/utils/$logger';
 import { $abiParser } from '../utils/$abiParser';
-import { $block } from '@dequanto/utils/$block';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
+import { $block } from 'dequanto/utils/$block';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
 import { ContractCreationResolver } from './ContractCreationResolver';
-import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
-import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
-import { $contract } from '@dequanto/utils/$contract';
-import { $require } from '@dequanto/utils/$require';
-import { $array } from '@dequanto/utils/$array';
-import { RpcTypes } from '@dequanto/rpc/Rpc';
-import { TEth } from '@dequanto/models/TEth';
-import { RpcContract, TRpcContractCall } from '@dequanto/rpc/RpcContract';
-import { WClient } from '@dequanto/clients/ClientPool';
-import { $traces } from '@dequanto/utils/$traces';
-import { $abiProvider } from '@dequanto/utils/$abiProvider';
+import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
+import { ITxLogItem } from 'dequanto/txs/receipt/ITxLogItem';
+import { $contract } from 'dequanto/utils/$contract';
+import { $require } from 'dequanto/utils/$require';
+import { $array } from 'dequanto/utils/$array';
+import { RpcTypes } from 'dequanto/rpc/Rpc';
+import { TEth } from 'dequanto/models/TEth';
+import { RpcContract, TRpcContractCall } from 'dequanto/rpc/RpcContract';
+import { WClient } from 'dequanto/clients/ClientPool';
+import { $traces } from 'dequanto/utils/$traces';
+import { $abiProvider } from 'dequanto/utils/$abiProvider';
 
 
 

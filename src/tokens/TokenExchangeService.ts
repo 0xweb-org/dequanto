@@ -1,21 +1,21 @@
 import di from 'a-di';
 import alot from 'alot';
-import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { IToken } from '@dequanto/models/IToken';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { $bigint } from '@dequanto/utils/$bigint';
-import { $is } from '@dequanto/utils/$is';
+import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { IToken } from 'dequanto/models/IToken';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { $bigint } from 'dequanto/utils/$bigint';
+import { $is } from 'dequanto/utils/$is';
 import { AmmV2ExchangeBase } from './TokenExchanges/AmmV2ExchangeBase';
 import { PancakeswapExchange } from './TokenExchanges/PancakeswapExchange';
 import { TokensService } from './TokensService';
 import { TokenUtils } from './utils/TokenUtils';
 import { UniswapV2Exchange } from './TokenExchanges/UniswapV2Exchange';
 import { SushiswapPolygonExchange } from './TokenExchanges/SushiswapPolygonExchange';
-import { $logger } from '@dequanto/utils/$logger';
-import { $require } from '@dequanto/utils/$require';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
+import { $logger } from 'dequanto/utils/$logger';
+import { $require } from 'dequanto/utils/$require';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
 
 export class TokenExchangeService {
 

@@ -1,10 +1,10 @@
-import { BlockchainExplorerStorage } from '@dequanto/explorer/BlockchainExplorerStorage';
-import { Config } from '@dequanto/config/Config';
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { SlotsDump } from '@dequanto/solidity/SlotsDump';
-import { SlotsParser } from '@dequanto/solidity/SlotsParser';
-import { SlotsStorage } from '@dequanto/solidity/SlotsStorage';
-import { l } from '@dequanto/utils/$logger';
+import { BlockchainExplorerStorage } from 'dequanto/explorer/BlockchainExplorerStorage';
+import { Config } from 'dequanto/config/Config';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { SlotsDump } from 'dequanto/solidity/SlotsDump';
+import { SlotsParser } from 'dequanto/solidity/SlotsParser';
+import { SlotsStorage } from 'dequanto/solidity/SlotsStorage';
+import { l } from 'dequanto/utils/$logger';
 
 const provider = new HardhatProvider();
 const client = provider.client();

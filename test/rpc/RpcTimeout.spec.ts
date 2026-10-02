@@ -1,8 +1,8 @@
-import { Rpc } from '@dequanto/rpc/Rpc';
-import { HttpTransport } from '@dequanto/rpc/transports/HttpTransport';
-import { MessageBasedTransport } from '@dequanto/rpc/transports/MessageBasedTransport';
-import { RpcRequestTimeoutError, TTransport } from '@dequanto/rpc/transports/ITransport';
-import { $promise } from '@dequanto/utils/$promise';
+import { Rpc } from 'dequanto/rpc/Rpc';
+import { HttpTransport } from 'dequanto/rpc/transports/HttpTransport';
+import { MessageBasedTransport } from 'dequanto/rpc/transports/MessageBasedTransport';
+import { RpcRequestTimeoutError, TTransport } from 'dequanto/rpc/transports/ITransport';
+import { $promise } from 'dequanto/utils/$promise';
 
 UTest({
     async 'should time out a custom transport request' () {

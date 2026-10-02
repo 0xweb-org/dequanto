@@ -1,12 +1,12 @@
-import { TokenDataProvider } from '@dequanto/tokens/TokenDataProvider';
-import { AmmV1Oracle } from '@dequanto/tokens/TokenOracles/amm/AmmV1Oracle';
-import { AmmV2Oracle } from '@dequanto/tokens/TokenOracles/amm/AmmV2Oracle';
-import { ChainlinkOracle } from '@dequanto/tokens/TokenOracles/chainlink/ChainlinkOracle';
-import { SpotPriceAggregator } from '@dequanto/tokens/TokenOracles/SpotPriceAggregator/SpotPriceAggregator';
-import { TokenPriceServiceFactory } from '@dequanto/tokens/TokenPriceServiceProvider';
-import { $date } from '@dequanto/utils/$date';
-import { l } from '@dequanto/utils/$logger';
-import { $sig } from '@dequanto/utils/$sig';
+import { TokenDataProvider } from 'dequanto/tokens/TokenDataProvider';
+import { AmmV1Oracle } from 'dequanto/tokens/TokenOracles/amm/AmmV1Oracle';
+import { AmmV2Oracle } from 'dequanto/tokens/TokenOracles/amm/AmmV2Oracle';
+import { ChainlinkOracle } from 'dequanto/tokens/TokenOracles/chainlink/ChainlinkOracle';
+import { SpotPriceAggregator } from 'dequanto/tokens/TokenOracles/SpotPriceAggregator/SpotPriceAggregator';
+import { TokenPriceServiceFactory } from 'dequanto/tokens/TokenPriceServiceProvider';
+import { $date } from 'dequanto/utils/$date';
+import { l } from 'dequanto/utils/$logger';
+import { $sig } from 'dequanto/utils/$sig';
 
 UTest({
     async 'ETH' () {

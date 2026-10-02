@@ -1,5 +1,5 @@
-import { TAddress } from '@dequanto/models/TAddress'
-import { TPlatform } from '@dequanto/models/TPlatform'
+import { TAddress } from 'dequanto/models/TAddress'
+import { TPlatform } from 'dequanto/models/TPlatform'
 
 
 export interface INsProviderOptions {

@@ -1,37 +1,37 @@
 import di from 'a-di';
 import memd from 'memd';
 import alot from 'alot';
-import type { TLogsRangeProgress, Web3Client } from '@dequanto/clients/Web3Client';
-import type { ITxWriterOptions, TxWriter } from '@dequanto/txs/TxWriter';
+import type { TLogsRangeProgress, Web3Client } from 'dequanto/clients/Web3Client';
+import type { ITxWriterOptions, TxWriter } from 'dequanto/txs/TxWriter';
 
-import type { IAccount, TAccount } from "@dequanto/models/TAccount";
-import type { TAbiItem } from '@dequanto/types/TAbi';
-import type { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import type { TAddress } from '@dequanto/models/TAddress';
-import type { ITxBuilderOptions } from '@dequanto/txs/ITxBuilderOptions';
+import type { IAccount, TAccount } from "dequanto/models/TAccount";
+import type { TAbiItem } from 'dequanto/types/TAbi';
+import type { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import type { TAddress } from 'dequanto/models/TAddress';
+import type { ITxBuilderOptions } from 'dequanto/txs/ITxBuilderOptions';
 
-import { $contract } from '@dequanto/utils/$contract';
-import { $class } from '@dequanto/utils/$class';
-import { $abiParser } from '@dequanto/utils/$abiParser';
+import { $contract } from 'dequanto/utils/$contract';
+import { $class } from 'dequanto/utils/$class';
+import { $abiParser } from 'dequanto/utils/$abiParser';
 import { ContractReader, ContractReaderUtils } from './ContractReader';
 import { ContractWriter } from './ContractWriter';
 import { ContractStream } from './ContractStream';
-import { TxTopicInMemoryProvider } from '@dequanto/txs/receipt/TxTopicInMemoryProvider';
-import { BlocksTxIndexer, TBlockListener } from '@dequanto/indexer/BlocksTxIndexer';
-import { SubjectStream } from '@dequanto/class/SubjectStream';
-import { $logger } from '@dequanto/utils/$logger';
-import { $address } from '@dequanto/utils/$address';
-import { TEth } from '@dequanto/models/TEth';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { RpcTypes } from '@dequanto/rpc/Rpc';
+import { TxTopicInMemoryProvider } from 'dequanto/txs/receipt/TxTopicInMemoryProvider';
+import { BlocksTxIndexer, TBlockListener } from 'dequanto/indexer/BlocksTxIndexer';
+import { SubjectStream } from 'dequanto/class/SubjectStream';
+import { $logger } from 'dequanto/utils/$logger';
+import { $address } from 'dequanto/utils/$address';
+import { TEth } from 'dequanto/models/TEth';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
+import { RpcTypes } from 'dequanto/rpc/Rpc';
 import { ContractStorageReaderBase } from './ContractStorageReaderBase';
 import { ContractBaseUtils } from './utils/ContractBaseUtils';
 import { FnSignedWrapper } from './wrappers/FnSignedWrapper';
-import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
-import { $is } from '@dequanto/utils/$is';
+import { ITxLogItem } from 'dequanto/txs/receipt/ITxLogItem';
+import { $is } from 'dequanto/utils/$is';
 import { FnRequestWrapper } from './wrappers/FnRequestWrapper';
-import { WClient } from '@dequanto/clients/ClientPool';
-import { Constructor } from '@dequanto/utils/types';
+import { WClient } from 'dequanto/clients/ClientPool';
+import { Constructor } from 'dequanto/utils/types';
 
 
 export abstract class ContractBase {

@@ -1,7 +1,7 @@
-import { EvmWeb3Client } from '@dequanto/clients/EvmWeb3Client';
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-import { $address } from '@dequanto/utils/$address';
+import { EvmWeb3Client } from 'dequanto/clients/EvmWeb3Client';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { TxDataBuilder } from 'dequanto/txs/TxDataBuilder';
+import { $address } from 'dequanto/utils/$address';
 
 const Accounts = [
     {

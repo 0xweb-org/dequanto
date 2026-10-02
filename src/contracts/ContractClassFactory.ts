@@ -1,10 +1,10 @@
-import { type TAbiItem } from '@dequanto/types/TAbi';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { TAddress } from '@dequanto/models/TAddress';
+import { type TAbiItem } from 'dequanto/types/TAbi';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { TAddress } from 'dequanto/models/TAddress';
 import { ContractBase } from './ContractBase';
-import { $abiParser } from '@dequanto/utils/$abiParser';
-import { Constructor } from '@dequanto/utils/types';
+import { $abiParser } from 'dequanto/utils/$abiParser';
+import { Constructor } from 'dequanto/utils/types';
 import alot from 'alot';
 
 

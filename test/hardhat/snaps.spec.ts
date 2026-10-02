@@ -1,7 +1,7 @@
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { TokenTransferService } from '@dequanto/tokens/TokenTransferService';
-import { $bigint } from '@dequanto/utils/$bigint';
-import { $sig } from '@dequanto/utils/$sig';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { TokenTransferService } from 'dequanto/tokens/TokenTransferService';
+import { $bigint } from 'dequanto/utils/$bigint';
+import { $sig } from 'dequanto/utils/$sig';
 
 UTest({
     async 'should create and restore a snapshot' () {

@@ -1,6 +1,6 @@
-import { $bloom } from '@dequanto/utils/$bloom';
-import { $contract } from '@dequanto/utils/$contract';
-import { $hex } from '@dequanto/utils/$hex';
+import { $bloom } from 'dequanto/utils/$bloom';
+import { $contract } from 'dequanto/utils/$contract';
+import { $hex } from 'dequanto/utils/$hex';
 
 UTest({
     async 'should check the topic' () {

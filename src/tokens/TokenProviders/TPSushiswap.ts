@@ -1,17 +1,17 @@
-import { $address } from '@dequanto/utils/$address';
-import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
-import { IToken, ITokenBase } from '@dequanto/models/IToken';
-import { ITokenGlob } from '@dequanto/models/ITokenGlob';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TPlatform } from '@dequanto/models/TPlatform';
+import { $address } from 'dequanto/utils/$address';
+import { JsonArrayStore } from 'dequanto/json/JsonArrayStore';
+import { IToken, ITokenBase } from 'dequanto/models/IToken';
+import { ITokenGlob } from 'dequanto/models/ITokenGlob';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TPlatform } from 'dequanto/models/TPlatform';
 import { TokenUtils } from '../utils/TokenUtils';
 import { ITokenProvider } from './ITokenProvider';
 import { ATokenProvider } from './ATokenProvider';
-import { $path } from '@dequanto/utils/$path';
+import { $path } from 'dequanto/utils/$path';
 import alot from 'alot';
-import { Config } from '@dequanto/config/Config';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { $http } from '@dequanto/utils/$http';
+import { Config } from 'dequanto/config/Config';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { $http } from 'dequanto/utils/$http';
 
 
 export class TPSushiswap extends ATokenProvider implements ITokenProvider  {

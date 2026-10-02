@@ -1,9 +1,9 @@
-import { TEth } from '@dequanto/models/TEth';
+import { TEth } from 'dequanto/models/TEth';
 import IOpcode from '../interfaces/IOpcode';
 import { EvmBytecode } from '../EvmBytecode';
-import { $require } from '@dequanto/utils/$require';
-import { $buffer } from '@dequanto/utils/$buffer';
-import { $hex } from '@dequanto/utils/$hex';
+import { $require } from 'dequanto/utils/$require';
+import { $buffer } from 'dequanto/utils/$buffer';
+import { $hex } from 'dequanto/utils/$hex';
 
 export namespace $bytecode {
 

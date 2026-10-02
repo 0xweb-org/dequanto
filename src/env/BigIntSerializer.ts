@@ -1,4 +1,4 @@
-import { $buffer } from '@dequanto/utils/$buffer';
+import { $buffer } from 'dequanto/utils/$buffer';
 
 (BigInt as any).prototype.toJSON = function () { return this.toString() };
 (BigInt as any).prototype.toBuffer = function () {

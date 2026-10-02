@@ -1,5 +1,5 @@
-import { SubjectStream } from '@dequanto/class/SubjectStream';
-import { TEth } from '@dequanto/models/TEth';
+import { SubjectStream } from 'dequanto/class/SubjectStream';
+import { TEth } from 'dequanto/models/TEth';
 import { TTransport } from './transports/ITransport';
 import { class_EventEmitter } from 'atma-utils';
 

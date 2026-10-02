@@ -1,6 +1,6 @@
-import { $http } from '@dequanto/utils/$http';
+import { $http } from 'dequanto/utils/$http';
 import { File } from 'atma-io'
-import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
+import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
 
 UTest({
     async $before () {

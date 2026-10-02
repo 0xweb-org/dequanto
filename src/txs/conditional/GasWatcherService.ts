@@ -1,10 +1,10 @@
 import alot from 'alot';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { $bigint } from '@dequanto/utils/$bigint';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { $bigint } from 'dequanto/utils/$bigint';
 import { GasWatcherLogger } from './GasWatcherLogger';
 import { GasWatcherStore, IGasWatcherStore } from './GasWatcherStore';
 import { GasWatcherTx, IGasWatcherCondition } from './GasWatcherTx';
-import { IAccount } from '@dequanto/models/TAccount';
+import { IAccount } from 'dequanto/models/TAccount';
 import type { TxWriter } from '../TxWriter';
 
 

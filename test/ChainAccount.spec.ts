@@ -1,9 +1,9 @@
 
-import { ChainAccountService } from '@dequanto/ChainAccountService';
-import { Config } from '@dequanto/config/Config';
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { $is } from '@dequanto/utils/$is';
-import { $sig } from '@dequanto/utils/$sig';
+import { ChainAccountService } from 'dequanto/ChainAccountService';
+import { Config } from 'dequanto/config/Config';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { $is } from 'dequanto/utils/$is';
+import { $sig } from 'dequanto/utils/$sig';
 import { File } from 'atma-io';
 import memd from 'memd';
 

@@ -1,18 +1,18 @@
 import alot from 'alot';
 import memd from 'memd';
-import type { TAbiItem } from '@dequanto/types/TAbi';
+import type { TAbiItem } from 'dequanto/types/TAbi';
 
-import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $require } from '@dequanto/utils/$require';
+import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $require } from 'dequanto/utils/$require';
 import { MappingSettersResolver } from '../SlotsParser/MappingSettersResolver';
 import { SourceCodeProvider } from '../SourceCodeProvider';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { $logger } from '@dequanto/utils/$logger';
-import { ContractReader } from '@dequanto/contracts/ContractReader';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { $logger } from 'dequanto/utils/$logger';
+import { ContractReader } from 'dequanto/contracts/ContractReader';
 
 export class MappingKeysLoader {
 

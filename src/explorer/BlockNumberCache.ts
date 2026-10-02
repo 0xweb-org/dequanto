@@ -1,8 +1,8 @@
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { $platform } from '@dequanto/utils/$platform';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { JsonArrayStore } from 'dequanto/json/JsonArrayStore';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { $platform } from 'dequanto/utils/$platform';
 import memd from 'memd';
 
 

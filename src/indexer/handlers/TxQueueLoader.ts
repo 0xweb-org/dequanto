@@ -1,6 +1,6 @@
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { TEth } from '@dequanto/models/TEth';
-import { $number } from '@dequanto/utils/$number';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { TEth } from 'dequanto/models/TEth';
+import { $number } from 'dequanto/utils/$number';
 
 
 export class TxQueueLoader {

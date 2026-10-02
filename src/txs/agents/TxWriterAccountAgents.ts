@@ -1,4 +1,4 @@
-import type { EoAccount, TAccount } from '@dequanto/models/TAccount';
+import type { EoAccount, TAccount } from 'dequanto/models/TAccount';
 import type { ITxWriterEmitter, TxWriter } from '../TxWriter';
 import { SafeAgent } from './SafeAgent';
 import { Erc4337Agent } from './Erc4337Agent';

@@ -1,6 +1,6 @@
-import { $abiParser } from '@dequanto/utils/$abiParser';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { type TAbiItem } from '@dequanto/types/TAbi';
+import { $abiParser } from 'dequanto/utils/$abiParser';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
+import { type TAbiItem } from 'dequanto/types/TAbi';
 import { IAbiItemFormattable, IKnownLogFormatter, ITxLogItemDescriptor } from './ITxLogItem';
 
 

@@ -1,9 +1,9 @@
-import type { TAbiItem } from '@dequanto/types/TAbi';
-import { TAddress } from '@dequanto/models/TAddress';
+import type { TAbiItem } from 'dequanto/types/TAbi';
+import { TAddress } from 'dequanto/models/TAddress';
 import { $web3Abi } from './utils/$web3Abi';
-import { Rpc } from '@dequanto/rpc/Rpc';
-import { TEth } from '@dequanto/models/TEth';
-import { TRpc } from '@dequanto/rpc/RpcBase';
+import { Rpc } from 'dequanto/rpc/Rpc';
+import { TEth } from 'dequanto/models/TEth';
+import { TRpc } from 'dequanto/rpc/RpcBase';
 
 export namespace Web3BatchRequests {
 

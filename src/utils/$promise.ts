@@ -1,4 +1,4 @@
-import { TError } from '@dequanto/models/TError';
+import { TError } from 'dequanto/models/TError';
 import { class_EventEmitter } from 'atma-utils';
 import { TFnWithCallback } from './types';
 import { $date } from './$date';

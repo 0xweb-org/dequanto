@@ -1,4 +1,4 @@
-import { Generator } from '@dequanto/gen/Generator';
+import { Generator } from 'dequanto/gen/Generator';
 import { Directory, File } from 'atma-io';
 import { run } from 'shellbee';
 import ts from 'typescript';

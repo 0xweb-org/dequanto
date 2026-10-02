@@ -3,39 +3,39 @@ import alot from 'alot';
 import { class_Uri } from 'atma-utils';
 import { File, env, Directory } from 'atma-io';
 
-import type { ContractBase } from '@dequanto/contracts/ContractBase';
+import type { ContractBase } from 'dequanto/contracts/ContractBase';
 
-import type { TAbiItem } from '@dequanto/types/TAbi';
-import type { TEth } from '@dequanto/models/TEth';
+import type { TAbiItem } from 'dequanto/types/TAbi';
+import type { TEth } from 'dequanto/models/TEth';
 
-import { EoAccount } from '@dequanto/models/TAccount';
-import { HardhatWeb3Client } from '@dequanto/hardhat/HardhatWeb3Client';
-import { Web3Client } from '@dequanto/clients/Web3Client';
+import { EoAccount } from 'dequanto/models/TAccount';
+import { HardhatWeb3Client } from 'dequanto/hardhat/HardhatWeb3Client';
+import { Web3Client } from 'dequanto/clients/Web3Client';
 
-import { $logger } from '@dequanto/utils/$logger';
-import { $number } from '@dequanto/utils/$number';
-import { $require } from '@dequanto/utils/$require';
-import { IGeneratorSources } from '@dequanto/gen/Generator';
-import { $path } from '@dequanto/utils/$path';
-import { ContractClassFactory, IContractWrapped } from '@dequanto/contracts/ContractClassFactory';
-import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
-import { IWeb3EndpointOptions } from '@dequanto/clients/interfaces/IWeb3EndpointOptions';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
+import { $logger } from 'dequanto/utils/$logger';
+import { $number } from 'dequanto/utils/$number';
+import { $require } from 'dequanto/utils/$require';
+import { IGeneratorSources } from 'dequanto/gen/Generator';
+import { $path } from 'dequanto/utils/$path';
+import { ContractClassFactory, IContractWrapped } from 'dequanto/contracts/ContractClassFactory';
+import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
+import { IWeb3EndpointOptions } from 'dequanto/clients/interfaces/IWeb3EndpointOptions';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 
-import { ContractDeployment } from '@dequanto/contracts/deploy/ContractDeployment';
-import { ContractDeployer } from '@dequanto/contracts/deploy/ContractDeployer';
-import { $sig } from '@dequanto/utils/$sig';
-import { $address } from '@dequanto/utils/$address';
-import { $promise } from '@dequanto/utils/$promise';
-import { $date } from '@dequanto/utils/$date';
-import { $hex } from '@dequanto/utils/$hex';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $contract } from '@dequanto/utils/$contract';
-import { $dependency } from '@dequanto/utils/$dependency';
-import { TTransport } from '@dequanto/rpc/transports/ITransport';
-import { Constructor } from '@dequanto/utils/types';
-import { BlockchainExplorer } from '@dequanto/explorer/BlockchainExplorer';
+import { ContractDeployment } from 'dequanto/contracts/deploy/ContractDeployment';
+import { ContractDeployer } from 'dequanto/contracts/deploy/ContractDeployer';
+import { $sig } from 'dequanto/utils/$sig';
+import { $address } from 'dequanto/utils/$address';
+import { $promise } from 'dequanto/utils/$promise';
+import { $date } from 'dequanto/utils/$date';
+import { $hex } from 'dequanto/utils/$hex';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $contract } from 'dequanto/utils/$contract';
+import { $dependency } from 'dequanto/utils/$dependency';
+import { TTransport } from 'dequanto/rpc/transports/ITransport';
+import { Constructor } from 'dequanto/utils/types';
+import { BlockchainExplorer } from 'dequanto/explorer/BlockchainExplorer';
 
 type THardhatLib = typeof import('hardhat');
 

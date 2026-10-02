@@ -1,8 +1,8 @@
-import { AbiDeserializer } from '@dequanto/contracts/utils/AbiDeserializer';
-import { $abiParser } from '@dequanto/utils/$abiParser';
+import { AbiDeserializer } from 'dequanto/contracts/utils/AbiDeserializer';
+import { $abiParser } from 'dequanto/utils/$abiParser';
 import { IAccessorItem } from '../Accessor';
-import { $hex } from '@dequanto/utils/$hex';
-import { ISlotVarDefinition } from '@dequanto/solidity/SlotsParser/models';
+import { $hex } from 'dequanto/utils/$hex';
+import { ISlotVarDefinition } from 'dequanto/solidity/SlotsParser/models';
 import { SlotBytesHandler } from './SlotBytesHandler';
 
 export class SlotStringHandler extends SlotBytesHandler {

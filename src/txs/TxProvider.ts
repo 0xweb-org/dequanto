@@ -1,7 +1,7 @@
-import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $platform } from '@dequanto/utils/$platform';
+import { EthWeb3Client } from 'dequanto/clients/EthWeb3Client';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $platform } from 'dequanto/utils/$platform';
 import di from 'a-di';
 import memd from 'memd';
 

@@ -1,4 +1,4 @@
-import { $abiType } from '@dequanto/utils/$abiType'
+import { $abiType } from 'dequanto/utils/$abiType'
 
 
 UTest({

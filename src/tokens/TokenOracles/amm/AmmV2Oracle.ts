@@ -2,17 +2,17 @@ import di from 'a-di';
 import alot from 'alot';
 import memd from 'memd';
 import { env } from 'atma-io';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { ITokenBase } from '@dequanto/models/IToken';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { ITokenBase } from 'dequanto/models/IToken';
 import { IOracle, IOracleResult, ISwapOptions } from '../IOracle';
-import { TResultAsync } from '@dequanto/models/TResult';
+import { TResultAsync } from 'dequanto/models/TResult';
 
-import { $require } from '@dequanto/utils/$require';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { AmmV2PriceQuote } from '@dequanto/tokens/TokenExchanges/AmmV2PriceQuote';
-import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
-import { TokensServiceFactory } from '@dequanto/tokens/TokensServiceFactory';
-import { $cache } from '@dequanto/utils/$cache';
+import { $require } from 'dequanto/utils/$require';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { AmmV2PriceQuote } from 'dequanto/tokens/TokenExchanges/AmmV2PriceQuote';
+import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
+import { TokensServiceFactory } from 'dequanto/tokens/TokensServiceFactory';
+import { $cache } from 'dequanto/utils/$cache';
 
 
 const CACHE_PATH = $cache.file(`amm-pairs.json`);

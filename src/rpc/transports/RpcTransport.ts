@@ -1,10 +1,10 @@
-import { $require } from '@dequanto/utils/$require';
+import { $require } from 'dequanto/utils/$require';
 import { HttpTransport } from './HttpTransport';
 import { WsTransport } from './WsTransport';
 import { TTransport } from './ITransport';
 import { EIP1193Transport, IEip1193Provider } from './compatibility/EIP1193Transport';
 import { Web3Transport } from './compatibility/Web3Transport';
-import { $is } from '@dequanto/utils/$is';
+import { $is } from 'dequanto/utils/$is';
 import { DeferredTransport } from './DeferredTransport';
 
 export namespace RpcTransport {

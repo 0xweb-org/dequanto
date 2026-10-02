@@ -1,6 +1,6 @@
 import alot from 'alot';
-import { SlotsParser } from '@dequanto/solidity/SlotsParser';
-import { $abiType } from '@dequanto/utils/$abiType';
+import { SlotsParser } from 'dequanto/solidity/SlotsParser';
+import { $abiType } from 'dequanto/utils/$abiType';
 import { SlotsStorage } from '../../SlotsStorage';
 import { IAccessorItem } from '../Accessor';
 import { SlotsStorageTransportForArray } from '../SlotsStorageTransport';

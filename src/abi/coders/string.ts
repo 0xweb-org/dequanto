@@ -1,7 +1,7 @@
 import type { Reader, Writer } from './abstract-coder';
 
 import { DynamicBytesCoder } from './bytes';
-import { $buffer } from '@dequanto/utils/$buffer';
+import { $buffer } from 'dequanto/utils/$buffer';
 
 export class StringCoder extends DynamicBytesCoder {
 

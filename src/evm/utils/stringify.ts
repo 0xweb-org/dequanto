@@ -1,4 +1,4 @@
-import { $is } from '@dequanto/utils/$is';
+import { $is } from 'dequanto/utils/$is';
 
 
 export default (item: any) => {

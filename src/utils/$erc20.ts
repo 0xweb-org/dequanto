@@ -2,9 +2,9 @@ import alot from 'alot';
 import { $require } from './$require';
 import { $hex } from './$hex';
 import { $bigint } from './$bigint';
-import { TEth } from '@dequanto/models/TEth';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
+import { TEth } from 'dequanto/models/TEth';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { ERC20 } from 'dequanto/prebuilt/openzeppelin/ERC20';
 
 export namespace $erc20 {
     export async function setBalanceAny(client: Web3Client, token: TEth.Address, account: TEth.Address, amount: bigint | number) {

@@ -1,21 +1,21 @@
-import { Rpc } from '@dequanto/rpc/Rpc';
+import { Rpc } from 'dequanto/rpc/Rpc';
 import { TestNode } from '../hardhat/TestNode'
-import { $address } from '@dequanto/utils/$address';
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { HardhatWeb3Client } from '@dequanto/hardhat/HardhatWeb3Client';
-import { TxWriter } from '@dequanto/txs/TxWriter';
+import { $address } from 'dequanto/utils/$address';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { HardhatWeb3Client } from 'dequanto/hardhat/HardhatWeb3Client';
+import { TxWriter } from 'dequanto/txs/TxWriter';
 
 import Web3 from 'web3';
-import { Web3Transport } from '@dequanto/rpc/transports/compatibility/Web3Transport';
-import { RpcContract } from '@dequanto/rpc/RpcContract';
+import { Web3Transport } from 'dequanto/rpc/transports/compatibility/Web3Transport';
+import { RpcContract } from 'dequanto/rpc/RpcContract';
 
-import { $hex } from '@dequanto/utils/$hex';
-import { ContractDeployer } from '@dequanto/contracts/deploy/ContractDeployer';
-import { ContractReader } from '@dequanto/contracts/ContractReader';
-import { TEth } from '@dequanto/models/TEth';
+import { $hex } from 'dequanto/utils/$hex';
+import { ContractDeployer } from 'dequanto/contracts/deploy/ContractDeployer';
+import { ContractReader } from 'dequanto/contracts/ContractReader';
+import { TEth } from 'dequanto/models/TEth';
 import Sinon from 'sinon';
-import { $sig } from '@dequanto/utils/$sig';
+import { $sig } from 'dequanto/utils/$sig';
 
 
 const PORT = `8545`;

@@ -1,7 +1,7 @@
 import di from 'a-di';
 import alot from 'alot';
-import { IToken } from '@dequanto/models/IToken';
-import { TokensService } from '@dequanto/tokens/TokensService';
+import { IToken } from 'dequanto/models/IToken';
+import { TokensService } from 'dequanto/tokens/TokensService';
 import { Wallet } from './Wallet';
 
 export class WalletService {

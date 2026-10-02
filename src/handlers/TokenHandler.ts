@@ -1,11 +1,11 @@
-import { EoAccount } from "@dequanto/models/TAccount";
-import { PlatformFactory } from '@dequanto/chains/PlatformFactory';
-import { IToken } from '@dequanto/models/IToken';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { $bigint } from '@dequanto/utils/$bigint';
-import { $is } from '@dequanto/utils/$is';
-import { $require } from '@dequanto/utils/$require';
+import { EoAccount } from "dequanto/models/TAccount";
+import { PlatformFactory } from 'dequanto/chains/PlatformFactory';
+import { IToken } from 'dequanto/models/IToken';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { $bigint } from 'dequanto/utils/$bigint';
+import { $is } from 'dequanto/utils/$is';
+import { $require } from 'dequanto/utils/$require';
 import di from 'a-di';
 import memd from 'memd';
 

@@ -1,6 +1,6 @@
-import { TEth } from '@dequanto/models/TEth';
-import { $buffer } from '@dequanto/utils/$buffer';
-import { $hex } from '@dequanto/utils/$hex';
+import { TEth } from 'dequanto/models/TEth';
+import { $buffer } from 'dequanto/utils/$buffer';
+import { $hex } from 'dequanto/utils/$hex';
 
 // https://ethereum.org/en/developers/docs/data-structures-and-encoding/rlp/
 

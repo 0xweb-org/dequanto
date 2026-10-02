@@ -1,12 +1,12 @@
-import { IContractDetails } from '@dequanto/models/IContractDetails';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $require } from '@dequanto/utils/$require';
+import { IContractDetails } from 'dequanto/models/IContractDetails';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $require } from 'dequanto/utils/$require';
 
 
 
 import { IBlockchainExplorer, IBlockchainTransferEvent } from './IBlockchainExplorer';
-import { $address } from '@dequanto/utils/$address';
-import { TEth } from '@dequanto/models/TEth';
+import { $address } from 'dequanto/utils/$address';
+import { TEth } from 'dequanto/models/TEth';
 
 export class BlockchainExplorerStorage implements IBlockchainExplorer {
     inMemoryDb: IContractDetails[];

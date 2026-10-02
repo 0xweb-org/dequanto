@@ -2,19 +2,19 @@ import di from 'a-di';
 import alot from 'alot';
 import { Rpc, RpcTypes } from './Rpc';
 
-import { TAbiItem } from '@dequanto/types/TAbi';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $require } from '@dequanto/utils/$require';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { $abiCoder } from '@dequanto/abi/$abiCoder';
-import { $abi } from '@dequanto/abi/$abi';
+import { TAbiItem } from 'dequanto/types/TAbi';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $require } from 'dequanto/utils/$require';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
+import { $abiCoder } from 'dequanto/abi/$abiCoder';
+import { $abi } from 'dequanto/abi/$abi';
 import { RpcError } from './RpcError';
-import { $hex } from '@dequanto/utils/$hex';
-import { TEth } from '@dequanto/models/TEth';
-import { DataLike } from '@dequanto/utils/types';
-import { $web3Abi } from '@dequanto/clients/utils/$web3Abi';
-import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
-import type { Web3Client } from '@dequanto/clients/Web3Client';
+import { $hex } from 'dequanto/utils/$hex';
+import { TEth } from 'dequanto/models/TEth';
+import { DataLike } from 'dequanto/utils/types';
+import { $web3Abi } from 'dequanto/clients/utils/$web3Abi';
+import { BlockDateResolver } from 'dequanto/blocks/BlockDateResolver';
+import type { Web3Client } from 'dequanto/clients/Web3Client';
 
 
 type TRpcContract = {

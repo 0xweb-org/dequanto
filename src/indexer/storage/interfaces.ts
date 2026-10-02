@@ -1,4 +1,4 @@
-import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem'
+import { ITxLogItem } from 'dequanto/txs/receipt/ITxLogItem'
 
 export type TEventsIndexerItem = ITxLogItem<any> & {
     filterKey?: string

@@ -1,8 +1,8 @@
-import { EoAccount } from "@dequanto/models/TAccount";
-import { TAddress } from '@dequanto/models/TAddress';
-import { TEth } from '@dequanto/models/TEth';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { TxWriter } from '@dequanto/txs/TxWriter';
+import { EoAccount } from "dequanto/models/TAccount";
+import { TAddress } from 'dequanto/models/TAddress';
+import { TEth } from 'dequanto/models/TEth';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { TxWriter } from 'dequanto/txs/TxWriter';
 import { class_Dfr } from 'atma-utils';
 
 

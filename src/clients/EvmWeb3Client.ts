@@ -1,9 +1,9 @@
-import { config } from '@dequanto/config/Config';
-import { $require } from '@dequanto/utils/$require';
+import { config } from 'dequanto/config/Config';
+import { $require } from 'dequanto/utils/$require';
 import { EthWeb3Client } from './EthWeb3Client'
 import { IWeb3EndpointOptions } from './interfaces/IWeb3EndpointOptions'
-import { ConfigDefaults } from '@dequanto/config/ConfigDefaults';
-import { $config } from '@dequanto/utils/$config';
+import { ConfigDefaults } from 'dequanto/config/ConfigDefaults';
+import { $config } from 'dequanto/utils/$config';
 
 
 export class EvmWeb3Client extends EthWeb3Client {

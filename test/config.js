@@ -47,7 +47,8 @@ module.exports = {
             $config: {
                 includejs: includeSettings(),
             },
-            tests: 'test/**.spec.ts'
+            tests: 'test/**.spec.ts',
+            exclude: 'fixtures/**',
         },
         docs : {
             $config: {

@@ -14,7 +14,7 @@
 // See: https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI
 
 
-import { $require } from '@dequanto/utils/$require';
+import { $require } from 'dequanto/utils/$require';
 import { Coder, Reader, Result, Writer } from "./coders/abstract-coder";
 import { AddressCoder } from "./coders/address";
 import { ArrayCoder } from "./coders/array";
@@ -26,7 +26,7 @@ import { NumberCoder } from "./coders/number";
 import { StringCoder } from "./coders/string";
 import { TupleCoder } from "./coders/tuple";
 import { ParamType } from "./fragments";
-import { TAbiInput } from '@dequanto/types/TAbi';
+import { TAbiInput } from 'dequanto/types/TAbi';
 
 
 

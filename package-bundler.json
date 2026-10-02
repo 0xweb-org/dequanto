@@ -37,6 +37,9 @@
                             "paths": {
                                 "@dequanto/*": [
                                     "src/*"
+                                ],
+                                "dequanto/*": [
+                                    "src/*"
                                 ]
                             },
                             "module": "CommonJS",
@@ -90,6 +93,9 @@
                             "paths": {
                                 "@dequanto/*": [
                                     "src/*"
+                                ],
+                                "dequanto/*": [
+                                    "src/*"
                                 ]
                             },
                             "module": "ES2022",
@@ -108,6 +114,9 @@
         }
     },
     "common": {
+        "mappings": {
+            "dequantos": ""
+        },
         "defaultExtensions": {
             "js": "ts"
         },
@@ -119,6 +128,9 @@
                 },
                 "routes": {
                     "@dequanto/*": [
+                        "src/*"
+                    ],
+                    "dequanto/*": [
                         "src/*"
                     ]
                 },

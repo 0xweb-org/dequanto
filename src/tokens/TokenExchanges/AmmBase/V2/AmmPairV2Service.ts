@@ -2,22 +2,22 @@ import di from 'a-di';
 import alot from 'alot';
 import memd from 'memd';
 import { env } from 'atma-io';
-import { $bigint } from '@dequanto/utils/$bigint';
-import { $date } from '@dequanto/utils/$date';
+import { $bigint } from 'dequanto/utils/$bigint';
+import { $date } from 'dequanto/utils/$date';
 
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { $address } from '@dequanto/utils/$address';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { TokensService } from '@dequanto/tokens/TokensService';
-import { IToken, ITokenBase } from '@dequanto/models/IToken';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { $address } from 'dequanto/utils/$address';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { TokensService } from 'dequanto/tokens/TokensService';
+import { IToken, ITokenBase } from 'dequanto/models/IToken';
 
 import { AmmV2ExchangeBase } from '../../AmmV2ExchangeBase';
 import { SushiswapPolygonExchange } from '../../SushiswapPolygonExchange';
 import { PancakeswapExchange } from '../../PancakeswapExchange';
 import { UniswapV2Exchange } from '../../UniswapV2Exchange';
-import { $cache } from '@dequanto/utils/$cache';
+import { $cache } from 'dequanto/utils/$cache';
 
 export interface ISwapPoolInfo {
     address: TAddress

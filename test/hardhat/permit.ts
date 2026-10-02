@@ -1,7 +1,7 @@
-import { ERC20Permit } from '@dequanto/prebuilt/openzeppelin/ERC20Permit';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { Erc4337TxWriter } from '@dequanto/erc4337/Erc4337TxWriter';
-import { TAddress } from '@dequanto/models/TAddress';
+import { ERC20Permit } from 'dequanto/prebuilt/openzeppelin/ERC20Permit';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { Erc4337TxWriter } from 'dequanto/erc4337/Erc4337TxWriter';
+import { TAddress } from 'dequanto/models/TAddress';
 
 const TOKEN_ADDRESS = '0x....';
 

@@ -1,6 +1,6 @@
-import { $array } from '@dequanto/utils/$array';
+import { $array } from 'dequanto/utils/$array';
 import { TTransport } from './transports/ITransport';
-import { TEth } from '@dequanto/models/TEth';
+import { TEth } from 'dequanto/models/TEth';
 
 export class RpcError extends Error {
     code: number

@@ -1,8 +1,8 @@
-import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
-import { ITokenGlob } from '@dequanto/models/ITokenGlob';
-import { ATokenProvider } from '@dequanto/tokens/TokenProviders/ATokenProvider';
-import { ITokenProvider } from '@dequanto/tokens/TokenProviders/ITokenProvider';
-import { $path } from '@dequanto/utils/$path';
+import { JsonArrayStore } from 'dequanto/json/JsonArrayStore';
+import { ITokenGlob } from 'dequanto/models/ITokenGlob';
+import { ATokenProvider } from 'dequanto/tokens/TokenProviders/ATokenProvider';
+import { ITokenProvider } from 'dequanto/tokens/TokenProviders/ITokenProvider';
+import { $path } from 'dequanto/utils/$path';
 
 
 

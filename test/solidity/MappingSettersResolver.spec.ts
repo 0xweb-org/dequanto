@@ -1,5 +1,5 @@
-import { MappingSettersResolver } from '@dequanto/solidity/SlotsParser/MappingSettersResolver';
-import { $contract } from '@dequanto/utils/$contract';
+import { MappingSettersResolver } from 'dequanto/solidity/SlotsParser/MappingSettersResolver';
+import { $contract } from 'dequanto/utils/$contract';
 
 UTest({
     async 'should get a simple event with different argument orders'() {

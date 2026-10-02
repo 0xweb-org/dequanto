@@ -1,25 +1,25 @@
 import alot from 'alot';
 import memd from 'memd';
 import { IBlockchainExplorer, IBlockchainTransferEvent } from './IBlockchainExplorer';
-import { IContractDetails } from '@dequanto/models/IContractDetails';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $logger } from '@dequanto/utils/$logger';
-import { $promise } from '@dequanto/utils/$promise';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { $address } from '@dequanto/utils/$address';
-import { $require } from '@dequanto/utils/$require';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { $str } from '@dequanto/solidity/utils/$str';
-import { $platform } from '@dequanto/utils/$platform';
-import type { TAbiItem } from '@dequanto/types/TAbi';
-import { TEth } from '@dequanto/models/TEth';
-import { $is } from '@dequanto/utils/$is';
-import { $http } from '@dequanto/utils/$http';
+import { IContractDetails } from 'dequanto/models/IContractDetails';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $logger } from 'dequanto/utils/$logger';
+import { $promise } from 'dequanto/utils/$promise';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { $address } from 'dequanto/utils/$address';
+import { $require } from 'dequanto/utils/$require';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { $str } from 'dequanto/solidity/utils/$str';
+import { $platform } from 'dequanto/utils/$platform';
+import type { TAbiItem } from 'dequanto/types/TAbi';
+import { TEth } from 'dequanto/models/TEth';
+import { $is } from 'dequanto/utils/$is';
+import { $http } from 'dequanto/utils/$http';
 import { IVerifier } from './verifiers/IVerifier';
 import { FsHtmlVerifier } from './verifiers/FsHtmlVerifier';
-import { TExplorer, TExplorerDefinition } from '@dequanto/models/TExplorer';
-import { RateLimitGuard } from '@dequanto/clients/handlers/RateLimitGuard';
+import { TExplorer, TExplorerDefinition } from 'dequanto/models/TExplorer';
+import { RateLimitGuard } from 'dequanto/clients/handlers/RateLimitGuard';
 
 
 /** @deprecated use TExplorerDefinition instead */

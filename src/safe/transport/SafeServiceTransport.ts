@@ -1,13 +1,13 @@
-import type { Web3Client } from '@dequanto/clients/Web3Client';
-import type { EoAccount } from '@dequanto/models/TAccount';
-import { TAddress } from '@dequanto/models/TAddress';
+import type { Web3Client } from 'dequanto/clients/Web3Client';
+import type { EoAccount } from 'dequanto/models/TAccount';
+import { TAddress } from 'dequanto/models/TAddress';
 
 import memd from 'memd';
 import { ISafeServiceTransport } from './ISafeServiceTransport';
-import { $http } from '@dequanto/utils/$http';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { config } from '@dequanto/config/Config';
-import { $require } from '@dequanto/utils/$require';
+import { $http } from 'dequanto/utils/$http';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { config } from 'dequanto/config/Config';
+import { $require } from 'dequanto/utils/$require';
 import { SafeServiceTypes } from '../types/SafeServiceTypes';
 
 // https://safe-transaction-mainnet.safe.global/?format=openapi

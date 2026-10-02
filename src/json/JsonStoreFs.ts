@@ -1,9 +1,9 @@
 import memd from 'memd';
-import { $require } from '@dequanto/utils/$require';
+import { $require } from 'dequanto/utils/$require';
 import { File, FileSafe } from 'atma-io';
 import { class_Dfr, type Constructor } from 'atma-utils';
 import { JsonConvert } from 'class-json';
-import { $ref } from '@dequanto/utils/$ref';
+import { $ref } from 'dequanto/utils/$ref';
 
 
 export class JsonStoreFs<T> {

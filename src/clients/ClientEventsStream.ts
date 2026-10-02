@@ -1,10 +1,10 @@
-import type { TAbiItem } from '@dequanto/types/TAbi';
-import { SubjectStream } from '@dequanto/class/SubjectStream';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { $contract } from '@dequanto/utils/$contract';
-import { TEth } from '@dequanto/models/TEth';
-import { RpcSubscription } from '@dequanto/rpc/RpcSubscription';
+import type { TAbiItem } from 'dequanto/types/TAbi';
+import { SubjectStream } from 'dequanto/class/SubjectStream';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
+import { $contract } from 'dequanto/utils/$contract';
+import { TEth } from 'dequanto/models/TEth';
+import { RpcSubscription } from 'dequanto/rpc/RpcSubscription';
 
 export interface TClientEventsStreamData<T extends any[] = any[]> {
     name: string

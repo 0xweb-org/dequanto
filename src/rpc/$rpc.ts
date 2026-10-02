@@ -1,7 +1,7 @@
 import type { Rpc } from './Rpc';
-import { $promise } from '@dequanto/utils/$promise';
-import { TEth } from '@dequanto/models/TEth';
-import { $require } from '@dequanto/utils/$require';
+import { $promise } from 'dequanto/utils/$promise';
+import { TEth } from 'dequanto/models/TEth';
+import { $require } from 'dequanto/utils/$require';
 import { TTransport } from './transports/ITransport';
 
 

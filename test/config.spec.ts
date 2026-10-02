@@ -1,4 +1,4 @@
-import { $config } from '@dequanto/utils/$config';
+import { $config } from 'dequanto/utils/$config';
 
 UTest({
     $after () {

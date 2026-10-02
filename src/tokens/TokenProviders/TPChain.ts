@@ -1,10 +1,10 @@
-import type { Web3Client } from '@dequanto/clients/Web3Client';
-import { IToken } from '@dequanto/models/IToken';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TPlatform } from '@dequanto/models/TPlatform';
+import type { Web3Client } from 'dequanto/clients/Web3Client';
+import { IToken } from 'dequanto/models/IToken';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TPlatform } from 'dequanto/models/TPlatform';
 import { ITokenProvider } from './ITokenProvider';
-import { ContractReader } from '@dequanto/contracts/ContractReader';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
+import { ContractReader } from 'dequanto/contracts/ContractReader';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 
 export class TPChain implements ITokenProvider {
 

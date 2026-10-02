@@ -1,10 +1,10 @@
-import type { IAccount, IAccountTx, TAccount } from "@dequanto/models/TAccount";
-import type { TAbiItem } from '@dequanto/types/TAbi';
-import { $contract } from '@dequanto/utils/$contract';
+import type { IAccount, IAccountTx, TAccount } from "dequanto/models/TAccount";
+import type { TAbiItem } from 'dequanto/types/TAbi';
+import { $contract } from 'dequanto/utils/$contract';
 import { ContractWriter } from '../ContractWriter';
-import { TEth } from '@dequanto/models/TEth';
-import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-import { $promise } from '@dequanto/utils/$promise';
+import { TEth } from 'dequanto/models/TEth';
+import { TxDataBuilder } from 'dequanto/txs/TxDataBuilder';
+import { $promise } from 'dequanto/utils/$promise';
 
 
 export namespace ContractBaseUtils {

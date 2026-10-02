@@ -1,7 +1,7 @@
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { IToken } from '@dequanto/models/IToken';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TPlatform } from '@dequanto/models/TPlatform';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { IToken } from 'dequanto/models/IToken';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TPlatform } from 'dequanto/models/TPlatform';
 import { ITokenProvider } from './ITokenProvider';
 
 export class TPExplorer implements ITokenProvider {

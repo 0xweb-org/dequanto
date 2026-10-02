@@ -10,11 +10,11 @@
  *  @_subsection api/abi/abi-coder:Fragments  [about-fragments]
  */
 
-import { $contract } from '@dequanto/utils/$contract';
-import { $bigint } from '@dequanto/utils/$bigint';
+import { $contract } from 'dequanto/utils/$contract';
+import { $bigint } from 'dequanto/utils/$bigint';
 
 
-import { $require } from '@dequanto/utils/$require';
+import { $require } from 'dequanto/utils/$require';
 
 
 /**

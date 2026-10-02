@@ -1,4 +1,4 @@
-import type { RpcTypes } from '@dequanto/rpc/Rpc'
+import type { RpcTypes } from 'dequanto/rpc/Rpc'
 import { TAddress } from './TAddress';
 import { TEth } from './TEth';
 import { TPlatform } from './TPlatform';

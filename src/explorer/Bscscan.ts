@@ -1,7 +1,7 @@
 import di from 'a-di';
 
-import { $config } from '@dequanto/utils/$config';
-import { BscWeb3Client } from '@dequanto/clients/BscWeb3Client';
+import { $config } from 'dequanto/utils/$config';
+import { BscWeb3Client } from 'dequanto/clients/BscWeb3Client';
 import { BlockchainExplorer } from './BlockchainExplorer';
 
 const contracts = $config.get('contracts.bsc', []);

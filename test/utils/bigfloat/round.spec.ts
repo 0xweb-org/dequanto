@@ -1,4 +1,4 @@
-import { $bigfloat, ROUNDING_MODE } from '@dequanto/utils/$bigfloat';
+import { $bigfloat, ROUNDING_MODE } from 'dequanto/utils/$bigfloat';
 
 // https://docs.oracle.com/javase/8/docs/api/java/math/RoundingMode.html
 

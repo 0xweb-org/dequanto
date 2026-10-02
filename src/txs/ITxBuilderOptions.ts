@@ -1,6 +1,6 @@
-import { EoAccount } from "@dequanto/models/TAccount";
-import { TAddress } from '@dequanto/models/TAddress';
-import { TAbiItem } from '@dequanto/types/TAbi';
+import { EoAccount } from "dequanto/models/TAccount";
+import { TAddress } from 'dequanto/models/TAddress';
+import { TAbiItem } from 'dequanto/types/TAbi';
 import { TxNonceManager } from './TxNonceManager';
 
 

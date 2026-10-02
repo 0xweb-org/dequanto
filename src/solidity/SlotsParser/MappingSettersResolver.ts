@@ -1,5 +1,5 @@
-import { $logger, l } from '@dequanto/utils/$logger';
-import { type TAbiItem } from '@dequanto/types/TAbi';
+import { $logger, l } from 'dequanto/utils/$logger';
+import { type TAbiItem } from 'dequanto/types/TAbi';
 import {
     AssemblyBlock,
     AssemblyCall,
@@ -27,8 +27,8 @@ import alot from 'alot';
 import { Ast } from './Ast';
 import { ISlotsParserOption, ISlotVarDefinition } from './models';
 import { SourceFile, TSourceFileContract } from './SourceFile';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { $is } from '@dequanto/utils/$is';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
+import { $is } from 'dequanto/utils/$is';
 
 
 

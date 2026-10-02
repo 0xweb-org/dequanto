@@ -1,5 +1,5 @@
-import { TAddress } from '@dequanto/models/TAddress';
-import { $address } from '@dequanto/utils/$address';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $address } from 'dequanto/utils/$address';
 
 UTest({
     'should check checksums'() {

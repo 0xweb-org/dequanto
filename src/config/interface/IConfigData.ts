@@ -1,10 +1,10 @@
-import { IContractDetails } from '@dequanto/models/IContractDetails';
-import { ITokenGlob } from '@dequanto/models/ITokenGlob';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { IRpcConfig } from '@dequanto/clients/ClientPool';
-import { TChain } from '@dequanto/models/TChain';
-import { TEth } from '@dequanto/models/TEth';
+import { IContractDetails } from 'dequanto/models/IContractDetails';
+import { ITokenGlob } from 'dequanto/models/ITokenGlob';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { IRpcConfig } from 'dequanto/clients/ClientPool';
+import { TChain } from 'dequanto/models/TChain';
+import { TEth } from 'dequanto/models/TEth';
 
 
 export interface IConfigData {

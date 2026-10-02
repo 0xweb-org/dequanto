@@ -1,7 +1,7 @@
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { SlotsParser } from '@dequanto/solidity/SlotsParser';
-import { l } from '@dequanto/utils/$logger';
-import { $require } from '@dequanto/utils/$require';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { SlotsParser } from 'dequanto/solidity/SlotsParser';
+import { l } from 'dequanto/utils/$logger';
+import { $require } from 'dequanto/utils/$require';
 
 UTest({
     async 'should extract slots from contract'() {

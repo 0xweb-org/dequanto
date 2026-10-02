@@ -1,23 +1,23 @@
 import alot from 'alot';
 import type { Deployments } from '../Deployments';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TEth } from '@dequanto/models/TEth';
-import { IAccount } from '@dequanto/models/TAccount';
-import { $contract } from '@dequanto/utils/$contract';
-import { Constructor } from '@dequanto/utils/types';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
-import { $require } from '@dequanto/utils/$require';
-import { $address } from '@dequanto/utils/$address';
-import { $logger, l } from '@dequanto/utils/$logger';
-import { ContractWriter } from '@dequanto/contracts/ContractWriter';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TEth } from 'dequanto/models/TEth';
+import { IAccount } from 'dequanto/models/TAccount';
+import { $contract } from 'dequanto/utils/$contract';
+import { Constructor } from 'dequanto/utils/types';
+import { ContractBase } from 'dequanto/contracts/ContractBase';
+import { $require } from 'dequanto/utils/$require';
+import { $address } from 'dequanto/utils/$address';
+import { $logger, l } from 'dequanto/utils/$logger';
+import { ContractWriter } from 'dequanto/contracts/ContractWriter';
 import { DeploymentsStorage } from '../storage/DeploymentsStorage';
 import { $proxyDeploy } from './$proxyDeploy';
 import { File } from 'atma-io';
-import { IContractWrapped } from '@dequanto/contracts/ContractClassFactory';
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { $hex } from '@dequanto/utils/$hex';
-import { SlotsStorage } from '@dequanto/solidity/SlotsStorage';
-import { SlotsParser } from '@dequanto/solidity/SlotsParser';
+import { IContractWrapped } from 'dequanto/contracts/ContractClassFactory';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { $hex } from 'dequanto/utils/$hex';
+import { SlotsStorage } from 'dequanto/solidity/SlotsStorage';
+import { SlotsParser } from 'dequanto/solidity/SlotsParser';
 
 export interface IProxy extends ContractBase {
     changeAdmin?

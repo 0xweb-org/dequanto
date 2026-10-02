@@ -1,5 +1,5 @@
 import di from 'a-di';
-import { type TAbiItem } from '@dequanto/types/TAbi';
+import { type TAbiItem } from 'dequanto/types/TAbi';
 import { IAbiItemFormattable, ITxLogItemDescriptor } from './ITxLogItem';
 import { TxLogsTransfer } from './TxLogsTransfer';
 import { TxTopicInMemoryProvider } from './TxTopicInMemoryProvider';

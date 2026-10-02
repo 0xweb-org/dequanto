@@ -1,4 +1,4 @@
-import { $base } from '@dequanto/utils/$base';
+import { $base } from 'dequanto/utils/$base';
 
 UTest({
     'test the base58 encode from hex string'() {

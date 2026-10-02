@@ -1,21 +1,21 @@
 import alot from 'alot';
 import { keccak_256 } from '@noble/hashes/sha3';
 
-import type { TAbiItem } from '@dequanto/types/TAbi';
+import type { TAbiItem } from 'dequanto/types/TAbi';
 
-import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
-import { TBufferLike } from '@dequanto/models/TBufferLike';
+import { ITxLogItem } from 'dequanto/txs/receipt/ITxLogItem';
+import { TBufferLike } from 'dequanto/models/TBufferLike';
 
 import { $abiUtils } from './$abiUtils';
 import { $abiParser } from './$abiParser';
 import { $require } from './$require';
 import { $buffer } from './$buffer';
-import { TEth } from '@dequanto/models/TEth';
-import { $abiCoder } from '@dequanto/abi/$abiCoder';
+import { TEth } from 'dequanto/models/TEth';
+import { $abiCoder } from 'dequanto/abi/$abiCoder';
 import { $logger } from './$logger';
 
-import { EvmBytecode } from '@dequanto/evm/EvmBytecode';
-import { $bytecode } from '@dequanto/evm/utils/$bytecode';
+import { EvmBytecode } from 'dequanto/evm/EvmBytecode';
+import { $bytecode } from 'dequanto/evm/utils/$bytecode';
 import { $hex } from './$hex';
 import { $is } from './$is';
 

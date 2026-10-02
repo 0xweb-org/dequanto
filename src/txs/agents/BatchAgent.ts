@@ -1,23 +1,23 @@
 import alot from 'alot';
-import type { Deployments } from '@dequanto/contracts/deploy/Deployments';
-import { EoAccount } from '@dequanto/models/TAccount';
+import type { Deployments } from 'dequanto/contracts/deploy/Deployments';
+import { EoAccount } from 'dequanto/models/TAccount';
 import { ITxWriterAgent } from './TxWriterAccountAgents';
 import { ITxWriterEmitter, ITxWriterEvents, ITxWriterTransaction, TxWriter } from '../TxWriter';
 
-import { ChainAccountService } from '@dequanto/ChainAccountService';
+import { ChainAccountService } from 'dequanto/ChainAccountService';
 import { class_Dfr, class_EventEmitter } from 'atma-utils';
-import { TEth } from '@dequanto/models/TEth';
-import { $date } from '@dequanto/utils/$date';
+import { TEth } from 'dequanto/models/TEth';
+import { $date } from 'dequanto/utils/$date';
 
-import { $address } from '@dequanto/utils/$address';
-import { $logger } from '@dequanto/utils/$logger';
-import { SafeTx } from '@dequanto/safe/SafeTx';
-import { TimelockController } from '@dequanto/prebuilt/openzeppelin/TimelockController';
-import { TimelockService } from '@dequanto/services/TimelockService/TimelockService';
+import { $address } from 'dequanto/utils/$address';
+import { $logger } from 'dequanto/utils/$logger';
+import { SafeTx } from 'dequanto/safe/SafeTx';
+import { TimelockController } from 'dequanto/prebuilt/openzeppelin/TimelockController';
+import { TimelockService } from 'dequanto/services/TimelockService/TimelockService';
 import { TxDataBuilder } from '../TxDataBuilder';
-import { $contract } from '@dequanto/utils/$contract';
-import { $require } from '@dequanto/utils/$require';
-import { $account } from '@dequanto/utils/$account';
+import { $contract } from 'dequanto/utils/$contract';
+import { $require } from 'dequanto/utils/$require';
+import { $account } from 'dequanto/utils/$account';
 
 
 export class BatchAgent implements ITxWriterAgent {

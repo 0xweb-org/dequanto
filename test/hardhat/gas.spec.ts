@@ -1,6 +1,6 @@
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { TxNonceManager } from '@dequanto/txs/TxNonceManager';
-import { $sig } from '@dequanto/utils/$sig';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { TxNonceManager } from 'dequanto/txs/TxNonceManager';
+import { $sig } from 'dequanto/utils/$sig';
 
 const provider = new HardhatProvider();
 const client = provider.client();

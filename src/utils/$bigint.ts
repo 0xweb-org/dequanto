@@ -1,7 +1,7 @@
-import { TEth } from '@dequanto/models/TEth';
+import { TEth } from 'dequanto/models/TEth';
 import { $buffer } from './$buffer';
 import { $require } from './$require';
-import { $is } from '@dequanto/utils/$is';
+import { $is } from 'dequanto/utils/$is';
 
 export namespace $bigint {
 

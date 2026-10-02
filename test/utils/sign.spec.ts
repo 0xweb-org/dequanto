@@ -1,13 +1,13 @@
 import { TestNode } from '../hardhat/TestNode';
-import { $address } from '@dequanto/utils/$address';
-import { $sig } from '@dequanto/utils/$sig';
-import { $rpc } from '@dequanto/rpc/$rpc';
+import { $address } from 'dequanto/utils/$address';
+import { $sig } from 'dequanto/utils/$sig';
+import { $rpc } from 'dequanto/rpc/$rpc';
 import { Fixtures } from '../Fixtures';
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-import { TEth } from '@dequanto/models/TEth';
-import { $crypto } from '@dequanto/utils/$crypto';
-import { $config } from '@dequanto/utils/$config';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { TxDataBuilder } from 'dequanto/txs/TxDataBuilder';
+import { TEth } from 'dequanto/models/TEth';
+import { $crypto } from 'dequanto/utils/$crypto';
+import { $config } from 'dequanto/utils/$config';
 
 
 const account = {

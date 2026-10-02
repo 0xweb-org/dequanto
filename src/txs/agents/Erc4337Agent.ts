@@ -1,9 +1,9 @@
 import type { TxWriter } from '../TxWriter';
 
-import { EoAccount, Erc4337Account, TAccount } from '@dequanto/models/TAccount';
+import { EoAccount, Erc4337Account, TAccount } from 'dequanto/models/TAccount';
 import { ITxWriterAccountAgent } from './TxWriterAccountAgents';
-import { $account } from '@dequanto/utils/$account';
-import { Erc4337Factory } from '@dequanto/erc4337/Erc4337Factory';
+import { $account } from 'dequanto/utils/$account';
+import { Erc4337Factory } from 'dequanto/erc4337/Erc4337Factory';
 
 export class Erc4337Agent implements ITxWriterAccountAgent {
     supports (account: TAccount) {

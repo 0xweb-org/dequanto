@@ -1,5 +1,5 @@
-import { $bigint } from '@dequanto/utils/$bigint';
-import { $logger } from '@dequanto/utils/$logger';
+import { $bigint } from 'dequanto/utils/$bigint';
+import { $logger } from 'dequanto/utils/$logger';
 import { TTxWriterJson, TxWriter } from '../TxWriter';
 import { GasWatcherLogger } from './GasWatcherLogger';
 

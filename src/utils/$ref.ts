@@ -1,4 +1,4 @@
-import { IEIP6963Provider } from '@dequanto/rpc/transports/compatibility/IEIP6963Provider';
+import { IEIP6963Provider } from 'dequanto/rpc/transports/compatibility/IEIP6963Provider';
 import { class_EventEmitter } from 'atma-utils';
 
 

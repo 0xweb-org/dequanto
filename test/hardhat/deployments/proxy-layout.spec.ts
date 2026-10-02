@@ -1,6 +1,6 @@
-import { $proxyDeploy } from '@dequanto/contracts/deploy/proxy/$proxyDeploy';
+import { $proxyDeploy } from 'dequanto/contracts/deploy/proxy/$proxyDeploy';
 
-import { SlotsParser } from '@dequanto/solidity/SlotsParser';
+import { SlotsParser } from 'dequanto/solidity/SlotsParser';
 import alot from 'alot';
 
 

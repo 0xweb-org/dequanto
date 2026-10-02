@@ -1,4 +1,4 @@
-import { $bigint } from '@dequanto/utils/$bigint'
+import { $bigint } from 'dequanto/utils/$bigint'
 
 
 UTest({

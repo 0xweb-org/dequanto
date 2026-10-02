@@ -1,6 +1,6 @@
-import { Config } from '@dequanto/config/Config';
-import { ContractCreationResolver } from '@dequanto/contracts/ContractCreationResolver';
-import { $promise } from '@dequanto/utils/$promise';
+import { Config } from 'dequanto/config/Config';
+import { ContractCreationResolver } from 'dequanto/contracts/ContractCreationResolver';
+import { $promise } from 'dequanto/utils/$promise';
 
 UTest({
     async $before () {

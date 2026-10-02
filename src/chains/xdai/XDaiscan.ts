@@ -1,8 +1,8 @@
 import di from 'a-di';
 
-import { $config } from '@dequanto/utils/$config';
+import { $config } from 'dequanto/utils/$config';
 import { XDaiWeb3Client } from './XDaiWeb3Client';
-import { BlockchainExplorer } from '@dequanto/explorer/BlockchainExplorer';
+import { BlockchainExplorer } from 'dequanto/explorer/BlockchainExplorer';
 
 const contracts = $config.get('contracts.xdai', []);
 

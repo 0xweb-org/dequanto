@@ -1,14 +1,14 @@
 import alot from 'alot';
 import memd from 'memd';
-import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { $logger, l } from '@dequanto/utils/$logger';
-import { $perf } from '@dequanto/utils/$perf';
-import { $require } from '@dequanto/utils/$require';
+import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { $logger, l } from 'dequanto/utils/$logger';
+import { $perf } from 'dequanto/utils/$perf';
+import { $require } from 'dequanto/utils/$require';
 import { class_Dfr } from 'atma-utils';
 import { SlotsParser } from './SlotsParser';
 import { ISlotVarDefinition, ISlotsParserOption } from './SlotsParser/models';
@@ -16,9 +16,9 @@ import { SlotsStorage } from './SlotsStorage';
 import { SourceCodeProvider } from './SourceCodeProvider';
 import { MappingKeysLoader } from './storage/MappingKeysLoader';
 import { SlotsStorageTransport } from './storage/SlotsStorageTransport';
-import { $hex } from '@dequanto/utils/$hex';
-import { TEth } from '@dequanto/models/TEth';
-import { RpcTypes } from '@dequanto/rpc/Rpc';
+import { $hex } from 'dequanto/utils/$hex';
+import { TEth } from 'dequanto/models/TEth';
+import { RpcTypes } from 'dequanto/rpc/Rpc';
 
 export class SlotsDump {
     private address: TAddress

@@ -1,4 +1,4 @@
-import { TAddress } from '@dequanto/models/TAddress'
+import { TAddress } from 'dequanto/models/TAddress'
 
 export interface IErc4337Info {
     addresses: {

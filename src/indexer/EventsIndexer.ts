@@ -1,21 +1,21 @@
 import alot from 'alot';
 import memd from 'memd';
-import { ContractBase, TEventLogOptions } from '@dequanto/contracts/ContractBase';
-import { ContractCreationResolver } from '@dequanto/contracts/ContractCreationResolver';
-import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
-import { ITxLogItem } from '@dequanto/txs/receipt/ITxLogItem';
-import { $date } from '@dequanto/utils/$date';
-import { $require } from '@dequanto/utils/$require';
-import { TAddress } from '@dequanto/models/TAddress';
+import { ContractBase, TEventLogOptions } from 'dequanto/contracts/ContractBase';
+import { ContractCreationResolver } from 'dequanto/contracts/ContractCreationResolver';
+import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
+import { ITxLogItem } from 'dequanto/txs/receipt/ITxLogItem';
+import { $date } from 'dequanto/utils/$date';
+import { $require } from 'dequanto/utils/$require';
+import { TAddress } from 'dequanto/models/TAddress';
 import { IEventsIndexerMetaStore, IEventsIndexerStore, TEventsIndexerItem, TEventsIndexerMeta } from './storage/interfaces';
 import { FsEventsIndexerStore } from './storage/FsEventsIndexerStore';
 import { FsEventsMetaStore } from './storage/FsEventsMetaStore';
 import { class_Dfr } from 'atma-utils';
-import { TLogsRangeProgress } from '@dequanto/clients/Web3Client';
-import { WClient } from '@dequanto/clients/ClientPool';
-import { TEth } from '@dequanto/models/TEth';
-import { l } from '@dequanto/utils/$logger';
-import { PackedRanges } from '@dequanto/class/PackedRanges';
+import { TLogsRangeProgress } from 'dequanto/clients/Web3Client';
+import { WClient } from 'dequanto/clients/ClientPool';
+import { TEth } from 'dequanto/models/TEth';
+import { l } from 'dequanto/utils/$logger';
+import { PackedRanges } from 'dequanto/class/PackedRanges';
 
 
 export class EventsIndexer <TContract extends ContractBase> {

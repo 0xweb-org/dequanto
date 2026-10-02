@@ -16,8 +16,8 @@ import type {
     StructDefinition,
     TypeDefinition
 } from '@solidity-parser/parser/dist/src/ast-types';
-import { $semver } from '@dequanto/utils/$semver';
-import { $path } from '@dequanto/utils/$path';
+import { $semver } from 'dequanto/utils/$semver';
+import { $path } from 'dequanto/utils/$path';
 
 
 export class TSourceFileContract {

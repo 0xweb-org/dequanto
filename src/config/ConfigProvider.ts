@@ -5,8 +5,8 @@ import { IConfigProvider, TConfigParamsNode } from './AConfigBase';
 import { IConfigData } from './interface/IConfigData';
 import { $cli } from '../utils/$cli';
 import { $secret } from '../utils/$secret';
-import { $require } from '@dequanto/utils/$require';
-import { is_BROWSER } from '@dequanto/utils/$const';
+import { $require } from 'dequanto/utils/$require';
+import { is_BROWSER } from 'dequanto/utils/$const';
 import { ConfigDefaults } from './ConfigDefaults';
 
 const DEFAULT_PATHS = {

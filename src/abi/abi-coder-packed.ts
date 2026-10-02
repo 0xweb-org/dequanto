@@ -1,7 +1,7 @@
-import { $hex } from '@dequanto/utils/$hex';
-import { $bigint } from '@dequanto/utils/$bigint';
-import { $buffer } from '@dequanto/utils/$buffer';
-import { $require } from '@dequanto/utils/$require';
+import { $hex } from 'dequanto/utils/$hex';
+import { $bigint } from 'dequanto/utils/$bigint';
+import { $buffer } from 'dequanto/utils/$buffer';
+import { $require } from 'dequanto/utils/$require';
 
 
 const regexBytes = /^bytes([0-9]+)$/;

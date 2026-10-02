@@ -1,6 +1,6 @@
 import di from 'a-di';
-import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
-import type { Web3Client } from '@dequanto/clients/Web3Client';
+import { BlockDateResolver } from 'dequanto/blocks/BlockDateResolver';
+import type { Web3Client } from 'dequanto/clients/Web3Client';
 
 export namespace $block {
     export function getDate(block: { timestamp: string | number }) {

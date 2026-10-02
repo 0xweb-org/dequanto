@@ -1,5 +1,5 @@
-import { AbiDeserializer } from '@dequanto/contracts/utils/AbiDeserializer';
-import { $abiParser } from '@dequanto/utils/$abiParser';
+import { AbiDeserializer } from 'dequanto/contracts/utils/AbiDeserializer';
+import { $abiParser } from 'dequanto/utils/$abiParser';
 import { IAccessorItem } from '../Accessor';
 import { ASlotsStorageHandler } from '../SlotsStorageHandler';
 

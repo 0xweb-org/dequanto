@@ -1,15 +1,15 @@
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { EoAccount, SafeAccount } from '@dequanto/models/TAccount';
-import { TEth } from '@dequanto/models/TEth';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { EoAccount, SafeAccount } from 'dequanto/models/TAccount';
+import { TEth } from 'dequanto/models/TEth';
 import { GnosisSafeHandler } from './GnosisSafeHandler';
-import { $require } from '@dequanto/utils/$require';
-import { TxWriter } from '@dequanto/txs/TxWriter';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-import { config } from '@dequanto/config/Config';
-import { MultiSend } from '@dequanto/prebuilt/safe/MultiSend';
+import { $require } from 'dequanto/utils/$require';
+import { TxWriter } from 'dequanto/txs/TxWriter';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
+import { TxDataBuilder } from 'dequanto/txs/TxDataBuilder';
+import { config } from 'dequanto/config/Config';
+import { MultiSend } from 'dequanto/prebuilt/safe/MultiSend';
 import { ISafeServiceTransport } from './transport/ISafeServiceTransport';
-import { $hex } from '@dequanto/utils/$hex';
+import { $hex } from 'dequanto/utils/$hex';
 
 export class SafeTx {
     constructor(

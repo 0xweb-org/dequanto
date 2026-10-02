@@ -1,17 +1,17 @@
 import di from 'a-di';
-import type { TAbiItem } from '@dequanto/types/TAbi';
-import { EthWeb3Client } from '@dequanto/clients/EthWeb3Client';
-import { TxWriter, ITxWriterOptions } from '@dequanto/txs/TxWriter';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-import { TAddress } from '@dequanto/models/TAddress';
+import type { TAbiItem } from 'dequanto/types/TAbi';
+import { EthWeb3Client } from 'dequanto/clients/EthWeb3Client';
+import { TxWriter, ITxWriterOptions } from 'dequanto/txs/TxWriter';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { TxDataBuilder } from 'dequanto/txs/TxDataBuilder';
+import { TAddress } from 'dequanto/models/TAddress';
 import { $abiParser } from '../utils/$abiParser';
-import { EoAccount, IAccount, IAccountTx } from "@dequanto/models/TAccount";
-import { ITxBuilderOptions } from '@dequanto/txs/ITxBuilderOptions';
-import { $logger } from '@dequanto/utils/$logger';
-import { $class } from '@dequanto/utils/$class';
-import { $account } from '@dequanto/utils/$account';
-import { $require } from '@dequanto/utils/$require';
+import { EoAccount, IAccount, IAccountTx } from "dequanto/models/TAccount";
+import { ITxBuilderOptions } from 'dequanto/txs/ITxBuilderOptions';
+import { $logger } from 'dequanto/utils/$logger';
+import { $class } from 'dequanto/utils/$class';
+import { $account } from 'dequanto/utils/$account';
+import { $require } from 'dequanto/utils/$require';
 
 interface IChainAccountSender extends EoAccount {
     value?: number | string | bigint

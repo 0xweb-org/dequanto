@@ -1,5 +1,5 @@
-import { TAddress } from '@dequanto/models/TAddress';
-import { $logger } from '@dequanto/utils/$logger';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $logger } from 'dequanto/utils/$logger';
 import { ClientStatus } from './model/ClientStatus';
 
 

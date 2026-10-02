@@ -1,13 +1,13 @@
 import { class_Uri } from 'atma-utils';
-import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
-import { $config } from '@dequanto/utils/$config';
+import { JsonArrayStore } from 'dequanto/json/JsonArrayStore';
+import { $config } from 'dequanto/utils/$config';
 
-import { ITokenGlob } from '@dequanto/models/ITokenGlob';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TPlatform } from '@dequanto/models/TPlatform';
+import { ITokenGlob } from 'dequanto/models/ITokenGlob';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TPlatform } from 'dequanto/models/TPlatform';
 import { ATokenProvider } from './ATokenProvider';
 import { ITokenProvider } from './ITokenProvider';
-import { $http } from '@dequanto/utils/$http';
+import { $http } from 'dequanto/utils/$http';
 import alot from 'alot';
 
 

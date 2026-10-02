@@ -1,5 +1,5 @@
-import { TokensService } from '@dequanto/tokens/TokensService';
-import { TokensServiceFactory } from '@dequanto/tokens/TokensServiceFactory';
+import { TokensService } from 'dequanto/tokens/TokensService';
+import { TokensServiceFactory } from 'dequanto/tokens/TokensServiceFactory';
 
 UTest({
     async 'should load token data' () {

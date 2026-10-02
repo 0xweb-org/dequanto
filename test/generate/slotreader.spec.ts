@@ -1,8 +1,8 @@
 import { File } from 'atma-io';
-import { $date } from '@dequanto/utils/$date';
-import { GeneratorStorageReader } from '@dequanto/gen/GeneratorStorageReader';
-import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client';
-import { ContractStorageReaderBase } from '@dequanto/contracts/ContractStorageReaderBase';
+import { $date } from 'dequanto/utils/$date';
+import { GeneratorStorageReader } from 'dequanto/gen/GeneratorStorageReader';
+import { PolyWeb3Client } from 'dequanto/clients/PolyWeb3Client';
+import { ContractStorageReaderBase } from 'dequanto/contracts/ContractStorageReaderBase';
 
 declare let include;
 

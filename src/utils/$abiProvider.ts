@@ -1,7 +1,7 @@
-import { TEth } from '@dequanto/models/TEth';
+import { TEth } from 'dequanto/models/TEth';
 import { $contract } from './$contract';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
 import { l } from './$logger';
 
 export namespace $abiProvider {

@@ -1,4 +1,4 @@
-import { $dependency } from '@dequanto/utils/$dependency';
+import { $dependency } from 'dequanto/utils/$dependency';
 
 declare var MozWebSocket;
 declare var window;

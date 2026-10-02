@@ -1,7 +1,7 @@
 import type { Reader, Writer } from "./abstract-coder";
 
 import { Coder } from "./abstract-coder";
-import { $buffer } from '@dequanto/utils/$buffer';
+import { $buffer } from 'dequanto/utils/$buffer';
 
 /**
  *  @_ignore

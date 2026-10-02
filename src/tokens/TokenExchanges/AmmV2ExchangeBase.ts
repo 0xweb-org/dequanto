@@ -1,20 +1,20 @@
 import di from 'a-di';
 import memd from 'memd';
 import alot from 'alot';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { ContractReader } from '@dequanto/contracts/ContractReader';
-import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
-import { IToken } from '@dequanto/models/IToken';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $bigint } from '@dequanto/utils/$bigint';
-import { $address } from '@dequanto/utils/$address';
-import { $require } from '@dequanto/utils/$require';
-import { $cache } from '@dequanto/utils/$cache';
-import { AmmFactoryV2Contract } from '@dequanto/prebuilt/amm/AmmFactoryV2Contract/AmmFactoryV2Contract';
-import { AmmMasterChefV2Contract } from '@dequanto/prebuilt/amm/AmmMasterChefV2Contract/AmmMasterChefV2Contract';
-import { AmmVaultV2Contract } from '@dequanto/prebuilt/amm/AmmVaultV2Contract/AmmVaultV2Contract';
-import { AmmPairV2Contract } from '@dequanto/prebuilt/amm/AmmPairV2Contract/AmmPairV2Contract';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { ContractReader } from 'dequanto/contracts/ContractReader';
+import { JsonArrayStore } from 'dequanto/json/JsonArrayStore';
+import { IToken } from 'dequanto/models/IToken';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $bigint } from 'dequanto/utils/$bigint';
+import { $address } from 'dequanto/utils/$address';
+import { $require } from 'dequanto/utils/$require';
+import { $cache } from 'dequanto/utils/$cache';
+import { AmmFactoryV2Contract } from 'dequanto/prebuilt/amm/AmmFactoryV2Contract/AmmFactoryV2Contract';
+import { AmmMasterChefV2Contract } from 'dequanto/prebuilt/amm/AmmMasterChefV2Contract/AmmMasterChefV2Contract';
+import { AmmVaultV2Contract } from 'dequanto/prebuilt/amm/AmmVaultV2Contract/AmmVaultV2Contract';
+import { AmmPairV2Contract } from 'dequanto/prebuilt/amm/AmmPairV2Contract/AmmPairV2Contract';
 import { TokensService } from '../TokensService';
 
 

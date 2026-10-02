@@ -1,4 +1,4 @@
-import { $bigfloat } from '@dequanto/utils/$bigfloat';
+import { $bigfloat } from 'dequanto/utils/$bigfloat';
 
 UTest({
     'multipliedBy' () {

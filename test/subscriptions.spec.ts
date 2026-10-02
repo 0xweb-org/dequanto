@@ -1,8 +1,8 @@
-import { Generator } from '@dequanto/gen/Generator';
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-import { l } from '@dequanto/utils/$logger';
-import { $promise } from '@dequanto/utils/$promise';
+import { Generator } from 'dequanto/gen/Generator';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { TxDataBuilder } from 'dequanto/txs/TxDataBuilder';
+import { l } from 'dequanto/utils/$logger';
+import { $promise } from 'dequanto/utils/$promise';
 import { ConstructorFragment } from 'ethers/lib/utils';
 import { TestNode } from './hardhat/TestNode';
 

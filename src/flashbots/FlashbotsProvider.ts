@@ -1,17 +1,17 @@
-import { Config } from '@dequanto/config/Config';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { EoAccount, IAccount } from '@dequanto/models/TAccount';
-import { TEth } from '@dequanto/models/TEth';
-import { Rpc, RpcTypes } from '@dequanto/rpc/Rpc';
-import { $contract } from '@dequanto/utils/$contract';
-import { $hex } from '@dequanto/utils/$hex';
-import { $require } from '@dequanto/utils/$require';
-import { $sig } from '@dequanto/utils/$sig';
-import { DeepPartial } from '@dequanto/utils/types';
+import { Config } from 'dequanto/config/Config';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { EoAccount, IAccount } from 'dequanto/models/TAccount';
+import { TEth } from 'dequanto/models/TEth';
+import { Rpc, RpcTypes } from 'dequanto/rpc/Rpc';
+import { $contract } from 'dequanto/utils/$contract';
+import { $hex } from 'dequanto/utils/$hex';
+import { $require } from 'dequanto/utils/$require';
+import { $sig } from 'dequanto/utils/$sig';
+import { DeepPartial } from 'dequanto/utils/types';
 
-import { $buffer } from '@dequanto/utils/$buffer';
-import { $crypto } from '@dequanto/utils/$crypto';
-import { IConfigData } from '@dequanto/config/interface/IConfigData';
+import { $buffer } from 'dequanto/utils/$buffer';
+import { $crypto } from 'dequanto/utils/$crypto';
+import { IConfigData } from 'dequanto/config/interface/IConfigData';
 
 /**
  * Submits transaction to Flashbots network

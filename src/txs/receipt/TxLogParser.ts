@@ -1,10 +1,10 @@
 import alot from 'alot';
-import type { TAbiItem } from '@dequanto/types/TAbi';
-import { $contract } from '@dequanto/utils/$contract';
+import type { TAbiItem } from 'dequanto/types/TAbi';
+import { $contract } from 'dequanto/utils/$contract';
 import { TxTopicProvider } from './TxTopicProvider';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { TEth } from '@dequanto/models/TEth';
-import { $require } from '@dequanto/utils/$require';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { TEth } from 'dequanto/models/TEth';
+import { $require } from 'dequanto/utils/$require';
 import { ITxLogItem } from './ITxLogItem';
 
 export class TxLogParser {

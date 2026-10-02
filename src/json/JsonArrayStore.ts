@@ -2,7 +2,7 @@ import alot from 'alot'
 import { JsonConvert } from 'class-json'
 import { Alot } from 'alot/alot'
 import { JsonStoreFs } from './JsonStoreFs'
-import { Constructor } from '@dequanto/utils/types'
+import { Constructor } from 'dequanto/utils/types'
 
 export interface IArrayStoreOptions<T, TStorage = T> {
     path: string

@@ -1,15 +1,15 @@
-import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
+import { JsonArrayStore } from 'dequanto/json/JsonArrayStore';
 import { ITokenProvider } from './ITokenProvider';
 import { ATokenProvider } from './ATokenProvider';
-import { ITokenGlob } from '@dequanto/models/ITokenGlob';
-import { $path } from '@dequanto/utils/$path';
-import { $http } from '@dequanto/utils/$http';
+import { ITokenGlob } from 'dequanto/models/ITokenGlob';
+import { $path } from 'dequanto/utils/$path';
+import { $http } from 'dequanto/utils/$http';
 import { TokenUtils } from '../utils/TokenUtils';
-import { Config } from '@dequanto/config/Config';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
+import { Config } from 'dequanto/config/Config';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import alot from 'alot';
-import { TAddress } from '@dequanto/models/TAddress';
-import { IToken } from '@dequanto/models/IToken';
+import { TAddress } from 'dequanto/models/TAddress';
+import { IToken } from 'dequanto/models/IToken';
 
 export class TPUniswap extends ATokenProvider implements ITokenProvider  {
     store = new JsonArrayStore<ITokenGlob> ({

@@ -1,9 +1,9 @@
-import { $config } from '@dequanto/utils/$config';
+import { $config } from 'dequanto/utils/$config';
 import { Web3Client } from './Web3Client';
-import { TPlatform } from '@dequanto/models/TPlatform';
+import { TPlatform } from 'dequanto/models/TPlatform';
 import { ClientEndpoints } from './utils/ClientEndpoints';
 import { IWeb3EndpointOptions } from './interfaces/IWeb3EndpointOptions';
-import { $bigint } from '@dequanto/utils/$bigint';
+import { $bigint } from 'dequanto/utils/$bigint';
 
 export class PolyWeb3Client extends Web3Client {
 

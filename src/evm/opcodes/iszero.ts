@@ -3,7 +3,7 @@ import Opcode from '../interfaces/IOpcode';
 import { LT } from './lt';
 import { GT } from './gt';
 import stringify from '../utils/stringify';
-import { $is } from '@dequanto/utils/$is';
+import { $is } from 'dequanto/utils/$is';
 
 export class ISZERO {
     readonly name: string;

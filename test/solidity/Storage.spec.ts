@@ -1,9 +1,9 @@
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { SlotsParser } from '@dequanto/solidity/SlotsParser';
-import { SlotsStorage } from '@dequanto/solidity/SlotsStorage';
-import { $address } from '@dequanto/utils/$address';
-import { $contract } from '@dequanto/utils/$contract';
-import { l } from '@dequanto/utils/$logger';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { SlotsParser } from 'dequanto/solidity/SlotsParser';
+import { SlotsStorage } from 'dequanto/solidity/SlotsStorage';
+import { $address } from 'dequanto/utils/$address';
+import { $contract } from 'dequanto/utils/$contract';
+import { l } from 'dequanto/utils/$logger';
 
 UTest({
     async 'should read and write simple value types'() {

@@ -1,5 +1,5 @@
-import type { IWeb3EndpointOptions } from '@dequanto/clients/interfaces/IWeb3EndpointOptions';
-import type { TEth } from '@dequanto/models/TEth';
+import type { IWeb3EndpointOptions } from 'dequanto/clients/interfaces/IWeb3EndpointOptions';
+import type { TEth } from 'dequanto/models/TEth';
 import type { ClientOptions } from 'ws'
 import { IEip1193Provider } from './compatibility/EIP1193Transport';
 

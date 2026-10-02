@@ -1,19 +1,19 @@
 import di from 'a-di'
 import alot from 'alot'
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer'
-import { IContractDetails } from '@dequanto/models/IContractDetails'
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer'
+import { IContractDetails } from 'dequanto/models/IContractDetails'
 import { ContractProvider, IContractProvider } from './ContractProvider'
 import { IContractReader } from './ContractReader'
 
-import { ITransactionDetails } from '@dequanto/models/ITransactionDetails'
-import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder'
-import { TxWriter } from '@dequanto/txs/TxWriter'
-import { Web3Client } from '@dequanto/clients/Web3Client'
-import { EoAccount } from "@dequanto/models/TAccount"
-import { $is } from '@dequanto/utils/$is'
-import { $abiUtils } from '@dequanto/utils/$abiUtils'
-import { TAbiItem } from '@dequanto/types/TAbi'
-import { TEth } from '@dequanto/models/TEth'
+import { ITransactionDetails } from 'dequanto/models/ITransactionDetails'
+import { TxDataBuilder } from 'dequanto/txs/TxDataBuilder'
+import { TxWriter } from 'dequanto/txs/TxWriter'
+import { Web3Client } from 'dequanto/clients/Web3Client'
+import { EoAccount } from "dequanto/models/TAccount"
+import { $is } from 'dequanto/utils/$is'
+import { $abiUtils } from 'dequanto/utils/$abiUtils'
+import { TAbiItem } from 'dequanto/types/TAbi'
+import { TEth } from 'dequanto/models/TEth'
 
 export interface IContractInit {
     Ctor?:  new (...args) => any

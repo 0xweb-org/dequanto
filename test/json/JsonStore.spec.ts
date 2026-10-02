@@ -1,7 +1,7 @@
-import { JsonArrayStore } from '@dequanto/json/JsonArrayStore';
-import { JsonObjectStore } from '@dequanto/json/JsonObjectStore';
-import { l } from '@dequanto/utils/$logger';
-import { $promise } from '@dequanto/utils/$promise';
+import { JsonArrayStore } from 'dequanto/json/JsonArrayStore';
+import { JsonObjectStore } from 'dequanto/json/JsonObjectStore';
+import { l } from 'dequanto/utils/$logger';
+import { $promise } from 'dequanto/utils/$promise';
 import { File } from 'atma-io'
 
 

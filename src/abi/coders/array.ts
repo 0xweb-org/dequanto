@@ -2,7 +2,7 @@ import { Coder, Result, WordSize, Writer } from "./abstract-coder";
 import { AnonymousCoder } from "./anonymous";
 
 import type { Reader } from "./abstract-coder";
-import { $require } from '@dequanto/utils/$require';
+import { $require } from 'dequanto/utils/$require';
 
 
 export function pack(writer: Writer, coders: ReadonlyArray<Coder>, values: Array<any> | { [ name: string ]: any }): number {

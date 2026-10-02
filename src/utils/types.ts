@@ -1,6 +1,6 @@
-import { IAccount } from '@dequanto/models/TAccount';
-import { TEth } from '@dequanto/models/TEth';
-import { TxWriter } from '@dequanto/txs/TxWriter';
+import { IAccount } from 'dequanto/models/TAccount';
+import { TEth } from 'dequanto/models/TEth';
+import { TxWriter } from 'dequanto/txs/TxWriter';
 
 type NoneMethodKeys<T> = {
     [P in keyof T]: T[P] extends ((...args) => any) ? never : P;

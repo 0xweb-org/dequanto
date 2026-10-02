@@ -1,6 +1,6 @@
-import type { TAbiItem, TAbiInput, TAbiOutput } from '@dequanto/types/TAbi';
+import type { TAbiItem, TAbiInput, TAbiOutput } from 'dequanto/types/TAbi';
 import { $require } from './$require';
-import { $str } from '@dequanto/solidity/utils/$str';
+import { $str } from 'dequanto/solidity/utils/$str';
 
 interface IParameter {
     name?: string

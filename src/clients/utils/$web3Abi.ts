@@ -1,5 +1,5 @@
-import { $abiParser } from '@dequanto/utils/$abiParser';
-import type { TAbiItem } from '@dequanto/types/TAbi';
+import { $abiParser } from 'dequanto/utils/$abiParser';
+import type { TAbiItem } from 'dequanto/types/TAbi';
 
 export namespace $web3Abi {
 

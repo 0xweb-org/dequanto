@@ -1,4 +1,4 @@
-import { $abiUtils } from '@dequanto/utils/$abiUtils'
+import { $abiUtils } from 'dequanto/utils/$abiUtils'
 
 UTest({
     'should get the event topic hash'() {

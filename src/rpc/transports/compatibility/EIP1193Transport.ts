@@ -1,7 +1,7 @@
-import { $promise } from '@dequanto/utils/$promise';
+import { $promise } from 'dequanto/utils/$promise';
 import { TTransport } from '../ITransport';
-import { RpcSubscription } from '@dequanto/rpc/RpcSubscription';
-import { RpcError } from '@dequanto/rpc/RpcError';
+import { RpcSubscription } from 'dequanto/rpc/RpcSubscription';
+import { RpcError } from 'dequanto/rpc/RpcError';
 import alot from 'alot';
 
 export interface IEip1193Message {

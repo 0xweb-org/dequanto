@@ -1,20 +1,20 @@
 import alot from 'alot';
-import { type TAbiItem } from '@dequanto/types/TAbi';
-import { TAddress } from '@dequanto/models/TAddress';
+import { type TAbiItem } from 'dequanto/types/TAbi';
+import { TAddress } from 'dequanto/models/TAddress';
 import { env, File } from 'atma-io';
 import { class_Uri } from 'atma-utils';
-import { $abiType } from '@dequanto/utils/$abiType';
-import { $date } from '@dequanto/utils/$date';
-import { $path } from '@dequanto/utils/$path';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { $config } from '@dequanto/utils/$config';
-import { $logger } from '@dequanto/utils/$logger';
+import { $abiType } from 'dequanto/utils/$abiType';
+import { $date } from 'dequanto/utils/$date';
+import { $path } from 'dequanto/utils/$path';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { $config } from 'dequanto/utils/$config';
+import { $logger } from 'dequanto/utils/$logger';
 import { GeneratorStorageReader } from './GeneratorStorageReader';
-import { Web3Client } from '@dequanto/clients/Web3Client';
+import { Web3Client } from 'dequanto/clients/Web3Client';
 import { Str } from './utils/Str';
 import { $gen } from './utils/$gen';
-import { IConfigData } from '@dequanto/config/interface/IConfigData';
+import { IConfigData } from 'dequanto/config/interface/IConfigData';
 
 
 

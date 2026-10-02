@@ -1,7 +1,7 @@
-import { ContractBase, TContractTypes } from '@dequanto/contracts/ContractBase'
-import { $abiParser } from '@dequanto/utils/$abiParser';
-import { $address } from '@dequanto/utils/$address';
-import { l } from '@dequanto/utils/$logger';
+import { ContractBase, TContractTypes } from 'dequanto/contracts/ContractBase'
+import { $abiParser } from 'dequanto/utils/$abiParser';
+import { $address } from 'dequanto/utils/$address';
+import { l } from 'dequanto/utils/$logger';
 
 UTest({
     async 'should resolve overloads'() {

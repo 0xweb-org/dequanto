@@ -1,6 +1,6 @@
-import { IToken, ITokenBase } from '@dequanto/models/IToken';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TResultAsync } from '@dequanto/models/TResult';
+import { IToken, ITokenBase } from 'dequanto/models/IToken';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TResultAsync } from 'dequanto/models/TResult';
 import { ISwapRouted } from '../TokenExchanges/AmmBase/V2/AmmPairV2Service';
 
 export interface IOracle {

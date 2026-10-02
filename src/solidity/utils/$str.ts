@@ -1,7 +1,7 @@
-import { TEth } from '@dequanto/models/TEth';
-import { $buffer } from '@dequanto/utils/$buffer';
-import { $hex } from '@dequanto/utils/$hex';
-import { $require } from '@dequanto/utils/$require';
+import { TEth } from 'dequanto/models/TEth';
+import { $buffer } from 'dequanto/utils/$buffer';
+import { $hex } from 'dequanto/utils/$hex';
+import { $require } from 'dequanto/utils/$require';
 import alot from 'alot';
 
 export namespace $str {

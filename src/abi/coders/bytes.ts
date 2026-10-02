@@ -1,4 +1,4 @@
-import { $buffer } from '@dequanto/utils/$buffer';
+import { $buffer } from 'dequanto/utils/$buffer';
 import { Coder } from "./abstract-coder";
 import type { Reader, Writer } from "./abstract-coder";
 

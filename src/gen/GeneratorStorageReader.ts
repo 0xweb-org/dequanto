@@ -1,15 +1,15 @@
 import alot from 'alot'
-import { Web3Client } from '@dequanto/clients/Web3Client'
-import { TAddress } from '@dequanto/models/TAddress'
-import { TPlatform } from '@dequanto/models/TPlatform'
-import { SlotsParser } from '@dequanto/solidity/SlotsParser'
-import { $require } from '@dequanto/utils/$require'
+import { Web3Client } from 'dequanto/clients/Web3Client'
+import { TAddress } from 'dequanto/models/TAddress'
+import { TPlatform } from 'dequanto/models/TPlatform'
+import { SlotsParser } from 'dequanto/solidity/SlotsParser'
+import { $require } from 'dequanto/utils/$require'
 import { File } from 'atma-io'
 import { Str } from './utils/Str'
-import { $abiType } from '@dequanto/utils/$abiType'
-import { $path } from '@dequanto/utils/$path'
+import { $abiType } from 'dequanto/utils/$abiType'
+import { $path } from 'dequanto/utils/$path'
 import { $gen } from './utils/$gen'
-import { ISlotVarDefinition } from '@dequanto/solidity/SlotsParser/models'
+import { ISlotVarDefinition } from 'dequanto/solidity/SlotsParser/models'
 
 export class GeneratorStorageReader {
 

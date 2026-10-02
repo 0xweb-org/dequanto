@@ -1,4 +1,4 @@
-import { TPlatform } from '@dequanto/models/TPlatform';
+import { TPlatform } from 'dequanto/models/TPlatform';
 import { BlockchainExplorer } from './BlockchainExplorer';
 
 

@@ -1,6 +1,6 @@
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
-import { $date } from '@dequanto/utils/$date';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { BlockDateResolver } from 'dequanto/blocks/BlockDateResolver';
+import { $date } from 'dequanto/utils/$date';
 
 UTest({
     $config: {

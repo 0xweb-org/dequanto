@@ -1,11 +1,11 @@
 import { BlocksWalker } from './handlers/BlocksWalker';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { TPlatform } from '@dequanto/models/TPlatform';
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { TPlatform } from 'dequanto/models/TPlatform';
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import { TxQueueLoader } from './handlers/TxQueueLoader';
 import { BlocksTxIndexer } from './BlocksTxIndexer';
-import { $number } from '@dequanto/utils/$number';
-import { TEth } from '@dequanto/models/TEth';
+import { $number } from 'dequanto/utils/$number';
+import { TEth } from 'dequanto/models/TEth';
 
 
 export interface IPendingTxIndexerOptions {

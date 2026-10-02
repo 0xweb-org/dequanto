@@ -1,13 +1,13 @@
 import alot from 'alot';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { $require } from '@dequanto/utils/$require';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { $require } from 'dequanto/utils/$require';
 import { SlotValueHandler } from './storage/handlers/SlotValueHandler';
 import { SlotFixedArrayHandler } from './storage/handlers/SlotFixedArrayHandler';
 import { SlotDynamicArrayHandler } from './storage/handlers/SlotDynamicArrayHandler';
 import { SlotsStorageTransport, ISlotsStorageTransport, SlotsCursorTransport } from './storage/SlotsStorageTransport';
-import { TAddress } from '@dequanto/models/TAddress';
+import { TAddress } from 'dequanto/models/TAddress';
 import { ASlotsStorageHandler } from './storage/SlotsStorageHandler';
-import { Constructor } from '@dequanto/utils/types';
+import { Constructor } from 'dequanto/utils/types';
 import { is_Object } from 'atma-utils';
 import { SlotMappingHandler } from './storage/handlers/SlotMappingHandler';
 import { SlotStringHandler } from './storage/handlers/SlotStringHandler';
@@ -18,7 +18,7 @@ import { $types } from './utils/$types';
 import { SlotBytesHandler } from './storage/handlers/SlotBytesHandler';
 import { SlotValueConstantHandler } from './storage/handlers/SlotValueConstantHandler';
 import { SlotValueImmutableHandler } from './storage/handlers/SlotValueImmutableHandler';
-import { TEth } from '@dequanto/models/TEth';
+import { TEth } from 'dequanto/models/TEth';
 
 export class SlotsStorage {
 

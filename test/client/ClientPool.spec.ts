@@ -1,7 +1,7 @@
-import { WClient } from '@dequanto/clients/ClientPool';
-import { ClientStatus } from '@dequanto/clients/model/ClientStatus';
-import { TTransport } from '@dequanto/rpc/transports/ITransport';
-import { $date } from '@dequanto/utils/$date';
+import { WClient } from 'dequanto/clients/ClientPool';
+import { ClientStatus } from 'dequanto/clients/model/ClientStatus';
+import { TTransport } from 'dequanto/rpc/transports/ITransport';
+import { $date } from 'dequanto/utils/$date';
 
 UTest({
     'should track endpoint health and retry after the cooldown' () {

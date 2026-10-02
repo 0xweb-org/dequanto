@@ -1,6 +1,6 @@
-import { TPlatform } from '@dequanto/models/TPlatform';
+import { TPlatform } from 'dequanto/models/TPlatform';
 import { IRpcConfig } from '../ClientPool';
-import { TTransport } from '@dequanto/rpc/transports/ITransport';
+import { TTransport } from 'dequanto/rpc/transports/ITransport';
 
 export interface IWeb3Client {
     platform: string

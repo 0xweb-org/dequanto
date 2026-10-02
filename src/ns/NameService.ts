@@ -1,12 +1,12 @@
-import { $require } from '@dequanto/utils/$require';
+import { $require } from 'dequanto/utils/$require';
 import { INsProvider, INsProviderOptions } from './providers/INsProvider';
-import { Web3Client } from '@dequanto/clients/Web3Client';
+import { Web3Client } from 'dequanto/clients/Web3Client';
 import { EnsProvider } from './providers/EnsProvider';
 import { UDProvider } from './providers/UDProvider';
 import { SpaceIdProvider } from './providers/SpaceIdProvider';
 import alot from 'alot';
-import { TAddress } from '@dequanto/models/TAddress';
-import { $is } from '@dequanto/utils/$is';
+import { TAddress } from 'dequanto/models/TAddress';
+import { $is } from 'dequanto/utils/$is';
 
 export class NameService {
 

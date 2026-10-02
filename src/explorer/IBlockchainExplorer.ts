@@ -1,9 +1,9 @@
-import { IContractDetails } from '@dequanto/models/IContractDetails';
+import { IContractDetails } from 'dequanto/models/IContractDetails';
 import { IAbiProvider } from './IAbiProvider';
-import { TEth } from '@dequanto/models/TEth';
-import { TAddress } from '@dequanto/models/TAddress';
+import { TEth } from 'dequanto/models/TEth';
+import { TAddress } from 'dequanto/models/TAddress';
 import { IVerifier } from './verifiers/IVerifier';
-import { TExplorerDefinition } from '@dequanto/models/TExplorer';
+import { TExplorerDefinition } from 'dequanto/models/TExplorer';
 
 
 export interface IBlockchainExplorer extends IAbiProvider, IVerifier {

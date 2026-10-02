@@ -1,15 +1,15 @@
 import di from 'a-di';
-import { EoAccount } from "@dequanto/models/TAccount";
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IToken } from '@dequanto/models/IToken';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TxWriter } from '@dequanto/txs/TxWriter';
-import { $bigint } from '@dequanto/utils/$bigint';
+import { EoAccount } from "dequanto/models/TAccount";
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { IToken } from 'dequanto/models/IToken';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TxWriter } from 'dequanto/txs/TxWriter';
+import { $bigint } from 'dequanto/utils/$bigint';
 import { TokensServiceFactory } from './TokensServiceFactory';
-import { $require } from '@dequanto/utils/$require';
+import { $require } from 'dequanto/utils/$require';
 import { TokensService } from './TokensService';
-import { WETH } from '@dequanto/prebuilt/weth/WETH/WETH';
-import { BlockDateResolver } from '@dequanto/blocks/BlockDateResolver';
+import { WETH } from 'dequanto/prebuilt/weth/WETH/WETH';
+import { BlockDateResolver } from 'dequanto/blocks/BlockDateResolver';
 
 
 export class TokenService {

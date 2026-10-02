@@ -1,29 +1,29 @@
 import alot from 'alot';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { ContractBase } from '@dequanto/contracts/ContractBase';
-import { HardhatProvider } from '@dequanto/hardhat/HardhatProvider';
-import { IAccount } from '@dequanto/models/TAccount';
-import { TEth } from '@dequanto/models/TEth';
-import { $abiUtils } from '@dequanto/utils/$abiUtils';
-import { $contract } from '@dequanto/utils/$contract';
-import { $require } from '@dequanto/utils/$require';
-import { Constructor, ParametersFromSecond } from '@dequanto/utils/types';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { ContractBase } from 'dequanto/contracts/ContractBase';
+import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
+import { IAccount } from 'dequanto/models/TAccount';
+import { TEth } from 'dequanto/models/TEth';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
+import { $contract } from 'dequanto/utils/$contract';
+import { $require } from 'dequanto/utils/$require';
+import { Constructor, ParametersFromSecond } from 'dequanto/utils/types';
 
-import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
-import { ContractVerifier } from '@dequanto/explorer/ContractVerifier';
-import { HardhatWeb3Client } from '@dequanto/hardhat/HardhatWeb3Client';
-import { LoggerService } from '@dequanto/loggers/LoggerService';
-import { $is } from '@dequanto/utils/$is';
+import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
+import { ContractVerifier } from 'dequanto/explorer/ContractVerifier';
+import { HardhatWeb3Client } from 'dequanto/hardhat/HardhatWeb3Client';
+import { LoggerService } from 'dequanto/loggers/LoggerService';
+import { $is } from 'dequanto/utils/$is';
 
-import { $bytecode } from '@dequanto/evm/utils/$bytecode';
-import { TAddress } from '@dequanto/models/TAddress';
-import { l } from '@dequanto/utils/$logger';
-import { $promise } from '@dequanto/utils/$promise';
+import { $bytecode } from 'dequanto/evm/utils/$bytecode';
+import { TAddress } from 'dequanto/models/TAddress';
+import { l } from 'dequanto/utils/$logger';
+import { $promise } from 'dequanto/utils/$promise';
 import { IBeacon, IBeaconProxy, IProxy, IProxyAdmin, ProxyDeployment } from './proxy/ProxyDeployment';
 import { DeploymentsStorage, IDeployment } from './storage/DeploymentsStorage';
-import { $address } from '@dequanto/utils/$address';
-import { $date } from '@dequanto/utils/$date';
-import { TransparentUpgradeableProxy } from '@dequanto/prebuilt/openzeppelin/compiled/TransparentUpgradeableProxy/TransparentUpgradeableProxy';
+import { $address } from 'dequanto/utils/$address';
+import { $date } from 'dequanto/utils/$date';
+import { TransparentUpgradeableProxy } from 'dequanto/prebuilt/openzeppelin/compiled/TransparentUpgradeableProxy/TransparentUpgradeableProxy';
 import { Directory, File, env } from 'atma-io';
 
 

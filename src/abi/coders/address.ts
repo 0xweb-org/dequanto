@@ -4,9 +4,9 @@ import type { Reader, Writer } from "./abstract-coder";
 
 import { Coder } from "./abstract-coder";
 
-import { $hex } from '@dequanto/utils/$hex';
-import { $bigint } from '@dequanto/utils/$bigint';
-import { $address } from '@dequanto/utils/$address';
+import { $hex } from 'dequanto/utils/$hex';
+import { $bigint } from 'dequanto/utils/$bigint';
+import { $address } from 'dequanto/utils/$address';
 
 
 /**

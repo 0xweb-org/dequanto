@@ -1,13 +1,13 @@
 import di from 'a-di';
-import { EoAccount } from "@dequanto/models/TAccount";
-import { IToken } from '@dequanto/models/IToken';
-import { TokenTransferService } from '@dequanto/tokens/TokenTransferService';
-import { TxWriter } from '@dequanto/txs/TxWriter';
-import { $bigint } from '@dequanto/utils/$bigint';
-import { $logger } from '@dequanto/utils/$logger';
+import { EoAccount } from "dequanto/models/TAccount";
+import { IToken } from 'dequanto/models/IToken';
+import { TokenTransferService } from 'dequanto/tokens/TokenTransferService';
+import { TxWriter } from 'dequanto/txs/TxWriter';
+import { $bigint } from 'dequanto/utils/$bigint';
+import { $logger } from 'dequanto/utils/$logger';
 import { Everlog } from '@everlog/core';
-import { TEth } from '@dequanto/models/TEth';
-import { $account } from '@dequanto/utils/$account';
+import { TEth } from 'dequanto/models/TEth';
+import { $account } from 'dequanto/utils/$account';
 import { IChannel } from '@everlog/core/interfaces/IChannel';
 
 

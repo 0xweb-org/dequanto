@@ -1,9 +1,9 @@
-import { $logger } from '@dequanto/utils/$logger';
-import { $txData } from '@dequanto/utils/$txData';
+import { $logger } from 'dequanto/utils/$logger';
+import { $txData } from 'dequanto/utils/$txData';
 import { File } from 'atma-io'
 import { TxDataBuilder } from '../TxDataBuilder'
-import { $sig } from '@dequanto/utils/$sig';
-import { TEth } from '@dequanto/models/TEth';
+import { $sig } from 'dequanto/utils/$sig';
+import { TEth } from 'dequanto/models/TEth';
 export class SigFileTransport {
 
     async create (path: string, txBuilder: TxDataBuilder, params: { wait: boolean }): Promise<{ path: string, signed?: TEth.Hex }> {

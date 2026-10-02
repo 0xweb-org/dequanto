@@ -1,18 +1,18 @@
 import di from 'a-di';
-import { BlockchainExplorerFactory } from '@dequanto/explorer/BlockchainExplorerFactory';
-import { EoAccount } from "@dequanto/models/TAccount";
-import { Web3ClientFactory } from '@dequanto/clients/Web3ClientFactory';
-import { IToken } from '@dequanto/models/IToken';
-import { TAddress } from '@dequanto/models/TAddress';
-import { TPlatform } from '@dequanto/models/TPlatform';
+import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
+import { EoAccount } from "dequanto/models/TAccount";
+import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
+import { IToken } from 'dequanto/models/IToken';
+import { TAddress } from 'dequanto/models/TAddress';
+import { TPlatform } from 'dequanto/models/TPlatform';
 import { class_Uri } from 'atma-utils';
 import { TokensService } from '../TokensService';
-import { TxWriter } from '@dequanto/txs/TxWriter';
-import { TxDataBuilder } from '@dequanto/txs/TxDataBuilder';
-import { Web3Client } from '@dequanto/clients/Web3Client';
-import { IBlockchainExplorer } from '@dequanto/explorer/IBlockchainExplorer';
-import { ERC20 } from '@dequanto/prebuilt/openzeppelin/ERC20';
-import { $http } from '@dequanto/utils/$http';
+import { TxWriter } from 'dequanto/txs/TxWriter';
+import { TxDataBuilder } from 'dequanto/txs/TxDataBuilder';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
+import { ERC20 } from 'dequanto/prebuilt/openzeppelin/ERC20';
+import { $http } from 'dequanto/utils/$http';
 
 const PLATFORMS = {
     eth: 1,

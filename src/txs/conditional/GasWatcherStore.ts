@@ -1,4 +1,4 @@
-import { JsonObjectStore } from '@dequanto/json/JsonObjectStore';
+import { JsonObjectStore } from 'dequanto/json/JsonObjectStore';
 import { TTxWriterJson } from '../TxWriter';
 import { GasWatcherTx, IGasWatcherCondition } from './GasWatcherTx';
 

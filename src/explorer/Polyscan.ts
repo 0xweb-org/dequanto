@@ -1,6 +1,6 @@
 import di from 'a-di';
-import { $config } from '@dequanto/utils/$config';
-import { PolyWeb3Client } from '@dequanto/clients/PolyWeb3Client';
+import { $config } from 'dequanto/utils/$config';
+import { PolyWeb3Client } from 'dequanto/clients/PolyWeb3Client';
 import { BlockchainExplorer } from './BlockchainExplorer';
 
 const contracts = $config.get('contracts.polygon', []);
