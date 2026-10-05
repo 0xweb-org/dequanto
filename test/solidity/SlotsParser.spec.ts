@@ -87,6 +87,26 @@ UTest({
             type: 'bytes16'
         });
     },
+    async 'should ignore transient variables without affecting storage packing' () {
+        let code = `
+            contract Test {
+                uint256 transient t;
+                uint128 a;
+                uint256 transient u;
+                uint128 b;
+                uint256 c;
+            }
+        `;
+        let slots = await SlotsParser.slots({
+            code,
+            path: './test/solidity/Parser.sol'
+        }, 'Test');
+
+        eq_(slots.length, 3);
+        has_(slots[0], { name: 'a', slot: 0, position: 0 });
+        has_(slots[1], { name: 'b', slot: 0, position: 128 });
+        has_(slots[2], { name: 'c', slot: 1, position: 0 });
+    },
     async 'struct with different sizes' () {
         const code = `
             contract Test {

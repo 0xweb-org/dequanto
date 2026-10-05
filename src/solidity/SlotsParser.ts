@@ -5,6 +5,7 @@ import type {
     ContractDefinition,
     ElementaryTypeName,
     Mapping,
+    StateVariableDeclarationVariable,
     StructDefinition,
     TypeName,
     UserDefinedTypeName
@@ -92,6 +93,9 @@ export namespace SlotsParser {
 
         let vars = Ast.isStructDefinition(contract.contract) ? contract.contract.members : alot(Ast.getVariableDeclarations(contract.contract))
             .map($var => {
+                if (($var as StateVariableDeclarationVariable).isTransient) {
+                    return null;
+                }
                 if ($var.isDeclaredConst && opts?.withConstants !== true) {
                     return null;
                 }
