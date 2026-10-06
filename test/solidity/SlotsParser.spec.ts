@@ -231,6 +231,30 @@ UTest({
                     position: 0,
                 })
             },
+            async 'should evaluate exponentiation with Solidity grouping'() {
+                let code = `
+                    contract Test {
+                        uint256 constant implicitRight = 2 ** 3 ** 2;
+                        uint256 constant explicitRight = 2 ** (3 ** 2);
+                        uint256 constant explicitLeft = (2 ** 3) ** 2;
+                        uint256 stored;
+                    }
+                `;
+                let slots = await SlotsParser.slots({
+                    code,
+                    path: './test/solidity/Parser.sol'
+                }, 'Test', { withConstants: true });
+
+                eq_(slots.length, 4);
+                eq_(slots[0].value, 512n);
+                eq_(slots[1].value, 512n);
+                eq_(slots[2].value, 64n);
+                for (let constant of slots.slice(0, 3)) {
+                    eq_(constant.memory, 'constant');
+                    eq_(constant.slot, null);
+                }
+                eq_(slots[3].slot, 0n);
+            },
             async 'should ignore immutable variables by default'() {
                 const input = `
                     contract Test {
