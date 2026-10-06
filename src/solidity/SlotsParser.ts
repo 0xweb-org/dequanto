@@ -88,7 +88,7 @@ export namespace SlotsParser {
         let contract = inheritanceChain[inheritanceChain.length - 1]?.contract;
         if (Ast.isContractDefinition(contract) && contract.storageLayout != null) {
             // The most derived contract sets the base slot for the entire inheritance chain.
-            let baseSlot = $require.notNull(Ast.evaluate<bigint>(contract.storageLayout));
+            let baseSlot = $require.notNull(Ast.evaluate<bigint>(contract.storageLayout), `StorageLayout eval failed`);
             if (baseSlot < 0n || baseSlot >= 2n ** 256n) {
                 throw new Error('Custom storage layout must be within the uint256 slot range');
             }

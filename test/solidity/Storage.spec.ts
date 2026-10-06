@@ -402,7 +402,7 @@ UTest({
         let { contract } = await provider.deployCode(code, { client });
         let slots = await SlotsParser.slots({ path: '', code }, 'AppStorage');
 
-        deepEq_(slots[0], { slot: 0, position: 0, name: 'foo', size: 256, type: 'uint256' });
+        deepEq_(slots[0], { slot: 0n, position: 0, name: 'foo', size: 256, type: 'uint256' });
 
         let storage = SlotsStorage.createWithClient(client, contract.address, slots, {
             storageOffset: $contract.keccak256('diamond.app.storage')
@@ -432,7 +432,7 @@ UTest({
         let slots = await SlotsParser.slots({ path: '', code }, 'FooStorage');
 
         eq_(slots.length, 1);
-        deepEq_(slots[0], { slot: 0, position: 0, name: 'foo', size: 256, type: 'uint256' });
+        deepEq_(slots[0], { slot: 0n, position: 0, name: 'foo', size: 256, type: 'uint256' });
 
         let { contract } = await provider.deployCode(code, { client });
         let storage = SlotsStorage.createWithClient(client, contract.address, slots);

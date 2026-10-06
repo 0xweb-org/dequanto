@@ -557,6 +557,8 @@ export namespace Ast {
                     return a % b as TResult;
                 case '<<':
                     return a << b as TResult;
+                case '|':
+                    return (a | b) as TResult;
                 case '>>':
                     return a >> b as TResult;
             }
