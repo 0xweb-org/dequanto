@@ -4,6 +4,7 @@ import type {
     ArrayTypeName,
     ContractDefinition,
     ElementaryTypeName,
+    Expression,
     Mapping,
     StateVariableDeclarationVariable,
     StructDefinition,
@@ -20,6 +21,7 @@ import { Ast } from './SlotsParser/Ast';
 import { ISlotsParserOption, ISlotVarDefinition } from './SlotsParser/models';
 
 import type { TAbiInput } from 'dequanto/types/TAbi';
+import { $bigint } from 'dequanto/utils/$bigint';
 
 const SLOT_SIZE = 256;
 export namespace SlotsParser {
@@ -35,7 +37,7 @@ export namespace SlotsParser {
                 let util = TypeAbiUtil.get(input)
                 if (util) {
                     return {
-                        slot: null as number,
+                        slot: null as bigint,
                         position: null as number,
                         name: input.name,
                         size: await util.sizeOf(),
@@ -82,10 +84,20 @@ export namespace SlotsParser {
             })
             .toArray();
 
-        let offset = { slot: 0, position: 0 };
+        let offset = { slot: 0n, position: 0 };
+        let contract = inheritanceChain[inheritanceChain.length - 1]?.contract;
+        if (Ast.isContractDefinition(contract) && contract.storageLayout != null) {
+            // The most derived contract sets the base slot for the entire inheritance chain.
+            let baseSlot = $require.notNull(Ast.evaluate<bigint>(contract.storageLayout));
+            if (baseSlot < 0n || baseSlot >= 2n ** 256n) {
+                throw new Error('Custom storage layout must be within the uint256 slot range');
+            }
+            offset.slot = baseSlot;
+        }
         slotsDef = applyPositions(slotsDef, offset);
         return slotsDef;
     }
+
     async function extractSlotsSingle (contract: TypeUtil.ITypeCtx, opts?: {
         withConstants?: boolean
         withImmutables?: boolean
@@ -112,7 +124,7 @@ export namespace SlotsParser {
                 let util = TypeUtil.get(v.typeName, contract);
                 if (util) {
                     let $var = {
-                        slot: null as number,
+                        slot: null as bigint,
                         position: null as number,
                         name: v.name,
                         size: await util.sizeOf(),
@@ -141,8 +153,8 @@ export namespace SlotsParser {
         return slotsDef;
     }
 
-    function applyPositions ($vars: ISlotVarDefinition[], offset?: { slot: number, position: number }) {
-        offset ??= { slot: 0, position: 0 };
+    function applyPositions ($vars: ISlotVarDefinition[], offset?: { slot: number | bigint, position: number }) {
+        let cursor = { slot: BigInt(offset?.slot ?? 0), position: offset?.position ?? 0 };
 
         $vars.forEach($var => {
             if ($var.memory === 'constant' || $var.memory === 'immutable') {
@@ -150,38 +162,38 @@ export namespace SlotsParser {
                 return;
             }
             if ($var.size === Infinity) {
-                if (offset.position > 0) {
+                if (cursor.position > 0) {
                     // was previously moved further in a slot, so just take the next slot
-                    offset.position = 0;
-                    offset.slot += 1;
+                    cursor.position = 0;
+                    cursor.slot += 1n;
                 }
 
-                $var.slot = offset.slot;
+                $var.slot = cursor.slot;
                 $var.position = 0;
 
                 // move to the start of the next slot
-                offset.slot += 1;
-                offset.position = 0;
+                cursor.slot += 1n;
+                cursor.position = 0;
                 return;
             }
-            if ($var.size <= SLOT_SIZE - offset.position && TypeUtil.isComplexType($var.type) === false) {
-                $var.slot = offset.slot;
-                $var.position = offset.position;
-                offset.position += $var.size;
+            if ($var.size <= SLOT_SIZE - cursor.position && TypeUtil.isComplexType($var.type) === false) {
+                $var.slot = cursor.slot;
+                $var.position = cursor.position;
+                cursor.position += $var.size;
                 return;
             }
-            if (offset.position > 0) {
-                offset.slot += 1;
-                offset.position = 0;
+            if (cursor.position > 0) {
+                cursor.slot += 1n;
+                cursor.position = 0;
                 // > moves to next slot
             }
-            $var.slot = offset.slot;
-            $var.position = offset.position;
+            $var.slot = cursor.slot;
+            $var.position = cursor.position;
 
             let slots = Math.floor($var.size / SLOT_SIZE);
 
-            offset.slot += slots;
-            offset.position = $var.size % SLOT_SIZE;
+            cursor.slot += BigInt(slots);
+            cursor.position = $var.size % SLOT_SIZE;
         });
         return $vars;
     }

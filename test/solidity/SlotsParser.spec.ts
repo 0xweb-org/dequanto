@@ -31,56 +31,56 @@ UTest({
         }, 'Test');
 
         has_(slots[0], {
-            slot: 0,
+            slot: 0n,
             position: 0,
             name: 'a',
             size: 256,
             type: 'uint256'
         });
         has_(slots[1], {
-            slot: 1,
+            slot: 1n,
             position: 0,
             name: 'b',
             size: 256 * 3,
             type: 'uint256[3]'
         });
         has_(slots[2], {
-            slot: 4,
+            slot: 4n,
             position: 0,
             name: 'c',
             size: 256 * 2,
             type: '(uint256 id, uint256 value)'
         });
         has_(slots[3], {
-            slot: 6,
+            slot: 6n,
             position: 0,
             name: 'd',
             size: Infinity,
             type: '(uint256 id, uint256 value)[]'
         });
         has_(slots[4], {
-            slot: 7,
+            slot: 7n,
             position: 0,
             name: 'e',
             size: Infinity,
             type: 'mapping(uint256 => uint256)'
         });
         has_(slots[5], {
-            slot: 8,
+            slot: 8n,
             position: 0,
             name: 'f',
             size: 256,
             type: 'bytes32'
         });
         has_(slots[6], {
-            slot: 9,
+            slot: 9n,
             position: 0,
             name: 'g',
             size: 128,
             type: 'bytes16'
         });
         has_(slots[7], {
-            slot: 9,
+            slot: 9n,
             position: 128,
             name: 'h',
             size: 128,
@@ -103,9 +103,64 @@ UTest({
         }, 'Test');
 
         eq_(slots.length, 3);
-        has_(slots[0], { name: 'a', slot: 0, position: 0 });
-        has_(slots[1], { name: 'b', slot: 0, position: 128 });
-        has_(slots[2], { name: 'c', slot: 1, position: 0 });
+        has_(slots[0], { name: 'a', slot: 0n, position: 0 });
+        has_(slots[1], { name: 'b', slot: 0n, position: 128 });
+        has_(slots[2], { name: 'c', slot: 1n, position: 0 });
+    },
+    async 'should shift inherited storage with a custom layout' () {
+        let code = `
+            contract Base {
+                uint128 a;
+                uint256 transient t;
+                uint256 constant K = 7;
+                uint256 immutable I = 8;
+            }
+            contract Test is Base layout at (0x20 + 10) {
+                uint128 b;
+                mapping(uint256 => uint256) entries;
+                uint256[2] values;
+                uint256 tail;
+            }
+        `;
+        let slots = await SlotsParser.slots({ code, path: './test/solidity/Parser.sol' }, 'Test', {
+            withConstants: true,
+            withImmutables: true
+        });
+        let storage = slots.filter(x => x.memory == null);
+        deepEq_(storage.map(x => [x.name, x.slot, x.position]), [
+            ['a', 42n, 0],
+            ['b', 42n, 128],
+            ['entries', 43n, 0],
+            ['values', 44n, 0],
+            ['tail', 46n, 0]
+        ]);
+        eq_(slots.find(x => x.name === 'K').slot, null);
+        eq_(slots.find(x => x.name === 'I').slot, null);
+        eq_(slots.some(x => x.name === 't'), false);
+    },
+    async 'should support literal and arithmetic layout offsets' () {
+        for (let [expression, expected] of [['0', 0], ['42', 42], ['0x100', 256], ['1_000', 1_000], ['1e3', 1_000], ['2 ** 3 ** 2', 512], ['(1 << 8) | 3', 259], ['2 ** 200', 2n ** 200n], ['9007199254740991', 9_007_199_254_740_991n]]) {
+            let slots = await SlotsParser.slots({
+                code: 'contract Test layout at ' + expression + ' { uint256 a; uint256 b; }',
+                path: './test/solidity/Parser.sol'
+            }, 'Test');
+            deepEq_(slots.map(x => x.slot), [BigInt(expected), BigInt(expected) + 1n]);
+        }
+    },
+    async 'should reject unsupported or out-of-range custom layouts' () {
+        for (let expression of ['1 ether', 'UNKNOWN + 1', '2 ** 256', '-1', '5 / 2']) {
+            let error: Error;
+            try {
+                await SlotsParser.slots({
+                    code: 'contract Test layout at ' + expression + ' { uint256[2] a; }',
+                    path: './test/solidity/Parser.sol'
+                }, 'Test');
+            } catch (err) {
+                error = err;
+            }
+            eq_(error != null, true, expression);
+            eq_(/custom storage layout/i.test(error.message), true);
+        }
     },
     async 'struct with different sizes' () {
         const code = `
@@ -129,7 +184,7 @@ UTest({
 
         eq_(slots[0].size, 256 /*roundId*/ + 256 /*answer*/ + 256 /*startedAt*/ + 256 /*updatedAt*/ + 80 /*answeredInRound*/);
         // though roundId is uint80, it is still 256 as the next field in the struct is int256
-        eq_(slots[1].slot, 5);
+        eq_(slots[1].slot, 5n);
     },
     async 'constants and immutables'() {
         return UTest({
@@ -147,7 +202,7 @@ UTest({
                 eq_(slots.length, 1);
                 has_(slots[0], {
                     name: 'b',
-                    slot: 0,
+                    slot: 0n,
                     position: 0,
                 })
             },
@@ -172,7 +227,7 @@ UTest({
                 })
                 has_(slots[1], {
                     name: 'b',
-                    slot: 0,
+                    slot: 0n,
                     position: 0,
                 })
             },
@@ -193,7 +248,7 @@ UTest({
                 eq_(slots.length, 1);
                 has_(slots[0], {
                     name: 'b',
-                    slot: 0,
+                    slot: 0n,
                     position: 0,
                 })
             }
@@ -211,14 +266,14 @@ UTest({
                 const slots = await SlotsParser.slotsFromAbi(input);
 
                 has_(slots[0], {
-                    slot: 0,
+                    slot: 0n,
                     position: 0,
                     name: 'foo',
                     size: 256,
                     type: 'uint256'
                 });
                 has_(slots[1], {
-                    slot: 1,
+                    slot: 1n,
                     position: 0,
                     name: 'bar',
                     size: 256 * 3,
@@ -231,7 +286,7 @@ UTest({
                 `;
                 const slots = await SlotsParser.slotsFromAbi(input);
                 has_(slots[0], {
-                    slot: 0,
+                    slot: 0n,
                     position: 0,
                     name: 'foo',
                     size: Infinity,
@@ -258,19 +313,19 @@ UTest({
         }, 'Test');
 
         has_(slots[0], {
-            slot: 0,
+            slot: 0n,
             name: 'a',
             size: 256,
             type: 'uint'
         });
         has_(slots[1], {
-            slot: 1,
+            slot: 1n,
             name: 'b',
             size: Infinity,
             type: 'string'
         });
         has_(slots[2], {
-            slot: 2,
+            slot: 2n,
             name: 'c',
             size: 256,
             type: 'uint256'
@@ -392,26 +447,26 @@ UTest({
                 let items = slots.map(x => [x.slot, x.name, x.type]);
                 let names = slots.map(x => [x.slot, x.name]);
                 deepEq_(names, [
-                    [0, 'owner'],
-                    [1, 'newOwner'],
-                    [2, 'standard'],
-                    [3, 'name'],
-                    [4, 'symbol'],
-                    [5, 'decimals'],
-                    [6, 'totalSupply$'],
-                    [7, 'balanceOf'],
-                    [8, 'allowance'],
-                    [9, 'totalSupply'],
-                    [10, 'crowdFundAddress'],
-                    [11, 'advisorAddress'],
-                    [12, 'incentivisationFundAddress'],
-                    [13, 'enjinTeamAddress'],
-                    [14, 'totalAllocatedToAdvisors'],
-                    [15, 'totalAllocatedToTeam'],
-                    [16, 'totalAllocated'],
-                    [17, 'isReleasedToPublic'],
-                    [18, 'teamTranchesReleased'],
-                    [19, 'maxTeamTranches'],
+                    [0n, 'owner'],
+                    [1n, 'newOwner'],
+                    [2n, 'standard'],
+                    [3n, 'name'],
+                    [4n, 'symbol'],
+                    [5n, 'decimals'],
+                    [6n, 'totalSupply$'],
+                    [7n, 'balanceOf'],
+                    [8n, 'allowance'],
+                    [9n, 'totalSupply'],
+                    [10n, 'crowdFundAddress'],
+                    [11n, 'advisorAddress'],
+                    [12n, 'incentivisationFundAddress'],
+                    [13n, 'enjinTeamAddress'],
+                    [14n, 'totalAllocatedToAdvisors'],
+                    [15n, 'totalAllocatedToTeam'],
+                    [16n, 'totalAllocated'],
+                    [17n, 'isReleasedToPublic'],
+                    [18n, 'teamTranchesReleased'],
+                    [19n, 'maxTeamTranches'],
                 ])
             },
             async 'parse presale'() {
@@ -441,7 +496,7 @@ UTest({
 
         l`type Exp should be found and rewritten`
         has_(slots[5], {
-            slot: 4,
+            slot: 4n,
             position: 0,
             name: 'maxSwings',
             size: Infinity,
@@ -481,7 +536,7 @@ UTest({
 
         function expectSlot(nr: number, name: string) {
             let slot = slots.find(x => x.name === name);
-            eq_(slot.slot, nr);
+            eq_(slot.slot, BigInt(nr));
         }
     },
     async 'should parse AlphaKlima.sol'() {
@@ -489,7 +544,7 @@ UTest({
         let slots = await SlotsParser.slots({ path: './test/fixtures/parser/AlphaKlima.sol' });
 
         let ownerSlot = slots.find(x => x.name === '_owner');
-        eq_(ownerSlot.slot, 201);
+        eq_(ownerSlot.slot, 201n);
     },
     async 'should parse USDC.sol'() {
         let slots = await SlotsParser.slots({ path: './test/fixtures/parser/USDC.sol' });
@@ -520,7 +575,7 @@ UTest({
         function expectSlot(nr: number, name: string) {
             let slot = slots.find(x => x.name === name);
             $require.notNull(slot, nr + ': ' + name);
-            eq_(slot.slot, nr);
+            eq_(slot.slot, BigInt(nr));
         }
     },
     async 'should parse USDT.sol'() {
@@ -547,7 +602,7 @@ UTest({
         function expectSlot(nr: number, name: string, mix?: { position?: number}) {
             let slot = slots.find(x => x.name === name);
             $require.notNull(slot, nr + ': ' + name);
-            eq_(slot.slot, nr, nr + ': ' + name);
+            eq_(slot.slot, BigInt(nr), nr + ': ' + name);
             if (mix?.position != null) {
                 eq_(slot.position, mix.position, `Invalid position ${nr}: ${name}`);
             }
@@ -569,10 +624,10 @@ UTest({
         }, 'Test');
 
         deepEq_(slots[0], {
-            slot: 0, position: 0, name: 'foo', size: 160, type: 'address'
+            slot: 0n, position: 0, name: 'foo', size: 160, type: 'address'
         });
         deepEq_(slots[1], {
-            slot: 1, position: 0, name: 'bar', size: 256, type: 'uint256'
+            slot: 1n, position: 0, name: 'bar', size: 256, type: 'uint256'
         });
     }
 })

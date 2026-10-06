@@ -277,14 +277,14 @@ export namespace $proxyDeploy {
             // Dynamic variables occupy a single slot.
             return {
                 variable: $var,
-                offset: $var.slot * 256,
-                length: 256
+                offset: BigInt($var.slot) * 256n,
+                length: 256n
             }
         };
         return {
             variable: $var,
-            offset: $var.slot * 256 + $var.position,
-            length: $var.size
+            offset: BigInt($var.slot) * 256n + BigInt($var.position),
+            length: BigInt($var.size)
         };
     }
     function serializePath (path: string, $var: ISlotVarDefinition) {

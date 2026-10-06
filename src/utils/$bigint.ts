@@ -68,9 +68,12 @@ export namespace $bigint {
     }
 
     /**
-     * @param amount e.g "2.4 ether", "10 gwei", "1.7^18", "123456", "1.7e18"
+     * @param amount e.g "2.4 ether", "10 gwei", "1.7^18", "123456", "1.7e18", "1_000_000"
      */
     export function parse (amount: string): bigint {
+        // clean 1_000
+        amount = amount.replaceAll('_', '');
+
         if (/^\d+$/.test(amount) || $is.Hex(amount) ) {
             return BigInt(amount);
         }

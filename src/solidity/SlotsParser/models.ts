@@ -1,3 +1,4 @@
+import { TEth } from 'dequanto/models/TEth'
 import type { SourceFile } from './SourceFile'
 
 export type TSourceFileImport = {
@@ -8,7 +9,7 @@ export type TSourceFileImport = {
 
 
 export interface ISlotVarDefinition {
-    slot: number
+    slot: bigint
     position: number
     name: string
     type: string
@@ -19,6 +20,9 @@ export interface ISlotVarDefinition {
     value?: string | number | bigint
 }
 
+
+/** Slot definitions accepted from callers, including older generated readers. */
+export type ISlotVarDefinitionInput = Omit<ISlotVarDefinition, 'slot'> & { slot: number | bigint |  TEth.Hex | string };
 
 export interface ISlotsParserOption {
     /* Optionally provide additional sources in memory */

@@ -1,4 +1,4 @@
-import type { ISlotVarDefinition } from 'dequanto/solidity/SlotsParser/models';
+import type { ISlotVarDefinitionInput } from 'dequanto/solidity/SlotsParser/models';
 import { IBlockchainExplorer } from 'dequanto/explorer/IBlockchainExplorer';
 import { Web3Client } from 'dequanto/clients/Web3Client';
 import { TAddress } from 'dequanto/models/TAddress';
@@ -23,7 +23,7 @@ export class ContractStorageReaderBase {
         return this.$storage.set(...args);
     }
 
-    protected $createHandler(slots: ISlotVarDefinition[]) {
+    protected $createHandler(slots: ISlotVarDefinitionInput[]) {
         this.$storage = SlotsStorage.createWithClient(this.client, this.address, slots);
     }
 }

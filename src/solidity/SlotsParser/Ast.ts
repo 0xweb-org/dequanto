@@ -43,6 +43,7 @@ import { $abiUtils } from 'dequanto/utils/$abiUtils';
 import { SourceFile, TSourceFileContract } from './SourceFile';
 import { $array } from 'dequanto/utils/$array';
 import { $types } from '../utils/$types';
+import { $bigint } from 'dequanto/utils/$bigint';
 
 export namespace Ast {
     export function parse(code: string, opts?: { path: string; }): { ast: SourceUnit, version: string } {
@@ -520,8 +521,23 @@ export namespace Ast {
     }
 
     export function evaluate<TResult extends bigint | string = bigint | string>(node: Expression): TResult {
-        if (isNumberLiteral(node)) {
-            return BigInt(node.number) as TResult;
+        if (isNumberLiteral(node) && node.subdenomination == null) {
+            return $bigint.parse(node.number) as TResult;
+        }
+        if (node.type === 'TupleExpression' && node.components.length === 1 && node.components[0] != null) {
+            return evaluate(node.components[0] as Expression);
+        }
+        if (Ast.isUnaryOperation(node)) {
+            let value = evaluate(node.subExpression);
+            if (node.operator === '-') {
+                return -value as TResult;
+            }
+            if (node.operator === '+') {
+                return value as TResult;
+            }
+            if (node.operator === '~') {
+                return ~value as TResult;
+            }
         }
         if (isBinaryOperation(node)) {
             let a = evaluate<bigint>(node.left);

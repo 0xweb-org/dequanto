@@ -132,8 +132,8 @@ UTest({
             l`Read with SLOTS Readers`
             let slots = await SlotsParser.slots({ path: '', code });
 
-            deepEq_(slots[0], { slot: 0, size: 8, position: 0, type: 'bool', name: 'flag' });
-            deepEq_(slots[1], { slot: 1, size: 24, position: 0, type: 'bool[3]', name: 'flags' });
+            deepEq_(slots[0], { slot: 0n, size: 8, position: 0, type: 'bool', name: 'flag' });
+            deepEq_(slots[1], { slot: 1n, size: 24, position: 0, type: 'bool[3]', name: 'flags' });
 
             let storage = SlotsStorage.createWithClient(client, contract.address, slots);
 
@@ -200,7 +200,7 @@ UTest({
             l`Read with SLOTS Readers`
             let slots = await SlotsParser.slots({ path: '', code });
 
-            deepEq_(slots[0], { slot: 0, size: Infinity, position: 0, type: '(address foo, bool isActive, uint256 amount)[]', name: 'users' });
+            deepEq_(slots[0], { slot: 0n, size: Infinity, position: 0, type: '(address foo, bool isActive, uint256 amount)[]', name: 'users' });
 
             let storage = SlotsStorage.createWithClient(client, contract.address, slots);
 

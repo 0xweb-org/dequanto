@@ -13,7 +13,7 @@ import { SlotMappingHandler } from './storage/handlers/SlotMappingHandler';
 import { SlotStringHandler } from './storage/handlers/SlotStringHandler';
 import { Accessor, IAccessorItem } from './storage/Accessor';
 import { SlotStructHandler } from './storage/handlers/SlotStructHandler';
-import { ISlotVarDefinition } from './SlotsParser/models';
+import { ISlotVarDefinition, ISlotVarDefinitionInput } from './SlotsParser/models';
 import { $types } from './utils/$types';
 import { SlotBytesHandler } from './storage/handlers/SlotBytesHandler';
 import { SlotValueConstantHandler } from './storage/handlers/SlotValueConstantHandler';
@@ -22,7 +22,7 @@ import { TEth } from 'dequanto/models/TEth';
 
 export class SlotsStorage {
 
-    static createWithClient(client: Web3Client, address: TAddress, slots: ISlotVarDefinition[], params?: {
+    static createWithClient(client: Web3Client, address: TAddress, slots: ISlotVarDefinitionInput[], params?: {
         blockNumber?: number
         storageOffset?: TEth.Hex | bigint
     }) {
@@ -35,8 +35,13 @@ export class SlotsStorage {
         return new SlotsStorage(transport, slots)
     }
 
-    constructor(public transport: ISlotsStorageTransport, public slots: ISlotVarDefinition[]) {
+    public slots: ISlotVarDefinition[];
 
+    constructor(public transport: ISlotsStorageTransport, slots: ISlotVarDefinitionInput[]) {
+        this.slots = slots.map(slot => ({
+            ...slot,
+            slot: slot.slot == null ? null : BigInt(slot.slot)
+        }));
     }
 
     async get<T = any>(path?: string | (string | number | bigint)[] |IAccessorItem[]): Promise<T> {
