@@ -2,11 +2,10 @@ import { $abi } from 'dequanto/abi/$abi';
 import { $abiCoder } from 'dequanto/abi/$abiCoder';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 import { TAbiInput } from 'dequanto/types/TAbi';
-import { $buffer } from 'dequanto/utils/$buffer';
 import { $contract } from 'dequanto/utils/$contract';
-import { $hex } from 'dequanto/utils/$hex';
 import { l } from 'dequanto/utils/$logger';
 import { File } from 'atma-io'
+import { TEth } from 'dequanto/models/TEth';
 
 UTest({
     'encode call data'() {
@@ -250,4 +249,28 @@ UTest({
             });
         }
     },
+
+    async 'decode return data'() {
+        const abi = {
+            "inputs": [],
+            "name": "foo",
+            "outputs": [
+                { "name": "timestamp", "type": "uint64" },
+                { "name": "amount", "type": "uint192" },
+                { "name": "token", "type": "address" },
+                { "name": "key", "type": "bytes12" }
+            ],
+            "type": "function"
+        };
+        const data = $abi.decodeReturn(
+            abi as TEth.Abi.Item,
+            '0x000000000000000000000000000000000000000000000000000000006ac9356b00000000000000000000000000000000000000000000554fe449d2e4dad91861000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+        );
+        deepEq_(data, {
+            timestamp: 1791571307n,
+            amount: 402874893736737211226209n,
+            token: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+            key: '0x000000000000000000000000'
+        });
+    }
 })

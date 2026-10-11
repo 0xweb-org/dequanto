@@ -4,6 +4,9 @@ import { TEth } from 'dequanto/models/TEth';
 import { $abiCoder } from './$abiCoder';
 import { $abiUtils } from 'dequanto/utils/$abiUtils';
 import { $abiParser } from 'dequanto/utils/$abiParser';
+import { $hex } from 'dequanto/utils/$hex';
+import alot from 'alot';
+import { $types } from 'dequanto/solidity/utils/$types';
 
 export namespace $abi {
     type TAbiType = string | ParamType | TAbiInput;
@@ -39,6 +42,39 @@ export namespace $abi {
         let outputs = typeof abi === 'string'
             ? ($abiParser.parseMethod(abi).outputs ?? [])
             : (Array.isArray(abi) ? abi : abi.outputs ?? []);
+        try {
+            return decodeReturnInner(outputs, hex);
+        } catch (error) {
+            if (outputs.length > 1) {
+                // Zero-pad missing trailing outputs only when all outputs are static
+                // and the data ends at an output boundary.
+                // Supports newer ABIs with trailing outputs that an older deployed contract does not return.
+                const receivedWords = $hex.getBytesLength(hex) / 32;
+                const abiWords = alot(outputs).sum($types.wordSizeOf);
+                if (Number.isFinite(abiWords)
+                    && Number.isInteger(receivedWords)
+                    && receivedWords > 0
+                    && receivedWords < abiWords
+                ) {
+                    let missingWords = abiWords - receivedWords;
+                    let boundaryWords = missingWords;
+                    for (let i = outputs.length - 1; i > -1; i--) {
+                        boundaryWords -= $types.wordSizeOf(outputs[i]);
+                        if (boundaryWords <= 0) {
+                            break;
+                        }
+                    }
+                    if (boundaryWords == 0) {
+                        let expanded = hex + '0'.repeat(64 * missingWords);
+                        return decodeReturnInner(outputs, expanded);
+                    }
+                }
+            }
+            throw error;
+        }
+    }
+
+    function decodeReturnInner<T = any>(outputs: TAbiOutput[], hex: string): T {
         let returnAbi = outputs;
         let isDynamic: boolean = null;
         if (outputs.length > 1) {

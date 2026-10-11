@@ -302,9 +302,9 @@ export class ContractReader implements IContractReader {
         return filters as RpcTypes.Filter;
     }
 
-    static async read <TResult = any> (client: Web3Client, address: TAddress, methodAbi: string){
+    static async read <TResult = any> (client: Web3Client, address: TAddress, methodAbi: string, ...params){
         let reader = new ContractReader(client);
-        return reader.readAsync<TResult>(address, methodAbi);
+        return reader.readAsync<TResult>(address, methodAbi, ...params);
     }
 }
 

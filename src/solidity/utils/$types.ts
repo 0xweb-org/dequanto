@@ -2,6 +2,7 @@ import { $abiParser } from 'dequanto/utils/$abiParser';
 import { $abiType } from 'dequanto/utils/$abiType';
 import { $abiUtils } from 'dequanto/utils/$abiUtils';
 import alot from 'alot';
+import { type TAbiInput } from 'dequanto/types/TAbi';
 
 export namespace $types {
     export function isFixedArray (type: string) {
@@ -23,6 +24,11 @@ export namespace $types {
     }
 
 
+    /**
+     * Returns the type size in bits, excluding ABI padding.
+     * Sums element sizes for fixed arrays and tuple declarations.
+     * Returns Infinity for dynamic or unknown types.
+     */
     export function sizeOf(type: string) {
         if (type === 'address') {
             // 20bytes
@@ -57,5 +63,26 @@ export namespace $types {
             return size;
         }
         return Infinity;
+    }
+
+    /** Number of 32-byte ABI words; Infinity for dynamic or unknown types. */
+    export function wordSizeOf(type: string | TAbiInput): number {
+        let input = typeof type === 'string' ? { type } : type;
+        let name = input.type.trim();
+        if (isFixedArray(name)) {
+            let baseType = $abiType.array.getBaseType(name);
+            let words = wordSizeOf({ ...input, type: baseType });
+            return Number.isFinite(words) ? words * $abiType.array.getLength(name) : Infinity;
+        }
+        if (isDynamicArray(name)) {
+            return Infinity;
+        }
+        if (name === 'tuple') {
+            return input.components == null ? Infinity : alot(input.components).sum(x => wordSizeOf(x));
+        }
+        if (isStruct(name) || name === '()') {
+            return alot($abiParser.parseArguments(name)).sum(x => wordSizeOf(x));
+        }
+        return Math.ceil(sizeOf(name) / 256);
     }
 }
