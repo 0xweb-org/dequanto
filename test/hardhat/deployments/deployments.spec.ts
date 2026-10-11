@@ -32,6 +32,8 @@ let paths = {
 
 export default UTest({
     async $before () {
+        // Start with a local chain even if an earlier suite left a fork active.
+        await client.debug.reset({});
         await File.removeAsync(deploymentsOutput);
         await File.removeAsync(deploymentsProxyOutput);
 

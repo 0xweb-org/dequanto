@@ -8,18 +8,23 @@ import { $dependency } from 'dequanto/utils/$dependency';
 UTest({
     async 'forks a local RPC and inherits its chainId' () {
         const hh = new HardhatProvider();
-        const client1 = await Web3ClientFactory.getAsync('hh:memory:eth');
-        const client2 = await hh.createFork({
-            platform: 'eth',
-            chainId: 1
-        });
+        try {
+            const client1 = await Web3ClientFactory.getAsync('hh:memory:eth');
+            const client2 = await hh.createFork({
+                platform: 'eth',
+                chainId: 1
+            });
 
-        const chainId1 = await client1.getChainId();
-        const chainId2 = await client2.getChainId();
-        eq_(chainId1, 1337);
-        eq_(chainId1, client1.chainId);
-        eq_(chainId2, 1);
-        eq_(chainId2, client2.chainId);
+            const chainId1 = await client1.getChainId();
+            const chainId2 = await client2.getChainId();
+            eq_(chainId1, 1337);
+            eq_(chainId1, client1.chainId);
+            eq_(chainId2, 1);
+            eq_(chainId2, client2.chainId);
+        } finally {
+            // getAsync('hh:memory:eth') forks the shared HRE provider.
+            await hh.client().debug.reset({});
+        }
     },
 
 
