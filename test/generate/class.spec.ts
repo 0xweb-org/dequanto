@@ -12,6 +12,7 @@ import { ContractWriter } from 'dequanto/contracts/ContractWriter';
 import { ERC20 } from 'dequanto/prebuilt/openzeppelin/ERC20';
 import alot from 'alot';
 import { ITxLogItem } from 'dequanto/txs/receipt/ITxLogItem';
+import { Fixtures } from '../Fixtures';
 
 declare let include;
 
@@ -20,12 +21,12 @@ UTest({
         timeout: $date.parseTimespan('5min'),
     },
 
-    async $before () {
+    async $before() {
         await TestNode.start();
         ContractWriter.SILENT = true;
     },
 
-    async 'generate Polygon WETH' () {
+    async 'generate Polygon WETH'() {
 
         const gen = new Generator({
             name: 'WETH',
@@ -54,7 +55,7 @@ UTest({
 
 
         let reader = new ContractReader(weth.client);
-        let [ name, totalSupply ] = await reader.executeBatch([ nameReq, totalSupplyReq ]);
+        let [name, totalSupply] = await reader.executeBatch([nameReq, totalSupplyReq]);
 
         eq_(name, 'Wrapped Ether');
         gt_(totalSupply, 1000n);
@@ -63,12 +64,43 @@ UTest({
         let nameFromSlot = await weth.storage._name();
         eq_(nameFromSlot, name);
     },
-    async 'generate from class metadata comments and check the sources' () {
+    async '!generate Polygon WETH in-memory'() {
+
+        await Fixtures.removeFile('./test/tmp/polygon/WETHMem/WETHMem.ts');
+
+        const gen = new Generator({
+            name: 'WETHMem',
+            platform: 'polygon',
+            source: {
+                abi: '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619'
+            },
+            output: './test/tmp/polygon/',
+            save: false,
+        });
+        const data = await gen.generate();
+
+        eq_(await File.existsAsync('./test/tmp/polygon/WETHMem/WETHMem.ts'), false);
+
+        let bindings = data.files.filter(x => x.kind === 'binding');
+        eq_(bindings.length, 1);
+        eq_(bindings[0].path, './test/tmp/polygon/WETHMem/WETHMem.ts');
+        has_(bindings[0].content, 'class WETHMem');
+
+        let abis = data.files.filter(x => x.kind === 'abi');
+        eq_(abis.length, 1);
+        eq_(abis[0].path, './test/tmp/polygon/WETHMem/WETHMemAbi.json');
+
+        let sources = data.files.filter(x => x.kind === 'source');
+        gte_(sources.length, 1);
+        eq_(sources[0].path, './test/tmp/polygon/WETHMem/WETHMem/MaticWETH.sol');
+
+    },
+    async 'generate from class metadata comments and check the sources'() {
         let genPath = `/test/tmp/polygon/DaiTokenContractBase/DaiTokenContractBase.ts`
 
         try {
             await File.removeAsync(genPath);
-        } catch(e){}
+        } catch (e) { }
 
         let existsBase = await File.exists(genPath);
         eq_(existsBase, false);
@@ -84,7 +116,7 @@ UTest({
         let source = await File.readAsync(genPath, { skipHooks: true });
         has_(source, 'onTransfer');
     },
-    async 'generate and check with a deployed contract' () {
+    async 'generate and check with a deployed contract'() {
 
         await hh.run('compile', {
             sources: '/test/fixtures/contracts',
@@ -106,11 +138,11 @@ UTest({
             $config: {
                 timeout: $date.parseTimespan('1min'),
             },
-            async 'deploy to localhost to listen for WS events' () {
+            async 'deploy to localhost to listen for WS events'() {
                 let provider = new HardhatProvider();
                 let client = await provider.client('localhost');
-                let { contract: foo }= await provider.deployClass<any>(Foo.Foo, {
-                    arguments: [ 'hello' ],
+                let { contract: foo } = await provider.deployClass<any>(Foo.Foo, {
+                    arguments: ['hello'],
                     client
                 });
 
@@ -130,7 +162,7 @@ UTest({
 
                 l`> Deploy second contract`;
                 let { contract: qux } = await provider.deployClass<any>(Foo.Foo, {
-                    arguments: [ 'qux' ],
+                    arguments: ['qux'],
                     client
                 });
 
@@ -163,19 +195,19 @@ UTest({
                 await subjectStream.onConnected;
 
 
-                l`> Set new name (block ${ await client.getBlockNumber() })`
+                l`> Set new name (block ${await client.getBlockNumber()})`
                 let tx = await foo.setName(provider.deployer(), 'bar');
                 let receipt = await tx.wait();
                 eq_(receipt.status, true);
 
-                l`> Check name was set (block ${ await client.getBlockNumber() })`
+                l`> Check name was set (block ${await client.getBlockNumber()})`
                 name = await foo.name();
                 eq_(name, 'bar');
 
                 l`> Set new name via setName2`
                 let txSetName2 = await foo.setName2(provider.deployer(), 'bar2');
                 await txSetName2.wait();
-                l`> Check name was set (block ${ await client.getBlockNumber() })`
+                l`> Check name was set (block ${await client.getBlockNumber()})`
                 name = await foo.name();
                 eq_(name, 'bar2');
 
@@ -241,18 +273,18 @@ UTest({
 
                 let allLogs = await foo.$getPastLogsParsed('*') as ITxLogItem[];
                 let allEvents = alot(allLogs).map(x => x.event).distinct().toArray();
-                deepEq_(allEvents, [ 'Updated', 'Updated2']);
+                deepEq_(allEvents, ['Updated', 'Updated2']);
 
                 let allLogsByName = await foo.getPastLogs(['Updated', 'Updated2']);
                 deepEq_(allLogs, allLogsByName);
             },
 
-            async 'deploy and check indexed logs' () {
+            async 'deploy and check indexed logs'() {
                 let provider = new HardhatProvider();
                 // Use in-memory storage, as it is enough
                 let client = await provider.client('hardhat');
                 let { contract: foo } = await provider.deployClass<any>(Foo.Foo, {
-                    arguments: [ 'hello' ],
+                    arguments: ['hello'],
                     client
                 });
 
@@ -277,12 +309,12 @@ UTest({
                 eq_(logs2nd[0].params.valueB, 6n);
             },
 
-            async 'deploy and check indexed logs with a non-linear indexed parameter order' () {
+            async 'deploy and check indexed logs with a non-linear indexed parameter order'() {
                 let provider = new HardhatProvider();
                 // Use in-memory storage, as it is enough
                 let client = await provider.client('hardhat');
                 let { contract: foo } = await provider.deployClass<any>(Foo.Foo, {
-                    arguments: [ 'hello' ],
+                    arguments: ['hello'],
                     client
                 });
 

@@ -56,6 +56,9 @@ export interface IGenerateOptions {
      */
     implementation?: TEth.Hex | TEth.Address | string
 
+    /** When false: no files will be saved. Use "files" in result */
+    save?: boolean
+
     /** ABI will be save alongside with TS classes */
     saveAbi?: boolean
 
@@ -240,6 +243,7 @@ export class Generator {
             implementation: implementation,
             sources: sources?.files,
             sourceMain: sourceMain,
+            save: this.options.save,
             saveAbi: this.options.saveAbi,
             saveSources: this.options.saveSources,
             client: this.client,

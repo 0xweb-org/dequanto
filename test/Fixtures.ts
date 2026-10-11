@@ -1,9 +1,16 @@
 import alot from 'alot';
+import { File } from 'atma-io';
 
 export namespace Fixtures {
     type TFixtures = {
         [K: string]: any[]
     };
+
+    export async function removeFile (path: string) {
+        if (await File.existsAsync(path)) {
+            await File.removeAsync(path);
+        }
+    }
 
     export async function walk <TInner> (fixtures:  TFixtures, cb: (fixture: any, i) => Promise<any>) {
 

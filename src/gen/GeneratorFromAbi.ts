@@ -33,6 +33,8 @@ export class GeneratorFromAbi {
         output: string
         outputFileExt?: string
         implementation: TAddress
+        /** No FS writes, use files in response  */
+        save?: boolean
         saveAbi?: boolean
         saveSources?: boolean
         sources?: {
@@ -320,24 +322,45 @@ export class GeneratorFromAbi {
             .replace(`/* $METHOD_TYPES$ */`, () => Str.indent(methodTypings.map(x => x.code).join('\n'), '        '))
             ;
 
+        if (opts.save !== false) {
+            await File.writeAsync(outputPath, code, { skipHooks: true });
+        }
+        const files = [
+            {
+                kind: 'binding',
+                path: outputPath,
+                content: code,
+            }
+        ];
 
-        await File.writeAsync(outputPath, code, { skipHooks: true });
         if (outputSourceType === 'js') {
             let outputPathDts = outputPath.replace(/\.\w+$/, '.d.ts');
-            await File.writeAsync(outputPathDts, codeDts, { skipHooks: true });
+            if (opts.save !== false) {
+                await File.writeAsync(outputPathDts, codeDts, { skipHooks: true });
+            }
+            files.push({
+                kind: 'declaration',
+                path: outputPathDts,
+                content: codeDts,
+            });
         }
 
 
-        if (opts.saveAbi) {
-            let path = class_Uri.combine(opts.output, outputDirectory, `${outputFilename}Abi.json`);
-            await File.writeAsync(path, abiJson);
+        let outputPathAbi = class_Uri.combine(opts.output, outputDirectory, `${outputFilename}Abi.json`);
+        if (opts.saveAbi && opts.save !== false) {
+            await File.writeAsync(outputPathAbi, abiJson);
         }
+        files.push({
+            kind: 'abi',
+            path: outputPathAbi,
+            content: JSON.stringify(abiJson),
+        });
 
         $logger.log(`bold<green<${className}>> ABI wrapper class created: bold<${outputPath}>`);
 
         let sources = opts.sources;
         let sourceFiles = [];
-        if (sources && opts.saveSources !== false) {
+        if (sources) {
             sourceFiles = await alot.fromObject(sources).mapAsync(async entry => {
                 let sourceFilename = /\/?([^/]+$)/.exec(entry.key)[1];
                 let sourcePath = entry.key;
@@ -351,9 +374,15 @@ export class GeneratorFromAbi {
                 //     sourcePath = `node_modules/${ sourcePath }`;
                 // }
                 let path = class_Uri.combine(opts.output, outputDirectory, outputFilename, sourcePath);
-                await File.writeAsync(path, entry.value.content, { skipHooks: true });
-
-                $logger.log(`Source code saved: ${path}`);
+                if (opts.saveSources !== false && opts.save !== false) {
+                    await File.writeAsync(path, entry.value.content, { skipHooks: true });
+                    $logger.log(`Source code saved: ${path}`);
+                }
+                files.push({
+                    kind: 'source',
+                    path: path,
+                    content: entry.value.content,
+                });
                 return path;
             }).toArrayAsync();
         }
@@ -363,7 +392,8 @@ export class GeneratorFromAbi {
             platform: opts.network,
             address: opts.address,
             implementation: opts.implementation,
-            contractName: opts.contractName
+            contractName: opts.contractName,
+            files
         };
     }
 
