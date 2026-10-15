@@ -67,6 +67,8 @@ export interface ITimelockService {
 }
 
 export interface ITimelockTx {
+    timelock?: TEth.Address
+
     // operation hash, unique as includes random salt
     id: TEth.Hex
     // operation key, should be unique only within pending operations

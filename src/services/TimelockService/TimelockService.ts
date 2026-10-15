@@ -86,10 +86,10 @@ export class TimelockService implements ITimelockService {
         let [ callSalt ] = callSaltArr;
 
         let [ callScheduleFirst ] = callScheduled;
-        callScheduleFirst.params.delay
 
         let schedule = {
             sender: null,
+            timelock: callScheduleFirst.address,
             key: callSalt.params.id,
             id: callSalt.params.id,
             salt: callSalt.params.salt,
