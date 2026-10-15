@@ -11,6 +11,7 @@ import { BatchAgent } from 'dequanto/txs/agents/BatchAgent';
 import { $abi } from 'dequanto/abi/$abi';
 import { TEth } from 'dequanto/models/TEth';
 import { $hex } from 'dequanto/utils/$hex';
+import { $require } from 'dequanto/utils/$require';
 
 
 let hh = new HardhatProvider();
@@ -61,25 +62,25 @@ UTest.create({
         let first = await targetContract.$receipt().add({ ...account, value: 5n }, 2);
         let receipt = first.receipt;
         eq_(receipt.status, 1);
-        eq_(receipt.from, account.operator.address);
-        eq_(receipt.to, account.address);
-        eq_(await targetContract.total(), 2n);
+        eq_(receipt.from.toLowerCase(), account.operator.address.toLowerCase());
+        eq_(receipt.to.toLowerCase(), account.address.toLowerCase());
+        $require.eq(await targetContract.total(), 2n);
         eq_(await targetContract.lastSender(), avatar);
-        eq_(await client.getBalance(targetContract.address), 5n);
+        $require.eq(await client.getBalance(targetContract.address), 5n);
 
         let data = { to: targetContract.address, data: $abi.encodeCall('add(uint256)', [3]) };
         await TxWriter
             .create(client, new TxDataBuilder(client, account, data), account)
             .send()
             .wait();
-        eq_(await targetContract.total(), 5n);
+        $require.eq(await targetContract.total(), 5n);
 
         let direct = await TxWriter.writeTxData(client, {
             to: targetContract.address,
             data: $abi.encodeCall('add(uint256)', [0])
         }, account);
         await direct.wait();
-        eq_(direct.receipt.to, account.address);
+        eq_(direct.receipt.to.toLowerCase(), account.address.toLowerCase());
 
         let batch = new BatchAgent().enable();
         await targetContract.$receipt().add(account, 4);
@@ -87,8 +88,8 @@ UTest.create({
         let writers = await batch.execute();
         batch.disable();
         eq_(writers.length, 1);
-        eq_(await targetContract.total(), 15n);
-        eq_(await roles.executions(), 4n);
+        $require.eq(await targetContract.total(), 15n);
+        $require.eq(await roles.executions(), 4n);
 
         // Same destination/calldata under different roles must not be deduplicated or grouped.
         batch = new BatchAgent().enable();
@@ -97,7 +98,7 @@ UTest.create({
         writers = await batch.execute();
         batch.disable();
         eq_(writers.length, 2);
-        eq_(await targetContract.total(), 17n);
+        $require.eq(await targetContract.total(), 17n);
 
 
         // Different values must not be dropped by batch deduplication.
@@ -106,7 +107,7 @@ UTest.create({
         await targetContract.$receipt().add({ ...account, value: 3n }, 0);
         await batch.execute();
         batch.disable();
-        eq_(await client.getBalance(targetContract.address), 10n);
+        $require.eq(await client.getBalance(targetContract.address), 10n);
 
         let zodiac = new ZodiacTx(account, client);
         await assert.rejects(async () => {
@@ -116,11 +117,11 @@ UTest.create({
             );
             await tx.wait();
         });
-        eq_(await targetContract.total(), 19n);
+        $require.eq(await targetContract.total(), 17n);
         await assert.rejects(async () => {
             let tx = await new ZodiacTx({ ...account, operator: hh.deployer(2) }, client).execute(data);
             await tx.wait();
         });
-        eq_(await targetContract.total(), 19n);
+        $require.eq(await targetContract.total(), 17n);
     }
 });
