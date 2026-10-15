@@ -673,10 +673,12 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> implements ITx
         let account = await TxWriter.prepareAccount(accountMix);
         let txBuilder = new TxDataBuilder(client, account, data);
 
-        await Promise.all([
-            txBuilder.ensureGas(),
-            txBuilder.ensureNonce(),
-        ]);
+        if (await TxWriter.hasAgent(account) === false) {
+            await Promise.all([
+                txBuilder.ensureGas(),
+                txBuilder.ensureNonce(),
+            ]);
+        }
 
         let w = new TxWriter(client, txBuilder, account);
         w.send(options);

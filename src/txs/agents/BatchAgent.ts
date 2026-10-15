@@ -12,6 +12,7 @@ import { $date } from 'dequanto/utils/$date';
 import { $address } from 'dequanto/utils/$address';
 import { $logger } from 'dequanto/utils/$logger';
 import { SafeTx } from 'dequanto/safe/SafeTx';
+import { ZodiacTx } from 'dequanto/zodiac/ZodiacTx';
 import { TimelockController } from 'dequanto/prebuilt/openzeppelin/TimelockController';
 import { TimelockService } from 'dequanto/services/TimelockService/TimelockService';
 import { TxDataBuilder } from '../TxDataBuilder';
@@ -86,7 +87,7 @@ export class BatchAgent implements ITxWriterAgent {
     /**
      * Executes the queued transactions.
      *
-     * By default, duplicate transactions are skipped. If the account is Safe or Timelock,
+     * By default, duplicate transactions are skipped. If the account is Safe, Zodiac, or Timelock,
      * prepares the corresponding calldata and submits it as a batch transaction.
      *
      * @param options.includeDuplicates Include duplicate transactions in the execution batch.
@@ -100,10 +101,10 @@ export class BatchAgent implements ITxWriterAgent {
         if (options?.includeDuplicates !== true) {
             txs = alot(txs).distinctBy(x => {
                 const data = x.outerWriter.builder.data;
-                const acc = x.account ?? x.sender;
-                // remove duplicates by [from,to,data]
+                // Remove duplicates by account, value, target, and calldata.
                 return [
-                    acc.address.toLowerCase(),
+                    this.getAccountKey(x),
+                    String(data.value ?? 0),
                     data.to?.toLowerCase() ?? '',
                     data.data ?? ''
                 ].join('');
@@ -117,10 +118,10 @@ export class BatchAgent implements ITxWriterAgent {
                 ? txs[i + 1]
                 : null;
 
-            let acc0 = tx.account?.address ?? tx.sender?.address;
-            let acc1 = next?.account?.address ?? next?.sender?.address;
+            let acc0 = this.getAccountKey(tx);
+            let acc1 = next == null ? null : this.getAccountKey(next);
 
-            if (next == null || $address.eq(acc0, acc1) === false) {
+            if (next == null || acc0 !== acc1) {
                 let arr = await this.executeGroup(txs.slice(groupStart, i + 1));
                 writers.push(...arr);
                 groupStart = i + 1;
@@ -175,9 +176,34 @@ export class BatchAgent implements ITxWriterAgent {
         return lines.join('\n');
     }
 
+    private getAccountKey (tx: MockTxWriter): string {
+        let account = tx.account ?? tx.sender;
+        let address = (account.address ?? tx.sender?.address)?.toLowerCase();
+        if ($account.isZodiac(account)) {
+            let roleKey = account.roleKey?.toLowerCase() ?? '';
+            return `${address}-${roleKey}`;
+        }
+        return address;
+    }
+
     private async executeGroup (txs: MockTxWriter[]) {
         let { account, sender } = txs[0];
         let acc = account ?? sender;
+        if ($account.isZodiac(acc)) {
+            let first = txs[0].outerWriter;
+            let { client, builder, options } = first;
+            let zodiac = new ZodiacTx({
+                ...acc,
+                operator: sender ?? acc.operator
+            }, client, {
+                builder: builder.config,
+                writer: options,
+            });
+            let calls = txs.map(x => x.outerWriter.builder.getTxData());
+            let writer = await zodiac.executeBatch(...calls);
+            await writer.wait();
+            return [writer];
+        }
         if ($account.isSafe(acc)) {
             let tx = await this.executeBatchSafe(acc, txs);
             return [ tx ];

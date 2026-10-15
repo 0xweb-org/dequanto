@@ -93,6 +93,7 @@ Transaction APIs accept several account shapes:
 - named account: string resolved through `ChainAccountService`
 - impersonated account in Hardhat: `{ type: 'impersonated', address }` (no private key required)
 - Safe account: `{ type: 'safe', address, operator, owners? }`
+- Zodiac Roles account: `{ type: 'zodiac', platform, address: rolesModifierAddress, operator, roleKey }`; the operator is an EOA and the role key is hex. See [Zodiac Roles](safe-erc4337.md#zodiac-roles-account-transaction) for execution and batching.
 - ERC-4337 account: `{ type: 'erc4337', address, operator }`
 
 Inspect `src/models/TAccount.ts` before adding a new account shape.

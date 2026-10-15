@@ -1,4 +1,4 @@
-import { EoAccount, Erc4337Account, SafeAccount, TAccount, TimelockAccount } from "dequanto/models/TAccount";
+import { EoAccount, Erc4337Account, SafeAccount, TAccount, TimelockAccount, ZodiacAccount } from "dequanto/models/TAccount";
 import { $address } from './$address';
 import { $require } from './$require';
 import { $sig } from './$sig';
@@ -13,12 +13,16 @@ export namespace $account {
             return { name: account };
         }
 
-        let acc = isSafe(account) || isErc4337 (account) || isTimelock(account)
+        let acc = isSafe(account) || isErc4337 (account) || isTimelock(account) || isZodiac(account)
             ? account.operator
             : account;
 
         $require.notNull(acc, `Sender not resolved for ${ account?.address ?? account }`);
         return acc as EoAccount;
+    }
+
+    export function isZodiac (account: TAccount): account is ZodiacAccount {
+        return account != null && typeof account === 'object' && account.type === 'zodiac';
     }
 
     export function isSafe (account:TAccount): account is SafeAccount {

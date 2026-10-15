@@ -1,3 +1,4 @@
+import type { ZodiacAccount as TZodiacAccount } from './TAccount';
 import type { RpcTypes } from 'dequanto/rpc/Rpc'
 import { TPlatform } from './TPlatform'
 
@@ -135,7 +136,7 @@ export namespace TEth {
 
 
     export interface IAccount {
-        type?: 'eoa' | 'safe' | 'erc4337' | 'timelock' | 'impersonated'
+        type?: 'eoa' | 'safe' | 'erc4337' | 'timelock' | 'impersonated' | 'zodiac'
         name?: string
         address?: Address
         platform?: Platform
@@ -153,6 +154,8 @@ export namespace TEth {
         eth_signTypedData_v4 (address: TEth.Address, typedData: Partial<RpcTypes.TypedData>): Promise<TEth.Hex>
         personal_sign (challenge: string, address: TEth.Address): Promise<TEth.Hex>
     }
+
+    export interface ZodiacAccount extends TZodiacAccount {}
 
     export interface SafeAccount extends IAccount {
         type: 'safe'

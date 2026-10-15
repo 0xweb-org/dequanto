@@ -3,6 +3,7 @@ import type { ITxWriterEmitter, TxWriter } from '../TxWriter';
 import { SafeAgent } from './SafeAgent';
 import { Erc4337Agent } from './Erc4337Agent';
 import { TimelockAgent } from './TimelockAgent';
+import { ZodiacAgent } from './ZodiacAgent';
 
 
 export interface ITxWriterAgent {
@@ -17,6 +18,7 @@ export namespace TxWriterAccountAgents {
 
     const agents: ITxWriterAccountAgent[] = [
         new SafeAgent(),
+        new ZodiacAgent(),
         new Erc4337Agent(),
         new TimelockAgent(),
     ];

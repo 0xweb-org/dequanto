@@ -24,7 +24,7 @@ Before using an unfamiliar dequanto API, verify the exact signature in `src/` or
 | Encode/decode ABI data, hash Solidity values, validate inputs, manipulate hex, work with dates, sign data, or capture promise errors | `$abi`, `$contract`, `$require`, `$hex`, `$date`, `$sig`, `$promise` | `references/utils.md` | `examples/utils.spec.ts` |
 | Read Solidity storage, structs, mappings, arrays, or diamond storage | `SlotsParser`, `SlotsStorage`, generated storage readers | `references/storage.md` | `examples/storage.spec.ts` |
 | Work with tokens and balances | `TokensService`, `TokensServiceFactory`, `TokenTransferService`, generated ERC20 wrappers | `references/tokens-accounts.md` | `examples/token-transfer.spec.ts` |
-| Work with accounts, signing, Safe, or ERC-4337 | `ChainAccountService`, `$sig`, `GnosisSafeHandler`, `SafeTx`, `Erc4337Service`, `Erc4337TxWriter` | `references/safe-erc4337.md`, `references/tokens-accounts.md` | `examples/safe-batch.spec.ts`, `examples/erc4337-userop.spec.ts` |
+| Work with accounts, signing, Safe, Zodiac Roles, or ERC-4337 | `ChainAccountService`, `$sig`, `GnosisSafeHandler`, `SafeTx`, `ZodiacAccount`, `ZodiacTx`, `Erc4337Service`, `Erc4337TxWriter` | `references/safe-erc4337.md`, `references/tokens-accounts.md` | `examples/safe-batch.spec.ts`, `examples/erc4337-userop.spec.ts` |
 | Connect a browser wallet (MetaMask, Rabby, etc.) or build a dApp; request accounts, switch chains, or sign/send txs from browser | `client.wallet`, `EIP6963ProviderFactory`, `WalletClient` | `references/browser.md` | `examples/browser-wallet.spec.ts` |
 | Convert code from ethers or viem habits | Use the dequanto equivalents instead of adding external clients | `references/migration-from-ethers-viem.md` | all examples |
 

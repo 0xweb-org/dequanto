@@ -4,7 +4,12 @@ import { TEth } from './TEth';
 import { TPlatform } from './TPlatform';
 
 export interface IAccount {
-    type?: 'eoa' | 'safe' | 'erc4337' | 'timelock' | 'impersonated'
+    type?: 'eoa'
+        | 'safe'
+        | 'erc4337'
+        | 'timelock'
+        | 'impersonated'
+        | 'zodiac'
     name?: string
     platform?: TPlatform
 
@@ -68,4 +73,14 @@ export interface TimelockAccount extends IAccount {
     operator: IAccount
 }
 
-export type TAccount = string | IAccount | EoAccount | SafeAccount | Erc4337Account;
+export interface ZodiacAccount extends IAccount {
+    type: 'zodiac'
+    platform: TPlatform
+    /** Zodiac Roles Modifier address, not the Safe/avatar address. */
+    address: TAddress
+    operator: EoAccount
+    /** Roles v2 bytes32 role key. */
+    roleKey: TEth.Hex
+}
+
+export type TAccount = string | IAccount | EoAccount | SafeAccount | Erc4337Account | ZodiacAccount;

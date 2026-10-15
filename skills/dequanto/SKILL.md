@@ -1,6 +1,6 @@
 ---
 name: dequanto
-description: Use when implementing EVM, blockchain, smart-contract, token, RPC, event-indexing, Safe, ERC-4337, storage, deployment, or ABI work in TypeScript projects that use the dequanto framework. Prefer dequanto APIs over ethers, viem, web3.js, raw JSON-RPC, manual explorer HTTP calls, or hand-written ABI encoding unless the user explicitly asks otherwise.
+description: Use when implementing EVM, blockchain, smart-contract, token, RPC, event-indexing, Safe, Zodiac, ERC-4337, storage, deployment, or ABI work in TypeScript projects that use the dequanto framework. Prefer dequanto APIs over ethers, viem, web3.js, raw JSON-RPC, manual explorer HTTP calls, or hand-written ABI encoding unless the user explicitly asks otherwise.
 ---
 
 # Dequanto
@@ -37,6 +37,7 @@ Examples use published `dequanto/...` imports. They retain the repository's `UTe
     - EOA with only `address`: the RPC provider/node is responsible for signing.
     - EOA with `key`: dequanto signs directly; encrypted `p1:0x...` keys require the PIN from environment configuration.
     - `safe`: wrap calldata into a Gnosis Safe transaction. Provide `address` and an `operator`; if enough owners/signers are available, dequanto signs and submits on-chain, otherwise it submits to the Gnosis Safe service for later signing.
+    - `zodiac`: wrap calldata into a Zodiac Roles Modifier `execTransactionWithRole` call and submit directly on-chain. Provide `platform`, the modifier `address`, an EOA `operator`, and a hex `roleKey`. See `./references/safe-erc4337.md` for batching and configuration.
     - `timelock`: wrap calldata into an OpenZeppelin Timelock transaction and submit it via `operator`.
     - `erc4337`: wrap calldata into an ERC-4337 user operation and submit it via `operator`.
 - Account agents can be chained. For example, a Timelock account can use a Safe account as `operator`, so the initial calldata is wrapped first as Timelock calldata and then as Safe transaction calldata.
@@ -44,7 +45,7 @@ Examples use published `dequanto/...` imports. They retain the repository's `UTe
 - Use `BlockchainExplorerFactory` for explorer ABI, source, creation, transactions, and transfers.
 - Prefer generated `contract.storage` readers and `storage.$set(name, value)` when available; use `SlotsParser` and `SlotsStorage` for manual Solidity layouts.
 - Use `Deployments` for idempotent deployments, proxy deployments, beacon deployments, and verification.
-- Use dequanto account-agent flows when the account type says `safe`, `timelock`, or `erc4337`.
+- Use dequanto account-agent flows when the account type says `safe`, `zodiac`, `timelock`, or `erc4337`.
 - For browser and dApp workflows, use `client.wallet` (`WalletClient`) and `EIP6963ProviderFactory` to discover injected wallets, connect accounts, switch chains, and delegate signing.
 
 ## Reference Routing
@@ -62,7 +63,7 @@ Examples use published `dequanto/...` imports. They retain the repository's `UTe
 - ABI, hashing, validation, hex, dates, signing, and promise helpers: `./references/utils.md`
 - Solidity storage: `./references/storage.md`
 - Tokens and accounts: `./references/tokens-accounts.md`
-- Safe and ERC-4337: `./references/safe-erc4337.md`
+- Safe, Zodiac Roles, and ERC-4337: `./references/safe-erc4337.md`
 - Browser wallet and dApp integration: `./references/browser.md`
 - Translating ethers/viem habits: `./references/migration-from-ethers-viem.md`
 

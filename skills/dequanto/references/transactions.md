@@ -72,6 +72,7 @@ Important behavior:
 - `batch.execute()` skips duplicate transactions by default; pass `{ includeDuplicates: true }` when duplicates are intentional.
 - Deployment transactions are ignored by default; pass `new BatchAgent({ ignoreContractCreation: false })` when contract creation should also be intercepted.
 - If the account being submitted is a Safe, `execute()` creates one Safe multicall/batch transaction from many cached single transactions.
+- If the account being submitted is Zodiac, `execute()` wraps each compatible group in MultiSend and submits it through `execTransactionWithRole`. Different roles, operators, and chains remain separate. See [Zodiac batching](safe-erc4337.md#zodiac-batch) for deployment configuration and the required unwrapper.
 - If the account being submitted is a Timelock, `execute()` creates one Timelock batch/scheduleBatch flow from many cached single transactions.
 - For normal EOA accounts, `execute()` sends each cached transaction on-chain.
 
@@ -165,5 +166,5 @@ See the [revert and custom error example](../examples/revert-error.spec.ts) for 
 
 - Do not perform manual simulations with `$call()` or `$gas()` solely to catch reverts before sending; `TxWriter` automatically simulates via gas estimation, decodes custom errors, and throws standard JavaScript errors.
 - Do not manually manage gas and nonce unless the task needs it.
-- Do not use external wallet clients when a dequanto `TAccount`, `SafeAccount`, or `Erc4337Account` flow is available.
+- Do not use external wallet clients when a dequanto `TAccount`, `SafeAccount`, `ZodiacAccount`, or `Erc4337Account` flow is available.
 
