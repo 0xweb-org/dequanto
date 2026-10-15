@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 import { SlotsParser } from 'dequanto/solidity/SlotsParser';
@@ -7,7 +8,7 @@ import { $buffer } from 'dequanto/utils/$buffer';
 import { $hex } from 'dequanto/utils/$hex';
 import { l } from 'dequanto/utils/$logger';
 
-UTest({
+UTest.create({
 
     async 'should read contract storage'() {
 
@@ -346,7 +347,7 @@ UTest({
 
     },
     async 'generate positions' () {
-        return UTest({
+        return UTest.create({
             async 'generate an array location' () {
                 let x = new SlotsStorageTransportForArray(null, 0);
                 let location = x.mapToGlobalSlot(14);

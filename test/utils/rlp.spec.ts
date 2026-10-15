@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { $rlp } from 'dequanto/abi/$rlp'
 import { TEth } from 'dequanto/models/TEth';
 import { $buffer } from 'dequanto/utils/$buffer'
@@ -119,7 +120,7 @@ const fixtures = {
     ]
 }
 
-UTest({
+UTest.create({
     'encode and decode fixtures'() {
         fixtures.data.forEach(([value, encoded], i) => {
             function ensureBuffers(val) {

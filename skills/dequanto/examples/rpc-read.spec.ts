@@ -1,10 +1,11 @@
+import { UTest } from 'atma-utest';
 import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import { BlockDateResolver } from 'dequanto/blocks/BlockDateResolver';
 import { Config } from 'dequanto/config/Config';
 import { $date } from 'dequanto/utils/$date';
 import { $require } from 'dequanto/utils/$require';
 
-UTest({
+UTest.create({
     async 'read common RPC data via Web3Client directly' () {
         const cfg = await Config.fetch();
 

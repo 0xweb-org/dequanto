@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import hh from 'hardhat';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 import { Generator } from 'dequanto/gen/Generator';
@@ -16,7 +17,7 @@ import { Fixtures } from '../Fixtures';
 
 declare let include;
 
-UTest({
+UTest.create({
     $config: {
         timeout: $date.parseTimespan('5min'),
     },
@@ -134,7 +135,7 @@ UTest({
 
         let { Foo } = await include.js('/test/tmp/eth/Foo/Foo.ts');
 
-        return UTest({
+        return UTest.create({
             $config: {
                 timeout: $date.parseTimespan('1min'),
             },

@@ -1,7 +1,8 @@
+import { UTest } from 'atma-utest';
 import { $bigint } from 'dequanto/utils/$bigint'
 
 
-UTest({
+UTest.create({
     'float math': {
         async 'multiply' () {
             let val = $bigint.multWithFloat(1000n, .99);

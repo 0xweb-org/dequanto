@@ -1,10 +1,11 @@
+import { UTest } from 'atma-utest';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 import { BlocksWalker } from 'dequanto/indexer/handlers/BlocksWalker';
 import { TxDataBuilder } from 'dequanto/txs/TxDataBuilder';
 import { TxWriter } from 'dequanto/txs/TxWriter';
 import { TestNode } from '../hardhat/TestNode';
 
-UTest({
+UTest.create({
 
     async 'should walk over sent transactions to get blocks, txs, and receipts' () {
         let provider = new HardhatProvider();

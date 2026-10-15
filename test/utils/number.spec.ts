@@ -1,7 +1,8 @@
+import { UTest } from 'atma-utest';
 import { $number } from 'dequanto/utils/$number'
 import alot from 'alot';
 
-UTest({
+UTest.create({
     'random': {
         async 'float with an explicit digit count' () {
             let min = 0.01;

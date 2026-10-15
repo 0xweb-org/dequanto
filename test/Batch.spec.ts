@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { Wallet } from 'ethers';
 import { l } from 'dequanto/utils/$logger';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
@@ -8,7 +9,7 @@ import { $contract } from 'dequanto/utils/$contract';
 import { $txData } from 'dequanto/utils/$txData';
 import { TestNode } from './hardhat/TestNode';
 
-UTest({
+UTest.create({
     $config: {
         timeout: 20_000
     },

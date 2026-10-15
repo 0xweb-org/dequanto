@@ -1,8 +1,9 @@
+import { UTest } from 'atma-utest';
 import { $http } from 'dequanto/utils/$http';
 import { File } from 'atma-io'
 import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
 
-UTest({
+UTest.create({
     async $before () {
         $http.register(/address\/0xfbD2aa7efA2B46Ce3c58D7ab0D92C176c71499C0/, async (opts) => {
             return {

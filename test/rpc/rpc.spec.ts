@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { Rpc } from 'dequanto/rpc/Rpc';
 import { TestNode } from '../hardhat/TestNode'
 import { $address } from 'dequanto/utils/$address';
@@ -23,7 +24,7 @@ const HOST = `127.0.0.1:${PORT}`
 const hh = new HardhatProvider();
 const acc1 = hh.deployer(0);
 
-UTest({
+UTest.create({
     async $before() {
         await TestNode.start();
     },
@@ -46,7 +47,7 @@ UTest({
     async 'should check a WS subscription'() {
         let url = `ws://${HOST}`;
         let rpc = new Rpc(url);
-        return UTest({
+        return UTest.create({
             async 'subscribe' () {
                 let subscription = await rpc.eth_subscribe('newHeads');
                 await rpc.request({ method: 'hardhat_mine' });
@@ -99,7 +100,7 @@ UTest({
 
 
 function RpcUtest(name: string, rpc: Rpc, client: Web3Client) {
-    return UTest({
+    return UTest.create({
         async 'should return a number for blockNumber'() {
             let nr = await rpc.eth_blockNumber();
             eq_(typeof nr, 'number');
@@ -117,7 +118,7 @@ function RpcUtest(name: string, rpc: Rpc, client: Web3Client) {
             eq_(typeof chainId, 'number');
         },
         async 'should test Web3Client'() {
-            return UTest({
+            return UTest.create({
                 async 'get block number'() {
                     let nr = await client.getBlockNumber();
                     eq_(typeof nr, 'number');
@@ -216,7 +217,7 @@ function RpcUtest(name: string, rpc: Rpc, client: Web3Client) {
                 abi: abi
             });
 
-            return UTest({
+            return UTest.create({
                 async 'call an unknown method'() {
                     let result = await rpc.eth_call({
                         to: $address.ZERO,

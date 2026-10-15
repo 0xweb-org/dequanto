@@ -1,10 +1,11 @@
+import { UTest } from 'atma-utest';
 import { $abiCoder } from 'dequanto/abi/$abiCoder';
 import { $bytecode } from 'dequanto/evm/utils/$bytecode';
 import { $abiUtils } from 'dequanto/utils/$abiUtils';
 import { $contract } from 'dequanto/utils/$contract';
 import { Fixtures } from 'test/Fixtures';
 
-UTest({
+UTest.create({
     async 'should split bytecode and metadata'() {
         // https://playground.sourcify.dev
         // https://etherscan.io/address/0x43506849d7c04f9138d1a2050bbf3a0c054402dd#code

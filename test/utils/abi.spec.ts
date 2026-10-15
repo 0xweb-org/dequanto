@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { $abi } from 'dequanto/abi/$abi';
 import { $abiCoder } from 'dequanto/abi/$abiCoder';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
@@ -7,7 +8,7 @@ import { l } from 'dequanto/utils/$logger';
 import { File } from 'atma-io'
 import { TEth } from 'dequanto/models/TEth';
 
-UTest({
+UTest.create({
     'encode call data'() {
         let to = '0x0000000000000000000000000000000000000002';
         let expected = '0xa9059cbb00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000005';

@@ -1,7 +1,8 @@
+import { UTest } from 'atma-utest';
 import { TokensService } from 'dequanto/tokens/TokensService';
 import { TokensServiceFactory } from 'dequanto/tokens/TokensServiceFactory';
 
-UTest({
+UTest.create({
     async 'should load token data' () {
         let service = new TokensService('eth');
         let usdc = await service.getKnownToken('USDC');

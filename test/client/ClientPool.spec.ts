@@ -1,9 +1,10 @@
+import { UTest } from 'atma-utest';
 import { WClient } from 'dequanto/clients/ClientPool';
 import { ClientStatus } from 'dequanto/clients/model/ClientStatus';
 import { TTransport } from 'dequanto/rpc/transports/ITransport';
 import { $date } from 'dequanto/utils/$date';
 
-UTest({
+UTest.create({
     'should track endpoint health and retry after the cooldown' () {
         let client = new WClient({
             web3: new TransportMock()

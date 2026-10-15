@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import di from 'a-di';
 import { EthWeb3Client } from 'dequanto/clients/EthWeb3Client';
 import { TxLogParser } from 'dequanto/txs/receipt/TxLogParser'
@@ -11,7 +12,7 @@ const tx = {
     swap: `0x7e91bf011c11e5e8a553db696bd4b070507b7149af841eb0319010bbfb03502a`
 };
 
-UTest({
+UTest.create({
     async '// download receipt' () {
         let receipt = await di.resolve(EthWeb3Client).getTransactionReceipt(tx.swap);
         await File.writeAsync(`./test/fixtures/receipts/swap.json`, receipt);

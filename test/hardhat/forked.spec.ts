@@ -1,9 +1,10 @@
+import { UTest } from 'atma-utest';
 import { ERC20 } from 'dequanto/prebuilt/openzeppelin/ERC20';
 import { ContractReader } from 'dequanto/contracts/ContractReader';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 import { $sig } from 'dequanto/utils/$sig';
 
-UTest({
+UTest.create({
     $config: {
         timeout: 90_000
     },
@@ -12,7 +13,7 @@ UTest({
         const client = await provider.forked({ platform: 'eth' });
         const owner = $sig.$account.generate();
 
-        return UTest({
+        return UTest.create({
             $config: {
                 timeout: 90_000
             },

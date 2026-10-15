@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
 import { Erc4337Service } from 'dequanto/erc4337/Erc4337Service';
@@ -6,7 +7,7 @@ import { $address } from 'dequanto/utils/$address';
 import { $erc4337 } from 'dequanto/erc4337/utils/$erc4337';
 import { $require } from 'dequanto/utils/$require';
 
-UTest({
+UTest.create({
     async 'hash a UserOperation and create an ERC-4337 service' () {
         const client = await Web3ClientFactory.getAsync('eth');
         const explorer = await BlockchainExplorerFactory.getAsync('eth');

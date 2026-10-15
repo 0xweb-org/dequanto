@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { JsonArrayStore } from 'dequanto/json/JsonArrayStore';
 import { JsonObjectStore } from 'dequanto/json/JsonObjectStore';
 import { l } from 'dequanto/utils/$logger';
@@ -8,7 +9,7 @@ import { File } from 'atma-io'
 let pathArr = '/test/tmp/jsonstore-arr.json';
 let pathObj = '/test/tmp/jsonstore-obj.json';
 
-UTest({
+UTest.create({
     'array': {
         $before () {
             File.exists(pathArr) && File.remove(pathArr);

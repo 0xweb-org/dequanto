@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { IContractWrapped } from 'dequanto/contracts/ContractClassFactory';
 import { Deployments } from 'dequanto/contracts/deploy/Deployments';
 import { IBeacon, IBeaconProxy, IProxyAdmin } from 'dequanto/contracts/deploy/proxy/ProxyDeployment';
@@ -37,7 +38,7 @@ let FooInits_v5_0_2;
 let FooInits_v5_0_2_raw;
 let ImmutablesInit;
 
-export default UTest({
+export default UTest.create({
     async $before() {
         await File.removeAsync(deploymentsOutput);
         await File.removeAsync(deploymentsProxyOutput);

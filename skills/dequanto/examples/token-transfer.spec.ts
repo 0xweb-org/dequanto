@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import { ERC20 } from 'dequanto/prebuilt/openzeppelin/ERC20';
 import { $account } from 'dequanto/utils/$account';
@@ -8,7 +9,7 @@ const USDC = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48' as const;
 const INITIAL_SENDER_BALANCE = 100_000_000n;
 const TRANSFER_AMOUNT = 42_000_000n;
 
-UTest({
+UTest.create({
     async 'transfer USDC with a prebuilt ERC20 contract class' () {
         const client = await Web3ClientFactory.getAsync('hh:memory:eth');
         const sender = $account.generate('sender');

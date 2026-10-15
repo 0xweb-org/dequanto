@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 
 import { MockWallet } from './MockWallet';
@@ -10,7 +11,7 @@ const provider = new HardhatProvider();
 const client = await provider.client();
 const wallet = new MockWallet(client);
 
-UTest({
+UTest.create({
     async 'should transfer from account 1 to account 2'() {
         const account = wallet.addAccount();
         const account2 = $sig.$account.generate();

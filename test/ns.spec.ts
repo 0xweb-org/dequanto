@@ -1,8 +1,9 @@
+import { UTest } from 'atma-utest';
 import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import { NameService } from 'dequanto/ns/NameService';
 import { $ns } from 'dequanto/ns/utils/$ns';
 
-UTest({
+UTest.create({
     'ens': {
         async 'TLD' () {
             let hash = $ns.namehash('eth');

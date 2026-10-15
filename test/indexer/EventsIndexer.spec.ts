@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import alot from 'alot';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 import { EventsIndexer } from 'dequanto/indexer/EventsIndexer';
@@ -28,7 +29,7 @@ const code = `
     }
 `;
 
-UTest({
+UTest.create({
     async $before () {
         if (await Directory.existsAsync(FS_DIR)) {
             await Directory.removeAsync(FS_DIR)

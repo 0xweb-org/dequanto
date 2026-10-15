@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 import { $account } from 'dequanto/utils/$account';
 import { $promise } from 'dequanto/utils/$promise';
@@ -8,7 +9,7 @@ import { $require } from 'dequanto/utils/$require';
 // if it reverts, dequanto catches the revert, decodes any custom error bytecode using the ABI,
 // captures execution traces, and throws a standard JavaScript Error.
 // If gas estimation succeeds but the transaction reverts on-chain later, the error flow is identical.
-UTest({
+UTest.create({
     async 'catch automatic revert and decode custom error without manual simulation' () {
         const hh = new HardhatProvider();
         const client = hh.client();

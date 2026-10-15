@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 import { TokenTransferService } from 'dequanto/tokens/TokenTransferService';
 import { TxNonceManager } from 'dequanto/txs/TxNonceManager';
@@ -7,7 +8,7 @@ let hh = new HardhatProvider();
 let client = hh.client('hardhat');
 let alice = hh.deployer(1);
 
-UTest({
+UTest.create({
     async 'should create and restore a snapshot' () {
 
         let nonce = TxNonceManager.create(client, alice);

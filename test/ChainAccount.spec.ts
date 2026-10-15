@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 
 import { ChainAccountService } from 'dequanto/ChainAccountService';
 import { Config } from 'dequanto/config/Config';
@@ -8,7 +9,7 @@ import { File } from 'atma-io';
 import memd from 'memd';
 
 
-UTest({
+UTest.create({
     async 'should generate an account' () {
         let { key, address } = $sig.$account.generate();
         eq_($is.Address(address), true);

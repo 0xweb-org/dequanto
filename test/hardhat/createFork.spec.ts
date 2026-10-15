@@ -1,11 +1,12 @@
-﻿import { PlatformFactory } from 'dequanto/chains/PlatformFactory';
+﻿import { UTest } from 'atma-utest';
+import { PlatformFactory } from 'dequanto/chains/PlatformFactory';
 import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 import { HardhatWeb3Client } from 'dequanto/hardhat/HardhatWeb3Client';
 import { $dependency } from 'dequanto/utils/$dependency';
 
 
-UTest({
+UTest.create({
     async 'forks a local RPC and inherits its chainId' () {
         const hh = new HardhatProvider();
         try {

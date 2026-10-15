@@ -1,9 +1,10 @@
+import { UTest } from 'atma-utest';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 import { SlotsParser } from 'dequanto/solidity/SlotsParser';
 import { l } from 'dequanto/utils/$logger';
 import { $require } from 'dequanto/utils/$require';
 
-UTest({
+UTest.create({
     async 'should extract slots from contract'() {
 
         const input = `
@@ -203,7 +204,7 @@ UTest({
         eq_(slots[1].slot, 5n);
     },
     async 'constants and immutables'() {
-        return UTest({
+        return UTest.create({
             async 'should ignore constants by default'() {
                 const input = `
                     contract Test {
@@ -297,7 +298,7 @@ UTest({
     },
     async 'should extract slots from an ABI'() {
 
-        return UTest({
+        return UTest.create({
             async 'simple struct'() {
                 const input = `
                     (uint256 foo, uint256[3] bar)
@@ -476,7 +477,7 @@ UTest({
     },
     async 'should parse Solidity versions lower than 0.4.17'() {
 
-        return new UTest({
+        return UTest.create({
             async 'parse ENJToken'() {
                 // https://etherscan.io/bytecode-decompiler?a=0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c
 

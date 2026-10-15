@@ -1,8 +1,9 @@
+import { UTest } from 'atma-utest';
 import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import { BlockDateResolver } from 'dequanto/blocks/BlockDateResolver';
 import { $date } from 'dequanto/utils/$date';
 
-UTest({
+UTest.create({
     $config: {
         timeout: 20_000
     },

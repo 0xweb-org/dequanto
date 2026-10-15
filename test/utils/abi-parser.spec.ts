@@ -1,8 +1,9 @@
+import { UTest } from 'atma-utest';
 import { $abiCoder } from '../../src/abi/$abiCoder'
 import { $abi } from '../../src/abi/$abi'
 import { $abiParser } from '../../src/utils/$abiParser'
 
-UTest({
+UTest.create({
     'parse an empty return' () {
         let abi = $abiParser.parseMethod('function bar(uint256):()');
         has_(abi, {

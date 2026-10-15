@@ -1,9 +1,10 @@
+import { UTest } from 'atma-utest';
 import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import { EventsIndexer } from 'dequanto/indexer/EventsIndexer';
 import { ERC20 } from 'dequanto/prebuilt/openzeppelin/ERC20';
 import { $require } from 'dequanto/utils/$require';
 
-UTest({
+UTest.create({
     async 'index stable USDC Transfer logs from live Ethereum RPC' () {
         const client = await Web3ClientFactory.getAsync('eth');
         const usdc = new ERC20('0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', client);

@@ -1,9 +1,10 @@
+import { UTest } from 'atma-utest';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 import { TxWriter } from 'dequanto/txs/TxWriter';
 import { $abiUtils } from 'dequanto/utils/$abiUtils';
 import { l } from 'dequanto/utils/$logger';
 
-UTest({
+UTest.create({
     async 'calldata vs encoded vs digit-packed vs bitwise-packed' () {
         const code = `
         contract Foo {

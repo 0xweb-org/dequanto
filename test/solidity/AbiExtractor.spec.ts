@@ -1,7 +1,8 @@
+import { UTest } from 'atma-utest';
 import { SolidityParser } from 'dequanto/solidity/SolidityParser';
 import alot from 'alot';
 
-UTest({
+UTest.create({
     async 'should extract slots from contract'() {
         const input = `
             contract Test {
@@ -209,7 +210,7 @@ UTest({
     },
     async 'should parse ABI from Solidity versions lower than 0.5.0'() {
 
-        return new UTest({
+        return UTest.create({
             async 'parse ENJToken'() {
                 const { abi: abis } = await SolidityParser.extractAbi({
                     path: './test/fixtures/parser/v04/ENJToken.sol'

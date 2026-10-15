@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import { TxDataBuilder } from 'dequanto/txs/TxDataBuilder';
 import { TxWriter } from 'dequanto/txs/TxWriter';
@@ -6,7 +7,7 @@ import { $address } from 'dequanto/utils/$address';
 import { $number } from 'dequanto/utils/$number';
 import { $require } from 'dequanto/utils/$require';
 
-UTest({
+UTest.create({
     async 'build native transfer tx data with gas fields' () {
         const client = await Web3ClientFactory.getAsync('hh:memory');
         const alice = $account.generate('alice');

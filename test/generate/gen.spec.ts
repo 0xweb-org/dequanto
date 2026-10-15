@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { ERC20 } from 'dequanto/prebuilt/openzeppelin/ERC20';
 import { Generator } from 'dequanto/gen/Generator';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
@@ -7,7 +8,7 @@ import { Constructor } from 'atma-utils';
 
 declare let include;
 
-UTest({
+UTest.create({
     async 'generate and deploy from compiled JSON metadata' () {
 
         /** Test with absolute path, to prevent absolute paths in generated files */

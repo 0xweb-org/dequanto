@@ -1,7 +1,8 @@
+import { UTest } from 'atma-utest';
 import { $abiType } from 'dequanto/utils/$abiType'
 
 
-UTest({
+UTest.create({
     'should get the event topic hash'() {
         ([
             [`uint256`, `bigint`],

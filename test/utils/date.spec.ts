@@ -1,6 +1,7 @@
+import { UTest } from 'atma-utest';
 import { $date } from 'dequanto/utils/$date'
 
-UTest({
+UTest.create({
     'should check adding seconds' () {
         let date = new Date();
         let x = $date.tool(date).add(`5s`).toUnixTimestamp();

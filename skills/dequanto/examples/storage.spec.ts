@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { AavePool } from '../../../0xc/eth/AavePool/AavePool';
 import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
@@ -7,7 +8,7 @@ import { $require } from 'dequanto/utils/$require';
 
 // Generated classes include the storage layout: use instance.storage.$set(name, value).
 // SlotsParser and SlotsStorage provide the low-level alternative for Solidity source.
-UTest({
+UTest.create({
     async 'read and set AavePool storage by variable name on an Ethereum fork' () {
         const client = await Web3ClientFactory.getAsync('hh:memory:eth');
         const pool = new AavePool(undefined, client);

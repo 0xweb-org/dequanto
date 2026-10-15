@@ -1,10 +1,11 @@
+import { UTest } from 'atma-utest';
 import { Generator } from 'dequanto/gen/Generator';
 import { $require } from 'dequanto/utils/$require';
 import { File } from 'atma-io';
 
 // Generator is the low-level API for creating contract classes programmatically.
 // Prefer 0xweb install for third-party contracts and @0xweb/hardhat for local Hardhat contracts.
-UTest({
+UTest.create({
     async 'generate a typed contract class from a fixture artifact' () {
         const output = './test/tmp/ai-examples/hardhat/';
         const gen = new Generator({

@@ -1,6 +1,7 @@
+import { UTest } from 'atma-utest';
 import { $base } from 'dequanto/utils/$base';
 
-UTest({
+UTest.create({
     'test the base58 encode from hex string'() {
         const fixtures = [
             ['0x', ''],

@@ -1,7 +1,8 @@
+import { UTest } from 'atma-utest';
 import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import { $require } from 'dequanto/utils/$require';
 
-UTest({
+UTest.create({
     async 'change balances, storage, and time on Hardhat and roll back'() {
         const client = await Web3ClientFactory.getAsync('hh:memory');
         const address = '0x0000000000000000000000000000000000001234';

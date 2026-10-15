@@ -1,8 +1,9 @@
+import { UTest } from 'atma-utest';
 import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
 import { $address } from 'dequanto/utils/$address';
 import { $require } from 'dequanto/utils/$require';
 
-UTest({
+UTest.create({
     async 'fetch stable USDC ABI and source from configured Ethereum explorer' () {
         const explorer = await BlockchainExplorerFactory.getAsync('eth');
         const address = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48';

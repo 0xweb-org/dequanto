@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 
 import { ContractReader } from 'dequanto/contracts/ContractReader';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
@@ -5,7 +6,7 @@ import { $abiUtils } from 'dequanto/utils/$abiUtils';
 import { $contract } from 'dequanto/utils/$contract';
 import { $sig } from 'dequanto/utils/$sig';
 
-UTest({
+UTest.create({
     async 'should sign a message'() {
         let amount = 9n;
         let nonce = 1;

@@ -1,6 +1,7 @@
+import { UTest } from 'atma-utest';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 
-UTest({
+UTest.create({
     async 'should check revert handling' () {
 
         let code = `

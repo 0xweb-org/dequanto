@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import { ContractClassFactory } from 'dequanto/contracts/ContractClassFactory';
 // dequanto ships prebuilt TypeScript clients for all OpenZeppelin contracts.
@@ -13,7 +14,7 @@ import { $address } from 'dequanto/utils/$address';
 const USDC = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48' as const;
 const AAVE_POOL = '0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2' as const;
 
-UTest({
+UTest.create({
     async 'read data from mainnet using the prebuilt ERC20 contract' () {
         const client = await Web3ClientFactory.getAsync('eth');
         const usdc = new ERC20(USDC, client);

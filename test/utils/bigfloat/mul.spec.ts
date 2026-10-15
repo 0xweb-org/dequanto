@@ -1,6 +1,7 @@
+import { UTest } from 'atma-utest';
 import { $bigfloat } from 'dequanto/utils/$bigfloat';
 
-UTest({
+UTest.create({
     'multipliedBy' () {
 
         function t(multiplicand, multiplier, expected) {

@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 import { WETH } from 'dequanto/prebuilt/weth/WETH/WETH';
@@ -20,7 +21,7 @@ const provider = new HardhatProvider();
 const client = provider.client();
 const deployer = provider.deployer();
 
-UTest({
+UTest.create({
     $before() {
         $contract.store.clear();
     },
@@ -87,7 +88,7 @@ UTest({
             color: false
         });
 
-        return UTest({
+        return UTest.create({
             async 'in gas estimation'() {
                 let { error } = await $promise.caught(contract.$receipt().fnOne(deployer, 42));
                 $assert.has(`AThrown.fnOne(foo: 42)`, error.message);

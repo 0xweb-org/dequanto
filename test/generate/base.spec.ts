@@ -1,9 +1,10 @@
+import { UTest } from 'atma-utest';
 import { ContractBase, TContractTypes } from 'dequanto/contracts/ContractBase'
 import { $abiParser } from 'dequanto/utils/$abiParser';
 import { $address } from 'dequanto/utils/$address';
 import { l } from 'dequanto/utils/$logger';
 
-UTest({
+UTest.create({
     async 'should resolve overloads'() {
         class Foo extends ContractBase {
             abi = null;
@@ -19,7 +20,7 @@ UTest({
             }
         }
 
-        return UTest({
+        return UTest.create({
             'by signatures'() {
                 let abi = new Foo().getAbi(
                     [

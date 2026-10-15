@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import { TokenTransferService } from 'dequanto/tokens/TokenTransferService';
 import { $require } from 'dequanto/utils/$require';
@@ -8,7 +9,7 @@ import { MockWallet } from '../../../test/eip6963/MockWallet';
 // In browser applications (dApps), dequanto discovers injected wallets via EIP-6963 / EIP-1193.
 // When an account is connected to client.wallet, TxWriter routes transactions to the browser wallet
 // for signing and submission without needing a private key.
-UTest({
+UTest.create({
     async 'connect to an injected browser wallet and send a transaction' () {
         const client = await Web3ClientFactory.getAsync('hh:memory');
 

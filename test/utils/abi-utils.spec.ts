@@ -1,6 +1,7 @@
+import { UTest } from 'atma-utest';
 import { $abiUtils } from 'dequanto/utils/$abiUtils'
 
-UTest({
+UTest.create({
     'should get the event topic hash'() {
         let hash = $abiUtils.getTopicSignature({
             anonymous: false,

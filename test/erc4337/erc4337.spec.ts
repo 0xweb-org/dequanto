@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import memd from 'memd';
 import { l } from 'dequanto/utils/$logger';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
@@ -23,7 +24,7 @@ const provider = new HardhatProvider();
 const client = await provider.client();
 const explorer = await provider.explorer();
 
-UTest({
+UTest.create({
     async 'should check the handleOps method signature'() {
         let abi = new EntryPoint().abi.find(x => x.name === 'handleOps');
         let sig = $abiUtils.getMethodSignature(abi);
@@ -117,7 +118,7 @@ UTest({
         await client.debug.setBalance(ownerFoo.address, 10n ** 18n);
 
 
-        return UTest({
+        return UTest.create({
             async 'low-level create and test with a demo contract'() {
                 l`1. Prepare ERC4337 contract account via Account Factory`;
                 let { initCode, initCodeGas } = await erc4337Service.prepareAccountCreation(ownerFoo.address);
@@ -277,7 +278,7 @@ UTest({
         let erc4337Account: Erc4337Account;
         let transferOperation: UserOperation;
 
-        return UTest({
+        return UTest.create({
             async 'owner funds the ERC-4337 account with tokens' () {
                 let erc4337Writer = new Erc4337TxWriter(client, explorer, {
                     addresses: {

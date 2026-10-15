@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { TokenDataProvider } from 'dequanto/tokens/TokenDataProvider';
 import { AmmV1Oracle } from 'dequanto/tokens/TokenOracles/amm/AmmV1Oracle';
 import { AmmV2Oracle } from 'dequanto/tokens/TokenOracles/amm/AmmV2Oracle';
@@ -8,11 +9,11 @@ import { $date } from 'dequanto/utils/$date';
 import { l } from 'dequanto/utils/$logger';
 import { $sig } from 'dequanto/utils/$sig';
 
-UTest({
+UTest.create({
     async 'ETH' () {
         let token = 'ETH';
 
-        return UTest({
+        return UTest.create({
             async 'from Chainlink' () {
                 let oracle = new ChainlinkOracle();
                 let { error, result } = await oracle.getPrice({ symbol: token });

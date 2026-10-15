@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { File } from 'atma-io';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 import { GnosisSafeFactory } from 'dequanto/safe/GnosisSafeFactory';
@@ -27,7 +28,7 @@ const client = await provider.client();
 const explorer = await provider.explorer();
 
 
-UTest({
+UTest.create({
     async $before() {
         try {
             await File.removeAsync('./test/tmp/safe-tx.json');
@@ -176,7 +177,7 @@ UTest({
             operator: owner1,
         };
 
-        return UTest({
+        return UTest.create({
             async 'execute single tx'() {
                 let confirmationsFile = './test/tmp/safe-tx.json';
                 let txWriter = await writer.writeAsync(safeAccount, 'airdrop()', [], {
@@ -339,7 +340,7 @@ UTest({
         let owner1 = await $sig.$account.fromKey(key);
         let owner2 = await hh.deployer(0);
 
-        return UTest({
+        return UTest.create({
             async 'create safe'() {
                 let safe = await GnosisSafeFactory.create(owner1, client, {
                     owners: [

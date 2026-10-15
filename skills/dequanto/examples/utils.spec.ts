@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { $abi } from 'dequanto/abi/$abi';
 import { $contract } from 'dequanto/utils/$contract';
 import { $date } from 'dequanto/utils/$date';
@@ -8,7 +9,7 @@ import { $sig } from 'dequanto/utils/$sig';
 
 const ACCOUNT = '0x0000000000000000000000000000000000000002';
 
-UTest({
+UTest.create({
     'encode and decode ABI values and calldata' () {
         const encoded = $abi.encode(['address', 'uint256'], [ACCOUNT, 5n]);
         const [account, amount] = $abi.decode(['address', 'uint256'], encoded);

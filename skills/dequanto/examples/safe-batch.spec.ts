@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { Config } from 'dequanto/config/Config';
 import { GnosisSafeFactory } from 'dequanto/safe/GnosisSafeFactory';
 import { BatchAgent } from 'dequanto/txs/agents/BatchAgent';
@@ -11,7 +12,7 @@ import { SafeAccount } from 'dequanto/models/TAccount';
 import { Web3Client } from 'dequanto/clients/Web3Client';
 import { TEth } from 'dequanto/models/TEth';
 
-UTest({
+UTest.create({
     async 'collect normal contract calls and execute one Safe batch'() {
         let provider = new HardhatProvider();
         let client = provider.client();

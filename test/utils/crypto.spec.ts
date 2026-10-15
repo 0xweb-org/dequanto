@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { $abiCoder } from 'dequanto/abi/$abiCoder';
 import { $contract } from 'dequanto/utils/$contract';
 import { File } from 'atma-io'
@@ -11,7 +12,7 @@ const implementations = [
     new $cryptoImpl.Web(),
 ];
 
-UTest({
+UTest.create({
     async 'should encrypt' () {
         let fixtures = {
             'simple signature': [

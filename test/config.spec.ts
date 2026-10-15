@@ -1,6 +1,7 @@
+import { UTest } from 'atma-utest';
 import { $config } from 'dequanto/utils/$config';
 
-UTest({
+UTest.create({
     $after () {
         $config.reloadEnv();
 

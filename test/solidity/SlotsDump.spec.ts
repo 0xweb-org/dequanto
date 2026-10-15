@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { BlockchainExplorerStorage } from 'dequanto/explorer/BlockchainExplorerStorage';
 import { Config } from 'dequanto/config/Config';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
@@ -9,7 +10,7 @@ import { l } from 'dequanto/utils/$logger';
 const provider = new HardhatProvider();
 const client = provider.client();
 
-UTest({
+UTest.create({
     async $before() {
         await Config.fetch();
     },
@@ -43,7 +44,7 @@ UTest({
             explorer,
         });
 
-        return UTest({
+        return UTest.create({
             async 'should read contract storage'() {
 
                 await contract.addUser(deployer);
@@ -138,7 +139,7 @@ UTest({
             }
         });
 
-        return UTest({
+        return UTest.create({
             async 'should read contract storage'() {
                 let { json } = await dump.getStorage();
                 deepEq_(json, {

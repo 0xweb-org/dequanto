@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { Generator } from 'dequanto/gen/Generator';
 import { Directory, File } from 'atma-io';
 import { run } from 'shellbee';
@@ -6,7 +7,7 @@ import path from 'path';
 
 const base = `./test/fixtures/package/simple`;
 
-UTest({
+UTest.create({
     '$config': {
         timeout: 100_000
     },

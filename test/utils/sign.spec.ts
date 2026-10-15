@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { TestNode } from '../hardhat/TestNode';
 import { $address } from 'dequanto/utils/$address';
 import { $sig } from 'dequanto/utils/$sig';
@@ -21,7 +22,7 @@ const accounts = [
 ];
 const hhProvider = new HardhatProvider();
 
-UTest({
+UTest.create({
     async 'sign and recover raw data'() {
 
         let fixtures = {
@@ -185,7 +186,7 @@ UTest({
             chainId: hh.chainId
         };
 
-        return UTest({
+        return UTest.create({
             async 'type 0: Legacy'() {
                 let tx = {
                     ...txBase,
@@ -252,7 +253,7 @@ UTest({
             value: 1
         } as TEth.TxLike;
 
-        return UTest({
+        return UTest.create({
             async 'sign tx'() {
                 let hh = new HardhatProvider();
                 let client = hh.client();

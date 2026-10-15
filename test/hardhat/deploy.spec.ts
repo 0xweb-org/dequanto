@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { ContractReader } from 'dequanto/contracts/ContractReader';
 import { ContractWriter } from 'dequanto/contracts/ContractWriter';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
@@ -12,7 +13,7 @@ const provider = new HardhatProvider();
 const client = provider.client();
 const deployer = provider.deployer();
 
-UTest({
+UTest.create({
     async 'should deploy solidity contract'() {
 
         let { contract, abi } = await provider.deploySol('/test/fixtures/contracts/Foo.sol', {
@@ -320,7 +321,7 @@ UTest({
     async 'should support an abstract class'() {
         let provider = new HardhatProvider();
         let client = provider.client();
-        return UTest({
+        return UTest.create({
             async 'with interfaces'() {
                 let code = `
                         abstract contract B1 {

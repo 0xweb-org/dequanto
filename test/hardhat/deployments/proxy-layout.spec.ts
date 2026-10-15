@@ -1,10 +1,11 @@
+import { UTest } from 'atma-utest';
 import { $proxyDeploy } from 'dequanto/contracts/deploy/proxy/$proxyDeploy';
 
 import { SlotsParser } from 'dequanto/solidity/SlotsParser';
 import alot from 'alot';
 
 
-UTest({
+UTest.create({
     'should compare storage': {
         async 'no collisions'() {
             await fixtures([{

@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import { Deployments } from 'dequanto/contracts/deploy/Deployments';
 import { Generator } from 'dequanto/gen/Generator';
@@ -12,7 +13,7 @@ import { File } from 'atma-io';
 // import { FooContract } from '0xc/hardhat/FooContract/FooContract';
 declare const include: any;
 
-UTest({
+UTest.create({
     async 'deploy a generated contract class with Deployments.ensure' () {
         const { client, deployer, FooContract } = await getContractClass();
         const deployments = new Deployments(client, deployer, {

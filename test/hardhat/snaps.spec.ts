@@ -1,9 +1,10 @@
+import { UTest } from 'atma-utest';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 import { TokenTransferService } from 'dequanto/tokens/TokenTransferService';
 import { $bigint } from 'dequanto/utils/$bigint';
 import { $sig } from 'dequanto/utils/$sig';
 
-UTest({
+UTest.create({
     async 'should create and restore a snapshot' () {
         let hh = new HardhatProvider();
         let client = hh.client('hardhat');

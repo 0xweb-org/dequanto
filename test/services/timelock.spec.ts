@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { TimelockController } from 'dequanto/prebuilt/openzeppelin/TimelockController';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider'
 import { TimelockAccount } from 'dequanto/models/TAccount';
@@ -16,7 +17,7 @@ let dir = './test/tmp/timelocks/';
 
 TimelockService.config({ dir });
 
-UTest({
+UTest.create({
     async $before () {
         try {
             await Directory.removeAsync(dir);

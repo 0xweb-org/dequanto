@@ -1,8 +1,9 @@
+import { UTest } from 'atma-utest';
 import { $bigfloat } from 'dequanto/utils/$bigfloat';
 
 
 
-UTest({
+UTest.create({
     'sqrt'() {
 
         function t(expected, value, dp?, rm?) {

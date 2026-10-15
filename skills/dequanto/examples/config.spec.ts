@@ -1,10 +1,11 @@
+import { UTest } from 'atma-utest';
 import { Config } from 'dequanto/config/Config';
 import { IRpcConfig } from 'dequanto/clients/ClientPool';
 import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import { $require } from 'dequanto/utils/$require';
 import { BlockchainExplorerFactory } from 'dequanto/explorer/BlockchainExplorerFactory';
 
-UTest({
+UTest.create({
     async 'load default configuration before RPC actions' () {
         const config = await Config.fetch();
 

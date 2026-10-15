@@ -1,7 +1,8 @@
+import { UTest } from 'atma-utest';
 import { $abiParser } from 'dequanto/utils/$abiParser';
 import { Fixtures } from '../Fixtures';
 
-UTest({
+UTest.create({
     async 'should parse a type'() {
         const fixtures = {
             'simple uint256': [

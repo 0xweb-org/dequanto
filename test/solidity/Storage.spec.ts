@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 import { SlotsParser } from 'dequanto/solidity/SlotsParser';
 import { SlotsStorage } from 'dequanto/solidity/SlotsStorage';
@@ -5,7 +6,7 @@ import { $address } from 'dequanto/utils/$address';
 import { $contract } from 'dequanto/utils/$contract';
 import { l } from 'dequanto/utils/$logger';
 
-UTest({
+UTest.create({
     async 'should read and write simple value types'() {
         let code = `
             contract Foo {
@@ -28,7 +29,7 @@ UTest({
         let slots = await SlotsParser.slots({ path: '', code });
         let storage = SlotsStorage.createWithClient(client, contract.address, slots);
 
-        return UTest({
+        return UTest.create({
             async 'NUMBER' () {
                 let iNumber = await storage.get('iNumber');
                 eq_(iNumber, 41n);
@@ -106,7 +107,7 @@ UTest({
         let slots = await SlotsParser.slots({ path: '', code });
         let storage = SlotsStorage.createWithClient(client, contract.address, slots);
 
-        return UTest({
+        return UTest.create({
             async 'read a single field in a simple structure' () {
                 let user = await storage.get('user');
                 deepEq_(user, {
@@ -177,7 +178,7 @@ UTest({
         let slots = await SlotsParser.slots({ path: '', code });
         let storage = SlotsStorage.createWithClient(client, contract.address, slots);
 
-        return UTest({
+        return UTest.create({
             async 'read and write a fixed-size array' () {
                 let v0 = await storage.get('fixSized[0]');
                 eq_(v0, 2n);
@@ -273,7 +274,7 @@ UTest({
         let slots = await SlotsParser.slots({ path: '', code });
         let storage = SlotsStorage.createWithClient(client, contract.address, slots);
 
-        return UTest({
+        return UTest.create({
             async 'read and write (number---number) mapping' () {
                 let v0 = await storage.get('ids["1"]');
                 eq_(v0, 2n);
@@ -355,7 +356,7 @@ UTest({
         let slots = await SlotsParser.slots({ path: '', code });
         let storage = SlotsStorage.createWithClient(client, contract.address, slots);
 
-        return UTest({
+        return UTest.create({
             async 'read and write (address---struct) mapping' () {
                 let flag = await storage.get('users[0].flag');
                 eq_(flag, 1);

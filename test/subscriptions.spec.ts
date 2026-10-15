@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { Generator } from 'dequanto/gen/Generator';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 import { TxDataBuilder } from 'dequanto/txs/TxDataBuilder';
@@ -10,7 +11,7 @@ import sinon = require('sinon');
 
 declare let include;
 
-UTest({
+UTest.create({
     async $before () {
         await TestNode.start();
 

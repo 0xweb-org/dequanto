@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 import { TxNonceManager } from 'dequanto/txs/TxNonceManager';
 import { $sig } from 'dequanto/utils/$sig';
@@ -7,7 +8,7 @@ const client = provider.client();
 const deployer = provider.deployer();
 
 
-UTest({
+UTest.create({
     async 'should calculate gas and get signed transactions' () {
         let code1 = `
             contract Foo {

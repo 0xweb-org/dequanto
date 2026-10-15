@@ -1,6 +1,7 @@
+import { UTest } from 'atma-utest';
 import { $bigfloat } from 'dequanto/utils/$bigfloat';
 
-UTest({
+UTest.create({
     'modulo' () {
 
         function t(value, mod, expected) {

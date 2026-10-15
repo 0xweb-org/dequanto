@@ -1,9 +1,10 @@
+import { UTest } from 'atma-utest';
 import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import { ERC20 } from 'dequanto/prebuilt/openzeppelin/ERC20';
 import { $erc20 } from 'dequanto/utils/$erc20';
 import { $require } from 'dequanto/utils/$require';
 
-UTest({
+UTest.create({
     async 'set an ERC20 balance and transfer from an impersonated account on a fork' () {
         // Requires an accessible Ethereum RPC from the dequanto configuration.
         const client = await Web3ClientFactory.getAsync('hh:memory:eth');

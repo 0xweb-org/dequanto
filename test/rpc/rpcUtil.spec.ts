@@ -1,7 +1,8 @@
+import { UTest } from 'atma-utest';
 import { $rpc } from 'dequanto/rpc/$rpc'
 import { Rpc } from 'dequanto/rpc/Rpc';
 
-UTest({
+UTest.create({
     'should deserialize logs' () {
         let rpc = new Rpc();
         let returns = (rpc as any).returnSchemas;

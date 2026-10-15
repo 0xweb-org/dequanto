@@ -1,7 +1,8 @@
+import { UTest } from 'atma-utest';
 import { TAddress } from 'dequanto/models/TAddress';
 import { $address } from 'dequanto/utils/$address';
 
-UTest({
+UTest.create({
     'should check checksums'() {
         let fixtures = [{
             chainId: null as number,

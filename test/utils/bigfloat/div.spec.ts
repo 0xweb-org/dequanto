@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { $bigfloat } from 'dequanto/utils/$bigfloat';
 
 
@@ -16,7 +17,7 @@ public class Main {
 }
  */
 
-UTest({
+UTest.create({
     'div'() {
 
         function t(dividend, divisor, expected, dp?, rm?) {

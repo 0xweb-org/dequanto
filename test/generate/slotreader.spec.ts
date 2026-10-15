@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { File } from 'atma-io';
 import { $date } from 'dequanto/utils/$date';
 import { GeneratorStorageReader } from 'dequanto/gen/GeneratorStorageReader';
@@ -6,7 +7,7 @@ import { ContractStorageReaderBase } from 'dequanto/contracts/ContractStorageRea
 
 declare let include;
 
-UTest({
+UTest.create({
     $config: {
         timeout: $date.parseTimespan('5min'),
     },

@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { $fn } from 'dequanto/utils/$fn'
 
 function foo (num: number) {
@@ -7,7 +8,7 @@ function foo (num: number) {
     return Promise.resolve(num);
 }
 
-UTest({
+UTest.create({
     async 'should resolve a retriable function' () {
         let result = await $fn
             .retriable(foo, null)

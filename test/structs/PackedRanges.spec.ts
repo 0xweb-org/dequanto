@@ -1,6 +1,7 @@
+import { UTest } from 'atma-utest';
 import { PackedRanges } from 'dequanto/class/PackedRanges';
 
-UTest({
+UTest.create({
     'adding numbers' () {
         let tracker = new PackedRanges({
             ranges: [[1,100]]

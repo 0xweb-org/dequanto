@@ -1,6 +1,7 @@
+import { UTest } from 'atma-utest';
 import { $types } from 'dequanto/solidity/utils/$types';
 
-UTest({
+UTest.create({
     'static ABI word sizes'() {
         let types = ['uint64', 'uint192', 'uint', 'address', 'bool', 'bytes12'];
         for (let type of types) {

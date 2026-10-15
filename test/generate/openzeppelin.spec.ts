@@ -1,7 +1,8 @@
+import { UTest } from 'atma-utest';
 import { ERC20 } from 'dequanto/prebuilt/openzeppelin/ERC20';
 import { PolyWeb3Client } from 'dequanto/clients/PolyWeb3Client';
 
-UTest({
+UTest.create({
     async 'should check the generated OpenZeppelin contract' () {
         let client = new PolyWeb3Client();
         let address = `0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063` as const;

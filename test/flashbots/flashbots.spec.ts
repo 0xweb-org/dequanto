@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { ERC20 } from 'dequanto/prebuilt/openzeppelin/ERC20'
 import { ChainAccountService } from 'dequanto/ChainAccountService';
 import { Config } from 'dequanto/config/Config';
@@ -9,7 +10,7 @@ import memd from 'memd';
 
 // integration test
 
-UTest({
+UTest.create({
     async '// integration test'() {
         memd.fn.clearMemoized(Config.fetch);
 
@@ -43,7 +44,7 @@ UTest({
         // Some tx to test serialization and submission
         let token = new ERC20(TOKEN, client);
 
-        return UTest({
+        return UTest.create({
             async 'should send a bundle'() {
                 let { signed: txHex } = await token.$signed().approve(account, account.address, 700n);
                 let bundleHash = await flashbots.sendPrivateTransaction({

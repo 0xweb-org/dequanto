@@ -1,9 +1,10 @@
+import { UTest } from 'atma-utest';
 import { EIP1193Transport, IEip1193Message, IEip1193Provider } from 'dequanto/rpc/transports/compatibility/EIP1193Transport';
 import { RpcTransport } from 'dequanto/rpc/transports/RpcTransport';
 import { TTransport } from 'dequanto/rpc/transports/ITransport';
 import Sinon from 'sinon';
 
-UTest({
+UTest.create({
     async 'should subscribe and unsubscribe via EIP-1193 message events' () {
         let provider = new ProviderMock();
         let transport = RpcTransport.create(provider);

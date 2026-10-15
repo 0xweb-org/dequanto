@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { EvmWeb3Client } from 'dequanto/clients/EvmWeb3Client';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 import { TxDataBuilder } from 'dequanto/txs/TxDataBuilder';
@@ -17,7 +18,7 @@ const Accounts = [
 const provider = new HardhatProvider();
 const client = await provider.client('hardhat');
 
-UTest({
+UTest.create({
     async 'should get a block' () {
         let block = await client.getBlockNumber();
         gte_(block, 0);
@@ -65,7 +66,7 @@ UTest({
             }
         `, { client });
 
-        return UTest({
+        return UTest.create({
             async 'reads a single slot' () {
                 let foo = await client.getStorageAt(contract.address, 0);
                 eq_(Number(foo), 4)

@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { IContractWrapped } from 'dequanto/contracts/ContractClassFactory';
 import { Deployments  } from 'dequanto/contracts/deploy/Deployments';
 import { IBeacon, IBeaconProxy, IProxyAdmin } from 'dequanto/contracts/deploy/proxy/ProxyDeployment';
@@ -30,7 +31,7 @@ let paths = {
     DeploymentsFooV3: './test/fixtures/deployments/DeploymentsFooV3.sol',
 };
 
-export default UTest({
+export default UTest.create({
     async $before () {
         // Start with a local chain even if an earlier suite left a fork active.
         await client.debug.reset({});
@@ -63,7 +64,7 @@ export default UTest({
         FooContract = DeploymentsFoo.DeploymentsFoo;
     },
     async 'should deploy the generated contract'() {
-        return UTest({
+        return UTest.create({
             async 'should get and deploy an OpenZeppelin proxy' () {
                 let source = '@openzeppelin/contracts/governance/TimelockController.sol';
                 let wrapperPath = './test/tmp/wrappers/TimelockController.sol';
@@ -129,7 +130,7 @@ export default UTest({
                 eq_(CtorData.source.contractName, 'DeploymentsFoo');
             },
             async 'with proxy' () {
-                return UTest({
+                return UTest.create({
                     async 'initial deploy'() {
                         let { contract, deployment } = await deployments.ensureWithProxy<IContractWrapped, any>(FooContract, {
                             id: 'DeploymentsFooWithProxy',
@@ -208,7 +209,7 @@ export default UTest({
         })
     },
     async 'with beacon' () {
-        return UTest({
+        return UTest.create({
             async '$before' () {
                 await deployments.store.saveAll([]);
             },

@@ -1,10 +1,11 @@
+import { UTest } from 'atma-utest';
 import { strict as assert } from 'assert';
 import { SlotsParser } from 'dequanto/solidity/SlotsParser';
 import { SlotsStorage } from 'dequanto/solidity/SlotsStorage';
 import { SlotsStorageTransportForArray, SlotsStorageTransportForMapping } from 'dequanto/solidity/storage/SlotsStorageTransport';
 import { GeneratorStorageReader } from 'dequanto/gen/GeneratorStorageReader';
 
-UTest({
+UTest.create({
     async 'keeps large slots exact through parsing and storage access' () {
         let base = 2n ** 200n;
         let slots = await SlotsParser.slots({

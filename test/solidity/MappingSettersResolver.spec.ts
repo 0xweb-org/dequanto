@@ -1,7 +1,8 @@
+import { UTest } from 'atma-utest';
 import { MappingSettersResolver } from 'dequanto/solidity/SlotsParser/MappingSettersResolver';
 import { $contract } from 'dequanto/utils/$contract';
 
-UTest({
+UTest.create({
     async 'should get a simple event with different argument orders'() {
         let code = `
             contract A {
@@ -424,7 +425,7 @@ UTest({
 
         let path = `./test/fixtures/mapping-setters/UniswapV3Staker/UniswapV3Staker.sol`;
 
-        return UTest({
+        return UTest.create({
             async 'no events, the method mutates the mapping, but the logged event does not contain the mapping key, which is not easy to calculate'() {
                 // should we implement complex static calculations to get the mapping key?
                 let result = await MappingSettersResolver.getEventsForMappingMutations('incentives', {
@@ -491,7 +492,7 @@ UTest({
 
         let path = `./test/fixtures/mapping-setters/GTC.sol`;
 
-        return UTest({
+        return UTest.create({
             async 'no events, the method mutates the mapping, but the logged event does not contain the mapping key, which is not easy to calculate'() {
                 // should we implement complex static calculations to get the mapping key?
                 let result = await MappingSettersResolver.getEventsForMappingMutations('balances', {

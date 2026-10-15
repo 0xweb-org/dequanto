@@ -1,3 +1,4 @@
+import { UTest } from 'atma-utest';
 import { TEth } from 'dequanto/models/TEth';
 import { Web3ClientFactory } from 'dequanto/clients/Web3ClientFactory';
 import { ERC20 } from 'dequanto/prebuilt/openzeppelin/ERC20';
@@ -9,7 +10,7 @@ import { $require } from 'dequanto/utils/$require';
 const USDC = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48' as const;
 const TRANSFER_AMOUNT = 1_000_000n; // 1 USDC (6 decimals).
 
-UTest({
+UTest.create({
     $config: {
         timeout: 60_000
     },

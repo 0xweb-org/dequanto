@@ -1,8 +1,9 @@
+import { UTest } from 'atma-utest';
 import { $bigfloat, ROUNDING_MODE } from 'dequanto/utils/$bigfloat';
 
 // https://docs.oracle.com/javase/8/docs/api/java/math/RoundingMode.html
 
-UTest({
+UTest.create({
     'check rounding': {
         'ROUND_UP'() {
             let fixtures = [
