@@ -45,10 +45,10 @@ export class GnosisSafeHandler {
         this.client = config.client ?? di.resolve(EthWeb3Client);
         this.transport = config.transport ?? (
             config.owners.length > 1
-            // when multiple owners are provided assume the transport is InMemory
-            ? new InMemoryServiceTransport(this.client, this.owners[0])
-            // otherwise use the default Safe Transaction Service
-            : new SafeServiceTransport(this.client, this.owners)
+                // when multiple owners are provided assume the transport is InMemory
+                ? new InMemoryServiceTransport(this.client, this.owners[0])
+                // otherwise use the default Safe Transaction Service
+                : new SafeServiceTransport(this.client, this.owners)
         )
 
         $require.Address(this.safeAddress, `Safe address ${this.safeAddress} is not valid`);
@@ -147,7 +147,7 @@ export class GnosisSafeHandler {
         return tx;
     }
 
-    async executeTxData (txData: TEth.TxLike, owner: EoAccount, safeTxParams?: {
+    async executeTxData(txData: TEth.TxLike, owner: EoAccount, safeTxParams?: {
         // 0 - Call (default)
         // 1 - DelegateCall
         operation?: 0 | 1
@@ -158,7 +158,7 @@ export class GnosisSafeHandler {
         return tx;
     }
 
-    async createTxHash (builder: TxDataBuilder, value?: bigint, safeTxParams?: {
+    async createTxHash(builder: TxDataBuilder, value?: bigint, safeTxParams?: {
         operation?: 0 | 1
     }) {
         let txData = builder.getTxData(this.client);
@@ -234,7 +234,7 @@ export class GnosisSafeHandler {
         let txProps: SafeServiceTypes.ProposeTransactionProps = {
             safeAddress: $address.toChecksum(this.safeAddress),
             senderAddress: $address.toChecksum(owner.address),
-            safeTransaction: <SafeServiceTypes.SafeTransaction> {
+            safeTransaction: <SafeServiceTypes.SafeTransaction>{
                 data: safeTxData,
                 signatures: signatures,
             },
@@ -286,11 +286,11 @@ export class GnosisSafeHandler {
         })
     }
 
-    static parseSafeTx(buffer: TEth.Hex, value?): { name, args: any[]} {
-        return $abiUtils.parseMethodCallData([ SafeAbi.execTransaction ], { input: buffer, value });
+    static parseSafeTx(buffer: TEth.Hex, value?): { name, args: any[] } {
+        return $abiUtils.parseMethodCallData([SafeAbi.execTransaction], { input: buffer, value });
     }
 
-    static async getInstance (senderMix: string | EoAccount, safeAccount: SafeAccount, client: Web3Client, options: {
+    static async getInstance(senderMix: string | EoAccount, safeAccount: SafeAccount, client: Web3Client, options: {
         transport?: ISafeServiceTransport
         contracts?: typeof config.safe.contracts
     }): Promise<GnosisSafeHandler> {
@@ -298,7 +298,7 @@ export class GnosisSafeHandler {
             ? await ChainAccountService.get(senderMix) as EoAccount
             : senderMix;
 
-        let owners = [ sender ];
+        let owners = [sender];
 
         if (safeAccount.owners) {
             let others = await alot(safeAccount.owners)
@@ -408,7 +408,7 @@ const SafeAbi = {
             }
         ]
     },
-    getTransactionHash: <TAbiItem> {
+    getTransactionHash: <TAbiItem>{
         "type": "function",
         "stateMutability": "view",
         "outputs": [
