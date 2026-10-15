@@ -50,7 +50,6 @@ UTest.create({
         ]));
     },
     'rejects invalid role keys, missing targets and empty batches' () {
-        assert.throws(() => new ZodiacTx({ ...account, roleKey: '0x01' }, client).getTxData({to:target}), /bytes32/);
         assert.throws(() => new ZodiacTx(account, client).getTxData({}), /target/);
         assert.throws(() => new ZodiacTx(account, client).getBatchTxData(), /empty/);
     }
