@@ -52,8 +52,22 @@ UTest.create({
         const info = await resolver.getBlockInfoFor(date);
         const blockDate = await resolver.getDate(blockNumber);
 
-        $require.lte(blockNumber - 24576295, 1);
-        $require.lte(Math.abs($date.toUnixTimestamp(date) - info.timestamp), 2);
-        $require.eq(blockDate.toISOString(), new Date('2026-03-03T10:19:59Z').toISOString());
+        /* max ~1 block diff */
+        const block = {
+            24576294: {
+                nr: 24576294,
+                date: new Date('2026-03-03T10:19:47Z'),
+            },
+            24576295: {
+                nr: 24576295,
+                date: new Date('2026-03-03T10:19:59Z'),
+            }
+        };
+        const blockData = block[info.block];
+        $require.notNull(blockData, `No info for the fetched block ${info.block}`);
+        $require.eq(blockNumber, info.block);
+        $require.eq(blockDate.toISOString(), blockData.date.toISOString());
+        $require.lte(Math.abs($date.toUnixTimestamp(blockData.date) - info.timestamp), 1);
+
     }
 });
