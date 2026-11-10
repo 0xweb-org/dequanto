@@ -8,8 +8,14 @@ interface ICrypto {
     randomUUID(): `${string}-${string}-${string}-${string}-${string}`;
     createECDH(curve: string)
 
+    sha1 (mix: string | TEth.Hex | Uint8Array, opts?: { encoding?: undefined | 'binary' }): Promise<Uint8Array>;
+    sha1 (mix: string | TEth.Hex | Uint8Array, opts: { encoding: 'hex' }): Promise<TEth.Hex>;
+
     sha256 (mix: string | TEth.Hex | Uint8Array, opts?: { encoding: 'hex' }): Promise<TEth.Hex>;
     sha256 (mix: string | TEth.Hex | Uint8Array): Promise<Uint8Array>;
+
+    hmac(mix: string | TEth.Hex | Uint8Array, opts: IHmacParams & { encoding?: undefined | 'binary' }): Promise<Uint8Array>;
+    hmac(mix: string | TEth.Hex | Uint8Array, opts: IHmacParams & { encoding: 'hex' }): Promise<TEth.Hex>;
 
     encrypt(buffer: string | TEth.Hex | Uint8Array, opts: IEncryptionParams & { encoding?: undefined | 'binary' }): Promise<Uint8Array>
     encrypt(buffer: string | TEth.Hex | Uint8Array, opts: IEncryptionParams & { encoding: 'hex' }): Promise<TEth.Hex>
@@ -25,6 +31,13 @@ interface IEncryptionParams {
     encoding?: 'binary' | 'hex' | 'utf8'
 }
 
+interface IHmacParams {
+    /** Raw key bytes, or text using the same input conversion as the hash helpers. */
+    secret: string | Uint8Array
+    algorithm: 'SHA-1' | 'SHA-256' | 'SHA-512'
+    encoding?: 'binary' | 'hex'
+}
+
 const CIPHER_ALGO = 'aes-256-ctr';
 
 abstract class CryptoBase implements ICrypto {
@@ -32,12 +45,36 @@ abstract class CryptoBase implements ICrypto {
     abstract randomUUID(): `${string}-${string}-${string}-${string}-${string}`;
     abstract createECDH(curve: string)
 
+    sha1 (mix: string | TEth.Hex | Uint8Array, opts?: { encoding?: undefined | 'binary' }): Promise<Uint8Array>
+    sha1 (mix: string | TEth.Hex | Uint8Array, opts: { encoding: 'hex' }): Promise<TEth.Hex>
+    async sha1 (mix: string | TEth.Hex | Uint8Array, opts?: { encoding?: 'hex' | 'binary' }) {
+        let buffer = utils.toBuffer(mix);
+        let hash = await this.sha1Inner(buffer);
+        if (opts?.encoding === 'hex') {
+            return $buffer.toHex(hash);
+        }
+        return hash;
+    }
+
     sha256 (mix: string | TEth.Hex | Uint8Array, opts?: { encoding?: undefined | 'binary' }): Promise<Uint8Array>
     sha256 (mix: string | TEth.Hex | Uint8Array, opts?: { encoding: 'hex' }): Promise<TEth.Hex>
     async sha256 (mix: string | TEth.Hex | Uint8Array, opts?: { encoding?: 'hex' | 'binary' }) {
         const buffer = utils.toBuffer(mix);
         const hash = await this.sha256Inner(buffer);
         if (opts?.encoding === 'hex') {
+            return $buffer.toHex(hash);
+        }
+        return hash;
+    }
+
+    hmac(mix: string | TEth.Hex | Uint8Array, opts: IHmacParams & { encoding?: undefined | 'binary' }): Promise<Uint8Array>
+    hmac(mix: string | TEth.Hex | Uint8Array, opts: IHmacParams & { encoding: 'hex' }): Promise<TEth.Hex>
+    async hmac(mix: string | TEth.Hex | Uint8Array, opts: IHmacParams) {
+        let buffer = utils.toBuffer(mix);
+        let secret = utils.toBuffer(opts.secret);
+        $require.gt(secret.length, 0, 'HMAC secret must be non-empty');
+        let hash = await this.hmacInner(buffer, secret, opts.algorithm);
+        if (opts.encoding === 'hex') {
             return $buffer.toHex(hash);
         }
         return hash;
@@ -87,6 +124,8 @@ abstract class CryptoBase implements ICrypto {
 
     protected abstract encryptInner (buffer: Uint8Array, secret: Uint8Array): Promise<Uint8Array>;
     protected abstract decryptInner (buffer: Uint8Array, secret: Uint8Array): Promise<Uint8Array>;
+    protected abstract sha1Inner (buffer: Uint8Array): Promise<Uint8Array>;
+    protected abstract hmacInner (buffer: Uint8Array, secret: Uint8Array, algorithm: IHmacParams['algorithm']): Promise<Uint8Array>;
     protected abstract sha256Inner (buffer: Uint8Array): Promise<Uint8Array>;
 
     private async prepareSecret (secret: string | TEth.Hex | Uint8Array): Promise<Uint8Array> {
@@ -159,6 +198,18 @@ namespace WebCryptoImpl {
             const arrayBuffer = await crypto.subtle.digest('SHA-256', buffer);
             return new Uint8Array(arrayBuffer);
         }
+        protected async sha1Inner(buffer: Uint8Array): Promise<Uint8Array> {
+            let arrayBuffer = await this.crypto.subtle.digest('SHA-1', buffer);
+            return new Uint8Array(arrayBuffer);
+        }
+        protected async hmacInner(buffer: Uint8Array, secret: Uint8Array, algorithm: IHmacParams['algorithm']): Promise<Uint8Array> {
+            let key = await this.crypto.subtle.importKey('raw', secret, {
+                name: 'HMAC',
+                hash: algorithm,
+            }, false, ['sign']);
+            let signature = await this.crypto.subtle.sign('HMAC', key, buffer);
+            return new Uint8Array(signature);
+        }
     }
 }
 
@@ -199,6 +250,12 @@ namespace NodeCryptoImpl {
 
         protected async sha256Inner(buffer: Uint8Array): Promise<Uint8Array> {
             return this.crypto.createHash('sha256').update(buffer).digest()
+        }
+        protected async sha1Inner(buffer: Uint8Array): Promise<Uint8Array> {
+            return this.crypto.createHash('sha1').update(buffer).digest();
+        }
+        protected async hmacInner(buffer: Uint8Array, secret: Uint8Array, algorithm: IHmacParams['algorithm']): Promise<Uint8Array> {
+            return this.crypto.createHmac(algorithm.replace('-', '').toLowerCase(), secret).update(buffer).digest();
         }
     }
 }
