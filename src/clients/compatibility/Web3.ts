@@ -163,14 +163,15 @@ namespace $Web3Contract {
                 promiseEvent.emit('transactionHash', ...args)
             });
             tx.on('receipt', async (receipt) => {
-                if (receipt.events == null) {
-                    receipt.events = alot(tx.tx.knownLogs ?? []).toDictionary(x => x.event, x => {
-                        return <any>{
-                            ...x,
-                            returnValues: x.params,
-                        }
-                    });
-                }
+                // web3 compatibility not needed:
+                // if (receipt.events == null) {
+                //     receipt.events = alot(tx.tx.knownLogs ?? []).toDictionary(x => x.event, x => {
+                //         return <any>{
+                //             ...x,
+                //             returnValues: x.params,
+                //         }
+                //     });
+                // }
                 promiseEvent.emit('receipt', receipt)
             });
 

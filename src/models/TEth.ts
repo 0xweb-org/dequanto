@@ -103,6 +103,9 @@ export namespace TEth {
             data: string
             topics: any[]
         }
+
+        params?: Record<string, any>
+        block?: { number: number; date: string }
     }
 
     export interface Log {

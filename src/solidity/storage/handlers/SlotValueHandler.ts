@@ -21,6 +21,10 @@ export class SlotValueHandler extends ASlotsStorageHandler {
         this.requireNoKeys(keys);
 
         let { slot } = this;
+        if (/^u?int\d*$/.test(slot.type) && typeof value === 'string' && /^-?\d+$/.test(value)) {
+            // CLI arguments and JSON dumps represent integers as decimal strings.
+            value = BigInt(value);
+        }
         await this.transport.setStorageAt(slot.slot, slot.position, slot.size, value);
     }
 
