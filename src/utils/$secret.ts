@@ -16,7 +16,9 @@ export namespace $secret {
         for (let i = 0; i < args.length - 1; i++) {
             let key = args[i].replace(/^\-+/, '');
             if (key === 'p' || key === 'pin') {
-                return args[i + 1];
+                let pin = args[i + 1];
+                args.splice(i, 2);
+                return pin;
             }
         }
         return null;

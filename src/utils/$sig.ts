@@ -700,10 +700,16 @@ export namespace KeyUtils {
         }
         let secret = resolveSecret();
         let hex = account.key.substring(encryptionMatch[0].length) as TEth.Hex;
-        let key = await $crypto.decrypt(hex, {
-            secret,
-            encoding: 'hex',
-        });
+        let key: TEth.Hex;
+        try {
+            key = await decrypt(hex, secret);
+        } catch (error) {
+            if (secret.includes(':') === false) {
+                throw error
+            }
+            // will throw if invalid
+            key = await decrypt(hex, secret.substring(secret.lastIndexOf(':') + 1));
+        }
         let accountDecrypted = {
             address: account.address,
             key
@@ -727,5 +733,15 @@ export namespace KeyUtils {
             }
         }
         throw new Error('Account key is encrypted, please provide a PIN to unlock it.');
+    }
+    async function decrypt (hex: TEth.Hex, secret: string) {
+        try {
+            return await $crypto.decrypt(hex, {
+                secret,
+                encoding: 'hex',
+            });
+        } catch (error) {
+            throw new Error(`Invalid secret`);
+        }
     }
 }
