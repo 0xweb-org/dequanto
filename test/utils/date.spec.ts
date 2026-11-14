@@ -2,6 +2,72 @@ import { UTest } from 'atma-utest';
 import { $date } from 'dequanto/utils/$date'
 
 UTest.create({
+    'should parse legacy formats in local time, including seconds' () {
+        for (let day of ['20.01.2024', '20-01-2024', '2024.01.20', '2024-01-20']) {
+            for (let [time, hours, minutes, seconds] of [
+                ['', 0, 0, 0],
+                [' 14:05', 14, 5, 0],
+                [' 14:00:37', 14, 0, 37],
+                [' 23:59:59', 23, 59, 59],
+            ] as const) {
+                let input = day + time;
+                let actual = $date.parse(input);
+                let expected = new Date(2024, 0, 20, hours, minutes, seconds);
+                eq_(actual.getTime(), expected.getTime(), input);
+                eq_(actual.getMilliseconds(), 0, input);
+            }
+        }
+        eq_($date.parse('29.02.2024 14:00:37').getTime(), new Date(2024, 1, 29, 14, 0, 37).getTime());
+        eq_($date.parse('29.02.2000').getTime(), new Date(2000, 1, 29).getTime());
+        eq_($date.parse('20.01.0099').getTime(), new Date(99, 0, 20).getTime());
+    },
+    'should preserve legacy calendar and time rollover' () {
+        let fallback = new Date(2024, 0, 1);
+        for (let [input, expected] of [
+            ['31.02.2024', new Date(2024, 2, 2)],
+            ['2024-02-31', new Date(2024, 2, 2)],
+            ['29.02.2023', new Date(2023, 2, 1)],
+            ['20.13.2024', new Date(2025, 0, 20)],
+            ['20.01.2024 24:00', new Date(2024, 0, 21)],
+            ['2024-01-20 14:60', new Date(2024, 0, 20, 15)],
+            ['20.01.2024 14:00:60', new Date(2024, 0, 20, 14, 1)],
+            ['20.01.2024 14:00:61', new Date(2024, 0, 20, 14, 1, 1)],
+            ['2024-01-20 14:00:61', new Date(2024, 0, 20, 14, 1, 1)],
+            ['2024-01-20 23:59:61', new Date(2024, 0, 21, 0, 0, 1)],
+        ] as const) {
+            eq_($date.parse(input).getTime(), expected.getTime(), input);
+            eq_($date.parse(input, fallback).getTime(), expected.getTime(), input);
+        }
+    },
+    'should preserve ISO timezone handling' () {
+        for (let input of [
+            '2024-01-20T14:00:37.123Z',
+            '2024-01-20T14:00:37+02:30',
+            '2024-01-20T14:00:37-05:00',
+            '2024-01-20T14:00:37',
+        ]) {
+            eq_($date.parse(input).getTime(), new Date(input).getTime(), input);
+        }
+    },
+    'should preserve Date, timestamp and default inputs' () {
+        let fallback = new Date(2024, 0, 1);
+        eq_($date.parse(fallback), fallback);
+        eq_($date.parse(0).getTime(), 0);
+        eq_($date.parse(1_705_766_437_000).getTime(), 1_705_766_437_000);
+        for (let input of [null, undefined, '']) {
+            eq_($date.parse(input), undefined);
+            eq_($date.parse(input, fallback), fallback);
+        }
+        eq_($date.parse('invalid', fallback), fallback);
+        eq_($date.parse('invalid', undefined), undefined);
+        let error: Error;
+        try {
+            $date.parse('invalid');
+        } catch (err) {
+            error = err;
+        }
+        eq_(error?.message, 'Invalid format invalid');
+    },
     'should check adding seconds' () {
         let date = new Date();
         let x = $date.tool(date).add(`5s`).toUnixTimestamp();

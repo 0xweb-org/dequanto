@@ -329,10 +329,12 @@ export namespace $date {
         let format = mix;
         let H = 0;
         let Min = 0;
-        let hours = /(\d{2}):(\d{2})/.exec(format);
+        let S = 0;
+        let hours = /(\d{2}):(\d{2})(?::(\d{2}))?/.exec(format);
         if (hours) {
             H = Number(hours[1]);
             Min = Number(hours[2]);
+            S = Number(hours[3] ?? 0);
         }
         let Y = 0;
         let M = 1;
@@ -357,7 +359,7 @@ export namespace $date {
             }
             throw new Error(`Invalid format ${format}`);
         }
-        return new Date(Y, M - 1, D, H, Min);
+        return new Date(Y, M - 1, D, H, Min, S);
     }
 
     export type TTimespanType = 'ms'
