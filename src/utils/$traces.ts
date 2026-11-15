@@ -302,7 +302,8 @@ export namespace $traces {
         let hex = memory.join('');
         let start = offset * 2;
         let end = start + size * 2;
-        return `0x${hex.slice(start, end)}` as TEth.Hex;
+        // Struct logs capture memory before the opcode expands it with zero bytes.
+        return `0x${hex.slice(start, end).padEnd(size * 2, '0')}` as TEth.Hex;
     }
 
     function formatEntrypointLabel(
@@ -516,10 +517,14 @@ export namespace $traces {
             }
         }
         if (frame.failed) {
-            let abis = $contract.store.getFlattened();
-            let error = $contract.decodeCustomError(frame.output, abis);
-            if (error) {
-                return JSON.stringify(error);
+            try {
+                let abis = $contract.store.getFlattened();
+                let error = $contract.decodeCustomError(frame.output, abis);
+                if (error) {
+                    return JSON.stringify(error, (_, value) => typeof value === 'bigint' ? value.toString() : value);
+                }
+            } catch {
+                // Keep the trace readable even when revert data cannot be decoded.
             }
         }
         return shortHex(frame.output, 18, 10);

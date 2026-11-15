@@ -280,7 +280,7 @@ export class TxDataBuilder {
                     let output = await $traces.format({
                         tx: txData,
                         traces,
-                        color: this.config.color ?? true,
+                        color: this.config?.color ?? true,
                         shortAddress: false,
                         async getABI(address) {
                             return $abiProvider.getAbi(address, client.network);
@@ -288,7 +288,7 @@ export class TxDataBuilder {
                     });
                     tracesF = `\nTraces: \n` + output;
                 } catch (error) {
-                    // ignore
+                    tracesF = `\nTraces Error: \n  ` + error.message;
                 }
             }
 
@@ -308,7 +308,7 @@ export class TxDataBuilder {
                 message += `\nMethod: ` + $contract.formatCall(parsed);
             }
             if (tracesF != null) {
-                message += `\nTraces: \n` + tracesF;
+                message += tracesF;
             }
 
             throw new Error(message);

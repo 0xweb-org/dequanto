@@ -3,6 +3,8 @@ import { ERC20 } from 'dequanto/prebuilt/openzeppelin/ERC20';
 import { ContractReader } from 'dequanto/contracts/ContractReader';
 import { HardhatProvider } from 'dequanto/hardhat/HardhatProvider';
 import { $sig } from 'dequanto/utils/$sig';
+import { $address } from 'dequanto/utils/$address';
+import { $promise } from 'dequanto/utils/$promise';
 
 UTest.create({
     $config: {
@@ -22,6 +24,9 @@ UTest.create({
                 // https://data.chain.link/ethereum/mainnet/crypto-usd/eth-usd
                 const result = await reader.readAsync('0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419', 'description() returns (string)');
                 eq_(result, 'ETH / USD');
+            },
+            async $after () {
+                await client.debug.reset({});
             },
             async 'write to a forked network' () {
                 // https://etherscan.io/address/0x60faae176336dab62e284fe19b885b095d29fb7f
@@ -48,8 +53,19 @@ UTest.create({
 
                 await client.debug.stopImpersonatingAccount(ownerImpersonated);
             },
-            async $after () {
-                await client.debug.reset({});
+
+            async 'simulate' () {
+                const erc20 = new ERC20('0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', client);
+                const acc = {
+                    address: $address.ZERO,
+                    type: 'impersonate'
+                };
+                let { error } = await $promise.caught(
+                    erc20.$receipt().transfer(acc, '0x1', BigInt(500e6))
+                );
+                notEq_(error, null);
+                eq_(error.message.includes('Traces Error:'), false);
+                eq_(error.message.includes('delegatecall'), true);
             }
         })
     },
