@@ -32,6 +32,7 @@ Examples use published `dequanto/...` imports. They retain the repository's `UTe
 - Blockchain explorer config is used for deployment verification, loading verified contract sources for class generation, `0xweb install`, and contract metadata. Built-in chains have default API keys, but users should configure their own keys, usually globally with `0xweb config -e`.
 - Use generated contract classes for ABI calls and transactions: call read-only ABI methods directly as normal TypeScript methods, and call writable ABI methods through `contract.$receipt().someFunction(sender, ...args)`.
 - Use generated `$data()` for calldata.
+- For transaction-data trace analysis, use `$traces.load(client, { tx })` as the primary entry point. It returns a JSON-serializable `call` tree and a `formatted` string with shared ABI loading. See [trace analysis](./references/rpc-clients.md#transaction-trace-analysis).
 - Treat `$receipt()` as a completed `TxWriter` flow that waits for the transaction receipt. The first writable-method argument is an `IAccount`.
 - Read account shapes in `src/models/TAccount.ts` when composing transaction senders:
     - EOA with only `address`: the RPC provider/node is responsible for signing.

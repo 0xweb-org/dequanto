@@ -7,6 +7,38 @@ const address = '0x0000000000000000000000000000000000000001';
 const word = (value: number) => value.toString(16).padStart(64, '0');
 
 UTest.create({
+    async 'should return JSON calls without struct logs or an ABI' () {
+        const output = `0x${'ab'.repeat(100)}` as TEth.Hex;
+        const call = await $traces.getCalls({
+            tx: { to: address, data: '0x12345678' },
+            traces: { failed: false, returnValue: output, gas: 0, structLogs: [] },
+            async getABI () { throw new Error('Unknown contract'); },
+        });
+        eq_(call.method, '0x12345678');
+        eq_(call.args, null);
+        eq_(call.abi, null);
+        eq_(call.return, output);
+        eq_(call.input, '0x12345678');
+        deepEq_(call.calls, []);
+        deepEq_(JSON.parse(JSON.stringify(call)), call);
+    },
+
+    async 'should return JSON errors and retain malformed revert bytes' () {
+        for (const output of ['0x08c379a0', `0x4e487b71${$abiCoder.encode(['uint256'], [17n]).slice(2)}`] as TEth.Hex[]) {
+            const call = await $traces.getCalls({
+                tx: { to: address },
+                traces: { failed: true, returnValue: output, gas: 0, structLogs: [] },
+                async getABI () { return null; },
+            });
+            eq_(call.failed, true);
+            if (output === '0x08c379a0') {
+                eq_(call.return, output);
+            } else {
+                eq_(JSON.stringify(call.return).includes('"17"'), true);
+            }
+        }
+    },
+
     async 'should zero fill memory expanded by a nested REVERT' () {
         const reason = 'ERC20: transfer from the zero address';
         const output = `0x08c379a0${$abiCoder.encode(['string'], [reason]).slice(2)}` as TEth.Hex;

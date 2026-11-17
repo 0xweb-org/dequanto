@@ -83,6 +83,41 @@ const result = await client.readContract({
 });
 ```
 
+## Transaction Trace Analysis
+
+Use `$traces.load(client, { tx })` as the primary entry point for AI-assisted analysis of transaction data on a supported client. It loads execution traces and builds both a structured call tree and a readable string, resolving each address's ABI once per load. Use `call` for programmatic analysis and `formatted` for inspection or reporting; avoid calling `getCalls()` and `format()` separately when both are needed.
+
+```ts
+import { $traces } from 'dequanto/utils/$traces';
+import { TEth } from 'dequanto/models/TEth';
+import { Web3Client } from 'dequanto/clients/Web3Client';
+
+async function analyzeTransaction(client: Web3Client, tx: TEth.TxLike) {
+    const { call, formatted } = await $traces.load(client, {
+        tx,
+        color: false,
+    });
+
+    console.log(formatted);
+    return call; // JSON.stringify(call) is supported.
+}
+```
+
+Pass transaction data including `to`, `data` (or `input`), and the relevant `from` and `value`. Generated contract `$data()` helpers can produce this input. The client must configure `client.debug.traceCall`, and its RPC endpoint must support that method and return opcode `structLogs` with stack and memory data. A Hardhat client or fork is suitable. `load()` simulates the transaction at `latest` by default; it does not broadcast it or replay a mined transaction at its original state.
+
+The result contains:
+
+- `call`: the root `TCall`, with nested `calls`, call `type`, destination `to`, `method`, decoded `args`, `return`, `abi`, `failed`, and raw `input`. Traverse nested calls to locate failures, including failures caught by their parent. Decoded bigints become decimal strings. When decoding is unavailable, `args` and `abi` can be `null`, `method` can be a selector or `null`, and return data retains its full hex value.
+- `formatted`: the readable trace, including decoded events where available. Use `color: false` for AI input or plain-text logs. The call tree does not include events.
+
+Optional inputs:
+
+- `traces`: reuse an existing `TClientDebugTraces` result and skip the trace RPC. For a specific block, obtain it with `await client.debug.traceCall(tx, blockNumber)` and pass it to `load()`.
+- `getABI(address)`: override ABI resolution with an async function returning `{ abi, name?, contractName? }`. By default, dequanto checks its local contract store and then the network's explorer when available.
+- `color` and `shortAddress`: control the formatted output; defaults are `true` and `false`, respectively.
+
+Source: `src/utils/$traces.ts`; regression examples: `test/utils/traces.spec.ts` and `test/utils/traces.revert.spec.ts` in the dequanto repository.
+
 ## Resolve Blocks By Date
 
 Use `BlockDateResolver` to find the block nearest to a date, or to resolve a block number back to its date:

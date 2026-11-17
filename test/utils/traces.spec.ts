@@ -67,6 +67,55 @@ UTest.create({
         $assert.has(`{ val: 43, flag: true }`, output);
         $assert.has(`event MyNumber(val: 43)`, output);
         $assert.has(`${depl.contract.address} <=> A`, output);
+
+        let abiRequests = 0;
+        let call = await $traces.getCalls({
+            tx: txData,
+            traces,
+            async getABI(address) {
+                abiRequests++;
+                return $contract.store.getContract(address);
+            }
+        });
+        eq_(call.type, 'CALL');
+        eq_(call.method, 'fnOne');
+        deepEq_(call.args, { foo: '42' });
+        eq_(call.return, '47');
+        eq_(call.failed, false);
+        eq_(call.calls.length, 1);
+        eq_(call.calls[0].method, 'echo');
+        deepEq_(call.calls[0].args, { val: '42', flag: true, name: 'lorem' });
+        deepEq_(call.calls[0].return, { val: '43', flag: true });
+        deepEq_(JSON.parse(JSON.stringify(call)), call);
+        eq_(abiRequests, 1);
+
+        abiRequests = 0;
+        let traceRequests = 0;
+        const loadClient = {
+            debug: {
+                async traceCall(tx) {
+                    traceRequests++;
+                    eq_(tx, txData);
+                    return traces;
+                }
+            }
+        } as typeof client;
+        const loaded = await $traces.load(loadClient, {
+            tx: txData,
+            color: false,
+            async getABI(address) {
+                abiRequests++;
+                return $contract.store.getContract(address);
+            }
+        });
+        deepEq_(loaded.call, call);
+        eq_(loaded.formatted, output);
+        eq_(abiRequests, 1);
+        eq_(traceRequests, 1);
+
+        const preloaded = await $traces.load(client, { tx: txData, traces, color: false });
+        deepEq_(preloaded.call, call);
+        eq_(preloaded.formatted, output);
     },
     async 'should should parse traces in gas estimation'() {
         let code = `

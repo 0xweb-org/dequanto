@@ -1,3 +1,4 @@
+import alot from 'alot';
 import { $abiCoder } from 'dequanto/abi/$abiCoder';
 import { TClientDebugTraces } from 'dequanto/clients/debug/ClientDebugMethods';
 import { TEth } from 'dequanto/models/TEth';
@@ -5,8 +6,9 @@ import { $abiUtils } from './$abiUtils';
 import { $bigint } from './$bigint';
 import { $hex } from 'dequanto/utils/$hex';
 import { $color, ColorData } from './$color';
-import alot from 'alot';
 import { $contract } from './$contract';
+import { $abiProvider } from './$abiProvider';
+import type { Web3Client } from 'dequanto/clients/Web3Client';
 
 export namespace $traces {
 
@@ -47,18 +49,138 @@ export namespace $traces {
     const CALL_OPS = new Set([ 'CALL', 'STATICCALL', 'DELEGATECALL', 'CALLCODE' ]);
     const FAILURE_OPS = new Set([ 'REVERT', 'INVALID' ]);
 
-    export async function format (params: {
+    export type TCall = {
+        type: 'CALL' | 'STATICCALL' | 'DELEGATECALL' | 'CALLCODE' | 'CREATE' | 'CREATE2'
+        to: TEth.Address | null
+        method: string | null
+        args: Record<string, any> | null
+        return: any
+        abi: TEth.Abi.Item | null
+        failed: boolean
+        calls: TCall[]
+        input: TEth.Hex | null
+    };
+
+    export type TTraceParams = {
         tx: TEth.TxLike
         traces: TClientDebugTraces
         getABI (contract: TEth.Address): Promise<TAbiMeta>
         color?: boolean
         shortAddress?: boolean
-        addresses?: Record<TEth.Address, string>,
-    }): Promise<string> {
+        addresses?: Record<TEth.Address, string>
+    };
+
+    export type TTraceResult = {
+        call: TCall
+        formatted: string
+    };
+
+    export async function load (
+        client: Web3Client,
+        params: Omit<TTraceParams, 'traces' | 'getABI'> & Partial<Pick<TTraceParams, 'traces' | 'getABI'>>
+    ): Promise<TTraceResult> {
+        let traces = params.traces ?? await client.debug.traceCall(params.tx);
+        return serialize({
+            ...params,
+            traces,
+            color: params.color ?? false,
+            shortAddress: params.shortAddress ?? false,
+            getABI: params.getABI ?? (address => $abiProvider.getAbi(address, client.network)),
+        });
+    }
+
+    /** Returns the root call tree, with bigints converted to decimal strings for JSON. */
+    export async function getCalls(params: TTraceParams): Promise<TCall> {
+        return (await serialize(params)).call;
+    }
+
+    function createCall(frame: TTraceFrame, abi: TEth.Abi.Item | null): TCall {
+        return {
+            type: frame.callOp as TCall['type'],
+            to: frame.to,
+            method: abi != null && 'name' in abi ? abi.name : frame.selector,
+            args: getCallArgs(frame, abi),
+            return: getCallReturn(frame, abi),
+            abi,
+            failed: frame.failed === true,
+            calls: [],
+            input: frame.input,
+        };
+    }
+
+    function getCallArgs(frame: TTraceFrame, abi: TEth.Abi.Item | null): Record<string, any> | null {
+        if (abi == null || frame.input == null) {
+            return null;
+        }
+        try {
+            let inputs = 'inputs' in abi ? abi.inputs ?? [] : [];
+            let values = $abiCoder.decode(inputs as any, `0x${frame.input.slice(10)}`);
+            return Object.fromEntries(inputs.map((input, i) => [
+                input.name?.trim() || `arg${i}`, toJsonValue(values[i])
+            ]));
+        } catch {
+            return null;
+        }
+    }
+
+    function getCallReturn(frame: TTraceFrame, abi: TEth.Abi.Item | null): any {
+        if (frame.output == null) {
+            return null;
+        }
+        try {
+            if (frame.failed) {
+                let error = $contract.decodeCustomError(frame.output, $contract.store.getFlattened());
+                return error != null ? toJsonValue(error) : frame.output;
+            }
+            let outputs = abi != null && 'outputs' in abi ? abi.outputs ?? [] : [];
+            if (outputs.length > 0) {
+                let values = $abiCoder.decode(outputs as any, frame.output);
+                return outputs.length === 1
+                    ? toJsonValue(values[0])
+                    : Object.fromEntries(outputs.map((output, i) => [
+                        output.name?.trim() || `out${i}`, toJsonValue(values[i])
+                    ]));
+            }
+        } catch {
+            // Retain full bytes when output or revert data cannot be decoded.
+        }
+        return frame.output;
+    }
+
+    function toJsonValue(value: any): any {
+        if (typeof value === 'bigint') {
+            return value.toString();
+        }
+        if (Array.isArray(value)) {
+            return value.map(toJsonValue);
+        }
+        if (value != null && typeof value === 'object') {
+            return Object.fromEntries(Object.entries(value).map(([key, val]) => [key, toJsonValue(val)]));
+        }
+        return value;
+    }
+
+    function getFrames(params: TTraceParams): TTraceFrame[] {
         const logs = params.traces.structLogs ?? [];
-        const frames = logs.length > 0
-            ? buildFrames(logs)
-            : [];
+        const frames = buildFrames(logs.length > 0 ? logs : [{ depth: 0, op: 'STOP' } as TStructLog]);
+        const root = frames[0];
+        root.callOp = params.tx.to != null ? 'CALL' : 'CREATE';
+        root.to = params.tx.to ?? null;
+        root.value = params.tx.value ?? null;
+        root.input = getInput(params.tx);
+        root.selector = getSelector(params.tx);
+        root.output = params.traces.returnValue ?? root.output;
+        root.failed = params.traces.failed;
+        return frames;
+    }
+
+    export async function format (params: TTraceParams): Promise<string> {
+        return (await serialize(params)).formatted;
+    }
+
+    /** Builds both representations from the same frames and ABI cache. */
+    async function serialize(params: TTraceParams): Promise<TTraceResult> {
+        const frames = getFrames(params);
         const abiCache = new Map<string, Promise<TAbiMeta | null>>();
 
         const entryAbiMeta = params.tx.to != null
@@ -66,15 +188,7 @@ export namespace $traces {
             : null;
         const entryAbiItem = getFunctionAbiItem(entryAbiMeta, getSelector(params.tx));
 
-        if (frames[0] != null) {
-            frames[0].to = params.tx.to ?? null;
-            frames[0].value = params.tx.value ?? null;
-            frames[0].input = getInput(params.tx);
-            frames[0].selector = getSelector(params.tx);
-            frames[0].output = params.traces.returnValue ?? frames[0].output;
-        }
-
-        await Promise.all(frames.map(async frame => {
+        const calls = await Promise.all(frames.map(async frame => {
             let abiMeta = frame.to != null
                 ? await getAbiMeta(frame.to)
                 : null;
@@ -86,9 +200,11 @@ export namespace $traces {
             for (let event of frame.events) {
                 event.label = formatEventLabel(event, abiMeta, params);
             }
+            return createCall(frame, abiItem);
         }));
 
         for (let frame of frames) {
+            calls[frame.id].calls = frame.children.map(child => calls[child.id]);
             if (frame.id !== 0) {
                 frame.label ??= formatFrameLabel(frame, null, null, params);
             }
@@ -116,12 +232,12 @@ export namespace $traces {
 
         lines.push('\n', ...addresses);
 
-        return lines.join('\n');
+        return { call: calls[0], formatted: lines.join('\n') };
 
         async function getAbiMeta(contract: TEth.Address): Promise<TAbiMeta | null> {
             let key = contract.toLowerCase();
             if (abiCache.has(key) === false) {
-                abiCache.set(key, params.getABI(contract).catch(() => null));
+                abiCache.set(key, Promise.resolve().then(() => params.getABI(contract)).catch(() => null));
             }
             return await abiCache.get(key);
         }

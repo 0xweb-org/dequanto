@@ -10,6 +10,7 @@ Before using an unfamiliar dequanto API, verify the exact signature in `src/` or
 
 | Goal | Use | Reference | Examples |
 | --- | --- | --- | --- |
+| Load and analyze execution traces for transaction data | `$traces.load(client, { tx })` returns `{ call, formatted }` | [Trace analysis](references/rpc-clients.md#transaction-trace-analysis) | Inline example in the reference |
 | Configure RPC endpoints, explorer keys, or custom chains | `Config.fetch`, `ConfigDefaults`, `RPC_<PLATFORM>` env vars, `blockchainExplorer` | `src/config/ConfigDefaults.ts` | `examples/config.spec.ts` |
 | Create an RPC client; read blocks, balances, logs, storage, or raw tx data; resolve blocks by date | `Web3ClientFactory`, `Web3Client`, `BlockDateResolver`, chain clients | `references/rpc-clients.md` | `examples/rpc-read.spec.ts` |
 | Develop contracts or experiment on a Hardhat fork; impersonate accounts, change balances/storage, mine, or roll back | `Web3ClientFactory`, `client.debug`, `$erc20.setBalanceAny` | `references/hardhat.md` | `examples/hardhat-debug.spec.ts`, `examples/hardhat-fork.spec.ts` |
