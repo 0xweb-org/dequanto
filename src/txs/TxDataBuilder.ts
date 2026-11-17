@@ -270,25 +270,22 @@ export class TxDataBuilder {
             return await this.client.getGasEstimation(from, this.data)
         } catch (error) {
             let message = error.message;
-            let tracesF = null;
+            let tracesFmt = null;
+            let tracesCalls = null;
             if (this.client.debug && this.client.debug.traceCall) {
                 // Process traces earlier to capture all ABIs for the error parser
                 try {
                     let { client } = this;
                     let txData = { from, ...this.data };
-                    let traces = await client.debug.traceCall(txData);
-                    let output = await $traces.format({
+                    let output = await $traces.load(client, {
                         tx: txData,
-                        traces,
                         color: this.config?.color ?? true,
                         shortAddress: false,
-                        async getABI(address) {
-                            return $abiProvider.getAbi(address, client.network);
-                        }
                     });
-                    tracesF = `\nTraces: \n` + output;
+                    tracesFmt = `\nTraces: \n` + output.formatted;
+                    tracesCalls = output.call;
                 } catch (error) {
-                    tracesF = `\nTraces Error: \n  ` + error.message;
+                    tracesFmt = `\nTraces Error: \n  ` + error.message;
                 }
             }
 
@@ -307,11 +304,11 @@ export class TxDataBuilder {
             if (parsed) {
                 message += `\nMethod: ` + $contract.formatCall(parsed);
             }
-            if (tracesF != null) {
-                message += tracesF;
+            if (tracesFmt != null) {
+                message += tracesFmt;
             }
 
-            throw new Error(message);
+            throw new TracesError(message, tracesCalls);
         }
     }
 
@@ -349,7 +346,10 @@ export class TxDataBuilder {
         }
         return null;
     }
+}
 
-
-
+class TracesError extends Error {
+    constructor (message, public traces: $traces.TCall | null) {
+        super(message);
+    }
 }
