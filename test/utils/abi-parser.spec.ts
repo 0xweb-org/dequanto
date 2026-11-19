@@ -4,6 +4,27 @@ import { $abi } from '../../src/abi/$abi'
 import { $abiParser } from '../../src/utils/$abiParser'
 
 UTest.create({
+    'parses indexed event arguments' () {
+        let abi = $abiParser.parseMethod('event Transfer(address indexed from, address to, uint256 amount)');
+        eq_(abi.type, 'event');
+        deepEq_(abi.inputs, [
+            { name: 'from', type: 'address', indexed: true },
+            { name: 'to', type: 'address' },
+            { name: 'amount', type: 'uint256' },
+        ]);
+        let unnamed = $abiParser.parseMethod('event Changed(address indexed, bytes32 indexed, uint256[] indexed values)');
+        deepEq_(unnamed.inputs, [
+            { name: '', type: 'address', indexed: true },
+            { name: '', type: 'bytes32', indexed: true },
+            { name: 'values', type: 'uint256[]', indexed: true },
+        ]);
+        let tuples = $abiParser.parseMethod('event Changed((uint256 value) indexed item, (address owner)[] indexed, (uint256 id) indexed)');
+        deepEq_(tuples.inputs, [
+            { name: 'item', type: 'tuple', indexed: true, components: [{ name: 'value', type: 'uint256' }] },
+            { name: '', type: 'tuple[]', indexed: true, components: [{ name: 'owner', type: 'address' }] },
+            { name: '', type: 'tuple', indexed: true, components: [{ name: 'id', type: 'uint256' }] },
+        ]);
+    },
     'parse an empty return' () {
         let abi = $abiParser.parseMethod('function bar(uint256):()');
         has_(abi, {

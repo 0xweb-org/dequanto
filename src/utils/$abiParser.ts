@@ -186,7 +186,9 @@ export namespace $abiParser {
                 delimiter = line.length;
             }
             let tupleName = line.substring(end + 1, delimiter).trim();
-            if (tupleName) {
+            let indexed = /\bindexed\b/.test(tupleName);
+            tupleName = tupleName.replace(/\bindexed\b/, '').trim();
+            if (tupleName || indexed) {
                 let type = 'tuple';
                 // e.g. tupleName "[] users" from (uint256 foo, uint256 bar)[] users
                 let arrMatch = /\[(\d+)?\]/.exec(tupleName);
@@ -198,6 +200,7 @@ export namespace $abiParser {
                     {
                         name: tupleName,
                         type,
+                        ...(indexed ? { indexed: true } : {}),
                         components: params
                     }
                 ];
@@ -231,6 +234,8 @@ export namespace $abiParser {
         //     });
         // }
 
+        let indexed = /\bindexed\b/.test(line);
+        line = line.replace(/\bindexed\b/, '').trim();
         let name = '';
         let type = line;
         let match = /^(?<type>.+)\s+(?<name>[\w_$]+)$/.exec(line);
@@ -247,6 +252,7 @@ export namespace $abiParser {
             {
                 name,
                 type,
+                ...(indexed ? { indexed: true } : {}),
             },
         ];
     }

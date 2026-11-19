@@ -10,7 +10,6 @@ export class TxTopicProvider {
 
     constructor () {
         this.register([
-            //'event Transfer(address from, address to, uint256 amount)'
             {
                 abi: 'event Transfer(address from, address to, uint256 amount)',
                 formatter: di.resolve(TxLogsTransfer)

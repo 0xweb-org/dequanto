@@ -3,7 +3,9 @@ import { $abiCoder } from 'dequanto/abi/$abiCoder';
 import { TEth } from 'dequanto/models/TEth';
 import { TAbiInput, TAbiItem } from 'dequanto/types/TAbi';
 import { TxLogParser } from 'dequanto/txs/receipt/TxLogParser';
+import { TxTopicProvider } from 'dequanto/txs/receipt/TxTopicProvider';
 import { $abiProvider } from 'dequanto/utils/$abiProvider';
+import { $abiParser } from 'dequanto/utils/$abiParser';
 import { $abiUtils } from 'dequanto/utils/$abiUtils';
 import { $contract } from 'dequanto/utils/$contract';
 
@@ -95,8 +97,66 @@ function nonIndexed() {
 }
 
 UTest.create({
+    async 'decodes all arguments from data when indexed topics are absent'() {
+        let abi = $abiParser.parseMethod('event Transfer(address indexed from, address indexed to, uint256 amount)');
+        let from = '0x0000000000000000000000000000000000000000';
+        let values = [from, address, 10n];
+        let transfer = fixture(abi, [], $abiCoder.encode(abi.inputs, values), values);
+        let referenceAbi = $abiParser.parseMethod('event Message(string indexed text, uint256 amount)');
+        let reference = fixture(referenceAbi, [], $abiCoder.encode(referenceAbi.inputs, ['hello', 42n]), ['hello', 42n]);
+        let tests = [transfer, reference];
+        let original = $abiProvider.getAbi;
+        try {
+            for (let test of tests) {
+                deepEq_($contract.parseLogWithAbi(test.log, test.abi), test.expected);
+                $abiProvider.getAbi = async () => ({ abi: [test.abi] });
+                let parsed = await TxLogParser.parseWithAbiLookup({ logs: [test.log] }, { platform: 'hardhat' });
+                deepEq_(parsed, [{ ...test.expected, decoded: true, raw: test.log }]);
+            }
+            deepEq_(abi.inputs.map(input => input.indexed), [true, true, undefined]);
+            eq_(referenceAbi.inputs[0].indexed, true);
+        } finally {
+            $abiProvider.getAbi = original;
+        }
+    },
+    'infers leading indexed arguments when indexed metadata is omitted'() {
+        let abi: TAbiItem = {
+            type: 'event', name: 'Transfer', inputs: [
+                { name: 'from', type: 'address' },
+                { name: 'to', type: 'address' },
+                { name: 'amount', type: 'uint256' },
+            ],
+        };
+        let values = ['0x0000000000000000000000000000000000000000', address, 10n];
+        let counts = [0, 1, 2];
+        for (let count of counts) {
+            let topics = abi.inputs.slice(0, count).map((input, i) => $abiCoder.encode([input], [values[i]]));
+            let test = fixture(abi, topics, $abiCoder.encode(abi.inputs.slice(count), values.slice(count)), values);
+            deepEq_($contract.parseLogWithAbi(test.log, 'event Transfer(address from, address to, uint256 amount)'), test.expected);
+            deepEq_($contract.parseLogWithAbi(test.log, abi), test.expected);
+            deepEq_(abi.inputs.map(input => input.indexed), [undefined, undefined, undefined]);
+        }
+    },
+    async 'decodes ERC20 transfers with the default topic ABI'() {
+        let abi: TAbiItem = {
+            type: 'event', name: 'Transfer', inputs: [
+                { name: 'from', type: 'address', indexed: true },
+                { name: 'to', type: 'address', indexed: true },
+                { name: 'amount', type: 'uint256', indexed: false },
+            ],
+        };
+        let from = '0x0000000000000000000000000000000000000000';
+        let test = fixture(abi, [
+            $abiCoder.encode(['address'], [from]),
+            $abiCoder.encode(['address'], [address]),
+        ], $abiCoder.encode(['uint256'], [10n]), [from, address, 10n]);
+        let topic = await new TxTopicProvider().get(test.log.topics[0]);
+        deepEq_($contract.parseLogWithAbi(test.log, topic.abi), test.expected);
+    },
     'preserves declaration order, named params and metadata'() {
         let test = changed(42n);
+        deepEq_($contract.parseLogWithAbi(test.log,
+            'event Changed(uint256 value, address indexed account, uint256 previous, uint256 indexed next)'), test.expected);
         deepEq_($contract.parseLogWithAbi(test.log, test.abi), test.expected);
         deepEq_($contract.parseLogWithAbi(test.log, [test.abi]), test.expected);
         deepEq_(test.abi.inputs.map(input => input.name), ['value', 'account', 'previous', 'next']);

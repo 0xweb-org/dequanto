@@ -81,7 +81,7 @@ export class TxLogParser {
                     return { decoded: false, raw, reason: 'AMBIGUOUS_EVENT' };
                 }
                 let event = events[0];
-                if (event.inputs.filter(input => input.indexed === true).length !== raw.topics.length - 1) {
+                if (raw.topics.length !== 1 && event.inputs.filter(input => input.indexed === true).length !== raw.topics.length - 1) {
                     return { decoded: false, raw, reason: 'DECODE_FAILED' };
                 }
                 return { ...$contract.parseLogWithAbi(raw, event), decoded: true, raw };

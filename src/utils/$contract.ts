@@ -196,6 +196,16 @@ export namespace $contract {
         }
 
         let inputs = abiItem.inputs;
+        if (log.topics.length === 1) {
+            // Only the event signature is present: all arguments are encoded in data.
+            inputs = inputs.map(input => ({ ...input, indexed: false }));
+        } else if (inputs.every(input => input.indexed == null)) {
+            // Without indexed metadata, retain the legacy assumption that topics
+            // correspond to the leading arguments. Non-leading topics need an explicit ABI.
+            let indexedCount = log.topics.length - 1;
+            $require.True(indexedCount <= inputs.length, 'More event topics than ABI inputs');
+            inputs = inputs.map((input, i) => ({ ...input, indexed: i < indexedCount }));
+        }
         let dataInputs = inputs.filter(input => input.indexed !== true);
         let values = dataInputs.length > 0 ? $abiCoder.decode(dataInputs, log.data) : [];
         let topicIndex = 1;
