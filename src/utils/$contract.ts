@@ -195,46 +195,24 @@ export namespace $contract {
             abiItem = mix;
         }
 
-        let inputs = abiItem.inputs.slice();
-
-        // Move indexed inputs forward
-        inputs.sort((a, b) => {
-            if (a.indexed === b.indexed) {
-                return 0;
+        let inputs = abiItem.inputs;
+        let dataInputs = inputs.filter(input => input.indexed !== true);
+        let values = dataInputs.length > 0 ? $abiCoder.decode(dataInputs, log.data) : [];
+        let topicIndex = 1;
+        let dataIndex = 0;
+        let args = inputs.map(input => {
+            let value;
+            if (input.indexed === true) {
+                let bytes = log.topics[topicIndex++];
+                // Indexed reference types contain hashes, including static arrays and tuples.
+                let isHash = input.type === 'string' || input.type === 'bytes'
+                    || input.type.includes('[') || input.type.startsWith('tuple');
+                value = isHash ? bytes : $abiCoder.decode([input], bytes)[0];
+            } else {
+                value = values[dataIndex++];
             }
-            if (b.indexed === true && a.indexed !== true) {
-                return 1;
-            }
-            return -1;
+            return { name: input.name, value };
         });
-
-        let args = log.topics.slice(1).map((bytes, i) => {
-            let type = inputs.shift();
-            if (type.indexed && $abiUtils.isDynamicType(type.type)) {
-                // Dynamic types are stored as keccak256 hashes
-                return {
-                    name: type.name,
-                    value: bytes
-                };
-            }
-            let val = $abiCoder.decode([type], bytes);
-
-            return {
-                name: type.name,
-                value: val[0]
-            }
-        });
-
-        if (inputs.length > 0) {
-            let values = $abiCoder.decode(inputs, log.data);
-
-            args.push(...values.map((val, i) => {
-                return {
-                    name: inputs[i].name,
-                    value: val
-                };
-            }));
-        }
         let params = args.reduce((agr, arg) => {
             agr[arg.name] = arg.value;
             return agr;
