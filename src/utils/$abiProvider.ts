@@ -1,3 +1,4 @@
+import memd from 'memd';
 import { TEth } from 'dequanto/models/TEth';
 import { $contract } from './$contract';
 import { TPlatform } from 'dequanto/models/TPlatform';
@@ -10,7 +11,7 @@ export namespace $abiProvider {
         address?: TEth.Address
         abi: TEth.Abi.Item[]
     }
-    export async function getAbi(address: TEth.Address, network: TPlatform): Promise<IContractMeta> {
+    export const getAbi = memd.fn.memoize(async function (address: TEth.Address, network: TPlatform): Promise<IContractMeta> {
         let local = $contract.store.getContract(address);
         if (local) {
             return local;
@@ -40,7 +41,6 @@ export namespace $abiProvider {
                 // ignore
             }
         }
-
         return null;
-    }
+    });
 }

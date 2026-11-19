@@ -6,6 +6,16 @@ import { TPlatform } from 'dequanto/models/TPlatform';
 import { TEth } from 'dequanto/models/TEth';
 import { $require } from 'dequanto/utils/$require';
 import { ITxLogItem } from './ITxLogItem';
+import { $abiProvider } from 'dequanto/utils/$abiProvider';
+import { $abiUtils } from 'dequanto/utils/$abiUtils';
+
+export interface ILogAbiLookupOptions {
+    platform: TPlatform
+}
+
+export type TDecodedReceiptLog =
+    | (ITxLogItem & { decoded: true; raw: TEth.Log })
+    | { decoded: false; raw: TEth.Log; reason: 'ABI_UNAVAILABLE' | 'EVENT_NOT_FOUND' | 'AMBIGUOUS_EVENT' | 'DECODE_FAILED' };
 
 export class TxLogParser {
 
@@ -48,6 +58,41 @@ export class TxLogParser {
         }
 
         return logs as ITxLogItem<Record<string, any>>[];
+    }
+
+    /** Resolves each emitter's ABI and preserves every raw log in receipt order. */
+    async parseWithAbiLookup(receipt: { logs: TEth.TxReceipt['logs'] }, opts: ILogAbiLookupOptions): Promise<TDecodedReceiptLog[]> {
+        $require.notNull(receipt, `Receipt is undefined to parse logs from`);
+
+        return await alot(receipt.logs).mapAsync(async (raw): Promise<TDecodedReceiptLog> => {
+            let meta = await $abiProvider.getAbi(raw.address, opts.platform);
+            let abi = meta?.abi;
+            if (Array.isArray(abi) === false) {
+                return { decoded: false, raw, reason: 'ABI_UNAVAILABLE' };
+            }
+            try {
+                // Anonymous events have no signature topic and cannot be identified this way.
+                let events = abi.filter(item => item.type === 'event' && item.anonymous !== true
+                    && $abiUtils.getTopicSignature(item).toLowerCase() === raw.topics[0]?.toLowerCase());
+                if (events.length === 0) {
+                    return { decoded: false, raw, reason: 'EVENT_NOT_FOUND' };
+                }
+                if (events.length > 1) {
+                    return { decoded: false, raw, reason: 'AMBIGUOUS_EVENT' };
+                }
+                let event = events[0];
+                if (event.inputs.filter(input => input.indexed === true).length !== raw.topics.length - 1) {
+                    return { decoded: false, raw, reason: 'DECODE_FAILED' };
+                }
+                return { ...$contract.parseLogWithAbi(raw, event), decoded: true, raw };
+            } catch (error) {
+                return { decoded: false, raw, reason: 'DECODE_FAILED' };
+            }
+        }).toArrayAsync();
+    }
+
+    static parseWithAbiLookup (...params: Parameters<TxLogParser['parseWithAbiLookup']>) {
+        return new TxLogParser().parseWithAbiLookup(...params);
     }
 
     static parse (...params: Parameters<TxLogParser['parse']>) {
