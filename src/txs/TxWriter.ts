@@ -34,6 +34,8 @@ import { SafeServiceTypes } from 'dequanto/safe/types/SafeServiceTypes';
 import { ChainAccountService } from 'dequanto/ChainAccountService';
 import { $is } from 'dequanto/utils/$is';
 import { ITxWriterAccountAgent, ITxWriterAgent, TxWriterAccountAgents } from './agents/TxWriterAccountAgents';
+import { TxWriterSigners } from './sig-transports/TxWriterSigners';
+import { $abi } from 'dequanto/abi/$abi';
 
 
 
@@ -235,6 +237,24 @@ export class TxWriter extends class_EventEmitter<ITxWriterEvents> implements ITx
         let signedTxBuffer = key == null
             ? null
             : await this.builder.signToString(sender.key);
+
+        if (signedTxBuffer == null && sender?.signer) {
+            if (typeof sender.signer === 'string') {
+                let signer = $require.notNull(
+                    TxWriterSigners.get(sender?.signer),
+                    `Signer not registered ${sender.signer} for ${sender.name}`
+                );
+
+                let tx = $txData.getJson(this.builder.data, this.client);
+                let data = tx.data || tx.input;
+                let abi = data ? $abi.findAbiByData(data, this.builder.abi) : null;
+                signedTxBuffer = await signer.signTransaction(sender, tx, abi)
+            } else {
+                $require.Function(sender.signer.eth_signTransaction, `eth_signTransaction function is undefined for ${sender.name}`)
+                let tx = $txData.getJson(this.builder.data, this.client);
+                signedTxBuffer = await sender.signer.eth_signTransaction(tx);
+            }
+        }
 
         if (signedTxBuffer == null) {
             if (this.options?.sigTransport != null) {

@@ -25,7 +25,8 @@ export interface IAccountTx extends IAccount {
 export interface EoAccount extends IAccount {
     type?: 'eoa' | 'impersonated'
     key?: TEth.Hex | `p1:0x${string}`
-    signer?: IRpcSigner
+    /** Custom web3 signer or name of a globally registered signing handler. */
+    signer?: IRpcSigner | string
 }
 
 interface IRpcSigner {

@@ -1,5 +1,5 @@
 import { TAbiInput, TAbiItem, TAbiOutput } from 'dequanto/types/TAbi';
-import { ParamType } from './fragments';
+import { FunctionFragment, ParamType } from './fragments';
 import { TEth } from 'dequanto/models/TEth';
 import { $abiCoder } from './$abiCoder';
 import { $abiUtils } from 'dequanto/utils/$abiUtils';
@@ -36,6 +36,33 @@ export namespace $abi {
 
     export function encodeCall(abi: string | TAbiItem, params?: any[]): TEth.Hex {
         return $abiUtils.serializeMethodCallData(abi, params);
+    }
+
+    /** Returns the lowercase four-byte selector, or null for invalid or shorter calldata. */
+    export function getSelectorFromData(data: string): TEth.Hex | null {
+        if (typeof data !== 'string' || /^0x[\da-f]{8}(?:[\da-f]{2})*$/i.test(data) === false) {
+            return null;
+        }
+        return data.substring(0, 10).toLowerCase() as TEth.Hex;
+    }
+
+    /** Computes the selector from a function ABI item or human-readable declaration. */
+    export function getSelectorFromAbi(abi: string | TAbiItem): TEth.Hex {
+        return FunctionFragment.from(abi).selector as TEth.Hex;
+    }
+
+    /** Returns the first matching function ABI, or null. Does not validate encoded arguments. */
+    export function findAbiByData(data: string, abi: TAbiItem[]): TAbiItem | null {
+        return findAbiBySelector(getSelectorFromData(data), abi);
+    }
+
+    /** Returns the first matching function ABI, or null for an invalid or unknown selector. */
+    export function findAbiBySelector(selector: string, abi: TAbiItem[]): TAbiItem | null {
+        if (typeof selector !== 'string' || /^0x[\da-f]{8}$/i.test(selector) === false) {
+            return null;
+        }
+        selector = selector.toLowerCase();
+        return abi.find(item => item.type === 'function' && getSelectorFromAbi(item) === selector) ?? null;
     }
 
     export function decodeReturn<T = any>(abi: string | TAbiItem | TAbiOutput[], hex: string): T {
