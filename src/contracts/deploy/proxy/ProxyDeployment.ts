@@ -377,7 +377,7 @@ export class ProxyDeployment {
 
                 l`Upgrading Beacon to ${implAddress}`;
                 let receipt = await Interfaces.call(
-                    deployer,
+                    ctx.owner ?? deployer,
                     contractBeacon,
                     Interfaces.Beacon.Beacon.upgradeTo,
                     implAddress
