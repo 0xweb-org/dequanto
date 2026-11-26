@@ -437,6 +437,7 @@ export class Deployments {
             beaconId,
             beaconProxyId,
             deployer: this.deployer,
+            owner: opts.deployment?.owner ?? this.opts?.owner ?? this.deployer,
             deployments: this,
             implementation: {
                 address: implementationAddress,
